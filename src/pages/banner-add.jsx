@@ -39,7 +39,8 @@ const BannerAdd = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Banner<span />
+                        Banner
+                        <span />
                       </label>
                       <input
                         className="form-control"
@@ -49,59 +50,41 @@ const BannerAdd = () => {
                       />
                     </div>
                   </div>
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Status</label>
+                      <select
+                        className="form-control form-select"
+                        style={{ width: "100%" }}
+                      >
+                        <option selected="selected">Select Status</option>
+                        <option>Active</option>
+                        <option>In-Active</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Banner URL <span />
+                      </label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Default input"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="card p-4">
-            <form>
-              {/* Site Name */}
-              <div className="mb-3 text-start">
-                <label htmlFor="siteName" className="form-label">
-                  Site Name
-                </label>
-                <select id="status" className="form-select"></select>
-              </div>
-
-              {/* Banner Upload */}
-              <div className="mb-3 text-start">
-                <label htmlFor="bannerFile" className="form-label">
-                  Banner
-                </label>
-                <input type="file" id="bannerFile" className="form-control" />
-              </div>
-
-              {/* Status */}
-              <div className="mb-3 text-start">
-                <label htmlFor="status" className="form-label">
-                  Status
-                </label>
-                <select id="status" className="form-select">
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
-
-              {/* Banner URL */}
-              <div className="mb-3 text-start">
-                <label htmlFor="bannerUrl" className="form-label">
-                  Banner URL
-                </label>
-                <input
-                  type="text"
-                  id="bannerUrl"
-                  className="form-control"
-                  placeholder="Enter banner URL"
-                />
-              </div>
-
-              {/* Submit Button */}
-              <div className="text-center">
-                <button type="submit" className="purple-btn2">
-                  Submit
-                </button>
-              </div>
-            </form>
+            <div className="row mt-2 justify-content-center">
+                    <div className="col-md-2">
+                      <button type="submit" className="purple-btn2 w-100">
+                        Submit
+                      </button>
+                    </div>
+                  </div>
           </div>
         </div>
         <Footer />
