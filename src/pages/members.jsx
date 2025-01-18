@@ -25,18 +25,15 @@
             <li>
                 <Link to="/banner-list">Banner List </Link>
             </li>
-<<<<<<< Updated upstream
             <li>
                 <Link to="banner-add">Banner Add </Link>
             </li>
             <li>
               <Link to="amenities">Amenities</Link>
             </li>
-=======
             {<li>
                 <Link to="/banner-add">Banner Add </Link>
             </li> }
->>>>>>> Stashed changes
           </ul>
          
         </div>
