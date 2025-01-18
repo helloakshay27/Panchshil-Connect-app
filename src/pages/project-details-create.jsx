@@ -1,337 +1,466 @@
-// function App() {
-//     const [formData, setFormData] = useState({
-//       Property_Type: "",
-//       SFDC_Project_Id: "",
-//       Project_Construction_Status: "",
-//       Configuration_Type: "",
-//       Project_Name: "vat test1",
-//       Location: "test location",
-//       Project_Description: "",
-//       Price_Onward: "",
-//       Project_Size_Sq_Mtr: 100,
-//       Project_Size_Sq_Ft: "",
-//       Rera_Carpet_Area_Sq_M: "",
-//       Rera_Carpet_Area_sqft: "",
-//       Number_Of_Towers: "",
-//       Number_Of_Units: "",
-//       Rera_Number: "",
-//       Amenities: "value1,value3, val",
-//       Specifications: "value1,value2",
-//       Land_Area: "",
-//       Address: {
-//         address_line_1: "line 1",
-//         address_line_2: "line 2",
-//         address_line_3: "line 3",
-//         city: "Pune",
-//         state: "Maharashtra",
-//         pin_code: 400709,
-//         country: "India",
-//       },
-//     });
-  
-//     const handleChange = (e) => {
-//       const { name, value } = e.target;
-  
-//       if (name.includes("Address.")) {
-//         const addressField = name.split(".")[1];
-//         setFormData((prev) => ({
-//           ...prev,
-//           Address: { ...prev.Address, [addressField]: value },
-//         }));
-//       } else {
-//         setFormData((prev) => ({
-//           ...prev,
-//           [name]: value,
-//         }));
-//       }
-//     };
-  
-//     const handleSubmit = (e) => {
-//       e.preventDefault();
-//       console.log("Submitted Data:", formData);
-//     };
-  
-//     return (
-//       <form onSubmit={handleSubmit}>
-//         <h2>Project Details</h2>
-  
-//         <label>
-//           Property Type:
-//           <input
-//             type="text"
-//             name="Property_Type"
-//             value={formData.Property_Type}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           SFDC Project ID:
-//           <input
-//             type="text"
-//             name="SFDC_Project_Id"
-//             value={formData.SFDC_Project_Id}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Project Construction Status:
-//           <input
-//             type="text"
-//             name="Project_Construction_Status"
-//             value={formData.Project_Construction_Status}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Configuration Type:
-//           <input
-//             type="text"
-//             name="Configuration_Type"
-//             value={formData.Configuration_Type}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Project Name:
-//           <input
-//             type="text"
-//             name="Project_Name"
-//             value={formData.Project_Name}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Location:
-//           <input
-//             type="text"
-//             name="Location"
-//             value={formData.Location}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Project Description:
-//           <textarea
-//             name="Project_Description"
-//             value={formData.Project_Description}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Price Onward:
-//           <input
-//             type="text"
-//             name="Price_Onward"
-//             value={formData.Price_Onward}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Project Size (Sq. Mtr):
-//           <input
-//             type="number"
-//             name="Project_Size_Sq_Mtr"
-//             value={formData.Project_Size_Sq_Mtr}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Project Size (Sq. Ft):
-//           <input
-//             type="text"
-//             name="Project_Size_Sq_Ft"
-//             value={formData.Project_Size_Sq_Ft}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Rera Carpet Area (Sq. M):
-//           <input
-//             type="text"
-//             name="Rera_Carpet_Area_Sq_M"
-//             value={formData.Rera_Carpet_Area_Sq_M}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Rera Carpet Area (Sq. Ft):
-//           <input
-//             type="text"
-//             name="Rera_Carpet_Area_sqft"
-//             value={formData.Rera_Carpet_Area_sqft}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Number Of Towers:
-//           <input
-//             type="text"
-//             name="Number_Of_Towers"
-//             value={formData.Number_Of_Towers}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Number Of Units:
-//           <input
-//             type="text"
-//             name="Number_Of_Units"
-//             value={formData.Number_Of_Units}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Rera Number:
-//           <input
-//             type="text"
-//             name="Rera_Number"
-//             value={formData.Rera_Number}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Amenities:
-//           <input
-//             type="text"
-//             name="Amenities"
-//             value={formData.Amenities}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Specifications:
-//           <input
-//             type="text"
-//             name="Specifications"
-//             value={formData.Specifications}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Land Area:
-//           <input
-//             type="text"
-//             name="Land_Area"
-//             value={formData.Land_Area}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <h3>Address</h3>
-//         <label>
-//           Address Line 1:
-//           <input
-//             type="text"
-//             name="Address.address_line_1"
-//             value={formData.Address.address_line_1}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Address Line 2:
-//           <input
-//             type="text"
-//             name="Address.address_line_2"
-//             value={formData.Address.address_line_2}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Address Line 3:
-//           <input
-//             type="text"
-//             name="Address.address_line_3"
-//             value={formData.Address.address_line_3}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           City:
-//           <input
-//             type="text"
-//             name="Address.city"
-//             value={formData.Address.city}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           State:
-//           <input
-//             type="text"
-//             name="Address.state"
-//             value={formData.Address.state}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Pin Code:
-//           <input
-//             type="number"
-//             name="Address.pin_code"
-//             value={formData.Address.pin_code}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <label>
-//           Country:
-//           <input
-//             type="text"
-//             name="Address.country"
-//             value={formData.Address.country}
-//             onChange={handleChange}
-//           />
-//         </label>
-  
-//         <button type="submit">Submit</button>
-//       </form>
-//     );
-//   };
-import React from 'react'
-import Header from '../components/Header'
-import Sidebar from '../components/Sidebar'
-import Footer from '../components/Footer';
+import React, { useState } from "react";
+import axios from "axios";
+import Select from "react-select";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
+import Footer from "../components/Footer";
 import "../mor.css";
-import { Link } from "react-router-dom";
 
 const ProjectDetailsCreate = () => {
+  const [formData, setFormData] = useState({
+    projectType: "",
+    sfdcProjectId: "",
+    constructionStatus: "",
+    configurationType: "",
+    projectName: "",
+    location: "",
+    description: "",
+    priceOnward: "",
+    projectSizeMtr: "",
+    projectSizeFt: "",
+    rareCarpetAreaMtr: "",
+    rareCarpetAreaFt: "",
+    numTowers: "",
+    numUnits: "",
+    rareNumber: "",
+    amenities: "",
+    specifications: "",
+    landArea: "",
+    addressLine1: "",
+    addressLine2: "",
+    addressLine3: "",
+    city: "",
+    state: "",
+    pinCode: "",
+    country: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "https://panchshil-super.lockated.com/projects.json",
+        formData
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("There was an error submitting the form!", error);
+    }
+  };
+
   return (
     <>
-      <Header />
-     <div className="main-content">
-        <Sidebar/>
-     <div className="website-content overflow-auto">
-     <div className="module-data-section container-fluid">
-        <h1>Project Detaildsds Create</h1>
+      {/* <Header /> */}
+      <div className="main-content">
+        <Sidebar />
+        <div className="website-content overflow-auto">
+          <div className="module-data-section p-3">
+            <div className="card mt-3 pb-4 mx-4">
+              <div className="card-header">
+                <h3 className="card-title">Project Details</h3>
+              </div>
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Project Type</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ width: "100%" }}
+                          name="projectType"
+                          value={formData.projectType}
+                          onChange={handleChange}
+                        >
+                          <option value="" disabled selected>
+                            Select Project Type
+                          </option>
+                          <option value="Alabama">Residental</option>
+                          <option value="Alaska">Office Parks</option>
+                          <option value="California">Plots</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>SFDC Project ID</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Default input"
+                          name="sfdcProjectId"
+                          value={formData.sfdcProjectId}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Project Construction Status</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ width: "100%" }}
+                          name="constructionStatus"
+                          value={formData.constructionStatus}
+                          onChange={handleChange}
+                        >
+                          <option value="" disabled selected>
+                            Select status
+                          </option>
+                          <option value="Alabama">Completed</option>
+                          <option value="Alaska">Ready-To-Move-In</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Configuration Type</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ width: "100%" }}
+                          name="constructionType"
+                          value={formData.constructionType}
+                          onChange={handleChange}
+                        >
+                          <option value="" disabled selected>
+                            Select Type
+                          </option>
+                          <option value="Alabama">3 BHK</option>
+                          <option value="Alaska">4 BHK</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Project Name</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Default input"
+                          name="projectName"
+                          value={formData.projectName}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Location</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Default input"
+                          name="location"
+                          value={formData.location}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-6 mt-2">
+                      <div className="form-group">
+                        <label>Project Description</label>
+                        <textarea
+                          className="form-control"
+                          rows={3}
+                          placeholder="Enter ..."
+                          name="description"
+                          value={formData.description}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Price Onward</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ width: "100%" }}
+                          name="priceOnward"
+                          value={formData.priceOnward}
+                          onChange={handleChange}
+                        >
+                          <option value="Alabama">Alabama</option>
+                          <option value="Alaska">Alaska</option>
+                          <option value="California">California</option>
+                          <option value="Delaware">Delaware</option>
+                          <option value="Tennessee">Tennessee</option>
+                          <option value="Texas">Texas</option>
+                          <option value="Washington">Washington</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Project Size (Sq. Mtr.)</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          placeholder="Default input"
+                          name="projectSizeMtr"
+                          value={formData.projectSizeMtr}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Project Size (Sq. Ft.)</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          placeholder="Default input"
+                          name="projectSizeFt"
+                          value={formData.projectSizeFt}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Rare Carpet Area (Sq. M)</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          placeholder="Default input"
+                          name="rareCarpetAreaMtr"
+                          value={formData.rareCarpetAreaMtr}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Rare Carpet Area (Sq. Ft.)</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          placeholder="Default input"
+                          name="rareCarpetAreaFt"
+                          value={formData.rareCarpetAreaFt}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Number of Towers</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          placeholder="Default input"
+                          name="numTowers"
+                          value={formData.numTowers}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Number of Units</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          placeholder="Default input"
+                          name="numUnits"
+                          value={formData.numUnits}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Rare Number</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          placeholder="Default input"
+                          name="rareNumber"
+                          value={formData.rareNumber}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Amenities</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ width: "100%" }}
+                          name="amenities"
+                          value={formData.amenities}
+                          onChange={handleChange}
+                        >
+                          <option value="Alabama">Alabama</option>
+                          <option value="Alaska">Alaska</option>
+                          <option value="California">California</option>
+                          <option value="Delaware">Delaware</option>
+                          <option value="Tennessee">Tennessee</option>
+                          <option value="Texas">Texas</option>
+                          <option value="Washington">Washington</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Specifications</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ width: "100%" }}
+                          name="specifications"
+                          value={formData.specifications}
+                          onChange={handleChange}
+                        >
+                          <option value="Alabama">Alabama</option>
+                          <option value="Alaska">Alaska</option>
+                          <option value="California">California</option>
+                          <option value="Delaware">Delaware</option>
+                          <option value="Tennessee">Tennessee</option>
+                          <option value="Texas">Texas</option>
+                          <option value="Washington">Washington</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Land Area</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          placeholder="Default input"
+                          name="landArea"
+                          value={formData.landArea}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div className="card mt-3 pb-4 mx-4">
+              <div className="card-header3">
+                <h3 className="card-title">Address</h3>
+              </div>
+              <div className="card-body">
+                <div className="row">
+                  {/* Address Section */}
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>Address Line 1</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Address Line 1"
+                        name="addressLine1"
+                        value={formData.addressLine1}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>Address Line 2</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Address Line 2"
+                        name="addressLine2"
+                        value={formData.addressLine2}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>Address Line 3</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Address Line 3"
+                        name="addressLine3"
+                        value={formData.addressLine3}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* City, State, Pin, Country Section */}
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>City</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="City"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>State</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="State"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>Pin Code</label>
+                      <input
+                        className="form-control"
+                        type="number"
+                        placeholder="Pin Code"
+                        name="pinCode"
+                        value={formData.pinCode}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>Country</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Country"
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="row mt-2 justify-content-center">
+              <div className="col-md-2">
+                <button type="submit" className="purple-btn2 w-100">
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-         </div>
-
-     </div>
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default ProjectDetailsCreate
+export default ProjectDetailsCreate;

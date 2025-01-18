@@ -28,6 +28,9 @@
             <li>
                 <Link to="banner-add">Banner Add </Link>
             </li>
+            <li>
+              <Link to="amenities">Amenities</Link>
+            </li>
           </ul>
          
         </div>
