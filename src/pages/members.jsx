@@ -31,9 +31,12 @@
             <li>
               <Link to="amenities">Amenities</Link>
             </li>
-            {<li>
+            {/* {<li>
                 <Link to="/banner-add">Banner Add </Link>
-            </li> }
+            </li> } */}
+            <li>
+              <Link to="/gallery">Gallery</Link>
+            </li>
           </ul>
          
         </div>
