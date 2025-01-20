@@ -51,7 +51,7 @@ const Gallery = () => {
                 <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Project ID <span />
+                        Project Name <span />
                       </label>
                       <input
                         className="form-control"
@@ -64,7 +64,7 @@ const Gallery = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Gallery Type ID <span />
+                        Gallery Name <span />
                       </label>
                       <input
                         className="form-control"
@@ -100,46 +100,19 @@ const Gallery = () => {
                       />
                     </div>
                   </div>
+
+ 
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Project Name <span />
+                        Gallery File <span />
                       </label>
                       <input
                         className="form-control"
-                        type="text"
-                        value={galleries[0]?.project_name}
+                        type="file"
                         placeholder="Default input"
                       />
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Gallery Type <span />
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        value={galleries[0]?.gallery_type}
-                        placeholder="Default input"
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Gallery URL <span />
-                      </label>
-                     <a
-                     href={galleries[0]?.url || '#'}
-                     className="form-control"
-                     style={{ textDecoration: 'none', color: 'blue' }}
-                     target="_blank"
-                     rel="noopener noreferrer"
-                      >
-                     {galleries[0]?.url || 'No URL available'}
-                      </a>
+            
                    </div>
                  </div>
 
@@ -160,27 +133,7 @@ const Gallery = () => {
                       </select>
                     </div>
                   </div> */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Attachment
-                        <span />
-                      </label>
-                      <a href={galleries[1]?.attachfile?.document_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="form-control">
-                      
-                       <img
-                         // src={galleries[1]?.attachfile?.document_url} 
-                           alt={galleries[1]?.attachfile?.document_file_name}
-                           className="img-fluid w-100"
-                           style={{ height: '100%' }}
-                        />
-                       </a>
-
-                    </div>
-                  </div>
+            
                   {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>Status</label>
