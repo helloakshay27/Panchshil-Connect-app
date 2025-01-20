@@ -63,7 +63,7 @@ const ProjectDetailsList = () => {
               <button
                 className="purple-btn2 rounded-3"
                 fdprocessedid="xn3e6n"
-                onClick={() => navigate("/banner-add")}
+                onClick={() => navigate("")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
