@@ -382,7 +382,7 @@ const Sidebar = () => {
                       fill="#DD7007"
                     ></path>
                   </svg>
-                  <span className="menu-link-text">Vendors</span>
+                  <span className="menu-link-text">Project</span>
                 </a>
               </li>
               <li className="menu-item d-flex">
@@ -414,7 +414,7 @@ const Sidebar = () => {
                       stroke-linejoin="round"
                     ></path>
                   </svg>
-                  <span className="menu-link-text">Re-Kyc</span>
+                  <span className="menu-link-text">Banner</span>
                 </a>
               </li>
               <li className="menu-item d-flex">
@@ -436,53 +436,10 @@ const Sidebar = () => {
                       fill="#DD7007"
                     ></path>
                   </svg>
-                  <span className="menu-link-text">Assesment</span>
+                  <span className="menu-link-text">Amenities</span>
                 </a>
               </li>
-              <li className="menu-item d-flex">
-                <a
-                  className="menu-link active d-flex"
-                  style={{ flexDirection: "column" }}
-                  href="/event-list?token=bfa5004e7b0175622be8f7e69b37d01290b737f82e078414"
-                  data-section="Homee"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M4.5 2.25V21.75H16.5V20.25H6V3.75H13.5V8.25H18V9.75H19.5V7.2L19.275 6.975L14.775 2.475L14.55 2.25H4.5ZM15 4.8L16.95 6.75H15V4.8ZM7.5 9.75V11.25H16.5V9.75H7.5ZM20.25 11.25V12.75C18.975 12.975 18 14.025 18 15.375C18 16.875 19.125 18 20.625 18H21.375C21.975 18 22.5 18.525 22.5 19.125C22.5 19.725 21.975 20.25 21.375 20.25H18.75V21.75H20.25V23.25H21.75V21.75C23.025 21.525 24 20.475 24 19.125C24 17.625 22.875 16.5 21.375 16.5H20.625C20.025 16.5 19.5 15.975 19.5 15.375C19.5 14.775 20.025 14.25 20.625 14.25H23.25V12.75H21.75V11.25H20.25ZM7.5 13.5V15H12.75V13.5H7.5ZM14.25 13.5V15H16.5V13.5H14.25ZM7.5 16.5V18H12.75V16.5H7.5ZM14.25 16.5V18H16.5V16.5H14.25Z"
-                      fill="#DD7007"
-                    ></path>
-                  </svg>
-                  <span className="menu-link-text">RFQ</span>
-                </a>
-              </li>
-              <li className="menu-item d-flex">
-                <a
-                  className="menu-link d-flex"
-                  style={{ flexDirection: "column" }}
-                  href="/pms/suppliers?layout=true"
-                  data-section="Homee"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20ZM9 13V19H7V13H9ZM15 15V19H17V15H15ZM11 11V19H13V11H11Z"
-                      fill="#DD7007"
-                    ></path>
-                  </svg>
-                  <span className="menu-link-text">Reports</span>
-                </a>
-              </li>
+      
                          
             </ul>
           </div>

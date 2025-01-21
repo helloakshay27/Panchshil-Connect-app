@@ -31,8 +31,10 @@ const Members = () => {
                 <Link to="amenities">Amenities</Link>
               </li>
               <li>
-                <Link to="testimonial">Testimonial</Link>
+                <Link to="testimonials">Testimonials</Link>
               </li>
+              
+
               {
                 <li>
                   <Link to="/banner-add">Banner Add </Link>
