@@ -18,7 +18,7 @@ const Amenities = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com//amenity_setups.json",
+        "https://panchshil-super.lockated.com/amenity_setups.json",
         formData,
         {
           headers: {
@@ -69,23 +69,24 @@ const Amenities = () => {
                         <label>Icon</label>
                         <input
                           type="file"
-                          accept=".xlsx,.csv,.pdf,.docx"
+                          accept=".png,.jpg,.jpeg,.svg"
+                          className="form-control"
                           onChange={(e) => setIcon(e.target.files[0])}
                         />
                       </div>
                     </div>
                   </div>
-                 
                 </form>
               </div>
             </div>
-            <div className="row mt-2 justify-content-center">
-                    <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100">
-                        Submit
-                      </button>
-                    </div>
-                  </div>
+          </div>
+          {/* Submit button moved outside card */}
+          <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button type="submit" className="purple-btn2 w-100" onClick={handleSubmit}>
+                Submit
+              </button>
+            </div>
           </div>
           <Footer />
         </div>
