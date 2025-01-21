@@ -7,11 +7,18 @@ import BannerList from "./pages/banner-list";
 import BannerAdd from "./pages/banner-add";
 import ProjectDetailsList from "./pages/project-details-list";
 import Amenities from "./pages/amenities";
+<<<<<<< HEAD
 import Testimonials from "./pages/testimonials";
+=======
+import Gallery from "./pages/gallery";
+import { Toast } from "bootstrap";
+import { Toaster } from "react-hot-toast";
+>>>>>>> 536055c370bbbd19c0c0758901dc03358dda6630
 
 function App() {
   return (
     <BrowserRouter>
+    <Toaster/>
       <Routes>
         <Route path="/" element={<Members />} />
         <Route

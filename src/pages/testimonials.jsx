@@ -1,28 +1,31 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Select from "react-select";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
 
 const Testimonials = () => {
-  const [formData, setFormData] = useState({
-    companysetupid: "",
-    username: "",
-    userType: "",
-    Content: "",
-  });
-
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
+  const [companySetupId, setCompanySetupId] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userType, setUserType] = useState("");
+  const [content, setContent] = useState("");
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/company_setups.json"
+          "https://panchshil-super.lockated.com/company_setups.json",
+          {
+            headers: {
+              Authorization:
+                "Bearer kD8B8ZeWZQAd2nQ-70dcfLXgYHLQh-zjggvuuE_93BY",
+            },
+          }
         );
-        setCompanySetupOptions(response.data);
+        console.log("response", response.data);
+        setCompanySetupOptions(response.data); // Set the company setup data
       } catch (error) {
         console.error("Error fetching company setup data:", error);
       }
@@ -31,11 +34,39 @@ const Testimonials = () => {
     fetchCompanySetups();
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+
+    // Prepare the data to send
+    const data = {
+      testimonial: {
+        company_setup_id: companySetupId,
+        user_name: userName,
+        user_type: userType,
+        content: content,
+      },
+    };
+
+    try {
+      const response = await axios.post(
+        "https://panchshil-super.lockated.com/testimonials.json",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer kD8B8ZeWZQAd2nQ-70dcfLXgYHLQh-zjggvuuE_93BY",
+          },
+        }
+      );
+      console.log("Response from POST:", response.data);
+      alert("Data saved successfully!");
+      // Optionally, reset the form after success
+      setCompanySetupId("");
+      setUserName("");
+      setUserType("");
+      setContent("");
+    } catch (error) {
+      console.error("Error submitting testimonial:", error);
+    }
   };
 
   return (
@@ -50,73 +81,81 @@ const Testimonials = () => {
                 <h3 className="card-title">Testimonials</h3>
               </div>
               <div className="card-body">
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Company Setup Id</label>
-                      <select
-                        className="form-control form-select"
-                        style={{ width: "100%" }}
-                        name="companysetupid"
-                        value={formData.companysetupid}
-                        onChange={handleChange}
-                      >
-                        <option value="" disabled>
-                          Select ID
-                        </option>
-                        {companySetupOptions.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.name}
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Company Setup Id</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ width: "100%" }}
+                          name="companysetupid"
+                          value={companySetupId}
+                          onChange={(e) => setCompanySetupId(e.target.value)}
+                        >
+                          <option value="" disabled>
+                            Select ID
                           </option>
-                        ))}
-                      </select>
+                          {companySetupOptions.map((option) => (
+                            <option key={option.id} value={option.id}>
+                              {option.name || option.company_name || "No Name"}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>User Name</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Default input"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                      />
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>User Name</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Default input"
+                          name="username"
+                          value={userName}
+                          onChange={(e) => setUserName(e.target.value)}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>User Type</label>
-                      <select
-                        className="form-control form-select"
-                        style={{ width: "100%" }}
-                        name="userType"
-                        value={formData.userType}
-                        onChange={handleChange}
-                      >
-                        <option value="" disabled>
-                          Select status
-                        </option>
-                        <option value="Alabama">user</option>
-                      </select>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>User Type</label>
+                        <select
+                          className="form-control form-select"
+                          style={{ width: "100%" }}
+                          name="userType"
+                          value={userType}
+                          onChange={(e) => setUserType(e.target.value)}
+                        >
+                          <option value="" disabled>
+                            Select status
+                          </option>
+                          <option value="User">User</option>
+                          {/* Add other user types if needed */}
+                        </select>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-3 mt-2">
-                    <div className="form-group">
-                      <label>Content</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Default input"
-                        name="Content"
-                        value={formData.Content}
-                        onChange={handleChange}
-                      />
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Content</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Default input"
+                          name="Content"
+                          value={content}
+                          onChange={(e) => setContent(e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                  <div className="col-md-2 ">
+                    <button type="submit" className="purple-btn2 w-80">
+                      Submit
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>

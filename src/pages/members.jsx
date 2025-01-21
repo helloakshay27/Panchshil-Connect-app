@@ -26,6 +26,7 @@ const Members = () => {
               </li>
               <li>
                 <Link to="banner-add">Banner Add </Link>
+<<<<<<< HEAD
               </li>
               <li>
                 <Link to="amenities">Amenities</Link>
@@ -43,6 +44,23 @@ const Members = () => {
             </ul>
           </div>
           <Footer />
+=======
+            </li>
+            <li>
+              <Link to="amenities">Amenities</Link>
+            </li>
+            {/* {<li>
+                <Link to="/banner-add">Banner Add </Link>
+            </li> } */}
+            <li>
+              <Link to="/gallery">Gallery</Link>
+            </li>
+            <li>
+              <Link to="/gallery-details">Gallery Details</Link>
+            </li>
+          </ul>
+         
+>>>>>>> 536055c370bbbd19c0c0758901dc03358dda6630
         </div>
       </div>
     </>
