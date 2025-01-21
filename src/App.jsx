@@ -30,6 +30,8 @@ function App() {
         <Route path="/banner-add" element={<BannerAdd />} />
         <Route path="/amenities" element={<Amenities />} />
         <Route path="/testimonials" element={<Testimonials />} />
+        <Route path="/gallery" element={<Gallery />} />
+        
       </Routes>
     </BrowserRouter>
   );
