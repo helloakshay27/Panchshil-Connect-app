@@ -5,10 +5,18 @@ import Footer from "../components/Footer";
 import "../mor.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "../components/Icons/SearchIcon";
+import axios from "axios";
+
 
 const BannerList = () => {
+
+  const [error, setError] = useState(null);
+  const [banners, setBanners] = useState([]); // Renamed galleries to banners
+  const [loading, setLoading] = useState(true);
+
   const [toggleStates, setToggleStates] = useState([true, false]);
   const navigate = useNavigate();
 
@@ -17,6 +25,30 @@ const BannerList = () => {
       prevStates.map((state, i) => (i === index ? !state : state))
     );
   };
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/banners.json"
+        );
+        console.log("response", response);
+        setBanners(response.data.banners); // Assuming the API returns an object with a "banners" field
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching banners:", error);
+        setError("Failed to fetch banners. Please try again later.");
+        setLoading(false);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
+  console.log("data", banners)
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <>
@@ -92,105 +124,66 @@ const BannerList = () => {
 
             {/* {Table content} */}
             <div className="card mx-3 mt-4">
-              <div className="card-header">
-                <h3 className="card-title">Banner List</h3>
-              </div>
-              <div className="card-body mt-4 pb-4 pt-0">
-                <div className="tbl-container mt-3">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>Action</th>
-                        <th>Site</th>
-                        <th>Title</th>
-                        <th>Banner</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr>
-                        <td></td>
-                        <td>Lockated, Pune</td>
-                        <td></td>
-                        <td>
-                          <img src="" class="img-thumbnail" alt="..." />
-                        </td>
-                        <td>
-                          <div
-                            onClick={() => handleToggle(0)} // Toggle first row
-                            style={{ cursor: "pointer" }}
-                          >
-                            {toggleStates[0] ? (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="30"
-                                height="30"
-                                fill="#E67E00"
-                                className="bi bi-toggle-on"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
-                              </svg>
-                            ) : (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="30"
-                                height="30"
-                                fill="gray"
-                                className="bi bi-toggle-off"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 3a5 5 0 0 1 0 10H5a5 5 0 0 1 0-10zm-6 9a4 4 0 1 0 0-8 4 4 0 0 0 0 8" />
-                              </svg>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td></td>
-                        <td>Lockated, Pune</td>
-                        <td>See More Ways</td>
-                        <td>
-                          <img src="" class="img-thumbnail" alt="..." />
-                        </td>
-                        <td>
-                          <div
-                            onClick={() => handleToggle(1)} // Toggle second row
-                            style={{ cursor: "pointer" }}
-                          >
-                            {toggleStates[1] ? (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="30"
-                                height="30"
-                                fill="#E67E00"
-                                className="bi bi-toggle-on"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
-                              </svg>
-                            ) : (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="30"
-                                height="30"
-                                fill="gray"
-                                className="bi bi-toggle-off"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M11 3a5 5 0 0 1 0 10H5a5 5 0 0 1 0-10zm-6 9a4 4 0 1 0 0-8 4 4 0 0 0 0 8" />
-                              </svg>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+      <div className="card-header">
+        <h3 className="card-title">Banner List</h3>
+      </div>
+      <div className="card-body mt-4 pb-4 pt-0">
+        <div className="tbl-container mt-3">
+          <table className="w-100">
+            <thead>
+              <tr>
+                <th>Index</th>
+                <th>Company ID</th>
+                <th>Site</th>
+                <th>Title</th>
+                <th>Banner</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Map over banners and display each banner's data */}
+              {banners.map((banner, index) => (
+                <tr key={index}>
+                  <td>{index+1}</td>
+                  <td>{banner.company_id || "N/A"}</td> 
+                  <td>Lockated, Pune</td> 
+                  <td>{banner.title || "No Title"}</td>
+                  <td className="d-flex justify-content-center align-items-center"> 
+                    
+                    <img
+                      src={banner?.attachfile?.document_url || "NA"}
+                      className="img-fluid rounded"
+                      alt={banner.title || "Banner Image"}
+                      style={{ maxWidth: "100px", maxHeight: "100px" }}
+                    />
+                  </td>
+                  <td>
+                                <button
+                                  className="btn "
+                                  // onClick={() =>
+                                  //   navigate(`/service-details/1`)
+                                  // }
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-eye"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"></path>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"></path>
+                                  </svg>{" "}
+                                </button>
+                          </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
           </div>
           <Footer />
         </div>

@@ -8,10 +8,13 @@ import BannerAdd from "./pages/banner-add";
 import ProjectDetailsList from "./pages/project-details-list";
 import Amenities from "./pages/amenities";
 import Gallery from "./pages/gallery";
+import { Toast } from "bootstrap";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <BrowserRouter>
+    <Toaster/>
       <Routes>
         <Route path="/" element={<Members />} />
         <Route path="/project-details-create" element={<ProjectDetailsCreate />} />
