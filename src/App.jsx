@@ -12,6 +12,7 @@ import Gallery from "./pages/gallery";
 import { Toast } from "bootstrap";
 import { Toaster } from "react-hot-toast";
 import ProjectDetailsEdit from "./pages/project-details-edit";
+import GalleryDetails from "./pages/gallery";
 
 function App() {
   return (
@@ -30,6 +31,11 @@ function App() {
         <Route path="/banner-add" element={<BannerAdd />} />
         <Route path="/amenities" element={<Amenities />} />
         <Route path="/testimonials" element={<Testimonials />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/gallery-details" element={<GalleryDetails />} />
+
+
+
       </Routes>
     </BrowserRouter>
   );
