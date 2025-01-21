@@ -195,10 +195,19 @@ const ProjectDetailsEdit = () => {
   useEffect(() => {
     // Fetch project data
     const fetchProject = async () => {
+
+      const token = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY"; // Replace with your actual token
+
+      const url = "https://panchshil-super.lockated.com/projects/1.json";
+
       try {
-        const response = await axios.get(
-          "https://panchshil-super.lockated.com/projects/1.json"
-        );
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+
         setProject(response.data);
       } catch (err) {
         console.error("Error fetching project data:", err);
@@ -234,12 +243,12 @@ const ProjectDetailsEdit = () => {
                           className="form-control form-select"
                           style={{ width: "100%" }}
                           name="propertyType"
-                          value={formData.propertyType}
+                          value={formData.propertyType || project?.property_type} // Handle default values
                           onChange={handleChange}
                         >
-                          <option value="" disabled selected>
-                          {project.property_type}
-                          </option>
+                          {/* <option value="" disabled selected>
+                            {project?.property_type}
+                          </option> */}
                           {projectsType?.map((type, index) => (
                             <option key={index} value={type.id}>
                               {type.property_type}
@@ -269,7 +278,7 @@ const ProjectDetailsEdit = () => {
                           className="form-control form-select"
                           style={{ width: "100%" }}
                           name="constructionStatus"
-                          value={formData.constructionStatus}
+                          value={formData.constructionStatus || project?.building_type}
                           onChange={handleChange}
                         >
                           <option value="" disabled selected>
@@ -305,9 +314,8 @@ const ProjectDetailsEdit = () => {
                         <input
                           className="form-control"
                           type="text"
-                          placeholder={project.project_name}
                           name="Project_Name"
-                          value={formData.Project_Name}
+                          value={formData.Project_Name || project?.project_name }
                           onChange={handleChange}
                         />
                       </div>
@@ -320,7 +328,7 @@ const ProjectDetailsEdit = () => {
                           type="text"
                           placeholder="Default input"
                           name="location"
-                          value={formData.location}
+                          value={formData.location || project?.location}
                           onChange={handleChange}
                         />
                       </div>
@@ -333,7 +341,7 @@ const ProjectDetailsEdit = () => {
                           rows={3}
                           placeholder="Enter ..."
                           name="description"
-                          value={formData.description}
+                          value={formData.description || project?.project_description}
                           onChange={handleChange}
                         />
                       </div>
@@ -347,7 +355,7 @@ const ProjectDetailsEdit = () => {
                           type="number"
                           placeholder="Default input"
                           name="priceOnward"
-                          value={formData.priceOnward}
+                          value={formData.priceOnward || project?.price}
                           onChange={handleChange}
                         />
 
@@ -361,7 +369,7 @@ const ProjectDetailsEdit = () => {
                           type="number"
                           placeholder="Default input"
                           name="projectSizeMtr"
-                          value={formData.projectSizeMtr}
+                          value={formData.projectSizeMtr || project?.project_size_sq_mtr}
                           onChange={handleChange}
                         />
                       </div>
@@ -373,21 +381,21 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="projectSizeFt"
-                          value={formData.projectSizeFt}
+                          name=" "
+                          value={formData.projectSizeFt || project?.project_size_sq_ft}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
-                        <label>Rare Carpet Area (Sq. M)</label>
+                        <label>Rera Carpet Area (Sq. M)</label>
                         <input
                           className="form-control"
                           type="number"
                           placeholder="Default input"
                           name="rareCarpetAreaMtr"
-                          value={formData.rareCarpetAreaMtr}
+                          value={formData.rareCarpetAreaMtr || project?.rera_carpet_area_sq_mtr}
                           onChange={handleChange}
                         />
                       </div>
@@ -400,7 +408,7 @@ const ProjectDetailsEdit = () => {
                           type="number"
                           placeholder="Default input"
                           name="rareCarpetAreaFt"
-                          value={formData.rareCarpetAreaFt}
+                          value={formData.rareCarpetAreaFt || project?.rera_carpet_area_sqft}
                           onChange={handleChange}
                         />
                       </div>
@@ -413,7 +421,7 @@ const ProjectDetailsEdit = () => {
                           type="number"
                           placeholder="Default input"
                           name="numTowers"
-                          value={formData.numTowers}
+                          value={formData.numTowers || project?.no_of_towers}
                           onChange={handleChange}
                         />
                       </div>
@@ -426,20 +434,20 @@ const ProjectDetailsEdit = () => {
                           type="number"
                           placeholder="Default input"
                           name="numUnits"
-                          value={formData.numUnits}
+                          value={formData.numUnits }
                           onChange={handleChange}
                         />
                       </div>
                     </div>
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
-                        <label>Rare Number</label>
+                        <label>Rera Number</label>
                         <input
                           className="form-control"
                           type="number"
                           placeholder="Default input"
                           name="rareNumber"
-                          value={formData.rareNumber}
+                          value={formData.rareNumber || project?.rera_number}
                           onChange={handleChange}
                         />
                       </div>
@@ -493,7 +501,7 @@ const ProjectDetailsEdit = () => {
                           type="number"
                           placeholder="Default input"
                           name="landArea"
-                          value={formData.landArea}
+                          value={formData.landArea || project?.land_area}
                           onChange={handleChange}
                         />
                       </div>
@@ -516,7 +524,7 @@ const ProjectDetailsEdit = () => {
                           type="text"
                           placeholder="Address Line 1"
                           name="addressLine1"
-                          value={formData.addressLine1}
+                          value={formData.addressLine1 || project?.project_address}
                           onChange={handleChange}
                         />
                       </div>
