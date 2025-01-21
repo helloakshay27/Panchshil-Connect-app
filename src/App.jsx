@@ -8,6 +8,7 @@ import BannerAdd from "./pages/banner-add";
 import ProjectDetailsList from "./pages/project-details-list";
 import Amenities from "./pages/amenities";
 import Gallery from "./pages/gallery";
+import GalleryDetails from "./pages/gallery-details";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/banner-add" element={<BannerAdd/>} />
         <Route path="/amenities" element={<Amenities/>} />
         <Route path="/gallery" element={<Gallery/>} />
+        <Route path="/gallery-details" element={<GalleryDetails/>} />
 
       </Routes>
     </BrowserRouter>
