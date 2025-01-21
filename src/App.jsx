@@ -13,6 +13,7 @@ import { Toast } from "bootstrap";
 import { Toaster } from "react-hot-toast";
 import ProjectDetailsEdit from "./pages/project-details-edit";
 import TestimonialList from "./pages/testimonial-list";
+import ProjectDetails from "./pages/project-details";
 
 function App() {
   return (
@@ -21,12 +22,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Members />} />
         <Route
-          path="/project-details-create"
+          path="/project-create"
           element={<ProjectDetailsCreate />}
         />
-        <Route path="/project-details-edit" element={<ProjectDetailsEdit />} />
+        <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
+        <Route path="/project-details/:id" element={<ProjectDetails />} />
 
-        <Route path="/project-details-list" element={<ProjectDetailsList />} />
+
+        <Route path="/project-list" element={<ProjectDetailsList />} />
         <Route path="/banner-list" element={<BannerList />} />
         <Route path="/banner-add" element={<BannerAdd />} />
         <Route path="/amenities" element={<Amenities />} />

@@ -16,13 +16,16 @@ const Members = () => {
             <h1>Panchshil Connect App</h1>
             <ul>
               <li>
-                <Link to="/project-details-create">Project Details Create</Link>
+                <Link to="/project-create">Project Create</Link>
               </li>
               <li>
-                <Link to="/project-details-list">Project Details List</Link>
+                <Link to="/project-list">Project List</Link>
               </li>
               <li>
-                <Link to="/project-details-edit">Project Details Edit</Link>
+                <Link to="/project-edit/2">Project Edit</Link>
+              </li>
+              <li>
+                <Link to="/project-details/2">Project Details </Link>
               </li>
 
               <li>

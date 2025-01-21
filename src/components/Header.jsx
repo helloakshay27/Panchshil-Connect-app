@@ -21,8 +21,8 @@ const Header = () => {
           <span className="navbar-toggler-icon" />
         </button>
         <img
-          style={{ height: 40 }}
-          src="https://india.lockated.co/wp-content/uploads/lockated-logo-nw.png"
+          style={{ height: 70 }}
+          src="https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png"
           alt="Logo"
         />
         <div
