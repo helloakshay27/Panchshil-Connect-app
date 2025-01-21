@@ -4,11 +4,40 @@ import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ProjectDetailsList = () => {
+  const [projects, setProjects] = useState([]);
+  const [error, setError] = useState(null);
+
+
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const token = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY"; // Replace with your actual token
+      const url = "https://panchshil-super.lockated.com/projects.json";
+
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setProjects(response.data?.projects);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  console.log("projects", projects);
+
+
   return (
     <>
       <Header />
@@ -63,7 +92,7 @@ const ProjectDetailsList = () => {
               <button
                 className="purple-btn2 rounded-3"
                 fdprocessedid="xn3e6n"
-                onClick={() => navigate("")}
+                onClick={() => navigate("/banner-add")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -81,48 +110,98 @@ const ProjectDetailsList = () => {
           </div>
           <div className="module-data-section container-fluid">
             <div className="card mx-3 mt-4">
-              <div className="card-header3">
-                <h3 className="card-title">Project Details</h3>
-                <div className="card-body mt-4 pb-4 pt-0">
-                  <div className="tbl-container mt-4 px-1">
-                    <table className="w-100">
-                      <thead>
-                        <tr>
-                          <th>Property Type</th>
-                          <th>SFDC Project ID</th>
-                          <th>Project Construction Status</th>
-                          <th>Configuration Type</th>
-                          <th>Project Name:</th>
-                          <th>Location:</th>
-                          <th>Project Description:</th>
-                          <th>Price Onward:</th>
-                          <th colSpan={3}>Project Size (Sq. Mtr):</th>
-                          <th>Project Size (Sq. Ft):</th>
-                          <th>Rera Carpet Area (Sq. M):</th>
-                          <th>Rera Carpet Area (Sq. Ft):</th>
-                          <th>Number Of Towers:</th>
-                          <th>Number Of Units:</th>
-                          <th>Rera Number:</th>
-                          <th>Amenities:</th>
-                          <th>Specifications:</th>
-                          <th>Land Area:</th>
-                          <th>Address Line 1:</th>
-                          <th>Address Line 2:</th>
-                          <th> Address Line 3:</th>
-                          <th>City:</th>
-                          <th>State:</th>
-                          <th>Pin Code:</th>
-                          <th>Country:</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+
+              <div className="tbl-container mt-4 px-1">
+                <table className="w-100" style={{width:"max-content"}}>
+                  <thead>
+                    <tr>
+                      <th>Property Type</th>
+                      <th>SFDC Project ID</th>
+                      <th>Project Construction Status</th>
+                      <th>Configuration Type</th>
+                      <th>Project Name</th>
+                      <th>Location</th>
+                      <th>Project Description</th>
+                      <th>Price Onward</th>
+                      <th>Project Size (Sq. Mtr)</th>
+                      <th>Project Size (Sq. Ft)</th>
+                      <th>Rera Carpet Area (Sq. M)</th>
+                      <th>Rera Carpet Area (Sq. Ft)</th>
+                      <th>Number Of Towers</th>
+                      <th>Number Of Units</th>
+                      <th>Rera Number</th>
+                      <th>Amenities</th>
+                      <th>Specifications</th>
+                      <th>Land Area</th>
+                      <th>Address Line 1</th>
+                      <th>Address Line 2</th>
+                      <th>Address Line 3</th>
+                      <th>City</th>
+                      <th>State</th>
+                      <th>Pin Code</th>
+                      <th>Country</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {projects?.map((project, index) => (
+                      <tr key={index}>
+                        <td>{project?.property_type || "N/A"}</td>
+                        <td>{project?.sfdc_project_id || "N/A"}</td>
+                        <td>{project?.status || "N/A"}</td>
+
+                        <td>{project?.building_type || "N/A"}</td>
+                        <td>{project?.project_name || "N/A"}</td>
+                        <td>
+                          {project?.location
+                            ? `${project.location}, ${project.location || "N/A"}, ${project.location || "N/A"}`
+                            : "N/A"}
+                        </td>
+                        <td>{project?.project_description || "N/A"}</td>
+                        <td>{project?.price || "N/A"}</td>
+                        <td>{project?.project_size_sq_mtr || "N/A"}</td>
+                        <td>{project?.project_size_sq_ft || "N/A"}</td>
+                        <td>{project?.rera_carpet_area_sq_mtr || "N/A"}</td>
+                        <td>{project?.rera_carpet_area_sqft || "N/A"}</td>
+                        <td>{project?.no_of_towers || "N/A"}</td>
+                        <td>{project?.no_of_apartments || "N/A"}</td>
+                        <td>{project?.rera_number || "N/A"}</td>
+                        <td style={{ width: "200px" }}>
+                          {project?.amenities?.length > 0
+                            ? project?.amenities.map((amenity, idx) => (
+                              <div key={idx}>
+                                {amenity.name}{" "}
+                                <img
+                                  src={amenity.icon_url}
+                                  alt={amenity.name}
+                                  style={{ width: "20px", marginLeft: "5px" }}
+                                />
+                              </div>
+                            ))
+                            : "No amenities"}
+                        </td>
+                        <td>
+                          {project?.specifications?.length > 0
+                            ? project?.specifications.map((spec, idx) => (
+                              <div key={idx}>{spec.name}</div>
+                            ))
+                            : "No specifications"}
+                        </td>
+                        <td>{project?.land_area || "N/A"}</td>
+                        <td>{project.address_line_1 || "N/A"}</td>
+                        <td>{project.address_line_2 || "N/A"}</td>
+                        <td>{project.address_line_3 || "N/A"}</td>
+
+                        <td>{project?.city || "N/A"}</td>
+                        <td>{project?.state || "N/A"}</td>
+                        <td>{project?.pin_code || "N/A"}</td>
+                        <td>{project?.country || "N/A"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+
+                </table>
+
+
               </div>
             </div>
           </div>

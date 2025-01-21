@@ -7,24 +7,24 @@ import BannerList from "./pages/banner-list";
 import BannerAdd from "./pages/banner-add";
 import ProjectDetailsList from "./pages/project-details-list";
 import Amenities from "./pages/amenities";
-<<<<<<< HEAD
 import Testimonials from "./pages/testimonials";
-=======
 import Gallery from "./pages/gallery";
 import { Toast } from "bootstrap";
 import { Toaster } from "react-hot-toast";
->>>>>>> 536055c370bbbd19c0c0758901dc03358dda6630
+import ProjectDetailsEdit from "./pages/project-details-edit";
 
 function App() {
   return (
     <BrowserRouter>
-    <Toaster/>
+      <Toaster />
       <Routes>
         <Route path="/" element={<Members />} />
         <Route
           path="/project-details-create"
           element={<ProjectDetailsCreate />}
         />
+        <Route path="/project-details-edit" element={<ProjectDetailsEdit />} />
+
         <Route path="/project-details-list" element={<ProjectDetailsList />} />
         <Route path="/banner-list" element={<BannerList />} />
         <Route path="/banner-add" element={<BannerAdd />} />

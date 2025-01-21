@@ -6,7 +6,7 @@ import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
 
-const ProjectDetailsCreate = () => {
+const ProjectDetailsEdit = () => {
   const [formData, setFormData] = useState({
     propertyType: "",
     sfdcProjectId: "",
@@ -188,6 +188,29 @@ const ProjectDetailsCreate = () => {
     fetchProjects();
   }, []);
 
+  const [project, setProject] = useState(null); // State to hold project data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  useEffect(() => {
+    // Fetch project data
+    const fetchProject = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/projects/1.json"
+        );
+        setProject(response.data);
+      } catch (err) {
+        console.error("Error fetching project data:", err);
+        setError("Failed to fetch project details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProject();
+  }, []);
+
 
   return (
     <>
@@ -215,7 +238,7 @@ const ProjectDetailsCreate = () => {
                           onChange={handleChange}
                         >
                           <option value="" disabled selected>
-                            Select Project Type
+                          {project.property_type}
                           </option>
                           {projectsType?.map((type, index) => (
                             <option key={index} value={type.id}>
@@ -282,7 +305,7 @@ const ProjectDetailsCreate = () => {
                         <input
                           className="form-control"
                           type="text"
-                          placeholder="Project Name"
+                          placeholder={project.project_name}
                           name="Project_Name"
                           value={formData.Project_Name}
                           onChange={handleChange}
@@ -642,4 +665,4 @@ const ProjectDetailsCreate = () => {
   );
 };
 
-export default ProjectDetailsCreate;
+export default ProjectDetailsEdit;
