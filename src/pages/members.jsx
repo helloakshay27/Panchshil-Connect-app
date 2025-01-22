@@ -8,9 +8,7 @@ import { Link } from "react-router-dom";
 const Members = () => {
   return (
     <>
-      <Header />
       <div className="main-content">
-        <Sidebar />
         <div className="website-content overflow-auto">
           <div className="module-data-section container-fluid">
             <h1>Panchshil Connect App</h1>
@@ -53,7 +51,6 @@ const Members = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

@@ -8,24 +8,24 @@ import "../mor.css";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
-    propertyType: "",
-    sfdcProjectId: "",
-    constructionStatus: "",
-    configurationType: "",
+    property_type: "",
+    SFDC_Project_Id: "",
+    Project_Construction_Status: "",
+    Configuration_Type: "",
     Project_Name: "",
     location: "",
-    description: "",
-    priceOnward: "",
-    projectSizeMtr: "",
-    projectSizeFt: "",
-    rareCarpetAreaMtr: "",
-    rareCarpetAreaFt: "",
-    numTowers: "",
-    numUnits: "",
-    rareNumber: "",
-    amenities: "",
+    Project_Description: "",
+    Price_Onward: "",
+    Project_Size_Sq_Mtr: "",
+    Project_Size_Sq_Ft: "",
+    Rera_Carpet_Area_Sq_M: "",
+    Rera_Carpet_Area_sqft: "",
+    Number_Of_Towers: "",
+    Number_Of_Units: "",
+    Rera_Number: "",
+    project_amenities: "",
     specifications: "",
-    landArea: "",
+    Land_Area: "",
     address: {
       addressLine1: "line 1",
       addressLine2: "line 2",
@@ -33,11 +33,15 @@ const ProjectDetailsCreate = () => {
       city: "Pune",
       state: "Maharashtra",
       pinCode: "400709",
-      country: "India"
+      country: "India",
     },
-    brochure: "",  // file input for brochure
-    two_d_images: [] // array of file inputs for 2D images
+    country: "",
+    brochure: null, // for file input
+    two_d_images: [] // for array of file inputs
   });
+
+
+
   const [projectsType, setprojectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
   const [amenities, setAmenities] = useState([]);
@@ -111,12 +115,12 @@ const ProjectDetailsCreate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer kD8B8ZeWZQAd2nQ-70dcfLXgYHLQh-zjggvuuE_93BY`, // Replace with actual token
+            Authorization: `Bearer UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY`, // Replace with actual token
           },
         }
       );
       console.log(response.data);
-      alert("Form submitted successfully!");
+      toast.success("form submited successfully")
     } catch (error) {
       console.error("Error submitting the form:", error);
       alert("Failed to submit the form. Please try again.");
@@ -193,7 +197,6 @@ const ProjectDetailsCreate = () => {
     <>
       {/* <Header /> */}
       <div className="main-content">
-        <Sidebar />
         <div className="website-content overflow-auto">
           <div className="module-data-section p-3">
             <form onSubmit={handleSubmit}>
@@ -204,219 +207,221 @@ const ProjectDetailsCreate = () => {
                 </div>
                 <div className="card-body">
                   <div className="row">
+                    {/* Project Type */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Project Types</label>
                         <select
                           className="form-control form-select"
-                          style={{ width: "100%" }}
-                          name="propertyType"
-                          value={formData.propertyType}
+                          name="type_of_project"
+                          value={formData.type_of_project}
                           onChange={handleChange}
                         >
-                          <option value="" disabled selected>
+                          <option value="" disabled>
                             Select Project Type
                           </option>
-                          {projectsType?.map((type, index) => (
+                          {projectsType.map((type, index) => (
                             <option key={index} value={type.id}>
                               {type.property_type}
                             </option>
                           ))}
-
                         </select>
                       </div>
                     </div>
+
+                    {/* SFDC Project ID */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>SFDC Project ID</label>
                         <input
                           className="form-control"
                           type="text"
-                          placeholder="Default input"
-                          name="sfdcProjectId"
-                          value={formData.sfdcProjectId}
+                          name="SFDC_Project_Id"
+                          value={formData.SFDC_Project_Id}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
+                    {/* Construction Status */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Project Construction Status</label>
                         <select
                           className="form-control form-select"
-                          style={{ width: "100%" }}
-                          name="constructionStatus"
-                          value={formData.constructionStatus}
+                          name="Project_Construction_Status"
+                          value={formData.Project_Construction_Status}
                           onChange={handleChange}
                         >
-                          <option value="" disabled selected>
+                          <option value="" disabled>
                             Select status
                           </option>
-                          <option value="Completed">Completed </option>
-                          <option value="Ready-To-Move-in">Ready To Move in </option>
-
+                          <option value="Completed">Completed</option>
+                          <option value="Ready-To-Move-in">Ready To Move in</option>
                         </select>
                       </div>
                     </div>
+
+                    {/* Configuration Type */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Configuration Type</label>
                         <select
                           className="form-control form-select"
-                          style={{ width: "100%" }}
-                          name="configurationType"
-                          value={formData.configurationType}
+                          name="Configuration_Type"
+                          value={formData.Configuration_Type}
                           onChange={handleChange}
                         >
-                          <option value="" disabled selected>
+                          <option value="" disabled>
                             Select Type
                           </option>
-                          <option value="Alabama">3 BHK</option>
-                          <option value="Alaska">4 BHK</option>
+                          <option value="3 BHK">3 BHK</option>
+                          <option value="4 BHK">4 BHK</option>
                         </select>
                       </div>
                     </div>
+
+                    {/* Project Name */}
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Project Name</label>
                         <input
                           className="form-control"
                           type="text"
-                          placeholder="Project Name"
                           name="Project_Name"
                           value={formData.Project_Name}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
+                    {/* Location */}
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Location</label>
                         <input
                           className="form-control"
                           type="text"
-                          placeholder="Default input"
                           name="location"
                           value={formData.location}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
+                    {/* Project Description */}
                     <div className="col-md-6 mt-2">
                       <div className="form-group">
                         <label>Project Description</label>
                         <textarea
                           className="form-control"
-                          rows={3}
-                          placeholder="Enter ..."
-                          name="description"
-                          value={formData.description}
+                          rows={1}
+                          name="Project_Description"
+                          value={formData.Project_Description}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Price Onward</label>
-
                         <input
                           className="form-control"
                           type="number"
-                          placeholder="Default input"
-                          name="priceOnward"
-                          value={formData.priceOnward}
+                          name="Price_Onward"
+                          value={formData.Price_Onward}
                           onChange={handleChange}
                         />
-
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Project Size (Sq. Mtr.)</label>
                         <input
                           className="form-control"
                           type="number"
-                          placeholder="Default input"
-                          name="projectSizeMtr"
-                          value={formData.projectSizeMtr}
+                          name="Project_Size_Sq_Mtr"
+                          value={formData.Project_Size_Sq_Mtr}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Project Size (Sq. Ft.)</label>
                         <input
                           className="form-control"
                           type="number"
-                          placeholder="Default input"
-                          name="projectSizeFt"
-                          value={formData.projectSizeFt}
+                          name="Project_Size_Sq_Ft"
+                          value={formData.Project_Size_Sq_Ft}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Rare Carpet Area (Sq. M)</label>
                         <input
                           className="form-control"
                           type="number"
-                          placeholder="Default input"
-                          name="rareCarpetAreaMtr"
-                          value={formData.rareCarpetAreaMtr}
+                          name="Rera_Carpet_Area_Sq_M"
+                          value={formData.Rera_Carpet_Area_Sq_M}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Rare Carpet Area (Sq. Ft.)</label>
                         <input
                           className="form-control"
                           type="number"
-                          placeholder="Default input"
-                          name="rareCarpetAreaFt"
-                          value={formData.rareCarpetAreaFt}
+                          name="Rera_Carpet_Area_sqft"
+                          value={formData.Rera_Carpet_Area_sqft}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Number of Towers</label>
                         <input
                           className="form-control"
                           type="number"
-                          placeholder="Default input"
-                          name="numTowers"
-                          value={formData.numTowers}
+                          name="Number_Of_Towers"
+                          value={formData.Number_Of_Towers}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Number of Units</label>
                         <input
                           className="form-control"
                           type="number"
-                          placeholder="Default input"
-                          name="numUnits"
-                          value={formData.numUnits}
+                          name="Number_Of_Units"
+                          value={formData.Number_Of_Units}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
-                        <label>Rare Number</label>
+                        <label>RERA Number</label>
                         <input
                           className="form-control"
-                          type="number"
-                          placeholder="Default input"
-                          name="rareNumber"
-                          value={formData.rareNumber}
+                          type="text"
+                          name="Rera_Number"
+                          value={formData.Rera_Number}
                           onChange={handleChange}
                         />
                       </div>
@@ -427,14 +432,14 @@ const ProjectDetailsCreate = () => {
                         <select
                           className="form-control form-select"
                           style={{ width: "100%" }}
-                          name="amenities"
-                          value={formData.amenities}
+                          name="project_amenities"
+                          value={formData.project_amenities}
                           onChange={handleChange}
                         >
                           <option disabled>Select a amenities</option>
                           {amenities?.map((ammit, index) => (
                             <option key={index} value={ammit.id}>
-                              {ammit.name}
+                              {ammit.id}
                             </option>
                           ))
 
@@ -462,19 +467,21 @@ const ProjectDetailsCreate = () => {
                         </select>
                       </div>
                     </div>
+
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
                         <label>Land Area</label>
                         <input
                           className="form-control"
                           type="number"
-                          placeholder="Default input"
-                          name="landArea"
-                          value={formData.landArea}
+                          name="Land_Area"
+                          value={formData.Land_Area}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+
+
                   </div>
                 </div>
               </div>
@@ -482,12 +489,12 @@ const ProjectDetailsCreate = () => {
                 <div className="card-header3">
                   <h3 className="card-title">Address</h3>
                 </div>
-                <div className="card-body">
+                <div className="card-body mt-0 pb-0">
                   <div className="row">
                     {/* Address Section */}
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
-                        <label>Address Line 1</label>
+                        <label>Address Line </label>
                         <input
                           className="form-control"
                           type="text"
@@ -498,32 +505,7 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>Address Line 2</label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Address Line 2"
-                          name="addressLine2"
-                          value={formData.addressLine2}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>Address Line 3</label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Address Line 3"
-                          name="addressLine3"
-                          value={formData.addressLine3}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
+ 
 
                     {/* City, State, Pin, Country Section */}
                     <div className="col-md-3 mt-2">
@@ -585,7 +567,7 @@ const ProjectDetailsCreate = () => {
                 <div className="card-header3">
                   <h3 className="card-title">File Upload</h3>
                 </div>
-                <div className="card-body">
+                <div className="card-body mt-0 pb-0">
                   <div className="row">
                     {/* Brochure Upload */}
                     <div className="col-md-3 mt-2">
@@ -635,7 +617,6 @@ const ProjectDetailsCreate = () => {
 
 
           </div>
-          <Footer />
         </div>
       </div>
     </>

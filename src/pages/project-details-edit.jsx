@@ -12,33 +12,29 @@ const ProjectDetailsEdit = () => {
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
-    propertyType: "",
-    sfdcProjectId: "",
-    constructionStatus: "",
-    configurationType: "",
+    type_of_project: "",
+    SFDC_Project_Id: "",
+    Project_Construction_Status: "",
+    Configuration_Type: "",
     Project_Name: "",
     location: "",
-    description: "",
-    priceOnward: "",
-    projectSizeMtr: "",
-    projectSizeFt: "",
-    rareCarpetAreaMtr: "",
-    rareCarpetAreaFt: "",
-    numTowers: "",
-    numUnits: "",
-    rareNumber: "",
-    amenities: "",
+    Project_Description: "",
+    Price_Onward: "",
+    Project_Size_Sq_Mtr: "",
+    Project_Size_Sq_Ft: "",
+    Rera_Carpet_Area_Sq_M: "",
+    Rera_Carpet_Area_sqft: "",
+    Number_Of_Towers: "",
+    Number_Of_Units: "",
+    Rera_Number: "",
+    project_amenities: "",
     specifications: "",
-    landArea: "",
-    address: {
-      addressLine1: "line 1",
-      addressLine2: "line 2",
-      addressLine3: "line 3",
-      city: "Pune",
-      state: "Maharashtra",
-      pinCode: "400709",
-      country: "India",
-    },
+    Land_Area: "",
+    Address: "",
+    city: "",
+    state: "",
+    pinCode: "",
+    country: "",
     brochure: null, // file input for brochure
     two_d_images: [], // array of file inputs for 2D images
   });
@@ -142,7 +138,7 @@ const ProjectDetailsEdit = () => {
           Authorization: AUTH_TOKEN,
         },
       });
-      alert("Form submitted successfully!");
+      toast.success("form submited successfully")
       console.log(response.data);
     } catch (error) {
       alert("Failed to submit the form. Please try again.");
@@ -159,7 +155,6 @@ const ProjectDetailsEdit = () => {
     <>
       {/* <Header /> */}
       <div className="main-content">
-        <Sidebar />
         <div className="website-content overflow-auto">
           <div className="module-data-section p-3">
             <form onSubmit={handleSubmit}>
@@ -176,8 +171,8 @@ const ProjectDetailsEdit = () => {
                         <select
                           className="form-control form-select"
                           style={{ width: "100%" }}
-                          name="propertyType"
-                          value={formData.propertyType || project?.property_type} // Handle default values
+                          name="type_of_project"
+                          value={formData.type_of_project || project?.property_type} // Handle default values
                           onChange={handleChange}
                         >
                           {/* <option value="" disabled selected>
@@ -199,8 +194,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="text"
                           placeholder="Default input"
-                          name="sfdcProjectId"
-                          value={formData.sfdcProjectId}
+                          name="SFDC_Project_Id"
+                          value={formData.SFDC_Project_Id}
                           onChange={handleChange}
                         />
                       </div>
@@ -211,8 +206,8 @@ const ProjectDetailsEdit = () => {
                         <select
                           className="form-control form-select"
                           style={{ width: "100%" }}
-                          name="constructionStatus"
-                          value={formData.constructionStatus || project?.building_type}
+                          name="Project_Construction_Status"
+                          value={formData.Project_Construction_Status || project?.building_type}
                           onChange={handleChange}
                         >
                           <option value="" disabled selected>
@@ -230,8 +225,8 @@ const ProjectDetailsEdit = () => {
                         <select
                           className="form-control form-select"
                           style={{ width: "100%" }}
-                          name="configurationType"
-                          value={formData.configurationType}
+                          name="Configuration_Type"
+                          value={formData.Configuration_Type}
                           onChange={handleChange}
                         >
                           <option value="" disabled selected>
@@ -249,7 +244,7 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="text"
                           name="Project_Name"
-                          value={formData.Project_Name || project?.project_name}
+                          value={formData.Project_Name || project?.Project_Name}
                           onChange={handleChange}
                         />
                       </div>
@@ -272,10 +267,10 @@ const ProjectDetailsEdit = () => {
                         <label>Project Description</label>
                         <textarea
                           className="form-control"
-                          rows={3}
+                          rows={1}
                           placeholder="Enter ..."
-                          name="description"
-                          value={formData.description || project?.project_description}
+                          name="Project_Description"
+                          value={formData.Project_Description || project?.project_Project_Description}
                           onChange={handleChange}
                         />
                       </div>
@@ -288,8 +283,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="priceOnward"
-                          value={formData.priceOnward || project?.price}
+                          name="Price_Onward"
+                          value={formData.Price_Onward || project?.price}
                           onChange={handleChange}
                         />
 
@@ -302,8 +297,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="projectSizeMtr"
-                          value={formData.projectSizeMtr || project?.project_size_sq_mtr}
+                          name="Project_Size_Sq_Mtr"
+                          value={formData.Project_Size_Sq_Mtr || project?.project_size_sq_mtr}
                           onChange={handleChange}
                         />
                       </div>
@@ -316,7 +311,7 @@ const ProjectDetailsEdit = () => {
                           type="number"
                           placeholder="Default input"
                           name=" "
-                          value={formData.projectSizeFt || project?.project_size_sq_ft}
+                          value={formData.Project_Size_Sq_Ft || project?.project_size_sq_ft}
                           onChange={handleChange}
                         />
                       </div>
@@ -328,8 +323,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="rareCarpetAreaMtr"
-                          value={formData.rareCarpetAreaMtr || project?.rera_carpet_area_sq_mtr}
+                          name="Rera_Carpet_Area_Sq_M"
+                          value={formData.Rera_Carpet_Area_Sq_M || project?.rera_carpet_area_sq_mtr}
                           onChange={handleChange}
                         />
                       </div>
@@ -341,8 +336,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="rareCarpetAreaFt"
-                          value={formData.rareCarpetAreaFt || project?.rera_carpet_area_sqft}
+                          name="Rera_Carpet_Area_sqft"
+                          value={formData.Rera_Carpet_Area_sqft || project?.rera_carpet_area_sqft}
                           onChange={handleChange}
                         />
                       </div>
@@ -354,8 +349,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="numTowers"
-                          value={formData.numTowers || project?.no_of_towers}
+                          name="Number_Of_Towers"
+                          value={formData.Number_Of_Towers || project?.no_of_towers}
                           onChange={handleChange}
                         />
                       </div>
@@ -367,8 +362,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="numUnits"
-                          value={formData.numUnits}
+                          name="Number_Of_Units"
+                          value={formData.Number_Of_Units}
                           onChange={handleChange}
                         />
                       </div>
@@ -380,8 +375,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="rareNumber"
-                          value={formData.rareNumber || project?.rera_number}
+                          name="Rera_Number"
+                          value={formData.Rera_Number || project?.rera_number}
                           onChange={handleChange}
                         />
                       </div>
@@ -392,8 +387,8 @@ const ProjectDetailsEdit = () => {
                         <select
                           className="form-control form-select"
                           style={{ width: "100%" }}
-                          name="amenities"
-                          value={formData.amenities}
+                          name="project_amenities"
+                          value={formData.project_amenities}
                           onChange={handleChange}
                         >
                           <option disabled>Select a amenities</option>
@@ -434,8 +429,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="number"
                           placeholder="Default input"
-                          name="landArea"
-                          value={formData.landArea || project?.land_area}
+                          name="Land_Area"
+                          value={formData.Land_Area || project?.land_area}
                           onChange={handleChange}
                         />
                       </div>
@@ -452,43 +447,18 @@ const ProjectDetailsEdit = () => {
                     {/* Address Section */}
                     <div className="col-md-3 mt-2">
                       <div className="form-group">
-                        <label>Address Line 1</label>
+                        <label>Address Line </label>
                         <input
                           className="form-control"
                           type="text"
                           placeholder="Address Line 1"
-                          name="addressLine1"
-                          value={formData.addressLine1 || project?.project_address}
+                          name="Address"
+                          value={formData.Address || project?.project_address}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>Address Line 2</label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Address Line 2"
-                          name="addressLine2"
-                          value={formData.addressLine2}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>Address Line 3</label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Address Line 3"
-                          name="addressLine3"
-                          value={formData.addressLine3}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
+ 
 
                     {/* City, State, Pin, Country Section */}
                     <div className="col-md-3 mt-2">
@@ -644,7 +614,6 @@ const ProjectDetailsEdit = () => {
 
 
           </div>
-          <Footer />
         </div>
       </div>
     </>

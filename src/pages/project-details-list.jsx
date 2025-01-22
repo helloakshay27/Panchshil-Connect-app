@@ -40,9 +40,7 @@ const ProjectDetailsList = () => {
 
   return (
     <>
-      <Header />
       <div className="main-content">
-        <Sidebar />
 
         <div className="website-content overflow-auto">
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
@@ -218,7 +216,6 @@ const ProjectDetailsList = () => {
               </div>
             </div>
           </div>
-          <Footer />
         </div>
       </div>
     </>

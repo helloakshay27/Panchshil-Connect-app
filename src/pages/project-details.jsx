@@ -159,7 +159,6 @@ const ProjectDetails = () => {
     <>
       {/* <Header /> */}
       <div className="main-content">
-        <Sidebar />
         <style>
           {`
           .form-disabled input,
@@ -660,7 +659,6 @@ const ProjectDetails = () => {
 
 
           </div>
-          <Footer />
         </div>
       </div>
     </>
