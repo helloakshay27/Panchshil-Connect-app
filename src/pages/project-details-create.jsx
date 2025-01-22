@@ -196,8 +196,6 @@ const ProjectDetailsCreate = () => {
   return (
     <>
       {/* <Header /> */}
-      <div className="main-content">
-        <div className="website-content overflow-auto">
           <div className="module-data-section p-3">
             <form onSubmit={handleSubmit}>
 
@@ -617,8 +615,6 @@ const ProjectDetailsCreate = () => {
 
 
           </div>
-        </div>
-      </div>
     </>
   );
 };

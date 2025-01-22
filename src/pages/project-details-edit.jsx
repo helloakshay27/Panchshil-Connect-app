@@ -154,8 +154,7 @@ const ProjectDetailsEdit = () => {
   return (
     <>
       {/* <Header /> */}
-      <div className="main-content">
-        <div className="website-content overflow-auto">
+  
           <div className="module-data-section p-3">
             <form onSubmit={handleSubmit}>
 
@@ -458,7 +457,7 @@ const ProjectDetailsEdit = () => {
                         />
                       </div>
                     </div>
- 
+
 
                     {/* City, State, Pin, Country Section */}
                     <div className="col-md-3 mt-2">
@@ -517,92 +516,92 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
               <div className="card mt-3 pb-4 mx-4">
-      <div className="card-header3">
-        <h3 className="card-title">File Upload</h3>
-      </div>
-      <div className="card-body">
-        <div className="row ">
-          {/* Brochure Upload */}
-          <div className="col-md-6 mt-2">
-            <div className="form-group">
-              <label htmlFor="brochure">Brochure</label>
-              <input
-                id="brochure"
-                className="form-control"
-                type="file"
-                name="brochure"
-                accept=".pdf,.docx"
-                onChange={handleChange}
-              />
-            </div>
+                <div className="card-header3">
+                  <h3 className="card-title">File Upload</h3>
+                </div>
+                <div className="card-body">
+                  <div className="row ">
+                    {/* Brochure Upload */}
+                    <div className="col-md-6 mt-2">
+                      <div className="form-group">
+                        <label htmlFor="brochure">Brochure</label>
+                        <input
+                          id="brochure"
+                          className="form-control"
+                          type="file"
+                          name="brochure"
+                          accept=".pdf,.docx"
+                          onChange={handleChange}
+                        />
+                      </div>
 
-            <div className="mt-4 tbl-container w-100">
-          <table className=" w-100">
-            <thead>
-              <tr>
-                <th>File Type</th>
-                <th>File Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Brochure */}
-              {project.brochure && (
-                <tr>
-                  <td>Brochure</td>
-                  <td>{project.brochure?.document_file_name}</td>
-                </tr>
-              )}
+                      <div className="mt-4 tbl-container w-100">
+                        <table className=" w-100">
+                          <thead>
+                            <tr>
+                              <th>File Type</th>
+                              <th>File Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {/* Brochure */}
+                            {project.brochure && (
+                              <tr>
+                                <td>Brochure</td>
+                                <td>{project.brochure?.document_file_name}</td>
+                              </tr>
+                            )}
 
-            
-            </tbody>
-          </table>
-        </div>
 
-          </div>
+                          </tbody>
+                        </table>
+                      </div>
 
-          {/* 2D Images */}
-          <div className="col-md-6 mt-2">
-            <div className="form-group">
-              <label htmlFor="two_d_images">2D Images</label>
-              <input
-                id="two_d_images"
-                className="form-control"
-                type="file"
-                multiple
-                accept="image/*"
-                name="two_d_images"
-                onChange={handleChange}
-              />
-            </div>
-            <div className="mt-4 tbl-container">
-          <table className="   w-100">
-            <thead>
-              <tr>
-                <th>File Type</th>
-                <th>File Name</th>
-              </tr>
-            </thead>
-            <tbody>
-            
+                    </div>
 
-              {/* 2D Images */}
-              {project.two_d_images.length > 0 &&
-                project.two_d_images.map((file, index) => (
-                  <tr key={index}>
-                    <td>2D Image {index + 1}</td>
-                    <td>{file.document_file_name}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-          </div>
-        </div>
+                    {/* 2D Images */}
+                    <div className="col-md-6 mt-2">
+                      <div className="form-group">
+                        <label htmlFor="two_d_images">2D Images</label>
+                        <input
+                          id="two_d_images"
+                          className="form-control"
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          name="two_d_images"
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="mt-4 tbl-container">
+                        <table className="   w-100">
+                          <thead>
+                            <tr>
+                              <th>File Type</th>
+                              <th>File Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
 
-        {/* Display Uploaded Files in a Table */}
-      
-      </div>
-    </div>
+
+                            {/* 2D Images */}
+                            {project.two_d_images.length > 0 &&
+                              project.two_d_images.map((file, index) => (
+                                <tr key={index}>
+                                  <td>2D Image {index + 1}</td>
+                                  <td>{file.document_file_name}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Display Uploaded Files in a Table */}
+
+                </div>
+              </div>
               <div className="row mt-2 justify-content-center">
                 <div className="col-md-2">
                   <button type="submit" className="purple-btn2 w-100">
@@ -614,8 +613,7 @@ const ProjectDetailsEdit = () => {
 
 
           </div>
-        </div>
-      </div>
+    
     </>
   );
 };

@@ -40,9 +40,7 @@ const ProjectDetailsList = () => {
 
   return (
     <>
-      <div className="main-content">
-
-        <div className="website-content overflow-auto">
+  
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
             <div className="col-md-4 pe-2 pt-2">
               <form
@@ -216,8 +214,7 @@ const ProjectDetailsList = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+    
     </>
   );
 };
