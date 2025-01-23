@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";  // Import Axios
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
 import "../mor.css";
 
 const GalleryDetails = () => {
@@ -27,9 +24,7 @@ const GalleryDetails = () => {
 
     return (
         <>
-            <Header />
             <div className="main-content">
-                <Sidebar />
                 <div className="website-content overflow-auto">
                     <div className="module-data-section container-fluid">
                         <div className="details_page ">
@@ -88,7 +83,6 @@ const GalleryDetails = () => {
                         </div>
                     </div>
                 </div>
-                <Footer />
             </div>
         </>
     );
