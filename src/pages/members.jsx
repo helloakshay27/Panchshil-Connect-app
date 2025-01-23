@@ -36,6 +36,9 @@ const Members = () => {
                 <Link to="/amenities">Amenities</Link>
               </li>
               <li>
+                <Link to="/amenities-list">Amenities List</Link>
+              </li>
+              <li>
                 <Link to="/testimonials">Testimonials</Link>
               </li>
               <li>
@@ -46,6 +49,12 @@ const Members = () => {
               </li>
               <li>
                 <Link to="/gallery-details">Gallery Details</Link>
+              </li>
+              <li>
+                <Link to="/new-gallery"> New Gallery</Link>
+              </li>
+              <li>
+                <Link to="/gallery-list">Gallery List </Link>
               </li>
             </ul>
           </div>

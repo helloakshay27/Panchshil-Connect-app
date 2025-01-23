@@ -17,6 +17,10 @@ import ProjectDetails from "./pages/project-details";
 import SignIn from "./pages/sign_pages/signIn";
 import RootLayout from "./pages/sign_pages/RootLayout";
 import ProtectedRoute from "./pages/sign_pages/ProtectedRoute";
+import AmenitiesList from "./pages/amenities-list";
+import NewGallery from "./pages/new-gallery";
+import GalleryList from "./pages/gallery-list";
+import GalleryDetails from "./pages/gallery-details";
 
 function App() {
   return (
@@ -49,9 +53,13 @@ function App() {
           <Route path="/banner-list" element={<BannerList />} />
           <Route path="/banner-add" element={<BannerAdd />} />
           <Route path="/amenities" element={<Amenities />} />
+          <Route path="/amenities-list" element={<AmenitiesList />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonial-list" element={<TestimonialList />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/gallery-details" element={<GalleryDetails />} />
+          <Route path="/new-gallery" element={<NewGallery/>} />
+          <Route path="/gallery-list" element={<GalleryList />} />
         </Route>
       </Routes>
     </BrowserRouter>
