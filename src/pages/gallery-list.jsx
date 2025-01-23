@@ -12,8 +12,8 @@ const GalleryList = () => {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/galleries.json?project_id=1"
         );
-        console.log("API Response:", response.data);
-        setGalleryData(Array.isArray(response.data) ? response.data : []);
+        console.log("API Response:", response.data.galleries);
+        setGalleryData(Array.isArray(response.data.galleries) ? response.data.galleries : []);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching gallery data:", error);
