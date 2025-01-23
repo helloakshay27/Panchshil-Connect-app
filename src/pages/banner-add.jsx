@@ -8,8 +8,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 
-
-
 const BannerAdd = () => {
 
   const [error, setError] = useState(null);
@@ -33,7 +31,7 @@ const BannerAdd = () => {
     const fetchBanners = async () => {
       try {
         const response = await axios.get(
-          " https://panchshil-super.lockated.com/company_setups.json",{
+          "https://panchshil-super.lockated.com/company_setups.json",{
             method: "GET",
             headers: {
               Authorization: `Bearer kD8B8ZeWZQAd2nQ-70dcfLXgYHLQh-zjggvuuE_93BY`,
@@ -103,9 +101,9 @@ const BannerAdd = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="main-content">
-        <Sidebar />
+        
         <div className="website-content overflow-auto">
           <div className="module-data-section container-fluid">
             <div className="card mt-3 pb-4 mx-4">
@@ -189,7 +187,7 @@ const BannerAdd = () => {
                   </div>
           </div>
         </div>
-        <Footer />
+        
       </div>
     </>
   );
