@@ -138,7 +138,7 @@ const [toggleStates, setToggleStates] = useState([true, false]);
                               </td>
                               <td>
                                 <img
-                                  src={item.image_url}
+                                  src={item?.attachfile?.document_url}
                                   alt={item.title_name}
                                   style={{ width: "50px", height: "50px" }}
                                 />
