@@ -24,7 +24,7 @@ const Header = () => {
   const signout = () => {
     console.log("Signing out...");
     sessionStorage.clear(); // Clear session storage
-    localStorage.removeItem("spree_api_key");
+    localStorage.removeItem("access_token"); 
 
     setShowModal(false);
   

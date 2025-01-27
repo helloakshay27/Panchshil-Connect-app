@@ -437,7 +437,7 @@ const ProjectDetailsCreate = () => {
                           <option disabled>Select a amenities</option>
                           {amenities?.map((ammit, index) => (
                             <option key={index} value={ammit.id}>
-                              {ammit.id}
+                              {ammit.name}
                             </option>
                           ))
 
