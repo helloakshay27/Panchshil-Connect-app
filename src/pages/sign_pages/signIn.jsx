@@ -33,15 +33,17 @@ const SignIn = () => {
         }
 
         try {
-            const response = await axios.post("https://staging.lockated.com/api/users/sign_in", {
+            const response = await axios.post("https://panchshil-super.lockated.com/users/signin.json", {
                 user: {
                     email,
                     password,
                 },
             });
 
+            console.log(response.data.access_token);
+
             if (response.data.access_token) {
-                localStorage.setItem("access_token", response.data.spree_api_key);
+                localStorage.setItem("access_token", response.data.access_token);
                 sessionStorage.setItem("email", response.data.email);
                 sessionStorage.setItem("firstname", response.data.firstname);
 

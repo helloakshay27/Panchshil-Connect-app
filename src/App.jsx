@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./mor.css";
-import { Link , Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Members from "./pages/members";
 import ProjectDetailsCreate from "./pages/project-details-create";
 import BannerList from "./pages/banner-list";
@@ -29,14 +29,15 @@ function App() {
     <BrowserRouter>
       <Toaster />
       <Routes>
-        <Route path="/login" element={<SignIn />} />
+      <Route path="/login" element={<SignIn />} />
 
         <Route
           path="/"
           element={
+            <ProtectedRoute>
               <RootLayout />
-            // <ProtectedRoute>
-            // </ProtectedRoute>
+
+            </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="/members" />} />
@@ -61,7 +62,7 @@ function App() {
           <Route path="/testimonial-list" element={<TestimonialList />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/gallery-details" element={<GalleryDetails />} />
-          <Route path="/new-gallery" element={<NewGallery/>} />
+          <Route path="/new-gallery" element={<NewGallery />} />
           <Route path="/gallery-list" element={<GalleryList />} />
           <Route path="/edit-gallery" element={<EditGallery />} />
         </Route>
