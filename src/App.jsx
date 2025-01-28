@@ -23,6 +23,7 @@ import GalleryList from "./pages/gallery-list";
 import GalleryDetails from "./pages/gallery-details";
 import EditGallery from "./pages/edit-gallery";
 import EditAmenities from "./pages/edit-amenities";
+import Register from "./pages/sign_pages/register";
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
       <Toaster />
       <Routes>
       <Route path="/login" element={<SignIn />} />
+      <Route path="/register" element={<Register />} />
+
 
         <Route
           path="/"

@@ -59,25 +59,66 @@ const SignIn = () => {
         }
     };
 
-    const handleSendOtp = () => {
-        // Simulate sending OTP
-        if (!mobile) {
-            setError("Please enter your mobile number.");
+    const handleSendOtp = async (e) => {
+        e.preventDefault();
+        if (!mobile || !/^\d{10}$/.test(mobile)) {
+            setError("Please enter a valid 10-digit mobile number.");
             return;
         }
         setError("");
-        alert("OTP sent successfully to your mobile number.");
+        setLoading(true);
+
+        try {
+            const response = await axios.post(
+                `https://panchshil-super.lockated.com/generate_code`,
+                {
+                   mobile
+                }
+            );
+            console.log("OTP sent successfully:", response.data);
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.message || "Failed to send OTP. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleVerifyOtp = (e) => {
+    const handleVerifyOtp = async (e) => {
         e.preventDefault();
-        if (!otp) {
-            setError("Please enter the OTP.");
+        if (!otp ) {
+            setError("Please enter a valid  OTP.");
             return;
         }
         setError("");
-        alert("OTP verified successfully!");
-        navigate("/"); // Navigate to another page after OTP verification
+        setLoading(true);
+
+        try {
+            const response = await axios.post(
+                `https://panchshil-super.lockated.com/verify_code.json`,
+                {
+                     mobile, otp 
+                }
+            );
+
+            const { access_token, email, firstname } = response.data;
+            console.log("OTP verified successfully:", response.data);
+
+            if (access_token) {
+                localStorage.setItem("access_token", access_token);
+                sessionStorage.setItem("email", email);
+                sessionStorage.setItem("firstname", firstname);
+
+                navigate("/");
+            } else {
+                setError("Login failed. Please check your credentials.");
+            }
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.message || "An error occurred during login. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -105,7 +146,8 @@ const SignIn = () => {
                                                     checked={selectedContent === "content1"}
                                                     onChange={() => toggleContent("content1")}
                                                 />
-                                                <label className="form-check-label">Existing User</label>
+                                                <label className="form-check-label">Login With Password
+                                                </label>
                                             </div>
                                         </div>
                                         <div className="form-group">
@@ -118,7 +160,8 @@ const SignIn = () => {
                                                     checked={selectedContent === "content2"}
                                                     onChange={() => toggleContent("content2")}
                                                 />
-                                                <label className="form-check-label">Login With New User</label>
+                                                <label className="form-check-label">Login With OTP
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
@@ -152,13 +195,17 @@ const SignIn = () => {
                                             <div className="d-flex justify-content-start mt-2 mb-3 gap-2">
                                                 <a className="forget-btn" href="/users/password/new">
                                                     Forgot password?
+
                                                 </a>
                                                 <br />
                                             </div>
+
                                             {error && <p className="text-danger">{error}</p>}
                                             <button type="submit" className="btn btn-danger mt-2">
                                                 {loading ? "Logging in..." : "Login"}
                                             </button>
+
+
                                         </form>
                                     )}
 
