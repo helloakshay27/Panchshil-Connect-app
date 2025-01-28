@@ -123,9 +123,68 @@ const ProjectDetailsEdit = () => {
     }
   };
 
+  const validateForm = (formData) => {
+    const errors = [];
+  
+    // Required fields
+    if (!formData.property_type) errors.push("Project Type is required.");
+    if (!formData.SFDC_Project_Id) errors.push("SFDC Project ID is required.");
+    if (!formData.Project_Construction_Status)
+      errors.push("Construction Status is required.");
+    if (!formData.Configuration_Type)
+      errors.push("Configuration Type is required.");
+    if (!formData.Project_Name) errors.push("Project Name is required.");
+    if (!formData.location) errors.push("Location is required.");
+    if (!formData.Project_Description)
+      errors.push("Project Description is required.");
+    if (!formData.Price_Onward) errors.push("Price Onward is required.");
+    if (!formData.Project_Size_Sq_Mtr)
+      errors.push("Project Size (Sq. Mtr.) is required.");
+    if (!formData.Project_Size_Sq_Ft)
+      errors.push("Project Size (Sq. Ft.) is required.");
+    if (!formData.Rera_Carpet_Area_Sq_M)
+      errors.push("RERA Carpet Area (Sq. M) is required.");
+    if (!formData.Rera_Carpet_Area_sqft)
+      errors.push("RERA Carpet Area (Sq. Ft.) is required.");
+    if (!formData.Number_Of_Towers)
+      errors.push("Number of Towers is required.");
+    if (!formData.Number_Of_Units)
+      errors.push("Number of Units is required.");
+    if (!formData.Rera_Number) errors.push("RERA Number is required.");
+    if (!formData.project_amenities)
+      errors.push("Amenities are required.");
+    if (!formData.specifications)
+      errors.push("Specifications are required.");
+    if (!formData.Land_Area) errors.push("Land Area is required.");
+  
+    // Address validation
+    if (!formData.address.addressLine1)
+      errors.push("Address Line 1 is required.");
+    if (!formData.address.city) errors.push("City is required.");
+    if (!formData.address.state) errors.push("State is required.");
+    if (!formData.address.pinCode) errors.push("Pin Code is required.");
+    if (!formData.address.country) errors.push("Country is required.");
+  
+    // File validation
+    if (!formData.brochure) errors.push("Brochure is required.");
+    if (formData.two_d_images.length === 0)
+      errors.push("At least one 2D image is required.");
+  
+    return errors;
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateForm(formData);
+
+  if (validationErrors.length > 0) {
+    // Display validation errors
+    validationErrors.forEach((error) => {
+      toast.error(error);
+    });
+    return; // Stop form submission if there are errors
+  }
 
     const data = new FormData();
 
@@ -156,6 +215,7 @@ const ProjectDetailsEdit = () => {
       });
       toast.success("Project Updated successfully")
       console.log(response.data);
+      Navigate("/project-list");
     } catch (error) {
       // alert("Failed to submit the form. Please try again.");
       console.error("Error submitting the form:", error);
