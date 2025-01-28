@@ -5,6 +5,8 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
+import toast from "react-hot-toast";
+
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
@@ -35,7 +37,6 @@ const ProjectDetailsCreate = () => {
       pinCode: "400709",
       country: "India",
     },
-    country: "",
     brochure: null, // for file input
     two_d_images: [] // for array of file inputs
   });
@@ -120,7 +121,7 @@ const ProjectDetailsCreate = () => {
         }
       );
       console.log(response.data);
-      toast.success("form submited successfully")
+      toast.success("Project submited successfully")
     } catch (error) {
       console.error("Error submitting the form:", error);
       alert("Failed to submit the form. Please try again.");
@@ -128,7 +129,7 @@ const ProjectDetailsCreate = () => {
   };
   useEffect(() => {
     const fetchProjects = async () => {
-      // const token = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY"; // Replace with your actual token
+      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
       const url = "https://panchshil-super.lockated.com/get_property_types.json";
 
       try {
@@ -150,7 +151,7 @@ const ProjectDetailsCreate = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      // const token = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY"; // Replace with your actual token
+      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
       const url = "https://panchshil-super.lockated.com/get_property_types.json";
 
       try {
@@ -172,7 +173,7 @@ const ProjectDetailsCreate = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      // const token = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY"; // Replace with your actual token
+      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
       const url = "https://panchshil-super.lockated.com/amenity_setups.json";
 
       try {
