@@ -115,7 +115,7 @@ const ProjectDetailsCreate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY`, // Replace with actual token
+            Authorization: `Bearer ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4`, // Replace with actual token
           },
         }
       );
@@ -161,7 +161,7 @@ const ProjectDetailsCreate = () => {
         });
 
         setConfigurations(response.data?.configurations);
-        console.log("configurations", Configurations);
+        console.log("configurations", configurations);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
@@ -183,7 +183,7 @@ const ProjectDetailsCreate = () => {
         });
 
         setAmenities(response.data?.amenities_setups);
-        console.log("amenities_setups", Amenities);
+        console.log("amenities_setups", amenities);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }

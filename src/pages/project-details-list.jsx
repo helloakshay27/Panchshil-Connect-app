@@ -17,7 +17,7 @@ const ProjectDetailsList = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const token = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY"; // Replace with your actual token
+      const token = "ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4"; // Replace with your actual token
       const url = " https://panchshil-super.lockated.com/get_all_projects.json";
 
       try {
