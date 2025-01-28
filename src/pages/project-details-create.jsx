@@ -75,6 +75,16 @@ const ProjectDetailsCreate = () => {
     }
   };
 
+  const handleDiscardFile = (fileType, index) => {
+    if (fileType === "brochure") {
+      setFormData({ ...formData, brochure: null });
+    } else if (fileType === "two_d_images") {
+      const updatedFiles = [...formData.two_d_images];
+      updatedFiles.splice(index, 1);
+      setFormData({ ...formData, two_d_images: updatedFiles });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -576,10 +586,10 @@ const ProjectDetailsCreate = () => {
             <div className="card-header3">
               <h3 className="card-title">File Upload</h3>
             </div>
-            <div className="card-body mt-0 pb-0">
-              <div className="row">
+            <div className="card-body">
+              <div className="row ">
                 {/* Brochure Upload */}
-                <div className="col-md-3 mt-2">
+                <div className="col-md-6 mt-2">
                   <div className="form-group">
                     <label htmlFor="brochure">Brochure</label>
                     <input
@@ -588,28 +598,83 @@ const ProjectDetailsCreate = () => {
                       type="file"
                       name="brochure"
                       accept=".pdf,.docx"
-
                       onChange={handleChange}
                     />
+                  </div>
+
+                  <div className="mt-4 tbl-container w-100">
+                    <table className=" w-100">
+                      <thead>
+                        <tr>
+                          <th>File Type</th>
+                          <th>File Name</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* Brochure */}
+                        {formData.brochure && (
+                          <tr>
+                            <td>Brochure</td>
+                            <td>{formData.brochure.name}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handleDiscardFile("brochure")}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
                 {/* 2D Images */}
-                <div className="col-md-3 mt-2">
+                <div className="col-md-6 mt-2">
                   <div className="form-group">
                     <label htmlFor="two_d_images">2D Images</label>
                     <input
                       id="two_d_images"
                       className="form-control"
                       type="file"
-                      placeholder="Enter 2D image details"
                       multiple
                       accept="image/*"
-
-
                       name="two_d_images"
                       onChange={handleChange}
                     />
+                  </div>
+                  <div className="mt-4 tbl-container">
+                    <table className="w-100">
+                      <thead>
+                        <tr>
+                          <th>File Type</th>
+                          <th>File Name</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* 2D Images */}
+                        {formData.two_d_images.map((file, index) => (
+                          <tr key={index}>
+                            <td>2D Image {index + 1}</td>
+                            <td>{file.name}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2 "
+                                onClick={() => handleDiscardFile("two_d_images", index)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
