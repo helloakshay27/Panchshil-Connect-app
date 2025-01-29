@@ -60,7 +60,7 @@ function App() {
           <Route path="/banner-add" element={<BannerAdd />} />
           <Route path="/amenities" element={<Amenities />} />
           <Route path="/amenities-list" element={<AmenitiesList />} />
-          <Route path="/edit-amenities" element={<EditAmenities />} />
+          <Route path="/edit-amenities/:id" element={<EditAmenities />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonial-list" element={<TestimonialList />} />
           <Route path="/testimonial-edit" element={<TestimonialEdit />} />
