@@ -66,10 +66,10 @@ function App() {
           <Route path="/testimonial-edit" element={<TestimonialEdit />} />
 
           <Route path="/gallery" element={<Gallery />} />
-          <Route path="/gallery-details" element={<GalleryDetails />} />
+          <Route path="/gallery-details/:id" element={<GalleryDetails />} />
           <Route path="/new-gallery" element={<NewGallery />} />
           <Route path="/gallery-list" element={<GalleryList />} />
-          <Route path="/edit-gallery" element={<EditGallery />} />
+          <Route path="/edit-gallery/:id" element={<EditGallery />} />
         </Route>
       </Routes>
     </BrowserRouter>
