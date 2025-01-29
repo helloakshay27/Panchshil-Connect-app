@@ -66,6 +66,11 @@ const Members = () => {
               <li>
                 <Link to="/edit-gallery">Edit Gallery</Link>
               </li>
+              <li>
+
+<Link to="/banner-edit">Banner Edit</Link>
+
+</li>
             </ul>
           </div>
         </div>

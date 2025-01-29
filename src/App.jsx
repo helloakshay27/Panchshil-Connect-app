@@ -23,8 +23,7 @@ import GalleryList from "./pages/gallery-list";
 import GalleryDetails from "./pages/gallery-details";
 import EditGallery from "./pages/edit-gallery";
 import EditAmenities from "./pages/edit-amenities";
-import Register from "./pages/sign_pages/register";
-import TestimonialEdit from "./pages/testimonial-edit";
+import BannerEdit from "./pages/banner-edit";
 
 function App() {
   return (
@@ -32,7 +31,7 @@ function App() {
       <Toaster />
       <Routes>
         <Route path="/login" element={<SignIn />} />
-        <Route path="/register" element={<Register />} />
+        {/* <Route path="/register" element={<Register />} /> */}
 
         <Route
           path="/"
@@ -63,13 +62,13 @@ function App() {
           <Route path="/edit-amenities/:id" element={<EditAmenities />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonial-list" element={<TestimonialList />} />
-          <Route path="/testimonial-edit" element={<TestimonialEdit />} />
-
+          {/* <Route path="/testimonial-edit" element={<TestimonialEdit />} /> */}
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/gallery-details/:id" element={<GalleryDetails />} />
           <Route path="/new-gallery" element={<NewGallery />} />
           <Route path="/gallery-list" element={<GalleryList />} />
-          <Route path="/edit-gallery/:id" element={<EditGallery />} />
+          <Route path="/edit-gallery" element={<EditGallery />} />
+          <Route path="/banner-edit/:id" element={<BannerEdit />} />
         </Route>
       </Routes>
     </BrowserRouter>
