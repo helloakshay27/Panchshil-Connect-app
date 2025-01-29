@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
 import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 
 const ProjectDetailsEdit = () => {
@@ -30,11 +31,15 @@ const ProjectDetailsEdit = () => {
     project_amenities: "",
     specifications: "",
     Land_Area: "",
-    Address: "",
-    city: "",
-    state: "",
-    pinCode: "",
-    country: "",
+    address: {
+      addressLine1: "line 1",
+      addressLine2: "line 2",
+      addressLine3: "line 3",
+      city: "Pune",
+      state: "Maharashtra",
+      pinCode: "400709",
+      country: "India",
+    },
     brochure: null, // file input for brochure
     two_d_images: [], // array of file inputs for 2D images
   });
@@ -47,7 +52,7 @@ const ProjectDetailsEdit = () => {
   const [error, setError] = useState(null);
 
   const API_BASE_URL = "https://panchshil-super.lockated.com";
-  const AUTH_TOKEN = "Bearer UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY"; // Replace with your actual token
+  const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
 
   // Unified API Fetcher
   const fetchData = async (endpoint, setter) => {
@@ -107,9 +112,79 @@ const ProjectDetailsEdit = () => {
     }
   };
 
+  // Handle file discard
+  const handleDiscardFile = (fileType, index) => {
+    if (fileType === "brochure") {
+      setFormData({ ...formData, brochure: null });
+    } else if (fileType === "two_d_images") {
+      const updatedFiles = [...formData.two_d_images];
+      updatedFiles.splice(index, 1);
+      setFormData({ ...formData, two_d_images: updatedFiles });
+    }
+  };
+
+  const validateForm = (formData) => {
+    const errors = [];
+  
+    // Required fields
+    if (!formData.property_type) errors.push("Project Type is required.");
+    if (!formData.SFDC_Project_Id) errors.push("SFDC Project ID is required.");
+    if (!formData.Project_Construction_Status)
+      errors.push("Construction Status is required.");
+    if (!formData.Configuration_Type)
+      errors.push("Configuration Type is required.");
+    if (!formData.Project_Name) errors.push("Project Name is required.");
+    if (!formData.location) errors.push("Location is required.");
+    if (!formData.Project_Description)
+      errors.push("Project Description is required.");
+    if (!formData.Price_Onward) errors.push("Price Onward is required.");
+    if (!formData.Project_Size_Sq_Mtr)
+      errors.push("Project Size (Sq. Mtr.) is required.");
+    if (!formData.Project_Size_Sq_Ft)
+      errors.push("Project Size (Sq. Ft.) is required.");
+    if (!formData.Rera_Carpet_Area_Sq_M)
+      errors.push("RERA Carpet Area (Sq. M) is required.");
+    if (!formData.Rera_Carpet_Area_sqft)
+      errors.push("RERA Carpet Area (Sq. Ft.) is required.");
+    if (!formData.Number_Of_Towers)
+      errors.push("Number of Towers is required.");
+    if (!formData.Number_Of_Units)
+      errors.push("Number of Units is required.");
+    if (!formData.Rera_Number) errors.push("RERA Number is required.");
+    if (!formData.project_amenities)
+      errors.push("Amenities are required.");
+    if (!formData.specifications)
+      errors.push("Specifications are required.");
+    if (!formData.Land_Area) errors.push("Land Area is required.");
+  
+    // Address validation
+    if (!formData.address.addressLine1)
+      errors.push("Address Line 1 is required.");
+    if (!formData.address.city) errors.push("City is required.");
+    if (!formData.address.state) errors.push("State is required.");
+    if (!formData.address.pinCode) errors.push("Pin Code is required.");
+    if (!formData.address.country) errors.push("Country is required.");
+  
+    // File validation
+    if (!formData.brochure) errors.push("Brochure is required.");
+    if (formData.two_d_images.length === 0)
+      errors.push("At least one 2D image is required.");
+  
+    return errors;
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateForm(formData);
+
+  if (validationErrors.length > 0) {
+    // Display validation errors
+    validationErrors.forEach((error) => {
+      toast.error(error);
+    });
+    return; // Stop form submission if there are errors
+  }
 
     const data = new FormData();
 
@@ -132,16 +207,17 @@ const ProjectDetailsEdit = () => {
     });
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/projects.json`, data, {
+      const response = await axios.put(`${API_BASE_URL}/projects/${id}.json`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: AUTH_TOKEN,
+          Authorization: `Bearer 0XH8lxmc2kQVcso9Dr86ymFfso2dctjn6ZDMBCnmN38`,
         },
       });
-      toast.success("form submited successfully")
+      toast.success("Project Updated successfully")
       console.log(response.data);
+      Navigate("/project-list");
     } catch (error) {
-      alert("Failed to submit the form. Please try again.");
+      // alert("Failed to submit the form. Please try again.");
       console.error("Error submitting the form:", error);
     }
   };
@@ -150,15 +226,13 @@ const ProjectDetailsEdit = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-
   return (
     <>
       {/* <Header /> */}
   
-          <div className="module-data-section p-3">
-            <form onSubmit={handleSubmit}>
-
-              <div className="card mt-3 pb-4 mx-4">
+      <div className="module-data-section p-3">
+        <form onSubmit={handleSubmit}>
+        <div className="card mt-3 pb-4 mx-4">
                 <div className="card-header">
                   <h3 className="card-title">Project Details</h3>
                 </div>
@@ -451,8 +525,8 @@ const ProjectDetailsEdit = () => {
                           className="form-control"
                           type="text"
                           placeholder="Address Line 1"
-                          name="Address"
-                          value={formData.Address || project?.project_address}
+                          name="addressLine1"
+                          value={formData.addressLine1 || project?.project_address}
                           onChange={handleChange}
                         />
                       </div>
@@ -515,105 +589,113 @@ const ProjectDetailsEdit = () => {
                   </div>
                 </div>
               </div>
-              <div className="card mt-3 pb-4 mx-4">
-                <div className="card-header3">
-                  <h3 className="card-title">File Upload</h3>
-                </div>
-                <div className="card-body">
-                  <div className="row ">
-                    {/* Brochure Upload */}
-                    <div className="col-md-6 mt-2">
-                      <div className="form-group">
-                        <label htmlFor="brochure">Brochure</label>
-                        <input
-                          id="brochure"
-                          className="form-control"
-                          type="file"
-                          name="brochure"
-                          accept=".pdf,.docx"
-                          onChange={handleChange}
-                        />
-                      </div>
-
-                      <div className="mt-4 tbl-container w-100">
-                        <table className=" w-100">
-                          <thead>
-                            <tr>
-                              <th>File Type</th>
-                              <th>File Name</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {/* Brochure */}
-                            {project.brochure && (
-                              <tr>
-                                <td>Brochure</td>
-                                <td>{project.brochure?.document_file_name}</td>
-                              </tr>
-                            )}
-
-
-                          </tbody>
-                        </table>
-                      </div>
-
-                    </div>
-
-                    {/* 2D Images */}
-                    <div className="col-md-6 mt-2">
-                      <div className="form-group">
-                        <label htmlFor="two_d_images">2D Images</label>
-                        <input
-                          id="two_d_images"
-                          className="form-control"
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          name="two_d_images"
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div className="mt-4 tbl-container">
-                        <table className="   w-100">
-                          <thead>
-                            <tr>
-                              <th>File Type</th>
-                              <th>File Name</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-
-
-                            {/* 2D Images */}
-                            {project.two_d_images.length > 0 &&
-                              project.two_d_images.map((file, index) => (
-                                <tr key={index}>
-                                  <td>2D Image {index + 1}</td>
-                                  <td>{file.document_file_name}</td>
-                                </tr>
-                              ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+          <div className="card mt-3 pb-4 mx-4">
+            <div className="card-header3">
+              <h3 className="card-title">File Upload</h3>
+            </div>
+            <div className="card-body">
+              <div className="row ">
+                {/* Brochure Upload */}
+                <div className="col-md-6 mt-2">
+                  <div className="form-group">
+                    <label htmlFor="brochure">Brochure</label>
+                    <input
+                      id="brochure"
+                      className="form-control"
+                      type="file"
+                      name="brochure"
+                      accept=".pdf,.docx"
+                      onChange={handleChange}
+                    />
                   </div>
 
-                  {/* Display Uploaded Files in a Table */}
+                  <div className="mt-4 tbl-container w-100">
+                    <table className=" w-100">
+                      <thead>
+                        <tr>
+                          <th>File Type</th>
+                          <th>File Name</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* Brochure */}
+                        {formData.brochure && (
+                          <tr>
+                            <td>Brochure</td>
+                            <td>{formData.brochure.name}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handleDiscardFile("brochure")}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
+                {/* 2D Images */}
+                <div className="col-md-6 mt-2">
+                  <div className="form-group">
+                    <label htmlFor="two_d_images">2D Images</label>
+                    <input
+                      id="two_d_images"
+                      className="form-control"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      name="two_d_images"
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="mt-4 tbl-container">
+                    <table className="w-100">
+                      <thead>
+                        <tr>
+                          <th>File Type</th>
+                          <th>File Name</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* 2D Images */}
+                        {formData.two_d_images.map((file, index) => (
+                          <tr key={index}>
+                            <td>2D Image {index + 1}</td>
+                            <td>{file.name}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2 "
+                                onClick={() => handleDiscardFile("two_d_images", index)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
-              <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button type="submit" className="purple-btn2 w-100">
-                    Submit
-                  </button>
-                </div>
-              </div>
-            </form>
-
-
+            </div>
           </div>
-    
+          <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button type="submit" className="purple-btn2 w-100">
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </>
   );
 };

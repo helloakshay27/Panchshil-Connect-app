@@ -51,7 +51,7 @@ const ProjectDetails = () => {
   const [error, setError] = useState(null);
 
   const API_BASE_URL = "https://panchshil-super.lockated.com";
-  const AUTH_TOKEN = "Bearer UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY"; // Replace with your actual token
+  const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
 
   // Unified API Fetcher
   const fetchData = async (endpoint, setter) => {
