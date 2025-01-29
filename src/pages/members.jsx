@@ -48,6 +48,10 @@ const Members = () => {
                 <Link to="/testimonial-list">TestimonialList</Link>
               </li>
               <li>
+                <Link to="/testimonial-edit">TestimonialEdit</Link>
+              </li>
+
+              <li>
                 <Link to="/gallery">Gallery</Link>
               </li>
               <li>

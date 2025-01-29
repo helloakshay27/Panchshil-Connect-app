@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
+
 import "../mor.css";
 
 const Testimonials = () => {
@@ -20,7 +19,7 @@ const Testimonials = () => {
           {
             headers: {
               Authorization:
-                "Bearer kD8B8ZeWZQAd2nQ-70dcfLXgYHLQh-zjggvuuE_93BY",
+                "Bearer ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4",
             },
           }
         );
@@ -135,7 +134,7 @@ const Testimonials = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3 ">
                       <div className="form-group">
                         <label>Content</label>
                         <input

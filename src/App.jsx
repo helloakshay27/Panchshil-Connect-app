@@ -24,36 +24,36 @@ import GalleryDetails from "./pages/gallery-details";
 import EditGallery from "./pages/edit-gallery";
 import EditAmenities from "./pages/edit-amenities";
 import Register from "./pages/sign_pages/register";
+import TestimonialEdit from "./pages/testimonial-edit";
 
 function App() {
   return (
     <BrowserRouter>
       <Toaster />
       <Routes>
-      <Route path="/login" element={<SignIn />} />
-      <Route path="/register" element={<Register />} />
-
+        <Route path="/login" element={<SignIn />} />
+        <Route path="/register" element={<Register />} />
 
         <Route
           path="/"
           element={
-            <ProtectedRoute>
-              <RootLayout />
+            // <<<<<<< Updated upstream
+            //             <ProtectedRoute>
+            //               <RootLayout />
 
-            </ProtectedRoute>
+            //             </ProtectedRoute>
+            // =======
+            <RootLayout />
+            // <ProtectedRoute>
+            // </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="/members" />} />
 
-
           <Route path="//members" element={<Members />} />
-          <Route
-            path="/project-create"
-            element={<ProjectDetailsCreate />}
-          />
+          <Route path="/project-create" element={<ProjectDetailsCreate />} />
           <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
           <Route path="/project-details/:id" element={<ProjectDetails />} />
-
 
           <Route path="/project-list" element={<ProjectDetailsList />} />
           <Route path="/banner-list" element={<BannerList />} />
@@ -63,6 +63,8 @@ function App() {
           <Route path="/edit-amenities" element={<EditAmenities />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonial-list" element={<TestimonialList />} />
+          <Route path="/testimonial-edit" element={<TestimonialEdit />} />
+
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/gallery-details" element={<GalleryDetails />} />
           <Route path="/new-gallery" element={<NewGallery />} />
