@@ -105,7 +105,7 @@ const BannerEdit = () => {
     // Ensure attachfile is an array and append each file correctly
     if (formData.attachfile.length > 0) {
       Array.from(formData.attachfile).forEach((file) => {
-        postData.append("banner[banner_image]", file);
+        postData.append("banner_image", file);
       });
     }
 

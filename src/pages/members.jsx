@@ -68,9 +68,9 @@ const Members = () => {
               </li>
               <li>
 
-<Link to="/banner-edit">Banner Edit</Link>
+               <Link to="/banner-edit/:id">Banner Edit</Link>
 
-</li>
+             </li>
             </ul>
           </div>
         </div>
