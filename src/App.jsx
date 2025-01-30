@@ -25,6 +25,7 @@ import EditGallery from "./pages/edit-gallery";
 import EditAmenities from "./pages/edit-amenities";
 import BannerEdit from "./pages/banner-edit";
 import TestimonialEdit from "./pages/testimonial-edit";
+import Register from "./pages/sign_pages/register";
 
 function App() {
   return (
