@@ -32,18 +32,18 @@ function App() {
       <Toaster />
       <Routes>
         <Route path="/login" element={<SignIn />} />
-        {/* <Route path="/register" element={<Register />} /> */}
+        <Route path="/register" element={<Register />} />
 
         <Route
           path="/"
           element={
             // <<<<<<< Updated upstream
-            //             <ProtectedRoute>
-            //               <RootLayout />
+                        <ProtectedRoute>
+                          <RootLayout />
 
-            //             </ProtectedRoute>
+                        </ProtectedRoute>
             // =======
-            <RootLayout />
+            // <RootLayout />
             // <ProtectedRoute>
             // </ProtectedRoute>
           }
