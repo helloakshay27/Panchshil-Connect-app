@@ -24,6 +24,7 @@ import GalleryDetails from "./pages/gallery-details";
 import EditGallery from "./pages/edit-gallery";
 import EditAmenities from "./pages/edit-amenities";
 import BannerEdit from "./pages/banner-edit";
+import TestimonialEdit from "./pages/testimonial-edit";
 
 function App() {
   return (
@@ -62,7 +63,7 @@ function App() {
           <Route path="/edit-amenities/:id" element={<EditAmenities />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonial-list" element={<TestimonialList />} />
-          {/* <Route path="/testimonial-edit" element={<TestimonialEdit />} /> */}
+          <Route path="/testimonial-edit" element={<TestimonialEdit />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/gallery-details/:id" element={<GalleryDetails />} />
           <Route path="/new-gallery" element={<NewGallery />} />

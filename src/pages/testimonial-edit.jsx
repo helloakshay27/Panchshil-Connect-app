@@ -43,7 +43,7 @@ const TestimonialEdit = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com//testimonials/${testimonial.id}`,
+        `https://panchshil-super.lockated.com//testimonials/${testimonial.id}.json`,
         formData
       );
 
