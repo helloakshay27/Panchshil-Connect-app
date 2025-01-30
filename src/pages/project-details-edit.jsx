@@ -712,19 +712,31 @@ const ProjectDetailsEdit = () => {
           <div className="card-body">
             <div className="row">
               {/* Brochure Upload */}
-              <div className="form-group">
-                <label htmlFor="brochure">
-                  Brochure
+            
+
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                Brochure{" "}
                   <span style={{ color: "red", fontSize: "16px" }}>*</span>
-                </label>
+                </h5>
+                <button
+                  className="purple-btn2 mt-3"
+                  onClick={() => document.getElementById("brochure").click()}
+                >
+                  <span className="material-symbols-outlined align-text-top me-2">
+                    add
+                  </span>
+                  <span>Add</span>
+                </button>
                 <input
                   id="brochure"
-                  style={{ width: "20%" }}
                   className="form-control"
                   type="file"
                   name="brochure"
                   accept=".pdf,.docx"
                   onChange={handleChange}
+                  style={{ display: "none" }}
+
                 />
               </div>
 
@@ -733,7 +745,6 @@ const ProjectDetailsEdit = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                        <th>File Type</th>
                         <th>File Name</th>
                         <th>Action</th>
                       </tr>
@@ -742,8 +753,8 @@ const ProjectDetailsEdit = () => {
                       {/* Brochure */}
                       {formData.brochure && (
                         <tr>
-                          <td>Brochure</td>
-                          <td>{formData.brochure.name}</td>
+                          <td>{formData.brochure?.document_file_name}</td>
+
                           <td>
                             <button
                               type="button"
@@ -791,7 +802,6 @@ const ProjectDetailsEdit = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                        <th>File Type</th>
                         <th>File Name</th>
                         <th>Image</th>
                         <th>Action</th>
@@ -801,8 +811,7 @@ const ProjectDetailsEdit = () => {
                       {/* 2D Images */}
                       {formData.two_d_images.map((file, index) => (
                         <tr key={index}>
-                          <td>2D Image {index + 1}</td>
-                          <td>{file.name}</td>
+                          <td> {file.document_file_name}</td>
                           <td><img style={{ width: "70px" }} src={file.document_url} alt="" /></td>
 
                      
