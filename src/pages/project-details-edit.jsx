@@ -794,7 +794,6 @@ const ProjectDetailsEdit = () => {
                         <th>File Type</th>
                         <th>File Name</th>
                         <th>Image</th>
-                        <th>Upload</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -806,25 +805,7 @@ const ProjectDetailsEdit = () => {
                           <td>{file.name}</td>
                           <td><img style={{ width: "70px" }} src={file.document_url} alt="" /></td>
 
-                          <td>
-                            <input
-                              className=""
-                              type="file"
-                              accept="image/*"
-                              name="two_d_images"
-                              onChange={(e) => {
-                                const newFile = e.target.files[0];
-                                if (newFile) {
-                                  const updatedImages = [...formData.two_d_images];
-                                  updatedImages[index] = newFile;
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    two_d_images: updatedImages,
-                                  }));
-                                }
-                              }}
-                            />
-                          </td>
+                     
                           <td>
                             <button
                               type="button"
