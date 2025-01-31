@@ -47,6 +47,8 @@ const Register = () => {
 
                 // Redirect to the home page
                 navigate("/");
+                toast.success("Register successfully")
+
             } else {
                 setError("Login failed. Please check your credentials.");
             }

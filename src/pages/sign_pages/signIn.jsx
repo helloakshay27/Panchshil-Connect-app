@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import "./login.css";
+import toast from "react-hot-toast";
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
@@ -12,6 +13,9 @@ const SignIn = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [selectedContent, setSelectedContent] = useState("content1");
+    const [showOtpSection, setShowOtpSection] = useState(false); // State to control OTP section visibility
+
+    const [OtpSection, setOtpSection] = useState(true); // State to control OTP section visibility
 
     const navigate = useNavigate();
 
@@ -72,13 +76,21 @@ const SignIn = () => {
             const response = await axios.post(
                 `https://panchshil-super.lockated.com/generate_code`,
                 {
-                   mobile
+                    mobile
                 }
             );
             console.log("OTP sent successfully:", response.data);
+            setOtpSection(false);
+            toast.success("OTP Sent successfully")
+
+
+            setShowOtpSection(true);
+
         } catch (err) {
+            toast.error("Failed to send OTP. Please try again.")
+
             console.error(err);
-            setError(err.response?.data?.message || "Failed to send OTP. Please try again.");
+            // setError(err.response?.data?.message || "Failed to send OTP. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -86,7 +98,7 @@ const SignIn = () => {
 
     const handleVerifyOtp = async (e) => {
         e.preventDefault();
-        if (!otp ) {
+        if (!otp) {
             setError("Please enter a valid  OTP.");
             return;
         }
@@ -97,7 +109,7 @@ const SignIn = () => {
             const response = await axios.post(
                 `https://panchshil-super.lockated.com/verify_code.json`,
                 {
-                     mobile, otp 
+                    mobile, otp
                 }
             );
 
@@ -110,6 +122,8 @@ const SignIn = () => {
                 sessionStorage.setItem("firstname", firstname);
 
                 navigate("/");
+                toast.success("Login successfully")
+
             } else {
                 setError("Login failed. Please check your credentials.");
             }
@@ -211,41 +225,56 @@ const SignIn = () => {
 
                                     {selectedContent === "content2" && (
                                         <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
-                                            <div className="form-group position-relative">
-                                                <label className="mb-1" htmlFor="mobile">Mobile Number</label>
-                                                <input
-                                                    type="tel"
-                                                    id="mobile"
-                                                    className="form-control mb-2"
-                                                    placeholder="Enter mobile number"
-                                                    value={mobile}
-                                                    onChange={(e) => setMobile(e.target.value)}
-                                                    required
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-danger mt-2"
-                                                    onClick={handleSendOtp}
-                                                >
-                                                    Send OTP
-                                                </button>
-                                            </div>
-                                            <div className="form-group position-relative">
-                                                <label className="mb-1" htmlFor="otp">Enter OTP</label>
-                                                <input
-                                                    type="text"
-                                                    id="otp"
-                                                    className="form-control mb-2"
-                                                    placeholder="Enter OTP"
-                                                    value={otp}
-                                                    onChange={(e) => setOtp(e.target.value)}
-                                                    required
-                                                />
-                                            </div>
+                                            {
+
+                                                OtpSection && (
+                                                    <div className="form-group position-relative">
+                                                        <label className="mb-1" htmlFor="mobile">Mobile Number</label>
+                                                        <input
+                                                            type="tel"
+                                                            id="mobile"
+                                                            className="form-control mb-2"
+                                                            placeholder="Enter mobile number"
+                                                            value={mobile}
+                                                            onChange={(e) => setMobile(e.target.value)}
+                                                            required
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-danger mt-2"
+                                                            onClick={handleSendOtp}
+                                                        >
+                                                            Send OTP
+                                                        </button>
+                                                    </div>
+
+                                                )
+                                            }
+
+                                            {showOtpSection && (
+                                                <div className="form-group position-relative">
+                                                    <label className="mb-1" htmlFor="otp">Enter OTP</label>
+                                                    <input
+                                                        type="text"
+                                                        id="otp"
+                                                        className="form-control mb-2"
+                                                        placeholder="Enter OTP"
+                                                        value={otp}
+                                                        onChange={(e) => setOtp(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* Error Message */}
                                             {error && <p className="text-danger">{error}</p>}
-                                            <button type="submit" className="btn btn-danger mt-2">
-                                                Verify OTP
-                                            </button>
+
+                                            {/* Verify OTP Button (Conditionally Rendered) */}
+                                            {showOtpSection && (
+                                                <button type="submit" className="btn btn-danger mt-2">
+                                                    Verify OTP
+                                                </button>
+                                            )}
                                         </form>
                                     )}
                                 </div>
