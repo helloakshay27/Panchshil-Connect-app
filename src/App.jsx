@@ -26,6 +26,7 @@ import EditAmenities from "./pages/edit-amenities";
 import BannerEdit from "./pages/banner-edit";
 import TestimonialEdit from "./pages/testimonial-edit";
 import Register from "./pages/sign_pages/register";
+import BannerDetails from "./pages/banner-details";
 
 function App() {
   return (
@@ -71,6 +72,7 @@ function App() {
           <Route path="/gallery-list" element={<GalleryList />} />
           <Route path="/edit-gallery" element={<EditGallery />} />
           <Route path="/banner-edit/:id" element={<BannerEdit />} />
+          <Route path="/banner-details/:id" element={<BannerDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>

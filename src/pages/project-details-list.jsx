@@ -83,7 +83,7 @@ const ProjectDetailsList = () => {
             </div>
           </form>{" "}
         </div>
-        <div className="card-tools">
+        <div className="card-tools mt-2">
           <button
             className="purple-btn2 rounded-3"
             fdprocessedid="xn3e6n"

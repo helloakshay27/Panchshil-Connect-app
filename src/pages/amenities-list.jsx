@@ -82,7 +82,7 @@ const AmenitiesList = () => {
                   </div>
                 </form>{" "}
               </div>
-              <div className="card-tools">
+              <div className="card-tools mt-1">
                 <button
                   className="purple-btn2 rounded-3"
                   onClick={() => navigate("/amenities")}

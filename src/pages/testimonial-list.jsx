@@ -90,7 +90,7 @@ const TestimonialList = () => {
                 </div>
               </form>{" "}
             </div>
-            <div className="card-tools">
+            <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
                 fdprocessedid="xn3e6n"
@@ -200,7 +200,9 @@ const TestimonialList = () => {
                     </tbody>
                   </table>
                 </div>
+                
               )}
+              
             </div>
           </div>
         </div>

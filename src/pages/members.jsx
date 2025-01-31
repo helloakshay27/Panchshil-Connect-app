@@ -33,6 +33,12 @@ const Members = () => {
                 <Link to="/banner-add">Banner Add</Link>
               </li>
               <li>
+               <Link to="/banner-edit/:id">Banner Edit</Link>
+             </li>
+             <li>
+               <Link to="/banner-details">Banner Details</Link>
+             </li>
+              <li>
                 <Link to="/amenities">Amenities</Link>
               </li>
               <li>
@@ -66,11 +72,7 @@ const Members = () => {
               <li>
                 <Link to="/edit-gallery">Edit Gallery</Link>
               </li>
-              <li>
-
-               <Link to="/banner-edit/:id">Banner Edit</Link>
-
-             </li>
+              
             </ul>
           </div>
         </div>
