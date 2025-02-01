@@ -109,7 +109,7 @@ const BannerList = () => {
                       name="s[name_cont]"
                       id="s_name_cont"
                       className="form-control tbl-search table_search"
-                      placeholder="Type your keywords here"
+                      placeholder="Search"
                       fdprocessedid="u38fp"
                     />
                     <div className="input-group-append">
@@ -191,7 +191,7 @@ const BannerList = () => {
                           </td>
                           <td>{banner.company_id || "N/A"}</td>
                           <td>Lockated, Pune</td>
-                          <td>{banner.name || "No Name"}</td>
+                          <td>{banner.company_name || "No Name"}</td>
                           <td>{banner.title || "No Title"}</td>
                           <td className="d-flex justify-content-center align-items-center">
                             <img
@@ -207,7 +207,7 @@ const BannerList = () => {
                           <td>
                             <input
                               type="checkbox"
-                              defaultChecked={banner.is_active}
+                              defaultChecked={banner.active}
                             />
                           </td>
                           <td>

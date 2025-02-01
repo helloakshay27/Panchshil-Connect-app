@@ -57,7 +57,7 @@ const AmenitiesList = () => {
                       name="s[name_cont]"
                       id="s_name_cont"
                       className="form-control tbl-search table_search"
-                      placeholder="Type your keywords here"
+                      placeholder="Search"
                     />
                     <div className="input-group-append">
                       <button type="submit" className="btn btn-md btn-default">

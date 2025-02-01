@@ -85,7 +85,7 @@ const TestimonialList = () => {
                     name="s[name_cont]"
                     id="s_name_cont"
                     className="form-control tbl-search table_search"
-                    placeholder="Type your keywords here"
+                    placeholder="Search"
                     fdprocessedid="u38fp"
                     value={searchQuery}
                     onChange={handleSearch}
