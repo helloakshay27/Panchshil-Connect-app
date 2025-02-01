@@ -61,6 +61,16 @@ const Amenities = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
+                        <label>Site Name</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Enter Site name"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
                         <label>Icon</label>
                         <input
                           type="file"
@@ -78,7 +88,11 @@ const Amenities = () => {
           {/* Submit button moved outside card */}
           <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
-              <button type="submit" className="purple-btn2 w-100" onClick={handleSubmit}>
+              <button
+                type="submit"
+                className="purple-btn2 w-100"
+                onClick={handleSubmit}
+              >
                 Submit
               </button>
             </div>

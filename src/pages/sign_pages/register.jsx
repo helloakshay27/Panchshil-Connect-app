@@ -80,7 +80,7 @@ const Register = () => {
                   >
                     <div className="form-group position-relative">
                       <label className="mb-1" htmlFor="email">
-                        Firstname
+                        First Name
                       </label>
                       <input
                         type="text"
@@ -94,7 +94,7 @@ const Register = () => {
                     </div>
                     <div className="form-group position-relative">
                       <label className="mb-1" htmlFor="password">
-                        Lastname
+                        Last Name
                       </label>
                       <input
                         type="text"
