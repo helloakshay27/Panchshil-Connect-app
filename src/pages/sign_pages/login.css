@@ -1,11 +1,10 @@
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-  }
-  
-  body{
+}
+
+body {
     font-family: "Open Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -13,70 +12,71 @@
     margin: 0;
     padding: 0;
     background-color: #FFFFFF;
-  }
-  
-  
-  a{
+}
+
+a {
     text-decoration: none !important;
-  }
-  
-  h1,h2,h3,h4,h5,h6{
-    font-family: "Open Sans", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  }
-  
-  p,span,div{
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: "Open Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
-  
-  }
-  :root {
-  --body-bg-color: #ffffff;
-  --red: #de7008;
-  --lightred: #9e2c2d;
-  --black: #000000;
-  --light-green: #8ed7c6;
-  --grey: #3a3a33;
-  --light-grey: #8692a6;
-  --text-color: #084236;
-  }
-  @font-face {
+}
+
+p,
+span,
+div {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+ :root {
+    --body-bg-color: #ffffff;
+    --red: #de7008;
+    --lightred: #9e2c2d;
+    --black: #000000;
+    --light-green: #8ed7c6;
+    --grey: #3a3a33;
+    --light-grey: #8692a6;
+    --text-color: #084236;
+}
+
+@font-face {
     font-family: "vi-regular";
     src: url(/assets/fonts/Vi-Regular.otf);
-  
-  }
-  
-  @font-face {
+}
+
+@font-face {
     font-family: "vi-bold";
     src: url(/assets/fonts/Vi-Bold.otf);
-  }
-  @font-face {
+}
+
+@font-face {
     font-family: "vi-SemiBold";
     src: url(/assets/fonts/Vi-SemiBold.otf);
-  }
-  
-  
-  
-  
-  .notice {
-   
+}
+
+.notice {
     color: #721c24 !important;
     font-weight: 500;
-  }
-  
-  .alert {
-   
+}
+
+.alert {
     color: #721c24 !important;
     font-weight: 500;
     margin-bottom: 0 !important;
     padding: 0 !important;
     text-align: center;
-  }
-  
-  
-  @keyframes slide-down {
+}
+
+@keyframes slide-down {
     from {
         top: -50px !important;
         opacity: 0 !important;
@@ -85,101 +85,110 @@
         top: 20px !important;
         opacity: 1 !important;
     }
-  }
-  
-  @keyframes fade-in {
+}
+
+@keyframes fade-in {
     from {
         opacity: 0 !important;
     }
     to {
         opacity: 1 !important;
     }
-  }
-  
-  
-  .forget-btn{
+}
+
+.forget-btn {
     color: var(--red);
-  }
-  
-  
-  
-  .login_module {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  }
-  
-  .login_bg{
-  
+}
+
+.login_module {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.login_bg {
     background-repeat: no-repeat;
     background-size: cover;
-  
-    background-image: url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg');  
-  }
-  
-  img {
+    background-image: url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg');
+}
+
+img {
     max-width: 100%;
     height: auto;
-  }
-  
-  /* Style for the welcome message */
-  h2 {
+}
+
+
+/* Style for the welcome message */
+
+h2 {
     font-size: 24px;
     margin-bottom: 20px;
-  }
-  
-  /* Style for the form */
-  .login-content, .otp-content , .create-new-password-content , .forget-password-content{
+}
+
+
+/* Style for the form */
+
+.login-content,
+.otp-content,
+.create-new-password-content,
+.forget-password-content {
     width: 100%;
     max-width: 380px;
-  }
-  
-  /* Style for form inputs */
-  .form-group {
+}
+
+
+/* Style for form inputs */
+
+.form-group {
     margin-bottom: 12px;
-  }
-  
-  .form-control {
+}
+
+.form-control {
     width: 100%;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
-  }
-  
-  /* Style for the checkbox */
-  .form-check-label {
+}
+
+
+/* Style for the checkbox */
+
+.form-check-label {
     font-family: "Open Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
     font-size: 14px;
-  }
-  
-  /* Style for the forgot password link */
-  
-  
-  /* Style for the login button */
-  .btn {
+}
+
+
+/* Style for the forgot password link */
+
+
+/* Style for the login button */
+
+.btn {
     width: 100%;
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
-  }
-  
-  .btn1 {
+}
+
+.btn1 {
     width: 100%;
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
-  }
-  
-  .btn-danger {
-    background-color: #dc3545; /* Red color */
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    /* Red color */
     border: none;
     color: #fff;
-  }
-  
-  .login-sec {
+}
+
+.login-sec {
     border-radius: 42px;
     border: 1px solid rgba(58, 58, 51, 0.40);
     background: rgba(255, 255, 255, 0.90);
@@ -188,224 +197,214 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-  }
-  
-  
-  .password-toggle {
+}
+
+.password-toggle {
     cursor: pointer;
     position: absolute;
     right: 10px;
     top: 70%;
     transform: translateY(-50%);
-    color: #007bff; /* Change color as needed */
-  }
-  
-  
-  .login-content p {
+    color: #007bff;
+    /* Change color as needed */
+}
+
+.login-content p {
     font-family: "Open Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
     width: 60%;
     margin: auto;
-  }
-  
-  .form-group label{
-  
+}
+
+.form-group label {
     font-family: "Open Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
-  
-  }
-  
-  
-  span.password-toggle i {
+}
+
+span.password-toggle i {
     color: #667085;
-  }
-  
-  .check-forgot{
+}
+
+.check-forgot {
     display: flex;
     align-items: center;
-  }
-  
-  .check-forgot {
+}
+
+.check-forgot {
     display: flex !important;
     align-items: center;
     justify-content: space-between;
-  }
-  
-  .form-check .form-check-input{
-  
+}
+
+.form-check .form-check-input {
     border: 1px solid #667085;
-  
-  
-  }
-  
-  .check-box {
+}
+
+.check-box {
     display: flex;
     gap: 8px;
-  }
-  
-  
-  .form-check-label {
+}
+
+.form-check-label {
     color: #747980;
     font-size: 14px;
-  }
-  .form-check a{
-  
+}
+
+.form-check a {
     font-family: "Open Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
     color: #8B0203;
-  }
-  
-  /* .form-control {
+}
+
+
+/* .form-control {
    
     padding: 0.375rem 0.75rem 0.375rem 1.5rem;
    
   } */
-  
-  .login-sec .btn{
+
+.login-sec .btn {
     background-color: #8B0203;
     color: #FFFFFF;
-  }
-  
-  
-  
-  .login-sec h3{
+}
+
+.login-sec h3 {
     font-family: "Open Sans", sans-serif;
     font-weight: 500;
     font-style: normal;
-  }
-  
-  .login-sec p{
-  font-size: 14px;
-  
-  }
-  .form-check-input:checked, .form-switch .on-off-toggler.form-check-input:checked {
+}
+
+.login-sec p {
+    font-size: 14px;
+}
+
+.form-check-input:checked,
+.form-switch .on-off-toggler.form-check-input:checked {
     background-color: var(--red) !important;
     border: #01c875 !important;
-  }
-  
-  
-  input#email,input#forgetEmail,input#newPassword,input#confirmPassword {
-        background-repeat: no-repeat;
-        padding: 0.375rem 2rem  0.375rem 0.7rem;
-    }
-  
-  input#password {
-  
-    padding: 0.375rem 2rem  0.375rem 0.7rem;
-  
-    
-  }
-  
-  .lock-icon {
+}
+
+input#email,
+input#forgetEmail,
+input#newPassword,
+input#confirmPassword {
+    background-repeat: no-repeat;
+    padding: 0.375rem 2rem 0.375rem 0.7rem;
+}
+
+input#password {
+    padding: 0.375rem 2rem 0.375rem 0.7rem;
+}
+
+.lock-icon {
     width: 4% !IMPORTANT;
     cursor: pointer;
     position: absolute;
     left: 9px;
     top: 71%;
     transform: translateY(-50%);
-  }
-  
-  .paganation-sec {
-  margin-bottom: 1rem;
-  align-items: baseline; 
-   justify-content: space-between;
-  }
-  
-  .paganation {
-  flex-direction: column;
-  align-items: end;
-  }
-  
-  .back-btn {
-  gap: 4px;
-  }
-  
-  .submit-forget-password{
-  background-color: var(--red) !important;
-  }
-  
-  
-  .forget-password-content p {
-  
-  color: var(--light-grey) !important;
-  
-  }
-  
-  .forget-password-content h2 {
-  font-weight: 400;
-  }
-  
-  .back-btn a{
-  color: var(--grey);
-  
-  }
-  .forget-password-content .back-btn a{
-  color: var(--grey);
-  }
-  
-  .paganation span{
-  color: var(--red);
-  
-  }
-  
-  .paganation p{
-  
-  }
-  
-  
-  .submit-otp,.submit-create-password{
-  background-color: var(--red) !important;
-  margin-top: 48px!important;
-  }
-  
-  .mark-indicator{
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: flex-start;
-  }
-  .pass-len,.pass-upp,.pass-num,.pass-char{
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  }
-  .mark-indicator p {
-  color: var(--light-grey );
-  margin: 0;
-  font-size: 14px;
-  }
-  
-  
-  .otp-content p{
-  font-size: 0.9rem;
-  }
-  .otp-content p span{
-  color: var(--red);
-  }
-  .another-way{
-  }
-  
-  .contentpo {
-    display: none; /* Hide all content initially */
-  }
-  
-  
-  
-  .another-way {
-  color: var(--light-grey);
-  font-size: 0.8px;
-  text-align: center;
-  margin-top: 1.5rem;
-  }
-  
-  .another-way a{
-      color: var(--red) !important;
-  }
-  
-  /* @media screen and (max-width: 1200px) {
+}
+
+.paganation-sec {
+    margin-bottom: 1rem;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.paganation {
+    flex-direction: column;
+    align-items: end;
+}
+
+.back-btn {
+    gap: 4px;
+}
+
+.submit-forget-password {
+    background-color: var(--red) !important;
+}
+
+.forget-password-content p {
+    color: var(--light-grey) !important;
+}
+
+.forget-password-content h2 {
+    font-weight: 400;
+}
+
+.back-btn a {
+    color: var(--grey);
+}
+
+.forget-password-content .back-btn a {
+    color: var(--grey);
+}
+
+.paganation span {
+    color: var(--red);
+}
+
+.paganation p {}
+
+.submit-otp,
+.submit-create-password {
+    background-color: var(--red) !important;
+    margin-top: 48px!important;
+}
+
+.mark-indicator {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.pass-len,
+.pass-upp,
+.pass-num,
+.pass-char {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.mark-indicator p {
+    color: var(--light-grey);
+    margin: 0;
+    font-size: 14px;
+}
+
+.otp-content p {
+    font-size: 0.9rem;
+}
+
+.otp-content p span {
+    color: var(--red);
+}
+
+.another-way {}
+
+.contentpo {
+    display: none;
+    /* Hide all content initially */
+}
+
+.another-way {
+    color: var(--light-grey);
+    font-size: 0.8px;
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.another-way a {
+    color: var(--red) !important;
+}
+
+
+/* @media screen and (max-width: 1200px) {
   div#forgetPasswordContainer {
     width: 60%;
     margin: 0rem auto 30% auto;
@@ -430,28 +429,35 @@
   }
   
   } */
-  
-  @media only screen and (max-width: 1400px) {
+
+@media only screen and (max-width: 1400px) {
     .logo_img {
-      width:200px;height: 200px; margin:auto;
+        width: 200px;
+        height: 200px;
+        margin: auto;
     }
-  }
-  
-  @media only screen and (max-width: 1200px) {
+}
+
+@media only screen and (max-width: 1200px) {
     .logo_img {
-      width:175px;height: 175px; margin:auto;
+        width: 175px;
+        height: 175px;
+        margin: auto;
     }
-  }
-  
-  @media only screen and (max-width: 1100px) {
+}
+
+@media only screen and (max-width: 1100px) {
     .logo_img {
-      width:170px;height: 170px; margin:auto;
+        width: 170px;
+        height: 170px;
+        margin: auto;
     }
-  }
-  
-  
-  @media only screen and (max-width: 1000px) {
+}
+
+@media only screen and (max-width: 1000px) {
     .logo_img {
-      width:160px;height: 160px; margin:auto;
+        width: 160px;
+        height: 160px;
+        margin: auto;
     }
-  }
+}

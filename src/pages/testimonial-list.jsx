@@ -10,6 +10,12 @@ const TestimonialList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+  });
+  const pageSize = 10; // Or any value that suits you
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +25,11 @@ const TestimonialList = () => {
           "https://panchshil-super.lockated.com/testimonials.json?company_id=1"
         );
         setTestimonials(response.data.testimonials || []);
+        setPagination((prevState) => ({
+          ...prevState,
+          total_count: response.data.testimonials.length,
+          total_pages: Math.ceil(response.data.testimonials.length / pageSize),
+        }));
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch testimonials.");
@@ -43,6 +54,20 @@ const TestimonialList = () => {
       )
     : testimonials;
 
+  const handlePageChange = (pageNumber) => {
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber,
+    }));
+  };
+
+  const displayedTestimonials = filteredTestimonials
+    .slice(
+      (pagination.current_page - 1) * pageSize,
+      pagination.current_page * pageSize
+    )
+    .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort testimonials by ID (asc)
+
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
@@ -62,6 +87,8 @@ const TestimonialList = () => {
                     className="form-control tbl-search table_search"
                     placeholder="Type your keywords here"
                     fdprocessedid="u38fp"
+                    value={searchQuery}
+                    onChange={handleSearch}
                   />
                   <div className="input-group-append">
                     <button
@@ -137,8 +164,8 @@ const TestimonialList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredTestimonials.length > 0 ? (
-                        filteredTestimonials.map((testimonial) => (
+                      {displayedTestimonials.length > 0 ? (
+                        displayedTestimonials.map((testimonial) => (
                           <tr key={testimonial.id}>
                             <td>{testimonial.id}</td>
                             <td>{testimonial.user_name}</td>
@@ -200,11 +227,122 @@ const TestimonialList = () => {
                     </tbody>
                   </table>
                 </div>
-                
               )}
-              
+              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                <ul className="pagination justify-content-center d-flex">
+                  {/* First Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(1)}
+                    >
+                      First
+                    </button>
+                  </li>
+
+                  {/* Previous Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                      disabled={pagination.current_page === 1}
+                    >
+                      Prev
+                    </button>
+                  </li>
+
+                  {/* Dynamic Page Numbers */}
+                  {Array.from(
+                    { length: pagination.total_pages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
+                    <li
+                      key={pageNumber}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  ))}
+
+                  {/* Next Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                      disabled={
+                        pagination.current_page === pagination.total_pages
+                      }
+                    >
+                      Next
+                    </button>
+                  </li>
+
+                  {/* Last Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(pagination.total_pages)}
+                      disabled={
+                        pagination.current_page === pagination.total_pages
+                      }
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
+
+                {/* Showing entries count */}
+                <div>
+                  <p>
+                    Showing{" "}
+                    {Math.min(
+                      (pagination.current_page - 1) * pageSize + 1 || 1,
+                      pagination.total_count
+                    )}{" "}
+                    to{" "}
+                    {Math.min(
+                      pagination.current_page * pageSize,
+                      pagination.total_count
+                    )}{" "}
+                    of {pagination.total_count} entries
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Pagination */}
         </div>
       </div>
     </div>
