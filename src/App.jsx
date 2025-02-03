@@ -26,7 +26,9 @@ import EditAmenities from "./pages/edit-amenities";
 import BannerEdit from "./pages/banner-edit";
 import TestimonialEdit from "./pages/testimonial-edit";
 import Register from "./pages/sign_pages/register";
-import BannerDetails from "./pages/banner-details";
+import Forgot from "./pages/sign_pages/Forgot";
+import ForgotOtp from "./pages/sign_pages/ForgotOtp";
+import CreatePassword from "./pages/sign_pages/CreatePassword";
 
 function App() {
   return (
@@ -35,6 +37,12 @@ function App() {
       <Routes>
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<Forgot />} />
+        <Route path="/forgot-otp" element={<ForgotOtp />} />
+        <Route path="/reset-password" element={<CreatePassword />} />
+
+
+
 
         <Route
           path="/"

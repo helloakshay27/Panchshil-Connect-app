@@ -27,18 +27,16 @@ const Register = () => {
       return;
     }
 
-    try {
-      const response = await axios.post(
-        " https://panchshil-super.lockated.com/users",
-        {
-          email,
-          firstname,
-          lastname,
-          mobile,
-        }
-      );
 
-      console.log(response.data.access_token);
+
+        try {
+            const response = await axios.post(" https://panchshil-super.lockated.com/users", {
+
+                email,
+                firstname,
+                lastname,
+                mobile,
+            });
 
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);

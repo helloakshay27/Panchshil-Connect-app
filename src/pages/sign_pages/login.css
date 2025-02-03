@@ -285,126 +285,122 @@ span.password-toggle i {
 .form-switch .on-off-toggler.form-check-input:checked {
     background-color: var(--red) !important;
     border: #01c875 !important;
-}
+  }
+  
+  
+  input#email,input#forgetEmail,input#newPassword,input#confirmPassword {
+        background-repeat: no-repeat;
+        /* padding: 0.375rem 2rem  0.375rem 0.7rem; */
+    }
+  
 
-input#email,
-input#forgetEmail,
-input#newPassword,
-input#confirmPassword {
-    background-repeat: no-repeat;
-    padding: 0.375rem 2rem 0.375rem 0.7rem;
-}
-
-input#password {
-    padding: 0.375rem 2rem 0.375rem 0.7rem;
-}
-
-.lock-icon {
+  
+  .lock-icon {
     width: 4% !IMPORTANT;
     cursor: pointer;
     position: absolute;
     left: 9px;
     top: 71%;
     transform: translateY(-50%);
-}
-
-.paganation-sec {
-    margin-bottom: 1rem;
-    align-items: baseline;
-    justify-content: space-between;
-}
-
-.paganation {
-    flex-direction: column;
-    align-items: end;
-}
-
-.back-btn {
-    gap: 4px;
-}
-
-.submit-forget-password {
-    background-color: var(--red) !important;
-}
-
-.forget-password-content p {
-    color: var(--light-grey) !important;
-}
-
-.forget-password-content h2 {
-    font-weight: 400;
-}
-
-.back-btn a {
-    color: var(--grey);
-}
-
-.forget-password-content .back-btn a {
-    color: var(--grey);
-}
-
-.paganation span {
-    color: var(--red);
-}
-
-.paganation p {}
-
-.submit-otp,
-.submit-create-password {
-    background-color: var(--red) !important;
-    margin-top: 48px!important;
-}
-
-.mark-indicator {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
-}
-
-.pass-len,
-.pass-upp,
-.pass-num,
-.pass-char {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-}
-
-.mark-indicator p {
-    color: var(--light-grey);
-    margin: 0;
-    font-size: 14px;
-}
-
-.otp-content p {
-    font-size: 0.9rem;
-}
-
-.otp-content p span {
-    color: var(--red);
-}
-
-.another-way {}
-
-.contentpo {
-    display: none;
-    /* Hide all content initially */
-}
-
-.another-way {
-    color: var(--light-grey);
-    font-size: 0.8px;
-    text-align: center;
-    margin-top: 1.5rem;
-}
-
-.another-way a {
-    color: var(--red) !important;
-}
-
-
-/* @media screen and (max-width: 1200px) {
+  }
+  
+  .paganation-sec {
+  margin-bottom: 1rem;
+  align-items: baseline; 
+   justify-content: space-between;
+  }
+  
+  .paganation {
+  flex-direction: column;
+  align-items: end;
+  }
+  
+  .back-btn {
+  gap: 4px;
+  }
+  
+  .submit-forget-password{
+  background-color: var(--red) !important;
+  }
+  
+  
+  .forget-password-content p {
+  
+  color: var(--light-grey) !important;
+  
+  }
+  
+  .forget-password-content h2 {
+  font-weight: 400;
+  }
+  
+  .back-btn a{
+  color: var(--grey);
+  
+  }
+  .forget-password-content .back-btn a{
+  color: var(--grey);
+  }
+  
+  .paganation span{
+  color: var(--red);
+  
+  }
+  
+  .paganation p{
+  
+  }
+  
+  
+  .submit-otp,.submit-create-password{
+  background-color: var(--red) !important;
+  }
+  
+  .mark-indicator{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+  }
+  .pass-len,.pass-upp,.pass-num,.pass-char{
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  }
+  .mark-indicator p {
+  color: var(--light-grey );
+  margin: 0;
+  font-size: 14px;
+  }
+  
+  
+  .otp-content p{
+  font-size: 0.9rem;
+  }
+  .otp-content p span{
+  color: var(--red);
+  }
+  .another-way{
+  }
+  
+  .contentpo {
+    display: none; /* Hide all content initially */
+  }
+  
+  
+  
+  .another-way {
+  color: var(--light-grey);
+  font-size: 0.8px;
+  text-align: center;
+  margin-top: 1.5rem;
+  }
+  
+  .another-way a{
+      color: var(--red) !important;
+  }
+  
+  /* @media screen and (max-width: 1200px) {
   div#forgetPasswordContainer {
     width: 60%;
     margin: 0rem auto 30% auto;

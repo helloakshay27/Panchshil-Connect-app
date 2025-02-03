@@ -135,6 +135,12 @@ const SignIn = () => {
         }
     };
 
+
+    const regiterPage = () => {
+
+        navigate("/register")
+    };
+
     return (
         <div>
             <main>
@@ -181,7 +187,7 @@ const SignIn = () => {
                                     </div>
 
                                     {selectedContent === "content1" && (
-                                        <form onSubmit={handlePasswordLogin} className="mt-2 login-content">
+                                        <div  className="mt-2 login-content">
                                             <div className="form-group position-relative">
                                                 <label className="mb-1" htmlFor="email">Email</label>
                                                 <input
@@ -207,20 +213,25 @@ const SignIn = () => {
                                                 />
                                             </div>
                                             <div className="d-flex justify-content-start mt-2 mb-3 gap-2">
-                                                <a className="forget-btn" href="/users/password/new">
+                                                <a className="forget-btn" href="/forgot-password">
                                                     Forgot password?
 
                                                 </a>
                                                 <br />
                                             </div>
+                                          
 
                                             {error && <p className="text-danger">{error}</p>}
-                                            <button type="submit" className="btn btn-danger mt-2">
+                                            <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger mt-2">
                                                 {loading ? "Logging in..." : "Login"}
                                             </button>
+                                            <button className="btn purple-btn2 mt-3 " onClick={regiterPage} style={{ width: "100%" ,background:"white" , color:"black"}}> 
+                                                {loading ? "Register in..." : "Register"}
+                                            </button>
+                                        
 
 
-                                        </form>
+                                        </div>
                                     )}
 
                                     {selectedContent === "content2" && (
@@ -274,6 +285,8 @@ const SignIn = () => {
                                                 <button type="submit" className="btn btn-danger mt-2">
                                                     Verify OTP
                                                 </button>
+
+
                                             )}
                                         </form>
                                     )}
