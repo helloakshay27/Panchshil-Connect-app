@@ -8,7 +8,6 @@ import "../mor.css";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
-
 const ProjectDetailsEdit = () => {
   const { id } = useParams();
 
@@ -83,14 +82,18 @@ const ProjectDetailsEdit = () => {
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/projects/${id}.json`, {
-          headers: { Authorization: AUTH_TOKEN },
-        });
+        const response = await axios.get(
+          `${API_BASE_URL}/projects/${id}.json`,
+          {
+            headers: { Authorization: AUTH_TOKEN },
+          }
+        );
         const projectData = response.data;
         setFormData({
           type_of_project: projectData.property_type || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
-          Project_Construction_Status: projectData.Project_Construction_Status || "",
+          Project_Construction_Status:
+            projectData.Project_Construction_Status || "",
           Configuration_Type: projectData.building_type || "",
           Project_Name: projectData.Project_Name || "",
           location: projectData.location || "",
@@ -167,7 +170,7 @@ const ProjectDetailsEdit = () => {
 
   const validateForm = (formData) => {
     const errors = [];
-  
+
     // Required fields (text fields)
     if (!formData.property_type) {
       errors.push("Project Type is required.");
@@ -241,7 +244,7 @@ const ProjectDetailsEdit = () => {
       errors.push("Land Area is required.");
       return errors; // Return the first error immediately
     }
-  
+
     // Address validation (nested fields)
     if (!formData.address || !formData.address.addressLine1) {
       errors.push("Address Line 1 is required.");
@@ -263,7 +266,7 @@ const ProjectDetailsEdit = () => {
       errors.push("Country is required.");
       return errors; // Return the first error immediately
     }
-  
+
     // File validation (files must be present)
     if (!formData.brochure) {
       errors.push("Brochure is required.");
@@ -273,10 +276,9 @@ const ProjectDetailsEdit = () => {
       errors.push("At least one 2D image is required.");
       return errors; // Return the first error immediately
     }
-  
+
     return errors; // Return the first error message if any
   };
-  
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -301,22 +303,24 @@ const ProjectDetailsEdit = () => {
       } else if (key === "brochure" && value) {
         data.append("project[brochure]", value);
       } else if (key === "two_d_images" && value.length > 0) {
-        value.forEach((file) =>
-          data.append("project[two_d_images][]", file)
-        );
+        value.forEach((file) => data.append("project[two_d_images][]", file));
       } else {
         data.append(`project[${key}]`, value);
       }
     });
 
     try {
-      const response = await axios.put(`${API_BASE_URL}/projects/${id}.json`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer 0XH8lxmc2kQVcso9Dr86ymFfso2dctjn6ZDMBCnmN38`,
-        },
-      });
-      toast.success("Project Updated successfully")
+      const response = await axios.put(
+        `${API_BASE_URL}/projects/${id}.json`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer 0XH8lxmc2kQVcso9Dr86ymFfso2dctjn6ZDMBCnmN38`,
+          },
+        }
+      );
+      toast.success("Project Updated successfully");
       console.log(response.data);
       Navigate("/project-list");
     } catch (error) {
@@ -358,7 +362,6 @@ const ProjectDetailsEdit = () => {
                         {type.property_type}
                       </option>
                     ))}
-
                   </select>
                 </div>
               </div>
@@ -382,7 +385,10 @@ const ProjectDetailsEdit = () => {
                     className="form-control form-select"
                     style={{ width: "100%" }}
                     name="Project_Construction_Status"
-                    value={formData.Project_Construction_Status || project?.building_type}
+                    value={
+                      formData.Project_Construction_Status ||
+                      project?.building_type
+                    }
                     onChange={handleChange}
                   >
                     <option value="" disabled selected>
@@ -390,7 +396,6 @@ const ProjectDetailsEdit = () => {
                     </option>
                     <option value="Completed">Completed </option>
                     <option value="Ready-To-Move-in">Ready To Move in </option>
-
                   </select>
                 </div>
               </div>
@@ -445,7 +450,10 @@ const ProjectDetailsEdit = () => {
                     rows={1}
                     placeholder="Enter ..."
                     name="Project_Description"
-                    value={formData.Project_Description || project?.Project_Description}
+                    value={
+                      formData.Project_Description ||
+                      project?.Project_Description
+                    }
                     onChange={handleChange}
                   />
                 </div>
@@ -462,7 +470,6 @@ const ProjectDetailsEdit = () => {
                     value={formData.Price_Onward || project?.price}
                     onChange={handleChange}
                   />
-
                 </div>
               </div>
               <div className="col-md-3 mt-2">
@@ -473,7 +480,10 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="Project_Size_Sq_Mtr"
-                    value={formData.Project_Size_Sq_Mtr || project?.project_size_sq_mtr}
+                    value={
+                      formData.Project_Size_Sq_Mtr ||
+                      project?.project_size_sq_mtr
+                    }
                     onChange={handleChange}
                   />
                 </div>
@@ -486,7 +496,9 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name=" "
-                    value={formData.Project_Size_Sq_Ft || project?.project_size_sq_ft}
+                    value={
+                      formData.Project_Size_Sq_Ft || project?.project_size_sq_ft
+                    }
                     onChange={handleChange}
                   />
                 </div>
@@ -499,7 +511,10 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="Rera_Carpet_Area_Sq_M"
-                    value={formData.Rera_Carpet_Area_Sq_M || project?.rera_carpet_area_sq_mtr}
+                    value={
+                      formData.Rera_Carpet_Area_Sq_M ||
+                      project?.rera_carpet_area_sq_mtr
+                    }
                     onChange={handleChange}
                   />
                 </div>
@@ -512,7 +527,10 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="Rera_Carpet_Area_sqft"
-                    value={formData.Rera_Carpet_Area_sqft || project?.rera_carpet_area_sqft}
+                    value={
+                      formData.Rera_Carpet_Area_sqft ||
+                      project?.rera_carpet_area_sqft
+                    }
                     onChange={handleChange}
                   />
                 </div>
@@ -571,9 +589,7 @@ const ProjectDetailsEdit = () => {
                       <option key={index} value={ammit.id}>
                         {ammit.name}
                       </option>
-                    ))
-
-                    }
+                    ))}
                   </select>
                 </div>
               </div>
@@ -647,8 +663,6 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-
-
               {/* City, State, Pin, Country Section */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
@@ -712,20 +726,28 @@ const ProjectDetailsEdit = () => {
           <div className="card-body">
             <div className="row">
               {/* Brochure Upload */}
-            
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
-                Brochure{" "}
+                  Brochure{" "}
                   <span style={{ color: "red", fontSize: "16px" }}>*</span>
                 </h5>
+
                 <button
-                  className="purple-btn2 mt-3"
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
                   onClick={() => document.getElementById("brochure").click()}
                 >
-                  <span className="material-symbols-outlined align-text-top me-2">
-                    add
-                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
                   <span>Add</span>
                 </button>
                 <input
@@ -736,7 +758,6 @@ const ProjectDetailsEdit = () => {
                   accept=".pdf,.docx"
                   onChange={handleChange}
                   style={{ display: "none" }}
-
                 />
               </div>
 
@@ -777,13 +798,24 @@ const ProjectDetailsEdit = () => {
                   2D Images{" "}
                   <span style={{ color: "red", fontSize: "16px" }}>*</span>
                 </h5>
+
                 <button
-                  className="purple-btn2 mt-3"
-                  onClick={() => document.getElementById("two_d_images").click()}
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  onClick={() =>
+                    document.getElementById("two_d_images").click()
+                  }
                 >
-                  <span className="material-symbols-outlined align-text-top me-2">
-                    add
-                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
                   <span>Add</span>
                 </button>
                 <input
@@ -812,14 +844,21 @@ const ProjectDetailsEdit = () => {
                       {formData.two_d_images.map((file, index) => (
                         <tr key={index}>
                           <td> {file.document_file_name}</td>
-                          <td><img style={{ width: "70px" }} src={file.document_url} alt="" /></td>
+                          <td>
+                            <img
+                              style={{ width: "70px" }}
+                              src={file.document_url}
+                              alt=""
+                            />
+                          </td>
 
-                     
                           <td>
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() => handleDiscardFile("two_d_images", index)}
+                              onClick={() =>
+                                handleDiscardFile("two_d_images", index)
+                              }
                             >
                               x
                             </button>

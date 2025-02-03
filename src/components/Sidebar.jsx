@@ -458,7 +458,7 @@ const Sidebar = () => {
                       fill="#DD7007"
                     ></path>
                   </svg>
-                  <span className="menu-link-text">Testimonical</span>
+                  <span className="menu-link-text">Testimonial</span>
                 </a>
               </li>
               <li className="menu-item d-flex">
@@ -483,7 +483,6 @@ const Sidebar = () => {
                   <span className="menu-link-text">Gallery</span>
                 </a>
               </li>
-      
                          
             </ul>
           </div>
