@@ -465,7 +465,7 @@ const Sidebar = () => {
                 <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
-                  href="/gallery"
+                  href="/gallery-list"
                   data-section="security"
                 >
                   <svg

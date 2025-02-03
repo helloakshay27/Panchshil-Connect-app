@@ -57,9 +57,7 @@ const Members = () => {
                 <Link to="/testimonial-edit">TestimonialEdit</Link>
               </li>
 
-              <li>
-                <Link to="/gallery">Gallery</Link>
-              </li>
+           
               <li>
                 <Link to="/gallery-details">Gallery Details</Link>
               </li>

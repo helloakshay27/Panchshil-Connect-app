@@ -79,7 +79,7 @@ const Register = () => {
                   <form
                     onSubmit={handlePasswordLogin}
                     className="mt-2 login-content"
-                    style={{ width: "260px" }}
+                    style={{ width: "295px" }}
                   >
                     <div className="form-group position-relative">
                       <label className="mb-1" htmlFor="email">
