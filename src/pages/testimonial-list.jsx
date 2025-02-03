@@ -152,7 +152,7 @@ const TestimonialList = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                        <th>Id</th>
+                        <th>Sr No</th>
                         <th>User Name</th>
                         <th>User Type</th>
                         <th>Content</th>

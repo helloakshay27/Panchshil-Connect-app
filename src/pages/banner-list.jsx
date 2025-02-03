@@ -170,10 +170,10 @@ const BannerList = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                        <th>Sr. No.</th>
+                        <th>Sr No</th>
                         <th>Company ID</th>
                         <th>Site</th>
-                        <th>Name</th>
+                        <th> Company Name</th>
                         <th>Title</th>
                         <th>Banner</th>
                         <th>Status</th>

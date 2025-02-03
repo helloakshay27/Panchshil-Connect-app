@@ -43,7 +43,7 @@ const BannerEdit = () => {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4`,
+            Authorization: `Bearer hnbLunLzzG9ft5dyVulTBpuQp2mgvfZe_69ukCTa8QQ`,
             "Content-Type": "application/json",
           },
         }
@@ -173,7 +173,6 @@ const BannerEdit = () => {
                     </div>
                   </div>
                   <div className="col-md-3 d-flex gap-3">
-                    
                     {formData.previewImage ? (
                       <img
                         src={formData.previewImage}

@@ -11,9 +11,16 @@ import axios from "axios";
 const ProjectDetailsList = () => {
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  const pageSize = 10; // Items per page
 
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -26,27 +33,46 @@ const ProjectDetailsList = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        const projectsData = response.data?.projects || [];
+        setProjects(projectsData);
 
-        setProjects(response.data?.projects);
+        setPagination({
+          current_page: 1,
+          total_count: projectsData.length,
+          total_pages: Math.ceil(projectsData.length / pageSize),
+        });
       } catch (error) {
         console.error("Error fetching projects:", error);
+        setError("Unable to fetch project data");
       }
     };
 
     fetchProjects();
   }, []);
 
-  console.log("projects", projects);
+  const handlePageChange = (pageNumber) => {
+    setPagination((prev) => ({
+      ...prev,
 
+      current_page: pageNumber,
+    }));
+  };
+
+  const displayedProjects = projects
+
+    .slice(
+      (pagination.current_page - 1) * pageSize,
+
+      pagination.current_page * pageSize
+    )
+
+    .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort projects by ID (ascending)
 
   return (
     <>
-
       <div className="d-flex justify-content-end px-4 pt-2 mt-3 align-items-center">
         <div className="col-md-4 pe-2 pt-2">
-          <form 
-            action="/projects"
-          >
+          <form action="/projects">
             <div className="input-group">
               <input
                 type="text"
@@ -60,7 +86,7 @@ const ProjectDetailsList = () => {
                 <button
                   type="submit"
                   className="btn btn-md btn-default"
-                  fdprocessedid="2wqzh" 
+                  fdprocessedid="2wqzh"
                 >
                   <svg
                     width={16}
@@ -83,7 +109,7 @@ const ProjectDetailsList = () => {
             </div>
           </form>{" "}
         </div>
-        <div className="card-tools mt-2">
+        <div className="card-tools mt-3 mb-1">
           <button
             className="purple-btn2 rounded-3"
             fdprocessedid="xn3e6n"
@@ -109,14 +135,11 @@ const ProjectDetailsList = () => {
             <h3 className="card-title">Project List</h3>
           </div>
           <div className="card-body mt-4 pb-4 pt-0">
-
             <div className="tbl-container mt-4 px-1">
-              <table className="w-100" style={{ width: "max-content" }}>
+              <table className="w-110" style={{ width: "max-content" }}>
                 <thead>
                   <tr>
-
-                  <th>Sr No</th>
-
+                    <th>Sr No</th>
 
                     <th>Project Name</th>
 
@@ -137,18 +160,14 @@ const ProjectDetailsList = () => {
                     <th>Amenities</th>
                     <th>Specifications</th>
                     <th>Action</th>
-
-
                   </tr>
                 </thead>
                 <tbody>
                   {projects?.map((project, index) => (
                     <tr key={index}>
-                    
                       <td>{index + 1}</td>
 
                       <td>{project?.project_name || "N/A"}</td>
-
 
                       <td>{project?.property_type || "N/A"}</td>
                       <td>{project?.sfdc_project_id || "N/As"}</td>
@@ -157,7 +176,9 @@ const ProjectDetailsList = () => {
                       <td>{project?.building_type || "N/A"}</td>
                       <td>
                         {project?.location
-                          ? `${project.location}, ${project.location || "N/A"}, ${project.location || "N/A"}`
+                          ? `${project.location}, ${
+                              project.location || "N/A"
+                            }, ${project.location || "N/A"}`
                           : "N/A"}
                       </td>
                       <td>{project?.project_description || "N/A"}</td>
@@ -172,48 +193,166 @@ const ProjectDetailsList = () => {
                       <td style={{ width: "200px" }}>
                         {project?.amenities?.length > 0
                           ? project?.amenities.map((amenity, idx) => (
-                            <div key={idx}>
-                              {amenity.name}{" "}
-                              <img
-                                src={amenity.icon_url}
-                                alt={amenity.name}
-                                style={{ width: "20px", marginLeft: "5px" }}
-                              />
-                            </div>
-                          ))
+                              <div key={idx}>
+                                {amenity.name}{" "}
+                                <img
+                                  src={amenity.icon_url}
+                                  alt={amenity.name}
+                                  style={{ width: "20px", marginLeft: "5px" }}
+                                />
+                              </div>
+                            ))
                           : "No amenities"}
                       </td>
                       <td>
                         {project?.specifications?.length > 0
                           ? project?.specifications.map((spec, idx) => (
-                            <div key={idx}>{spec.name}</div>
-                          ))
+                              <div key={idx}>{spec.name}</div>
+                            ))
                           : "No specifications"}
                       </td>
                       <td>
-
-<a href={`/project-edit/${project?.id || "N/A"}`}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-  <path d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z" fill="#667085" />
-  <path d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z" fill="#667085" />
-</svg>
-</a>
-<a href={`/project-details/${project?.id || "N/A"}`}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"></path><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"></path></svg>
-</a>
-</td>
-
+                        <a href={`/project-edit/${project?.id || "N/A"}`}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
+                              fill="#667085"
+                            />
+                            <path
+                              d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
+                              fill="#667085"
+                            />
+                          </svg>
+                        </a>
+                        <a href={`/project-details/${project?.id || "N/A"}`}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-eye"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"></path>
+                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"></path>
+                          </svg>
+                        </a>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
-
               </table>
+            </div>
+            {/* Pagination */}
 
+            <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+              <ul className="pagination">
+                <li
+                  className={`page-item ${
+                    pagination.current_page === 1 ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(1)}
+                  >
+                    First
+                  </button>
+                </li>
 
+                <li
+                  className={`page-item ${
+                    pagination.current_page === 1 ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      handlePageChange(pagination.current_page - 1)
+                    }
+                  >
+                    Prev
+                  </button>
+                </li>
+
+                {Array.from(
+                  { length: pagination.total_pages },
+
+                  (_, index) => index + 1
+                ).map((page) => (
+                  <li
+                    key={page}
+                    className={`page-item ${
+                      pagination.current_page === page ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+
+                <li
+                  className={`page-item ${
+                    pagination.current_page === pagination.total_pages
+                      ? "disabled"
+                      : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      handlePageChange(pagination.current_page + 1)
+                    }
+                  >
+                    Next
+                  </button>
+                </li>
+
+                <li
+                  className={`page-item ${
+                    pagination.current_page === pagination.total_pages
+                      ? "disabled"
+                      : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(pagination.total_pages)}
+                  >
+                    Last
+                  </button>
+                </li>
+              </ul>
+
+              <div>
+                <p>
+                  Showing{" "}
+                  {Math.min(
+                    (pagination.current_page - 1) * pageSize + 1 || 1,
+                    pagination.total_count
+                  )}{" "}
+                  to{" "}
+                  {Math.min(
+                    pagination.current_page * pageSize,
+                    pagination.total_count
+                  )}{" "}
+                  of {pagination.total_count} entries
+                </p>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
-
     </>
   );
 };

@@ -759,6 +759,7 @@ const ProjectDetailsCreate = () => {
                   <div className="form-group">
                     <label htmlFor="two_d_images">2D Images</label>
                     <input
+                    
                       id="two_d_images"
                       className="form-control"
                       type="file"
