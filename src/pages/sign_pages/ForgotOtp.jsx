@@ -33,8 +33,8 @@ const ForgotOtp = () => {
                 otp,
             });
 
+            navigate("/reset-password");
             if (response.data.success) {
-                navigate("/reset-password");
             } else {
                 setError("Invalid OTP. Please try again.");
             }

@@ -24,8 +24,8 @@ const Forgot = () => {
                 username,
             });
 
+            navigate("/forgot-otp"); // Navigate to the next step
             if (response.data.success) {
-                navigate("/reset-password"); // Navigate to the next step
             } else {
                 setError(response.data.message || "Something went wrong");
             }
