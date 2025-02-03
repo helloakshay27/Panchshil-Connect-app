@@ -100,16 +100,16 @@ const Header = () => {
                 <a
                   className="nav-link active"
                   aria-current="page"
-                  href="./1CF_Main.html"
+                  href="/members"
                 >
                   Home
                 </a>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link className="nav-link" to="/dashboard">
                   Dashboard
                 </Link>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <a className="nav-link" href="./31Dashboard_Daily.html">
                   Setup
@@ -118,7 +118,7 @@ const Header = () => {
             </ul>
             <div className="header-icons me-5">
               <ul className="d-flex gap-4">
-                <li>
+                {/* <li>
                   <a href="">
                     <svg
                       width={16}
@@ -189,10 +189,10 @@ const Header = () => {
                       />
                     </svg>
                   </a>
-                </li>
+                </li> */}
                 <li>
                  <a style={{cursor
-                  :"pointer"
+                  :"pointer", color:"var(--red)", display:"flex", alignItems:"center", gap:"5px"
                  }} className=" "  onClick={handleOpen}>
                     <svg
                       width={18}
@@ -206,6 +206,8 @@ const Header = () => {
                         fill="#8B0203"
                       />
                     </svg>
+
+                    Profile
                     </a>
                 </li>
               </ul>

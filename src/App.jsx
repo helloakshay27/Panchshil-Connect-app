@@ -60,7 +60,7 @@ function App() {
         >
           <Route index element={<Navigate to="/members" />} />
 
-          <Route path="//members" element={<Members />} />
+          <Route path="/members" element={<Members />} />
           <Route path="/project-create" element={<ProjectDetailsCreate />} />
           <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
           <Route path="/project-details/:id" element={<ProjectDetails />} />
