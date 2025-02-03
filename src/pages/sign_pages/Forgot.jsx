@@ -17,6 +17,7 @@ const Forgot = () => {
         setLoading(true);
         setError("");
 
+        navigate("/forgot-otp"); // Navigate to the next step
         try {
             const response = await axios.post("/api/forgot-password", {
                 email,
@@ -24,7 +25,6 @@ const Forgot = () => {
                 username,
             });
 
-            navigate("/forgot-otp"); // Navigate to the next step
             if (response.data.success) {
             } else {
                 setError(response.data.message || "Something went wrong");

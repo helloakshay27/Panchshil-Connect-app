@@ -19,6 +19,7 @@ const ForgotOtp = () => {
         e.preventDefault();
         setError("");
         setLoading(true);
+        navigate("/reset-password");
 
         // OTP validation (assuming 6-digit OTP)
         if (!/^[0-9]{6}$/.test(otp)) {
@@ -33,7 +34,6 @@ const ForgotOtp = () => {
                 otp,
             });
 
-            navigate("/reset-password");
             if (response.data.success) {
             } else {
                 setError("Invalid OTP. Please try again.");

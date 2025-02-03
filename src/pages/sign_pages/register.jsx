@@ -29,14 +29,14 @@ const Register = () => {
 
 
 
-        try {
-            const response = await axios.post(" https://panchshil-super.lockated.com/users", {
+    try {
+      const response = await axios.post(" https://panchshil-super.lockated.com/users", {
 
-                email,
-                firstname,
-                lastname,
-                mobile,
-            });
+        email,
+        firstname,
+        lastname,
+        mobile,
+      });
 
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);
@@ -55,6 +55,11 @@ const Register = () => {
       setLoading(false);
     }
   };
+
+  const regiterPage = () => {
+
+    navigate("/login")
+};
 
   return (
     <div>
@@ -137,6 +142,10 @@ const Register = () => {
                     <button type="submit" className="btn btn-danger mt-2">
                       {loading ? "Register in..." : "Register"}
                     </button>
+                    <button className="btn purple-btn2 mt-3 " onClick={regiterPage} style={{ width: "100%", background: "white", color: "black" }}>
+                      {loading ? "Register in..." : "Register"}
+                    </button>
+
                   </form>
                 </div>
               </div>
