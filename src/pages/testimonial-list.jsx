@@ -152,7 +152,7 @@ const TestimonialList = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                        <th>Sr No</th>
+                        <th>Sr</th>
                         <th>User Name</th>
                         <th>User Type</th>
                         <th>Content</th>
@@ -165,9 +165,13 @@ const TestimonialList = () => {
                     </thead>
                     <tbody>
                       {displayedTestimonials.length > 0 ? (
-                        displayedTestimonials.map((testimonial) => (
+                        displayedTestimonials.map((testimonial, index) => (
                           <tr key={testimonial.id}>
-                            <td>{testimonial.id}</td>
+                            <td>
+                              {(pagination.current_page - 1) * pageSize +
+                                index +
+                                1}
+                            </td>
                             <td>{testimonial.user_name}</td>
                             <td>{testimonial.user_type}</td>
                             <td>{testimonial.content}</td>

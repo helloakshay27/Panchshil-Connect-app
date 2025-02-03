@@ -152,7 +152,11 @@ const AmenitiesList = () => {
                       {displayedAmenities.length > 0 ? (
                         displayedAmenities.map((amenity, index) => (
                           <tr key={index}>
-                            <td>{amenity.id}</td>
+                            <td>
+                              {(pagination.current_page - 1) * pageSize +
+                                index +
+                                1}
+                            </td>
                             <td>{amenity.name || "No Name"}</td>
                             <td></td>
                             <td>
