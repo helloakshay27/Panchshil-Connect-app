@@ -33,11 +33,9 @@ const Members = () => {
                 <Link to="/banner-add">Banner Add</Link>
               </li>
               <li>
-               <Link to="/banner-edit/:id">Banner Edit</Link>
-             </li>
-             <li>
-               <Link to="/banner-details">Banner Details</Link>
-             </li>
+                <Link to="/banner-edit/:id">Banner Edit</Link>
+              </li>
+
               <li>
                 <Link to="/amenities">Amenities</Link>
               </li>
@@ -57,7 +55,6 @@ const Members = () => {
                 <Link to="/testimonial-edit">TestimonialEdit</Link>
               </li>
 
-           
               <li>
                 <Link to="/gallery-details">Gallery Details</Link>
               </li>
@@ -70,7 +67,6 @@ const Members = () => {
               <li>
                 <Link to="/edit-gallery">Edit Gallery</Link>
               </li>
-              
             </ul>
           </div>
         </div>

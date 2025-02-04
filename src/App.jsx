@@ -80,7 +80,7 @@ function App() {
           <Route path="/gallery-list" element={<GalleryList />} />
           <Route path="/edit-gallery" element={<EditGallery />} />
           <Route path="/banner-edit/:id" element={<BannerEdit />} />
-          {/* <Route path="/banner-details/:id" element={<BannerDetails />} /> */}
+          
         </Route>
       </Routes>
     </BrowserRouter>
