@@ -13,9 +13,10 @@ const ProjectDetailsList = () => {
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({
     current_page: 1,
-    total_count: 0,
-    total_pages: 0,
+    total_pages: 5,
+    total_count: 50, // total number of entries
   });
+
   const [loading, setLoading] = useState(true);
 
   const pageSize = 10; // Items per page
@@ -51,21 +52,25 @@ const ProjectDetailsList = () => {
   }, []);
 
   const handlePageChange = (pageNumber) => {
-    setPagination((prev) => ({
-      ...prev,
-
-      current_page: pageNumber,
-    }));
+    if (pageNumber >= 1 && pageNumber <= pagination.total_pages) {
+      // Update the current page in state and fetch new data if needed
+      setPagination({
+        ...pagination,
+        current_page: pageNumber,
+      });
+      // Optional: Fetch the data for the new page if required
+    }
   };
 
-  const displayedProjects = projects
+  const pageNumbers = [...Array(pagination.total_pages).keys()].map(
+    (i) => i + 1
+  );
 
+  const displayedProjects = projects
     .slice(
       (pagination.current_page - 1) * pageSize,
-
       pagination.current_page * pageSize
     )
-
     .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort projects by ID (ascending)
 
   return (
@@ -163,16 +168,13 @@ const ProjectDetailsList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {projects?.map((project, index) => (
+                  {displayedProjects?.map((project, index) => (
                     <tr key={index}>
-                      <td>{index + 1}</td>
-
+                      <td>{(pagination.current_page - 1) * pageSize + index + 1}</td>
                       <td>{project?.project_name || "N/A"}</td>
-
                       <td>{project?.property_type || "N/A"}</td>
                       <td>{project?.sfdc_project_id || "N/As"}</td>
                       <td>{project?.status || "N/A"}</td>
-
                       <td>{project?.building_type || "N/A"}</td>
                       <td>
                         {project?.location
@@ -212,7 +214,7 @@ const ProjectDetailsList = () => {
                           : "No specifications"}
                       </td>
                       <td>
-                        <a href={`/project-edit/${project?.id || "N/A"}`}>
+                        <a href={`/project-edit/2${project?.id || "N/A"}`}>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -230,7 +232,7 @@ const ProjectDetailsList = () => {
                             />
                           </svg>
                         </a>
-                        <a href={`/project-details/${project?.id || "N/A"}`}>
+                        <a href={`/project-details/2${project?.id || "N/A"}`}>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
@@ -249,101 +251,118 @@ const ProjectDetailsList = () => {
                 </tbody>
               </table>
             </div>
+
             {/* Pagination */}
 
             <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-              <ul className="pagination">
-                <li
-                  className={`page-item ${
-                    pagination.current_page === 1 ? "disabled" : ""
-                  }`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() => handlePageChange(1)}
-                  >
-                    First
-                  </button>
-                </li>
-
-                <li
-                  className={`page-item ${
-                    pagination.current_page === 1 ? "disabled" : ""
-                  }`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() =>
-                      handlePageChange(pagination.current_page - 1)
-                    }
-                  >
-                    Prev
-                  </button>
-                </li>
-
-                {Array.from(
-                  { length: pagination.total_pages },
-
-                  (_, index) => index + 1
-                ).map((page) => (
+              {/* Pagination Section */}
+              {pagination.total_pages > 1 && (
+                <ul className="pagination">
+                  {/* First Page Button */}
                   <li
-                    key={page}
                     className={`page-item ${
-                      pagination.current_page === page ? "active" : ""
+                      pagination.current_page === 1 ? "disabled" : ""
                     }`}
                   >
                     <button
                       className="page-link"
-                      onClick={() => handlePageChange(page)}
+                      onClick={() => handlePageChange(1)}
+                      disabled={pagination.current_page === 1}
                     >
-                      {page}
+                      First
                     </button>
                   </li>
-                ))}
 
-                <li
-                  className={`page-item ${
-                    pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                  }`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() =>
-                      handlePageChange(pagination.current_page + 1)
-                    }
+                  {/* Previous Page Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
-                    Next
-                  </button>
-                </li>
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                      disabled={pagination.current_page === 1}
+                    >
+                      Prev
+                    </button>
+                  </li>
 
-                <li
-                  className={`page-item ${
-                    pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                  }`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() => handlePageChange(pagination.total_pages)}
+                  {/* Page Number Buttons */}
+                  {Array.from(
+                    { length: pagination.total_pages },
+                    (_, index) => index + 1
+                  ).map((page) => (
+                    <li
+                      key={page}
+                      className={`page-item ${
+                        pagination.current_page === page ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </button>
+                    </li>
+                  ))}
+
+                  {/* Next Page Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
                   >
-                    Last
-                  </button>
-                </li>
-              </ul>
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                      disabled={
+                        pagination.current_page === pagination.total_pages
+                      }
+                    >
+                      Next
+                    </button>
+                  </li>
 
+                  {/* Last Page Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(pagination.total_pages)}
+                      disabled={
+                        pagination.current_page === pagination.total_pages
+                      }
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
+              )}
+
+              {/* Showing Entries Information */}
               <div>
                 <p>
                   Showing{" "}
                   {Math.min(
-                    (pagination.current_page - 1) * pageSize + 1 || 1,
+                    (pagination.current_page - 1) * 10 + 1,
                     pagination.total_count
                   )}{" "}
                   to{" "}
                   {Math.min(
-                    pagination.current_page * pageSize,
+                    pagination.current_page * 10,
                     pagination.total_count
                   )}{" "}
                   of {pagination.total_count} entries

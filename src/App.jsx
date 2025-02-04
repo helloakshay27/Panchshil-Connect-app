@@ -29,6 +29,7 @@ import Register from "./pages/sign_pages/register";
 import Forgot from "./pages/sign_pages/Forgot";
 import ForgotOtp from "./pages/sign_pages/ForgotOtp";
 import CreatePassword from "./pages/sign_pages/CreatePassword";
+import EventCreate from "./pages/event-create";
 
 function App() {
   return (
@@ -80,6 +81,8 @@ function App() {
           <Route path="/gallery-list" element={<GalleryList />} />
           <Route path="/edit-gallery" element={<EditGallery />} />
           <Route path="/banner-edit/:id" element={<BannerEdit />} />
+          <Route path="/event-create" element={<EventCreate />} />
+          
           
         </Route>
       </Routes>

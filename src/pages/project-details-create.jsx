@@ -88,10 +88,10 @@ const ProjectDetailsCreate = () => {
     const errors = [];
   
     // Required fields (text fields)
-    if (!formData.property_type) {
-      errors.push("Project Type is required.");
-      return errors; // Return the first error immediately
-    }
+    // if (!formData.property_type) {
+    //   errors.push("Project Type is required.");
+    //   return errors; // Return the first error immediately
+    // }
     if (!formData.SFDC_Project_Id) {
       errors.push("SFDC Project ID is required.");
       return errors; // Return the first error immediately
@@ -152,10 +152,10 @@ const ProjectDetailsCreate = () => {
       errors.push("Amenities are required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.specifications) {
-      errors.push("Specifications are required.");
-      return errors; // Return the first error immediately
-    }
+    // if (!formData.specifications) {
+    //   errors.push("Specifications are required.");
+    //   return errors; // Return the first error immediately
+    // }
     if (!formData.Land_Area) {
       errors.push("Land Area is required.");
       return errors; // Return the first error immediately
@@ -245,7 +245,7 @@ const ProjectDetailsCreate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4`, // Replace with actual token
+            Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`, // Replace with actual token
           },
         }
       );
@@ -255,7 +255,7 @@ const ProjectDetailsCreate = () => {
 
     } catch (error) {
       console.error("Error submitting the form:", error);
-      toast.error("Failed to submit the form. Please try again.");
+      // toast.error("Failed to submit the form. Please try again.");
     }
   };
   useEffect(() => {

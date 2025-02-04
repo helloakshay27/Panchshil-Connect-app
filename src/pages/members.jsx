@@ -67,6 +67,9 @@ const Members = () => {
               <li>
                 <Link to="/edit-gallery">Edit Gallery</Link>
               </li>
+              <li>
+                <Link to="/event-Create">Event Create</Link>
+              </li>
             </ul>
           </div>
         </div>
