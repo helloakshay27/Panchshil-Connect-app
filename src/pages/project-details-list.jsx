@@ -11,6 +11,7 @@ import axios from "axios";
 const ProjectDetailsList = () => {
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
     current_page: 1,
     total_pages: 5,
@@ -23,8 +24,7 @@ const ProjectDetailsList = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProjects = async () => {
+      const fetchProjects = async (searchTerm = "") => {
       const token = "ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4"; // Replace with your actual token
       const url = " https://panchshil-super.lockated.com/get_all_projects.json";
 
@@ -33,6 +33,10 @@ const ProjectDetailsList = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          params: {
+            "q[Project_Name_cont]": searchTerm, // Passing search query
+          },
+  
         });
         const projectsData = response.data?.projects || [];
         setProjects(projectsData);
@@ -48,8 +52,20 @@ const ProjectDetailsList = () => {
       }
     };
 
-    fetchProjects();
-  }, []);
+    useEffect(() => {
+      fetchProjects();
+    }, []);
+  
+
+    const handleSearchChange = (e) => {
+      setSearchQuery(e.target.value);
+    };
+  
+    const handleSearchSubmit = (e) => {
+      e.preventDefault();
+      fetchProjects(searchQuery);
+    };
+  
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= pagination.total_pages) {
@@ -77,10 +93,12 @@ const ProjectDetailsList = () => {
     <>
       <div className="d-flex justify-content-end px-4 pt-2 mt-3 align-items-center">
         <div className="col-md-4 pe-2 pt-2">
-          <form action="/projects">
+          <form onSubmit={handleSearchSubmit}>
             <div className="input-group">
               <input
                 type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
                 name="s[name_cont]"
                 id="s_name_cont"
                 className="form-control tbl-search table_search"
