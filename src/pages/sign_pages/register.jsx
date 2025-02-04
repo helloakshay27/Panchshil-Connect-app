@@ -143,7 +143,7 @@ const Register = () => {
                       {loading ? "Register in..." : "Register"}
                     </button>
                     <button className="btn purple-btn2 mt-3 " onClick={regiterPage} style={{ width: "100%", background: "white", color: "black" }}>
-                      {loading ? "Register in..." : "Register"}
+                      {loading ? "Sign..." : "Sign"}
                     </button>
 
                   </form>
