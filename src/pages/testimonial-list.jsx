@@ -160,7 +160,7 @@ const TestimonialList = () => {
                         <th>Company Name</th>
                         <th>Created At</th>
                         <th>Updated At</th>
-                        <th>Edit</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
