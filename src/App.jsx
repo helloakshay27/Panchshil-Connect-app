@@ -30,7 +30,8 @@ import Forgot from "./pages/sign_pages/Forgot";
 import ForgotOtp from "./pages/sign_pages/ForgotOtp";
 import CreatePassword from "./pages/sign_pages/CreatePassword";
 import EventCreate from "./pages/event-create";
-
+import Referralcreate from "./pages/referral-create";
+import Referrallist from "./pages/referral-list";
 function App() {
   return (
     <BrowserRouter>
@@ -42,17 +43,13 @@ function App() {
         <Route path="/forgot-otp" element={<ForgotOtp />} />
         <Route path="/reset-password" element={<CreatePassword />} />
 
-
-
-
         <Route
           path="/"
           element={
             // <<<<<<< Updated upstream
-                        <ProtectedRoute>
-                          <RootLayout />
-
-                        </ProtectedRoute>
+            <ProtectedRoute>
+              <RootLayout />
+            </ProtectedRoute>
             // =======
             // <RootLayout />
             // <ProtectedRoute>
@@ -82,8 +79,8 @@ function App() {
           <Route path="/edit-gallery" element={<EditGallery />} />
           <Route path="/banner-edit/:id" element={<BannerEdit />} />
           <Route path="/event-create" element={<EventCreate />} />
-          
-          
+          <Route path="/referral-create" element={<Referralcreate />} />
+          <Route path="/referral-list" element={<Referrallist />} />
         </Route>
       </Routes>
     </BrowserRouter>
