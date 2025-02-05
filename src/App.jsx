@@ -32,6 +32,7 @@ import CreatePassword from "./pages/sign_pages/CreatePassword";
 import EventCreate from "./pages/event-create";
 import Referrallist from "./pages/referral-list";
 import Referralcreate from "./pages/referral-create";
+import Eventlist from "./pages/event-list";
 function App() {
   return (
     <BrowserRouter>
@@ -81,6 +82,7 @@ function App() {
           <Route path="/event-create" element={<EventCreate />} />
           <Route path="/referral-create" element={<Referralcreate />} />
           <Route path="/referral-list" element={<Referrallist />} />
+          <Route path="/event-list" element={<Eventlist />} />
         </Route>
       </Routes>
     </BrowserRouter>

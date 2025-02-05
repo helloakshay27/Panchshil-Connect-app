@@ -5,27 +5,29 @@ const Referrallist = () => {
   const [referrals, setReferrals] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+  });
+  const pageSize = 10;
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchReferrals = async () => {
       try {
         const response = await fetch(
-          "https://panchshil-super.lockated.com/referrals.json?project_id=7 ",
+          "https://panchshil-super.lockated.com/referrals.json?project_id=7",
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer hnbLunLzzG9ft5dyVulTBpuQp2mgvfZe_69ukCTa8QQ`, // Use Bearer token if required
+              Authorization: `Bearer hnbLunLzzG9ft5dyVulTBpuQp2mgvfZe_69ukCTa8QQ`,
             },
           }
         );
 
-        console.log("Response Status: ", response.status); // Log response status
-        console.log("Response Headers: ", response.headers); // Log response headers
-
         if (!response.ok) {
           const errorMessage = await response.text();
-          console.error("Error Message: ", errorMessage); // Log the detailed error message from the API
-
           if (response.status === 401) {
             setError("Unauthorized: Please check your API key or token.");
           } else {
@@ -36,15 +38,36 @@ const Referrallist = () => {
 
         const data = await response.json();
         setReferrals(data.referrals || []);
+        setPagination((prevState) => ({
+          ...prevState,
+          total_count: data.referrals.length,
+          total_pages: Math.ceil(data.referrals.length / pageSize),
+        }));
       } catch (error) {
         console.error("Error fetching referral data:", error);
         setError("Failed to fetch data.");
-        setReferrals([]); // Clear referrals on error
+        setReferrals([]);
       }
     };
 
     fetchReferrals();
   }, []);
+
+  const handlePageChange = (pageNumber) => {
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber,
+    }));
+  };
+
+  const filteredReferrals = referrals.filter((referral) =>
+    referral.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const displayedReferrals = filteredReferrals.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
+  );
 
   return (
     <div className="main-content">
@@ -86,7 +109,6 @@ const Referrallist = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                fdprocessedid="xn3e6n"
                 onClick={() => navigate("/referral-create")}
               >
                 <svg
@@ -123,51 +145,49 @@ const Referrallist = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {referrals.length > 0 ? (
-                      referrals
-                        .filter((referral) =>
-                          referral.name
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase())
-                        )
-                        .map((referral, index) => (
-                          <tr key={referral.id}>
-                            <td>{index + 1}</td>
-                            <td>{referral.name}</td>
-                            <td>{referral.email}</td>
-                            <td>{referral.mobile}</td>
-                            <td>{referral.referral_code || "N/A"}</td>
-                            <td>{referral.project_name}</td>
-                            <td className="text-center">
-                              <button
-                                className="btn btn-link"
-                                onClick={() => navigate("/referral-create")}
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  padding: "0",
-                                }}
+                    {displayedReferrals.length > 0 ? (
+                      displayedReferrals.map((referral, index) => (
+                        <tr key={referral.id}>
+                          <td>
+                            {(pagination.current_page - 1) * pageSize +
+                              index +
+                              1}
+                          </td>
+                          <td>{referral.name}</td>
+                          <td>{referral.email}</td>
+                          <td>{referral.mobile}</td>
+                          <td>{referral.referral_code || "N/A"}</td>
+                          <td>{referral.project_name}</td>
+                          <td className="text-center">
+                            <button
+                              className="btn btn-link"
+                              onClick={() => navigate("/referral-create")}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                padding: "0",
+                              }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="24"
-                                  height="24"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                >
-                                  <path
-                                    d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
-                                    fill="#667085"
-                                  />
-                                  <path
-                                    d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
-                                    fill="#667085"
-                                  />
-                                </svg>
-                              </button>
-                            </td>
-                          </tr>
-                        ))
+                                <path
+                                  d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
+                                  fill="#667085"
+                                />
+                                <path
+                                  d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
+                                  fill="#667085"
+                                />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
                     ) : (
                       <tr>
                         <td colSpan="7" className="text-center">
@@ -177,6 +197,117 @@ const Referrallist = () => {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+              <ul className="pagination justify-content-center d-flex">
+                {/* First Button */}
+                <li
+                  className={`page-item ${
+                    pagination.current_page === 1 ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(1)}
+                    disabled={pagination.current_page === 1}
+                  >
+                    First
+                  </button>
+                </li>
+
+                {/* Previous Button */}
+                <li
+                  className={`page-item ${
+                    pagination.current_page === 1 ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      handlePageChange(pagination.current_page - 1)
+                    }
+                    disabled={pagination.current_page === 1}
+                  >
+                    Prev
+                  </button>
+                </li>
+
+                {/* Dynamic Page Numbers */}
+                {Array.from(
+                  { length: pagination.total_pages },
+                  (_, index) => index + 1
+                ).map((pageNumber) => (
+                  <li
+                    key={pageNumber}
+                    className={`page-item ${
+                      pagination.current_page === pageNumber ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(pageNumber)}
+                    >
+                      {pageNumber}
+                    </button>
+                  </li>
+                ))}
+
+                {/* Next Button */}
+                <li
+                  className={`page-item ${
+                    pagination.current_page === pagination.total_pages
+                      ? "disabled"
+                      : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      handlePageChange(pagination.current_page + 1)
+                    }
+                    disabled={
+                      pagination.current_page === pagination.total_pages
+                    }
+                  >
+                    Next
+                  </button>
+                </li>
+
+                {/* Last Button */}
+                <li
+                  className={`page-item ${
+                    pagination.current_page === pagination.total_pages
+                      ? "disabled"
+                      : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(pagination.total_pages)}
+                    disabled={
+                      pagination.current_page === pagination.total_pages
+                    }
+                  >
+                    Last
+                  </button>
+                </li>
+              </ul>
+
+              <div>
+                <p>
+                  Showing{" "}
+                  {Math.min(
+                    (pagination.current_page - 1) * pageSize + 1 || 1,
+                    pagination.total_count
+                  )}{" "}
+                  to{" "}
+                  {Math.min(
+                    pagination.current_page * pageSize,
+                    pagination.total_count
+                  )}{" "}
+                  of {pagination.total_count} entries
+                </p>
               </div>
             </div>
           </div>
