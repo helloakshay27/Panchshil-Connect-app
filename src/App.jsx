@@ -30,8 +30,8 @@ import Forgot from "./pages/sign_pages/Forgot";
 import ForgotOtp from "./pages/sign_pages/ForgotOtp";
 import CreatePassword from "./pages/sign_pages/CreatePassword";
 import EventCreate from "./pages/event-create";
-import Referralcreate from "./pages/referral-create";
 import Referrallist from "./pages/referral-list";
+import Referralcreate from "./pages/referral-create";
 function App() {
   return (
     <BrowserRouter>
