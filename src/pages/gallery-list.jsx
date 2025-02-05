@@ -5,6 +5,14 @@ import { useNavigate } from "react-router-dom";
 const GalleryList = () => {
   const [galleryData, setGalleryData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+  });
+  const pageSize = 10;
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGalleryData = async () => {
@@ -13,9 +21,15 @@ const GalleryList = () => {
           "https://panchshil-super.lockated.com/galleries.json?project_id=1"
         );
         console.log("API Response:", response.data.galleries);
-        setGalleryData(
-          Array.isArray(response.data.galleries) ? response.data.galleries : []
-        );
+        const galleryList = Array.isArray(response.data.galleries)
+          ? response.data.galleries
+          : [];
+        setGalleryData(galleryList);
+        setPagination((prevState) => ({
+          ...prevState,
+          total_count: galleryList.length,
+          total_pages: Math.ceil(galleryList.length / pageSize),
+        }));
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching gallery data:", error);
@@ -26,8 +40,19 @@ const GalleryList = () => {
     fetchGalleryData();
   }, []);
 
-  const [toggleStates, setToggleStates] = useState([true, false]);
-  const navigate = useNavigate();
+  const handlePageChange = (pageNumber) => {
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber,
+    }));
+  };
+
+  const displayedGalleries = galleryData
+    .slice(
+      (pagination.current_page - 1) * pageSize,
+      pagination.current_page * pageSize
+    )
+    .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort galleries by ID (asc)
 
   const handleToggle = (index) => {
     setToggleStates((prevStates) =>
@@ -81,7 +106,7 @@ const GalleryList = () => {
                       </button>
                     </div>
                   </div>
-                </form>{" "}
+                </form>
               </div>
               <div className="card-tools mt-1">
                 <button
@@ -126,11 +151,15 @@ const GalleryList = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {Array.isArray(galleryData) &&
-                        galleryData.length > 0 ? (
-                          galleryData.map((item, index) => (
+                        {Array.isArray(displayedGalleries) &&
+                        displayedGalleries.length > 0 ? (
+                          displayedGalleries.map((item, index) => (
                             <tr key={item.id}>
-                              <td>{index + 1}</td>
+                              <td>
+                                {(pagination.current_page - 1) * pageSize +
+                                  index +
+                                  1}
+                              </td>
                               <td>{item.title_name}</td>
                               <td>{item.project_name}</td>
                               <td>{item.gallery_type}</td>
@@ -145,21 +174,6 @@ const GalleryList = () => {
                                 />
                               </td>
                               <td className="text-center">
-                                {/* <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
-                                  fill="currentColor"
-                                  class="bi bi-pencil-square"
-                                  viewBox="0 0 16 16"
-                                  onClick={() => navigate(`/edit-gallery/${item.id}`)}
-                                >
-                                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                  <path
-                                    fill-rule="evenodd"
-                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"
-                                  />
-                                </svg> */}
                                 <button
                                   className="btn btn-link"
                                   onClick={() =>
@@ -199,6 +213,117 @@ const GalleryList = () => {
                       </tbody>
                     </table>
                   )}
+                </div>
+                <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                  <ul className="pagination justify-content-center d-flex">
+                    {/* First Button */}
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(1)}
+                      >
+                        First
+                      </button>
+                    </li>
+
+                    {/* Previous Button */}
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() =>
+                          handlePageChange(pagination.current_page - 1)
+                        }
+                        disabled={pagination.current_page === 1}
+                      >
+                        Prev
+                      </button>
+                    </li>
+
+                    {/* Dynamic Page Numbers */}
+                    {Array.from(
+                      { length: pagination.total_pages },
+                      (_, index) => index + 1
+                    ).map((pageNumber) => (
+                      <li
+                        key={pageNumber}
+                        className={`page-item ${
+                          pagination.current_page === pageNumber ? "active" : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      </li>
+                    ))}
+
+                    {/* Next Button */}
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === pagination.total_pages
+                          ? "disabled"
+                          : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() =>
+                          handlePageChange(pagination.current_page + 1)
+                        }
+                        disabled={
+                          pagination.current_page === pagination.total_pages
+                        }
+                      >
+                        Next
+                      </button>
+                    </li>
+
+                    {/* Last Button */}
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === pagination.total_pages
+                          ? "disabled"
+                          : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pagination.total_pages)}
+                        disabled={
+                          pagination.current_page === pagination.total_pages
+                        }
+                      >
+                        Last
+                      </button>
+                    </li>
+                  </ul>
+
+                  {/* Showing entries count */}
+                  <div>
+                    <p>
+                      Showing{" "}
+                      {Math.min(
+                        (pagination.current_page - 1) * pageSize + 1 || 1,
+                        pagination.total_count
+                      )}{" "}
+                      to{" "}
+                      {Math.min(
+                        pagination.current_page * pageSize,
+                        pagination.total_count
+                      )}{" "}
+                      of {pagination.total_count} entries
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
