@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 const Eventlist = () => {
   const [events, setEvents] = useState([]); // Initialize events as an empty array
   const [loading, setLoading] = useState(true); // Track loading state
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+  });
+  const pageSize = 10; // Define the page size
   const navigate = useNavigate(); // Call useNavigate at the top of the component
 
   useEffect(() => {
@@ -17,6 +23,13 @@ const Eventlist = () => {
         // Ensure the response contains the events array
         if (Array.isArray(data.events)) {
           setEvents(data.events); // Set events to the 'events' array from the response
+
+          // Update pagination details
+          setPagination((prevState) => ({
+            ...prevState,
+            total_count: data.events.length,
+            total_pages: Math.ceil(data.events.length / pageSize),
+          }));
         } else {
           console.error("API response does not contain events array", data);
         }
@@ -33,6 +46,18 @@ const Eventlist = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  const handlePageChange = (pageNumber) => {
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber,
+    }));
+  };
+
+  const displayedEvents = events.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
+  );
 
   return (
     <div className="main-content">
@@ -121,14 +146,18 @@ const Eventlist = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {events.length === 0 ? (
+                    {displayedEvents.length === 0 ? (
                       <tr>
                         <td colSpan="8">No events found.</td>
                       </tr>
                     ) : (
-                      events.map((event, index) => (
+                      displayedEvents.map((event, index) => (
                         <tr key={event.id}>
-                          <td>{index + 1}</td>
+                          <td>
+                            {(pagination.current_page - 1) * pageSize +
+                              index +
+                              1}
+                          </td>
                           <td>{event.project_id}</td>
                           <td>{event.event_name}</td>
                           <td>{event.event_at}</td>
@@ -176,8 +205,121 @@ const Eventlist = () => {
                   </tbody>
                 </table>
               </div>
+              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                <ul className="pagination justify-content-center d-flex">
+                  {/* First Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(1)}
+                    >
+                      First
+                    </button>
+                  </li>
+
+                  {/* Previous Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                      disabled={pagination.current_page === 1}
+                    >
+                      Prev
+                    </button>
+                  </li>
+
+                  {/* Dynamic Page Numbers */}
+                  {Array.from(
+                    { length: pagination.total_pages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
+                    <li
+                      key={pageNumber}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  ))}
+
+                  {/* Next Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                      disabled={
+                        pagination.current_page === pagination.total_pages
+                      }
+                    >
+                      Next
+                    </button>
+                  </li>
+
+                  {/* Last Button */}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(pagination.total_pages)}
+                      disabled={
+                        pagination.current_page === pagination.total_pages
+                      }
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
+
+                {/* Showing entries count */}
+                <div>
+                  <p>
+                    Showing{" "}
+                    {Math.min(
+                      (pagination.current_page - 1) * pageSize + 1 || 1,
+                      pagination.total_count
+                    )}{" "}
+                    to{" "}
+                    {Math.min(
+                      pagination.current_page * pageSize,
+                      pagination.total_count
+                    )}{" "}
+                    of {pagination.total_count} entries
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Pagination */}
         </div>
       </div>
     </div>
