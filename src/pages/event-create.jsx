@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const EventCreate = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     event_type: "",
     event_name: "",
@@ -139,7 +141,7 @@ const EventCreate = () => {
     data.append("event[rsvp_action]", formData.rsvp_action);
     data.append("event[description]", formData.description);
     data.append("event[publish]", formData.publish);
-    //data.append("user_id", formData.user_id);
+    data.append("event[user_id]", formData.user_id);
     data.append("event[comment]", formData.comment);
     data.append("event[shared]", formData.shared);
     data.append("event[share_groups]", formData.share_groups);
@@ -175,7 +177,7 @@ const EventCreate = () => {
       );
       console.log(response.data);
       toast.success("Event created successfully");
-      Navigate("");
+      navigate("/banner-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
       // toast.error("Failed to submit the form. Please try again.");
@@ -205,16 +207,19 @@ useEffect(() => {
 useEffect(() => {
   const fetchEvent = async () => {
     // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-    const url = "https://panchshil-super.lockated.com/events.json";
+    const url = "https://panchshil-super.lockated.com/users/get_users";
 
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get("https://panchshil-super.lockated.com/users/get_users", {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
       });
 
-      setEventUserID(response.data);
+      
+
+      setEventUserID(response?.data.users || []);
+      // console.log("User", response)
       console.log("eventUserID", eventUserID);
     } catch (error) {
       console.error("Error fetching Event:", error);
@@ -223,6 +228,7 @@ useEffect(() => {
 
   fetchEvent();
 }, []);
+
 
 
 
@@ -245,7 +251,7 @@ useEffect(() => {
                         <label>Event Types</label>
                         <select
                           className="form-control form-select"
-                          name="type_of_project"
+                          name="event_type"
                           value={formData.event_type}
                           onChange={handleChange}
                         >
@@ -281,7 +287,7 @@ useEffect(() => {
                           type="text"
                           name="event_at"
                           placeholder="Enter Evnet At"
-                          value={FormData.event_at}
+                          value={formData.event_at}
                           onChange={handleChange}
                         />
                       </div>
@@ -368,33 +374,33 @@ useEffect(() => {
                         <input
                           className="form-control"
                           type="text"
-                          name="SFDC_Project_Id"
+                          name="publish"
                           placeholder="Enter Event Publish"
-                          value={FormData.publish}
+                          value={formData.publish}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
-                    {/* <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>Enter User ID</label>
                         <select
                           className="form-control form-select"
                           name="user_id"
-                          value={FormData.user_id}
+                          value={formData.user_id}
                           onChange={handleChange}
                         >
                           <option value="" disabled>
                             Select User ID
                           </option>
-                          {eventUserID?.map((type, index) => (
-                        <option key={index} value={type.id}>
-                          {type.user_id}
+                          {eventUserID?.map((user, index) => (
+                        <option key={index} value={user.id}>
+                          {user.id}
                         </option>
                       ))}  
                         </select>
                       </div>
-                    </div> */}
+                    </div>
                     {/* <div className="col-md-3">
                   <div className="form-group">
                     <label>Event Canceled By</label>
@@ -498,6 +504,13 @@ useEffect(() => {
                         />
                       </div>
                     </div>
+                    {/* <div className="col-md-3">
+                    <div className="form-group">
+                    <label>Email Trigger</label>
+                       
+                    </div>
+                    </div> */}
+
                   </div>
                 </div>
               </div>
