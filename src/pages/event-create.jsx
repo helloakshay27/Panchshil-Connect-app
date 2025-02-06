@@ -26,8 +26,8 @@ const EventCreate = () => {
   const [eventUserID, setEventUserID] = useState([]);
   const [files, setFiles] = useState([]);
 
-  console.log("AA", eventType)
-  console.log("bb", eventUserID)
+  console.log("AA", eventType);
+  console.log("bb", eventUserID);
 
   // Handle input change for form fields
   const handleChange = (e) => {
@@ -57,11 +57,10 @@ const EventCreate = () => {
     }));
     setFiles([...files, ...fileData]);
   };
-  
 
   const validateForm = (formData) => {
     const errors = [];
-  
+
     // Required fields (text fields)
     // if (!formData.property_type) {
     //   errors.push("Project Type is required.");
@@ -119,7 +118,7 @@ const EventCreate = () => {
     //   errors.push("Attachment is required.");
     //   return errors; // Return the first error immediately
     // }
-   
+
     // File validation (files must be present)
     if (!formData.attachfile) {
       errors.push("attachment is required.");
@@ -129,13 +128,13 @@ const EventCreate = () => {
     //   errors.push("At least one 2D image is required.");
     //   return errors; // Return the first error immediately
     // }
-  
+
     return errors; // Return the first error message if any
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
@@ -143,10 +142,10 @@ const EventCreate = () => {
       console.log(validationErrors);
       return; // Early return if there are validation errors
     }
-  
+
     // Create FormData to send with the request
     const data = new FormData();
-    
+
     // Populate FormData with values from formData
     data.append("event[event_type]", formData.event_type);
     data.append("event[event_name]", formData.event_name);
@@ -160,26 +159,26 @@ const EventCreate = () => {
     data.append("event[comment]", formData.comment);
     data.append("event[shared]", formData.shared);
     data.append("event[share_groups]", formData.share_groups);
-  
+
     // Append files to FormData
-  if (formData.attachfile.length > 0) {
-    formData.attachfile.forEach((file, index) => {
-      data.append("event[event_image]", file);
-    });
-  }
-  
+    if (formData.attachfile.length > 0) {
+      formData.attachfile.forEach((file, index) => {
+        data.append("event[event_image]", file);
+      });
+    }
+
     // Optional: Append any other fields or files you need
     // if (formData.two_d_images && formData.two_d_images.length > 0) {
     //   formData.two_d_images.forEach((image, index) => {
     //     data.append(`two_d_image_${index}`, image);
     //   });
     // }
-  
+
     // Log the data object to see what it contains
     for (let [key, value] of data.entries()) {
       console.log(`${key}:`, value);
     }
-  
+
     try {
       // Make the POST request
       const response = await axios.post(
@@ -200,52 +199,52 @@ const EventCreate = () => {
       // toast.error("Failed to submit the form. Please try again.");
     }
   };
-  
 
-useEffect(() => {
-  const fetchEvent = async () => {
-    // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-    const url = "https://panchshil-super.lockated.com/events.json";
+  useEffect(() => {
+    const fetchEvent = async () => {
+      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
+      const url = "https://panchshil-super.lockated.com/events.json";
 
-    try {
-      const response = await axios.get("https://panchshil-super.lockated.com/events.json", {
-      });
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/events.json",
+          {}
+        );
 
-      setEventType(response?.data?.events);
-      console.log("eventType", eventType);
-    } catch (error) {
-      console.error("Error fetching Event:", error);
-    }
-  };
+        setEventType(response?.data?.events);
+        console.log("eventType", eventType);
+      } catch (error) {
+        console.error("Error fetching Event:", error);
+      }
+    };
 
-  fetchEvent();
-}, []);
+    fetchEvent();
+  }, []);
 
-useEffect(() => {
-  const fetchEvent = async () => {
-    // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-    const url = "https://panchshil-super.lockated.com/users/get_users";
+  useEffect(() => {
+    const fetchEvent = async () => {
+      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
+      const url = "https://panchshil-super.lockated.com/users/get_users";
 
-    try {
-      const response = await axios.get("https://panchshil-super.lockated.com/users/get_users", {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-      });
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/users/get_users",
+          {
+            // headers: {
+            //   Authorization: `Bearer ${token}`,
+            // },
+          }
+        );
 
-      setEventUserID(response?.data.users || []);
-      // console.log("User", response)
-      console.log("eventUserID", eventUserID);
-    } catch (error) {
-      console.error("Error fetching Event:", error);
-    }
-  };
-  fetchEvent();
-}, []);
-
-
-
-
+        setEventUserID(response?.data.users || []);
+        // console.log("User", response)
+        console.log("eventUserID", eventUserID);
+      } catch (error) {
+        console.error("Error fetching Event:", error);
+      }
+    };
+    fetchEvent();
+  }, []);
 
   return (
     <>
@@ -273,10 +272,10 @@ useEffect(() => {
                             Select Event Type
                           </option>
                           {eventType?.map((type, index) => (
-                        <option key={index} value={type.id}>
-                          {type.event_type}
-                        </option>
-                      ))} 
+                            <option key={index} value={type.id}>
+                              {type.event_type}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>
@@ -311,7 +310,7 @@ useEffect(() => {
                         <label>Event From</label>
                         <input
                           className="form-control"
-                          type="date"
+                          type="datetime-local"
                           name="from_time"
                           placeholder="Enter Event From"
                           value={formData.from_time}
@@ -324,7 +323,7 @@ useEffect(() => {
                         <label>Event To</label>
                         <input
                           className="form-control"
-                          type="date"
+                          type="datetime-local"
                           name="to_time"
                           placeholder="Enter Event To"
                           value={formData.to_time}
@@ -408,10 +407,13 @@ useEffect(() => {
                             Select User ID
                           </option>
                           {eventUserID?.map((user, index) => (
-                        <option key={index} value={user.id}>
-                          {user.id}
-                        </option>
-                      ))}  
+                            <option
+                              key={index}
+                              value={user.firstname + " " + user.lastname}
+                            >
+                              {user.firstname} {user.lastname}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>
@@ -517,43 +519,41 @@ t
                   </div>
                 </div> */}
                     <div className="col-md-3">
-  <div className="form-group">
-    <label>
-      Attachment
-      <span />
-    </label>
-    <input
-      className="form-control"
-      type="file"
-      name="attachfile"
-      multiple
-      placeholder="Default input"
-      onChange={handleFileChange} // Ensure handleFileChange is being called
-    />
-  </div>
-</div>
+                      <div className="form-group">
+                        <label>
+                          Attachment
+                          <span />
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="attachfile"
+                          multiple
+                          placeholder="Default input"
+                          onChange={handleFileChange} // Ensure handleFileChange is being called
+                        />
+                      </div>
+                    </div>
                     {/* <div className="col-md-3">
                     <div className="form-group">
                     <label>Email Trigger</label>
                        
                     </div>
                     </div> */}
-
                   </div>
                 </div>
               </div>
               <div className="row mt-2 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  onClick={handleSubmit}
-                  type="submit"
-                  className="purple-btn2 w-100"
-                >
-                  Submit
-                </button>
+                <div className="col-md-2">
+                  <button
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="purple-btn2 w-100"
+                  >
+                    Submit
+                  </button>
+                </div>
               </div>
-            </div>
-              
             </div>
           </div>
         </div>
