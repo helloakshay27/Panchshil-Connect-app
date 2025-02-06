@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
+import toast from "react-hot-toast";
 
 const Forgot = () => {
     const [email, setEmail] = useState("");
@@ -17,15 +18,16 @@ const Forgot = () => {
         setLoading(true);
         setError("");
 
-        navigate("/forgot-otp"); // Navigate to the next step
+        navigate(`/forgot-otp?email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}`);
         try {
-            const response = await axios.post("/api/forgot-password", {
+            const response = await axios.post("https://panchshil-super.lockated.com/generate_code", {
                 email,
                 mobile,
-                username,
             });
 
             if (response.data.success) {
+                toast.success("OTP Sent successfully")
+
             } else {
                 setError(response.data.message || "Something went wrong");
             }
@@ -105,6 +107,8 @@ const Forgot = () => {
                         </div>
                     </div>
                 </section>
+
+
             </main>
         </div>
     );

@@ -1,44 +1,66 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./login.css";
 
 const CreatePassword = () => {
-    const [email, setEmail] = useState("");
-    const [mobile, setMobile] = useState("");
-    const [firstname, setFirstname] = useState("");
-    const [lastname, setLastname] = useState("");
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const email = queryParams.get("email"); // Get email from URL
+    const mobile = queryParams.get("mobile"); // Get mobile from URL
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
 
-
-
-    const handlePasswordLogin = async (e) => {
+    const handlePasswordReset = async (e) => {
         e.preventDefault();
         setError(""); // Reset error state
         setLoading(true);
 
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            setError("Please enter a valid email address.");
+        // Password validation
+        if (newPassword !== confirmPassword) {
+            setError("Passwords do not match.");
+            setLoading(false);
+            return;
+        }
+
+        if (newPassword.length < 8 || newPassword.length > 32) {
+            setError("Password must be between 8 to 32 characters.");
+            setLoading(false);
+            return;
+        }
+
+        if (!/[A-Z]/.test(newPassword)) {
+            setError("Password must contain at least one uppercase letter.");
+            setLoading(false);
+            return;
+        }
+
+        if (!/[0-9]/.test(newPassword)) {
+            setError("Password must contain at least one number.");
+            setLoading(false);
+            return;
+        }
+
+        if (!/[!@#$%^&*]/.test(newPassword)) {
+            setError("Password must contain at least one special character.");
             setLoading(false);
             return;
         }
 
         try {
-            const response = await axios.post(" https://panchshil-super.lockated.com/users", {
-
-                email,
-                firstname,
-                lastname,
-                mobile,
+            const response = await axios.post(`https://panchshil-super.lockated.com/users/forgot_password.json`, {
+                user: {
+                    email_or_mobile: email,
+                    password: newPassword,
+                },
             });
-
-            console.log(response.data.access_token);
+            navigate("/");
 
             if (response.data.access_token) {
                 localStorage.setItem("access_token", response.data.access_token);
@@ -47,24 +69,16 @@ const CreatePassword = () => {
 
                 // Redirect to the home page
                 navigate("/");
-                toast.success("Register successfully")
-
+                toast.success("Password reset successfully!");
             } else {
-                setError("Login failed. Please check your credentials.");
+                setError("Password reset failed. Please try again.");
             }
         } catch (err) {
-            setError("An error occurred during login. Please try again.");
+            setError("An error occurred during password reset. Please try again.");
         } finally {
             setLoading(false);
         }
     };
-
-    const regiterPage = () => {
-
-        navigate("/login")
-    };
-
-
 
     return (
         <div>
@@ -74,7 +88,7 @@ const CreatePassword = () => {
                         <div className="row align-items-center vh-100 login_bg justify-content-center">
                             <div className="col-lg-7 col-md-7 vh-50 d-flex align-items-center">
                                 <div className="login-sec" id="forgetPasswordContainer">
-                                    <form className="create-new-password-content" id="createPasswordForm">
+                                    <form className="create-new-password-content" id="createPasswordForm" onSubmit={handlePasswordReset}>
                                         <div className="paganation-sec d-flex">
                                             <div className="back-btn d-flex">
                                                 <a href="">
@@ -99,6 +113,9 @@ const CreatePassword = () => {
                                                 className="form-control"
                                                 id="newPassword"
                                                 placeholder="Enter your new password"
+                                                value={newPassword}
+                                                onChange={(e) => setNewPassword(e.target.value)}
+                                                required
                                             />
                                         </div>
                                         {/* Confirm password field */}
@@ -111,6 +128,9 @@ const CreatePassword = () => {
                                                 className="form-control"
                                                 id="confirmPassword"
                                                 placeholder="Confirm your new password"
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                required
                                             />
                                         </div>
                                         <div className="mark-indicator">
@@ -151,12 +171,15 @@ const CreatePassword = () => {
                                                 <p>Must contain one special character.</p>
                                             </div>
                                         </div>
+                                        {/* Error message */}
+                                        {error && <div className="alert alert-danger">{error}</div>}
                                         {/* Submit button */}
                                         <button
                                             type="submit"
                                             className="btn mt-4 submit-create-password btn-primary mt-2"
+                                            disabled={loading}
                                         >
-                                            Reset Password
+                                            {loading ? "Resetting Password..." : "Reset Password"}
                                         </button>
                                     </form>
                                 </div>
@@ -164,7 +187,6 @@ const CreatePassword = () => {
                         </div>
                     </div>
                 </section>
-
             </main>
         </div>
     );

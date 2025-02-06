@@ -1,13 +1,17 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 
 const ForgotOtp = () => {
     const [otp, setOtp] = useState("");
-    const [email, setEmail] = useState("username@gmail.com"); // Example email placeholder
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const email = queryParams.get("email"); // Get email from URL
+    const mobile = queryParams.get("mobile"); // Get mobile from URL
     
     const navigate = useNavigate();
 
@@ -19,7 +23,7 @@ const ForgotOtp = () => {
         e.preventDefault();
         setError("");
         setLoading(true);
-        navigate("/reset-password");
+        navigate(`/reset-password?email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}`);
 
         // OTP validation (assuming 6-digit OTP)
         if (!/^[0-9]{6}$/.test(otp)) {
@@ -35,6 +39,8 @@ const ForgotOtp = () => {
             });
 
             if (response.data.success) {
+                toast.success("OTP verified successfully")
+
             } else {
                 setError("Invalid OTP. Please try again.");
             }

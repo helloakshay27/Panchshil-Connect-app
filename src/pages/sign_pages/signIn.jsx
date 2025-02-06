@@ -109,7 +109,9 @@ const SignIn = () => {
             const response = await axios.post(
                 `https://panchshil-super.lockated.com/verify_code.json`,
                 {
-                    mobile, otp
+                    // email,
+                    mobile,
+                     otp
                 }
             );
 

@@ -232,7 +232,7 @@ const ProjectDetailsList = () => {
                           : "No specifications"}
                       </td>
                       <td>
-                        <a href={`/project-edit/2${project?.id || "N/A"}`}>
+                        <a href={`/project-edit/${project?.id || "N/A"}`}>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
