@@ -19,6 +19,8 @@ const EventCreate = () => {
     shared: "",
     share_groups: "",
     attachfile: [],
+    is_important: "",
+    email_trigger_enabled: "",
   });
 
   console.log("formData", formData);
@@ -44,6 +46,14 @@ const EventCreate = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       attachfile: [...prevFormData.attachfile, ...files], // Append the new files to the existing files in formData
+    }));
+  };
+
+  const handleRadioChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value, // Update the state with the radio button's value
     }));
   };
 
@@ -159,6 +169,8 @@ const EventCreate = () => {
     data.append("event[comment]", formData.comment);
     data.append("event[shared]", formData.shared);
     data.append("event[share_groups]", formData.share_groups);
+    data.append("event[is_important]", formData.is_important);
+    data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
 
     // Append files to FormData
     if (formData.attachfile.length > 0) {
@@ -396,7 +408,7 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Enter User ID</label>
+                        <label>Event User ID</label>
                         <select
                           className="form-control form-select"
                           name="user_id"
@@ -534,12 +546,55 @@ t
                         />
                       </div>
                     </div>
-                    {/* <div className="col-md-3">
-                    <div className="form-group">
-                    <label>Email Trigger</label>
-                       
+
+                    
+                    <div className="col-md-3">
+                      <div className="form-check mt-4">
+                        <label className="form-group">Event is Important</label>
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="is_important"
+                          value="true"
+                          checked={formData.is_important === "true"}
+                          onChange={handleRadioChange}
+                        />
+
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="is_important"
+                          value="false"
+                          checked={formData.is_important === "false"}
+                          onChange={handleRadioChange}
+                        />
+                      </div>
                     </div>
-                    </div> */}
+
+                    <div className="col-md-3">
+                      <div className="form-check mt-4" >
+                        <label className="form-group">
+                          Event Email Trigger Enabled
+                        </label>
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="email_trigger_enabled"
+                          value="true"
+                          checked={formData.email_trigger_enabled === "true"}
+                          onChange={handleRadioChange}
+                        />
+
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="email_trigger_enabled"
+                          value="false"
+                          checked={formData.email_trigger_enabled === "false"}
+                          onChange={handleRadioChange}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
