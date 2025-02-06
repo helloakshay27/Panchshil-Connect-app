@@ -68,9 +68,6 @@ const Members = () => {
                 <Link to="/edit-gallery">Edit Gallery</Link>
               </li>
               <li>
-                <Link to="/event-Create">Event Create</Link>
-              </li>
-              <li>
                 <Link to="/referral-create">Referral Create</Link>
               </li>
               <li>
@@ -78,6 +75,12 @@ const Members = () => {
               </li>
               <li>
                 <Link to="/event-list">Event List</Link>
+              </li>
+              <li>
+                <Link to="/event-Create">Event Create</Link>
+              </li>
+              <li>
+                <Link to="/event-details">Event Details</Link>
               </li>
             </ul>
           </div>
