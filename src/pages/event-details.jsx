@@ -1,6 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const EventDetails = () => {
+  // State to store event data
+  const [eventData, setEventData] = useState(null);
+
+  // Fetch event details based on the ID (assuming you're passing the event ID)
+  const eventId = 4; // Replace with dynamic ID from URL or props
+
+  useEffect(() => {
+    const fetchEventData = async () => {
+      try {
+        const response = await axios.get(
+          `https://panchshil-super.lockated.com/events/${eventId}.json`
+        );
+        setEventData(response.data);
+      } catch (error) {
+        console.error("Error fetching event data", error);
+      }
+    };
+
+    fetchEventData();
+  }, [eventId]);
+
+  // If event data is not yet loaded, show a loading state
+  if (!eventData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div className="main-content">
@@ -21,7 +48,6 @@ const EventDetails = () => {
                             <span className="me-3">
                               <span className="text-dark">:</span>
                             </span>
-                            
                           </label>
                         </div>
                       </div>
@@ -70,7 +96,6 @@ const EventDetails = () => {
                             <span className="me-3">
                               <span className="text-dark">:</span>
                             </span>
-                            
                           </label>
                         </div>
                       </div>
@@ -162,15 +187,23 @@ const EventDetails = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Event Image */}
               <div className="card mt-3 pb-4 mx-4">
-              <div className="card-header">
+                <div className="card-header">
                   <h3 className="card-title">Event Image</h3>
-                </div>                
+                </div>
                 <div className="card-body">
                   <div className="row">
-                    
+                    <div className="col-12">
+                      <img
+                        src={eventData.attachfile.document_url}
+                        alt="Event Image"
+                        className="img-fluid"
+                      />
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </div>
