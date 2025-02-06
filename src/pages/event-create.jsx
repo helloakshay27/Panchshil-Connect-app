@@ -18,14 +18,17 @@ const EventCreate = () => {
     comment: "",
     shared: "",
     share_groups: "",
-    attachment: [],
+    attachfile: [],
   });
 
+  console.log("formData", formData);
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
+  const [files, setFiles] = useState([]);
 
   console.log("AA", eventType)
   console.log("bb", eventUserID)
+
   // Handle input change for form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,13 +39,25 @@ const EventCreate = () => {
   };
 
   //for files into array
-  const handleFileChange = (e, fieldName) => {
-    const files = e.target.files;
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files); // Convert FileList to array
     setFormData((prevFormData) => ({
       ...prevFormData,
-      attachfile: files,
+      attachfile: [...prevFormData.attachfile, ...files], // Append the new files to the existing files in formData
     }));
   };
+
+  const handleFileUpload = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+    const fileData = selectedFiles.map((file) => ({
+      file: file,
+      name: file.name,
+      type: file.type,
+      url: file.type.startsWith("image") ? URL.createObjectURL(file) : null,
+    }));
+    setFiles([...files, ...fileData]);
+  };
+  
 
   const validateForm = (formData) => {
     const errors = [];
@@ -106,7 +121,7 @@ const EventCreate = () => {
     // }
    
     // File validation (files must be present)
-    if (!formData.attachment) {
+    if (!formData.attachfile) {
       errors.push("attachment is required.");
       return errors; // Return the first error immediately
     }
@@ -146,10 +161,12 @@ const EventCreate = () => {
     data.append("event[shared]", formData.shared);
     data.append("event[share_groups]", formData.share_groups);
   
-    // If there's an attachment, append it as well
-    if (formData.attachment) {
-      data.append("attachment", formData.attachment);
-    }
+    // Append files to FormData
+  if (formData.attachfile.length > 0) {
+    formData.attachfile.forEach((file, index) => {
+      data.append("event[event_image]", file);
+    });
+  }
   
     // Optional: Append any other fields or files you need
     // if (formData.two_d_images && formData.two_d_images.length > 0) {
@@ -177,7 +194,7 @@ const EventCreate = () => {
       );
       console.log(response.data);
       toast.success("Event created successfully");
-      navigate("/banner-list");
+      navigate("/event-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
       // toast.error("Failed to submit the form. Please try again.");
@@ -216,8 +233,6 @@ useEffect(() => {
         // },
       });
 
-      
-
       setEventUserID(response?.data.users || []);
       // console.log("User", response)
       console.log("eventUserID", eventUserID);
@@ -225,7 +240,6 @@ useEffect(() => {
       console.error("Error fetching Event:", error);
     }
   };
-
   fetchEvent();
 }, []);
 
@@ -465,9 +479,23 @@ useEffect(() => {
                       </div>
                     </div>
                     {/* <div className="col-md-3">
-                  <div className="form-group">
+                  <div clconst handleFileChange = (e) => {
+  const files = Array.from(e.target.files); // Convert FileList to array
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    attachfile: [...prevFormData.attachfile, ...files], // Append the new files to the existing files in formData
+  }));
+};
+assName="form-group">
                     <label>Event Resource ID</label>
-                    <input
+                    <inpuconst handleFileChange = (e) => {
+  const files = Array.from(e.target.files); // Convert FileList to array
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    attachfile: [...prevFormData.attachfile, ...files], // Append the new files to the existing files in formData
+  }));
+};
+t
                       className="form-control"
                       type="text"
                       name="SFDC_Project_Id"
@@ -489,21 +517,21 @@ useEffect(() => {
                   </div>
                 </div> */}
                     <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Attachment
-                          <span />
-                        </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="attachfile"
-                          multiple
-                          placeholder="Default input"
-                          onChange={(e) => handleFileChange(e, "attachfile")}
-                        />
-                      </div>
-                    </div>
+  <div className="form-group">
+    <label>
+      Attachment
+      <span />
+    </label>
+    <input
+      className="form-control"
+      type="file"
+      name="attachfile"
+      multiple
+      placeholder="Default input"
+      onChange={handleFileChange} // Ensure handleFileChange is being called
+    />
+  </div>
+</div>
                     {/* <div className="col-md-3">
                     <div className="form-group">
                     <label>Email Trigger</label>
