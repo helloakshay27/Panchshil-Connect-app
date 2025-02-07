@@ -12,7 +12,7 @@ const AmenitiesList = () => {
     total_count: 0,
     total_pages: 0,
   });
-  const pageSize = 10; // Number of items per page
+  const pageSize = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const AmenitiesList = () => {
       (pagination.current_page - 1) * pageSize,
       pagination.current_page * pageSize
     )
-    .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort amenities by ID (ascending)
+    .sort((a, b) => (a.id || 0) - (b.id || 0));
 
   const handleToggle = (index) => {
     setToggleStates((prevStates) =>
@@ -129,7 +129,7 @@ const AmenitiesList = () => {
           </div>
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Amenities List</h3>
+              <h3 className="card-title">Amenities Setup List</h3>
             </div>
             <div className="card-body">
               {loading ? (
@@ -172,15 +172,6 @@ const AmenitiesList = () => {
                               )}
                             </td>
                             <td>
-                              {/* <button
-                                aria-label={`Edit ${amenity.name || "No Name"}`}
-                                style={{ background: "none", border: "none" }}
-                                onClick={() =>
-                                  navigate(`/edit-amenities/${amenity.id}`)
-                                }
-                              >
-                                Edit
-                              </button> */}
                               <button
                                 className="btn btn-link"
                                 onClick={() =>
