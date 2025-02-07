@@ -37,10 +37,10 @@ const Members = () => {
               </li>
 
               <li>
-                <Link to="/amenities">Amenities</Link>
+                <Link to="/amenities">Amenities Setup</Link>
               </li>
               <li>
-                <Link to="/amenities-list">Amenities List</Link>
+                <Link to="/amenities-list">Amenities Setup List</Link>
               </li>
               <li>
                 <Link to="/edit-amenities">Edit Amenities </Link>
@@ -81,6 +81,15 @@ const Members = () => {
               </li>
               <li>
                 <Link to="/event-details/:id">Event Details</Link>
+              </li>
+              <li>
+                <Link to="/specification">Specification</Link>
+              </li>
+              <li>
+                <Link to="/specification-list">Specification List</Link>
+              </li>
+              <li>
+                <Link to="/specification-list">Specification Update</Link>
               </li>
             </ul>
           </div>

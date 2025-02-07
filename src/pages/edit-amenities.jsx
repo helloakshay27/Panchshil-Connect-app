@@ -29,10 +29,20 @@ const EditAmenities = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!name.trim()) {
+      alert("Name is required.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("name", name);
+    formData.append("amenity_setup[name]", name);
     if (icon) {
       formData.append("icon", icon);
+    }
+
+    // Log form data
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
     }
 
     try {
@@ -45,11 +55,15 @@ const EditAmenities = () => {
           },
         }
       );
-      console.log("API Response:", response);
+      console.log("API Response:", response.data);
       alert("Amenity updated successfully!");
     } catch (error) {
-      console.error("API Error:", error);
-      alert("Failed to update amenity.");
+      console.error("API Error:", error.response?.data || error.message);
+      alert(
+        `Failed to update amenity: ${
+          error.response?.data?.error || "Unknown error"
+        }`
+      );
     }
   };
 
