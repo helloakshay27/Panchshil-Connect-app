@@ -84,7 +84,7 @@ function App() {
           <Route path="/referral-create" element={<Referralcreate />} />
           <Route path="/referral-list" element={<Referrallist />} />
           <Route path="/event-list" element={<Eventlist />} />
-          <Route path="/event-details" element={<EventDetails />} />
+          <Route path="/event-details/:id" element={<EventDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>

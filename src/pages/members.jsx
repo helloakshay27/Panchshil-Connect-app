@@ -80,7 +80,7 @@ const Members = () => {
                 <Link to="/event-Create">Event Create</Link>
               </li>
               <li>
-                <Link to="/event-details">Event Details</Link>
+                <Link to="/event-details/:id">Event Details</Link>
               </li>
             </ul>
           </div>

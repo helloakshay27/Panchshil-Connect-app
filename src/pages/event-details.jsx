@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const EventDetails = () => {
-  // State to store event data
+  
+  const { id } = useParams();
   const [eventData, setEventData] = useState(null);
+  
 
-  // Fetch event details based on the ID (assuming you're passing the event ID)
-  const eventId = 4; // Replace with dynamic ID from URL or props
+  const eventId = id;
+  console.log("ID", eventData);
+  
 
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const response = await axios.get(
-          `https://panchshil-super.lockated.com/events/${eventId}.json`
-        );
+        const response = await axios.get(`https://panchshil-super.lockated.com/events/${eventId}}.json`);
         setEventData(response.data);
       } catch (error) {
-        console.error("Error fetching event data", error);
+        //console.error("Error fetching event data", error);
       }
     };
 
@@ -46,7 +48,8 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">:</span> 
+                              <span className="text-dark"> {eventData.event_type || 'N/A'} </span>
                             </span>
                           </label>
                         </div>
@@ -58,7 +61,8 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">:</span> 
+                              <span className="text-black"> {eventData.event_name} </span>
                             </span>
                           </label>
                         </div>
@@ -70,7 +74,7 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {eventData.event_at}</span>    
                             </span>
                           </label>
                         </div>
@@ -82,7 +86,7 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {new Date(eventData.from_time).toLocaleString()}</span> 
                             </span>
                           </label>
                         </div>
@@ -94,7 +98,7 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {new Date(eventData.to_time).toLocaleString()}</span> 
                             </span>
                           </label>
                         </div>
@@ -106,7 +110,7 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {eventData.rsvp_action || 'N/A'}</span> 
                             </span>
                           </label>
                         </div>
@@ -118,11 +122,12 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {eventData.description}</span> 
                             </span>
                           </label>
                         </div>
                       </div>
+                      {/* Add more fields as required */}
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6 ">
                           <label>Event Publish</label>
@@ -130,7 +135,7 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {eventData.publish}</span> 
                             </span>
                           </label>
                         </div>
@@ -142,7 +147,7 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {eventData.user_id}</span> 
                             </span>
                           </label>
                         </div>
@@ -154,7 +159,7 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {eventData.comment}</span> 
                             </span>
                           </label>
                         </div>
@@ -166,19 +171,19 @@ const EventDetails = () => {
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {eventData.shared}</span> 
                             </span>
                           </label>
                         </div>
                       </div>
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6 ">
-                          <label>Event Shared Groups</label>
+                          <label>Event Share Groups</label>
                         </div>
                         <div className="col-6">
                           <label className="text">
                             <span className="me-3">
-                              <span className="text-dark">:</span>
+                              <span className="text-dark">: {eventData.share_groups}</span> 
                             </span>
                           </label>
                         </div>
@@ -187,7 +192,6 @@ const EventDetails = () => {
                   </div>
                 </div>
               </div>
-
               {/* Event Image */}
               <div className="card mt-3 pb-4 mx-4">
                 <div className="card-header">

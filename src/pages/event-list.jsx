@@ -12,6 +12,9 @@ const Eventlist = () => {
   const pageSize = 10; // Define the page size
   const navigate = useNavigate(); // Call useNavigate at the top of the component
 
+
+  console.log("Events", events);
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -47,6 +50,8 @@ const Eventlist = () => {
     return <div>Loading...</div>;
   }
 
+  //console.log("ID", events.id)
+
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({
       ...prevState,
@@ -58,6 +63,8 @@ const Eventlist = () => {
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
+
+  
 
   return (
     <div className="main-content">
@@ -199,7 +206,7 @@ const Eventlist = () => {
                         </a>
                         <a href=""
                         
-                        onClick={() => navigate("/event-details")}>
+                        onClick={() => navigate(`/event-details/${event.id}`)}>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
