@@ -429,30 +429,8 @@ const EventCreate = () => {
                         </select>
                       </div>
                     </div>
-                    {/* <div className="col-md-3">
-                  <div className="form-group">
-                    <label>Event Canceled By</label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="SFDC_Project_Id"
-                      placeholder="Enter Canceled By"
-                      value=""                     
-                    />
-                  </div>
-                </div> */}
-                    {/* <div className="col-md-3">
-                  <div className="form-group">
-                    <label>Event Canceler ID</label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="SFDC_Project_Id"
-                      placeholder="Enter Event Canceler ID"
-                      value=""                     
-                    />
-                  </div>
-                </div> */}
+                    
+                    
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Comment</label>
@@ -492,44 +470,7 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-                    {/* <div className="col-md-3">
-                  <div clconst handleFileChange = (e) => {
-  const files = Array.from(e.target.files); // Convert FileList to array
-  setFormData((prevFormData) => ({
-    ...prevFormData,
-    attachfile: [...prevFormData.attachfile, ...files], // Append the new files to the existing files in formData
-  }));
-};
-assName="form-group">
-                    <label>Event Resource ID</label>
-                    <inpuconst handleFileChange = (e) => {
-  const files = Array.from(e.target.files); // Convert FileList to array
-  setFormData((prevFormData) => ({
-    ...prevFormData,
-    attachfile: [...prevFormData.attachfile, ...files], // Append the new files to the existing files in formData
-  }));
-};
-t
-                      className="form-control"
-                      type="text"
-                      name="SFDC_Project_Id"
-                      placeholder="Enter Resource ID"
-                      value=""                     
-                    />
-                  </div>
-                </div> */}
-                    {/* <div className="col-md-3">
-                  <div className="form-group">
-                    <label>Event Resource Type</label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="SFDC_Project_Id"
-                      placeholder="Enter Resource Type"
-                      value=""                     
-                    />
-                  </div>
-                </div> */}
+                                     
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
