@@ -73,7 +73,7 @@ const Eventlist = () => {
         <div className="module-data-section container-fluid">
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
             <div className="col-md-4 pe-2 pt-2">
-              <form
+              <form 
                 action="/pms/departments"
                 acceptCharset="UTF-8"
                 method="get"
@@ -179,7 +179,9 @@ const Eventlist = () => {
                           <td>{event.project_id}</td>
                           <td>{event.event_name}</td>
                           <td>{event.event_at}</td>
+
                           <td>{event.from_time}</td>
+
                           <td>{event.to_time}</td>
                           <td>
                             {event.attachfile &&

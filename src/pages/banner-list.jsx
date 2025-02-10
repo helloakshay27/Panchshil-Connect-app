@@ -12,16 +12,15 @@ import axios from "axios";
 
 const BannerList = () => {
   const [error, setError] = useState(null);
-  const [banners, setBanners] = useState([]); // Renamed galleries to banners
+  const [banners, setBanners] = useState([]); 
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
     current_page: 1,
     total_count: 0,
     total_pages: 0,
   });
-  const [pageSize] = useState(10); // Or any value that suits you
-
-  const [toggleStates, setToggleStates] = useState([true, false]);
+  const [pageSize] = useState(10); 
   const navigate = useNavigate();
 
   const handleToggle = (index) => {
@@ -29,6 +28,16 @@ const BannerList = () => {
       prevStates.map((state, i) => (i === index ? !state : state))
     );
   };
+
+  const filteredEvents = banners.filter((banner) =>
+    (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+  );
+
+  const displayedBanners = filteredEvents.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
+  )
+  .sort((a, b) => (b.id || 0) - (a.id || 0)); 
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -82,13 +91,17 @@ const BannerList = () => {
       current_page: pageNumber,
     }));
   };
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setPagination((prevState) => ({ ...prevState, current_page: 1 }));
+  };
 
-  const displayedBanners = banners
-    .slice(
-      (pagination.current_page - 1) * pageSize,
-      pagination.current_page * pageSize
-    )
-    .sort((a, b) => (b.id || 0) - (a.id || 0)); // Sort banners
+  // const displayedBanners = banners
+  //   .slice(
+  //     (pagination.current_page - 1) * pageSize,
+  //     pagination.current_page * pageSize
+  //   )
+  //   .sort((a, b) => (b.id || 0) - (a.id || 0)); 
 
   return (
     <>
@@ -104,14 +117,16 @@ const BannerList = () => {
                   method="get"
                 >
                   <div className="input-group">
-                    <input
-                      type="text"
-                      name="s[name_cont]"
-                      id="s_name_cont"
-                      className="form-control tbl-search table_search"
-                      placeholder="Search"
-                      fdprocessedid="u38fp"
-                    />
+                  <input
+                    type="text"
+                    name="s[name_cont]"
+                    id="s_name_cont"
+                    className="form-control tbl-search table_search"
+                    placeholder="Search"
+                    fdprocessedid="u38fp"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
                     <div className="input-group-append">
                       <button
                         type="submit"
@@ -183,7 +198,7 @@ const BannerList = () => {
                     <tbody>
                       {/* Sort banners in descending order and then map over them */}
                       {displayedBanners.map((banner, index) => (
-                        <tr key={index}>
+                        <tr key={banner.id}>
                           <td>
                             {(pagination.current_page - 1) * pageSize +
                               index +
