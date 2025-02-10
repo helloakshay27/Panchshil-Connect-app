@@ -58,7 +58,10 @@ const Eventlist = () => {
     event.event_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const displayedEvents = filteredEvents.slice(
+  const displayedEvents = filteredEvents
+  //.sort((a, b) => (b.id || 0) - (a.id || 0))
+
+  .slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );

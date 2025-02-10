@@ -68,10 +68,21 @@ const BannerAdd = () => {
 
   //for files into array
   const handleFileChange = (e, fieldName) => {
-    const files = e.target.files;
+    const files = Array.from(e.target.files); // Convert FileList to Array
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+    // Filter only valid image files
+    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+
+    if (validFiles.length !== files.length) {
+      alert("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = ""; // Reset the input if invalid file is detected
+      return;
+    }
+
     setFormData((prevFormData) => ({
       ...prevFormData,
-      attachfile: files,
+      attachfile: validFiles, // Store only valid images
     }));
   };
 
@@ -156,8 +167,8 @@ const BannerAdd = () => {
                         className="form-control"
                         type="file"
                         name="attachfile"
+                        accept="image/*" // Ensures only image files can be selected
                         multiple
-                        placeholder="Default input"
                         onChange={(e) => handleFileChange(e, "attachfile")}
                       />
                     </div>

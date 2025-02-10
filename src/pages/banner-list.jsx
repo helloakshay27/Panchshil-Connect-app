@@ -12,7 +12,7 @@ import axios from "axios";
 
 const BannerList = () => {
   const [error, setError] = useState(null);
-  const [banners, setBanners] = useState([]); 
+  const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
@@ -20,7 +20,7 @@ const BannerList = () => {
     total_count: 0,
     total_pages: 0,
   });
-  const [pageSize] = useState(10); 
+  const [pageSize] = useState(10);
   const navigate = useNavigate();
 
   const handleToggle = (index) => {
@@ -33,11 +33,13 @@ const BannerList = () => {
     (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
 
-  const displayedBanners = filteredEvents.slice(
-    (pagination.current_page - 1) * pageSize,
-    pagination.current_page * pageSize
-  )
-  .sort((a, b) => (b.id || 0) - (a.id || 0)); 
+  const displayedBanners = filteredEvents
+  .sort((a, b) => (b.id || 0) - (a.id || 0))
+    .slice(
+      (pagination.current_page - 1) * pageSize,
+      pagination.current_page * pageSize
+    );
+    
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -101,7 +103,7 @@ const BannerList = () => {
   //     (pagination.current_page - 1) * pageSize,
   //     pagination.current_page * pageSize
   //   )
-  //   .sort((a, b) => (b.id || 0) - (a.id || 0)); 
+  //   .sort((a, b) => (b.id || 0) - (a.id || 0));
 
   return (
     <>
@@ -117,16 +119,16 @@ const BannerList = () => {
                   method="get"
                 >
                   <div className="input-group">
-                  <input
-                    type="text"
-                    name="s[name_cont]"
-                    id="s_name_cont"
-                    className="form-control tbl-search table_search"
-                    placeholder="Search"
-                    fdprocessedid="u38fp"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                  />
+                    <input
+                      type="text"
+                      name="s[name_cont]"
+                      id="s_name_cont"
+                      className="form-control tbl-search table_search"
+                      placeholder="Search"
+                      fdprocessedid="u38fp"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                    />
                     <div className="input-group-append">
                       <button
                         type="submit"
