@@ -15,7 +15,7 @@ const Specification = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError(null); 
 
     const formData = new FormData();
     formData.append("specification_setup[name]", name);

@@ -7,6 +7,7 @@ const SpecificationList = () => {
   const [specifications, setSpecifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +30,6 @@ const SpecificationList = () => {
       });
   }, []);
 
-  // ✅ DELETE FUNCTION
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this specification?"
@@ -42,7 +42,6 @@ const SpecificationList = () => {
       );
       alert("Specification deleted successfully!");
 
-      // ✅ Remove deleted item from UI
       setSpecifications((prevSpecs) =>
         prevSpecs.filter((spec) => spec.id !== id)
       );
@@ -50,11 +49,65 @@ const SpecificationList = () => {
       alert("Error deleting specification. Please try again.");
     }
   };
+  const filteredSpecifications = specifications.filter((spec) =>
+    spec.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
+          <div className="d-flex justify-content-end px-4 pt-2 mt-3">
+            <div className="col-md-4 pe-2 pt-2">
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control tbl-search table_search"
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <div className="input-group-append">
+                  <button type="submit" className="btn btn-md btn-default">
+                    <svg
+                      width={16}
+                      height={16}
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"
+                        fill="#8B0203"
+                      />
+                      <path
+                        d="M14.6676 14.5644C14.5409 14.5644 14.4143 14.5206 14.3143 14.4269L12.9809 13.1769C12.7876 12.9956 12.7876 12.6956 12.9809 12.5144C13.1743 12.3331 13.4943 12.3331 13.6876 12.5144L15.0209 13.7644C15.2143 13.9456 15.2143 14.2456 15.0209 14.4269C14.9209 14.5206 14.7943 14.5644 14.6676 14.5644Z"
+                        fill="#8B0203"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="card-tools mt-1">
+              <button
+                className="purple-btn2 rounded-3"
+                onClick={() => navigate("/specification")}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={16}
+                  height={16}
+                  fill="currentColor"
+                  className="bi bi-plus"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                </svg>
+                <span>Add</span>
+              </button>
+            </div>
+          </div>
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
               <h3 className="card-title">Specification List</h3>
@@ -76,8 +129,8 @@ const SpecificationList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {specifications.length > 0 ? (
-                        specifications.map((spec, index) => (
+                      {filteredSpecifications.length > 0 ? (
+                        filteredSpecifications.map((spec, index) => (
                           <tr key={spec.id}>
                             <td>{index + 1}</td>
                             <td>{spec.name || "N/A"}</td>
@@ -94,7 +147,6 @@ const SpecificationList = () => {
                               )}
                             </td>
                             <td>
-                              {/* ✅ EDIT BUTTON */}
                               <button
                                 className=" btn-link"
                                 onClick={() =>

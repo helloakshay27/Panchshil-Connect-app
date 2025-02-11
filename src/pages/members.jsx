@@ -89,7 +89,7 @@ const Members = () => {
                 <Link to="/specification-list">Specification List</Link>
               </li>
               <li>
-                <Link to="/specification-list">Specification Update</Link>
+                <Link to="/specification-update/:id">Specification Update</Link>
               </li>
             </ul>
           </div>

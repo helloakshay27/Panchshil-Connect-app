@@ -1,44 +1,39 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const Referralcreate = () => {
-  const [project, setProject] = useState([]);
+const ReferralCreate = () => {
+  const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     mobile: "",
     referralCode: "",
-    userId: "",
-    projectId: "",
+    userId: "2", // Assuming a static user ID for now
   });
 
   useEffect(() => {
-    const fetchProject = async () => {
+    const fetchProjects = async () => {
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/projects.json",
           {
             headers: {
-              Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
+              Authorization: `Bearer 4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs`,
               "Content-Type": "application/json",
             },
           }
         );
-
-        if (response.data.projects) {
-          setProject(response.data.projects);
-        } else {
-          console.error("Unexpected API response:", response.data);
-        }
+        setProjects(response.data.projects || []);
       } catch (error) {
         console.error(
-          "Error fetching project data:",
+          "Error fetching projects:",
           error.response?.data || error.message
         );
       }
     };
-    fetchProject();
+
+    fetchProjects();
   }, []);
 
   const handleChange = (e) => {
@@ -54,21 +49,25 @@ const Referralcreate = () => {
       !formData.mobile ||
       !selectedProjectId
     ) {
-      console.error("Please fill all required fields.");
+      alert("Please fill all required fields.");
       return;
     }
+
+    const payload = {
+      referral: {
+        name: formData.name,
+        email: formData.email,
+        mobile: formData.mobile,
+        referral_code: formData.referralCode || null,
+        user_id: formData.userId,
+        project_id: selectedProjectId,
+      },
+    };
 
     try {
       const response = await axios.post(
         "https://panchshil-super.lockated.com/referrals.json",
-        {
-          name: formData.name,
-          email: formData.email,
-          mobile: formData.mobile,
-          referral_code: formData.referralCode || null,
-          user_id: 2,
-          project_id: selectedProjectId,
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
@@ -76,7 +75,9 @@ const Referralcreate = () => {
           },
         }
       );
-      console.log("Referral created successfully:", response.data);
+
+      alert("Referral created successfully!");
+      console.log("Response:", response.data);
     } catch (error) {
       console.error(
         "Error creating referral:",
@@ -94,6 +95,8 @@ const Referralcreate = () => {
       } else {
         console.error("Error setting up request:", error.message);
       }
+
+      alert("Failed to create referral. Please check your inputs.");
     }
   };
 
@@ -103,7 +106,7 @@ const Referralcreate = () => {
         <div className="module-data-section p-3">
           <div className="card mt-5 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Referral</h3>
+              <h3 className="card-title">Create Referral</h3>
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit}>
@@ -149,16 +152,16 @@ const Referralcreate = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Project Id</label>
+                      <label>Project</label>
                       <select
                         className="form-control form-select"
                         value={selectedProjectId}
                         onChange={(e) => setSelectedProjectId(e.target.value)}
                       >
                         <option value="" disabled>
-                          Select ID
+                          Select Project
                         </option>
-                        {project.map((proj) => (
+                        {projects.map((proj) => (
                           <option key={proj.id} value={proj.id}>
                             {proj.project_name}
                           </option>
@@ -194,4 +197,4 @@ const Referralcreate = () => {
   );
 };
 
-export default Referralcreate;
+export default ReferralCreate;

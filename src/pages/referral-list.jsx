@@ -17,11 +17,11 @@ const Referrallist = () => {
     const fetchReferrals = async () => {
       try {
         const response = await fetch(
-          "https://panchshil-super.lockated.com/referrals.json?project_id=7",
+          "https://panchshil-super.lockated.com/referrals.json?project_id=1",
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer hnbLunLzzG9ft5dyVulTBpuQp2mgvfZe_69ukCTa8QQ`,
+              Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
             },
           }
         );
@@ -141,7 +141,6 @@ const Referrallist = () => {
                       <th>Mobile No</th>
                       <th>Referral Code</th>
                       <th>Project Name</th>
-                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -158,7 +157,7 @@ const Referrallist = () => {
                           <td>{referral.mobile}</td>
                           <td>{referral.referral_code || "N/A"}</td>
                           <td>{referral.project_name}</td>
-                          <td className="text-center">
+                          {/* <td className="text-center">
                             <button
                               className="btn btn-link"
                               onClick={() => navigate("/referral-create")}
@@ -185,7 +184,7 @@ const Referrallist = () => {
                                 />
                               </svg>
                             </button>
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     ) : (
