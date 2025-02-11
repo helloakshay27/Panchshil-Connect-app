@@ -227,7 +227,7 @@ const BannerEdit = () => {
                   type="submit"
                   className="purple-btn2 w-100"
                 >
-                  Submit
+                  Update
                 </button>
               </div>
             </div>

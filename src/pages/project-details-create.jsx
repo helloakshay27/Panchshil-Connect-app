@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 
 const ProjectDetailsCreate = () => {
@@ -46,6 +47,8 @@ const ProjectDetailsCreate = () => {
   const [projectsType, setprojectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
   const [amenities, setAmenities] = useState([]);
+
+  const Navigate = useNavigate();
 
 
 
