@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const AmenitiesList = () => {
   const [toggleStates, setToggleStates] = useState([true, false]);
   const [amenities, setAmenities] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({
@@ -14,6 +15,10 @@ const AmenitiesList = () => {
   });
   const pageSize = 10;
   const navigate = useNavigate();
+
+  const filteredAmities = amenities.filter((amenities) =>
+    (amenities.name?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchAmenities = async () => {
@@ -52,7 +57,7 @@ const AmenitiesList = () => {
     }));
   };
 
-  const displayedAmenities = amenities
+  const displayedAmenities = filteredAmities
     .slice(
       (pagination.current_page - 1) * pageSize,
       pagination.current_page * pageSize
@@ -65,6 +70,20 @@ const AmenitiesList = () => {
     );
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setPagination((prevState) => ({ ...prevState, current_page: 1 }));
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) {
+      params.set("s[name_cont]", searchQuery);
+    }
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
@@ -72,18 +91,24 @@ const AmenitiesList = () => {
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
             <div className="col-md-4 pe-2 pt-2">
               <form
+                onSubmit={handleSearchSubmit}
                 action="/pms/departments"
                 acceptCharset="UTF-8"
                 method="get"
               >
                 <div className="input-group">
-                  <input
-                    type="text"
-                    name="s[name_cont]"
-                    id="s_name_cont"
-                    className="form-control tbl-search table_search"
-                    placeholder="Type your keywords here"
-                  />
+                <input
+                      type="text"
+                      name="s[name_cont]"
+                      id="s_name_cont"
+                      className="form-control tbl-search table_search"
+                      placeholder="Search"
+                      fdprocessedid="u38fp"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      
+                    />
+
                   <div className="input-group-append">
                     <button type="submit" className="btn btn-md btn-default">
                       <svg
@@ -151,7 +176,7 @@ const AmenitiesList = () => {
                     <tbody>
                       {displayedAmenities.length > 0 ? (
                         displayedAmenities.map((amenity, index) => (
-                          <tr key={index}>
+                          <tr key={amenity.id}>
                             <td>
                               {(pagination.current_page - 1) * pageSize +
                                 index +

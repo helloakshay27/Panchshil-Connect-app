@@ -98,6 +98,18 @@ const BannerList = () => {
     setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
 
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) {
+      params.set("s[name_cont]", searchQuery);
+    }
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
+
+  
+
   // const displayedBanners = banners
   //   .slice(
   //     (pagination.current_page - 1) * pageSize,
@@ -114,6 +126,7 @@ const BannerList = () => {
             <div className="d-flex justify-content-end px-4 pt-2 mt-3">
               <div className="col-md-4 pe-2 pt-2">
                 <form
+                  onSubmit={handleSearchSubmit}
                   action="/pms/departments"
                   acceptCharset="UTF-8"
                   method="get"
@@ -128,12 +141,14 @@ const BannerList = () => {
                       fdprocessedid="u38fp"
                       value={searchQuery}
                       onChange={handleSearchChange}
+                      
                     />
                     <div className="input-group-append">
                       <button
                         type="submit"
                         className="btn btn-md btn-default"
                         fdprocessedid="2wqzh"
+                        
                       >
                         <svg
                           width={16}
@@ -141,6 +156,7 @@ const BannerList = () => {
                           viewBox="0 0 16 16"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
+                          
                         >
                           <path
                             d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"

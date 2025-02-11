@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import { useNavigate } from "react-router-dom";
 
 const Eventlist = () => {
@@ -70,13 +69,22 @@ const Eventlist = () => {
     setPagination((prevState) => ({ ...prevState, current_page: pageNumber }));
   };
 
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) {
+      params.set("s[name_cont]", searchQuery);
+    }
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
             <div className="col-md-4 pe-2 pt-2">
-              <form
+              <form onSubmit={handleSearchSubmit}
                 action="/pms/departments"
                 acceptCharset="UTF-8"
                 method="get"
@@ -98,6 +106,7 @@ const Eventlist = () => {
                       type="submit"
                       className="btn btn-md btn-default"
                       fdprocessedid="2wqzh"
+                      
                     >
                       <svg
                         width={16}

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const GalleryList = () => {
   const [galleryData, setGalleryData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -11,7 +12,7 @@ const GalleryList = () => {
     total_pages: 0,
   });
   const pageSize = 10;
-  const [searchQuery, setSearchQuery] = useState("");
+ 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,7 +48,11 @@ const GalleryList = () => {
     }));
   };
 
-  const displayedGalleries = galleryData
+  const filteredGallery = galleryData.filter((galleryData) =>
+    (galleryData.gallery_type?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+  );
+
+  const displayedGalleries = filteredGallery
     .slice(
       (pagination.current_page - 1) * pageSize,
       pagination.current_page * pageSize
@@ -60,6 +65,21 @@ const GalleryList = () => {
     );
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setPagination((prevState) => ({ ...prevState, current_page: 1 }));
+  };
+
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) {
+      params.set("s[name_cont]", searchQuery);
+    }
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
   return (
     <>
       <div className="main-content">
@@ -68,18 +88,22 @@ const GalleryList = () => {
             <div className="d-flex justify-content-end px-4 pt-2 mt-3">
               <div className="col-md-4 pe-2 pt-2">
                 <form
+                  onSubmit={handleSearchSubmit}
                   action="/pms/departments"
                   acceptCharset="UTF-8"
                   method="get"
                 >
                   <div className="input-group">
-                    <input
+                  <input
                       type="text"
                       name="s[name_cont]"
                       id="s_name_cont"
                       className="form-control tbl-search table_search"
-                      placeholder="Type your keywords here"
+                      placeholder="Search"
                       fdprocessedid="u38fp"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      
                     />
                     <div className="input-group-append">
                       <button
