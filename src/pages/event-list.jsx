@@ -59,12 +59,12 @@ const Eventlist = () => {
   );
 
   const displayedEvents = filteredEvents
-  //.sort((a, b) => (b.id || 0) - (a.id || 0))
+    //.sort((a, b) => (b.id || 0) - (a.id || 0))
 
-  .slice(
-    (pagination.current_page - 1) * pageSize,
-    pagination.current_page * pageSize
-  );
+    .slice(
+      (pagination.current_page - 1) * pageSize,
+      pagination.current_page * pageSize
+    );
 
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({ ...prevState, current_page: pageNumber }));
@@ -76,7 +76,7 @@ const Eventlist = () => {
         <div className="module-data-section container-fluid">
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
             <div className="col-md-4 pe-2 pt-2">
-              <form 
+              <form
                 action="/pms/departments"
                 acceptCharset="UTF-8"
                 method="get"

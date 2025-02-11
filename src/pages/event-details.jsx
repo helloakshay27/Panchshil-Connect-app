@@ -201,7 +201,7 @@ const EventDetails = () => {
                   <div className="row">
                     <div className="col-12">
                       <img
-                        src={eventData.attachfile.document_url}
+                        src={eventData?.attachfile?.document_url || "NA"}
                         alt="Event Image"
                         className="img-fluid"
                       />
