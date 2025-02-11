@@ -41,11 +41,22 @@ const EventCreate = () => {
   };
 
   //for files into array
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files); // Convert FileList to array
+  const handleFileChange = (e, fieldName) => {
+    const files = Array.from(e.target.files); // Convert FileList to Array
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+    // Filter only valid image files
+    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+
+    if (validFiles.length !== files.length) {
+      alert("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = ""; // Reset the input if invalid file is detected
+      return;
+    }
+
     setFormData((prevFormData) => ({
       ...prevFormData,
-      attachfile: [...prevFormData.attachfile, ...files], // Append the new files to the existing files in formData
+      attachfile: validFiles, // Store only valid images
     }));
   };
 
@@ -429,8 +440,7 @@ const EventCreate = () => {
                         </select>
                       </div>
                     </div>
-                    
-                    
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Comment</label>
@@ -470,7 +480,7 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-                                     
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -481,14 +491,13 @@ const EventCreate = () => {
                           className="form-control"
                           type="file"
                           name="attachfile"
+                          accept="image/*" // Ensures only image files can be selected
                           multiple
-                          placeholder="Default input"
-                          onChange={handleFileChange} // Ensure handleFileChange is being called
+                          onChange={(e) => handleFileChange(e, "attachfile")}
                         />
                       </div>
                     </div>
 
-                    
                     <div className="col-md-3">
                       <div className="form-check mt-4">
                         <label className="form-group">Event is Important</label>
@@ -513,7 +522,7 @@ const EventCreate = () => {
                     </div>
 
                     <div className="col-md-3">
-                      <div className="form-check mt-4" >
+                      <div className="form-check mt-4">
                         <label className="form-group">
                           Event Email Trigger Enabled
                         </label>
