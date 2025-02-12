@@ -83,7 +83,7 @@ const Members = () => {
                 <Link to="/event-details/:id">Event Details</Link>
               </li>
               <li>
-                <Link to="/event-edit">Event Edit</Link>
+                <Link to="/event-edit/:id">Event Edit</Link>
               </li>
               <li>
                 <Link to="/specification">Specification</Link>

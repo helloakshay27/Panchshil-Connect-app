@@ -115,14 +115,14 @@ const EventCreate = () => {
       errors.push("Event description is required.");
       return errors; // Return the first error immediately
     }
-    // if (!formData.publish) {
-    //   errors.push("Event Publish is required.");
-    //   return errors; // Return the first error immediately
-    // }
-    // if (!formData.user_id) {
-    //   errors.push("Event User ID is required.");
-    //   return errors; // Return the first error immediately
-    // }
+    if (!formData.publish) {
+      errors.push("Event Publish is required.");
+      return errors; // Return the first error immediately
+    }
+    if (!formData.user_id) {
+      errors.push("Event User ID is required.");
+      return errors; // Return the first error immediately
+    }
     if (!formData.comment) {
       errors.push("Event Comment is required.");
       return errors; // Return the first error immediately
@@ -159,10 +159,10 @@ const EventCreate = () => {
     // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
-      // Show errors to the user and stop the form submission if there are validation errors
-      console.log(validationErrors);
-      return; // Early return if there are validation errors
+      alert(validationErrors.join("\n")); // Show all errors in an alert
+      return; // Stop form submission
     }
+  
 
     // Create FormData to send with the request
     const data = new FormData();
@@ -190,13 +190,14 @@ const EventCreate = () => {
       });
     }
 
-    // Optional: Append any other fields or files you need
-    // if (formData.two_d_images && formData.two_d_images.length > 0) {
-    //   formData.two_d_images.forEach((image, index) => {
-    //     data.append(`two_d_image_${index}`, image);
-    //   });
-    // }
-
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key === "attachfile" && value.length > 0) {
+        value.forEach((file) => data.append("event[event_image]", file));
+      } else {
+        data.append(`event[${key}]`, value);
+      }
+    });
+    
     // Log the data object to see what it contains
     for (let [key, value] of data.entries()) {
       console.log(`${key}:`, value);
@@ -219,7 +220,7 @@ const EventCreate = () => {
       navigate("/event-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
-      // toast.error("Failed to submit the form. Please try again.");
+      toast.error("Failed to submit the form. Please try again.");
     }
   };
 

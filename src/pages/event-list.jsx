@@ -211,7 +211,7 @@ const Eventlist = () => {
                           <td>
                             <a
                               href=""
-                              onClick={() => navigate("/event-create")}
+                              onClick={() => navigate(`/event-edit/${event.id}`)}
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
