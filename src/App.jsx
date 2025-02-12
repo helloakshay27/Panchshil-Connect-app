@@ -38,6 +38,7 @@ import Specification from "./pages/specification";
 import SpecificationList from "./pages/specification-list";
 import SpecificationUpdate from "./pages/specification-update";
 import EventEdit from "./pages/event-edit";
+import SitevisitCreate from "./pages/sitevisit-create";
 function App() {
   return (
     <BrowserRouter>
@@ -94,6 +95,7 @@ function App() {
           <Route path="/specification" element={<Specification />} />
           <Route path="/specification-update/:id" element={<SpecificationUpdate />} />
           <Route path="/specification-list" element={<SpecificationList />} />
+          <Route path="/sitevisit-create" element={<SitevisitCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>

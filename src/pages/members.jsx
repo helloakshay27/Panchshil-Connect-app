@@ -94,6 +94,9 @@ const Members = () => {
               <li>
                 <Link to="/specification-update/:id">Specification Update</Link>
               </li>
+              <li>
+                <Link to="/sitevisit-create">Site Visit Create</Link>
+              </li>
             </ul>
           </div>
         </div>

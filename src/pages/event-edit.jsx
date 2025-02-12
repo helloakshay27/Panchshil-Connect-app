@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const EventEdit = () => {
   const { eventId } = useParams(); // Get event ID from URL params
   const navigate = useNavigate();
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     event_type: "",
     event_name: "",
