@@ -97,17 +97,16 @@ const AmenitiesList = () => {
                 method="get"
               >
                 <div className="input-group">
-                <input
-                      type="text"
-                      name="s[name_cont]"
-                      id="s_name_cont"
-                      className="form-control tbl-search table_search"
-                      placeholder="Search"
-                      fdprocessedid="u38fp"
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                      
-                    />
+                  <input
+                    type="text"
+                    name="s[name_cont]"
+                    id="s_name_cont"
+                    className="form-control tbl-search table_search"
+                    placeholder="Search"
+                    fdprocessedid="u38fp"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
 
                   <div className="input-group-append">
                     <button type="submit" className="btn btn-md btn-default">
@@ -162,7 +161,7 @@ const AmenitiesList = () => {
               ) : error ? (
                 <p className="text-danger">{error}</p>
               ) : (
-                <div className="tbl-container mt-4 px-1">
+                <div className="tbl-container mt-4 ">
                   <table className="w-100">
                     <thead>
                       <tr>

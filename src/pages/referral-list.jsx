@@ -131,7 +131,7 @@ const Referrallist = () => {
               <h3 className="card-title">Referral List</h3>
             </div>
             <div className="card-body mt-4 pb-4 pt-0">
-              <div className="tbl-container mt-4 px-1">
+              <div className="tbl-container mt-4 ">
                 <table className="w-100">
                   <thead>
                     <tr>

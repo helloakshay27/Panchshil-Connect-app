@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 const Members = () => {
   return (
     <>
-      <div className="main-content">
+      <div className="main-content ">
         <div className="website-content overflow-auto">
           <div className="module-data-section container-fluid">
             <h1>Panchshil Connect App</h1>
@@ -95,8 +95,19 @@ const Members = () => {
                 <Link to="/specification-update/:id">Specification Update</Link>
               </li>
               <li>
+<<<<<<< Updated upstream
                 <Link to="/sitevisit-create">Site Visit Create</Link>
               </li>
+=======
+                <Link to="/siteVisit-SlotConfig">Site Visit Slot Config</Link>
+              </li>
+              <li>
+                <Link to="/siteVisit-SlotConfig-list">
+                  Site Visit Slot Config list
+                </Link>
+              </li>
+              <li className="pb-5">{/* add above this li */}</li>
+>>>>>>> Stashed changes
             </ul>
           </div>
         </div>

@@ -118,7 +118,7 @@ const SpecificationList = () => {
               ) : error ? (
                 <p>Error: {error}</p>
               ) : (
-                <div className="tbl-container mt-4 px-1">
+                <div className="tbl-container mt-4 ">
                   <table className="w-100">
                     <thead>
                       <tr>

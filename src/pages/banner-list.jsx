@@ -34,12 +34,11 @@ const BannerList = () => {
   );
 
   const displayedBanners = filteredEvents
-  .sort((a, b) => (b.id || 0) - (a.id || 0))
+    .sort((a, b) => (b.id || 0) - (a.id || 0))
     .slice(
       (pagination.current_page - 1) * pageSize,
       pagination.current_page * pageSize
     );
-    
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -107,9 +106,6 @@ const BannerList = () => {
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
   };
 
-
-  
-
   // const displayedBanners = banners
   //   .slice(
   //     (pagination.current_page - 1) * pageSize,
@@ -141,14 +137,12 @@ const BannerList = () => {
                       fdprocessedid="u38fp"
                       value={searchQuery}
                       onChange={handleSearchChange}
-                      
                     />
                     <div className="input-group-append">
                       <button
                         type="submit"
                         className="btn btn-md btn-default"
                         fdprocessedid="2wqzh"
-                        
                       >
                         <svg
                           width={16}
@@ -156,7 +150,6 @@ const BannerList = () => {
                           viewBox="0 0 16 16"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
-                          
                         >
                           <path
                             d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"
@@ -198,7 +191,7 @@ const BannerList = () => {
               <div className="card-header">
                 <h3 className="card-title">Banner List</h3>
               </div>
-              <div className="card-body mt-4 pb-4 pt-0">
+              <div className=" card-body mt-4 pb-4 pt-0">
                 <div className="tbl-container mt-3">
                   <table className="w-100">
                     <thead>

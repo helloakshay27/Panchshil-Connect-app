@@ -77,7 +77,7 @@ const SpecificationUpdate = () => {
                   </div>
                 </div>
                 <button type="submit" className="purple-btn2 w-80">
-                  Submit
+                  Update
                 </button>
               </form>
             </div>

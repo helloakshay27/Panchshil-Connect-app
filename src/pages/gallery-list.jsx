@@ -12,7 +12,7 @@ const GalleryList = () => {
     total_pages: 0,
   });
   const pageSize = 10;
- 
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +49,9 @@ const GalleryList = () => {
   };
 
   const filteredGallery = galleryData.filter((galleryData) =>
-    (galleryData.gallery_type?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+    (galleryData.gallery_type?.toLowerCase() || "").includes(
+      searchQuery.toLowerCase()
+    )
   );
 
   const displayedGalleries = filteredGallery
@@ -69,7 +71,6 @@ const GalleryList = () => {
     setSearchQuery(e.target.value);
     setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
-
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -94,7 +95,7 @@ const GalleryList = () => {
                   method="get"
                 >
                   <div className="input-group">
-                  <input
+                    <input
                       type="text"
                       name="s[name_cont]"
                       id="s_name_cont"
@@ -103,7 +104,6 @@ const GalleryList = () => {
                       fdprocessedid="u38fp"
                       value={searchQuery}
                       onChange={handleSearchChange}
-                      
                     />
                     <div className="input-group-append">
                       <button
@@ -158,7 +158,7 @@ const GalleryList = () => {
                 <h3 className="card-title">Gallery List</h3>
               </div>
               <div className="card-body">
-                <div className="tbl-container mt-4 px-1">
+                <div className="tbl-container mt-4 ">
                   {isLoading ? (
                     <p>Loading...</p>
                   ) : (

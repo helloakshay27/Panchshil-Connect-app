@@ -24,48 +24,45 @@ const ProjectDetailsList = () => {
 
   const navigate = useNavigate();
 
-      const fetchProjects = async (searchTerm = "") => {
-      const token = "ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4"; // Replace with your actual token
-      const url = " https://panchshil-super.lockated.com/get_all_projects.json";
+  const fetchProjects = async (searchTerm = "") => {
+    const token = "ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4"; // Replace with your actual token
+    const url = " https://panchshil-super.lockated.com/get_all_projects.json";
 
-      try {
-        const response = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            "q[Project_Name_cont]": searchTerm, // Passing search query
-          },
-  
-        });
-        const projectsData = response.data?.projects || [];
-        setProjects(projectsData);
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          "q[Project_Name_cont]": searchTerm, // Passing search query
+        },
+      });
+      const projectsData = response.data?.projects || [];
+      setProjects(projectsData);
 
-        setPagination({
-          current_page: 1,
-          total_count: projectsData.length,
-          total_pages: Math.ceil(projectsData.length / pageSize),
-        });
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-        setError("Unable to fetch project data");
-      }
-    };
+      setPagination({
+        current_page: 1,
+        total_count: projectsData.length,
+        total_pages: Math.ceil(projectsData.length / pageSize),
+      });
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      setError("Unable to fetch project data");
+    }
+  };
 
-    useEffect(() => {
-      fetchProjects();
-    }, []);
-  
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
-    const handleSearchChange = (e) => {
-      setSearchQuery(e.target.value);
-    };
-  
-    const handleSearchSubmit = (e) => {
-      e.preventDefault();
-      fetchProjects(searchQuery);
-    };
-  
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    fetchProjects(searchQuery);
+  };
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= pagination.total_pages) {
@@ -158,7 +155,7 @@ const ProjectDetailsList = () => {
             <h3 className="card-title">Project List</h3>
           </div>
           <div className="card-body mt-4 pb-4 pt-0">
-            <div className="tbl-container mt-4 px-1">
+            <div className="tbl-container mt-4 ">
               <table className="w-110" style={{ width: "max-content" }}>
                 <thead>
                   <tr>
@@ -188,7 +185,9 @@ const ProjectDetailsList = () => {
                 <tbody>
                   {displayedProjects?.map((project, index) => (
                     <tr key={index}>
-                      <td>{(pagination.current_page - 1) * pageSize + index + 1}</td>
+                      <td>
+                        {(pagination.current_page - 1) * pageSize + index + 1}
+                      </td>
                       <td>{project?.project_name || "N/A"}</td>
                       <td>{project?.property_type || "N/A"}</td>
                       <td>{project?.sfdc_project_id || "N/As"}</td>

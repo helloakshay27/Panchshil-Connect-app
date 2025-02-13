@@ -142,13 +142,13 @@ const TestimonialList = () => {
             <div className="card-header">
               <h3 className="card-title">Testimonials List</h3>
             </div>
-            <div className="card-body mt-4 pb-4 pt-0">
+            <div className="card-body  mt-4 pb-4 pt-0">
               {loading ? (
                 <p>Loading...</p>
               ) : error ? (
                 <p className="text-danger">{error}</p>
               ) : (
-                <div className="tbl-container mt-4 px-1">
+                <div className="tbl-container mt-4 ">
                   <table className="w-100">
                     <thead>
                       <tr>

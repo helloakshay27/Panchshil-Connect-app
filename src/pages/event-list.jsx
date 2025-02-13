@@ -84,7 +84,8 @@ const Eventlist = () => {
         <div className="module-data-section container-fluid">
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
             <div className="col-md-4 pe-2 pt-2">
-              <form onSubmit={handleSearchSubmit}
+              <form
+                onSubmit={handleSearchSubmit}
                 action="/pms/departments"
                 acceptCharset="UTF-8"
                 method="get"
@@ -106,7 +107,6 @@ const Eventlist = () => {
                       type="submit"
                       className="btn btn-md btn-default"
                       fdprocessedid="2wqzh"
-                      
                     >
                       <svg
                         width={16}

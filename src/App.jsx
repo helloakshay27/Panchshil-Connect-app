@@ -38,7 +38,12 @@ import Specification from "./pages/specification";
 import SpecificationList from "./pages/specification-list";
 import SpecificationUpdate from "./pages/specification-update";
 import EventEdit from "./pages/event-edit";
+<<<<<<< Updated upstream
 import SitevisitCreate from "./pages/sitevisit-create";
+=======
+import SiteVisitSlotConfig from "./pages/siteVisit-SlotConfig";
+import SiteVisitSlotConfigList from "./pages/siteVisit-SlotConfig-list";
+>>>>>>> Stashed changes
 function App() {
   return (
     <BrowserRouter>
@@ -93,9 +98,23 @@ function App() {
           <Route path="/event-details" element={<EventDetails />} />
           <Route path="/event-edit/:id" element={<EventEdit />} />
           <Route path="/specification" element={<Specification />} />
-          <Route path="/specification-update/:id" element={<SpecificationUpdate />} />
+          <Route
+            path="/specification-update/:id"
+            element={<SpecificationUpdate />}
+          />
           <Route path="/specification-list" element={<SpecificationList />} />
+<<<<<<< Updated upstream
           <Route path="/sitevisit-create" element={<SitevisitCreate />} />
+=======
+          <Route
+            path="/siteVisit-SlotConfig"
+            element={<SiteVisitSlotConfig />}
+          />
+          <Route
+            path="/siteVisit-SlotConfig-list"
+            element={<SiteVisitSlotConfigList />}
+          />
+>>>>>>> Stashed changes
         </Route>
       </Routes>
     </BrowserRouter>
