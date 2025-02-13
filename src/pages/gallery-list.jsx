@@ -19,7 +19,7 @@ const GalleryList = () => {
     const fetchGalleryData = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/galleries.json?project_id=1"
+          "https://panchshil-super.lockated.com/galleries.json?project_id=1.json"
         );
         console.log("API Response:", response.data.galleries);
         const galleryList = Array.isArray(response.data.galleries)

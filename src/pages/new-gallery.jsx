@@ -139,10 +139,7 @@ const NewGallery = () => {
                 <h3 className="card-title">Add Gallery</h3>
               </div>
               <div className="card-body">
-                {error && <div className="alert alert-danger">{error}</div>}
-                {loading ? (
-                  <div className="text-center">Loading...</div>
-                ) : (
+                
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
@@ -150,11 +147,11 @@ const NewGallery = () => {
                         <select
                           className="form-control form-select"
                           name="galleryType"
-                          value={formData.galleryType || galleryData.gallery_type_id}
+                          value={formData.galleryType}
                           onChange={handleInputChange}
                         >
                           <option value="" disabled>
-                            {galleryData.gallery_type}
+                            Select
                           </option>
                           {galleryType.map((type) => (
                             <option key={type.id} value={type.id}>
@@ -223,7 +220,7 @@ const NewGallery = () => {
                       </div>
                     </div>
                   </div>
-                )}
+              
               </div>
             </div>
             {/* Submit Button */}

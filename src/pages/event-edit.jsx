@@ -4,7 +4,9 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
 const EventEdit = () => {
-  const { eventId } = useParams();
+  const { id } = useParams();
+
+  console.log("id", id);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -25,6 +27,8 @@ const EventEdit = () => {
     email_trigger_enabled: "false",
   });
 
+  console.log("Data", formData);
+
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
 
@@ -32,16 +36,19 @@ const EventEdit = () => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/events/${eventId}.json`
+          `https://panchshil-super.lockated.com/events/${id}.json`
         );
-        setFormData(response.data.event);
+
+
+        console.log("resp", response);
+        setFormData(response?.data);
       } catch (error) {
         console.error("Error fetching event:", error);
       }
     };
 
-    if (eventId) fetchEvent();
-  }, [eventId]);
+    if (id) fetchEvent();
+  }, [id]);
 
   useEffect(() => {
     const fetchEventTypes = async () => {
@@ -102,7 +109,7 @@ const EventEdit = () => {
 
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/events/${eventId}.json`,
+        `https://panchshil-super.lockated.com/events/${id}.json`,
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -112,6 +119,12 @@ const EventEdit = () => {
       console.error("Error updating event:", error);
       toast.error("Failed to update event.");
     }
+  };
+
+  const formatDateForInput = (isoString) => {
+    if (!isoString) return ""; // Handle empty values
+    const date = new Date(isoString);
+    return date.toISOString().slice(0, 16); // Extract "YYYY-MM-DDTHH:MM"
   };
 
   return (
@@ -133,7 +146,7 @@ const EventEdit = () => {
                         <select
                           name="event_type"
                           className="form-control form-select"
-                          value={formData.event_type}
+                          value={formData.event_type || "NA"}
                           onChange={handleChange}
                         >
                           {/* <option value="">Select Event Type</option> */}
@@ -153,7 +166,7 @@ const EventEdit = () => {
                           type="text"
                           name="event_name"
                           placeholder="Enter Event Name"
-                          value={formData.event_name}
+                          value={formData.event_name || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -166,7 +179,7 @@ const EventEdit = () => {
                           type="text"
                           name="event_at"
                           placeholder="Enter Evnet At"
-                          value={formData.event_at}
+                          value={formData.event_at || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -179,7 +192,7 @@ const EventEdit = () => {
                           type="datetime-local"
                           name="from_time"
                           placeholder="Enter Event From"
-                          value={formData.from_time}
+                          value={formatDateForInput(formData.from_time) || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -192,7 +205,7 @@ const EventEdit = () => {
                           type="datetime-local"
                           name="to_time"
                           placeholder="Enter Event To"
-                          value={formData.to_time}
+                          value={formatDateForInput(formData.to_time) || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -206,7 +219,7 @@ const EventEdit = () => {
                           type="text"
                           name="rsvp_action"
                           placeholder="Enter RSVP Action"
-                          value={formData.rsvp_action}
+                          value={formData.rsvp_action || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -220,7 +233,7 @@ const EventEdit = () => {
                           rows={1}
                           name="description"
                           placeholder="Enter Project Description"
-                          value={formData.description}
+                          value={formData.description || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -233,7 +246,7 @@ const EventEdit = () => {
                           type="text"
                           name="publish"
                           placeholder="Enter Event Publish"
-                          value={formData.publish}
+                          value={formData.publish || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -270,7 +283,7 @@ const EventEdit = () => {
                           rows={1}
                           name="comment"
                           placeholder="Enter Project Description"
-                          value={formData.comment}
+                          value={formData.comment || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -283,7 +296,7 @@ const EventEdit = () => {
                           type="text"
                           name="shared"
                           placeholder="Enter Event Shared"
-                          value={formData.shared}
+                          value={formData.shared || "NA"}
                           onChange={handleChange}
                         />
                       </div>
@@ -296,13 +309,28 @@ const EventEdit = () => {
                           type="text"
                           name="share_groups"
                           placeholder="Enter Shared Groups"
-                          value={formData.share_groups}
+                          value={formData.share_groups || "NA"}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
 
                     <div className="col-md-3">
+                    {formData.previewImage ? (
+                      <img
+                        src={formData.previewImage}
+                        alt="Uploaded Preview"
+                        className="img-fluid rounded mt-2"
+                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                      />
+                    ) : (
+                      <img
+                        src={formData?.attachfile?.document_url || "NA"}
+                        className="img-fluid rounded mt-2"
+                        alt={formData?.title || "Banner Image"}
+                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                      />
+                    )}
                       <div className="form-group">
                         <label>
                           Attachment
