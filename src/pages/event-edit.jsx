@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const EventEdit = () => {
   const { eventId } = useParams(); // Get event ID from URL params
   const navigate = useNavigate();
-  const { id } = useParams();
+  //const { id } = useParams();
   const [formData, setFormData] = useState({
     event_type: "",
     event_name: "",
@@ -193,7 +193,7 @@ const EventEdit = () => {
                         <select
                           className="form-control form-select"
                           name="event_type"
-                          value={formData.event_type || event?.event_type}
+                          value={formData.event_type || eventId?.event_type}
                           onChange={handleChange}
                         >
                           <option value="" disabled>
