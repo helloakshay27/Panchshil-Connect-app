@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const SitevisitCreate = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const SitevisitCreate = () => {
 
   const [projectsType, setProjectsType] = useState([]);
   const [slots, setSlots] = useState([]);
+  const navigate = useNavigate();
 
   const apiUrl = "https://panchshil-super.lockated.com/site_schedule_requests";
   const projectsApiUrl =
@@ -134,6 +136,7 @@ const SitevisitCreate = () => {
 
       toast.success("Form submitted successfully");
       console.log("Response from API:", response.data);
+      navigate("/sitevisit-list");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error(`Error submitting schedule: ${error.message}`);
