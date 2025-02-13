@@ -167,8 +167,8 @@ const ProjectDetailsList = () => {
                     <th>SFDC Project ID</th>
                     <th>Project Construction Status</th>
                     <th>Configuration Type</th>
-                    <th>Location</th>
-                    <th>Project Description</th>
+                    {/* <th>Location</th>
+                    <th>Project Description</th> */}
                     <th>Price Onward</th>
                     <th>Project Size (Sq. Mtr)</th>
                     <th>Project Size (Sq. Ft)</th>
@@ -193,14 +193,14 @@ const ProjectDetailsList = () => {
                       <td>{project?.sfdc_project_id || "N/As"}</td>
                       <td>{project?.status || "N/A"}</td>
                       <td>{project?.building_type || "N/A"}</td>
-                      <td>
+                      {/* <td>
                         {project?.location
                           ? `${project.location}, ${
                               project.location || "N/A"
                             }, ${project.location || "N/A"}`
                           : "N/A"}
                       </td>
-                      <td>{project?.project_description || "N/A"}</td>
+                      <td>{project?.project_description || "N/A"}</td> */}
                       <td>{project?.price || "N/A"}</td>
                       <td>{project?.project_size_sq_mtr || "N/A"}</td>
                       <td>{project?.project_size_sq_ft || "N/A"}</td>

@@ -4,9 +4,9 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
 const EventEdit = () => {
-  const { eventId } = useParams(); // Get event ID from URL params
+  const { eventId } = useParams();
   const navigate = useNavigate();
-  //const { id } = useParams();
+
   const [formData, setFormData] = useState({
     event_type: "",
     event_name: "",
@@ -21,13 +21,12 @@ const EventEdit = () => {
     shared: "",
     share_groups: "",
     attachfile: [],
-    is_important: "",
-    email_trigger_enabled: "",
+    is_important: "false",
+    email_trigger_enabled: "false",
   });
 
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
-  const [files, setFiles] = useState([]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -35,15 +34,13 @@ const EventEdit = () => {
         const response = await axios.get(
           `https://panchshil-super.lockated.com/events/${eventId}.json`
         );
-        setFormData(response.data.event); // Set existing event data in form
+        setFormData(response.data.event);
       } catch (error) {
         console.error("Error fetching event:", error);
       }
     };
 
-    if (eventId) {
-      fetchEvent();
-    }
+    if (eventId) fetchEvent();
   }, [eventId]);
 
   useEffect(() => {
@@ -57,7 +54,6 @@ const EventEdit = () => {
         console.error("Error fetching event types:", error);
       }
     };
-
     fetchEventTypes();
   }, []);
 
@@ -72,98 +68,43 @@ const EventEdit = () => {
         console.error("Error fetching users:", error);
       }
     };
-
     fetchUsers();
   }, []);
 
-  // Handle input change for form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle file selection
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
-
-    if (validFiles.length !== files.length) {
-      alert("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = "";
-      return;
-    }
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      attachfile: validFiles,
-    }));
+    setFormData((prev) => ({ ...prev, attachfile: files }));
   };
 
-  // Handle radio input changes
-  const handleRadioChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const validateForm = (formData) => {
-    const errors = [];
-    if (!formData.event_name) errors.push("Event Name is required.");
-    if (!formData.event_at) errors.push("Event At is required.");
-    if (!formData.from_time) errors.push("Event from time is required.");
-    if (!formData.to_time) errors.push("Event to Time is required.");
-    if (!formData.rsvp_action) errors.push("RSVP action is required.");
-    if (!formData.description) errors.push("Event description is required.");
-    if (!formData.comment) errors.push("Event Comment is required.");
-    if (!formData.shared) errors.push("Event Shared is required.");
-    if (!formData.share_groups) errors.push("Event Shared Group is required.");
-    if (!formData.attachfile.length) errors.push("Attachment is required.");
-    return errors;
+  const handleRadioChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm(formData);
-    if (validationErrors.length > 0) {
-      console.log(validationErrors);
-      return;
-    }
-
     const data = new FormData();
-    data.append("event[event_type]", formData.event_type);
-    data.append("event[event_name]", formData.event_name);
-    data.append("event[event_at]", formData.event_at);
-    data.append("event[from_time]", formData.from_time);
-    data.append("event[to_time]", formData.to_time);
-    data.append("event[rsvp_action]", formData.rsvp_action);
-    data.append("event[description]", formData.description);
-    data.append("event[publish]", formData.publish);
-    data.append("event[user_id]", formData.user_id);
-    data.append("event[comment]", formData.comment);
-    data.append("event[shared]", formData.shared);
-    data.append("event[share_groups]", formData.share_groups);
-    data.append("event[is_important]", formData.is_important);
-    data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
 
-    if (formData.attachfile.length > 0) {
-      formData.attachfile.forEach((file) => {
-        data.append("event[event_image]", file);
-      });
-    }
+    Object.keys(formData).forEach((key) => {
+      if (key === "attachfile" && formData.attachfile.length > 0) {
+        formData.attachfile.forEach((file) => {
+          data.append("event[event_image]", file);
+        });
+      } else {
+        data.append(`event[${key}]`, formData[key]);
+      }
+    });
 
     try {
-      const response = await axios.put(
+      await axios.put(
         `https://panchshil-super.lockated.com/events/${eventId}.json`,
         data,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       toast.success("Event updated successfully!");
       navigate("/event-list");
@@ -172,7 +113,6 @@ const EventEdit = () => {
       toast.error("Failed to update event.");
     }
   };
-
 
   return (
     <>
@@ -191,15 +131,13 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>Event Types</label>
                         <select
-                          className="form-control form-select"
                           name="event_type"
-                          value={formData.event_type || eventId?.event_type}
+                          className="form-control form-select"
+                          value={formData.event_type}
                           onChange={handleChange}
                         >
-                          <option value="" disabled>
-                            Select Event Type
-                          </option>
-                          {eventType?.map((type, index) => (
+                          {/* <option value="">Select Event Type</option> */}
+                          {eventType.map((type, index) => (
                             <option key={index} value={type.id}>
                               {type.event_type}
                             </option>
@@ -259,7 +197,7 @@ const EventEdit = () => {
                         />
                       </div>
                     </div>
-                    
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>RSVP Action</label>
@@ -273,7 +211,7 @@ const EventEdit = () => {
                         />
                       </div>
                     </div>
-                    
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Description</label>

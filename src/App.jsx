@@ -41,6 +41,8 @@ import EventEdit from "./pages/event-edit";
 import SitevisitCreate from "./pages/sitevisit-create";
 import SiteVisitSlotConfig from "./pages/siteVisit-SlotConfig";
 import SiteVisitSlotConfigList from "./pages/siteVisit-SlotConfig-list";
+import SitevisitList from "./pages/sitevisit-list";
+
 function App() {
   return (
     <BrowserRouter>
@@ -98,6 +100,7 @@ function App() {
           />
           <Route path="/specification-list" element={<SpecificationList />} />
           <Route path="/sitevisit-create" element={<SitevisitCreate />} />
+          <Route path="/sitevisit-list" element={<SitevisitList />} />
           <Route
             path="/siteVisit-SlotConfig"
             element={<SiteVisitSlotConfig />}

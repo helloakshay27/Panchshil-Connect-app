@@ -98,6 +98,9 @@ const Members = () => {
                 <Link to="/sitevisit-create">Site Visit Create</Link>
               </li>
               <li>
+                <Link to="/sitevisit-list">Site Visit List</Link>
+              </li>
+              <li>
                 <Link to="/siteVisit-SlotConfig">Site Visit Slot Config</Link>
               </li>
               <li>
