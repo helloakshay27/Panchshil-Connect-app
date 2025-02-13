@@ -23,7 +23,7 @@ const Members = () => {
                 <Link to="/project-edit/2">Project Edit</Link>
               </li>
               <li>
-                <Link to="/project-details/2">Project Details </Link>
+                <Link to="/project-details/2">Project Details</Link>
               </li>
 
               <li>
@@ -43,26 +43,26 @@ const Members = () => {
                 <Link to="/amenities-list">Amenities Setup List</Link>
               </li>
               <li>
-                <Link to="/edit-amenities">Edit Amenities </Link>
+                <Link to="/edit-amenities">Edit Amenities</Link>
               </li>
               <li>
                 <Link to="/testimonials">Testimonials</Link>
               </li>
               <li>
-                <Link to="/testimonial-list">TestimonialList</Link>
+                <Link to="/testimonial-list">Testimonial List</Link>
               </li>
               <li>
-                <Link to="/testimonial-edit">TestimonialEdit</Link>
+                <Link to="/testimonial-edit">Testimonial Edit</Link>
               </li>
 
               <li>
                 <Link to="/gallery-details">Gallery Details</Link>
               </li>
               <li>
-                <Link to="/new-gallery"> New Gallery</Link>
+                <Link to="/new-gallery">New Gallery</Link>
               </li>
               <li>
-                <Link to="/gallery-list">Gallery List </Link>
+                <Link to="/gallery-list">Gallery List</Link>
               </li>
               <li>
                 <Link to="/edit-gallery">Edit Gallery</Link>
@@ -95,19 +95,17 @@ const Members = () => {
                 <Link to="/specification-update/:id">Specification Update</Link>
               </li>
               <li>
-<<<<<<< Updated upstream
                 <Link to="/sitevisit-create">Site Visit Create</Link>
               </li>
-=======
+              <li>
                 <Link to="/siteVisit-SlotConfig">Site Visit Slot Config</Link>
               </li>
               <li>
                 <Link to="/siteVisit-SlotConfig-list">
-                  Site Visit Slot Config list
+                  Site Visit Slot Config List
                 </Link>
               </li>
               <li className="pb-5">{/* add above this li */}</li>
->>>>>>> Stashed changes
             </ul>
           </div>
         </div>
