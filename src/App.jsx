@@ -85,7 +85,7 @@ function App() {
           <Route path="/gallery-details/:id" element={<GalleryDetails />} />
           <Route path="/new-gallery" element={<NewGallery />} />
           <Route path="/gallery-list" element={<GalleryList />} />
-          <Route path="/edit-gallery" element={<EditGallery />} />
+          <Route path="/edit-gallery/:id" element={<EditGallery />} />
           <Route path="/banner-edit/:id" element={<BannerEdit />} />
           <Route path="/event-create" element={<EventCreate />} />
           <Route path="/referral-create" element={<Referralcreate />} />
@@ -110,7 +110,6 @@ function App() {
             path="/siteVisit-SlotConfig-list"
             element={<SiteVisitSlotConfigList />}
           />
-           <Route path="/edit-gallery/:id" element={<EditGallery />} />
         </Route>
 
       </Routes>
