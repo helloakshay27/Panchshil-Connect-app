@@ -203,10 +203,12 @@ const ReferralCreate = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-2 mt-3">
-                  <button type="submit" className="purple-btn2 w-80">
-                    Submit
-                  </button>
+                <div className="row mt-2 justify-content-center">
+                  <div className="col-md-2">
+                    <button type="submit" className="purple-btn2 w-100">
+                      Submit
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>

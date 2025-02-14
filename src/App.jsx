@@ -115,6 +115,8 @@ function App() {
             path="/siteVisit-SlotConfig-list"
             element={<SiteVisitSlotConfigList />}
           />
+
+
         </Route>
 
       </Routes>
