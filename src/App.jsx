@@ -42,6 +42,7 @@ import SitevisitCreate from "./pages/sitevisit-create";
 import SiteVisitSlotConfig from "./pages/siteVisit-SlotConfig";
 import SiteVisitSlotConfigList from "./pages/siteVisit-SlotConfig-list";
 import SitevisitList from "./pages/sitevisit-list";
+import OrganizationCreate from "./pages/organization-create"
 // import EditGallery from './EditGallery';
 
 function App() {
@@ -95,6 +96,7 @@ function App() {
           <Route path="/event-details" element={<EventDetails />} />
           <Route path="/event-edit/:id" element={<EventEdit />} />
           <Route path="/specification" element={<Specification />} />
+          <Route path="/organization-create" element={<OrganizationCreate />} />
           <Route
             path="/specification-update/:id"
             element={<SpecificationUpdate />}
