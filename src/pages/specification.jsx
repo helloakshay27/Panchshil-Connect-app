@@ -64,7 +64,12 @@ const Specification = () => {
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Name</label>
+                      <label>
+                        Name
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -77,7 +82,12 @@ const Specification = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Icon</label>
+                      <label>
+                        Icon
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <input
                         className="form-control"
                         type="file"

@@ -66,7 +66,10 @@ const Amenities = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Name <span>*</span>
+                          Name{" "}
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
                         </label>
                         <input
                           className="form-control"
@@ -81,7 +84,10 @@ const Amenities = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Icon <span>*</span>
+                          Icon{" "}
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
                           <span />
                         </label>
                         <input

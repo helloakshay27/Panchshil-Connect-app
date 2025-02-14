@@ -141,7 +141,10 @@ const BannerAdd = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Title <span>*</span>
+                        Title{" "}
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
                       </label>
                       <input
                         className="form-control"
@@ -162,7 +165,10 @@ const BannerAdd = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company <span>*</span>
+                        Company{" "}
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
                       </label>
                       <select
                         className="form-control form-select"
@@ -188,7 +194,10 @@ const BannerAdd = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Banner <span>*</span>
+                        Banner{" "}
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
                       </label>
                       <input
                         className="form-control"

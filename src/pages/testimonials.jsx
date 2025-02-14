@@ -84,7 +84,10 @@ const Testimonials = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Company Setup Id<span>*</span>
+                          Company Setup Id
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
                         </label>
                         <select
                           className="form-control form-select"
@@ -108,7 +111,10 @@ const Testimonials = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          User Name<span>*</span>
+                          User Name
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
                         </label>
                         <input
                           className="form-control"
@@ -124,7 +130,10 @@ const Testimonials = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          User Type<span>*</span>
+                          User Type
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
                         </label>
                         <select
                           className="form-control form-select"
@@ -146,7 +155,10 @@ const Testimonials = () => {
                     <div className="col-md-3 ">
                       <div className="form-group">
                         <label>
-                          Description <span>*</span>
+                          Description{" "}
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
                         </label>
                         <input
                           className="form-control"

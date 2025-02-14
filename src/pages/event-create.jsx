@@ -284,7 +284,12 @@ const EventCreate = () => {
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Types</label>
+                        <label>
+                          Event Types
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <select
                           className="form-control form-select"
                           name="event_type"
@@ -304,7 +309,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Name</label>
+                        <label>
+                          Event Name
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
@@ -317,7 +327,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event At</label>
+                        <label>
+                          Event At
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
@@ -330,7 +345,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event From</label>
+                        <label>
+                          Event From
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="datetime-local"
@@ -344,7 +364,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event To</label>
+                        <label>
+                          Event To
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="datetime-local"
@@ -373,7 +398,12 @@ const EventCreate = () => {
                     </div> */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>RSVP Action</label>
+                        <label>
+                          RSVP Action
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
@@ -398,7 +428,12 @@ const EventCreate = () => {
                     </div> */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Description</label>
+                        <label>
+                          Event Description
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <textarea
                           className="form-control"
                           rows={1}
@@ -411,7 +446,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Publish</label>
+                        <label>
+                          Event Publish
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
@@ -424,7 +464,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event User ID</label>
+                        <label>
+                          Event User ID
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <select
                           className="form-control form-select"
                           name="user_id"
@@ -448,7 +493,12 @@ const EventCreate = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Comment</label>
+                        <label>
+                          Event Comment
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <textarea
                           className="form-control"
                           rows={1}
@@ -461,7 +511,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Shared</label>
+                        <label>
+                          Event Shared
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
@@ -474,7 +529,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Share Groups</label>
+                        <label>
+                          Event Share Groups
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
@@ -490,6 +550,9 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Attachment
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
                           <span />
                         </label>
                         <input

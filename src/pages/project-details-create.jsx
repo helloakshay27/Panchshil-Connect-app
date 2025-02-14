@@ -347,7 +347,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
-                    Project Types<span>*</span>
+                    Project Types
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -371,7 +372,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
-                    SFDC Project ID<span>*</span>
+                    SFDC Project ID
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -388,7 +390,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
-                    Project Construction Status<span>*</span>
+                    Project Construction Status
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -409,7 +412,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
-                    Configuration Type<span>*</span>
+                    Configuration Type
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -430,7 +434,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Name<span>*</span>
+                    Project Name
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -447,7 +452,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Location<span>*</span>
+                    Location
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -464,7 +470,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-6 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Description<span>*</span>
+                    Project Description
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <textarea
                     className="form-control"
@@ -480,7 +487,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Price Onward<span>*</span>
+                    Price Onward
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -496,7 +504,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Size (Sq. Mtr.)<span>*</span>
+                    Project Size (Sq. Mtr.)
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -512,7 +521,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Size (Sq. Ft.)<span>*</span>
+                    Project Size (Sq. Ft.)
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -528,7 +538,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    RERA Carpet Area (Sq. M)<span>*</span>
+                    RERA Carpet Area (Sq. M)
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -544,7 +555,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    RERA Carpet Area (Sq. Ft.)<span>*</span>
+                    RERA Carpet Area (Sq. Ft.)
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -560,7 +572,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Number of Towers<span>*</span>
+                    Number of Towers
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -576,7 +589,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Number of Units<span>*</span>
+                    Number of Units
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -592,7 +606,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    RERA Number<span>*</span>
+                    RERA Number
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -608,7 +623,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Amenities<span>*</span>
+                    Amenities
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -630,7 +646,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Specifications<span>*</span>
+                    Specifications
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -653,7 +670,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Land Area<span>*</span>
+                    Land Area
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -678,7 +696,10 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Address Line<span>*</span>{" "}
+                    Address Line
+                    <span style={{ color: "red", fontSize: "16px" }}>
+                      *
+                    </span>{" "}
                   </label>
                   <input
                     className="form-control"
@@ -695,7 +716,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    City<span>*</span>
+                    City
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -710,7 +732,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    State<span>*</span>
+                    State
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -725,7 +748,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Pin Code<span>*</span>
+                    Pin Code
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -740,7 +764,8 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Country<span>*</span>
+                    Country
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"

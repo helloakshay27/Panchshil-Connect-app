@@ -103,7 +103,12 @@ const SiteVisitSlotConfig = () => {
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Start Date</label>
+                        <label>
+                          Start Date
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="date"
@@ -117,7 +122,12 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>End Date</label>
+                        <label>
+                          End Date
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="date"
@@ -131,7 +141,12 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group ">
-                        <label>Start Hours</label>
+                        <label>
+                          Start Hours
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <select
                           className="form-control"
                           value={startHour}
@@ -148,7 +163,12 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Start Minutes</label>
+                        <label>
+                          Start Minutes
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <select
                           className="form-control"
                           value={startMinute}
@@ -167,7 +187,12 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>End Hours</label>
+                        <label>
+                          End Hours
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <select
                           className="form-control"
                           value={endHour}
@@ -184,7 +209,12 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>End Minutes</label>
+                        <label>
+                          End Minutes
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <select
                           className="form-control"
                           value={endMinute}
@@ -201,7 +231,12 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Project</label>
+                        <label>
+                          Project
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            *
+                          </span>
+                        </label>
                         <select
                           className="form-control form-select"
                           value={selectedProject}

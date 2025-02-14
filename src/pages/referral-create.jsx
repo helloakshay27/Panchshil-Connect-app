@@ -120,7 +120,12 @@ const ReferralCreate = () => {
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Name</label>
+                      <label>
+                        Name
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -134,7 +139,12 @@ const ReferralCreate = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Email</label>
+                      <label>
+                        Email
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <input
                         className="form-control"
                         type="email"
@@ -148,7 +158,12 @@ const ReferralCreate = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Mobile No</label>
+                      <label>
+                        Mobile No
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <input
                         className="form-control"
                         type="number"
@@ -164,7 +179,12 @@ const ReferralCreate = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Project</label>
+                      <label>
+                        Project
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <select
                         className="form-control form-select"
                         value={selectedProjectId}
