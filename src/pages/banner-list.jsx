@@ -23,11 +23,19 @@ const BannerList = () => {
   const [pageSize] = useState(10);
   const navigate = useNavigate();
 
-  const handleToggle = (index) => {
-    setToggleStates((prevStates) =>
-      prevStates.map((state, i) => (i === index ? !state : state))
+  const onToggle = (id) => {
+    setBanners((prevBanners) =>
+      prevBanners.map((banner) =>
+        banner.id === id ? { ...banner, active: !banner.active } : banner
+      )
     );
   };
+
+  // const handleToggle = (index) => {
+  //   setToggleStates((prevStates) =>
+  //     prevStates.map((state, i) => (i === index ? !state : state))
+  //   );
+  // };
 
   const filteredEvents = banners.filter((banner) =>
     (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
@@ -231,11 +239,43 @@ const BannerList = () => {
                             />
                           </td>
                           <td>
-                            <input
-                              type="checkbox"
-                              defaultChecked={banner.active}
-                            />
+                            <button
+                              onClick={() => onToggle(banner.id)}
+                              className="toggle-button"
+                              style={{
+                                border: "none",
+                                background: "none",
+                                cursor: "pointer",
+                                padding: 0,
+                                width: "70px", // Adjust width as needed
+                              }}
+                            >
+                              {banner.active ? (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40" // Increased width
+                                  height="25"
+                                  fill="#de7008"
+                                  className="bi bi-toggle-on"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                                </svg>
+                              ) : (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40" // Increased width
+                                  height="25"
+                                  fill="#667085"
+                                  className="bi bi-toggle-off"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                                </svg>
+                              )}
+                            </button>
                           </td>
+
                           <td>
                             {/* Edit Icon */}
                             <a
