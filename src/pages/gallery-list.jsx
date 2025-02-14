@@ -200,9 +200,7 @@ const GalleryList = () => {
                               <td className="text-center">
                                 <button
                                   className="btn btn-link"
-                                  onClick={() =>
-                                    navigate(`/edit-gallery/${item.id}`)
-                                  }
+                                  onClick={() => navigate(`/edit-gallery/${item.id}`)}
                                   style={{
                                     background: "none",
                                     border: "none",

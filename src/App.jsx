@@ -42,6 +42,7 @@ import SitevisitCreate from "./pages/sitevisit-create";
 import SiteVisitSlotConfig from "./pages/siteVisit-SlotConfig";
 import SiteVisitSlotConfigList from "./pages/siteVisit-SlotConfig-list";
 import SitevisitList from "./pages/sitevisit-list";
+import EditGallery from './EditGallery';
 
 function App() {
   return (
@@ -109,7 +110,9 @@ function App() {
             path="/siteVisit-SlotConfig-list"
             element={<SiteVisitSlotConfigList />}
           />
+           <Route path="/edit-gallery/:id" element={<EditGallery />} />
         </Route>
+
       </Routes>
     </BrowserRouter>
   );
