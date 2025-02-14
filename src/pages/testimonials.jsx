@@ -89,6 +89,7 @@ const Testimonials = () => {
                           style={{ width: "100%" }}
                           name="companysetupid"
                           value={companySetupId}
+                          required
                           onChange={(e) => setCompanySetupId(e.target.value)}
                         >
                           <option value="" disabled>
@@ -110,6 +111,7 @@ const Testimonials = () => {
                           type="text"
                           placeholder="Default input"
                           name="username"
+                          required
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
                         />
@@ -123,6 +125,7 @@ const Testimonials = () => {
                           style={{ width: "100%" }}
                           name="userType"
                           value={userType}
+                          required
                           onChange={(e) => setUserType(e.target.value)}
                         >
                           <option value="" disabled>
@@ -143,6 +146,7 @@ const Testimonials = () => {
                           placeholder="Default input"
                           name="Content"
                           value={content}
+                          required
                           onChange={(e) => setContent(e.target.value)}
                         />
                       </div>

@@ -12,8 +12,8 @@ const BannerAdd = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [projects, setProjects] = useState([]);
-  const [selectedCompany, setSelectedCompany] = useState("");
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     banner_type: "",
     banner_redirect: "",
@@ -21,8 +21,6 @@ const BannerAdd = () => {
     title: "",
     attachfile: [],
   });
-
-  console.log("data", formData);
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -38,7 +36,6 @@ const BannerAdd = () => {
           }
         );
 
-        console.log("response", response.data);
         setProjects(response.data); // Assuming the API returns an object with a "banners" field
         setLoading(false);
       } catch (error) {
@@ -51,60 +48,80 @@ const BannerAdd = () => {
     fetchBanners();
   }, []);
 
-  // this is for dropdown
+  // Dropdown handler
   const handleCompanyChange = (e) => {
-    const formData = e.target.value;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      company_id: formData,
+      company_id: e.target.value,
     }));
   };
-  console.log("data", formData);
 
-  //this is for input value
+  // Input handler
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  //for files into array
-  const handleFileChange = (e, fieldName) => {
-    const files = Array.from(e.target.files); // Convert FileList to Array
+  // File input handler
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
-    // Filter only valid image files
     const validFiles = files.filter((file) => allowedTypes.includes(file.type));
 
     if (validFiles.length !== files.length) {
-      alert("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = ""; // Reset the input if invalid file is detected
+      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = "";
       return;
     }
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      attachfile: validFiles, // Store only valid images
+      attachfile: validFiles,
     }));
   };
 
+  // Form validation
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (!formData.title.trim()) {
+      newErrors.title = "Title is mandatory";
+      toast.error("Title is mandatory");
+    } else if (!formData.company_id.trim()) {
+      newErrors.company_id = "Company  is mandatory";
+      toast.error("Company is mandatory");
+    } else if (!formData.attachfile || formData.attachfile.length === 0) {
+      newErrors.attachfile = "Banner image is mandatory";
+      toast.error("Banner image is mandatory");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const attachfile = formData.attachfile || [];
-    // Prepare the data for the POST request
+
+    if (!validateForm()) {
+      return; // Prevent form submission if validation fails
+    }
+
     try {
       const sendData = new FormData();
-      sendData.append("banner[title]", formData.title || "");
-      sendData.append("banner[company_id]", formData.company_id || "");
-      Array.from(formData.attachfile).forEach((file, index) => {
+      sendData.append("banner[title]", formData.title);
+      sendData.append("banner[company_id]", formData.company_id);
+      formData.attachfile.forEach((file) => {
         sendData.append(`banner[banner_image]`, file);
       });
+
       const response = await axios.post(
         "https://panchshil-super.lockated.com/banners.json",
         sendData
       );
 
-      toast.success("form submited successfully");
+      toast.success("Form submitted successfully");
       navigate("/banner-list");
-      console.log("response", response);
     } catch (error) {
       toast.error(`Error creating banner: ${error.message}`);
     }
@@ -112,7 +129,6 @@ const BannerAdd = () => {
 
   return (
     <>
-      {/* <Header /> */}
       <div className="main-content">
         <div className="website-content overflow-hidden">
           <div className="module-data-section">
@@ -125,8 +141,7 @@ const BannerAdd = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Title
-                        <span />
+                        Title <span>*</span>
                       </label>
                       <input
                         className="form-control"
@@ -134,16 +149,23 @@ const BannerAdd = () => {
                         name="title"
                         value={formData.title}
                         onChange={handleChange}
-                        placeholder="Default input"
+                        placeholder="Enter title"
                       />
+                      {errors.title && (
+                        <span className="error text-danger">
+                          {errors.title}
+                        </span>
+                      )}
                     </div>
                   </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Company</label>
+                      <label>
+                        Company <span>*</span>
+                      </label>
                       <select
                         className="form-control form-select"
-                        style={{ width: "100%" }}
                         value={formData.company_id}
                         name="company_id"
                         onChange={handleCompanyChange}
@@ -155,39 +177,38 @@ const BannerAdd = () => {
                           </option>
                         ))}
                       </select>
+                      {errors.company_id && (
+                        <span className="error text-danger">
+                          {errors.company_id}
+                        </span>
+                      )}
                     </div>
                   </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Banner
-                        <span />
+                        Banner <span>*</span>
                       </label>
                       <input
                         className="form-control"
                         type="file"
                         name="attachfile"
-                        accept="image/*" // Ensures only image files can be selected
+                        accept="image/*"
                         multiple
-                        onChange={(e) => handleFileChange(e, "attachfile")}
+                        onChange={handleFileChange}
                       />
+                      {errors.attachfile && (
+                        <span className="error text-danger">
+                          {errors.attachfile}
+                        </span>
+                      )}
                     </div>
                   </div>
-                  {/* <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Banner Type</label>
-                      <select
-                        className="form-control form-select"
-                        style={{ width: "100%" }}>
-                        <option selected="selected">Select Status</option>
-                        <option>Active</option>
-                        <option>In-Active</option>
-                      </select>
-                    </div>
-                  </div> */}
                 </div>
               </div>
             </div>
+
             <div className="row mt-2 justify-content-center">
               <div className="col-md-2">
                 <button

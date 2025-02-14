@@ -13,7 +13,6 @@ const ReferralCreate = () => {
   });
 
   useEffect(() => {
-    
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
@@ -100,6 +99,13 @@ const ReferralCreate = () => {
       alert("Failed to create referral. Please check your inputs.");
     }
   };
+  const handleeeeeChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "mobile") {
+      if (value.length > 10) return; // Prevent typing more than 10 digits
+    }
+    setFormData({ ...formData, [name]: value });
+  };
 
   return (
     <div className="main-content">
@@ -120,6 +126,7 @@ const ReferralCreate = () => {
                         type="text"
                         placeholder="Enter Name"
                         name="name"
+                        required
                         value={formData.name}
                         onChange={handleChange}
                       />
@@ -133,6 +140,7 @@ const ReferralCreate = () => {
                         type="email"
                         placeholder="Enter Email"
                         name="email"
+                        required
                         value={formData.email}
                         onChange={handleChange}
                       />
@@ -147,7 +155,10 @@ const ReferralCreate = () => {
                         placeholder="Enter Mobile No"
                         name="mobile"
                         value={formData.mobile}
-                        onChange={handleChange}
+                        onChange={handleeeeeChange}
+                        min="1000000000"
+                        max="9999999999" // Limits to 10 digits
+                        required
                       />
                     </div>
                   </div>
@@ -157,6 +168,7 @@ const ReferralCreate = () => {
                       <select
                         className="form-control form-select"
                         value={selectedProjectId}
+                        required
                         onChange={(e) => setSelectedProjectId(e.target.value)}
                       >
                         <option value="" disabled>
@@ -168,19 +180,6 @@ const ReferralCreate = () => {
                           </option>
                         ))}
                       </select>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Referral Code</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Enter Referral Code"
-                        name="referralCode"
-                        value={formData.referralCode}
-                        onChange={handleChange}
-                      />
                     </div>
                   </div>
                 </div>

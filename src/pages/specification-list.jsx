@@ -24,7 +24,7 @@ const SpecificationList = () => {
         }
         setLoading(false);
       })
-      .catch((error) => {
+      .catch((error) => { 
         setError(error.message);
         setLoading(false);
       });

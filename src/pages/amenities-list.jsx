@@ -155,13 +155,13 @@ const AmenitiesList = () => {
             <div className="card-header">
               <h3 className="card-title">Amenities Setup List</h3>
             </div>
-            <div className="card-body">
+            <div className="card-body mt-4 pb-4 pt-0">
               {loading ? (
                 <p>Loading...</p>
               ) : error ? (
                 <p className="text-danger">{error}</p>
               ) : (
-                <div className="tbl-container mt-4 ">
+                <div className="tbl-container mt-3 ">
                   <table className="w-100">
                     <thead>
                       <tr>
@@ -183,13 +183,16 @@ const AmenitiesList = () => {
                             </td>
                             <td>{amenity.name || "No Name"}</td>
                             <td></td>
-                            <td>
+                            <td className="d-flex justify-content-center align-items-center">
                               {amenity.icon_url ? (
                                 <img
                                   src={amenity.icon_url}
+                                  className="img-fluid rounded"
                                   alt={amenity.name || "No Name"}
-                                  width="50"
-                                  height="50"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                  }}
                                 />
                               ) : (
                                 <span>No Icon</span>

@@ -87,6 +87,7 @@ const Amenities = () => {
                           type="file"
                           accept=".png,.jpg,.jpeg,.svg"
                           placeholder="Default input"
+                          required
                           onChange={handleFileChange}
                         />
                       </div>

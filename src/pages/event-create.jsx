@@ -162,7 +162,6 @@ const EventCreate = () => {
       alert(validationErrors.join("\n")); // Show all errors in an alert
       return; // Stop form submission
     }
-  
 
     // Create FormData to send with the request
     const data = new FormData();
@@ -197,7 +196,7 @@ const EventCreate = () => {
         data.append(`event[${key}]`, value);
       }
     });
-    
+
     // Log the data object to see what it contains
     for (let [key, value] of data.entries()) {
       console.log(`${key}:`, value);
@@ -338,6 +337,7 @@ const EventCreate = () => {
                           name="from_time"
                           placeholder="Enter Event From"
                           value={formData.from_time}
+                          min={new Date().toISOString().slice(0, 16)}
                           onChange={handleChange}
                         />
                       </div>
@@ -351,6 +351,10 @@ const EventCreate = () => {
                           name="to_time"
                           placeholder="Enter Event To"
                           value={formData.to_time}
+                          min={
+                            formData.from_time ||
+                            new Date().toISOString().slice(0, 16)
+                          }
                           onChange={handleChange}
                         />
                       </div>
