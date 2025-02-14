@@ -8,7 +8,6 @@ import "../mor.css";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
     property_type: "",
@@ -39,19 +38,14 @@ const ProjectDetailsCreate = () => {
       country: "India",
     },
     brochure: null, // for file input
-    two_d_images: [] // for array of file inputs
+    two_d_images: [], // for array of file inputs
   });
-
-
 
   const [projectsType, setprojectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
   const [amenities, setAmenities] = useState([]);
 
   const Navigate = useNavigate();
-
-
-
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
@@ -218,14 +212,16 @@ const ProjectDetailsCreate = () => {
       return; // Stop form submission if there are errors
     }
 
-
     const data = new FormData();
 
     for (const key in formData) {
       if (key === "address") {
         // Append nested address fields
         for (const addressKey in formData.address) {
-          data.append(`project[Address][${addressKey}]`, formData.address[addressKey]);
+          data.append(
+            `project[Address][${addressKey}]`,
+            formData.address[addressKey]
+          );
         }
       } else if (key === "brochure") {
         // Append single file
@@ -262,9 +258,8 @@ const ProjectDetailsCreate = () => {
         }
       );
       console.log(response.data);
-      toast.success("Project submited successfully")
+      toast.success("Project submited successfully");
       Navigate("/project-list");
-
     } catch (error) {
       console.error("Error submitting the form:", error);
       // toast.error("Failed to submit the form. Please try again.");
@@ -273,7 +268,8 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url = "https://panchshil-super.lockated.com/get_property_types.json";
+      const url =
+        "https://panchshil-super.lockated.com/get_property_types.json";
 
       try {
         const response = await axios.get(url, {
@@ -295,7 +291,8 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url = "https://panchshil-super.lockated.com/get_property_types.json";
+      const url =
+        "https://panchshil-super.lockated.com/get_property_types.json";
 
       try {
         const response = await axios.get(url, {
@@ -336,7 +333,6 @@ const ProjectDetailsCreate = () => {
     fetchProjects();
   }, []);
 
-
   return (
     <>
       {/* <Header /> */}
@@ -350,7 +346,9 @@ const ProjectDetailsCreate = () => {
               {/* Project Type */}
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>Project Types</label>
+                  <label>
+                    Project Types<span>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     name="type_of_project"
@@ -372,7 +370,9 @@ const ProjectDetailsCreate = () => {
               {/* SFDC Project ID */}
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>SFDC Project ID</label>
+                  <label>
+                    SFDC Project ID<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -387,7 +387,9 @@ const ProjectDetailsCreate = () => {
               {/* Construction Status */}
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>Project Construction Status</label>
+                  <label>
+                    Project Construction Status<span>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     name="Project_Construction_Status"
@@ -406,7 +408,9 @@ const ProjectDetailsCreate = () => {
               {/* Configuration Type */}
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>Configuration Type</label>
+                  <label>
+                    Configuration Type<span>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     name="Configuration_Type"
@@ -425,7 +429,9 @@ const ProjectDetailsCreate = () => {
               {/* Project Name */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Name</label>
+                  <label>
+                    Project Name<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -440,7 +446,9 @@ const ProjectDetailsCreate = () => {
               {/* Location */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Location</label>
+                  <label>
+                    Location<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -455,7 +463,9 @@ const ProjectDetailsCreate = () => {
               {/* Project Description */}
               <div className="col-md-6 mt-2">
                 <div className="form-group">
-                  <label>Project Description</label>
+                  <label>
+                    Project Description<span>*</span>
+                  </label>
                   <textarea
                     className="form-control"
                     rows={1}
@@ -469,7 +479,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Price Onward</label>
+                  <label>
+                    Price Onward<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -483,7 +495,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Size (Sq. Mtr.)</label>
+                  <label>
+                    Project Size (Sq. Mtr.)<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -497,7 +511,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Size (Sq. Ft.)</label>
+                  <label>
+                    Project Size (Sq. Ft.)<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -511,7 +527,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>RERA Carpet Area (Sq. M)</label>
+                  <label>
+                    RERA Carpet Area (Sq. M)<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -525,7 +543,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>RERA Carpet Area (Sq. Ft.)</label>
+                  <label>
+                    RERA Carpet Area (Sq. Ft.)<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -539,7 +559,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Number of Towers</label>
+                  <label>
+                    Number of Towers<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -553,7 +575,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Number of Units</label>
+                  <label>
+                    Number of Units<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -567,7 +591,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>RERA Number</label>
+                  <label>
+                    RERA Number<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -581,7 +607,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Amenities</label>
+                  <label>
+                    Amenities<span>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     style={{ width: "100%" }}
@@ -601,7 +629,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Specifications</label>
+                  <label>
+                    Specifications<span>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     style={{ width: "100%" }}
@@ -622,7 +652,9 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Land Area</label>
+                  <label>
+                    Land Area<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -645,7 +677,9 @@ const ProjectDetailsCreate = () => {
               {/* Address Section */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Address Line </label>
+                  <label>
+                    Address Line<span>*</span>{" "}
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -657,11 +691,12 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-
               {/* City, State, Pin, Country Section */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>City</label>
+                  <label>
+                    City<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -674,7 +709,9 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>State</label>
+                  <label>
+                    State<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -687,7 +724,9 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Pin Code</label>
+                  <label>
+                    Pin Code<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -700,7 +739,9 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Country</label>
+                  <label>
+                    Country<span>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -842,7 +883,11 @@ const ProjectDetailsCreate = () => {
                           <td>
                             <img
                               style={{ width: "70px" }}
-                              src={file.type.startsWith("image") ? URL.createObjectURL(file) : null}
+                              src={
+                                file.type.startsWith("image")
+                                  ? URL.createObjectURL(file)
+                                  : null
+                              }
                               alt=""
                             />
                           </td>
@@ -873,9 +918,7 @@ const ProjectDetailsCreate = () => {
               </button>
             </div>
           </div>
-
         </div>
-
       </div>
     </>
   );

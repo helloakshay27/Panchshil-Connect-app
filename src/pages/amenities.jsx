@@ -65,7 +65,9 @@ const Amenities = () => {
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Name</label>
+                        <label>
+                          Name <span>*</span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
@@ -79,7 +81,7 @@ const Amenities = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Icon
+                          Icon <span>*</span>
                           <span />
                         </label>
                         <input

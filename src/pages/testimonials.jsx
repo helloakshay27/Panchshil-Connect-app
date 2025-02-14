@@ -83,7 +83,9 @@ const Testimonials = () => {
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Company Setup Id</label>
+                        <label>
+                          Company Setup Id<span>*</span>
+                        </label>
                         <select
                           className="form-control form-select"
                           style={{ width: "100%" }}
@@ -105,7 +107,9 @@ const Testimonials = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>User Name</label>
+                        <label>
+                          User Name<span>*</span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
@@ -119,7 +123,9 @@ const Testimonials = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>User Type</label>
+                        <label>
+                          User Type<span>*</span>
+                        </label>
                         <select
                           className="form-control form-select"
                           style={{ width: "100%" }}
@@ -139,7 +145,9 @@ const Testimonials = () => {
 
                     <div className="col-md-3 ">
                       <div className="form-group">
-                        <label>Content</label>
+                        <label>
+                          Description <span>*</span>
+                        </label>
                         <input
                           className="form-control"
                           type="text"
