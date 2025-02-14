@@ -498,6 +498,7 @@ const EventCreate = () => {
                           name="attachfile"
                           accept="image/*" // Ensures only image files can be selected
                           multiple
+                          required
                           onChange={(e) => handleFileChange(e, "attachfile")}
                         />
                       </div>

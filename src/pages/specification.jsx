@@ -15,7 +15,7 @@ const Specification = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null); 
+    setError(null);
 
     const formData = new FormData();
     formData.append("specification_setup[name]", name);
@@ -81,6 +81,7 @@ const Specification = () => {
                       <input
                         className="form-control"
                         type="file"
+                        required
                         accept=".png,.jpg,.jpeg,.svg"
                         onChange={handleFileChange}
                       />

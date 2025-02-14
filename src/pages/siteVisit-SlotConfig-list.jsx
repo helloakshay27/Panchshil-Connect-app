@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 const SiteVisitSlotConfigList = () => {
   const [slots, setSlots] = useState([]);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+  });
+  const pageSize = 10;
 
   const fetchSlots = async () => {
     try {
@@ -19,8 +25,14 @@ const SiteVisitSlotConfigList = () => {
 
       if (response.data && response.data.slots) {
         setSlots(response.data.slots);
+        setPagination((prevState) => ({
+          ...prevState,
+          total_count: response.data.slots.length,
+          total_pages: Math.ceil(response.data.slots.length / pageSize),
+        }));
       } else {
         setSlots([]);
+        setPagination({ current_page: 1, total_count: 0, total_pages: 0 });
       }
     } catch (error) {
       console.error(
@@ -36,6 +48,17 @@ const SiteVisitSlotConfigList = () => {
   useEffect(() => {
     fetchSlots();
   }, []);
+  const handlePageChange = (pageNumber) => {
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber,
+    }));
+  };
+
+  const displayedSlots = slots.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
+  );
 
   return (
     <div className="main-content">
@@ -106,10 +129,14 @@ const SiteVisitSlotConfigList = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {slots.length > 0 ? (
-                      slots.map((slot, index) => (
+                    {displayedSlots.length > 0 ? (
+                      displayedSlots.map((slot, index) => (
                         <tr key={slot.id || index}>
-                          <td>{index + 1}</td>
+                          <td>
+                            {(pagination.current_page - 1) * pageSize +
+                              index +
+                              1}
+                          </td>
                           <td>{slot.project_id}</td>
                           <td>{slot.scheduled_date}</td>
                           <td>{slot.ampm_timing}</td>
@@ -124,6 +151,107 @@ const SiteVisitSlotConfigList = () => {
                     )}
                   </tbody>
                 </table>
+              </div>
+              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                <ul className="pagination justify-content-center d-flex">
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(1)}
+                      disabled={pagination.current_page === 1}
+                    >
+                      First
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                      disabled={pagination.current_page === 1}
+                    >
+                      Prev
+                    </button>
+                  </li>
+                  {Array.from(
+                    { length: pagination.total_pages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
+                    <li
+                      key={pageNumber}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                      disabled={
+                        pagination.current_page === pagination.total_pages
+                      }
+                    >
+                      Next
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(pagination.total_pages)}
+                      disabled={
+                        pagination.current_page === pagination.total_pages
+                      }
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
+                <div>
+                  <p>
+                    Showing{" "}
+                    {Math.min(
+                      (pagination.current_page - 1) * pageSize + 1 || 1,
+                      pagination.total_count
+                    )}{" "}
+                    to{" "}
+                    {Math.min(
+                      pagination.current_page * pageSize,
+                      pagination.total_count
+                    )}{" "}
+                    of {pagination.total_count} entries
+                  </p>
+                </div>
               </div>
             </div>
           </div>

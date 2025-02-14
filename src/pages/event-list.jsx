@@ -195,14 +195,17 @@ const Eventlist = () => {
                           <td>{event.from_time}</td>
 
                           <td>{event.to_time}</td>
-                          <td>
+                          <td className="d-flex justify-content-center align-items-center">
                             {event.attachfile &&
                             event.attachfile.document_url ? (
                               <img
                                 src={event.attachfile.document_url}
                                 alt="event"
-                                width="50"
-                                height="50"
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                }}
                               />
                             ) : (
                               <span>No image</span>
@@ -211,7 +214,9 @@ const Eventlist = () => {
                           <td>
                             <a
                               href=""
-                              onClick={() => navigate(`/event-edit/${event.id}`)}
+                              onClick={() =>
+                                navigate(`/event-edit/${event.id}`)
+                              }
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"

@@ -8,6 +8,12 @@ const SpecificationList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+  });
+  const pageSize = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,12 +25,19 @@ const SpecificationList = () => {
           Array.isArray(response.data.specification_setups)
         ) {
           setSpecifications(response.data.specification_setups);
+          setPagination((prevState) => ({
+            ...prevState,
+            total_count: response.data.specification_setups.length,
+            total_pages: Math.ceil(
+              response.data.specification_setups.length / pageSize
+            ),
+          }));
         } else {
           setSpecifications([]);
         }
         setLoading(false);
       })
-      .catch((error) => { 
+      .catch((error) => {
         setError(error.message);
         setLoading(false);
       });
@@ -45,12 +58,27 @@ const SpecificationList = () => {
       setSpecifications((prevSpecs) =>
         prevSpecs.filter((spec) => spec.id !== id)
       );
+      setPagination((prevState) => ({
+        ...prevState,
+        total_count: prevState.total_count - 1,
+        total_pages: Math.ceil((prevState.total_count - 1) / pageSize),
+      }));
     } catch (error) {
       alert("Error deleting specification. Please try again.");
     }
   };
+  const handlePageChange = (pageNumber) => {
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber,
+    }));
+  };
   const filteredSpecifications = specifications.filter((spec) =>
     spec.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const displayedSpecifications = filteredSpecifications.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
   );
 
   return (
@@ -129,18 +157,25 @@ const SpecificationList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredSpecifications.length > 0 ? (
-                        filteredSpecifications.map((spec, index) => (
+                      {displayedSpecifications.length > 0 ? (
+                        displayedSpecifications.map((spec, index) => (
                           <tr key={spec.id}>
-                            <td>{index + 1}</td>
-                            <td>{spec.name || "N/A"}</td>
                             <td>
+                              {(pagination.current_page - 1) * pageSize +
+                                index +
+                                1}
+                            </td>
+                            <td>{spec.name || "N/A"}</td>
+                            <td className="d-flex justify-content-center align-items-center">
                               {spec.icon_url ? (
                                 <img
                                   src={spec.icon_url}
                                   alt="icon"
-                                  width={24}
-                                  height={24}
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                  }}
                                 />
                               ) : (
                                 <span>No Icon</span>
@@ -208,6 +243,84 @@ const SpecificationList = () => {
                   </table>
                 </div>
               )}
+              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                <ul className="pagination justify-content-center d-flex">
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(1)}
+                    >
+                      First
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                    >
+                      Prev
+                    </button>
+                  </li>
+                  {Array.from(
+                    { length: pagination.total_pages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
+                    <li
+                      key={pageNumber}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                    >
+                      Next
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(pagination.total_pages)}
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
