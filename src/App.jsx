@@ -42,7 +42,7 @@ import SitevisitCreate from "./pages/sitevisit-create";
 import SiteVisitSlotConfig from "./pages/siteVisit-SlotConfig";
 import SiteVisitSlotConfigList from "./pages/siteVisit-SlotConfig-list";
 import SitevisitList from "./pages/sitevisit-list";
-import EditGallery from './EditGallery';
+// import EditGallery from './EditGallery';
 
 function App() {
   return (
