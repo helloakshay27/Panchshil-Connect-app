@@ -355,7 +355,7 @@ const EventCreate = () => {
                           className="form-control"
                           type="datetime-local"
                           name="from_time"
-                          placeholder="Enter Event From"
+                          placeholder="Enter Event From "
                           value={formData.from_time}
                           min={new Date().toISOString().slice(0, 16)}
                           onChange={handleChange}
