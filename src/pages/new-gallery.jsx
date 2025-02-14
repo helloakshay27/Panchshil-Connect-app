@@ -3,26 +3,37 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 const NewGallery = () => {
-  const { id } = useParams();
-  const [projectsType, setProjectsType] = useState([]);
+  const { id } = useParams(); // Corrected ID extraction
+  const [projectsType, setprojectsType] = useState([]);
   const [galleryType, setGalleryType] = useState([]);
-  const [galleryData, setGalleryData] = useState({});
+   const [galleryData, setGalleryData] = useState([]);
+
+
   const [formData, setFormData] = useState({
     galleryType: "",
     projectId: "",
     name: "",
     title: "",
-    attachment: [],
+    attachment: null,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value,
+    }));
+  };
 
   useEffect(() => {
     if (!id) return;
 
     const fetchGallery = async () => {
       setLoading(true);
-      setError("");
+      setError(""); // Reset error state
 
       try {
         const response = await axios.get(
@@ -34,7 +45,7 @@ const NewGallery = () => {
           projectId: response.data?.project_id || "",
           name: response.data?.name || "",
           title: response.data?.title || "",
-          attachment: [],
+          attachment: null,
         });
 
         setGalleryData(response.data);
@@ -49,54 +60,6 @@ const NewGallery = () => {
     fetchGallery();
   }, [id]);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      const url = "https://panchshil-super.lockated.com/get_property_types.json";
-
-      try {
-        const response = await axios.get(url);
-        setProjectsType(response.data?.property_types);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-
-    fetchProjects();
-  }, []);
-
-  useEffect(() => {
-    const fetchGalleryTypes = async () => {
-      const url = "https://panchshil-super.lockated.com/gallery_types.json?project_id=1";
-
-      try {
-        const response = await axios.get(url);
-        setGalleryType(response.data?.gallery_types);
-      } catch (error) {
-        console.error("Error fetching gallery types:", error);
-      }
-    };
-
-    fetchGalleryTypes();
-  }, []);
-
-  // Handle input changes
-  const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (name === "attachment") {
-      // Convert FileList to an array
-      setFormData((prevData) => ({
-        ...prevData,
-        attachment: Array.from(files),
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-  };
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -108,11 +71,9 @@ const NewGallery = () => {
     data.append("gallery[gallery_type_id]", formData.galleryType);
     data.append("gallery[name]", formData.name);
     data.append("gallery[title]", formData.title);
-
-    // Append multiple files
-    formData.attachment.forEach((file, index) => {
-      data.append(`gallery[attachments][${index}]`, file);
-    });
+    if (formData.attachment) {
+      data.append("gallery[attachment]", formData.attachment);
+    }
 
     try {
       const response = await axios.put(
@@ -128,6 +89,48 @@ const NewGallery = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const fetchProjects = async () => {
+      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
+      const url = "https://panchshil-super.lockated.com/get_property_types.json";
+
+      try {
+        const response = await axios.get(url, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        });
+
+        setprojectsType(response.data?.property_types);
+        // console.log("projectsType", projectsType);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
+      const url = "https://panchshil-super.lockated.com/gallery_types.json?project_id=1";
+
+      try {
+        const response = await axios.get(url, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        });
+
+        setGalleryType(response.data?.gallery_types);
+        // console.log("projectsType", projectsType);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   return (
     <div className="main-content">
@@ -139,7 +142,10 @@ const NewGallery = () => {
                 <h3 className="card-title">Add Gallery</h3>
               </div>
               <div className="card-body">
-                
+                {error && <div className="alert alert-danger">{error}</div>}
+                {loading ? (
+                  <div className="text-center">Loading...</div>
+                ) : (
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
@@ -147,14 +153,14 @@ const NewGallery = () => {
                         <select
                           className="form-control form-select"
                           name="galleryType"
-                          value={formData.galleryType}
+                          value={formData.galleryType || galleryData.gallery_type_id} 
                           onChange={handleInputChange}
                         >
                           <option value="" disabled>
-                            Select
+                            {galleryData.gallery_type}
                           </option>
-                          {galleryType.map((type) => (
-                            <option key={type.id} value={type.id}>
+                          {galleryType.map((type, index) => (
+                            <option key={index} value={type.id}>
                               {type.name}
                             </option>
                           ))}
@@ -166,15 +172,15 @@ const NewGallery = () => {
                         <label>Project Types</label>
                         <select
                           className="form-control form-select"
-                          name="projectId"
-                          value={formData.projectId || galleryData.project_id}
+                          name="type_of_project"
+                          value={formData.projectId || galleryData.project_id} 
                           onChange={handleInputChange}
                         >
                           <option value="" disabled>
-                            {galleryData.project_name}
-                          </option>
-                          {projectsType.map((type) => (
-                            <option key={type.id} value={type.id}>
+                            {galleryData.project_name}                         
+                        </option>
+                          {projectsType.map((type, index) => (
+                            <option key={index} value={type.id}>
                               {type.property_type}
                             </option>
                           ))}
@@ -202,25 +208,24 @@ const NewGallery = () => {
                           type="text"
                           name="title"
                           placeholder="Enter title"
-                          value={formData.title || galleryData.title}
+                          value={formData.title|| galleryData.title}
                           onChange={handleInputChange}
                         />
                       </div>
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Attachments</label>
+                        <label>Attachment</label>
                         <input
                           className="form-control"
                           type="file"
                           name="attachment"
-                          multiple
                           onChange={handleInputChange}
                         />
                       </div>
                     </div>
                   </div>
-              
+                )}
               </div>
             </div>
             {/* Submit Button */}
