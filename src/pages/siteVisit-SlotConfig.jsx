@@ -109,6 +109,7 @@ const SiteVisitSlotConfig = () => {
                           type="date"
                           name="start_date"
                           value={startDate}
+                          required
                           onChange={(e) => setStartDate(e.target.value)}
                           placeholder="Enter Event Start Date"
                         />
@@ -121,6 +122,7 @@ const SiteVisitSlotConfig = () => {
                           className="form-control"
                           type="date"
                           name="end_date"
+                          required
                           value={endDate}
                           onChange={(e) => setEndDate(e.target.value)}
                           placeholder="Enter Event End Date"
@@ -128,11 +130,12 @@ const SiteVisitSlotConfig = () => {
                       </div>
                     </div>
                     <div className="col-md-3">
-                      <div className="form-group">
+                      <div className="form-group ">
                         <label>Start Hours</label>
                         <select
                           className="form-control"
                           value={startHour}
+                          required
                           onChange={(e) => setStartHour(Number(e.target.value))}
                         >
                           {hours.map((hour) => (
@@ -149,6 +152,7 @@ const SiteVisitSlotConfig = () => {
                         <select
                           className="form-control"
                           value={startMinute}
+                          required
                           onChange={(e) =>
                             setStartMinute(Number(e.target.value))
                           }
@@ -167,6 +171,7 @@ const SiteVisitSlotConfig = () => {
                         <select
                           className="form-control"
                           value={endHour}
+                          required
                           onChange={(e) => setEndHour(Number(e.target.value))}
                         >
                           {hours.map((hour) => (
@@ -183,6 +188,7 @@ const SiteVisitSlotConfig = () => {
                         <select
                           className="form-control"
                           value={endMinute}
+                          required
                           onChange={(e) => setEndMinute(Number(e.target.value))}
                         >
                           {minutes.map((minute) => (
@@ -200,6 +206,7 @@ const SiteVisitSlotConfig = () => {
                           className="form-control form-select"
                           value={selectedProject}
                           onChange={handleProjectChange}
+                          required
                         >
                           <option value="" disabled>
                             Select Project
