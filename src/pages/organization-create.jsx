@@ -13,18 +13,18 @@ const OrganizationCreate = () => {
     attachment: null,
   });
 
-  // Handle input change
+  //input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle file upload
+  //file upload
   const handleFileChange = (e) => {
     setFormData({ ...formData, attachment: e.target.files[0] });
   };
 
-  // Handle form submit
+  //form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
