@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import SelectBox from "../components/base/SingleSelect";
 
 const NewGallery = () => {
   const { id } = useParams(); // Corrected ID extraction
   const [projectsType, setprojectsType] = useState([]);
   const [galleryType, setGalleryType] = useState([]);
-   const [galleryData, setGalleryData] = useState([]);
-
+  const [galleryData, setGalleryData] = useState([]);
 
   const [formData, setFormData] = useState({
     galleryType: "",
@@ -92,7 +92,8 @@ const NewGallery = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url = "https://panchshil-super.lockated.com/get_property_types.json";
+      const url =
+        "https://panchshil-super.lockated.com/get_property_types.json";
 
       try {
         const response = await axios.get(url, {
@@ -113,7 +114,8 @@ const NewGallery = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url = "https://panchshil-super.lockated.com/gallery_types.json?project_id=1";
+      const url =
+        "https://panchshil-super.lockated.com/gallery_types.json?project_id=1";
 
       try {
         const response = await axios.get(url, {
@@ -147,7 +149,7 @@ const NewGallery = () => {
                   <div className="text-center">Loading...</div>
                 ) : (
                   <div className="row">
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>Gallery Type</label>
                         <select
@@ -166,27 +168,53 @@ const NewGallery = () => {
                           ))}
                         </select>
                       </div>
+                    </div> */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Gallery Type</label>
+                        <SelectBox
+                          options={galleryType.map((type) => ({
+                            value: type.id,
+                            label: type.name,
+                          }))}
+                          defaultValue={
+                            formData.galleryType || galleryData.gallery_type_id
+                          }
+                          onChange={(value) =>
+                            setFormData((prevData) => ({
+                              ...prevData,
+                              galleryType: value,
+                            }))
+                          }
+                          isDisableFirstOption={true}
+                          className="custom-selectbox"
+                        />
+                      </div>
                     </div>
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Project Types</label>
-                        <select
-                          className="form-control form-select"
-                          name="type_of_project"
-                          value={formData.projectId || galleryData.project_id} 
-                          onChange={handleInputChange}
-                        >
-                          <option value="" disabled>
-                            {galleryData.project_name}                         
-                        </option>
-                          {projectsType.map((type, index) => (
-                            <option key={index} value={type.id}>
-                              {type.property_type}
-                            </option>
-                          ))}
-                        </select>
+                        <SelectBox
+                          options={projectsType.map((type) => ({
+                            value: type.id,
+                            label: type.property_type,
+                          }))}
+                          defaultValue={
+                            formData.projectId || galleryData.project_id
+                          }
+                          onChange={(value) =>
+                            setFormData((prevData) => ({
+                              ...prevData,
+                              projectId: value,
+                            }))
+                          }
+                          isDisableFirstOption={true}
+                          className="custom-selectbox"
+                        />
                       </div>
                     </div>
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Name</label>
@@ -208,7 +236,7 @@ const NewGallery = () => {
                           type="text"
                           name="title"
                           placeholder="Enter title"
-                          value={formData.title|| galleryData.title}
+                          value={formData.title || galleryData.title}
                           onChange={handleInputChange}
                         />
                       </div>
