@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 const EventDetails = () => {
   const { id } = useParams();
   const [eventData, setEventData] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const eventId = id;
   console.log("ID", eventData);
@@ -201,18 +202,32 @@ const EventDetails = () => {
                           </label>
                         </div>
                       </div>
-                      <div className="col-lg-12 col-md-6 col-sm-12 row px-3 ">
-                        <div className="col-3 ">
+                      <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                        <div className="col-6">
                           <label>Event Description</label>
                         </div>
-                        <div className="col-8">
-                          <label className="text">
-                            <span className="me-3">
-                              <span className="text-dark">
-                                :{eventData.description}
+                        <div className="col-6">
+                          <p
+                            style={{
+                              display: "-webkit-box",
+                              WebkitLineClamp: isExpanded ? "unset" : 1, // Show only 1 line initially
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: isExpanded ? "normal" : "nowrap",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => setIsExpanded(!isExpanded)}
+                          >
+                            : {eventData.description}{" "}
+                            {!isExpanded && (
+                              <span
+                                style={{ color: "black", cursor: "pointer" }}
+                              >
+                                ...
                               </span>
-                            </span>
-                          </label>
+                            )}
+                          </p>
                         </div>
                       </div>
                     </div>

@@ -472,9 +472,9 @@ const ProjectDetails = () => {
                     <div className="col-6">
                       <label className="text">
                         <span className="me-3">
-                          <span className="text-dark">:</span>
+                          <span className="text-dark">: {formData.propertyType}</span>
                         </span>
-                        Residential
+                      
                       </label>
                     </div>
                   </div>
@@ -485,7 +485,7 @@ const ProjectDetails = () => {
                     <div className="col-6">
                       <label className="text">
                         <span className="me-3">
-                          <span className="text-dark">:</span>
+                          <span className="text-dark">: {formData.sfdcProjectId}</span>
                         </span>
                       </label>
                     </div>

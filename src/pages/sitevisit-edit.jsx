@@ -1,28 +1,31 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const SitevisitEdit = () => {
   const [formData, setFormData] = useState({
+    id: "",
     project_id: "",
     project_name: "",
     scheduled_at: "",
     selected_slot: "",
   });
 
-
+  const { id } = useParams(); // Get ID from URL params for editing
   const [projectsType, setProjectsType] = useState([]);
   const [slots, setSlots] = useState([]);
   const navigate = useNavigate();
 
-  const apiUrl = "https://panchshil-super.lockated.com/site_schedule_requests";
+  const apiUrl = "http://panchshil-super.lockated.com/site_schedule_requests.json";
   const projectsApiUrl =
     "https://panchshil-super.lockated.com/get_all_projects.json";
   const slotsApiUrl =
     "https://panchshil-super.lockated.com/site_schedule/get_site_schedules_for_user.json";
+
   const authToken = "4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs";
   const projectsAuthToken = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY";
+  const authenticationToken = "eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA";
 
   // Helper function to format date as DD-MM-YYYY
   const formatDateForApi = (dateString) => {
@@ -30,37 +33,50 @@ const SitevisitEdit = () => {
     return `${day}-${month}-${year}`;
   };
 
-  // Fetch project types on mount
+  // Fetch project list on mount
   useEffect(() => {
     axios
       .get(projectsApiUrl, {
-        headers: {
-          Authorization: `Bearer ${projectsAuthToken}`,
-        },
+        headers: { Authorization: `Bearer ${projectsAuthToken}` },
       })
-      .then((response) => {
-        const data = response.data;
-        const allProjects = [];
-
-        if (data.featured) {
-          allProjects.push(data.featured);
-        }
-
-        if (data.projects && Array.isArray(data.projects)) {
-          allProjects.push(...data.projects);
-        }
-
-        setProjectsType(allProjects);
-      })
+      .then((response) => setProjectsType(response.data.projects))
       .catch((error) => console.error("Error fetching projects:", error));
   }, []);
 
-  // Fetch slots when user selects a date and project
-  const fetchSlots = async (selectedDate, selectedProjectId) => {
-    if (!selectedDate || !selectedProjectId) {
-      console.error("Project ID and date are required to fetch slots.");
-      return;
+  // Fetch site visit details when editing
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`${apiUrl}/${id}.json`, {
+          headers: { Authorization: `Bearer ${authenticationToken}` },
+        })
+        .then((response) => {
+          const siteVisit = response.data;
+          setFormData({
+            project_id: siteVisit.project_id,
+            project_name: siteVisit.project_name,
+            scheduled_at: siteVisit.scheduled_at,
+            selected_slot: siteVisit.selected_slot,
+          });
+
+          // Fetch slots for this project & date
+          fetchSlots(siteVisit.scheduled_at, siteVisit.project_id);
+        })
+        .catch((error) =>
+          console.error("Error fetching site visit data:", error)
+        );
     }
+  }, [id]);
+
+  // Fetch slots dynamically when project or date changes
+  useEffect(() => {
+    if (formData.project_id && formData.scheduled_at) {
+      fetchSlots(formData.scheduled_at, formData.project_id);
+    }
+  }, [formData.project_id, formData.scheduled_at]);
+
+  const fetchSlots = async (selectedDate, selectedProjectId) => {
+    if (!selectedDate || !selectedProjectId) return;
 
     try {
       const formattedDate = formatDateForApi(selectedDate);
@@ -68,14 +84,6 @@ const SitevisitEdit = () => {
         headers: { Authorization: `Bearer ${authToken}` },
         params: { project_id: selectedProjectId, date: formattedDate },
       });
-
-      console.log(
-        "Fetching slots for project:",
-        selectedProjectId,
-        "date:",
-        formattedDate,
-        response.data
-      );
 
       setSlots(response.data?.slots || []);
     } catch (error) {
@@ -92,28 +100,26 @@ const SitevisitEdit = () => {
     setFormData((prev) => {
       let updatedForm = { ...prev, [name]: value };
 
-      if (name === "project_name") {
+      if (name === "project_id") {
         const selectedProject = projectsType.find(
           (p) => p.id === parseInt(value)
         );
-
         updatedForm.project_name = selectedProject?.project_name || "";
-        updatedForm.project_id = selectedProject?.id || "";
-      }
-
-      if (updatedForm.project_id && updatedForm.scheduled_at) {
-        fetchSlots(updatedForm.scheduled_at, updatedForm.project_id);
       }
 
       return updatedForm;
     });
   };
 
-  // Handle form submission
+  // Handle form submission (Create or Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.scheduled_at || !formData.project_id || !formData.selected_slot) {
+    if (
+      !formData.scheduled_at ||
+      !formData.project_id ||
+      !formData.selected_slot
+    ) {
       toast.error("Please fill all required fields, including a time slot.");
       return;
     }
@@ -128,15 +134,28 @@ const SitevisitEdit = () => {
     };
 
     try {
-      const response = await axios.post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      let response;
 
-      toast.success("Form submitted successfully");
-      console.log("Response from API:", response.data);
+      if (id) {
+        // If ID exists, update the existing record
+        response = await axios.put(`${apiUrl}/${id}.json`, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authenticationToken}`,
+          },
+        });
+        toast.success("Schedule updated successfully!");
+      } else {
+        // If no ID, create a new record
+        response = await axios.post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        toast.success("Form submitted successfully!");
+      }
+
       navigate("/sitevisit-list");
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -158,40 +177,36 @@ const SitevisitEdit = () => {
                   <div className="row">
                     {/* Project Selection */}
                     <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Project Name</label>
-                        <select
-                          className="form-control form-select"
-                          name="project_name"
-                          value={formData.project_id}
-                          onChange={handleChange}
-                          required
-                        >
-                          <option value="" disabled>
-                            Select Project
+                      <label>Project Name</label>
+                      <select
+                        className="form-control form-select"
+                        name="project_id"
+                        value={formData.project_id || "N/A"}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="" disabled>
+                          Select Project
+                        </option>
+                        {projectsType.map((project) => (
+                          <option key={project.id} value={project.id}>
+                            {project.project_name}
                           </option>
-                          {projectsType.map((project) => (
-                            <option key={project.id} value={project.id}>
-                              {project.project_name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                        ))}
+                      </select>
                     </div>
 
                     {/* Date Selection */}
                     <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Date</label>
-                        <input
-                          className="form-control"
-                          type="date"
-                          name="scheduled_at"
-                          value={formData.scheduled_at}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
+                      <label>Date</label>
+                      <input
+                        className="form-control"
+                        type="date"
+                        name="scheduled_at"
+                        value={formData.scheduled_at}
+                        onChange={handleChange}
+                        required
+                      />
                     </div>
                   </div>
 
@@ -199,39 +214,35 @@ const SitevisitEdit = () => {
                   {slots.length > 0 && (
                     <div className="row mt-3">
                       <div className="col-md-6">
-                        <div className="form-group">
-                          <label>Select Available Slot</label>
-                          <select
-                            className="form-control form-select"
-                            name="selected_slot"
-                            value={formData.selected_slot || ""}
-                            onChange={handleChange}
-                            required
-                          >
-                            <option value="" disabled>
-                              Select a time slot
+                        <label>Select Available Slot</label>
+                        <select
+                          className="form-control form-select"
+                          name="selected_slot"
+                          value={formData.selected_slot}
+                          onChange={handleChange}
+                          required
+                        >
+                          <option value="" disabled>
+                            Select a time slot
+                          </option>
+                          {slots.map((slot) => (
+                            <option key={slot.id} value={slot.id}>
+                              {slot.ampm_timing}
                             </option>
-                            {slots.map((slot) => (
-                              <option
-                                key={slot.id}
-                                value={slot.id}
-                                disabled={slot.slot_disabled}
-                                style={{ color: slot.slot_color_code }}
-                              >
-                                {slot.ampm_timing}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   )}
 
-                  {/* Submit Button */}
                   <div className="row mt-2 justify-content-center">
                     <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100">
-                        Submit
+                      <button
+                        onClick={handleSubmit}
+                        type="submit"
+                        className="purple-btn2 w-100"
+                      >
+                        Update
                       </button>
                     </div>
                   </div>
