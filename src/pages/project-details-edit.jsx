@@ -933,9 +933,11 @@ const ProjectDetailsEdit = () => {
                           <td>{file.file_name}</td>
                           <td>
                             <img
-                              style={{ width: "70px" }}
+                              style={{ maxWidth: 100, maxHeight: 100 }}
                               src={file.file_url} // Use file_url for image preview
                               alt={file.file_name} // Use file_name as alt text for accessibility
+                              className="img-fluid rounded" 
+
                             />
                           </td>
                           <td>

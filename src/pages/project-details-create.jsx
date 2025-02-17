@@ -940,7 +940,8 @@ const ProjectDetailsCreate = () => {
                           <td> {file.name}</td>
                           <td>
                             <img
-                              style={{ width: "70px" }}
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded" 
                               src={
                                 file.type.startsWith("image")
                                   ? URL.createObjectURL(file)
