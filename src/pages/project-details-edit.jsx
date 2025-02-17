@@ -351,7 +351,10 @@ const ProjectDetailsEdit = () => {
             <div className="row">
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>Project Types</label>
+                  <label>
+                    Project Types
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     style={{ width: "100%" }}
@@ -372,7 +375,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>SFDC Project ID</label>
+                  <label>
+                    SFDC Project ID
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -385,7 +391,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>Project Construction Status</label>
+                  <label>
+                    Project Construction Status
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     style={{ width: "100%" }}
@@ -406,7 +415,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>Configuration Type</label>
+                  <label>
+                    Configuration Type
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     style={{ width: "100%" }}
@@ -424,7 +436,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Name</label>
+                  <label>
+                    Project Name
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -436,7 +451,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Location</label>
+                  <label>
+                    Location
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -449,7 +467,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-6 mt-2">
                 <div className="form-group">
-                  <label>Project Description</label>
+                  <label>
+                    Project Description
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <textarea
                     className="form-control"
                     rows={1}
@@ -465,7 +486,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Price Onward</label>
+                  <label>
+                    Price Onward
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
 
                   <input
                     className="form-control"
@@ -479,7 +503,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Size (Sq. Mtr.)</label>
+                  <label>
+                    Project Size (Sq. Mtr.)
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -495,7 +522,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Size (Sq. Ft.)</label>
+                  <label>
+                    Project Size (Sq. Ft.)
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -510,7 +540,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Rera Carpet Area (Sq. M)</label>
+                  <label>
+                    Rera Carpet Area (Sq. M)
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -526,7 +559,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Rare Carpet Area (Sq. Ft.)</label>
+                  <label>
+                    Rare Carpet Area (Sq. Ft.)
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -542,7 +578,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Number of Towers</label>
+                  <label>
+                    Number of Towers
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -555,7 +594,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Number of Units</label>
+                  <label>
+                    Number of Units
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -568,7 +610,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Rera Number</label>
+                  <label>
+                    Rera Number
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -581,7 +626,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Amenities</label>
+                  <label>
+                    Amenities
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     style={{ width: "100%" }}
@@ -600,7 +648,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Specifications</label>
+                  <label>
+                    Specifications
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <select
                     className="form-control form-select"
                     style={{ width: "100%" }}
@@ -620,7 +671,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Land Area</label>
+                  <label>
+                    Land Area
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -636,14 +690,20 @@ const ProjectDetailsEdit = () => {
         </div>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
-            <h3 className="card-title">Address</h3>
+            <h3 className="card-title">
+              Address
+              <span style={{ color: "red", fontSize: "16px" }}>*</span>
+            </h3>
           </div>
           <div className="card-body">
             <div className="row">
               {/* Address Section */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Address Line </label>
+                  <label>
+                    Address Line{" "}
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -656,7 +716,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Address Line </label>
+                  <label>
+                    Address Line
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -671,7 +734,10 @@ const ProjectDetailsEdit = () => {
               {/* City, State, Pin, Country Section */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>City</label>
+                  <label>
+                    City
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -684,7 +750,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>State</label>
+                  <label>
+                    State
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -697,7 +766,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Pin Code</label>
+                  <label>
+                    Pin Code
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="number"
@@ -710,7 +782,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Country</label>
+                  <label>
+                    Country
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  </label>
                   <input
                     className="form-control"
                     type="text"
@@ -726,7 +801,10 @@ const ProjectDetailsEdit = () => {
         </div>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
-            <h3 className="card-title">File Upload</h3>
+            <h3 className="card-title">
+              File Upload
+              <span style={{ color: "red", fontSize: "16px" }}>*</span>
+            </h3>
           </div>
           <div className="card-body">
             <div className="row">

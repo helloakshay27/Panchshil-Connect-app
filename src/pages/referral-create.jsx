@@ -106,6 +106,16 @@ const ReferralCreate = () => {
     }
     setFormData({ ...formData, [name]: value });
   };
+  const handleCancel = () => {
+    setFormData({
+      name: "",
+      email: "",
+      mobile: "",
+      referralCode: "",
+      userId: "2",
+    });
+    setSelectedProjectId("");
+  };
 
   return (
     <div className="main-content">
@@ -207,6 +217,15 @@ const ReferralCreate = () => {
                   <div className="col-md-2">
                     <button type="submit" className="purple-btn2 w-100">
                       Submit
+                    </button>
+                  </div>
+                  <div className="col-md-2">
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={handleCancel}
+                    >
+                      Cancel
                     </button>
                   </div>
                 </div>

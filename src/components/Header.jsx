@@ -24,16 +24,16 @@ const Header = () => {
   const signout = () => {
     console.log("Signing out...");
     sessionStorage.clear(); // Clear session storage
-    localStorage.removeItem("access_token"); 
+    localStorage.removeItem("access_token");
 
     setShowModal(false);
-  
+
     // Remove any existing modal backdrop elements
     const modalBackdrop = document.querySelector(".modal-backdrop");
     if (modalBackdrop) {
       modalBackdrop.remove();
     }
-  
+
     navigate("/login");
   };
 
@@ -65,7 +65,7 @@ const Header = () => {
               <h5>{sessionStorage.getItem("firstname") || "First Name"}</h5>
               <p>{sessionStorage.getItem("email") || "example@example.com"}</p>
               <button
-                className="purple-btn1 my-3"
+                className="purple-btn2 my-3"
                 aria-label="Close"
                 onClick={signout}
               >
@@ -91,8 +91,9 @@ const Header = () => {
             alt="Logo"
           />
           <div
-            className={`collapse navbar-collapse ms-5 align-items-baseline ${isSidebarOpen ? "show" : ""
-              }`}
+            className={`collapse navbar-collapse ms-5 align-items-baseline ${
+              isSidebarOpen ? "show" : ""
+            }`}
             id="navbarTogglerDemo02"
           >
             <ul className="navbar-nav me-auto mb-2 mb-lg-0 mt-2">
@@ -191,9 +192,17 @@ const Header = () => {
                   </a>
                 </li> */}
                 <li>
-                 <a style={{cursor
-                  :"pointer", color:"var(--red)", display:"flex", alignItems:"center", gap:"5px"
-                 }} className=" "  onClick={handleOpen}>
+                  <a
+                    style={{
+                      cursor: "pointer",
+                      color: "var(--red)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                    className=" "
+                    onClick={handleOpen}
+                  >
                     <svg
                       width={18}
                       height={18}
@@ -206,9 +215,8 @@ const Header = () => {
                         fill="#8B0203"
                       />
                     </svg>
-
                     Profile
-                    </a>
+                  </a>
                 </li>
               </ul>
             </div>

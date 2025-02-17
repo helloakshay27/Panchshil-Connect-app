@@ -24,9 +24,16 @@ const Testimonials = () => {
           }
         );
         console.log("response", response.data);
-        setCompanySetupOptions(response.data); // Set the company setup data
+
+        // Ensure the response is an array before setting state
+        if (Array.isArray(response.data)) {
+          setCompanySetupOptions(response.data);
+        } else {
+          setCompanySetupOptions([]); // Default to empty array
+        }
       } catch (error) {
         console.error("Error fetching company setup data:", error);
+        setCompanySetupOptions([]); // Default to empty array on error
       }
     };
 
@@ -67,6 +74,13 @@ const Testimonials = () => {
       console.error("Error submitting testimonial:", error);
     }
   };
+  const handleCancel = () => {
+    // Reset form fields when Cancel is clicked
+    setCompanySetupId("");
+    setUserName("");
+    setUserType("");
+    setContent("");
+  };
 
   return (
     <>
@@ -100,7 +114,7 @@ const Testimonials = () => {
                           <option value="" disabled>
                             Select ID
                           </option>
-                          {companySetupOptions.map((option) => (
+                          {(companySetupOptions || []).map((option) => (
                             <option key={option.id} value={option.id}>
                               {option.name || option.company_name || "No Name"}
                             </option>
@@ -176,6 +190,15 @@ const Testimonials = () => {
                     <div className="col-md-2">
                       <button type="submit" className="purple-btn2 w-100">
                         Submit
+                      </button>
+                    </div>
+                    <div className="col-md-2">
+                      <button
+                        type="button"
+                        className="purple-btn2 w-100"
+                        onClick={handleCancel}
+                      >
+                        Cancel
                       </button>
                     </div>
                   </div>

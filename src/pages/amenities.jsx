@@ -49,6 +49,10 @@ const Amenities = () => {
       setLoading(false);
     }
   };
+  const handleCancel = () => {
+    setName("");
+    setIcon(null);
+  };
 
   return (
     <>
@@ -109,6 +113,15 @@ const Amenities = () => {
                         disabled={loading}
                       >
                         {loading ? "Submitting..." : "Submit"}
+                      </button>
+                    </div>
+                    <div className="col-md-2">
+                      <button
+                        type="button"
+                        className="purple-btn2 w-100"
+                        onClick={handleCancel}
+                      >
+                        Cancel
                       </button>
                     </div>
                   </div>

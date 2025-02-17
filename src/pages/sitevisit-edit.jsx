@@ -17,7 +17,8 @@ const SitevisitEdit = () => {
   const [slots, setSlots] = useState([]);
   const navigate = useNavigate();
 
-  const apiUrl = "http://panchshil-super.lockated.com/site_schedule_requests.json";
+  const apiUrl =
+    "http://panchshil-super.lockated.com/site_schedule_requests.json";
   const projectsApiUrl =
     "https://panchshil-super.lockated.com/get_all_projects.json";
   const slotsApiUrl =
@@ -177,7 +178,12 @@ const SitevisitEdit = () => {
                   <div className="row">
                     {/* Project Selection */}
                     <div className="col-md-3">
-                      <label>Project Name</label>
+                      <label>
+                        Project Name
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <select
                         className="form-control form-select"
                         name="project_id"
@@ -198,7 +204,12 @@ const SitevisitEdit = () => {
 
                     {/* Date Selection */}
                     <div className="col-md-3">
-                      <label>Date</label>
+                      <label>
+                        Date
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <input
                         className="form-control"
                         type="date"

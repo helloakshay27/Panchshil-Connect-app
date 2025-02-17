@@ -50,6 +50,11 @@ const Specification = () => {
     }
   };
 
+  const handleCancel = () => {
+    setName(""); 
+    setIcon(null); 
+    setError(null); 
+  };
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
@@ -106,6 +111,15 @@ const Specification = () => {
                       disabled={loading}
                     >
                       {loading ? "Submitting..." : "Submit"}
+                    </button>
+                  </div>
+                  <div className="col-md-2">
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={handleCancel}
+                    >
+                      Cancel
                     </button>
                   </div>
                 </div>

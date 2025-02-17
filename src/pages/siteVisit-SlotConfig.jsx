@@ -88,6 +88,15 @@ const SiteVisitSlotConfig = () => {
       endDate,
     });
   };
+  const handleCancel = () => {
+    setStartHour(0);
+    setStartMinute(0);
+    setEndHour(0);
+    setEndMinute(0);
+    setSelectedProject("");
+    setStartDate("");
+    setEndDate("");
+  };
 
   return (
     <div className="main-content">
@@ -261,6 +270,15 @@ const SiteVisitSlotConfig = () => {
                     <div className="col-md-2">
                       <button type="submit" className="purple-btn2 w-100">
                         Submit
+                      </button>
+                    </div>
+                    <div className="col-md-2">
+                      <button
+                        type="button"
+                        className="purple-btn2 w-100 "
+                        onClick={handleCancel}
+                      >
+                        Cancel
                       </button>
                     </div>
                   </div>

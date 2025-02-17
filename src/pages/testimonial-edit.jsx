@@ -6,13 +6,16 @@ const TestimonialEdit = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { testimonial, setTestimonials } = state || {};
+
   const [formData, setFormData] = useState({
     company_setup_id: testimonial?.company_setup_id || "",
     user_name: testimonial?.user_name || "",
     user_type: testimonial?.user_type || "",
     content: testimonial?.content || "",
   });
+
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
+
   useEffect(() => {
     const fetchCompanySetups = async () => {
       try {
@@ -21,19 +24,27 @@ const TestimonialEdit = () => {
           {
             headers: {
               Authorization:
-                "Bearer hnbLunLzzG9ft5dyVulTBpuQp2mgvfZe_69ukCTa8QQ",
+                "Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE",
             },
           }
         );
         console.log("response", response.data);
-        setCompanySetupOptions(response.data); // Set the company setup data
+
+        // Ensure response is an array before setting state
+        if (Array.isArray(response.data)) {
+          setCompanySetupOptions(response.data);
+        } else {
+          setCompanySetupOptions([]); // Default to empty array
+        }
       } catch (error) {
         console.error("Error fetching company setup data:", error);
+        setCompanySetupOptions([]); // Default to empty array on error
       }
     };
 
     fetchCompanySetups();
   }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -43,7 +54,7 @@ const TestimonialEdit = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com//testimonials/${testimonial.id}.json`,
+        `https://panchshil-super.lockated.com/testimonials/${testimonial.id}.json`,
         formData
       );
 
@@ -55,7 +66,8 @@ const TestimonialEdit = () => {
       alert("Testimonial updated successfully!");
       navigate("/testimonials");
     } catch (error) {
-      alert("Data Is Updated");
+      console.error("Error updating testimonial:", error);
+      alert("Error updating testimonial. Please try again.");
     }
   };
 
@@ -72,34 +84,42 @@ const TestimonialEdit = () => {
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Company Setup Id</label>
-                      {/* <input
-                        className="form-control"
-                        name="company_setup_id"
-                        value={formData.company_setup_id}
-                        onChange={handleChange}
-                      /> */}
+                      <label>
+                        Company Setup Id
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <select
                         className="form-control form-select"
                         style={{ width: "100%" }}
-                        name="companysetupid"
+                        name="company_setup_id"
                         value={formData.company_setup_id}
                         onChange={handleChange}
                       >
                         <option value="" disabled>
                           Select ID
                         </option>
-                        {companySetupOptions.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.name || option.company_name || "No Name"}
-                          </option>
-                        ))}
+                        {Array.isArray(companySetupOptions)
+                          ? companySetupOptions.map((option) => (
+                              <option key={option.id} value={option.id}>
+                                {option.name ||
+                                  option.company_name ||
+                                  "No Name"}
+                              </option>
+                            ))
+                          : []}
                       </select>
                     </div>
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>User Name</label>
+                      <label>
+                        User Name
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <input
                         className="form-control"
                         name="user_name"
@@ -110,7 +130,12 @@ const TestimonialEdit = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>User Type</label>
+                      <label>
+                        User Type
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <select
                         className="form-control"
                         name="user_type"
@@ -124,7 +149,12 @@ const TestimonialEdit = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Content</label>
+                      <label>
+                        Content
+                        <span style={{ color: "red", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
                       <input
                         className="form-control"
                         name="content"
@@ -134,8 +164,8 @@ const TestimonialEdit = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-2 ">
-                  <button type="submit" className="purple-btn2 w-80">
+                <div className="col-md-2 mt-3">
+                  <button type="submit" className="purple-btn2 w-100">
                     Submit
                   </button>
                 </div>

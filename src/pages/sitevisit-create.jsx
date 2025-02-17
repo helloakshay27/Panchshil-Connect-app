@@ -23,13 +23,11 @@ const SitevisitCreate = () => {
   const authToken = "4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs";
   const projectsAuthToken = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY";
 
-  // Helper function to format date as DD-MM-YYYY
   const formatDateForApi = (dateString) => {
     const [year, month, day] = dateString.split("-");
     return `${day}-${month}-${year}`;
   };
 
-  // Fetch project types on mount
   useEffect(() => {
     axios
       .get(projectsApiUrl, {
@@ -112,7 +110,11 @@ const SitevisitCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.scheduled_at || !formData.project_id || !formData.selected_slot) {
+    if (
+      !formData.scheduled_at ||
+      !formData.project_id ||
+      !formData.selected_slot
+    ) {
       toast.error("Please fill all required fields, including a time slot.");
       return;
     }
@@ -141,6 +143,15 @@ const SitevisitCreate = () => {
       console.error("Error submitting form:", error);
       toast.error(`Error submitting schedule: ${error.message}`);
     }
+  };
+  const handleCancel = () => {
+    setFormData({
+      project_id: "",
+      project_name: "",
+      scheduled_at: "",
+      selected_slot: "",
+    });
+    setSlots([]); // Reset slots as well
   };
 
   return (
@@ -231,6 +242,15 @@ const SitevisitCreate = () => {
                     <div className="col-md-2">
                       <button type="submit" className="purple-btn2 w-100">
                         Submit
+                      </button>
+                    </div>
+                    <div className="col-md-2">
+                      <button
+                        type="button"
+                        className="purple-btn2 w-100"
+                        onClick={handleCancel}
+                      >
+                        Cancel
                       </button>
                     </div>
                   </div>

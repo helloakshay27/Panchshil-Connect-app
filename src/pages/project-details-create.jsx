@@ -332,6 +332,39 @@ const ProjectDetailsCreate = () => {
 
     fetchProjects();
   }, []);
+  const handleCancel = () => {
+    setFormData({
+      property_type: "",
+      SFDC_Project_Id: "",
+      Project_Construction_Status: "",
+      Configuration_Type: "",
+      Project_Name: "",
+      location: "",
+      Project_Description: "",
+      Price_Onward: "",
+      Project_Size_Sq_Mtr: "",
+      Project_Size_Sq_Ft: "",
+      Rera_Carpet_Area_Sq_M: "",
+      Rera_Carpet_Area_sqft: "",
+      Number_Of_Towers: "",
+      Number_Of_Units: "",
+      Rera_Number: "",
+      project_amenities: "",
+      specifications: "",
+      Land_Area: "",
+      address: {
+        addressLine1: "",
+        addressLine2: "",
+        addressLine3: "",
+        city: "",
+        state: "",
+        pinCode: "",
+        country: "",
+      },
+      brochure: null,
+      two_d_images: [],
+    });
+  };
 
   return (
     <>
@@ -492,7 +525,7 @@ const ProjectDetailsCreate = () => {
                   </label>
                   <input
                     className="form-control"
-                    type="number"
+                    type="text-number"
                     name="Price_Onward"
                     placeholder="Enter Price Onward"
                     value={formData.Price_Onward}
@@ -940,6 +973,15 @@ const ProjectDetailsCreate = () => {
             <div className="col-md-2">
               <button onClick={handleSubmit} className="purple-btn2 w-100">
                 Submit
+              </button>
+            </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="purple-btn2 w-100"
+              >
+                Cancel
               </button>
             </div>
           </div>
