@@ -5471,6 +5471,9 @@ iframe .website-content {
 .input-group-append .btn {
   border: 1px solid var(--red) !important;
   border-radius: 4px;
+  padding: 10px 15px;
+
+
 }
 
 .event-input {

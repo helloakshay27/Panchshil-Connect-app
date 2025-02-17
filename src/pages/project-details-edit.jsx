@@ -129,19 +129,24 @@ const ProjectDetailsEdit = () => {
     fetchProjectDetails();
   }, []);
 
-  // Handle form changes
   const handleChange = (e) => {
     const { name, files, value } = e.target;
 
     if (name === "brochure") {
-      // Update brochure file
       setFormData((prev) => ({
         ...prev,
-        brochure: files[0],
+        brochure: {
+          file: files[0],
+          document_file_name: files[0]?.name,
+        },
       }));
     } else if (name === "two_d_images") {
-      // Update 2D images array
-      const newImages = Array.from(files);
+      const newImages = Array.from(files).map((file) => ({
+        file: file,
+        file_name: file.name,
+        file_url: URL.createObjectURL(file),
+      }));
+
       setFormData((prev) => ({
         ...prev,
         two_d_images: [...prev.two_d_images, ...newImages],
@@ -727,6 +732,7 @@ const ProjectDetailsEdit = () => {
             <div className="row">
               {/* Brochure Upload */}
 
+              {/* File Upload Section */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
@@ -735,7 +741,6 @@ const ProjectDetailsEdit = () => {
 
                 <button
                   className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
                   onClick={() => document.getElementById("brochure").click()}
                 >
                   <svg
@@ -750,6 +755,7 @@ const ProjectDetailsEdit = () => {
                   </svg>
                   <span>Add</span>
                 </button>
+
                 <input
                   id="brochure"
                   className="form-control"
@@ -774,7 +780,10 @@ const ProjectDetailsEdit = () => {
                       {/* Brochure */}
                       {formData.brochure && (
                         <tr>
-                          <td>{formData.brochure?.document_file_name}</td>
+                          <td>
+                            {formData.brochure?.document_file_name ||
+                              "No file selected"}
+                          </td>
 
                           <td>
                             <button
@@ -801,7 +810,6 @@ const ProjectDetailsEdit = () => {
 
                 <button
                   className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
                   onClick={() =>
                     document.getElementById("two_d_images").click()
                   }
@@ -818,6 +826,7 @@ const ProjectDetailsEdit = () => {
                   </svg>
                   <span>Add</span>
                 </button>
+
                 <input
                   id="two_d_images"
                   type="file"
@@ -829,6 +838,7 @@ const ProjectDetailsEdit = () => {
                 />
               </div>
 
+              {/* Table to Display Images */}
               <div className="col-md-12 mt-2">
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
@@ -840,18 +850,16 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* 2D Images */}
                       {formData.two_d_images.map((file, index) => (
                         <tr key={index}>
-                          <td> {file.document_file_name}</td>
+                          <td>{file.file_name}</td>
                           <td>
                             <img
                               style={{ width: "70px" }}
-                              src={file.document_url}
-                              alt=""
+                              src={file.file_url} // Use file_url for image preview
+                              alt={file.file_name} // Use file_name as alt text for accessibility
                             />
                           </td>
-
                           <td>
                             <button
                               type="button"
