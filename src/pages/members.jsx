@@ -114,6 +114,9 @@ const Members = () => {
               <li>
                 <Link to="/organization-create">Organization Create</Link>
               </li>
+              <li>
+                <Link to="/organization-list">Organization List</Link>
+              </li>
               <li className="pb-5">{/* add above this li */}</li>
             </ul>
           </div>

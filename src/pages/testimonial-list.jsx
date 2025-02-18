@@ -10,8 +10,11 @@ const TestimonialList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("currentPage")) || 1;
+  };
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_count: 0,
     total_pages: 0,
   });
@@ -29,6 +32,7 @@ const TestimonialList = () => {
           ...prevState,
           total_count: response.data.testimonials.length,
           total_pages: Math.ceil(response.data.testimonials.length / pageSize),
+          current_page: getPageFromStorage(),
         }));
         setLoading(false);
       } catch (err) {
@@ -59,6 +63,7 @@ const TestimonialList = () => {
       ...prevState,
       current_page: pageNumber,
     }));
+    localStorage.setItem("currentPage", pageNumber);
   };
 
   const displayedTestimonials = filteredTestimonials

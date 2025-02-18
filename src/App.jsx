@@ -44,6 +44,7 @@ import SiteVisitSlotConfigList from "./pages/siteVisit-SlotConfig-list";
 import SitevisitList from "./pages/sitevisit-list";
 import OrganizationCreate from "./pages/organization-create"
 import SitevisitEdit from "./pages/sitevisit-edit";
+import OrganizationList from "./pages/organization-list";
 
 // import EditGallery from './EditGallery';
 
@@ -99,6 +100,7 @@ function App() {
           <Route path="/event-edit/:id" element={<EventEdit />} />
           <Route path="/specification" element={<Specification />} />
           <Route path="/organization-create" element={<OrganizationCreate />} />
+          <Route path="/organization-list" element={<OrganizationList />} />
           <Route
             path="/specification-update/:id"
             element={<SpecificationUpdate />}

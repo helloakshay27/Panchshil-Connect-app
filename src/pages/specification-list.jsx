@@ -17,6 +17,14 @@ const SpecificationList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const savedPage = localStorage.getItem("currentPage");
+    const currentPage = savedPage ? parseInt(savedPage) : 1;
+
+    // Set the page number based on localStorage or default to 1
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: currentPage,
+    }));
     axios
       .get("https://panchshil-super.lockated.com/specification_setups.json")
       .then((response) => {
@@ -72,6 +80,7 @@ const SpecificationList = () => {
       ...prevState,
       current_page: pageNumber,
     }));
+    localStorage.setItem("currentPage", pageNumber);
   };
   const filteredSpecifications = specifications.filter((spec) =>
     spec.name.toLowerCase().includes(searchQuery.toLowerCase())

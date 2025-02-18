@@ -773,10 +773,10 @@ a.purple-btn2 {
 }
 
 .purple-btn2:focus {
-  border: 2px solid var(--lightred) !important;
+  border: 2px solid var(--red) !important;
 }
 
-.purple-btn3 {
+.purple .purple-btn3 {
   width: 151px;
   height: 34px;
   padding: 5px 10px;
@@ -5438,7 +5438,7 @@ iframe .website-content {
 
 .page-link:hover {
   z-index: 2;
-  color: var(--red) !important;
+  /* color: var(--red) !important; */
   background-color: var(--bs-pagination-hover-bg);
   border-color: var(--bs-pagination-hover-border-color);
 }

@@ -30,13 +30,19 @@ const BannerAdd = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer hnbLunLzzG9ft5dyVulTBpuQp2mgvfZe_69ukCTa8QQ`,
+              Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
               "Content-Type": "application/json",
             },
           }
         );
 
-        setProjects(response.data); // Assuming the API returns an object with a "banners" field
+        // Ensure we are getting the correct structure (company_setups array)
+        if (response.data && Array.isArray(response.data.company_setups)) {
+          setProjects(response.data.company_setups); // Access company_setups instead of response.data
+        } else {
+          setProjects([]); // If it's not an array, set an empty array
+        }
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching banners:", error);

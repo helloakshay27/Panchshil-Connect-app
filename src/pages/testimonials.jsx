@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
-
 import "../mor.css";
 
 const Testimonials = () => {
@@ -19,21 +18,26 @@ const Testimonials = () => {
           {
             headers: {
               Authorization:
-                "Bearer hnbLunLzzG9ft5dyVulTBpuQp2mgvfZe_69ukCTa8QQ",
+                "Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE",
             },
           }
         );
-        console.log("response", response.data);
 
-        // Ensure the response is an array before setting state
-        if (Array.isArray(response.data)) {
-          setCompanySetupOptions(response.data);
+        console.log("Raw API Response:", response.data);
+
+        if (response.data && Array.isArray(response.data.company_setups)) {
+          setCompanySetupOptions(response.data.company_setups);
         } else {
-          setCompanySetupOptions([]); // Default to empty array
+          console.warn("Unexpected API response format:", response.data);
+          setCompanySetupOptions([]);
         }
       } catch (error) {
         console.error("Error fetching company setup data:", error);
-        setCompanySetupOptions([]); // Default to empty array on error
+
+        if (error.response) {
+          console.error("API Response Error:", error.response.data);
+        }
+        setCompanySetupOptions([]);
       }
     };
 
@@ -41,17 +45,23 @@ const Testimonials = () => {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
 
-    // Prepare the data to send
+    if (!companySetupId || !userName.trim() || !userType || !content.trim()) {
+      alert("All fields are required.");
+      return;
+    }
+
     const data = {
       testimonial: {
         company_setup_id: companySetupId,
-        user_name: userName,
+        user_name: userName.trim(),
         user_type: userType,
-        content: content,
+        content: content.trim(),
       },
     };
+
+    console.log("Submitting data:", data);
 
     try {
       const response = await axios.post(
@@ -60,22 +70,26 @@ const Testimonials = () => {
         {
           headers: {
             Authorization: "Bearer kD8B8ZeWZQAd2nQ-70dcfLXgYHLQh-zjggvuuE_93BY",
+            "Content-Type": "application/json",
           },
         }
       );
       console.log("Response from POST:", response.data);
       alert("Data saved successfully!");
-      // Optionally, reset the form after success
       setCompanySetupId("");
       setUserName("");
       setUserType("");
       setContent("");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+      }
+      alert("Failed to submit. Please check your input.");
     }
   };
+
   const handleCancel = () => {
-    // Reset form fields when Cancel is clicked
     setCompanySetupId("");
     setUserName("");
     setUserType("");
@@ -84,7 +98,6 @@ const Testimonials = () => {
 
   return (
     <>
-      {/* <Header /> */}
       <div className="main-content">
         <div className="website-content overflow-auto">
           <div className="module-data-section p-3">
@@ -105,20 +118,24 @@ const Testimonials = () => {
                         </label>
                         <select
                           className="form-control form-select"
-                          style={{ width: "100%" }}
                           name="companysetupid"
                           value={companySetupId}
-                          required
                           onChange={(e) => setCompanySetupId(e.target.value)}
                         >
                           <option value="" disabled>
                             Select ID
                           </option>
-                          {(companySetupOptions || []).map((option) => (
-                            <option key={option.id} value={option.id}>
-                              {option.name || option.company_name || "No Name"}
-                            </option>
-                          ))}
+                          {companySetupOptions.length > 0 ? (
+                            companySetupOptions.map((option) => (
+                              <option key={option.id} value={option.id}>
+                                {option.name ||
+                                  option.company_name ||
+                                  `ID: ${option.id}`}
+                              </option>
+                            ))
+                          ) : (
+                            <option disabled>No options available</option>
+                          )}
                         </select>
                       </div>
                     </div>
@@ -133,11 +150,10 @@ const Testimonials = () => {
                         <input
                           className="form-control"
                           type="text"
-                          placeholder="Default input"
                           name="username"
-                          required
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
+                          required
                         />
                       </div>
                     </div>
@@ -151,25 +167,22 @@ const Testimonials = () => {
                         </label>
                         <select
                           className="form-control form-select"
-                          style={{ width: "100%" }}
                           name="userType"
                           value={userType}
-                          required
                           onChange={(e) => setUserType(e.target.value)}
+                          required
                         >
                           <option value="" disabled>
                             Select status
                           </option>
                           <option value="User">User</option>
-                          {/* Add other user types if needed */}
                         </select>
                       </div>
                     </div>
-
-                    <div className="col-md-3 ">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Description{" "}
+                          Description
                           <span style={{ color: "red", fontSize: "16px" }}>
                             *
                           </span>
@@ -177,11 +190,10 @@ const Testimonials = () => {
                         <input
                           className="form-control"
                           type="text"
-                          placeholder="Default input"
-                          name="Content"
+                          name="content"
                           value={content}
-                          required
                           onChange={(e) => setContent(e.target.value)}
+                          required
                         />
                       </div>
                     </div>

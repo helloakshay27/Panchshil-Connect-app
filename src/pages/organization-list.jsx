@@ -1,69 +1,49 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const SiteVisitSlotConfigList = () => {
-  const [slots, setSlots] = useState([]);
+const getPageFromStorage = () => {
+  return parseInt(localStorage.getItem("currentPage")) || 1;
+};
+
+const OrganizationList = () => {
+  const [organizations, setOrganizations] = useState([]);
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_count: 0,
     total_pages: 0,
   });
   const pageSize = 10;
-
-  const fetchSlots = async () => {
-    try {
-      const response = await axios.get(
-        "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json",
-        {
-          headers: {
-            Authorization: `Bearer 4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data && response.data.slots) {
-        setSlots(response.data.slots);
-        setPagination((prevState) => ({
-          ...prevState,
-          total_count: response.data.slots.length,
-          total_pages: Math.ceil(response.data.slots.length / pageSize),
-        }));
-      } else {
-        setSlots([]);
-        setPagination({ current_page: 1, total_count: 0, total_pages: 0 });
-      }
-    } catch (error) {
-      console.error(
-        "Error fetching site visit slots:",
-        error.response?.data || error.message
-      );
-      setSlots([]);
-    }
-  };
   const navigate = useNavigate();
 
-  // Fetch data when the component mounts
   useEffect(() => {
-    const savedPage = localStorage.getItem("siteVisitCurrentPage");
-    if (savedPage) {
-      setPagination((prevState) => ({
-        ...prevState,
-        current_page: parseInt(savedPage),
-      }));
-    }
-    fetchSlots();
+    fetch("https://panchshil-super.lockated.com/organizations.json", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setOrganizations(data);
+        setPagination((prevState) => ({
+          ...prevState,
+          total_count: data.length,
+          total_pages: Math.ceil(data.length / pageSize),
+          current_page: getPageFromStorage(),
+        }));
+      })
+      .catch((error) => console.error("Error fetching organizations:", error));
   }, []);
+
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
     }));
-    localStorage.setItem("siteVisitCurrentPage", pageNumber);
+    localStorage.setItem("currentPage", pageNumber);
   };
 
-  const displayedSlots = slots.slice(
+  const displayedOrganizations = organizations.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
@@ -77,11 +57,18 @@ const SiteVisitSlotConfigList = () => {
               <div className="input-group">
                 <input
                   type="text"
+                  name="s[name_cont]"
+                  id="s_name_cont"
                   className="form-control tbl-search table_search"
                   placeholder="Search"
+                  fdprocessedid="u38fp"
                 />
                 <div className="input-group-append">
-                  <button type="submit" className="btn btn-md btn-default">
+                  <button
+                    type="submit"
+                    className="btn btn-md btn-default"
+                    fdprocessedid="2wqzh"
+                  >
                     <svg
                       width={16}
                       height={16}
@@ -105,7 +92,8 @@ const SiteVisitSlotConfigList = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/siteVisit-SlotConfig")}
+                fdprocessedid="xn3e6n"
+                onClick={() => navigate("/organization-create")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -123,43 +111,45 @@ const SiteVisitSlotConfigList = () => {
           </div>
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Site Visit Slot Config List</h3>
+              <h3 className="card-title">Organization List</h3>
             </div>
-            <div className="card-body mt-3 pb-4 pt-0">
-              <div className="tbl-container mt-4 ">
+            <div className="card-body mt-4 pb-4 pt-0">
+              <div className="tbl-container mt-4">
                 <table className="w-100">
                   <thead>
                     <tr>
                       <th>Sr</th>
-                      <th>Project Id</th>
-                      <th>Scheduled Date</th>
-                      <th>AM PM Timing</th>
+                      <th>Name</th>
+                      <th>Domain</th>
+                      <th>Sub Domain</th>
+                      <th>Mobile Number</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {displayedSlots.length > 0 ? (
-                      displayedSlots.map((slot, index) => (
-                        <tr key={slot.id || index}>
+                    {displayedOrganizations.length > 0 ? (
+                      displayedOrganizations.map((org, index) => (
+                        <tr key={org.id}>
                           <td>
                             {(pagination.current_page - 1) * pageSize +
                               index +
                               1}
                           </td>
-                          <td>{slot.project_id}</td>
-                          <td>{slot.scheduled_date}</td>
-                          <td>{slot.ampm_timing}</td>
+                          <td>{org.name}</td>
+                          <td>{org.domain || "N/A"}</td>
+                          <td>{org.sub_domain || "N/A"}</td>
+                          <td>{org.mobile || "N/A"}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="4" className="text-center">
-                          No data available
-                        </td>
+                        <td colSpan="5">No organizations found.</td>
                       </tr>
                     )}
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination Controls */}
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
@@ -170,7 +160,6 @@ const SiteVisitSlotConfigList = () => {
                     <button
                       className="page-link"
                       onClick={() => handlePageChange(1)}
-                      disabled={pagination.current_page === 1}
                     >
                       First
                     </button>
@@ -249,7 +238,7 @@ const SiteVisitSlotConfigList = () => {
                   <p>
                     Showing{" "}
                     {Math.min(
-                      (pagination.current_page - 1) * pageSize + 1 || 1,
+                      (pagination.current_page - 1) * pageSize + 1,
                       pagination.total_count
                     )}{" "}
                     to{" "}
@@ -269,4 +258,4 @@ const SiteVisitSlotConfigList = () => {
   );
 };
 
-export default SiteVisitSlotConfigList;
+export default OrganizationList;
