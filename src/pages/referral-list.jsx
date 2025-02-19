@@ -21,7 +21,7 @@ const Referrallist = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
           }
         );

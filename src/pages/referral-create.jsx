@@ -9,7 +9,6 @@ const ReferralCreate = () => {
     email: "",
     mobile: "",
     referralCode: "",
-    userId: "2", // Assuming a static user ID for now
   });
 
   useEffect(() => {
@@ -19,7 +18,7 @@ const ReferralCreate = () => {
           "https://panchshil-super.lockated.com/projects.json",
           {
             headers: {
-              Authorization: `Bearer 4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs`,
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               "Content-Type": "application/json",
             },
           }
@@ -59,7 +58,6 @@ const ReferralCreate = () => {
         email: formData.email,
         mobile: formData.mobile,
         referral_code: formData.referralCode || null,
-        user_id: formData.userId,
         project_id: selectedProjectId,
       },
     };
@@ -70,7 +68,7 @@ const ReferralCreate = () => {
         payload,
         {
           headers: {
-            Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
           },
         }
@@ -83,37 +81,18 @@ const ReferralCreate = () => {
         "Error creating referral:",
         error.response?.data || error.message
       );
-
-      if (error.response) {
-        console.error(
-          "Server Response:",
-          error.response.status,
-          error.response.data
-        );
-      } else if (error.request) {
-        console.error("No response received:", error.request);
-      } else {
-        console.error("Error setting up request:", error.message);
-      }
-
       alert("Failed to create referral. Please check your inputs.");
     }
   };
-  const handleeeeeChange = (e) => {
+
+  const handleMobileChange = (e) => {
     const { name, value } = e.target;
-    if (name === "mobile") {
-      if (value.length > 10) return; // Prevent typing more than 10 digits
-    }
+    if (name === "mobile" && value.length > 10) return; // Limit to 10 digits
     setFormData({ ...formData, [name]: value });
   };
+
   const handleCancel = () => {
-    setFormData({
-      name: "",
-      email: "",
-      mobile: "",
-      referralCode: "",
-      userId: "2",
-    });
+    setFormData({ name: "", email: "", mobile: "", referralCode: "" });
     setSelectedProjectId("");
   };
 
@@ -131,10 +110,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Name
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          *
-                        </span>
+                        Name<span style={{ color: "red" }}>*</span>
                       </label>
                       <input
                         className="form-control"
@@ -150,10 +126,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Email
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          *
-                        </span>
+                        Email<span style={{ color: "red" }}>*</span>
                       </label>
                       <input
                         className="form-control"
@@ -169,10 +142,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Mobile No
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          *
-                        </span>
+                        Mobile No<span style={{ color: "red" }}>*</span>
                       </label>
                       <input
                         className="form-control"
@@ -180,9 +150,9 @@ const ReferralCreate = () => {
                         placeholder="Enter Mobile No"
                         name="mobile"
                         value={formData.mobile}
-                        onChange={handleeeeeChange}
+                        onChange={handleMobileChange}
                         min="1000000000"
-                        max="9999999999" // Limits to 10 digits
+                        max="9999999999"
                         required
                       />
                     </div>
@@ -190,10 +160,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Project
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          *
-                        </span>
+                        Project<span style={{ color: "red" }}>*</span>
                       </label>
                       <select
                         className="form-control form-select"
