@@ -6,8 +6,11 @@ const GalleryList = () => {
   const [galleryData, setGalleryData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("gallery_list_currentPage")) || 1;
+  }
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_count: 0,
     total_pages: 0,
   });
@@ -30,6 +33,7 @@ const GalleryList = () => {
           ...prevState,
           total_count: galleryList.length,
           total_pages: Math.ceil(galleryList.length / pageSize),
+          current_page: getPageFromStorage(),
         }));
         setIsLoading(false);
       } catch (error) {
@@ -46,6 +50,7 @@ const GalleryList = () => {
       ...prevState,
       current_page: pageNumber,
     }));
+    localStorage.setItem("gallery_list_currentPage", pageNumber);
   };
 
   const filteredGallery = galleryData.filter((galleryData) =>
@@ -176,7 +181,7 @@ const GalleryList = () => {
                       </thead>
                       <tbody>
                         {Array.isArray(displayedGalleries) &&
-                        displayedGalleries.length > 0 ? (
+                          displayedGalleries.length > 0 ? (
                           displayedGalleries.map((item, index) => (
                             <tr key={item.id}>
                               <td>
@@ -241,9 +246,8 @@ const GalleryList = () => {
                   <ul className="pagination justify-content-center d-flex">
                     {/* First Button */}
                     <li
-                      className={`page-item ${
-                        pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -255,9 +259,8 @@ const GalleryList = () => {
 
                     {/* Previous Button */}
                     <li
-                      className={`page-item ${
-                        pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -277,9 +280,8 @@ const GalleryList = () => {
                     ).map((pageNumber) => (
                       <li
                         key={pageNumber}
-                        className={`page-item ${
-                          pagination.current_page === pageNumber ? "active" : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -292,11 +294,10 @@ const GalleryList = () => {
 
                     {/* Next Button */}
                     <li
-                      className={`page-item ${
-                        pagination.current_page === pagination.total_pages
+                      className={`page-item ${pagination.current_page === pagination.total_pages
                           ? "disabled"
                           : ""
-                      }`}
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -313,11 +314,10 @@ const GalleryList = () => {
 
                     {/* Last Button */}
                     <li
-                      className={`page-item ${
-                        pagination.current_page === pagination.total_pages
+                      className={`page-item ${pagination.current_page === pagination.total_pages
                           ? "disabled"
                           : ""
-                      }`}
+                        }`}
                     >
                       <button
                         className="page-link"

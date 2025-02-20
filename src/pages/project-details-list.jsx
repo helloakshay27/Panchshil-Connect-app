@@ -12,8 +12,11 @@ const ProjectDetailsList = () => {
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("project_details_list_currentPage")) || 1;
+  }
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_pages: 5,
     total_count: 50, // total number of entries
   });
@@ -41,7 +44,7 @@ const ProjectDetailsList = () => {
       setProjects(projectsData);
 
       setPagination({
-        current_page: 1,
+        current_page: getPageFromStorage(),
         total_count: projectsData.length,
         total_pages: Math.ceil(projectsData.length / pageSize),
       });
@@ -71,6 +74,7 @@ const ProjectDetailsList = () => {
         ...pagination,
         current_page: pageNumber,
       });
+      localStorage.setItem("project_details_list_currentPage", pageNumber);
       // Optional: Fetch the data for the new page if required
     }
   };
@@ -212,22 +216,22 @@ const ProjectDetailsList = () => {
                       <td style={{ width: "200px" }}>
                         {project?.amenities?.length > 0
                           ? project?.amenities.map((amenity, idx) => (
-                              <div key={idx}>
-                                {amenity.name}{" "}
-                                <img
-                                  src={amenity.icon_url}
-                                  alt={amenity.name}
-                                  style={{ width: "20px", marginLeft: "5px" }}
-                                />
-                              </div>
-                            ))
+                            <div key={idx}>
+                              {amenity.name}{" "}
+                              <img
+                                src={amenity.icon_url}
+                                alt={amenity.name}
+                                style={{ width: "20px", marginLeft: "5px" }}
+                              />
+                            </div>
+                          ))
                           : "No amenities"}
                       </td>
                       <td>
                         {project?.specifications?.length > 0
                           ? project?.specifications.map((spec, idx) => (
-                              <div key={idx}>{spec.name}</div>
-                            ))
+                            <div key={idx}>{spec.name}</div>
+                          ))
                           : "No specifications"}
                       </td>
                       <td>
@@ -277,9 +281,8 @@ const ProjectDetailsList = () => {
                 <ul className="pagination">
                   {/* First Page Button */}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -292,9 +295,8 @@ const ProjectDetailsList = () => {
 
                   {/* Previous Page Button */}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -314,9 +316,8 @@ const ProjectDetailsList = () => {
                   ).map((page) => (
                     <li
                       key={page}
-                      className={`page-item ${
-                        pagination.current_page === page ? "active" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === page ? "active" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -329,11 +330,10 @@ const ProjectDetailsList = () => {
 
                   {/* Next Page Button */}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
+                    className={`page-item ${pagination.current_page === pagination.total_pages
                         ? "disabled"
                         : ""
-                    }`}
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -350,11 +350,10 @@ const ProjectDetailsList = () => {
 
                   {/* Last Page Button */}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
+                    className={`page-item ${pagination.current_page === pagination.total_pages
                         ? "disabled"
                         : ""
-                    }`}
+                      }`}
                   >
                     <button
                       className="page-link"

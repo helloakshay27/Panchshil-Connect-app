@@ -8,8 +8,11 @@ const AmenitiesList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("amenities_list_currentPage")) || 1;
+  }
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_count: 0,
     total_pages: 0,
   });
@@ -35,6 +38,7 @@ const AmenitiesList = () => {
             ...prev,
             total_count: data.length,
             total_pages: Math.ceil(data.length / pageSize),
+            current_page: getPageFromStorage(),
           }));
         } else {
           setError("Unexpected response format");
@@ -55,6 +59,7 @@ const AmenitiesList = () => {
       ...prev,
       current_page: page,
     }));
+    localStorage.setItem("amenities_list_currentPage", page);
   };
 
   const displayedAmenities = filteredAmities
@@ -245,9 +250,8 @@ const AmenitiesList = () => {
               <div className="d-flex justify-content-between align-items-center mt-4">
                 <ul className="pagination">
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -257,9 +261,8 @@ const AmenitiesList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -276,9 +279,8 @@ const AmenitiesList = () => {
                   ).map((page) => (
                     <li
                       key={page}
-                      className={`page-item ${
-                        pagination.current_page === page ? "active" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === page ? "active" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -289,11 +291,10 @@ const AmenitiesList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === pagination.total_pages
+                      ? "disabled"
+                      : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -305,11 +306,10 @@ const AmenitiesList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === pagination.total_pages
+                      ? "disabled"
+                      : ""
+                      }`}
                   >
                     <button
                       className="page-link"

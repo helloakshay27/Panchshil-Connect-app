@@ -46,7 +46,7 @@ const SiteVisitSlotConfigList = () => {
 
   // Fetch data when the component mounts
   useEffect(() => {
-    const savedPage = localStorage.getItem("siteVisitCurrentPage");
+    const savedPage = localStorage.getItem("siteSlotVisitCurrentPage");
     if (savedPage) {
       setPagination((prevState) => ({
         ...prevState,
@@ -60,7 +60,7 @@ const SiteVisitSlotConfigList = () => {
       ...prevState,
       current_page: pageNumber,
     }));
-    localStorage.setItem("siteVisitCurrentPage", pageNumber);
+    localStorage.setItem("siteSlotVisitCurrentPage", pageNumber);
   };
 
   const displayedSlots = slots.slice(
@@ -163,9 +163,8 @@ const SiteVisitSlotConfigList = () => {
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -176,9 +175,8 @@ const SiteVisitSlotConfigList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -196,9 +194,8 @@ const SiteVisitSlotConfigList = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${
-                        pagination.current_page === pageNumber ? "active" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -209,11 +206,10 @@ const SiteVisitSlotConfigList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
+                    className={`page-item ${pagination.current_page === pagination.total_pages
                         ? "disabled"
                         : ""
-                    }`}
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -228,11 +224,10 @@ const SiteVisitSlotConfigList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
+                    className={`page-item ${pagination.current_page === pagination.total_pages
                         ? "disabled"
                         : ""
-                    }`}
+                      }`}
                   >
                     <button
                       className="page-link"

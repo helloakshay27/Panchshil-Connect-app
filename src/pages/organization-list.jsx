@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const getPageFromStorage = () => {
-  return parseInt(localStorage.getItem("currentPage")) || 1;
+  return parseInt(localStorage.getItem("organization_currentPage")) || 1;
 };
 
 const OrganizationList = () => {
@@ -41,7 +41,7 @@ const OrganizationList = () => {
       ...prevState,
       current_page: pageNumber,
     }));
-    localStorage.setItem("currentPage", pageNumber);
+    localStorage.setItem("organization_currentPage", pageNumber);
   };
 
   // Handle search query change
@@ -181,9 +181,8 @@ const OrganizationList = () => {
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -193,9 +192,8 @@ const OrganizationList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -213,9 +211,8 @@ const OrganizationList = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${
-                        pagination.current_page === pageNumber ? "active" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -226,11 +223,10 @@ const OrganizationList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
+                    className={`page-item ${pagination.current_page === pagination.total_pages
                         ? "disabled"
                         : ""
-                    }`}
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -245,11 +241,10 @@ const OrganizationList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
+                    className={`page-item ${pagination.current_page === pagination.total_pages
                         ? "disabled"
                         : ""
-                    }`}
+                      }`}
                   >
                     <button
                       className="page-link"
