@@ -20,10 +20,10 @@ const Members = () => {
                 <Link to="/project-list">Project List</Link>
               </li>
               <li>
-                <Link to="/project-edit/2">Project Edit</Link>
+                <Link to="/project-edit/:id">Project Edit</Link>
               </li>
               <li>
-                <Link to="/project-details/2">Project Details</Link>
+                <Link to="/project-details/">Project Details</Link>
               </li>
 
               <li>
@@ -101,7 +101,7 @@ const Members = () => {
                 <Link to="/sitevisit-list">Site Visit List</Link>
               </li>
               <li>
-                <Link to="/sitevisit-edit/:id">Site Visit Edit</Link>
+                <Link to="/sitevisit-edit/">Site Visit Edit</Link>
               </li>
               <li>
                 <Link to="/siteVisit-SlotConfig">Site Visit Slot Config</Link>

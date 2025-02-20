@@ -10,6 +10,8 @@ import { useParams } from "react-router-dom";
 const ProjectDetails = () => {
   const { id } = useParams();
 
+  console.log("id", id)
+
   const [formData, setFormData] = useState({
     propertyType: "",
     sfdcProjectId: "",

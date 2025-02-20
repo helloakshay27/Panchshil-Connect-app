@@ -12,31 +12,32 @@ const ProjectDetailsEdit = () => {
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
-    type_of_project: "",
+    property_type : "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
     Configuration_Type: "",
-    Project_Name: "",
-    location: "",
-    Project_Description: "",
-    Price_Onward: "",
-    Project_Size_Sq_Mtr: "",
+    project_name: "",
+    project_address: "",
+    project_description: "",
+    price: "",
+    project_size_sq_mtr: "",
     Project_Size_Sq_Ft: "",
     Rera_Carpet_Area_Sq_M: "",
     Rera_Carpet_Area_sqft: "",
     Number_Of_Towers: "",
-    Number_Of_Units: "",
+    no_of_apartments: "",
     Rera_Number: "",
     project_amenities: "",
     specifications: "",
     Land_Area: "",
-    address: {
+    location: {
+      address:"",
       addressLine1: "line 1",
-      addressLine2: "line 2",
+      address_line_two: "line 2",
       addressLine3: "line 3",
       city: "Pune",
       state: "Maharashtra",
-      pinCode: "400709",
+      pin_code: "400709",
       country: "India",
     },
     brochure: null, // file input for brochure
@@ -78,6 +79,7 @@ const ProjectDetailsEdit = () => {
     );
   }, []);
 
+  console.log("data", projectsType);
   // Fetch specific project details on mount
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -90,30 +92,31 @@ const ProjectDetailsEdit = () => {
         );
         const projectData = response.data;
         setFormData({
-          type_of_project: projectData.property_type || "",
+          property_type: projectData.property_type || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
           Project_Construction_Status:
             projectData.Project_Construction_Status || "",
           Configuration_Type: projectData.building_type || "",
-          Project_Name: projectData.Project_Name || "",
-          location: projectData.location || "",
-          Project_Description: projectData.Project_Description || "",
-          Price_Onward: projectData.price || "",
-          Project_Size_Sq_Mtr: projectData.project_size_sq_mtr || "",
+          project_name: projectData.project_name || "",
+          project_address: projectData.project_address || "",
+          project_description: projectData.project_description || "",
+          price: projectData.price || "",
+          project_size_sq_mtr: projectData.project_size_sq_mtr || "",
           Project_Size_Sq_Ft: projectData.project_size_sq_ft || "",
           Rera_Carpet_Area_Sq_M: projectData.rera_carpet_area_sq_mtr || "",
           Rera_Carpet_Area_sqft: projectData.rera_carpet_area_sqft || "",
           Number_Of_Towers: projectData.no_of_towers || "",
-          Number_Of_Units: projectData.Number_Of_Units || "",
+          no_of_apartments: projectData.no_of_apartments || "",
           Rera_Number: projectData.rera_number || "",
           specifications: projectData.specifications || "",
           Land_Area: projectData.land_area || "",
-          address: {
-            addressLine1: projectData.project_address || "line 1",
-            city: projectData.address?.city || "Pune",
-            state: projectData.address?.state || "Maharashtra",
-            pinCode: projectData.address?.pinCode || "400709",
-            country: projectData.address?.country || "India",
+          location: {
+            address: projectData.location?.address || "line 1",
+            address_line_two: projectData.location?.address_line_two || "line 1",
+            city: projectData.location?.city || "Pune",
+            state: projectData.location?.state || "Maharashtra",
+            pin_code: projectData.location?.pin_code || "400709",
+            country: projectData.location?.country || "India",
           },
           brochure: projectData.brochure || null,
           two_d_images: projectData.two_d_images || [],
@@ -193,23 +196,23 @@ const ProjectDetailsEdit = () => {
       errors.push("Configuration Type is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.Project_Name) {
+    if (!formData.project_name) {
       errors.push("Project Name is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.location) {
+    if (!formData.project_address) {
       errors.push("Location is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.Project_Description) {
+    if (!formData.project_description) {
       errors.push("Project Description is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.Price_Onward) {
+    if (!formData.price) {
       errors.push("Price Onward is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.Project_Size_Sq_Mtr) {
+    if (!formData.project_size_sq_mtr) {
       errors.push("Project Size (Sq. Mtr.) is required.");
       return errors; // Return the first error immediately
     }
@@ -229,7 +232,7 @@ const ProjectDetailsEdit = () => {
       errors.push("Number of Towers is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.Number_Of_Units) {
+    if (!formData.no_of_apartments) {
       errors.push("Number of Units is required.");
       return errors; // Return the first error immediately
     }
@@ -251,23 +254,28 @@ const ProjectDetailsEdit = () => {
     }
 
     // Address validation (nested fields)
-    if (!formData.address || !formData.address.addressLine1) {
+    if (!formData.location || !formData.location.address) {
       errors.push("Address Line 1 is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.address || !formData.address.city) {
+    // Address validation (nested fields)
+    if (!formData.location || !formData.location.address_line_two) {
+      errors.push("Address Line 2 is required.");
+      return errors; // Return the first error immediately
+    }
+    if (!formData.location || !formData.location.city) {
       errors.push("City is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.address || !formData.address.state) {
+    if (!formData.location || !formData.location.state) {
       errors.push("State is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.address || !formData.address.pinCode) {
+    if (!formData.location || !formData.location.pin_code) {
       errors.push("Pin Code is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.address || !formData.address.country) {
+    if (!formData.location || !formData.location.country) {
       errors.push("Country is required.");
       return errors; // Return the first error immediately
     }
@@ -321,7 +329,7 @@ const ProjectDetailsEdit = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer 0XH8lxmc2kQVcso9Dr86ymFfso2dctjn6ZDMBCnmN38`,
+            Authorization: `Bearer BQsUyW98rCwspkXZ9ZJuHAxr34TEIiaugiFlpyUySpA`,
           },
         }
       );
@@ -358,8 +366,8 @@ const ProjectDetailsEdit = () => {
                   <select
                     className="form-control form-select"
                     style={{ width: "100%" }}
-                    name="type_of_project"
-                    value={formData.type_of_project || project?.property_type} // Handle default values
+                    name="property_type"
+                    value={formData.property_type } // Handle default values
                     onChange={handleChange}
                   >
                     {/* <option value="" disabled selected>
@@ -443,8 +451,8 @@ const ProjectDetailsEdit = () => {
                   <input
                     className="form-control"
                     type="text"
-                    name="Project_Name"
-                    value={formData.Project_Name || project?.Project_Name}
+                    name="project_name"
+                    value={formData.project_name || project?.project_name}
                     onChange={handleChange}
                   />
                 </div>
@@ -459,8 +467,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="text"
                     placeholder="Default input"
-                    name="location"
-                    value={formData.location || project?.location}
+                    name="project_address"
+                    value={formData.project_address || project?.project_address}
                     onChange={handleChange}
                   />
                 </div>
@@ -475,10 +483,10 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     rows={1}
                     placeholder="Enter ..."
-                    name="Project_Description"
+                    name="project_description"
                     value={
-                      formData.Project_Description ||
-                      project?.Project_Description
+                      formData.project_description ||
+                      project?.project_description
                     }
                     onChange={handleChange}
                   />
@@ -493,10 +501,10 @@ const ProjectDetailsEdit = () => {
 
                   <input
                     className="form-control"
-                    type="number"
+                    type="text"
                     placeholder="Default input"
-                    name="Price_Onward"
-                    value={formData.Price_Onward || project?.price}
+                    name="price"
+                    value={formData.price || project?.price}
                     onChange={handleChange}
                   />
                 </div>
@@ -511,9 +519,9 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="number"
                     placeholder="Default input"
-                    name="Project_Size_Sq_Mtr"
+                    name="project_size_sq_mtr"
                     value={
-                      formData.Project_Size_Sq_Mtr ||
+                      formData.project_size_sq_mtr ||
                       project?.project_size_sq_mtr
                     }
                     onChange={handleChange}
@@ -602,8 +610,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="number"
                     placeholder="Default input"
-                    name="Number_Of_Units"
-                    value={formData.Number_Of_Units}
+                    name="no_of_apartments"
+                    value={formData.no_of_apartments}
                     onChange={handleChange}
                   />
                 </div>
@@ -701,15 +709,15 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Address Line{" "}
+                    Address Line 1{" "}
                     <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
                   </label>
                   <input
                     className="form-control"
                     type="text"
                     placeholder="Address Line 1"
-                    name="addressLine1"
-                    value={formData.addressLine1 || project?.project_address}
+                    name="address"
+                    value={formData.location.address}
                     onChange={handleChange}
                   />
                 </div>
@@ -717,15 +725,15 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Address Line
+                    Address Line 2
                     <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
                   </label>
                   <input
                     className="form-control"
                     type="text"
                     placeholder="Address Line 1"
-                    name="addressLine1"
-                    value={formData.addressLine1 || project?.project_address}
+                    name="address_line_two"
+                    value={formData.location.address_line_two}
                     onChange={handleChange}
                   />
                 </div>
@@ -743,7 +751,7 @@ const ProjectDetailsEdit = () => {
                     type="text"
                     placeholder="City"
                     name="city"
-                    value={formData.city}
+                    value={formData.location.city}
                     onChange={handleChange}
                   />
                 </div>
@@ -759,7 +767,7 @@ const ProjectDetailsEdit = () => {
                     type="text"
                     placeholder="State"
                     name="state"
-                    value={formData.state}
+                    value={formData.location.state}
                     onChange={handleChange}
                   />
                 </div>
@@ -774,8 +782,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="number"
                     placeholder="Pin Code"
-                    name="pinCode"
-                    value={formData.pinCode}
+                    name="pin_code"
+                    value={formData.location.pin_code}
                     onChange={handleChange}
                   />
                 </div>
@@ -791,7 +799,7 @@ const ProjectDetailsEdit = () => {
                     type="text"
                     placeholder="Country"
                     name="country"
-                    value={formData.country}
+                    value={formData.location.country}
                     onChange={handleChange}
                   />
                 </div>

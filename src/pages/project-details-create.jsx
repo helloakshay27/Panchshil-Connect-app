@@ -15,7 +15,7 @@ const ProjectDetailsCreate = () => {
     Project_Construction_Status: "",
     Configuration_Type: "",
     Project_Name: "",
-    location: "",
+    project_address: "",
     Project_Description: "",
     Price_Onward: "",
     Project_Size_Sq_Mtr: "",
@@ -28,13 +28,14 @@ const ProjectDetailsCreate = () => {
     project_amenities: "",
     specifications: "",
     Land_Area: "",
-    address: {
+    location: {
+      address:"",
       addressLine1: "line 1",
-      addressLine2: "line 2",
+      address_line_two: "line 2",
       addressLine3: "line 3",
       city: "Pune",
       state: "Maharashtra",
-      pinCode: "400709",
+      pin_code: "400709",
       country: "India",
     },
     brochure: null, // for file input
@@ -114,7 +115,7 @@ const ProjectDetailsCreate = () => {
       errors.push("Project Name is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.location) {
+    if (!formData.project_address) {
       errors.push("Location is required.");
       return errors; // Return the first error immediately
     }
@@ -167,24 +168,29 @@ const ProjectDetailsCreate = () => {
       return errors; // Return the first error immediately
     }
 
-    // Address validation (nested fields)
-    if (!formData.address || !formData.address.addressLine1) {
+     // Address validation (nested fields)
+     if (!formData.location || !formData.location.address) {
       errors.push("Address Line 1 is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.address || !formData.address.city) {
+    // Address validation (nested fields)
+    if (!formData.address_line_two || !formData.location.address_line_two) {
+      errors.push("Address Line 2 is required.");
+      return errors; // Return the first error immediately
+    }
+    if (!formData.location || !formData.location.city) {
       errors.push("City is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.address || !formData.address.state) {
+    if (!formData.location || !formData.location.state) {
       errors.push("State is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.address || !formData.address.pinCode) {
+    if (!formData.location || !formData.location.pin_code) {
       errors.push("Pin Code is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.address || !formData.address.country) {
+    if (!formData.location || !formData.location.country) {
       errors.push("Country is required.");
       return errors; // Return the first error immediately
     }
@@ -339,7 +345,7 @@ const ProjectDetailsCreate = () => {
       Project_Construction_Status: "",
       Configuration_Type: "",
       Project_Name: "",
-      location: "",
+      project_address: "",
       Project_Description: "",
       Price_Onward: "",
       Project_Size_Sq_Mtr: "",
@@ -352,14 +358,15 @@ const ProjectDetailsCreate = () => {
       project_amenities: "",
       specifications: "",
       Land_Area: "",
-      address: {
-        addressLine1: "",
-        addressLine2: "",
-        addressLine3: "",
-        city: "",
-        state: "",
-        pinCode: "",
-        country: "",
+      location: {
+        address:"",
+        addressLine1: "line 1",
+        address_line_two: "line 2",
+        addressLine3: "line 3",
+        city: "Pune",
+        state: "Maharashtra",
+        pin_code: "400709",
+        country: "India",
       },
       brochure: null,
       two_d_images: [],
@@ -738,8 +745,25 @@ const ProjectDetailsCreate = () => {
                     className="form-control"
                     type="text"
                     placeholder="Address Line 1"
-                    name="addressLine1"
-                    value={formData.addressLine1}
+                    name="address"
+                    value={formData.location.address}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Address Line
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Address Line 1"
+                    name="address_line_two"
+                    value={formData.location.address_line_two}
                     onChange={handleChange}
                   />
                 </div>
@@ -757,7 +781,7 @@ const ProjectDetailsCreate = () => {
                     type="text"
                     placeholder="City"
                     name="city"
-                    value={formData.city}
+                    value={formData.location.city}
                     onChange={handleChange}
                   />
                 </div>
@@ -773,7 +797,7 @@ const ProjectDetailsCreate = () => {
                     type="text"
                     placeholder="State"
                     name="state"
-                    value={formData.state}
+                    value={formData.location.state}
                     onChange={handleChange}
                   />
                 </div>
@@ -788,8 +812,8 @@ const ProjectDetailsCreate = () => {
                     className="form-control"
                     type="number"
                     placeholder="Pin Code"
-                    name="pinCode"
-                    value={formData.pinCode}
+                    name="pin_code"
+                    value={formData.location.pin_code}
                     onChange={handleChange}
                   />
                 </div>
@@ -805,7 +829,7 @@ const ProjectDetailsCreate = () => {
                     type="text"
                     placeholder="Country"
                     name="country"
-                    value={formData.country}
+                    value={formData.location.country}
                     onChange={handleChange}
                   />
                 </div>
