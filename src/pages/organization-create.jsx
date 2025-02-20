@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Toaster, toast } from 'react-hot-toast';
+import { Toaster, toast } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 
 const OrganizationCreate = () => {
@@ -37,29 +37,29 @@ const OrganizationCreate = () => {
     payload.append("organization[active]", true);
     payload.append("organization[created_by_id]", 1);
     if (formData.attachment) {
-        payload.append("organization[logo]", formData.attachment);
+      payload.append("organization[logo]", formData.attachment);
     }
 
     try {
-        const response = await axios.post(
-            "https://panchshil-super.lockated.com/organizations.json",
-            payload,
-            {
-                headers: {
-                    Authorization: `Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA`,
-                },
-            }
-        );
-
-        console.log("Response:", response);  // Log the full response
-
-        if (response.status === 201 || response.status === 200) {
-            toast.success("Form submitted successfully");
+      const response = await axios.post(
+        "https://panchshil-super.lockated.com/organizations.json",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA`,
+          },
         }
+      );
+
+      console.log("Response:", response); // Log the full response
+
+      if (response.status === 201 || response.status === 200) {
+        toast.success("Form submitted successfully");
+      }
     } catch (error) {
-        toast.error(`Error creating Organization: ${error.message}`);
+      toast.error(`Error creating Organization: ${error.message}`);
     }
-};
+  };
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
@@ -73,7 +73,9 @@ const OrganizationCreate = () => {
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Name</label>
+                      <label>
+                        Name <span style={{ color: "red" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -88,7 +90,9 @@ const OrganizationCreate = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Domain</label>
+                      <label>
+                        Domain <span style={{ color: "red" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -103,7 +107,9 @@ const OrganizationCreate = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Sub-domain</label>
+                      <label>
+                        Sub-domain<span style={{ color: "red" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -117,7 +123,9 @@ const OrganizationCreate = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Country ID</label>
+                      <label>
+                        Country ID<span style={{ color: "red" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="number"
@@ -132,7 +140,9 @@ const OrganizationCreate = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Mobile No.</label>
+                      <label>
+                        Mobile No. <span style={{ color: "red" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -147,7 +157,9 @@ const OrganizationCreate = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Attachment</label>
+                      <label>
+                        Attachment <span style={{ color: "red" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="file"
@@ -159,7 +171,7 @@ const OrganizationCreate = () => {
                 </div>
 
                 <div className="row mt-3 justify-content-center">
-                  <div className="col-md-3">
+                  <div className="col-md-2">
                     <button type="submit" className="purple-btn2 w-100">
                       Create Organization
                     </button>

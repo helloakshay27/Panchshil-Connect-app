@@ -381,7 +381,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Types
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -389,8 +389,8 @@ const ProjectDetailsCreate = () => {
                     value={formData.type_of_project}
                     onChange={handleChange}
                   >
-                    <option value="" disabled>
-                      Select Project Type
+                    <option value=""  disabled>
+                      -- Select Project Type --
                     </option>
                     {projectsType.map((type, index) => (
                       <option key={index} value={type.id}>
@@ -406,7 +406,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     SFDC Project ID
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -424,7 +424,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Construction Status
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -446,7 +446,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Configuration Type
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -468,7 +468,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Name
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -486,7 +486,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Location
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -504,7 +504,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Description
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <textarea
                     className="form-control"
@@ -521,7 +521,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Price Onward
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -538,7 +538,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Mtr.)
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -555,7 +555,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Ft.)
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -572,7 +572,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Carpet Area (Sq. M)
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -589,7 +589,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Carpet Area (Sq. Ft.)
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -606,7 +606,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Number of Towers
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -623,7 +623,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Number of Units
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -640,7 +640,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Number
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -657,7 +657,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Amenities
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -680,7 +680,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Specifications
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -704,7 +704,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Land Area
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -750,7 +750,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     City
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -766,7 +766,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     State
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -782,7 +782,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Pin Code
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -798,7 +798,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Country
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -824,7 +824,7 @@ const ProjectDetailsCreate = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
-                  <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  <span style={{ color: "red", fontSize: "16px" }}> *</span>
                 </h5>
 
                 <button
@@ -941,7 +941,7 @@ const ProjectDetailsCreate = () => {
                           <td>
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded" 
+                              className="img-fluid rounded"
                               src={
                                 file.type.startsWith("image")
                                   ? URL.createObjectURL(file)

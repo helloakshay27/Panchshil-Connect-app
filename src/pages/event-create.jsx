@@ -287,6 +287,7 @@ const EventCreate = () => {
                         <label>
                           Event Types
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -312,6 +313,7 @@ const EventCreate = () => {
                         <label>
                           Event Name
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -330,6 +332,7 @@ const EventCreate = () => {
                         <label>
                           Event At
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -348,6 +351,7 @@ const EventCreate = () => {
                         <label>
                           Event From
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -367,6 +371,7 @@ const EventCreate = () => {
                         <label>
                           Event To
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -401,6 +406,7 @@ const EventCreate = () => {
                         <label>
                           RSVP Action
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -431,6 +437,7 @@ const EventCreate = () => {
                         <label>
                           Event Description
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -449,6 +456,7 @@ const EventCreate = () => {
                         <label>
                           Event Publish
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -467,6 +475,7 @@ const EventCreate = () => {
                         <label>
                           Event User ID
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -496,6 +505,7 @@ const EventCreate = () => {
                         <label>
                           Event Comment
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -514,6 +524,7 @@ const EventCreate = () => {
                         <label>
                           Event Shared
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -532,6 +543,7 @@ const EventCreate = () => {
                         <label>
                           Event Share Groups
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -551,6 +563,7 @@ const EventCreate = () => {
                         <label>
                           Attachment
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                           <span />

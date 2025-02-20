@@ -113,6 +113,7 @@ const Testimonials = () => {
                         <label>
                           Company Setup Id
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -144,6 +145,7 @@ const Testimonials = () => {
                         <label>
                           User Name
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -151,6 +153,7 @@ const Testimonials = () => {
                           className="form-control"
                           type="text"
                           name="username"
+                          placeholder="Enter user name"
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
                           required
@@ -162,6 +165,7 @@ const Testimonials = () => {
                         <label>
                           User Type
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -184,6 +188,7 @@ const Testimonials = () => {
                         <label>
                           Description
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -191,6 +196,7 @@ const Testimonials = () => {
                           className="form-control"
                           type="text"
                           name="content"
+                          placeholder="Enter Description"
                           value={content}
                           onChange={(e) => setContent(e.target.value)}
                           required

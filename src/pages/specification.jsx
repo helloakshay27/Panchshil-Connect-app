@@ -51,9 +51,9 @@ const Specification = () => {
   };
 
   const handleCancel = () => {
-    setName(""); 
-    setIcon(null); 
-    setError(null); 
+    setName("");
+    setIcon(null);
+    setError(null);
   };
   return (
     <div className="main-content">
@@ -72,6 +72,7 @@ const Specification = () => {
                       <label>
                         Name
                         <span style={{ color: "red", fontSize: "16px" }}>
+                          {" "}
                           *
                         </span>
                       </label>
@@ -90,6 +91,7 @@ const Specification = () => {
                       <label>
                         Icon
                         <span style={{ color: "red", fontSize: "16px" }}>
+                          {" "}
                           *
                         </span>
                       </label>

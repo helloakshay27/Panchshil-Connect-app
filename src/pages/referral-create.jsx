@@ -110,7 +110,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Name<span style={{ color: "red" }}>*</span>
+                        Name<span style={{ color: "red" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -126,7 +126,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Email<span style={{ color: "red" }}>*</span>
+                        Email<span style={{ color: "red" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -142,7 +142,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Mobile No<span style={{ color: "red" }}>*</span>
+                        Mobile No<span style={{ color: "red" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -160,7 +160,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Project<span style={{ color: "red" }}>*</span>
+                        Project<span style={{ color: "red" }}> *</span>
                       </label>
                       <select
                         className="form-control form-select"

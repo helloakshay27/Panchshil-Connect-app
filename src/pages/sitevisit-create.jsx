@@ -161,7 +161,7 @@ const SitevisitCreate = () => {
           <div className="module-data-section p-3">
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header3">
-                <h3 className="card-title">Event Details</h3>
+                <h3 className="card-title">Site Visit Create</h3>
               </div>
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
@@ -169,7 +169,9 @@ const SitevisitCreate = () => {
                     {/* Project Selection */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Project Name</label>
+                        <label>
+                          Project Name <span style={{ color: "red" }}> *</span>
+                        </label>
                         <select
                           className="form-control form-select"
                           name="project_name"
@@ -192,7 +194,9 @@ const SitevisitCreate = () => {
                     {/* Date Selection */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Date</label>
+                        <label>
+                          Date <span style={{ color: "red" }}> *</span>
+                        </label>
                         <input
                           className="form-control"
                           type="date"

@@ -115,6 +115,7 @@ const SiteVisitSlotConfig = () => {
                         <label>
                           Start Date
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -134,6 +135,7 @@ const SiteVisitSlotConfig = () => {
                         <label>
                           End Date
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -153,6 +155,7 @@ const SiteVisitSlotConfig = () => {
                         <label>
                           Start Hours
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -175,6 +178,7 @@ const SiteVisitSlotConfig = () => {
                         <label>
                           Start Minutes
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -199,6 +203,7 @@ const SiteVisitSlotConfig = () => {
                         <label>
                           End Hours
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -221,6 +226,7 @@ const SiteVisitSlotConfig = () => {
                         <label>
                           End Minutes
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
@@ -243,6 +249,7 @@ const SiteVisitSlotConfig = () => {
                         <label>
                           Project
                           <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
                             *
                           </span>
                         </label>
