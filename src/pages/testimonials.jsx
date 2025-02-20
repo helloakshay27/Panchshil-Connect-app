@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
 import "../mor.css";
 
 const Testimonials = () => {
@@ -89,11 +90,9 @@ const Testimonials = () => {
     }
   };
 
+  const navigate = useNavigate();
   const handleCancel = () => {
-    setCompanySetupId("");
-    setUserName("");
-    setUserType("");
-    setContent("");
+    navigate(-1); // This navigates back one step in history
   };
 
   return (

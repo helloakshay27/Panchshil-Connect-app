@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ReferralCreate = () => {
   const [projects, setProjects] = useState([]);
@@ -91,9 +92,9 @@ const ReferralCreate = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const navigate = useNavigate();
   const handleCancel = () => {
-    setFormData({ name: "", email: "", mobile: "", referralCode: "" });
-    setSelectedProjectId("");
+    navigate(-1); // This navigates back one step in history
   };
 
   return (

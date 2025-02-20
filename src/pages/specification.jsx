@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import "../mor.css";
 
 const Specification = () => {
@@ -50,11 +52,12 @@ const Specification = () => {
     }
   };
 
+  const navigate = useNavigate();
+
   const handleCancel = () => {
-    setName("");
-    setIcon(null);
-    setError(null);
+    navigate(-1); // This navigates back one step in history
   };
+
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">

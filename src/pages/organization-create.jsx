@@ -71,8 +71,7 @@ const OrganizationCreate = () => {
       domain: "",
       mobile: "",
       sub_domain: "",
-      country_id: "",
-      attachment: null,
+      country_id,
     });
     setSelectedProjectId("");
   };

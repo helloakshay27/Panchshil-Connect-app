@@ -14,7 +14,6 @@ const OrganizationList = () => {
   });
   const [searchQuery, setSearchQuery] = useState(""); // Added state for search
   const pageSize = 10;
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("https://panchshil-super.lockated.com/organizations.json", {
@@ -78,6 +77,7 @@ const OrganizationList = () => {
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
+  const navigate = useNavigate();
 
   return (
     <div className="main-content">

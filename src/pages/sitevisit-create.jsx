@@ -13,7 +13,6 @@ const SitevisitCreate = () => {
 
   const [projectsType, setProjectsType] = useState([]);
   const [slots, setSlots] = useState([]);
-  const navigate = useNavigate();
 
   const apiUrl = "https://panchshil-super.lockated.com/site_schedule_requests";
   const projectsApiUrl =
@@ -144,14 +143,9 @@ const SitevisitCreate = () => {
       toast.error(`Error submitting schedule: ${error.message}`);
     }
   };
+  const navigate = useNavigate();
   const handleCancel = () => {
-    setFormData({
-      project_id: "",
-      project_name: "",
-      scheduled_at: "",
-      selected_slot: "",
-    });
-    setSlots([]); // Reset slots as well
+    navigate(-1); // This navigates back one step in history
   };
 
   return (

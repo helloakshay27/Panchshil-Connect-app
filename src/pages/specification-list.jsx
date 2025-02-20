@@ -17,15 +17,17 @@ const SpecificationList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
+    const savedPage = localStorage.getItem("currentPage");
+    const currentPage = savedPage ? parseInt(savedPage) : 1;
 
-      try {
-        const response = await axios.get(
-          `https://panchshil-super.lockated.com/specification_setups.json?page=${pagination.current_page}&per_page=${pageSize}&search=${searchQuery}`
-        );
-
+    // Set the page number based on localStorage or default to 1
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: currentPage,
+    }));
+    axios
+      .get("https://panchshil-super.lockated.com/specification_setups.json")
+      .then((response) => {
         if (
           response.data &&
           Array.isArray(response.data.specification_setups)
@@ -33,21 +35,21 @@ const SpecificationList = () => {
           setSpecifications(response.data.specification_setups);
           setPagination((prevState) => ({
             ...prevState,
-            total_count: response.data.total_count, // Assuming API sends this
-            total_pages: response.data.total_pages, // Assuming API sends this
+            total_count: response.data.specification_setups.length,
+            total_pages: Math.ceil(
+              response.data.specification_setups.length / pageSize
+            ),
           }));
         } else {
           setSpecifications([]);
         }
-      } catch (error) {
-        setError(error.message);
-      } finally {
         setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [pagination.current_page, searchQuery]); 
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
@@ -327,6 +329,21 @@ const SpecificationList = () => {
                     </button>
                   </li>
                 </ul>
+                <div>
+                  <p>
+                    Showing{" "}
+                    {Math.min(
+                      (pagination.current_page - 1) * pageSize + 1 || 1,
+                      pagination.total_count
+                    )}{" "}
+                    to{" "}
+                    {Math.min(
+                      pagination.current_page * pageSize,
+                      pagination.total_count
+                    )}{" "}
+                    of {pagination.total_count} entries
+                  </p>
+                </div>
               </div>
             </div>
           </div>

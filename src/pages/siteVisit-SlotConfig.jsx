@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const SiteVisitSlotConfig = () => {
   const [startHour, setStartHour] = useState("");
   const [startMinute, setStartMinute] = useState("");
@@ -88,14 +88,9 @@ const SiteVisitSlotConfig = () => {
       endDate,
     });
   };
+  const navigate = useNavigate();
   const handleCancel = () => {
-    setStartHour("");
-    setStartMinute("");
-    setEndHour("");
-    setEndMinute("");
-    setSelectedProject("");
-    setStartDate("");
-    setEndDate("");
+    navigate(-1); // This navigates back one step in history
   };
 
   return (
