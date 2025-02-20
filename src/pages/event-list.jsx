@@ -5,8 +5,11 @@ const Eventlist = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("event_list_currentPage")) || 1;
+  }
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_count: 0,
     total_pages: 0,
   });
@@ -27,7 +30,7 @@ const Eventlist = () => {
           setEvents(data.events);
 
           setPagination({
-            current_page: 1,
+            current_page: getPageFromStorage(),
             total_count: data.events.length,
             total_pages: Math.ceil(data.events.length / pageSize),
           });
@@ -66,7 +69,11 @@ const Eventlist = () => {
     );
 
   const handlePageChange = (pageNumber) => {
-    setPagination((prevState) => ({ ...prevState, current_page: pageNumber }));
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber
+    }));
+    localStorage.setItem("event_list_currentPage", pageNumber);
   };
 
   const handleSearchSubmit = (event) => {
@@ -197,7 +204,7 @@ const Eventlist = () => {
                           <td>{event.to_time}</td>
                           <td className="d-flex justify-content-center align-items-center">
                             {event.attachfile &&
-                            event.attachfile.document_url ? (
+                              event.attachfile.document_url ? (
                               <img
                                 src={event.attachfile.document_url}
                                 alt="event"
@@ -264,9 +271,8 @@ const Eventlist = () => {
                 <ul className="pagination justify-content-center d-flex">
                   {/* First Button */}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -278,9 +284,8 @@ const Eventlist = () => {
 
                   {/* Previous Button */}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -300,9 +305,8 @@ const Eventlist = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${
-                        pagination.current_page === pageNumber ? "active" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -315,11 +319,10 @@ const Eventlist = () => {
 
                   {/* Next Button */}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === pagination.total_pages
+                      ? "disabled"
+                      : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -336,11 +339,10 @@ const Eventlist = () => {
 
                   {/* Last Button */}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === pagination.total_pages
+                      ? "disabled"
+                      : ""
+                      }`}
                   >
                     <button
                       className="page-link"

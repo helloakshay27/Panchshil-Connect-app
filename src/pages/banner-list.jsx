@@ -15,8 +15,11 @@ const BannerList = () => {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("banner_list_currentPage")) || 1;
+  }
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_count: 0,
     total_pages: 0,
   });
@@ -56,9 +59,10 @@ const BannerList = () => {
         );
         setBanners(response.data.banners);
         setPagination({
-          current_page: 1,
+          current_page: getPageFromStorage(),
           total_count: response.data.banners.length, // Or use pagination data from API if available
           total_pages: Math.ceil(response.data.banners.length / pageSize),
+
         });
         setLoading(false);
       } catch (error) {
@@ -99,6 +103,7 @@ const BannerList = () => {
       ...prevState,
       current_page: pageNumber,
     }));
+    localStorage.setItem("banner_list_currentPage", pageNumber);
   };
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -310,9 +315,8 @@ const BannerList = () => {
                   <ul className="pagination justify-content-center d-flex">
                     {/* First Button */}
                     <li
-                      className={`page-item ${
-                        pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -324,9 +328,8 @@ const BannerList = () => {
 
                     {/* Previous Button */}
                     <li
-                      className={`page-item ${
-                        pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -346,9 +349,8 @@ const BannerList = () => {
                     ).map((pageNumber) => (
                       <li
                         key={pageNumber}
-                        className={`page-item ${
-                          pagination.current_page === pageNumber ? "active" : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -361,11 +363,10 @@ const BannerList = () => {
 
                     {/* Next Button */}
                     <li
-                      className={`page-item ${
-                        pagination.current_page === pagination.total_pages
-                          ? "disabled"
-                          : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -382,11 +383,10 @@ const BannerList = () => {
 
                     {/* Last Button */}
                     <li
-                      className={`page-item ${
-                        pagination.current_page === pagination.total_pages
-                          ? "disabled"
-                          : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                        }`}
                     >
                       <button
                         className="page-link"

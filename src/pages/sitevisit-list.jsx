@@ -10,8 +10,11 @@ const SitevisitList = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("sitevisit_list_currentPage")) || 1;
+  }
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_count: 0,
     total_pages: 0,
   });
@@ -33,7 +36,7 @@ const SitevisitList = () => {
         setSiteVisits(data);
         setFilteredSiteVisits;
         setPagination({
-          current_page: 1,
+          current_page: getPageFromStorage(),
           total_count: data.length,
           total_pages: Math.ceil(data.length / pageSize),
         });
@@ -51,7 +54,7 @@ const SitevisitList = () => {
     );
     setFilteredSiteVisits(filteredData);
     setPagination({
-      current_page: 1,
+      current_page: getPageFromStorage(),
       total_count: filteredData.length,
       total_pages: Math.ceil(filteredData.length / pageSize),
     });
@@ -62,6 +65,7 @@ const SitevisitList = () => {
       ...prevState,
       current_page: pageNumber,
     }));
+    localStorage.setItem("sitevisit_list_currentPage", pageNumber);
   };
 
   const handleSearchChange = (e) => {
@@ -227,9 +231,8 @@ const SitevisitList = () => {
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -239,9 +242,8 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -258,9 +260,8 @@ const SitevisitList = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${
-                        pagination.current_page === pageNumber ? "active" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -271,11 +272,10 @@ const SitevisitList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
+                    className={`page-item ${pagination.current_page === pagination.total_pages
                         ? "disabled"
                         : ""
-                    }`}
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -287,11 +287,10 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
+                    className={`page-item ${pagination.current_page === pagination.total_pages
                         ? "disabled"
                         : ""
-                    }`}
+                      }`}
                   >
                     <button
                       className="page-link"

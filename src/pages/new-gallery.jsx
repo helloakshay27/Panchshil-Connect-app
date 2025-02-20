@@ -258,6 +258,7 @@ const NewGallery = () => {
                           className="form-control"
                           type="file"
                           name="attachment"
+                          multiple
                           onChange={handleInputChange}
                         />
                       </div>
