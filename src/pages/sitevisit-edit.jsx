@@ -171,7 +171,7 @@ const SitevisitEdit = () => {
           <div className="module-data-section p-3">
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header3">
-                <h3 className="card-title">Event Details</h3>
+                <h3 className="card-title">Site Visit Edit</h3>
               </div>
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
@@ -253,7 +253,7 @@ const SitevisitEdit = () => {
                         type="submit"
                         className="purple-btn2 w-100"
                       >
-                        Update
+                        Submit
                       </button>
                     </div>
                   </div>

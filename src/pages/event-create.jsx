@@ -296,6 +296,7 @@ const EventCreate = () => {
                           name="event_type"
                           value={formData.event_type}
                           onChange={handleChange}
+                          required
                         >
                           <option value="" disabled>
                             Select Event Type
@@ -324,6 +325,7 @@ const EventCreate = () => {
                           placeholder="Enter Event Name"
                           value={formData.event_name}
                           onChange={handleChange}
+                          required
                         />
                       </div>
                     </div>
@@ -342,6 +344,7 @@ const EventCreate = () => {
                           name="event_at"
                           placeholder="Enter Evnet At"
                           value={formData.event_at}
+                          required
                           onChange={handleChange}
                         />
                       </div>
@@ -361,6 +364,7 @@ const EventCreate = () => {
                           name="from_time"
                           placeholder="Enter Event From "
                           value={formData.from_time}
+                          required
                           min={new Date().toISOString().slice(0, 16)}
                           onChange={handleChange}
                         />
@@ -380,6 +384,7 @@ const EventCreate = () => {
                           type="datetime-local"
                           name="to_time"
                           placeholder="Enter Event To"
+                          required
                           value={formData.to_time}
                           min={
                             formData.from_time ||
@@ -417,6 +422,7 @@ const EventCreate = () => {
                           placeholder="Enter RSVP Action"
                           value={formData.rsvp_action}
                           onChange={handleChange}
+                          required
                         />
                       </div>
                     </div>
@@ -448,6 +454,7 @@ const EventCreate = () => {
                           placeholder="Enter Project Description"
                           value={formData.description}
                           onChange={handleChange}
+                          required
                         />
                       </div>
                     </div>
@@ -467,6 +474,7 @@ const EventCreate = () => {
                           placeholder="Enter Event Publish"
                           value={formData.publish}
                           onChange={handleChange}
+                          required
                         />
                       </div>
                     </div>
@@ -483,6 +491,7 @@ const EventCreate = () => {
                           className="form-control form-select"
                           name="user_id"
                           value={formData.user_id}
+                          required
                           onChange={handleChange}
                         >
                           <option value="" disabled>
@@ -516,6 +525,7 @@ const EventCreate = () => {
                           placeholder="Enter Project Description"
                           value={formData.comment}
                           onChange={handleChange}
+                          required
                         />
                       </div>
                     </div>
@@ -531,6 +541,7 @@ const EventCreate = () => {
                         <input
                           className="form-control"
                           type="text"
+                          required
                           name="shared"
                           placeholder="Enter Event Shared"
                           value={formData.shared}
@@ -550,6 +561,7 @@ const EventCreate = () => {
                         <input
                           className="form-control"
                           type="text"
+                          required
                           name="share_groups"
                           placeholder="Enter Shared Groups"
                           value={formData.share_groups}

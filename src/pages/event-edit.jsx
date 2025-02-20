@@ -39,7 +39,6 @@ const EventEdit = () => {
           `https://panchshil-super.lockated.com/events/${id}.json`
         );
 
-
         console.log("resp", response);
         setFormData(response?.data);
       } catch (error) {
@@ -135,7 +134,7 @@ const EventEdit = () => {
             <div className="module-data-section p-3">
               <div className="card mt-3 pb-4 mx-4">
                 <div className="card-header">
-                  <h3 className="card-title">Event Create</h3>
+                  <h3 className="card-title">Event Update</h3>
                 </div>
 
                 <div className="card-body">
@@ -316,21 +315,21 @@ const EventEdit = () => {
                     </div>
 
                     <div className="col-md-3">
-                    {formData.previewImage ? (
-                      <img
-                        src={formData.previewImage}
-                        alt="Uploaded Preview"
-                        className="img-fluid rounded mt-2"
-                        style={{ maxWidth: "100px", maxHeight: "100px" }}
-                      />
-                    ) : (
-                      <img
-                        src={formData?.attachfile?.document_url || "NA"}
-                        className="img-fluid rounded mt-2"
-                        alt={formData?.title || "Banner Image"}
-                        style={{ maxWidth: "100px", maxHeight: "100px" }}
-                      />
-                    )}
+                      {formData.previewImage ? (
+                        <img
+                          src={formData.previewImage}
+                          alt="Uploaded Preview"
+                          className="img-fluid rounded mt-2"
+                          style={{ maxWidth: "100px", maxHeight: "100px" }}
+                        />
+                      ) : (
+                        <img
+                          src={formData?.attachfile?.document_url || "NA"}
+                          className="img-fluid rounded mt-2"
+                          alt={formData?.title || "Banner Image"}
+                          style={{ maxWidth: "100px", maxHeight: "100px" }}
+                        />
+                      )}
                       <div className="form-group">
                         <label>
                           Attachment

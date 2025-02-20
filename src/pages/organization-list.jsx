@@ -12,6 +12,7 @@ const OrganizationList = () => {
     total_count: 0,
     total_pages: 0,
   });
+  const [searchQuery, setSearchQuery] = useState(""); // Added state for search
   const pageSize = 10;
   const navigate = useNavigate();
 
@@ -35,6 +36,7 @@ const OrganizationList = () => {
       .catch((error) => console.error("Error fetching organizations:", error));
   }, []);
 
+  // Function to handle page changes
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({
       ...prevState,
@@ -43,7 +45,36 @@ const OrganizationList = () => {
     localStorage.setItem("currentPage", pageNumber);
   };
 
-  const displayedOrganizations = organizations.slice(
+  // Handle search query change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: 1, // Reset to first page on search
+    }));
+  };
+
+  // Filter organizations based on search query
+  const filteredOrganizations = organizations.filter(
+    (org) =>
+      org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (org.domain &&
+        org.domain.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (org.sub_domain &&
+        org.sub_domain.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (org.mobile && org.mobile.includes(searchQuery))
+  );
+  useEffect(() => {
+    setPagination((prevState) => ({
+      ...prevState,
+      total_count: filteredOrganizations.length,
+      total_pages: Math.ceil(filteredOrganizations.length / pageSize),
+    }));
+  }, [filteredOrganizations]);
+
+  // Function to handle page changes
+
+  const displayedOrganizations = filteredOrganizations.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
@@ -61,14 +92,11 @@ const OrganizationList = () => {
                   id="s_name_cont"
                   className="form-control tbl-search table_search"
                   placeholder="Search"
-                  fdprocessedid="u38fp"
+                  value={searchQuery} // Bind the search query value
+                  onChange={handleSearchChange} // Handle search query change
                 />
                 <div className="input-group-append">
-                  <button
-                    type="submit"
-                    className="btn btn-md btn-default"
-                    fdprocessedid="2wqzh"
-                  >
+                  <button type="submit" className="btn btn-md btn-default">
                     <svg
                       width={16}
                       height={16}
@@ -88,7 +116,7 @@ const OrganizationList = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </div>{" "}
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"

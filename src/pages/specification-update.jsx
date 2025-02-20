@@ -19,6 +19,10 @@ const SpecificationUpdate = () => {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, [id]);
+  const handleCancel = () => {
+    setSetupName("");
+    setIcon(null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,9 +80,22 @@ const SpecificationUpdate = () => {
                     </div>
                   </div>
                 </div>
-                <button type="submit" className="purple-btn2 w-80">
-                  Update
-                </button>
+                <div className="row mt-2 justify-content-center">
+                  <div className="col-md-2">
+                    <button type="submit" className="purple-btn2 w-100">
+                      submit
+                    </button>
+                  </div>
+                  <div className="col-md-2">
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
               </form>
             </div>
           </div>

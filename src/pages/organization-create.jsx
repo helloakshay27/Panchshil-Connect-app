@@ -18,6 +18,11 @@ const OrganizationCreate = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  const handleMobileChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "mobile" && value.length > 10) return; // Limit to 10 digits
+    setFormData({ ...formData, [name]: value });
+  };
 
   //file upload
   const handleFileChange = (e) => {
@@ -59,6 +64,17 @@ const OrganizationCreate = () => {
     } catch (error) {
       toast.error(`Error creating Organization: ${error.message}`);
     }
+  };
+  const handleCancel = () => {
+    setFormData({
+      name: "",
+      domain: "",
+      mobile: "",
+      sub_domain: "",
+      country_id: "",
+      attachment: null,
+    });
+    setSelectedProjectId("");
   };
   return (
     <div className="main-content">
@@ -117,6 +133,7 @@ const OrganizationCreate = () => {
                         placeholder="Enter Sub-domain"
                         value={formData.sub_domain}
                         onChange={handleChange}
+                        required
                       />
                     </div>
                   </div>
@@ -145,11 +162,13 @@ const OrganizationCreate = () => {
                       </label>
                       <input
                         className="form-control"
-                        type="text"
+                        type="number"
+                        placeholder="Enter Mobile No"
                         name="mobile"
-                        placeholder="Enter Mobile No."
                         value={formData.mobile}
-                        onChange={handleChange}
+                        onChange={handleMobileChange}
+                        min="1000000000"
+                        max="9999999999"
                         required
                       />
                     </div>
@@ -164,6 +183,7 @@ const OrganizationCreate = () => {
                         className="form-control"
                         type="file"
                         name="attachment"
+                        required
                         onChange={handleFileChange}
                       />
                     </div>
@@ -173,7 +193,16 @@ const OrganizationCreate = () => {
                 <div className="row mt-3 justify-content-center">
                   <div className="col-md-2">
                     <button type="submit" className="purple-btn2 w-100">
-                      Create Organization
+                      Submit
+                    </button>
+                  </div>
+                  <div className="col-md-2">
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={handleCancel}
+                    >
+                      Cancel
                     </button>
                   </div>
                 </div>

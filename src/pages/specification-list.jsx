@@ -17,17 +17,15 @@ const SpecificationList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedPage = localStorage.getItem("currentPage");
-    const currentPage = savedPage ? parseInt(savedPage) : 1;
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
 
-    // Set the page number based on localStorage or default to 1
-    setPagination((prevState) => ({
-      ...prevState,
-      current_page: currentPage,
-    }));
-    axios
-      .get("https://panchshil-super.lockated.com/specification_setups.json")
-      .then((response) => {
+      try {
+        const response = await axios.get(
+          `https://panchshil-super.lockated.com/specification_setups.json?page=${pagination.current_page}&per_page=${pageSize}&search=${searchQuery}`
+        );
+
         if (
           response.data &&
           Array.isArray(response.data.specification_setups)
@@ -35,21 +33,21 @@ const SpecificationList = () => {
           setSpecifications(response.data.specification_setups);
           setPagination((prevState) => ({
             ...prevState,
-            total_count: response.data.specification_setups.length,
-            total_pages: Math.ceil(
-              response.data.specification_setups.length / pageSize
-            ),
+            total_count: response.data.total_count, // Assuming API sends this
+            total_pages: response.data.total_pages, // Assuming API sends this
           }));
         } else {
           setSpecifications([]);
         }
-        setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         setError(error.message);
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    fetchData();
+  }, [pagination.current_page, searchQuery]); 
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(

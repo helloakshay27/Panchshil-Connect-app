@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const SiteVisitSlotConfig = () => {
-  const [startHour, setStartHour] = useState(0);
-  const [startMinute, setStartMinute] = useState(0);
-  const [endHour, setEndHour] = useState(0);
-  const [endMinute, setEndMinute] = useState(0);
+  const [startHour, setStartHour] = useState("");
+  const [startMinute, setStartMinute] = useState("");
+  const [endHour, setEndHour] = useState("");
+  const [endMinute, setEndMinute] = useState("");
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -89,10 +89,10 @@ const SiteVisitSlotConfig = () => {
     });
   };
   const handleCancel = () => {
-    setStartHour(0);
-    setStartMinute(0);
-    setEndHour(0);
-    setEndMinute(0);
+    setStartHour("");
+    setStartMinute("");
+    setEndHour("");
+    setEndMinute("");
     setSelectedProject("");
     setStartDate("");
     setEndDate("");
@@ -125,6 +125,7 @@ const SiteVisitSlotConfig = () => {
                           name="start_date"
                           value={startDate}
                           required
+                          min={new Date().toISOString().split("T")[0]}
                           onChange={(e) => setStartDate(e.target.value)}
                           placeholder="Enter Event Start Date"
                         />
@@ -145,6 +146,9 @@ const SiteVisitSlotConfig = () => {
                           name="end_date"
                           required
                           value={endDate}
+                          min={
+                            startDate || new Date().toISOString().split("T")[0]
+                          }
                           onChange={(e) => setEndDate(e.target.value)}
                           placeholder="Enter Event End Date"
                         />
@@ -165,6 +169,9 @@ const SiteVisitSlotConfig = () => {
                           required
                           onChange={(e) => setStartHour(Number(e.target.value))}
                         >
+                          <option value="" disabled>
+                            Select Start Hour
+                          </option>
                           {hours.map((hour) => (
                             <option key={hour} value={hour}>
                               {hour.toString().padStart(2, "0")}
@@ -190,6 +197,9 @@ const SiteVisitSlotConfig = () => {
                             setStartMinute(Number(e.target.value))
                           }
                         >
+                          <option value="" disabled>
+                            Select Start Minute
+                          </option>
                           {minutes.map((minute) => (
                             <option key={minute} value={minute}>
                               {minute.toString().padStart(2, "0")}
@@ -213,6 +223,10 @@ const SiteVisitSlotConfig = () => {
                           required
                           onChange={(e) => setEndHour(Number(e.target.value))}
                         >
+                          {" "}
+                          <option value="" disabled>
+                            Select End Hour
+                          </option>
                           {hours.map((hour) => (
                             <option key={hour} value={hour}>
                               {hour.toString().padStart(2, "0")}
@@ -236,6 +250,10 @@ const SiteVisitSlotConfig = () => {
                           required
                           onChange={(e) => setEndMinute(Number(e.target.value))}
                         >
+                          {" "}
+                          <option value="" disabled>
+                            Select End Minute
+                          </option>
                           {minutes.map((minute) => (
                             <option key={minute} value={minute}>
                               {minute.toString().padStart(2, "0")}
