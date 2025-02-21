@@ -4,6 +4,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const SitevisitCreate = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
   const [formData, setFormData] = useState({
     project_id: "",
     project_name: "",
@@ -108,6 +112,8 @@ const SitevisitCreate = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("")
 
     if (
       !formData.scheduled_at ||
@@ -115,6 +121,7 @@ const SitevisitCreate = () => {
       !formData.selected_slot
     ) {
       toast.error("Please fill all required fields, including a time slot.");
+      setLoading(false)
       return;
     }
 
@@ -140,10 +147,13 @@ const SitevisitCreate = () => {
       navigate("/sitevisit-list");
     } catch (error) {
       console.error("Error submitting form:", error);
+      setError("Error submitting form");
       toast.error(`Error submitting schedule: ${error.message}`);
+    } finally {
+      setLoading(false)
     }
   };
-  const navigate = useNavigate();
+
   const handleCancel = () => {
     navigate(-1); // This navigates back one step in history
   };
@@ -158,6 +168,7 @@ const SitevisitCreate = () => {
                 <h3 className="card-title">Site Visit Create</h3>
               </div>
               <div className="card-body">
+                {error && <p className="text-danger">{error}</p>}
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     {/* Project Selection */}
@@ -238,8 +249,8 @@ const SitevisitCreate = () => {
                   {/* Submit Button */}
                   <div className="row mt-2 justify-content-center">
                     <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100">
-                        Submit
+                      <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                        {loading ? "Submitting..." : "Submit"}
                       </button>
                     </div>
                     <div className="col-md-2">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 const SiteVisitSlotConfig = () => {
   const [startHour, setStartHour] = useState("");
   const [startMinute, setStartMinute] = useState("");
@@ -10,6 +11,8 @@ const SiteVisitSlotConfig = () => {
   const [selectedProject, setSelectedProject] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
   const hours = Array.from({ length: 24 }, (_, i) => i); // 0-23 hours
   const minutes = Array.from({ length: 60 }, (_, i) => i); // 0-59 minutes
@@ -46,6 +49,8 @@ const SiteVisitSlotConfig = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
+    setError("")
 
     const postData = {
       project_id: selectedProject,
@@ -68,13 +73,18 @@ const SiteVisitSlotConfig = () => {
           },
         }
       );
-      alert("Slot created successfully!");
+      toast.success("Slot created successfully!");
       console.log("Data successfully submitted:", response.data);
+      navigate('/siteVisit-SlotConfig-list')
     } catch (error) {
       console.error(
         "Error submitting data:",
         error.response?.data || error.message
       );
+      setError("Failed to create slot. Please try again.");
+      toast.error("Failed to create slot. Please try again.");
+    } finally {
+      setLoading(false)
     }
 
     // Log the form data (You can replace this with further logic if needed)
@@ -103,6 +113,7 @@ const SiteVisitSlotConfig = () => {
                 <h3 className="card-title">Site Visit Slot Configuration</h3>
               </div>
               <div className="card-body">
+                {error && <p className="text-danger">{error}</p>}
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-md-3">
@@ -288,8 +299,8 @@ const SiteVisitSlotConfig = () => {
                   </div>
                   <div className="row mt-2 justify-content-center">
                     <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100">
-                        Submit
+                      <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                        {loading ? "Submitting..." : "Submit"}
                       </button>
                     </div>
                     <div className="col-md-2">

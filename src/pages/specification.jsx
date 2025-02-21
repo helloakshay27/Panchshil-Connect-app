@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import "../mor.css";
+import toast from "react-hot-toast";
 
 const Specification = () => {
   const [name, setName] = useState("");
@@ -40,12 +41,13 @@ const Specification = () => {
       console.log("Success:", response.data);
       setName("");
       setIcon(null);
-      alert("Specification added successfully");
+      toast.success("Specification added successfully");
+      navigate('/specification-list')
     } catch (err) {
       console.error("Error Response:", err.response?.data || err.message);
       setError(
         err.response?.data?.message ||
-          "Failed to add specification. Please try again."
+        "Failed to add specification. Please try again."
       );
     } finally {
       setLoading(false);

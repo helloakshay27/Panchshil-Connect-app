@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const OrganizationCreate = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: "",
     domain: "",
@@ -12,6 +14,8 @@ const OrganizationCreate = () => {
     mobile: "",
     attachment: null,
   });
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
   //input change
   const handleChange = (e) => {
@@ -32,6 +36,8 @@ const OrganizationCreate = () => {
   //form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
+    setError("")
 
     const payload = new FormData();
     payload.append("organization[name]", formData.name);
@@ -61,10 +67,15 @@ const OrganizationCreate = () => {
       if (response.status === 201 || response.status === 200) {
         toast.success("Form submitted successfully");
       }
+      navigate('/organization-list')
     } catch (error) {
+      setError("Error Creating Organization");
       toast.error(`Error creating Organization: ${error.message}`);
+    } finally {
+      setLoading(false)
     }
   };
+
   const handleCancel = () => {
     setFormData({
       name: "",
@@ -74,6 +85,7 @@ const OrganizationCreate = () => {
       country_id,
     });
     setSelectedProjectId("");
+    navigate(-1);
   };
   return (
     <div className="main-content">
@@ -84,6 +96,7 @@ const OrganizationCreate = () => {
               <h3 className="card-title">Create Organization</h3>
             </div>
             <div className="card-body">
+              {error && <p className="text-danger">{error}</p>}
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-md-3">
@@ -191,8 +204,8 @@ const OrganizationCreate = () => {
 
                 <div className="row mt-3 justify-content-center">
                   <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100">
-                      Submit
+                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                      {loading ? "Submitting..." : "Submit"}
                     </button>
                   </div>
                   <div className="col-md-2">

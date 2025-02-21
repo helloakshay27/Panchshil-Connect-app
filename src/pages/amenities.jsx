@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../mor.css";
+import { useNavigate } from "react-router-dom";
+import { toast } from 'react-hot-toast'
 
 const Amenities = () => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setIcon(e.target.files[0]);
@@ -38,20 +42,24 @@ const Amenities = () => {
       console.log("Success:", response.data);
       setName("");
       setIcon(null);
-      alert("Amenity added successfully");
+      toast.success("Amenity added successfully");
+      navigate('/amenities-list')
     } catch (err) {
       console.error("Error Response:", err.response?.data || err.message);
       setError(
         err.response?.data?.message ||
-          "Failed to add amenity. Please try again."
+        "Failed to add amenity. Please try again."
       );
+      toast.error(err.message)
     } finally {
       setLoading(false);
     }
   };
+
   const handleCancel = () => {
     setName("");
     setIcon(null);
+    navigate(-1);
   };
 
   return (

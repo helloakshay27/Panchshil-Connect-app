@@ -290,8 +290,8 @@ const TestimonialList = () => {
                   {/* Next Button */}
                   <li
                     className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
+                      ? "disabled"
+                      : ""
                       }`}
                   >
                     <button
@@ -310,8 +310,8 @@ const TestimonialList = () => {
                   {/* Last Button */}
                   <li
                     className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
+                      ? "disabled"
+                      : ""
                       }`}
                   >
                     <button

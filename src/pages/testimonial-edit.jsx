@@ -71,6 +71,10 @@ const TestimonialEdit = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate(-1);
+  }
+
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
@@ -102,12 +106,12 @@ const TestimonialEdit = () => {
                         </option>
                         {Array.isArray(companySetupOptions)
                           ? companySetupOptions.map((option) => (
-                              <option key={option.id} value={option.id}>
-                                {option.name ||
-                                  option.company_name ||
-                                  "No Name"}
-                              </option>
-                            ))
+                            <option key={option.id} value={option.id}>
+                              {option.name ||
+                                option.company_name ||
+                                "No Name"}
+                            </option>
+                          ))
                           : []}
                       </select>
                     </div>
@@ -164,10 +168,17 @@ const TestimonialEdit = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-2 mt-3">
-                  <button type="submit" className="purple-btn2 w-100">
-                    Submit
-                  </button>
+                <div className="row mt-2 justify-content-center">
+                  <div className="col-md-2 mt-3">
+                    <button type="submit" className="purple-btn2 w-100">
+                      Update
+                    </button>
+                  </div>
+                  <div className="col-md-2 mt-3">
+                    <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>

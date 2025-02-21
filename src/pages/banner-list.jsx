@@ -17,7 +17,7 @@ const BannerList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("banner_list_currentPage")) || 1;
-  }
+  };
   const [pagination, setPagination] = useState({
     current_page: getPageFromStorage(),
     total_count: 0,
@@ -40,9 +40,11 @@ const BannerList = () => {
   //   );
   // };
 
-  const filteredEvents = banners.filter((banner) =>
-    (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
-  );
+  const filteredEvents = searchQuery
+    ? banners.filter((banner) =>
+      (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+    )
+    : banners;
 
   const displayedBanners = filteredEvents
     .sort((a, b) => (b.id || 0) - (a.id || 0))
@@ -62,7 +64,6 @@ const BannerList = () => {
           current_page: getPageFromStorage(),
           total_count: response.data.banners.length, // Or use pagination data from API if available
           total_pages: Math.ceil(response.data.banners.length / pageSize),
-
         });
         setLoading(false);
       } catch (error) {
@@ -364,8 +365,8 @@ const BannerList = () => {
                     {/* Next Button */}
                     <li
                       className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
+                          ? "disabled"
+                          : ""
                         }`}
                     >
                       <button
@@ -384,8 +385,8 @@ const BannerList = () => {
                     {/* Last Button */}
                     <li
                       className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
+                          ? "disabled"
+                          : ""
                         }`}
                     >
                       <button

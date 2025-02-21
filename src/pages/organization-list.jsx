@@ -224,8 +224,8 @@ const OrganizationList = () => {
                   ))}
                   <li
                     className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
+                      ? "disabled"
+                      : ""
                       }`}
                   >
                     <button
@@ -242,8 +242,8 @@ const OrganizationList = () => {
                   </li>
                   <li
                     className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
+                      ? "disabled"
+                      : ""
                       }`}
                   >
                     <button

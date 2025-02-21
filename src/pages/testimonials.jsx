@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-hot-toast'
 import "../mor.css";
 
 const Testimonials = () => {
@@ -10,6 +11,7 @@ const Testimonials = () => {
   const [userName, setUserName] = useState("");
   const [userType, setUserType] = useState("");
   const [content, setContent] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -49,7 +51,7 @@ const Testimonials = () => {
     e.preventDefault();
 
     if (!companySetupId || !userName.trim() || !userType || !content.trim()) {
-      alert("All fields are required.");
+      toast.error("All fields are required.");
       return;
     }
 
@@ -76,17 +78,20 @@ const Testimonials = () => {
         }
       );
       console.log("Response from POST:", response.data);
-      alert("Data saved successfully!");
+      toast.success("Data saved successfully!");
       setCompanySetupId("");
       setUserName("");
       setUserType("");
       setContent("");
+      setError(null);
+      navigate('/testimonial-list')
     } catch (error) {
       console.error("Error submitting testimonial:", error);
       if (error.response) {
         console.error("Response data:", error.response.data);
       }
-      alert("Failed to submit. Please check your input.");
+      setError("Failed to add testimonials. Please try again.");
+      toast.error("Failed to submit. Please check your input.");
     }
   };
 
@@ -105,6 +110,7 @@ const Testimonials = () => {
                 <h3 className="card-title">Testimonials</h3>
               </div>
               <div className="card-body">
+                {error && <p className="text-danger">{error}</p>}
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-md-3">

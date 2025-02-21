@@ -22,6 +22,7 @@ const SpecificationUpdate = () => {
   const handleCancel = () => {
     setSetupName("");
     setIcon(null);
+    navigate(-1)
   };
 
   const handleSubmit = async (e) => {
@@ -83,7 +84,7 @@ const SpecificationUpdate = () => {
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
                     <button type="submit" className="purple-btn2 w-100">
-                      submit
+                      Update
                     </button>
                   </div>
                   <div className="col-md-2">

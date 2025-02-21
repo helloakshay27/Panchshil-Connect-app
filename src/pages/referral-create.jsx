@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const ReferralCreate = () => {
   const [projects, setProjects] = useState([]);
@@ -11,6 +12,8 @@ const ReferralCreate = () => {
     mobile: "",
     referralCode: "",
   });
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -42,6 +45,8 @@ const ReferralCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
+    setError("")
 
     if (
       !formData.name ||
@@ -49,7 +54,7 @@ const ReferralCreate = () => {
       !formData.mobile ||
       !selectedProjectId
     ) {
-      alert("Please fill all required fields.");
+      toast.error("Please fill all required fields.");
       return;
     }
 
@@ -75,14 +80,24 @@ const ReferralCreate = () => {
         }
       );
 
-      alert("Referral created successfully!");
+      toast.success("Referral created successfully!");
       console.log("Response:", response.data);
+
+      setFormData({
+        name: "",
+        email: "",
+        mobile: "",
+      })
+      navigate('/referral-list')
     } catch (error) {
       console.error(
         "Error creating referral:",
         error.response?.data || error.message
       );
-      alert("Failed to create referral. Please check your inputs.");
+      setError("Failed to create referral. Please check your inputs.");
+      toast.error("Failed to create referral. Please check your inputs.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -106,6 +121,7 @@ const ReferralCreate = () => {
               <h3 className="card-title">Create Referral</h3>
             </div>
             <div className="card-body">
+              {error && <p className="text-danger">{error}</p>}
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-md-3">
@@ -183,8 +199,8 @@ const ReferralCreate = () => {
                 </div>
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100">
-                      Submit
+                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                      {loading ? "Submitting..." : "Submit"}
                     </button>
                   </div>
                   <div className="col-md-2">

@@ -27,6 +27,8 @@ const EventCreate = () => {
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
   const [files, setFiles] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false)
 
   console.log("AA", eventType);
   console.log("bb", eventUserID);
@@ -49,7 +51,7 @@ const EventCreate = () => {
     const validFiles = files.filter((file) => allowedTypes.includes(file.type));
 
     if (validFiles.length !== files.length) {
-      alert("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
       e.target.value = ""; // Reset the input if invalid file is detected
       return;
     }
@@ -155,11 +157,13 @@ const EventCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
+    setError("")
 
     // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
-      alert(validationErrors.join("\n")); // Show all errors in an alert
+      toast.error(validationErrors.join("\n")); // Show all errors in an alert
       return; // Stop form submission
     }
 
@@ -220,6 +224,9 @@ const EventCreate = () => {
     } catch (error) {
       console.error("Error submitting the form:", error);
       toast.error("Failed to submit the form. Please try again.");
+      setError("Failed to submit the form. Please try again.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -269,6 +276,10 @@ const EventCreate = () => {
     fetchEvent();
   }, []);
 
+  const handleCancel = () => {
+    navigate(-1);
+  }
+
   return (
     <>
       <div className="main-content">
@@ -281,6 +292,7 @@ const EventCreate = () => {
                 </div>
 
                 <div className="card-body">
+                  {error && <p className="text-danger">{error}</p>}
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
@@ -641,18 +653,29 @@ const EventCreate = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    onClick={handleSubmit}
-                    type="submit"
-                    className="purple-btn2 w-100"
-                  >
-                    Submit
-                  </button>
+                <div className="row mt-2 justify-content-center">
+                  <div className="col-md-2">
+                    <button
+                      onClick={handleSubmit}
+                      type="submit"
+                      className="purple-btn2 w-100"
+                      disabled={loading}
+                    >
+                      {loading ? "Submitting..." : "Submit"}
+                    </button>
+                  </div>
+                  <div className="col-md-2">
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>

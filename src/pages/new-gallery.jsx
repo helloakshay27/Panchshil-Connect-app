@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import SelectBox from "../components/base/SingleSelect";
+import { toast } from "react-hot-toast";
 
 const NewGallery = () => {
   const { id } = useParams(); // Corrected ID extraction
@@ -14,10 +15,12 @@ const NewGallery = () => {
     projectId: "",
     name: "",
     title: "",
-    attachment: null,
+    attachment: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -60,9 +63,38 @@ const NewGallery = () => {
     fetchGallery();
   }, [id]);
 
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (!formData.galleryType.trim()) {
+      newErrors.galleryType = "Gallery type is mandatory";
+      toast.error("Gallery type is mandatory");
+    } else if (!formData.projectId.trim()) {
+      newErrors.projectId = "Project types  is mandatory";
+      toast.error("Project type is mandatory");
+    } else if (!formData.name.trim()) {
+      newErrors.name = "Name is mandatory";
+      toast.error("Name is mandatory");
+    } else if (!formData.title.trim()) {
+      newErrors.title = "Title is mandatory";
+      toast.error("Title is mandatory");
+    } else if (!formData.attachfile || formData.attachfile.length === 0) {
+      newErrors.attachfile = "Banner image is mandatory";
+      toast.error("Banner image is mandatory");
+    }
+
+    setError(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return; // Prevent form submission if validation fails
+    }
+
     setLoading(true);
     setError("");
 
@@ -80,9 +112,11 @@ const NewGallery = () => {
         `https://panchshil-super.lockated.com/galleries/${id}.json`,
         data
       );
-      alert("Gallery updated successfully!");
+      toast.success("Gallery updated successfully!");
       console.log("Success:", response.data);
+      navigate('/gallery-list')
     } catch (error) {
+      toast.error("Failed to update the gallery. Please try again.");
       setError("Failed to update the gallery. Please try again.");
       console.error("Error:", error.response?.data || error.message);
     } finally {
@@ -133,6 +167,10 @@ const NewGallery = () => {
 
     fetchProjects();
   }, []);
+
+  const handleCancel = () => {
+    navigate(-1);
+  }
 
   return (
     <div className="main-content">
@@ -266,17 +304,26 @@ const NewGallery = () => {
                   </div>
                 )}
               </div>
-            </div>
-            {/* Submit Button */}
-            <div className="row mt-3 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={loading}
-                >
-                  {loading ? "Updating..." : "Update Gallery"}
-                </button>
+              {/* Submit Button */}
+              <div className="row mt-3 justify-content-center">
+                <div className="col-md-2">
+                  <button
+                    type="submit"
+                    className="purple-btn2 w-100"
+                    disabled={loading}
+                  >
+                    {loading ? "Submitting..." : "Submit"}
+                  </button>
+                </div>
+                <div className="col-md-2">
+                  <button
+                    type="button"
+                    className="purple-btn2 w-100"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </form>
