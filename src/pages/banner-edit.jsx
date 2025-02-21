@@ -7,9 +7,8 @@ const BannerEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [error, setError] = useState(null);
-  const [banners, setBanners] = useState([]); // Renamed galleries to banners
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState([]); // Always set as an array
   const [formData, setFormData] = useState({
     banner_type: "",
     banner_redirect: "",
@@ -23,15 +22,16 @@ const BannerEdit = () => {
       const response = await axios.get(
         `https://panchshil-super.lockated.com/banners/${id}.json`
       );
-      // console.log("response", response);
 
-      const data = response.data;
-
-      setFormData(data); // Assuming the API returns an object with a "banners" field
-      setLoading(false);
+      if (response.data) {
+        setFormData(response.data);
+      } else {
+        throw new Error("Invalid banner data received.");
+      }
     } catch (error) {
-      console.error("Error fetching banners:", error);
-      setError("Failed to fetch banners. Please try again later.");
+      console.error("Error fetching banner:", error);
+      setError("Failed to fetch banner. Please try again later.");
+    } finally {
       setLoading(false);
     }
   };
@@ -49,12 +49,16 @@ const BannerEdit = () => {
         }
       );
 
-      setProjects(response.data); // Assuming the API returns an object with a "banners" field
-      setLoading(false);
+      // Ensure response.data.company_setups is an array before setting state
+      if (response.data && Array.isArray(response.data.company_setups)) {
+        setProjects(response.data.company_setups);
+      } else {
+        setProjects([]); // Fallback to empty array if invalid response
+      }
     } catch (error) {
-      console.error("Error fetching banners:", error);
-      setError("Failed to fetch banners. Please try again later.");
-      setLoading(false);
+      console.error("Error fetching companies:", error);
+      setError("Failed to fetch companies. Please try again later.");
+      setProjects([]); // Ensure `projects` is always an array
     }
   };
 
@@ -63,13 +67,11 @@ const BannerEdit = () => {
   };
 
   const handleCompanyChange = (e) => {
-    const formData = e.target.value;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      company_id: formData,
+      company_id: e.target.value,
     }));
   };
-  console.log("formdata ", formData);
 
   useEffect(() => {
     fetchBanners();
@@ -78,8 +80,6 @@ const BannerEdit = () => {
 
   const handleFileChange = (e, fieldName) => {
     const files = Array.from(e.target.files); // Convert FileList to an array
-
-    // Generate preview URLs for images
     const filePreviews = files.map((file) => URL.createObjectURL(file));
 
     setFormData((prevFormData) => ({
@@ -96,27 +96,22 @@ const BannerEdit = () => {
       }
 
       const postData = new FormData();
-
-      // Ensure attachfile is an array and append each file correctly
       if (formData.attachfile.length > 0) {
-        Array.from(formData.attachfile).forEach((file) => {
-          postData.append("banner_image", file);
-        });
+        formData.attachfile.forEach((file) =>
+          postData.append("banner_image", file)
+        );
       }
 
-      // Append other form fields to FormData
       postData.append("banner[banner_type]", formData.banner_type);
       postData.append("banner[banner_redirect]", formData.banner_redirect);
       postData.append("banner[company_id]", formData.company_id);
       postData.append("banner[title]", formData.title);
 
-      // API Call
-      const response = await axios.put(
+      await axios.put(
         `https://panchshil-super.lockated.com/banners/${id}.json`,
         postData
       );
 
-      console.log("Update Successful:", response.data);
       toast.success("Updated successfully!");
       navigate("/banner-list");
     } catch (error) {
@@ -127,99 +122,88 @@ const BannerEdit = () => {
 
   return (
     <>
-      {/* <Header /> */}
       <div className="main-content">
         <div className="website-content overflow-hidden">
           <div className="module-data-section">
             <div className="card mt-4 pb-2 mx-4">
               <div className="card-header">
-                <h3 className="card-title">New Banner</h3>
+                <h3 className="card-title">Edit Banner</h3>
               </div>
               <div className="card-body">
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Title
-                        <span />
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        placeholder="Default input"
-                      />
+                {loading ? (
+                  <p>Loading...</p>
+                ) : error ? (
+                  <p className="text-danger">{error}</p>
+                ) : (
+                  <div className="row">
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Title</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="title"
+                          value={formData.title}
+                          onChange={handleChange}
+                          placeholder="Enter title"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Company</label>
-                      <select
-                        className="form-control form-select"
-                        style={{ width: "100%" }}
-                        value={formData.company_id}
-                        name="company_id"
-                        onChange={handleCompanyChange}
-                      >
-                        <option value="">Select a Company</option>
-                        {projects.map((project) => (
-                          <option key={project.id} value={project.id}>
-                            {project.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="col-md-3 d-flex gap-3">
-                    {formData.previewImage ? (
-                      <img
-                        src={formData.previewImage}
-                        alt="Uploaded Preview"
-                        className="img-fluid rounded mt-2"
-                        style={{ maxWidth: "100px", maxHeight: "100px" }}
-                      />
-                    ) : (
-                      <img
-                        src={formData?.attachfile?.document_url || "NA"}
-                        className="img-fluid rounded mt-2"
-                        alt={formData?.title || "Banner Image"}
-                        style={{ maxWidth: "100px", maxHeight: "100px" }}
-                      />
-                    )}
 
-                    <div className="form-group">
-                      <label>
-                        Banner
-                        <span />
-                      </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        name="attachfile"
-                        multiple
-                        placeholder="Default input"
-                        onChange={(e) => handleFileChange(e, "attachfile")}
-                        style={{ width: "170%" }}
-                      />
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Company</label>
+                        <select
+                          className="form-control form-select"
+                          value={formData.company_id}
+                          name="company_id"
+                          onChange={handleCompanyChange}
+                        >
+                          <option value="">Select a Company</option>
+                          {Array.isArray(projects) &&
+                            projects.map((project) => (
+                              <option key={project.id} value={project.id}>
+                                {project.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="col-md-3 d-flex gap-3">
+                      {formData.previewImage ? (
+                        <img
+                          src={formData.previewImage}
+                          alt="Uploaded Preview"
+                          className="img-fluid rounded mt-2"
+                          style={{ maxWidth: "100px", maxHeight: "100px" }}
+                        />
+                      ) : (
+                        <img
+                          src={formData?.attachfile?.document_url || "NA"}
+                          className="img-fluid rounded mt-2"
+                          alt={formData?.title || "Banner Image"}
+                          style={{ maxWidth: "100px", maxHeight: "100px" }}
+                        />
+                      )}
+
+                      <div className="form-group">
+                        <label>Banner</label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="attachfile"
+                          multiple
+                          onChange={(e) => handleFileChange(e, "attachfile")}
+                          style={{ width: "170%" }}
+                        />
+                      </div>
                     </div>
                   </div>
-                  {/* <div className="col-md-3">
-                  <div className="form-group">
-                    <label>Banner Type</label>
-                    <select
-                      className="form-control form-select"
-                      style={{ width: "100%" }}>
-                      <option selected="selected">Select Status</option>
-                      <option>Active</option>
-                      <option>In-Active</option>
-                    </select>
-                  </div>
-                </div> */}
-                </div>
+                )}
               </div>
             </div>
+
             <div className="row mt-2 justify-content-center">
               <div className="col-md-2">
                 <button
@@ -227,7 +211,7 @@ const BannerEdit = () => {
                   type="submit"
                   className="purple-btn2 w-100"
                 >
-                  Update
+                  Submit
                 </button>
               </div>
             </div>

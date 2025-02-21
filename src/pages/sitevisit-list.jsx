@@ -12,7 +12,7 @@ const SitevisitList = () => {
   const navigate = useNavigate();
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("sitevisit_list_currentPage")) || 1;
-  }
+  };
   const [pagination, setPagination] = useState({
     current_page: getPageFromStorage(),
     total_count: 0,
@@ -231,8 +231,9 @@ const SitevisitList = () => {
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -242,8 +243,9 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -260,8 +262,9 @@ const SitevisitList = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
-                        }`}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -272,10 +275,11 @@ const SitevisitList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -287,10 +291,11 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
                   >
                     <button
                       className="page-link"

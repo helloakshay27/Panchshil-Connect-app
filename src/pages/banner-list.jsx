@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import SearchIcon from "../components/Icons/SearchIcon";
 import axios from "axios";
 
@@ -26,24 +27,39 @@ const BannerList = () => {
   const [pageSize] = useState(10);
   const navigate = useNavigate();
 
-  const onToggle = (id) => {
-    setBanners((prevBanners) =>
-      prevBanners.map((banner) =>
-        banner.id === id ? { ...banner, active: !banner.active } : banner
-      )
-    );
-  };
+  const onToggle = async (bannerId, currentStatus) => {
+    try {
+      const response = await axios.put(
+        `https://panchshil-super.lockated.com/banners/${bannerId}.json`,
+        { banner: { active: !currentStatus } }, // Toggle active state
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  // const handleToggle = (index) => {
-  //   setToggleStates((prevStates) =>
-  //     prevStates.map((state, i) => (i === index ? !state : state))
-  //   );
-  // };
+      if (response.status === 200) {
+        setBanners((prevBanners) =>
+          prevBanners.map((banner) =>
+            banner.id === bannerId
+              ? { ...banner, active: !currentStatus }
+              : banner
+          )
+        );
+        toast.success("Banner status updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error toggling banner status:", error);
+      toast.error("Failed to update banner status.");
+    }
+  };
 
   const filteredEvents = searchQuery
     ? banners.filter((banner) =>
-      (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
-    )
+        (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+      )
     : banners;
 
   const displayedBanners = filteredEvents
@@ -79,15 +95,16 @@ const BannerList = () => {
     const fetchBanners = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/banners.json"
+          "https://panchshil-super.lockated.com/banners.json",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
         );
-        console.log("response", response);
-        setBanners(response.data.banners); // Assuming the API returns an object with a "banners" field
-        setLoading(false);
+        setBanners(response.data.banners);
       } catch (error) {
         console.error("Error fetching banners:", error);
-        setError("Failed to fetch banners. Please try again later.");
-        setLoading(false);
       }
     };
 
@@ -246,20 +263,20 @@ const BannerList = () => {
                           </td>
                           <td>
                             <button
-                              onClick={() => onToggle(banner.id)}
+                              onClick={() => onToggle(banner.id, banner.active)}
                               className="toggle-button"
                               style={{
                                 border: "none",
                                 background: "none",
                                 cursor: "pointer",
                                 padding: 0,
-                                width: "70px", // Adjust width as needed
+                                width: "70px",
                               }}
                             >
                               {banner.active ? (
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  width="40" // Increased width
+                                  width="40"
                                   height="25"
                                   fill="#de7008"
                                   className="bi bi-toggle-on"
@@ -270,7 +287,7 @@ const BannerList = () => {
                               ) : (
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  width="40" // Increased width
+                                  width="40"
                                   height="25"
                                   fill="#667085"
                                   className="bi bi-toggle-off"
@@ -316,8 +333,9 @@ const BannerList = () => {
                   <ul className="pagination justify-content-center d-flex">
                     {/* First Button */}
                     <li
-                      className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                        }`}
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -329,8 +347,9 @@ const BannerList = () => {
 
                     {/* Previous Button */}
                     <li
-                      className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                        }`}
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -350,8 +369,9 @@ const BannerList = () => {
                     ).map((pageNumber) => (
                       <li
                         key={pageNumber}
-                        className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
-                          }`}
+                        className={`page-item ${
+                          pagination.current_page === pageNumber ? "active" : ""
+                        }`}
                       >
                         <button
                           className="page-link"
@@ -364,10 +384,11 @@ const BannerList = () => {
 
                     {/* Next Button */}
                     <li
-                      className={`page-item ${pagination.current_page === pagination.total_pages
+                      className={`page-item ${
+                        pagination.current_page === pagination.total_pages
                           ? "disabled"
                           : ""
-                        }`}
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -384,10 +405,11 @@ const BannerList = () => {
 
                     {/* Last Button */}
                     <li
-                      className={`page-item ${pagination.current_page === pagination.total_pages
+                      className={`page-item ${
+                        pagination.current_page === pagination.total_pages
                           ? "disabled"
                           : ""
-                        }`}
+                      }`}
                     >
                       <button
                         className="page-link"
