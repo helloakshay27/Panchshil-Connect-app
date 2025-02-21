@@ -29,14 +29,12 @@ const ProjectDetailsCreate = () => {
     specifications: "",
     Land_Area: "",
     location: {
-      address:"",
-      addressLine1: "line 1",
-      address_line_two: "line 2",
-      addressLine3: "line 3",
-      city: "Pune",
-      state: "Maharashtra",
-      pin_code: "400709",
-      country: "India",
+      address: "",
+      address_line_two: "",
+      city: "",
+      state: "",
+      pin_code: "",
+      country: "",
     },
     brochure: null, // for file input
     two_d_images: [], // for array of file inputs
@@ -50,37 +48,42 @@ const ProjectDetailsCreate = () => {
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
-
+  
     if (type === "file") {
       if (name === "brochure") {
         // Store only the first file for 'brochure'
-        setFormData({
-          ...formData,
+        setFormData((prev) => ({
+          ...prev,
           brochure: files[0],
-        });
+        }));
       } else if (name === "two_d_images") {
         // Convert FileList to an array to ensure we handle multiple files
         const newImages = Array.from(files);
-
-        const fileData = newImages.map((file) => ({
-          file: file,
-          name: file.name,
-          type: file.type,
-          url: file.type.startsWith("image") ? URL.createObjectURL(file) : null,
-        }));
-
+  
         setFormData((prev) => ({
           ...prev,
           two_d_images: [...prev.two_d_images, ...newImages],
         }));
       }
     } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+      // Check if the field belongs to the "location" object
+      if (["address", "address_line_two", "city", "state", "pin_code", "country"].includes(name)) {
+        setFormData((prev) => ({
+          ...prev,
+          location: {
+            ...prev.location, // Preserve existing location data
+            [name]: value, // Update specific field
+          },
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
     }
   };
+  
 
   const handleDiscardFile = (fileType, index) => {
     if (fileType === "brochure") {
@@ -168,16 +171,16 @@ const ProjectDetailsCreate = () => {
       return errors; // Return the first error immediately
     }
 
-     // Address validation (nested fields)
-     if (!formData.location || !formData.location.address) {
+    // Address validation (nested fields)
+    if (!formData.location || !formData.location.address) {
       errors.push("Address Line 1 is required.");
       return errors; // Return the first error immediately
     }
-    // Address validation (nested fields)
-    if (!formData.address_line_two || !formData.location.address_line_two) {
-      errors.push("Address Line 2 is required.");
-      return errors; // Return the first error immediately
-    }
+    // // Address validation (nested fields)
+    // if (!formData.address_line_two || !formData.location.address_line_two) {
+    //   errors.push("Address Line 2 is required.");
+    //   return errors; // Return the first error immediately
+    // }
     if (!formData.location || !formData.location.city) {
       errors.push("City is required.");
       return errors; // Return the first error immediately
@@ -221,12 +224,12 @@ const ProjectDetailsCreate = () => {
     const data = new FormData();
 
     for (const key in formData) {
-      if (key === "address") {
+      if (key === "location") {
         // Append nested address fields
-        for (const addressKey in formData.address) {
+        for (const addressKey in formData.location) {
           data.append(
             `project[Address][${addressKey}]`,
-            formData.address[addressKey]
+            formData.location[addressKey]
           );
         }
       } else if (key === "brochure") {
@@ -271,6 +274,7 @@ const ProjectDetailsCreate = () => {
       // toast.error("Failed to submit the form. Please try again.");
     }
   };
+
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
@@ -359,14 +363,12 @@ const ProjectDetailsCreate = () => {
       specifications: "",
       Land_Area: "",
       location: {
-        address:"",
-        addressLine1: "line 1",
-        address_line_two: "line 2",
-        addressLine3: "line 3",
-        city: "Pune",
-        state: "Maharashtra",
-        pin_code: "400709",
-        country: "India",
+        address: "",
+        address_line_two: "",
+        city: "",
+        state: "",
+        pin_code: "",
+        country: "",
       },
       brochure: null,
       two_d_images: [],
@@ -396,9 +398,7 @@ const ProjectDetailsCreate = () => {
                     value={formData.type_of_project}
                     onChange={handleChange}
                   >
-                    <option value=""  disabled>
-                      -- Select Project Type --
-                    </option>
+                    <option value="">-- Select Project Type --</option>
                     {projectsType.map((type, index) => (
                       <option key={index} value={type.id}>
                         {type.property_type}
@@ -498,9 +498,9 @@ const ProjectDetailsCreate = () => {
                   <input
                     className="form-control"
                     type="text"
-                    name="location"
+                    name="project_address"
                     placeholder="Enter Location"
-                    value={formData.location}
+                    value={formData.project_address}
                     onChange={handleChange}
                   />
                 </div>
@@ -673,7 +673,7 @@ const ProjectDetailsCreate = () => {
                     value={formData.project_amenities}
                     onChange={handleChange}
                   >
-                    <option disabled>Select amenities</option>
+                    <option>Select amenities</option>
                     {amenities?.map((ammit, index) => (
                       <option key={index} value={ammit.id}>
                         {ammit.name}
@@ -696,6 +696,9 @@ const ProjectDetailsCreate = () => {
                     value={formData.specifications}
                     onChange={handleChange}
                   >
+                    <option value="" disabled>
+                      Select Specifications
+                    </option>
                     <option value="Alabama">Alabama</option>
                     <option value="Alaska">Alaska</option>
                     <option value="California">California</option>
@@ -736,12 +739,13 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Address Line
+                    Address Line 1
                     <span style={{ color: "red", fontSize: "16px" }}>
                       *
                     </span>{" "}
                   </label>
                   <input
+                    //title="location.address"
                     className="form-control"
                     type="text"
                     placeholder="Address Line 1"
@@ -755,13 +759,15 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Address Line
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
+                    Address Line 2
+                    <span style={{ color: "red", fontSize: "16px" }}>
+                      *
+                    </span>{" "}
                   </label>
                   <input
                     className="form-control"
                     type="text"
-                    placeholder="Address Line 1"
+                    placeholder="Address Line 2"
                     name="address_line_two"
                     value={formData.location.address_line_two}
                     onChange={handleChange}

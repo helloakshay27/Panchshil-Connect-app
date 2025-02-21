@@ -18,7 +18,7 @@ const SitevisitEdit = () => {
   const navigate = useNavigate();
 
   const apiUrl =
-    "http://panchshil-super.lockated.com/site_schedule_requests.json";
+    `https://panchshil-super.lockated.com/site_schedule_requests/${id}.json`;
   const projectsApiUrl =
     "https://panchshil-super.lockated.com/get_all_projects.json";
   const slotsApiUrl =
@@ -48,7 +48,7 @@ const SitevisitEdit = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get(`${apiUrl}/${id}.json`, {
+        .get(`${apiUrl}`, {
           headers: { Authorization: `Bearer ${authenticationToken}` },
         })
         .then((response) => {
@@ -139,7 +139,7 @@ const SitevisitEdit = () => {
 
       if (id) {
         // If ID exists, update the existing record
-        response = await axios.put(`${apiUrl}/${id}.json`, requestData, {
+        response = await axios.put(`${apiUrl}`, requestData, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${authenticationToken}`,

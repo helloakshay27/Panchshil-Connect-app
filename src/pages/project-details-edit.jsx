@@ -32,13 +32,13 @@ const ProjectDetailsEdit = () => {
     Land_Area: "",
     location: {
       address:"",
-      addressLine1: "line 1",
-      address_line_two: "line 2",
-      addressLine3: "line 3",
-      city: "Pune",
-      state: "Maharashtra",
-      pin_code: "400709",
-      country: "India",
+      addressLine1: "",
+      address_line_two: "",
+      addressLine3: "",
+      city: "",
+      state: "",
+      pin_code: "",
+      country: "",
     },
     brochure: null, // file input for brochure
     two_d_images: [], // array of file inputs for 2D images
@@ -131,10 +131,9 @@ const ProjectDetailsEdit = () => {
 
     fetchProjectDetails();
   }, []);
-
   const handleChange = (e) => {
     const { name, files, value } = e.target;
-
+  
     if (name === "brochure") {
       setFormData((prev) => ({
         ...prev,
@@ -149,15 +148,31 @@ const ProjectDetailsEdit = () => {
         file_name: file.name,
         file_url: URL.createObjectURL(file),
       }));
-
+  
       setFormData((prev) => ({
         ...prev,
         two_d_images: [...prev.two_d_images, ...newImages],
       }));
+    } else if (
+      ["address", "address_line_two", "city", "state", "pin_code", "country"].includes(name)
+    ) {
+      // Handle location-specific inputs properly
+      setFormData((prev) => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          [name]: value, // Correctly updating the location object
+        },
+      }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      // For all other top-level form fields
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
+  
 
   // Handle file discard
   const handleDiscardFile = (type, index) => {
@@ -731,7 +746,7 @@ const ProjectDetailsEdit = () => {
                   <input
                     className="form-control"
                     type="text"
-                    placeholder="Address Line 1"
+                    placeholder="Address Line 2"
                     name="address_line_two"
                     value={formData.location.address_line_two}
                     onChange={handleChange}
