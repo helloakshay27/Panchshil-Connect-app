@@ -228,7 +228,7 @@ const BannerList = () => {
                     <thead>
                       <tr>
                         <th>Sr No</th>
-                        <th>Company ID</th>
+
                         <th>Site</th>
                         <th> Company Name</th>
                         <th>Title</th>
@@ -246,7 +246,7 @@ const BannerList = () => {
                               index +
                               1}
                           </td>
-                          <td>{banner.company_id || "N/A"}</td>
+
                           <td>Lockated, Pune</td>
                           <td>{banner.company_name || "No Name"}</td>
                           <td>{banner.title || "No Title"}</td>
