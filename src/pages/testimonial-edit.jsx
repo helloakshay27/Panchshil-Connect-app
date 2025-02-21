@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const TestimonialEdit = () => {
   const { state } = useLocation();
@@ -63,11 +64,11 @@ const TestimonialEdit = () => {
           t.id === testimonial.id ? { ...t, ...formData } : t
         )
       );
-      alert("Testimonial updated successfully!");
+      toast.success("Testimonial updated successfully!");
       navigate("/testimonials");
     } catch (error) {
       console.error("Error updating testimonial:", error);
-      alert("Error updating testimonial. Please try again.");
+      toast.error("Error updating testimonial. Please try again.");
     }
   };
 

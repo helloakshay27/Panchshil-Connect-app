@@ -11,7 +11,6 @@ const Testimonials = () => {
   const [userName, setUserName] = useState("");
   const [userType, setUserType] = useState("");
   const [content, setContent] = useState("");
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -83,14 +82,12 @@ const Testimonials = () => {
       setUserName("");
       setUserType("");
       setContent("");
-      setError(null);
       navigate('/testimonial-list')
     } catch (error) {
       console.error("Error submitting testimonial:", error);
       if (error.response) {
         console.error("Response data:", error.response.data);
       }
-      setError("Failed to add testimonials. Please try again.");
       toast.error("Failed to submit. Please check your input.");
     }
   };
@@ -110,7 +107,6 @@ const Testimonials = () => {
                 <h3 className="card-title">Testimonials</h3>
               </div>
               <div className="card-body">
-                {error && <p className="text-danger">{error}</p>}
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-md-3">

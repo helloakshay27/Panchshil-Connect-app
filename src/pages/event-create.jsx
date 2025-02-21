@@ -27,7 +27,6 @@ const EventCreate = () => {
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
   const [files, setFiles] = useState([]);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false)
 
   console.log("AA", eventType);
@@ -158,7 +157,6 @@ const EventCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-    setError("")
 
     // Validate form data
     const validationErrors = validateForm(formData);
@@ -224,7 +222,6 @@ const EventCreate = () => {
     } catch (error) {
       console.error("Error submitting the form:", error);
       toast.error("Failed to submit the form. Please try again.");
-      setError("Failed to submit the form. Please try again.");
     } finally {
       setLoading(false)
     }
@@ -292,7 +289,6 @@ const EventCreate = () => {
                 </div>
 
                 <div className="card-body">
-                  {error && <p className="text-danger">{error}</p>}
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">

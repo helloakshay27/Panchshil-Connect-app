@@ -12,7 +12,6 @@ const SiteVisitSlotConfig = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
 
   const hours = Array.from({ length: 24 }, (_, i) => i); // 0-23 hours
   const minutes = Array.from({ length: 60 }, (_, i) => i); // 0-59 minutes
@@ -50,7 +49,6 @@ const SiteVisitSlotConfig = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-    setError("")
 
     const postData = {
       project_id: selectedProject,
@@ -81,7 +79,6 @@ const SiteVisitSlotConfig = () => {
         "Error submitting data:",
         error.response?.data || error.message
       );
-      setError("Failed to create slot. Please try again.");
       toast.error("Failed to create slot. Please try again.");
     } finally {
       setLoading(false)
@@ -113,7 +110,6 @@ const SiteVisitSlotConfig = () => {
                 <h3 className="card-title">Site Visit Slot Configuration</h3>
               </div>
               <div className="card-body">
-                {error && <p className="text-danger">{error}</p>}
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-md-3">

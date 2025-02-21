@@ -14,7 +14,6 @@ const ReferralCreate = () => {
     mobile: "",
     referralCode: "",
   });
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -47,7 +46,6 @@ const ReferralCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     if (
       !formData.name ||
@@ -98,7 +96,6 @@ const ReferralCreate = () => {
         "Error creating referral:",
         error.response?.data || error.message
       );
-      setError("Failed to create referral. Please check your inputs.");
       toast.error("Failed to create referral. Please check your inputs.");
     } finally {
       setLoading(false);
@@ -125,7 +122,6 @@ const ReferralCreate = () => {
               <h3 className="card-title">Create Referral</h3>
             </div>
             <div className="card-body">
-              {error && <p className="text-danger">{error}</p>}
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-md-3">

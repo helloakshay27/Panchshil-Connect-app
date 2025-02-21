@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 
 const BannerAdd = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
@@ -46,7 +45,6 @@ const BannerAdd = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching banners:", error);
-        setError("Failed to fetch banners. Please try again later.");
         setLoading(false);
       }
     };

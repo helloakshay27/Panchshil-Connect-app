@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 const SitevisitCreate = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
 
   const [formData, setFormData] = useState({
     project_id: "",
@@ -113,7 +112,6 @@ const SitevisitCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("")
 
     if (
       !formData.scheduled_at ||
@@ -147,7 +145,6 @@ const SitevisitCreate = () => {
       navigate("/sitevisit-list");
     } catch (error) {
       console.error("Error submitting form:", error);
-      setError("Error submitting form");
       toast.error(`Error submitting schedule: ${error.message}`);
     } finally {
       setLoading(false)
@@ -168,7 +165,6 @@ const SitevisitCreate = () => {
                 <h3 className="card-title">Site Visit Create</h3>
               </div>
               <div className="card-body">
-                {error && <p className="text-danger">{error}</p>}
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     {/* Project Selection */}

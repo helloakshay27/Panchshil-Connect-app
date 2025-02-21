@@ -48,7 +48,7 @@ const ProjectDetailsCreate = () => {
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
-  
+
     if (type === "file") {
       if (name === "brochure") {
         // Store only the first file for 'brochure'
@@ -59,7 +59,7 @@ const ProjectDetailsCreate = () => {
       } else if (name === "two_d_images") {
         // Convert FileList to an array to ensure we handle multiple files
         const newImages = Array.from(files);
-  
+
         setFormData((prev) => ({
           ...prev,
           two_d_images: [...prev.two_d_images, ...newImages],
@@ -83,7 +83,7 @@ const ProjectDetailsCreate = () => {
       }
     }
   };
-  
+
 
   const handleDiscardFile = (fileType, index) => {
     if (fileType === "brochure") {
@@ -271,7 +271,7 @@ const ProjectDetailsCreate = () => {
       Navigate("/project-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
-      // toast.error("Failed to submit the form. Please try again.");
+      toast.error("Failed to submit the form. Please try again.");
     }
   };
 

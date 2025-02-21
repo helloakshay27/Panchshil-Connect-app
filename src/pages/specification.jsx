@@ -9,7 +9,6 @@ const Specification = () => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const handleFileChange = (e) => {
     setIcon(e.target.files[0]);
@@ -18,7 +17,6 @@ const Specification = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     const formData = new FormData();
     formData.append("specification_setup[name]", name);
@@ -45,10 +43,7 @@ const Specification = () => {
       navigate('/specification-list')
     } catch (err) {
       console.error("Error Response:", err.response?.data || err.message);
-      setError(
-        err.response?.data?.message ||
-        "Failed to add specification. Please try again."
-      );
+      toast.error("Failed to add specification. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -69,7 +64,6 @@ const Specification = () => {
               <h3 className="card-title">Specification</h3>
             </div>
             <div className="card-body">
-              {error && <p className="text-danger">{error}</p>}
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-md-3">

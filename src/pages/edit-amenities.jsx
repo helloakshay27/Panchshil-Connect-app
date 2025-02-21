@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom"; // If using React Router
 import "../mor.css";
+import toast from "react-hot-toast";
 
 const EditAmenities = () => {
   const { id } = useParams(); // Get ID from URL
@@ -56,12 +57,11 @@ const EditAmenities = () => {
         }
       );
       console.log("API Response:", response.data);
-      alert("Amenity updated successfully!");
+      toast.success("Amenity updated successfully!");
     } catch (error) {
       console.error("API Error:", error.response?.data || error.message);
-      alert(
-        `Failed to update amenity: ${
-          error.response?.data?.error || "Unknown error"
+      toast.error(
+        `Failed to update amenity: ${error.response?.data?.error || "Unknown error"
         }`
       );
     }

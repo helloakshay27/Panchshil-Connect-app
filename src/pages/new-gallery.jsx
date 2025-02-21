@@ -18,7 +18,6 @@ const NewGallery = () => {
     attachment: [],
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -36,7 +35,6 @@ const NewGallery = () => {
 
     const fetchGallery = async () => {
       setLoading(true);
-      setError(""); // Reset error state
 
       try {
         const response = await axios.get(
@@ -54,7 +52,6 @@ const NewGallery = () => {
         setGalleryData(response.data);
       } catch (error) {
         console.error("Error fetching gallery:", error);
-        setError("Failed to fetch gallery details. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -83,7 +80,6 @@ const NewGallery = () => {
       toast.error("Banner image is mandatory");
     }
 
-    setError(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -96,7 +92,6 @@ const NewGallery = () => {
     }
 
     setLoading(true);
-    setError("");
 
     const data = new FormData();
     data.append("gallery[project_id]", formData.projectId);
@@ -117,7 +112,6 @@ const NewGallery = () => {
       navigate('/gallery-list')
     } catch (error) {
       toast.error("Failed to update the gallery. Please try again.");
-      setError("Failed to update the gallery. Please try again.");
       console.error("Error:", error.response?.data || error.message);
     } finally {
       setLoading(false);
@@ -182,7 +176,6 @@ const NewGallery = () => {
                 <h3 className="card-title">Add Gallery</h3>
               </div>
               <div className="card-body">
-                {error && <div className="alert alert-danger">{error}</div>}
                 {loading ? (
                   <div className="text-center">Loading...</div>
                 ) : (

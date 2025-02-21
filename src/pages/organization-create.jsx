@@ -15,7 +15,6 @@ const OrganizationCreate = () => {
     attachment: null,
   });
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
 
   //input change
   const handleChange = (e) => {
@@ -37,7 +36,6 @@ const OrganizationCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-    setError("")
 
     const payload = new FormData();
     payload.append("organization[name]", formData.name);
@@ -69,7 +67,6 @@ const OrganizationCreate = () => {
       }
       navigate('/organization-list')
     } catch (error) {
-      setError("Error Creating Organization");
       toast.error(`Error creating Organization: ${error.message}`);
     } finally {
       setLoading(false)
@@ -96,7 +93,6 @@ const OrganizationCreate = () => {
               <h3 className="card-title">Create Organization</h3>
             </div>
             <div className="card-body">
-              {error && <p className="text-danger">{error}</p>}
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-md-3">

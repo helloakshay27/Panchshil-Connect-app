@@ -273,8 +273,8 @@ const SitevisitList = () => {
                   ))}
                   <li
                     className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
+                      ? "disabled"
+                      : ""
                       }`}
                   >
                     <button
@@ -288,8 +288,8 @@ const SitevisitList = () => {
                   </li>
                   <li
                     className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
+                      ? "disabled"
+                      : ""
                       }`}
                   >
                     <button

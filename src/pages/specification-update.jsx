@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const SpecificationUpdate = () => {
   const { id } = useParams();
@@ -39,10 +40,11 @@ const SpecificationUpdate = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      alert("Specification updated successfully!");
+      toast.success("Specification updated successfully!");
       navigate("/specification-list");
     } catch (error) {
       console.error("Error updating specification:", error);
+      toast.error("Failed to update specification. Please try again.");
     }
   };
 

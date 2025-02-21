@@ -12,7 +12,7 @@ const ProjectDetailsEdit = () => {
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
-    property_type : "",
+    property_type: "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
     Configuration_Type: "",
@@ -31,7 +31,7 @@ const ProjectDetailsEdit = () => {
     specifications: "",
     Land_Area: "",
     location: {
-      address:"",
+      address: "",
       addressLine1: "",
       address_line_two: "",
       addressLine3: "",
@@ -133,7 +133,7 @@ const ProjectDetailsEdit = () => {
   }, []);
   const handleChange = (e) => {
     const { name, files, value } = e.target;
-  
+
     if (name === "brochure") {
       setFormData((prev) => ({
         ...prev,
@@ -148,7 +148,7 @@ const ProjectDetailsEdit = () => {
         file_name: file.name,
         file_url: URL.createObjectURL(file),
       }));
-  
+
       setFormData((prev) => ({
         ...prev,
         two_d_images: [...prev.two_d_images, ...newImages],
@@ -172,7 +172,7 @@ const ProjectDetailsEdit = () => {
       }));
     }
   };
-  
+
 
   // Handle file discard
   const handleDiscardFile = (type, index) => {
@@ -352,7 +352,7 @@ const ProjectDetailsEdit = () => {
       console.log(response.data);
       Navigate("/project-list");
     } catch (error) {
-      // alert("Failed to submit the form. Please try again.");
+      toast.error("Failed to submit the form. Please try again.");
       console.error("Error submitting the form:", error);
     }
   };
@@ -382,7 +382,7 @@ const ProjectDetailsEdit = () => {
                     className="form-control form-select"
                     style={{ width: "100%" }}
                     name="property_type"
-                    value={formData.property_type } // Handle default values
+                    value={formData.property_type} // Handle default values
                     onChange={handleChange}
                   >
                     {/* <option value="" disabled selected>
@@ -959,7 +959,7 @@ const ProjectDetailsEdit = () => {
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               src={file.file_url} // Use file_url for image preview
                               alt={file.file_name} // Use file_name as alt text for accessibility
-                              className="img-fluid rounded" 
+                              className="img-fluid rounded"
 
                             />
                           </td>
