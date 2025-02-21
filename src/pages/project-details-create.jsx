@@ -7,13 +7,15 @@ import Footer from "../components/Footer";
 import "../mor.css";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import SelectBox from "../components/base/SelectBox";
+import MultiSelectBox from "../components/base/MultiSelectBox";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
     property_type: "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
-    Configuration_Type: "",
+    Configuration_Type: [], // Ensure this is an array
     Project_Name: "",
     project_address: "",
     Project_Description: "",
@@ -25,8 +27,8 @@ const ProjectDetailsCreate = () => {
     Number_Of_Towers: "",
     Number_Of_Units: "",
     Rera_Number: "",
-    project_amenities: "",
-    specifications: "",
+    project_amenities: [], // Ensure this is an array
+    specifications: [], // Ensure this is an array
     Land_Area: "",
     location: {
       address: "",
@@ -67,7 +69,16 @@ const ProjectDetailsCreate = () => {
       }
     } else {
       // Check if the field belongs to the "location" object
-      if (["address", "address_line_two", "city", "state", "pin_code", "country"].includes(name)) {
+      if (
+        [
+          "address",
+          "address_line_two",
+          "city",
+          "state",
+          "pin_code",
+          "country",
+        ].includes(name)
+      ) {
         setFormData((prev) => ({
           ...prev,
           location: {
@@ -83,7 +94,6 @@ const ProjectDetailsCreate = () => {
       }
     }
   };
-
 
   const handleDiscardFile = (fileType, index) => {
     if (fileType === "brochure") {
@@ -110,7 +120,7 @@ const ProjectDetailsCreate = () => {
       errors.push("Construction Status is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.Configuration_Type) {
+    if (!formData.Configuration_Type.length) {
       errors.push("Configuration Type is required.");
       return errors; // Return the first error immediately
     }
@@ -158,11 +168,11 @@ const ProjectDetailsCreate = () => {
       errors.push("RERA Number is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.project_amenities) {
+    if (!formData.project_amenities.length) {
       errors.push("Amenities are required.");
       return errors; // Return the first error immediately
     }
-    // if (!formData.specifications) {
+    // if (!formData.specifications.length) {
     //   errors.push("Specifications are required.");
     //   return errors; // Return the first error immediately
     // }
@@ -299,26 +309,19 @@ const ProjectDetailsCreate = () => {
   }, []);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url =
-        "https://panchshil-super.lockated.com/get_property_types.json";
+    const fetchConfigurations = async () => {
+      const url = "https://panchshil-super.lockated.com/configuration_setups.json";
 
       try {
-        const response = await axios.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-
-        setConfigurations(response.data?.configurations);
-        console.log("configurations", configurations);
+        const response = await axios.get(url);
+        setConfigurations(response.data);
+        console.log("configurations", response.data);
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error fetching configurations:", error);
       }
     };
 
-    fetchProjects();
+    fetchConfigurations();
   }, []);
 
   useEffect(() => {
@@ -347,7 +350,7 @@ const ProjectDetailsCreate = () => {
       property_type: "",
       SFDC_Project_Id: "",
       Project_Construction_Status: "",
-      Configuration_Type: "",
+      Configuration_Type: [],
       Project_Name: "",
       project_address: "",
       Project_Description: "",
@@ -359,8 +362,8 @@ const ProjectDetailsCreate = () => {
       Number_Of_Towers: "",
       Number_Of_Units: "",
       Rera_Number: "",
-      project_amenities: "",
-      specifications: "",
+      project_amenities: [],
+      specifications: [],
       Land_Area: "",
       location: {
         address: "",
@@ -392,19 +395,27 @@ const ProjectDetailsCreate = () => {
                     Project Types
                     <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
-                  <select
-                    className="form-control form-select"
-                    name="type_of_project"
-                    value={formData.type_of_project}
-                    onChange={handleChange}
-                  >
-                    <option value="">-- Select Project Type --</option>
-                    {projectsType.map((type, index) => (
-                      <option key={index} value={type.id}>
-                        {type.property_type}
-                      </option>
-                    ))}
-                  </select>
+                  <SelectBox
+                    options={[
+                      {
+                        value: "",
+                        label: "-- Select Project Type --",
+                        isDisabled: true,
+                      },
+                      ...projectsType.map((type) => ({
+                        value: type.id,
+                        label: type.property_type,
+                      })),
+                    ]}
+                    defaultValue={formData.type_of_project}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        type_of_project: value,
+                      }))
+                    }
+                    isDisableFirstOption={true}
+                  />
                 </div>
               </div>
 
@@ -433,18 +444,21 @@ const ProjectDetailsCreate = () => {
                     Project Construction Status
                     <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
-                  <select
-                    className="form-control form-select"
-                    name="Project_Construction_Status"
-                    value={formData.Project_Construction_Status}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      Select status
-                    </option>
-                    <option value="Completed">Completed</option>
-                    <option value="Ready-To-Move-in">Ready To Move in</option>
-                  </select>
+                  <SelectBox
+                    options={[
+                      { value: "", label: "Select status", isDisabled: true },
+                      { value: "Completed", label: "Completed" },
+                      { value: "Ready-To-Move-in", label: "Ready To Move in" },
+                    ]}
+                    defaultValue={formData.Project_Construction_Status}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Project_Construction_Status: value,
+                      }))
+                    }
+                    isDisableFirstOption={true}
+                  />
                 </div>
               </div>
 
@@ -455,18 +469,25 @@ const ProjectDetailsCreate = () => {
                     Configuration Type
                     <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
-                  <select
-                    className="form-control form-select"
-                    name="Configuration_Type"
-                    value={formData.Configuration_Type}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      Select Type
-                    </option>
-                    <option value="3 BHK">3 BHK</option>
-                    <option value="4 BHK">4 BHK</option>
-                  </select>
+                  <MultiSelectBox
+                    options={configurations?.map((config) => ({
+                      value: config.name,
+                      label: config.name,
+                    }))}
+                    value={formData.Configuration_Type.map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Configuration_Type: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      }))
+                    }
+                    placeholder="Select Type"
+                  />
                 </div>
               </div>
 
@@ -666,20 +687,33 @@ const ProjectDetailsCreate = () => {
                     Amenities
                     <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
-                  <select
-                    className="form-control form-select"
-                    style={{ width: "100%" }}
-                    name="project_amenities"
-                    value={formData.project_amenities}
-                    onChange={handleChange}
-                  >
-                    <option>Select amenities</option>
-                    {amenities?.map((ammit, index) => (
-                      <option key={index} value={ammit.id}>
-                        {ammit.name}
-                      </option>
-                    ))}
-                  </select>
+                  <MultiSelectBox
+                    options={amenities.map((ammit) => ({
+                      value: ammit.id,
+                      label: ammit.name,
+                    }))}
+                    value={formData.project_amenities
+                      .map((id) => {
+                        const ammit = amenities.find(
+                          (ammit) => ammit.id === id
+                        );
+                        return ammit
+                          ? { value: ammit.id, label: ammit.name }
+                          : null;
+                      })
+                      .filter(Boolean)}
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        project_amenities: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      }))
+                    }
+                    placeholder="Select amenities"
+                  />
+                  {console.log("amenities", amenities)}
+                  {console.log("project_amenities", formData.project_amenities)}
                 </div>
               </div>
 
@@ -689,24 +723,30 @@ const ProjectDetailsCreate = () => {
                     Specifications
                     <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
-                  <select
-                    className="form-control form-select"
-                    style={{ width: "100%" }}
-                    name="specifications"
-                    value={formData.specifications}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      Select Specifications
-                    </option>
-                    <option value="Alabama">Alabama</option>
-                    <option value="Alaska">Alaska</option>
-                    <option value="California">California</option>
-                    <option value="Delaware">Delaware</option>
-                    <option value="Tennessee">Tennessee</option>
-                    <option value="Texas">Texas</option>
-                    <option value="Washington">Washington</option>
-                  </select>
+                  <MultiSelectBox
+                    options={[
+                      { value: "Alabama", label: "Alabama" },
+                      { value: "Alaska", label: "Alaska" },
+                      { value: "California", label: "California" },
+                      { value: "Delaware", label: "Delaware" },
+                      { value: "Tennessee", label: "Tennessee" },
+                      { value: "Texas", label: "Texas" },
+                      { value: "Washington", label: "Washington" },
+                    ]}
+                    value={formData.specifications.map((spec) => ({
+                      value: spec,
+                      label: spec,
+                    }))}
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        specifications: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      }))
+                    }
+                    placeholder="Select Specifications"
+                  />
                 </div>
               </div>
 
@@ -740,9 +780,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Address Line 1
-                    <span style={{ color: "red", fontSize: "16px" }}>
-                      *
-                    </span>{" "}
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
                   </label>
                   <input
                     //title="location.address"
@@ -760,9 +798,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Address Line 2
-                    <span style={{ color: "red", fontSize: "16px" }}>
-                      *
-                    </span>{" "}
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
                   </label>
                   <input
                     className="form-control"
