@@ -246,6 +246,12 @@ const EventDetails = () => {
                         src={eventData?.attachfile?.document_url || "NA"}
                         alt="Event Image"
                         className="img-fluid"
+                        style={{
+                          width: "300px",
+                          height: "300px",
+                          objectFit: "contain",
+                          display: "block",
+                        }}
                       />
                     </div>
                   </div>

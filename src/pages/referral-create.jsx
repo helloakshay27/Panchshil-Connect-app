@@ -6,14 +6,15 @@ import toast from "react-hot-toast";
 const ReferralCreate = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     mobile: "",
     referralCode: "",
   });
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -45,8 +46,8 @@ const ReferralCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
     if (
       !formData.name ||
@@ -57,7 +58,7 @@ const ReferralCreate = () => {
       toast.error("Please fill all required fields.");
       return;
     }
-
+    setLoading(true);
     const payload = {
       referral: {
         name: formData.name,
@@ -87,8 +88,11 @@ const ReferralCreate = () => {
         name: "",
         email: "",
         mobile: "",
-      })
-      navigate('/referral-list')
+      });
+      navigate("/referral-list");
+      console.log("Response:", response.data);
+
+      navigate("/referral-list"); // Redirect to referral list page after success
     } catch (error) {
       console.error(
         "Error creating referral:",
@@ -97,7 +101,7 @@ const ReferralCreate = () => {
       setError("Failed to create referral. Please check your inputs.");
       toast.error("Failed to create referral. Please check your inputs.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -199,10 +203,15 @@ const ReferralCreate = () => {
                 </div>
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                    <button
+                      type="submit"
+                      className="purple-btn2 w-100"
+                      disabled={loading}
+                    >
                       {loading ? "Submitting..." : "Submit"}
                     </button>
                   </div>
+
                   <div className="col-md-2">
                     <button
                       type="button"
