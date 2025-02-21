@@ -22,13 +22,23 @@ export default function SelectBox({
   const customStyles = {
     control: (base, state) => ({
       ...base,
-      maxHeight: "65px",
-      overflowY: "auto",
+      minHeight: "35px", // Reduce the height of the box
+      height: "30px", // Explicit height control
+      padding: "0px 4px", // Reduce padding to make it more compact
+      //overflowY: "auto",
       borderColor: state.isFocused ? "#de7008" : base.borderColor,
       "&:hover": {
         borderColor: "#de7008",
       },
       boxShadow: state.isFocused ? "0 0 0 1px #de7008" : base.boxShadow,
+    }),
+    valueContainer: (base) => ({
+      ...base,
+      padding: "0px 6px", // Reduce padding inside the box
+    }),
+    indicatorsContainer: (base) => ({
+      ...base,
+      height: "32px", // Match the control height
     }),
     menu: (base) => ({
       ...base,

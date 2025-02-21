@@ -196,7 +196,20 @@ const ProjectDetailsList = () => {
                       <td>{project?.property_type || "N/A"}</td>
                       <td>{project?.sfdc_project_id || "N/As"}</td>
                       <td>{project?.status || "N/A"}</td>
-                      <td>{project?.building_type || "N/A"}</td>
+                      <td><td style={{ width: "200px" }}>
+                        {project?.configurations?.length > 0
+                          ? project?.configurations.map((configurations, idx) => (
+                            <div key={idx}>
+                              {configurations.name}{" "}
+                              <img
+                                src={configurations.icon_url}
+                                alt={configurations.name}
+                                style={{ width: "20px", marginLeft: "5px" }}
+                              />
+                            </div>
+                          ))
+                          : "No amenities"}
+                      </td></td>
                       {/* <td>
                         {project?.location
                           ? `${project.location}, ${

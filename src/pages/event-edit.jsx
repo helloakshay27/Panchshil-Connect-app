@@ -10,6 +10,7 @@ const EventEdit = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    project_id:"",
     event_type: "",
     event_name: "",
     event_at: "",
@@ -143,6 +144,33 @@ const EventEdit = () => {
 
                 <div className="card-body">
                   <div className="row">
+                  <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Project ID
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <select
+                          className="form-control form-select"
+                          //name="project_id"
+                          value={formData.project_id}
+                          onChange={handleChange}
+                          required
+                        >
+                          <option value="" disabled>
+                            Select Event ID
+                          </option>
+                          {eventType?.map((type, index) => (
+                            <option key={index} value={type.id}>
+                              {type.project_id}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Types</label>
@@ -318,7 +346,7 @@ const EventEdit = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-3 d-flex gap-3">
                       {formData.previewImage ? (
                         <img
                           src={formData.previewImage}

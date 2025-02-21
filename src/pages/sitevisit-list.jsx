@@ -48,16 +48,16 @@ const SitevisitList = () => {
     };
     fetchSiteVisits();
   }, []);
-  useEffect(() => {
-    const filteredData = siteVisits.filter((visit) =>
-      visit.project_name.toLowerCase().includes(searchQuery.toLowerCase())
+
+ useEffect(() => {
+    if (!searchQuery) {
+      setFilteredSiteVisits(siteVisits);
+      return;
+    }
+    const filteredData = siteVisits.filter(
+      (visit) => visit.project_name && visit.project_name.includes(searchQuery)
     );
     setFilteredSiteVisits(filteredData);
-    setPagination({
-      current_page: getPageFromStorage(),
-      total_count: filteredData.length,
-      total_pages: Math.ceil(filteredData.length / pageSize),
-    });
   }, [searchQuery, siteVisits]);
 
   const handlePageChange = (pageNumber) => {

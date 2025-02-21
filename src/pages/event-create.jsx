@@ -27,6 +27,7 @@ const EventCreate = () => {
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
   const [files, setFiles] = useState([]);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false)
 
   console.log("AA", eventType);
@@ -157,6 +158,7 @@ const EventCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
+    setError("")
 
     // Validate form data
     const validationErrors = validateForm(formData);
@@ -222,6 +224,7 @@ const EventCreate = () => {
     } catch (error) {
       console.error("Error submitting the form:", error);
       toast.error("Failed to submit the form. Please try again.");
+      setError("Failed to submit the form. Please try again.");
     } finally {
       setLoading(false)
     }
@@ -289,7 +292,35 @@ const EventCreate = () => {
                 </div>
 
                 <div className="card-body">
+                  {error && <p className="text-danger">{error}</p>}
                   <div className="row">
+                  <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Project ID
+                          <span style={{ color: "red", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <select
+                          className="form-control form-select"
+                          name="project_id"
+                          value={formData.project_id}
+                          onChange={handleChange}
+                          required
+                        >
+                          <option value="" disabled>
+                            Select Event ID
+                          </option>
+                          {eventType?.map((type, index) => (
+                            <option key={index} value={type.id}>
+                              {type.project_id}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>

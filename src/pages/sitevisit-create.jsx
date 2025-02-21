@@ -243,7 +243,7 @@ const SitevisitCreate = () => {
                   )}
 
                   {/* Submit Button */}
-                  <div className="row mt-2 justify-content-center">
+                  <div className="row mt-4 justify-content-center">
                     <div className="col-md-2">
                       <button type="submit" className="purple-btn2 w-100" disabled={loading}>
                         {loading ? "Submitting..." : "Submit"}

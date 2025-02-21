@@ -164,6 +164,11 @@ const SitevisitEdit = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate(-1); // This navigates back one step in history
+  };
+
+
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
@@ -191,7 +196,7 @@ const SitevisitEdit = () => {
                         onChange={handleChange}
                         required
                       >
-                        <option value="" disabled>
+                        <option value="">
                           Select Project
                         </option>
                         {projectsType.map((project) => (
@@ -246,7 +251,7 @@ const SitevisitEdit = () => {
                     </div>
                   )}
 
-                  <div className="row mt-2 justify-content-center">
+                  <div className="row mt-4 justify-content-center">
                     <div className="col-md-2">
                       <button
                         onClick={handleSubmit}
@@ -254,6 +259,15 @@ const SitevisitEdit = () => {
                         className="purple-btn2 w-100"
                       >
                         Submit
+                      </button>
+                    </div>
+                    <div className="col-md-2">
+                      <button
+                        type="button"
+                        className="purple-btn2 w-100"
+                        onClick={handleCancel}
+                      >
+                        Cancel
                       </button>
                     </div>
                   </div>

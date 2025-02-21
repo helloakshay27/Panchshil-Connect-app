@@ -381,7 +381,7 @@ const ProjectDetailsEdit = () => {
       <div className="module-data-section p-3">
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
-            <h3 className="card-title">Project Details</h3>
+            <h3 className="card-title">Project Update</h3>
           </div>
           <div className="card-body">
             <div className="row">

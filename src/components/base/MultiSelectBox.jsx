@@ -10,11 +10,23 @@ export default function MultiSelectBox({
   const customStyles = {
     control: (base) => ({
       ...base,
-      maxHeight: "65px",
-      overflowY: "auto",
+      minHeight: "35px", // Reduce the height of the box
+     // height: "30px", // Explicit height control
+      padding: "0px 4px", 
+      //overflowY: "auto",
       position: "relative",
       zIndex: 10,
       border: "1px solid #ccc",
+      
+    }),
+    valueContainer: (base) => ({
+      ...base,
+      overflowY: "auto",
+      //padding: "0px 6px", // Reduce padding inside the box
+    }),
+    indicatorsContainer: (base) => ({
+      ...base,
+      height: "32px", // Match the control height
     }),
     menu: (base) => ({
       ...base,
