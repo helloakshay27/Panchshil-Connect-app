@@ -277,96 +277,94 @@ const ProjectDetailsList = () => {
 
             <div className="d-flex justify-content-between align-items-center px-3 mt-2">
               {/* Pagination Section */}
-              {pagination.total_pages > 1 && (
-                <ul className="pagination">
-                  {/* First Page Button */}
+              <ul className="pagination">
+                {/* First Page Button */}
+                <li
+                  className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(1)}
+                    disabled={pagination.current_page === 1}
+                  >
+                    First
+                  </button>
+                </li>
+
+                {/* Previous Page Button */}
+                <li
+                  className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      handlePageChange(pagination.current_page - 1)
+                    }
+                    disabled={pagination.current_page === 1}
+                  >
+                    Prev
+                  </button>
+                </li>
+
+                {/* Page Number Buttons */}
+                {Array.from(
+                  { length: pagination.total_pages },
+                  (_, index) => index + 1
+                ).map((page) => (
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                    key={page}
+                    className={`page-item ${pagination.current_page === page ? "active" : ""
                       }`}
                   >
                     <button
                       className="page-link"
-                      onClick={() => handlePageChange(1)}
-                      disabled={pagination.current_page === 1}
+                      onClick={() => handlePageChange(page)}
                     >
-                      First
+                      {page}
                     </button>
                   </li>
+                ))}
 
-                  {/* Previous Page Button */}
-                  <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                {/* Next Page Button */}
+                <li
+                  className={`page-item ${pagination.current_page === pagination.total_pages
+                    ? "disabled"
+                    : ""
+                    }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      handlePageChange(pagination.current_page + 1)
+                    }
+                    disabled={
+                      pagination.current_page === pagination.total_pages
+                    }
                   >
-                    <button
-                      className="page-link"
-                      onClick={() =>
-                        handlePageChange(pagination.current_page - 1)
-                      }
-                      disabled={pagination.current_page === 1}
-                    >
-                      Prev
-                    </button>
-                  </li>
+                    Next
+                  </button>
+                </li>
 
-                  {/* Page Number Buttons */}
-                  {Array.from(
-                    { length: pagination.total_pages },
-                    (_, index) => index + 1
-                  ).map((page) => (
-                    <li
-                      key={page}
-                      className={`page-item ${pagination.current_page === page ? "active" : ""
-                        }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(page)}
-                      >
-                        {page}
-                      </button>
-                    </li>
-                  ))}
-
-                  {/* Next Page Button */}
-                  <li
-                    className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                      }`}
+                {/* Last Page Button */}
+                <li
+                  className={`page-item ${pagination.current_page === pagination.total_pages
+                    ? "disabled"
+                    : ""
+                    }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(pagination.total_pages)}
+                    disabled={
+                      pagination.current_page === pagination.total_pages
+                    }
                   >
-                    <button
-                      className="page-link"
-                      onClick={() =>
-                        handlePageChange(pagination.current_page + 1)
-                      }
-                      disabled={
-                        pagination.current_page === pagination.total_pages
-                      }
-                    >
-                      Next
-                    </button>
-                  </li>
-
-                  {/* Last Page Button */}
-                  <li
-                    className={`page-item ${pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                      }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(pagination.total_pages)}
-                      disabled={
-                        pagination.current_page === pagination.total_pages
-                      }
-                    >
-                      Last
-                    </button>
-                  </li>
-                </ul>
-              )}
+                    Last
+                  </button>
+                </li>
+              </ul>
 
               {/* Showing Entries Information */}
               <div>
