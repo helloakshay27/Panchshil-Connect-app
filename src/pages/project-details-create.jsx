@@ -44,6 +44,7 @@ const ProjectDetailsCreate = () => {
 
   const [projectsType, setprojectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
+  const [specifications, setSpecifications] = useState([]);
   const [amenities, setAmenities] = useState([]);
 
   const Navigate = useNavigate();
@@ -310,7 +311,8 @@ const ProjectDetailsCreate = () => {
 
   useEffect(() => {
     const fetchConfigurations = async () => {
-      const url = "https://panchshil-super.lockated.com/configuration_setups.json";
+      const url =
+        "https://panchshil-super.lockated.com/configuration_setups.json";
 
       try {
         const response = await axios.get(url);
@@ -322,6 +324,24 @@ const ProjectDetailsCreate = () => {
     };
 
     fetchConfigurations();
+  }, []);
+
+  useEffect(() => {
+    const fetchSpecifications = async () => {
+      const url =
+        "https://panchshil-super.lockated.com/specification_setups.json";
+
+      try {
+        const response = await axios.get(url);
+        if (response.data && response.data.specification_setups) {
+          setSpecifications(response.data.specification_setups); // Extract array correctly
+        }
+      } catch (error) {
+        console.error("Error fetching specifications:", error);
+      }
+    };
+
+    fetchSpecifications();
   }, []);
 
   useEffect(() => {
@@ -378,6 +398,8 @@ const ProjectDetailsCreate = () => {
     });
   };
 
+  console.log("specification", specifications);
+
   return (
     <>
       {/* <Header /> */}
@@ -395,7 +417,7 @@ const ProjectDetailsCreate = () => {
                     Project Types
                     <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
-                  <SelectBox 
+                  <SelectBox
                     options={[
                       {
                         value: "",
@@ -724,19 +746,20 @@ const ProjectDetailsCreate = () => {
                     <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <MultiSelectBox
-                    options={[
-                      { value: "Alabama", label: "Alabama" },
-                      { value: "Alaska", label: "Alaska" },
-                      { value: "California", label: "California" },
-                      { value: "Delaware", label: "Delaware" },
-                      { value: "Tennessee", label: "Tennessee" },
-                      { value: "Texas", label: "Texas" },
-                      { value: "Washington", label: "Washington" },
-                    ]}
-                    value={formData.specifications.map((spec) => ({
-                      value: spec,
-                      label: spec,
+                    options={specifications.map((spec) => ({
+                      value: spec.id,
+                      label: spec.name,
                     }))}
+                    value={formData.specifications
+                      .map((specId) => {
+                        const spec = specifications.find(
+                          (s) => s.id === specId
+                        );
+                        return spec
+                          ? { value: spec.id, label: spec.name }
+                          : null;
+                      })
+                      .filter(Boolean)}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -795,7 +818,6 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div> */}
-              
             </div>
           </div>
         </div>
@@ -810,7 +832,9 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Address Line 1
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
+                    <span style={{ color: "red", fontSize: "16px" }}>
+                      *
+                    </span>{" "}
                   </label>
                   <input
                     //title="location.address"
@@ -828,7 +852,9 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Address Line 2
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
+                    <span style={{ color: "red", fontSize: "16px" }}>
+                      *
+                    </span>{" "}
                   </label>
                   <input
                     className="form-control"

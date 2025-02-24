@@ -89,13 +89,13 @@ const BannerAdd = () => {
     let newErrors = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = "Title is mandatory";
+     newErrors.title = "";
       toast.error("Title is mandatory");
     } else if (!formData.company_id.trim()) {
-      newErrors.company_id = "Company  is mandatory";
+      newErrors.company_id = "";
       toast.error("Company is mandatory");
     } else if (!formData.attachfile || formData.attachfile.length === 0) {
-      newErrors.attachfile = "Banner image is mandatory";
+      newErrors.attachfile = "";
       toast.error("Banner image is mandatory");
     }
 

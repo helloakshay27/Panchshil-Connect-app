@@ -47,6 +47,7 @@ const ProjectDetailsEdit = () => {
 
   const [projectsType, setProjectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
+  const [specifications, setSpecifications] = useState([]);
   const [amenities, setAmenities] = useState([]);
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,6 +76,9 @@ const ProjectDetailsEdit = () => {
     );
     fetchData("configuration_setups.json", (data) =>
       setConfigurations(data || [])
+    );
+    fetchData("specification_setups.json", (data) =>
+      setSpecifications(data?.specification_setups || [])
     );
     fetchData("amenity_setups.json", (data) =>
       setAmenities(data?.amenities_setups || [])
@@ -113,7 +117,7 @@ const ProjectDetailsEdit = () => {
           no_of_apartments: projectData.no_of_apartments || "",
           Rera_Number: projectData.rera_number || "",
           specifications: Array.isArray(projectData.specifications)
-            ? projectData.specifications
+            ? projectData.specifications.map((spac) => spac.name)
             : [],
           Land_Area: projectData.land_area || "",
           location: {
@@ -336,7 +340,7 @@ const ProjectDetailsEdit = () => {
 
     // Append form data
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === "address") {
+      if (key === "location") {
         // Append nested address fields
         Object.entries(value).forEach(([subKey, subValue]) =>
           data.append(`project[Address][${subKey}]`, subValue)
@@ -701,6 +705,7 @@ const ProjectDetailsEdit = () => {
                   {console.log("project_amenities", formData.project_amenities)}
                 </div>
               </div>
+
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -708,31 +713,30 @@ const ProjectDetailsEdit = () => {
                     <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <MultiSelectBox
-                    options={[
-                      { value: "Alabama", label: "Alabama" },
-                      { value: "Alaska", label: "Alaska" },
-                      { value: "California", label: "California" },
-                      { value: "Delaware", label: "Delaware" },
-                      { value: "Tennessee", label: "Tennessee" },
-                      { value: "Texas", label: "Texas" },
-                      { value: "Washington", label: "Washington" },
-                    ]}
-                    value={formData.specifications.map((spec) => ({
-                      value: spec,
-                      label: spec,
+                    options={specifications.map((spec) => ({
+                      value: spec.id,
+                      label: spec.name,
                     }))}
-                    onChange={(selectedOptions) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        specifications: selectedOptions.map(
-                          (option) => option.value
-                        ),
-                      }))
+                    value={
+                      specifications
+                        .filter((spec) => formData.specifications.includes(spec.id))
+                        .map((spec) => ({
+                          value: spec.id,
+                          label: spec.name,
+                        }))
                     }
-                    placeholder="Select Specifications"
+                      onChange={(selectedOptions) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          specifications: selectedOptions.map((option) => option.value),
+                        }))
+                      }
+                    placeholder="Select Type"
                   />
+                  {console.log("specifications", specifications)}                 
                 </div>
               </div>
+              
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
