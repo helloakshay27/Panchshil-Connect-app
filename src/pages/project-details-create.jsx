@@ -46,6 +46,7 @@ const ProjectDetailsCreate = () => {
   const [configurations, setConfigurations] = useState([]);
   const [specifications, setSpecifications] = useState([]);
   const [amenities, setAmenities] = useState([]);
+  const [loading, setLoading] = useState(false)
 
   const Navigate = useNavigate();
 
@@ -224,11 +225,13 @@ const ProjectDetailsCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const validationErrors = validateForm(formData);
 
     if (validationErrors.length > 0) {
       // Show only the first validation error
       toast.error(validationErrors[0]);
+      setLoading(false)
       return; // Stop form submission if there are errors
     }
 
@@ -283,6 +286,8 @@ const ProjectDetailsCreate = () => {
     } catch (error) {
       console.error("Error submitting the form:", error);
       toast.error("Failed to submit the form. Please try again.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -1094,7 +1099,7 @@ const ProjectDetailsCreate = () => {
           </div>
           <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
-              <button onClick={handleSubmit} className="purple-btn2 w-100">
+              <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
                 Submit
               </button>
             </div>

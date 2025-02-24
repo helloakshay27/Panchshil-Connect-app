@@ -328,11 +328,13 @@ const ProjectDetailsEdit = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const validationErrors = validateForm(formData);
 
     if (validationErrors.length > 0) {
       // Show only the first validation error
       toast.error(validationErrors[0]);
+      setLoading(false);
       return; // Stop form submission if there are errors
     }
 
@@ -371,6 +373,8 @@ const ProjectDetailsEdit = () => {
     } catch (error) {
       toast.error("Failed to submit the form. Please try again.");
       console.error("Error submitting the form:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -725,18 +729,18 @@ const ProjectDetailsEdit = () => {
                           label: spec.name,
                         }))
                     }
-                      onChange={(selectedOptions) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          specifications: selectedOptions.map((option) => option.value),
-                        }))
-                      }
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        specifications: selectedOptions.map((option) => option.value),
+                      }))
+                    }
                     placeholder="Select Type"
                   />
-                  {console.log("specifications", specifications)}                 
+                  {console.log("specifications", specifications)}
                 </div>
               </div>
-              
+
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -1030,7 +1034,7 @@ const ProjectDetailsEdit = () => {
         </div>
         <div className="row mt-2 justify-content-center">
           <div className="col-md-2">
-            <button onClick={handleSubmit} className="purple-btn2 w-100">
+            <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
               Update
             </button>
           </div>

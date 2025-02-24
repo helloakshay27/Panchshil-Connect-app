@@ -16,6 +16,7 @@ const TestimonialEdit = () => {
   });
 
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -53,6 +54,7 @@ const TestimonialEdit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await axios.put(
         `https://panchshil-super.lockated.com/testimonials/${testimonial.id}.json`,
@@ -69,6 +71,8 @@ const TestimonialEdit = () => {
     } catch (error) {
       console.error("Error updating testimonial:", error);
       toast.error("Error updating testimonial. Please try again.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -171,7 +175,7 @@ const TestimonialEdit = () => {
                 </div>
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2 mt-3">
-                    <button type="submit" className="purple-btn2 w-100">
+                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
                       Update
                     </button>
                   </div>

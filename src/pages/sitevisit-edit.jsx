@@ -15,6 +15,7 @@ const SitevisitEdit = () => {
   const { id } = useParams(); // Get ID from URL params for editing
   const [projectsType, setProjectsType] = useState([]);
   const [slots, setSlots] = useState([]);
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
 
   const apiUrl =
@@ -115,6 +116,7 @@ const SitevisitEdit = () => {
   // Handle form submission (Create or Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (
       !formData.scheduled_at ||
@@ -122,6 +124,7 @@ const SitevisitEdit = () => {
       !formData.selected_slot
     ) {
       toast.error("Please fill all required fields, including a time slot.");
+      setLoading(false)
       return;
     }
 
@@ -161,6 +164,8 @@ const SitevisitEdit = () => {
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error(`Error submitting schedule: ${error.message}`);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -257,8 +262,9 @@ const SitevisitEdit = () => {
                         onClick={handleSubmit}
                         type="submit"
                         className="purple-btn2 w-100"
+                        disabled={loading}
                       >
-                        Submit
+                        Update
                       </button>
                     </div>
                     <div className="col-md-2">

@@ -45,7 +45,6 @@ const ReferralCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     if (
       !formData.name ||
@@ -204,7 +203,7 @@ const ReferralCreate = () => {
                       className="purple-btn2 w-100"
                       disabled={loading}
                     >
-                      {loading ? "Submitting..." : "Submit"}
+                      Submit
                     </button>
                   </div>
 

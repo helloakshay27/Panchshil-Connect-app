@@ -90,6 +90,7 @@ const BannerEdit = () => {
   };
 
   const updateBanners = async () => {
+    setLoading(true);
     try {
       if (!id) {
         throw new Error("Banner ID is missing.");
@@ -117,6 +118,8 @@ const BannerEdit = () => {
     } catch (error) {
       console.error("Update Error:", error);
       toast.error("Failed to update the banner. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -210,6 +213,7 @@ const BannerEdit = () => {
                   onClick={updateBanners}
                   type="submit"
                   className="purple-btn2 w-100"
+                  disabled={loading}
                 >
                   Submit
                 </button>

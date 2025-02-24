@@ -123,7 +123,7 @@ const SiteVisitSlotConfigList = () => {
           </div>
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Site Visit Slot Config List</h3>
+              <h3 className="card-title">Site Slot List</h3>
             </div>
             <div className="card-body mt-3 pb-4 pt-0">
               <div className="tbl-container mt-4 ">
@@ -133,7 +133,7 @@ const SiteVisitSlotConfigList = () => {
                       <th>Sr</th>
                       <th>Project Id</th>
                       <th>Scheduled Date</th>
-                      <th>AM PM Timing</th>
+                      <th>Scheduled Time</th>
                     </tr>
                   </thead>
                   <tbody>

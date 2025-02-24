@@ -9,6 +9,7 @@ const SpecificationUpdate = () => {
   const [setupName, setSetupName] = useState("");
   const [icon, setIcon] = useState(null);
   // alert(id);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     axios
@@ -28,6 +29,7 @@ const SpecificationUpdate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData();
     formData.append("specification_setup[name]", setupName);
     if (icon) formData.append("icon", icon);
@@ -45,6 +47,8 @@ const SpecificationUpdate = () => {
     } catch (error) {
       console.error("Error updating specification:", error);
       toast.error("Failed to update specification. Please try again.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -85,7 +89,7 @@ const SpecificationUpdate = () => {
                 </div>
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100">
+                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
                       Update
                     </button>
                   </div>

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom"; // If using React Router
 import "../mor.css";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 const EditAmenities = () => {
   const { id } = useParams(); // Get ID from URL
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
+  const [loading, setLoading] = useState(false)
 
   // Fetch existing amenity details
   useEffect(() => {
@@ -29,9 +30,11 @@ const EditAmenities = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!name.trim()) {
-      alert("Name is required.");
+      toast.error("Name is required.");
+      setLoading(false);
       return;
     }
 
@@ -64,6 +67,8 @@ const EditAmenities = () => {
         `Failed to update amenity: ${error.response?.data?.error || "Unknown error"
         }`
       );
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -104,7 +109,7 @@ const EditAmenities = () => {
                 </div>
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100">
+                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
                       Update
                     </button>
                   </div>

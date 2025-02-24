@@ -10,7 +10,7 @@ const EventEdit = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    project_id:"",
+    project_id: "",
     event_type: "",
     event_name: "",
     event_at: "",
@@ -32,6 +32,7 @@ const EventEdit = () => {
 
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -95,6 +96,7 @@ const EventEdit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const data = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -118,6 +120,8 @@ const EventEdit = () => {
     } catch (error) {
       console.error("Error updating event:", error);
       toast.error("Failed to update event.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -144,7 +148,7 @@ const EventEdit = () => {
 
                 <div className="card-body">
                   <div className="row">
-                  <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Project ID
@@ -174,7 +178,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Types
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -196,8 +200,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Name 
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <label>Event Name
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -215,7 +219,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event At
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -233,7 +237,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event From
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -251,7 +255,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event To
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -270,7 +274,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>RSVP Action
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -289,7 +293,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Description
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -307,7 +311,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Publish
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -325,7 +329,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event User ID
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -354,7 +358,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Comment
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -372,7 +376,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Shared
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -390,7 +394,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Share Groups
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "red", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -497,6 +501,7 @@ const EventEdit = () => {
                       onClick={handleSubmit}
                       type="submit"
                       className="purple-btn2 w-100"
+                      disabled={loading}
                     >
                       Update
                     </button>

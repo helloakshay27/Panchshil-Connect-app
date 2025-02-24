@@ -164,6 +164,7 @@ const EventCreate = () => {
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
       toast.error(validationErrors.join("\n")); // Show all errors in an alert
+      setLoading(false)
       return; // Stop form submission
     }
 
@@ -294,7 +295,7 @@ const EventCreate = () => {
                 <div className="card-body">
                   {error && <p className="text-danger">{error}</p>}
                   <div className="row">
-                  <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Project ID
@@ -688,7 +689,7 @@ const EventCreate = () => {
                       className="purple-btn2 w-100"
                       disabled={loading}
                     >
-                      {loading ? "Submitting..." : "Submit"}
+                      Submit
                     </button>
                   </div>
                   <div className="col-md-2">

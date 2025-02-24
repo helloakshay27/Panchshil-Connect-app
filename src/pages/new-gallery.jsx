@@ -10,6 +10,9 @@ const NewGallery = () => {
   const [galleryType, setGalleryType] = useState([]);
   const [galleryData, setGalleryData] = useState([]);
 
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [seeAll, setSeeAll] = useState(false);
+
   const [formData, setFormData] = useState({
     galleryType: "",
     projectId: "",
@@ -24,10 +27,28 @@ const NewGallery = () => {
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: files ? files[0] : value,
-    }));
+    // setFormData((prevData) => ({
+    //   ...prevData,
+    //   [name]: files ? files[0] : value,
+    // }));
+
+    if (files) {
+      const fileArray = Array.from(files);
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: fileArray,
+      }));
+
+      // Generate preview URLs
+      const previews = fileArray.map((file) => URL.createObjectURL(file));
+      setImagePreviews(previews);
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+    console.log(formData);
   };
 
   useEffect(() => {
@@ -109,7 +130,7 @@ const NewGallery = () => {
       );
       toast.success("Gallery updated successfully!");
       console.log("Success:", response.data);
-      navigate('/gallery-list')
+      navigate("/gallery-list");
     } catch (error) {
       toast.error("Failed to update the gallery. Please try again.");
       console.error("Error:", error.response?.data || error.message);
@@ -164,7 +185,19 @@ const NewGallery = () => {
 
   const handleCancel = () => {
     navigate(-1);
-  }
+  };
+
+  const handleRemoveImage = (index) => {
+    setImagePreviews((prevPreviews) =>
+      prevPreviews.filter((_, i) => i !== index)
+    );
+    console.log(imagePreviews.length);
+    setFormData((prevData) => ({
+      ...prevData,
+      attachment: prevData.attachment.filter((_, i) => i !== index),
+    }));
+    console.log(formData);
+  };
 
   return (
     <div className="main-content">
@@ -294,6 +327,49 @@ const NewGallery = () => {
                         />
                       </div>
                     </div>
+                    <div className="row mt-3">
+                      {(seeAll ? imagePreviews : imagePreviews.slice(0, 3)).map(
+                        (preview, index) => (
+                          <div
+                            key={index}
+                            className="col-md-1 position-relative"
+                          >
+                            <img
+                              src={preview}
+                              alt={`Preview ${index}`}
+                              className="img-thumbnail mt-2"
+                              style={{
+                                maxWidth: "100px",
+                                maxHeight: "100px",
+                                objectFit: "cover",
+                              }}
+                            />
+                            <button
+                              type="button"
+                              className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                              style={{
+                                top: 2,
+                                right: -5,
+                                height: 20,
+                                width: 20,
+                                backgroundColor: "var(--red)",
+                                color: "white"
+                              }}
+                              onClick={() => handleRemoveImage(index)}
+                            >
+                              x
+                            </button>
+                          </div>
+                        )
+                      )}
+                      {imagePreviews.length > 3 && <span
+                        className="mt-2"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setSeeAll(!seeAll)}
+                      >
+                        {seeAll ? "See Less" : "See All"}
+                      </span>}
+                    </div>
                   </div>
                 )}
               </div>
@@ -305,7 +381,7 @@ const NewGallery = () => {
                     className="purple-btn2 w-100"
                     disabled={loading}
                   >
-                    {loading ? "Submitting..." : "Submit"}
+                    Submit
                   </button>
                 </div>
                 <div className="col-md-2">

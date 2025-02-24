@@ -89,7 +89,7 @@ const BannerAdd = () => {
     let newErrors = {};
 
     if (!formData.title.trim()) {
-     newErrors.title = "";
+      newErrors.title = "";
       toast.error("Title is mandatory");
     } else if (!formData.company_id.trim()) {
       newErrors.company_id = "";
@@ -106,8 +106,11 @@ const BannerAdd = () => {
   // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!validateForm()) {
+      toast.error("Please fill in all the required fields.");
+      setLoading(false);
       return; // Prevent form submission if validation fails
     }
 
@@ -128,6 +131,8 @@ const BannerAdd = () => {
       navigate("/banner-list");
     } catch (error) {
       toast.error(`Error creating banner: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -230,6 +235,7 @@ const BannerAdd = () => {
                     onClick={handleSubmit}
                     type="submit"
                     className="purple-btn2 w-100"
+                    disabled={loading}
                   >
                     Submit
                   </button>

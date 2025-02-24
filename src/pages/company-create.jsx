@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from 'react-hot-toast'
 
 const CompanyCreate = () => {
   const [organizations, setOrganizations] = useState([]);
@@ -70,14 +71,14 @@ const CompanyCreate = () => {
       );
 
       if (response.ok) {
-        alert("Company created successfully!");
+        toast.success("Company created successfully!");
         setFormData({ companyName: "", companyLogo: null, organizationId: "" }); // Reset form
       } else {
-        alert("Failed to create company. Please try again.");
+        toast.error("Failed to create company. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting company:", error);
-      alert("Something went wrong.");
+      toast.error("Something went wrong.");
     } finally {
       setSubmitting(false);
     }

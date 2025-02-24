@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import SelectBox from "../components/base/SingleSelect";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const EditGallery = () => {
   const { id } = useParams(); // Corrected ID extraction
@@ -80,10 +81,11 @@ const EditGallery = () => {
         `https://panchshil-super.lockated.com/galleries/${id}.json`,
         data
       );
-      alert("Gallery updated successfully!");
+      toast.success("Gallery updated successfully!");
       console.log("Success:", response.data);
     } catch (error) {
       setError("Failed to update the gallery. Please try again.");
+      toast.error("Failed to update the gallery. Please try again.");
       console.error("Error:", error.response?.data || error.message);
     } finally {
       setLoading(false);
@@ -144,7 +146,6 @@ const EditGallery = () => {
                 <h3 className="card-title">Edit Gallery</h3>
               </div>
               <div className="card-body">
-                {error && <div className="alert alert-danger">{error}</div>}
                 {loading ? (
                   <div className="text-center">Loading...</div>
                 ) : (
@@ -275,17 +276,17 @@ const EditGallery = () => {
                   </div>
                 )}
               </div>
-            </div>
-            {/* Submit Button */}
-            <div className="row mt-3 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={loading}
-                >
-                  {loading ? "Updating..." : "Update Gallery"}
-                </button>
+              {/* Submit Button */}
+              <div className="row mt-3 justify-content-center">
+                <div className="col-md-2">
+                  <button
+                    type="submit"
+                    className="purple-btn2 w-100"
+                    disabled={loading}
+                  >
+                    Update
+                  </button>
+                </div>
               </div>
             </div>
           </form>

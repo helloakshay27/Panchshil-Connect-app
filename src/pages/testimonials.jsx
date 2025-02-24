@@ -11,6 +11,7 @@ const Testimonials = () => {
   const [userName, setUserName] = useState("");
   const [userType, setUserType] = useState("");
   const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -48,9 +49,11 @@ const Testimonials = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!companySetupId || !userName.trim() || !userType || !content.trim()) {
       toast.error("All fields are required.");
+      setLoading(false);
       return;
     }
 
@@ -89,6 +92,8 @@ const Testimonials = () => {
         console.error("Response data:", error.response.data);
       }
       toast.error("Failed to submit. Please check your input.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -207,7 +212,7 @@ const Testimonials = () => {
                   </div>
                   <div className="row mt-2 justify-content-center">
                     <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100">
+                      <button type="submit" className="purple-btn2 w-100" disabled={loading}>
                         Submit
                       </button>
                     </div>

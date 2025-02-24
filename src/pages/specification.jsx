@@ -111,7 +111,7 @@ const Specification = () => {
                       className="purple-btn2 w-100"
                       disabled={loading}
                     >
-                      {loading ? "Submitting..." : "Submit"}
+                      Submit
                     </button>
                   </div>
                   <div className="col-md-2">
