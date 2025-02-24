@@ -61,7 +61,7 @@ const Specification = () => {
         <div className="module-data-section container-fluid">
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Specification</h3>
+              <h3 className="card-title">Create Specification</h3>
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit}>
@@ -70,7 +70,7 @@ const Specification = () => {
                     <div className="form-group">
                       <label>
                         Name
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           {" "}
                           *
                         </span>
@@ -89,7 +89,7 @@ const Specification = () => {
                     <div className="form-group">
                       <label>
                         Icon
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           {" "}
                           *
                         </span>

@@ -181,7 +181,7 @@ const SitevisitEdit = () => {
           <div className="module-data-section p-3">
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header3">
-                <h3 className="card-title">Site Visit Edit</h3>
+                <h3 className="card-title">Edit Site Visit</h3>
               </div>
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
@@ -190,7 +190,7 @@ const SitevisitEdit = () => {
                     <div className="col-md-3">
                       <label>
                         Project Name
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
@@ -216,7 +216,7 @@ const SitevisitEdit = () => {
                     <div className="col-md-3">
                       <label>
                         Date
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
@@ -264,7 +264,7 @@ const SitevisitEdit = () => {
                         className="purple-btn2 w-100"
                         disabled={loading}
                       >
-                        Update
+                        Submit
                       </button>
                     </div>
                     <div className="col-md-2">

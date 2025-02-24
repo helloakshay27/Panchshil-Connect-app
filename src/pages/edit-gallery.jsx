@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import SelectBox from "../components/base/SingleSelect";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 const EditGallery = () => {
+  const navigate = useNavigate()
   const { id } = useParams(); // Corrected ID extraction
   const [projectsType, setprojectsType] = useState([]);
   const [galleryType, setGalleryType] = useState([]);
@@ -135,6 +136,10 @@ const EditGallery = () => {
 
     fetchProjects();
   }, []);
+
+  const handleCancel = () => {
+    navigate(-1);
+  }
 
   return (
     <div className="main-content">
@@ -284,7 +289,16 @@ const EditGallery = () => {
                     className="purple-btn2 w-100"
                     disabled={loading}
                   >
-                    Update
+                    Submit
+                  </button>
+                </div>
+                <div className="col-md-2">
+                  <button
+                    type="button"
+                    className="purple-btn2 w-100"
+                    onClick={handleCancel}
+                  >
+                    Cancel
                   </button>
                 </div>
               </div>

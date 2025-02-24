@@ -147,7 +147,7 @@ const BannerAdd = () => {
           <div className="module-data-section">
             <div className="card mt-4 pb-2 mx-4">
               <div className="card-header">
-                <h3 className="card-title">New Banner</h3>
+                <h3 className="card-title">Create Banner</h3>
               </div>
               <div className="card-body">
                 <div className="row">
@@ -155,7 +155,7 @@ const BannerAdd = () => {
                     <div className="form-group">
                       <label>
                         Title{" "}
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
@@ -179,7 +179,7 @@ const BannerAdd = () => {
                     <div className="form-group">
                       <label>
                         Company{" "}
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
@@ -208,7 +208,7 @@ const BannerAdd = () => {
                     <div className="form-group">
                       <label>
                         Banner{" "}
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>

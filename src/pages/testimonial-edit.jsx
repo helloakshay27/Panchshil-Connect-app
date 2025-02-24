@@ -95,7 +95,7 @@ const TestimonialEdit = () => {
                     <div className="form-group">
                       <label>
                         Company Setup Id
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
@@ -125,7 +125,7 @@ const TestimonialEdit = () => {
                     <div className="form-group">
                       <label>
                         User Name
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
@@ -141,7 +141,7 @@ const TestimonialEdit = () => {
                     <div className="form-group">
                       <label>
                         User Type
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
@@ -160,7 +160,7 @@ const TestimonialEdit = () => {
                     <div className="form-group">
                       <label>
                         Content
-                        <span style={{ color: "red", fontSize: "16px" }}>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
@@ -176,7 +176,7 @@ const TestimonialEdit = () => {
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2 mt-3">
                     <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                      Update
+                      Submit
                     </button>
                   </div>
                   <div className="col-md-2 mt-3">

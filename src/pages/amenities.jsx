@@ -63,7 +63,7 @@ const Amenities = () => {
           <div className="module-data-section container-fluid">
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header">
-                <h3 className="card-title">Amenities Setup</h3>
+                <h3 className="card-title">Create Amenities</h3>
               </div>
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
@@ -72,7 +72,7 @@ const Amenities = () => {
                       <div className="form-group">
                         <label>
                           Name{" "}
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             *
                           </span>
                         </label>
@@ -90,7 +90,7 @@ const Amenities = () => {
                       <div className="form-group">
                         <label>
                           Icon{" "}
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             *
                           </span>
                           <span />

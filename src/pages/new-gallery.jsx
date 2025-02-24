@@ -206,7 +206,7 @@ const NewGallery = () => {
           <form onSubmit={handleSubmit}>
             <div className="card mx-4 pb-4 mt-4">
               <div className="card-header">
-                <h3 className="card-title">Add Gallery</h3>
+                <h3 className="card-title">Create Gallery</h3>
               </div>
               <div className="card-body">
                 {loading ? (
@@ -236,7 +236,7 @@ const NewGallery = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Gallery Type<span style={{ color: "red" }}> *</span>
+                          Gallery Type<span style={{ color: "#de7008" }}> *</span>
                         </label>
                         <SelectBox
                           options={galleryType.map((type) => ({
@@ -261,7 +261,7 @@ const NewGallery = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Project Types<span style={{ color: "red" }}> *</span>
+                          Project Types<span style={{ color: "#de7008" }}> *</span>
                         </label>
                         <SelectBox
                           options={projectsType.map((type) => ({
@@ -286,7 +286,7 @@ const NewGallery = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Name<span style={{ color: "red" }}> *</span>
+                          Name<span style={{ color: "#de7008" }}> *</span>
                         </label>
                         <input
                           className="form-control"
@@ -301,7 +301,7 @@ const NewGallery = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Title<span style={{ color: "red" }}> *</span>
+                          Title<span style={{ color: "#de7008" }}> *</span>
                         </label>
                         <input
                           className="form-control"
@@ -316,7 +316,7 @@ const NewGallery = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Attachment<span style={{ color: "red" }}> *</span>
+                          Attachment<span style={{ color: "#de7008" }}> *</span>
                         </label>
                         <input
                           className="form-control"

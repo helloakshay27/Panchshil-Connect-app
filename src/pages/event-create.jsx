@@ -289,7 +289,7 @@ const EventCreate = () => {
             <div className="module-data-section p-3">
               <div className="card mt-3 pb-4 mx-4">
                 <div className="card-header">
-                  <h3 className="card-title">Event Create</h3>
+                  <h3 className="card-title">Create Event</h3>
                 </div>
 
                 <div className="card-body">
@@ -299,7 +299,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Project ID
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -326,7 +326,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Types
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -353,7 +353,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Name
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -373,7 +373,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event At
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -393,7 +393,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event From
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -414,7 +414,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event To
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -450,7 +450,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           RSVP Action
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -482,7 +482,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Description
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -502,7 +502,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Publish
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -522,7 +522,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event User ID
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -553,7 +553,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Comment
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -573,7 +573,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Shared
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -593,7 +593,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Share Groups
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -614,7 +614,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Attachment
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>

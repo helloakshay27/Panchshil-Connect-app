@@ -109,7 +109,7 @@ const Testimonials = () => {
           <div className="module-data-section p-3">
             <div className="card mt-5 pb-4 mx-4">
               <div className="card-header">
-                <h3 className="card-title">Testimonials</h3>
+                <h3 className="card-title">Create Testimonials</h3>
               </div>
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
@@ -118,7 +118,7 @@ const Testimonials = () => {
                       <div className="form-group">
                         <label>
                           Company Setup Id
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -150,7 +150,7 @@ const Testimonials = () => {
                       <div className="form-group">
                         <label>
                           User Name
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -170,7 +170,7 @@ const Testimonials = () => {
                       <div className="form-group">
                         <label>
                           User Type
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -193,7 +193,7 @@ const Testimonials = () => {
                       <div className="form-group">
                         <label>
                           Description
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>

@@ -58,7 +58,7 @@ const SpecificationUpdate = () => {
         <div className="module-data-section container-fluid">
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Specification Update</h3>
+              <h3 className="card-title">Edit Specification</h3>
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit}>
@@ -90,7 +90,7 @@ const SpecificationUpdate = () => {
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
                     <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                      Update
+                      Submit
                     </button>
                   </div>
                   <div className="col-md-2">

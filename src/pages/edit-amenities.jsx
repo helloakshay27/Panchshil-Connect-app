@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom"; // If using React Router
+import { useNavigate, useParams } from "react-router-dom"; // If using React Router
 import "../mor.css";
 import { toast } from "react-hot-toast";
 
 const EditAmenities = () => {
+  const navigate = useNavigate()
   const { id } = useParams(); // Get ID from URL
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
@@ -72,6 +73,10 @@ const EditAmenities = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate(-1)
+  }
+
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
@@ -110,7 +115,12 @@ const EditAmenities = () => {
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
                     <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                      Update
+                      Submit
+                    </button>
+                  </div>
+                  <div className="col-md-2">
+                    <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
+                      Cancel
                     </button>
                   </div>
                 </div>

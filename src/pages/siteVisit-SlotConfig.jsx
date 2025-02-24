@@ -107,7 +107,7 @@ const SiteVisitSlotConfig = () => {
           <div className="module-data-section p-3">
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header">
-                <h3 className="card-title">Site Visit Slot Configuration</h3>
+                <h3 className="card-title">Create Site Slot</h3>
               </div>
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
@@ -116,7 +116,7 @@ const SiteVisitSlotConfig = () => {
                       <div className="form-group">
                         <label>
                           Start Date
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -137,7 +137,7 @@ const SiteVisitSlotConfig = () => {
                       <div className="form-group">
                         <label>
                           End Date
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -160,7 +160,7 @@ const SiteVisitSlotConfig = () => {
                       <div className="form-group ">
                         <label>
                           Start Hours
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -186,7 +186,7 @@ const SiteVisitSlotConfig = () => {
                       <div className="form-group">
                         <label>
                           Start Minutes
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -214,7 +214,7 @@ const SiteVisitSlotConfig = () => {
                       <div className="form-group">
                         <label>
                           End Hours
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -241,7 +241,7 @@ const SiteVisitSlotConfig = () => {
                       <div className="form-group">
                         <label>
                           End Minutes
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
@@ -268,7 +268,7 @@ const SiteVisitSlotConfig = () => {
                       <div className="form-group">
                         <label>
                           Project
-                          <span style={{ color: "red", fontSize: "16px" }}>
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
