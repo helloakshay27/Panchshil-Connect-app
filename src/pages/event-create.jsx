@@ -310,7 +310,7 @@ const EventCreate = () => {
                           onChange={handleChange}
                           required
                         >
-                          <option value="" disabled>
+                          <option value="" >
                             Select Event ID
                           </option>
                           {eventType?.map((type, index) => (

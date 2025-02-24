@@ -18,10 +18,7 @@ const ProjectDetails = () => {
     property_type: "",
     SFDC_Project_Id: "",
     status: "",
-    configurations: {
-      name: "",
-      icon_url: "",
-    },
+    configurations: [],
     project_name: "",
     project_address: "",
     project_description: "",
@@ -33,8 +30,8 @@ const ProjectDetails = () => {
     no_of_towers: "",
     no_of_apartments: "",
     rera_number: "",
-    project_amenities: "",
-    specifications: "",
+    amenities: [],
+    specifications: [],
     land_area: "",
     location: {
       address: "",
@@ -347,7 +344,7 @@ const ProjectDetails = () => {
                   <div className="col-6">
                     <label className="text">
                       <span className="me-3">
-                        <span className="text-dark">: {formData.amenities}</span>
+                        <span className="text-dark">: {formData.amenities.name}</span>
                       </span>
                     </label>
                   </div>
@@ -360,7 +357,7 @@ const ProjectDetails = () => {
                     <label className="text">
                       <span className="me-3">
                         <span className="text-dark">
-                          : {formData.specifications}
+                          : {formData.specifications.name}
                         </span>
                       </span>
                     </label>

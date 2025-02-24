@@ -26,11 +26,11 @@ export default function SelectBox({
       height: "30px", // Explicit height control
       padding: "0px 4px", // Reduce padding to make it more compact
       //overflowY: "auto",
-      borderColor: state.isFocused ? "#de7008" : base.borderColor,
-      "&:hover": {
-        borderColor: "#de7008",
-      },
-      boxShadow: state.isFocused ? "0 0 0 1px #de7008" : base.boxShadow,
+      borderColor: state.isFocused ? "#80bdff" : base.borderColor,
+      // "&:hover": {
+      //   borderColor: "#80bdff",
+      // },
+      boxShadow: state.isFocused ? "0 0 0 4px rgba(128, 189, 255, 0.5)" : base.boxShadow,
     }),
     valueContainer: (base) => ({
       ...base,

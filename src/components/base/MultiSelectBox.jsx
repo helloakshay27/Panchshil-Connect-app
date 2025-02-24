@@ -8,7 +8,7 @@ export default function MultiSelectBox({
   placeholder,
 }) {
   const customStyles = {
-    control: (base) => ({
+    control: (base, state) => ({
       ...base,
       minHeight: "35px", // Reduce the height of the box
      // height: "30px", // Explicit height control
@@ -17,8 +17,11 @@ export default function MultiSelectBox({
       position: "relative",
       zIndex: 10,
       border: "1px solid #ccc",
+      boxShadow: state.isFocused ? "0 0 0 4px rgba(128, 189, 255, 0.5)" : base.boxShadow,
+
       
     }),
+    
     valueContainer: (base) => ({
       ...base,
       overflowY: "auto",
@@ -72,11 +75,11 @@ export default function MultiSelectBox({
     }),
     dropdownIndicator: (base) => ({
       ...base,
-      color: "#de7008",
+      color: "hsl(0, 0%, 80%)",
     }),
     clearIndicator: (base) => ({
       ...base,
-      color: "#de7008",
+      color: "hsl(0, 0%, 80%)",
     }),
   };
 

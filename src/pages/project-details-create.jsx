@@ -766,6 +766,36 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
+              {/* <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Project Status
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
+                  </label>
+                  <SelectBox 
+                    options={[
+                      {
+                        value: "",
+                        label: "-- Select Project Status --",
+                        isDisabled: true,
+                      },
+                      ...projectsType.map((type) => ({
+                        value: type.id,
+                        label: type.property_type,
+                      })),
+                    ]}
+                    defaultValue={formData.type_of_project}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        type_of_project: value,
+                      }))
+                    }
+                    isDisableFirstOption={true}
+                  />
+                </div>
+              </div> */}
+              
             </div>
           </div>
         </div>
