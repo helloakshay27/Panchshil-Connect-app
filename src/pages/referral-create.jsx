@@ -126,7 +126,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Name<span style={{ color: "red" }}> *</span>
+                        Name<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -142,7 +142,7 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Email<span style={{ color: "red" }}> *</span>
+                        Email<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -158,25 +158,28 @@ const ReferralCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Mobile No<span style={{ color: "red" }}> *</span>
+                        Mobile No<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
-                        type="number"
+                        type="text" // Use text to prevent increment/decrement buttons
+                        inputMode="numeric" // Helps mobile devices show the number keyboard
+                        pattern="\d{10}" // Ensures only numbers are entered
                         placeholder="Enter Mobile No"
                         name="mobile"
                         value={formData.mobile}
+                        maxLength={10} // Restrict to 10 digits
                         onChange={handleMobileChange}
-                        min="1000000000"
-                        max="9999999999"
                         required
+                        style={{ appearance: "textfield" }} // Removes number input arrows
                       />
                     </div>
                   </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Project<span style={{ color: "red" }}> *</span>
+                        Project<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <select
                         className="form-control form-select"

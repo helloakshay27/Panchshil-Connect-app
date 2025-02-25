@@ -46,6 +46,7 @@ import OrganizationCreate from "./pages/organization-create"
 import SitevisitEdit from "./pages/sitevisit-edit";
 import OrganizationList from "./pages/organization-list";
 import CompanyCreate from "./pages/company-create";
+import PressReleasesCreate from "./pages/press-releases-create";
 
 // import EditGallery from './EditGallery';
 
@@ -119,6 +120,8 @@ function App() {
             element={<SiteVisitSlotConfigList />}
           />
           <Route path="/company-create" element={<CompanyCreate/>}/>
+          <Route path="/pressreleases-create" element={<PressReleasesCreate/>}/>
+
 
 
         </Route>

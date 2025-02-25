@@ -120,6 +120,9 @@ const Members = () => {
               <li>
                 <Link to="/company-create">Company Create</Link>
               </li>
+              <li>
+                <Link to="/pressreleases-create">Press Releases Create</Link>
+              </li>
               <li className="pb-5">{/* add above this li */}</li>
             </ul>
           </div>

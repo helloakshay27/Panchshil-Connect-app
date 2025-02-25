@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 
@@ -52,7 +52,6 @@ const ProjectDetailsEdit = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate()
 
   const API_BASE_URL = "https://panchshil-super.lockated.com";
   const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
@@ -273,10 +272,10 @@ const ProjectDetailsEdit = () => {
       errors.push("RERA Number is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.project_amenities.length) {
-      errors.push("Amenities are required.");
-      return errors; // Return the first error immediately
-    }
+    // if (!formData.project_amenities.length) {
+    //   errors.push("Amenities are required.");
+    //   return errors; // Return the first error immediately
+    // }
     if (!formData.specifications.length) {
       errors.push("Specifications are required.");
       return errors; // Return the first error immediately
@@ -348,14 +347,25 @@ const ProjectDetailsEdit = () => {
         Object.entries(value).forEach(([subKey, subValue]) =>
           data.append(`project[Address][${subKey}]`, subValue)
         );
-      } else if (key === "brochure" && value) {
-        data.append("project[brochure]", value);
-      } else if (key === "two_d_images" && value.length > 0) {
-        value.forEach((file) => data.append("project[two_d_images][]", file));
+      } 
+      else if (key === "brochure" && value) {
+        const file = value instanceof File ? value : value.file; // Extract file if wrapped in an object
+        if (file instanceof File) {
+            data.append("project[brochure]", file);
+        }
+    } else if (key === "two_d_images" && Array.isArray(value) && value.length > 0) {
+        value.forEach((fileObj) => {
+          // Ensure `fileObj` is a File instance, not an object with metadata
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
+            data.append("project[two_d_images][]", file);
+          }
+        });
       } else {
         data.append(`project[${key}]`, value);
       }
     });
+    
 
     try {
       const response = await axios.put(
@@ -379,13 +389,13 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigate(-1); // This navigates back one step in history
-  };
-
   // Render loading or error states
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
+
+  const handleCancel = () => {
+    navigate(-1)
+  }
 
   return (
     <>
@@ -394,7 +404,7 @@ const ProjectDetailsEdit = () => {
       <div className="module-data-section p-3">
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
-            <h3 className="card-title">Edit Project</h3>
+            <h3 className="card-title">Project Update</h3>
           </div>
           <div className="card-body">
             <div className="row">
@@ -402,7 +412,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Types
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -426,7 +436,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     SFDC Project ID
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -442,7 +452,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Construction Status
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <select
                     className="form-control form-select"
@@ -466,7 +476,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Configuration Type
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <MultiSelectBox
                     options={configurations.map((config) => ({
@@ -493,7 +503,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Name
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -508,7 +518,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Location
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -524,7 +534,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Description
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <textarea
                     className="form-control"
@@ -543,7 +553,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Price Onward
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
 
                   <input
@@ -560,7 +570,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Mtr.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -579,7 +589,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Ft.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -597,7 +607,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Rera Carpet Area (Sq. M)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -616,7 +626,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Rare Carpet Area (Sq. Ft.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -635,7 +645,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Number of Towers
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -651,7 +661,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Number of Units
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -667,7 +677,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Rera Number
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -683,7 +693,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Amenities
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
                   </label>
                   <MultiSelectBox
                     options={amenities.map((ammit) => ({
@@ -719,7 +729,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Specifications
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <MultiSelectBox
                     options={specifications.map((spec) => ({
@@ -750,7 +760,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Land Area
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -769,6 +779,7 @@ const ProjectDetailsEdit = () => {
           <div className="card-header3">
             <h3 className="card-title">
               Address
+              <span style={{ color: "red", fontSize: "16px" }}>*</span>
             </h3>
           </div>
           <div className="card-body">
@@ -778,7 +789,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Address Line 1{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>{" "}
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
                   </label>
                   <input
                     className="form-control"
@@ -794,7 +805,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Address Line 2
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>{" "}
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
                   </label>
                   <input
                     className="form-control"
@@ -812,7 +823,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     City
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -828,7 +839,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     State
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -844,7 +855,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Pin Code
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -860,7 +871,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Country
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
                   </label>
                   <input
                     className="form-control"
@@ -879,6 +890,7 @@ const ProjectDetailsEdit = () => {
           <div className="card-header3">
             <h3 className="card-title">
               File Upload
+              <span style={{ color: "red", fontSize: "16px" }}>*</span>
             </h3>
           </div>
           <div className="card-body">
@@ -889,7 +901,7 @@ const ProjectDetailsEdit = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  <span style={{ color: "red", fontSize: "16px" }}>*</span>
                 </h5>
 
                 <button
@@ -959,7 +971,7 @@ const ProjectDetailsEdit = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   2D Images{" "}
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  <span style={{ color: "red", fontSize: "16px" }}>*</span>
                 </h5>
 
                 <button
@@ -1034,19 +1046,24 @@ const ProjectDetailsEdit = () => {
               </div>
             </div>
           </div>
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
-                Submit
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button type="button" onClick={handleCancel} className="purple-btn2 w-100">
-                Cancel
-              </button>
-            </div>
-          </div>
         </div>
+        <div className="row mt-2 justify-content-center">
+          <div className="col-md-2">
+            <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
+              Submit
+            </button>
+          </div>
+        
+        <div className="col-md-2">
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+      </div>
       </div>
     </>
   );
