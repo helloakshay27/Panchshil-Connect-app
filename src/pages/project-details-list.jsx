@@ -85,12 +85,12 @@ const ProjectDetailsList = () => {
     (i) => i + 1
   );
 
-  // const displayedProjects = projects
-  //   .slice(
-  //     (pagination.current_page - 1) * pageSize,
-  //     pagination.current_page * pageSize
-  //   )
-  //   .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort projects by ID (ascending)
+   const displayedProjects = projects
+     .slice(
+       (pagination.current_page - 1) * pageSize,
+       pagination.current_page * pageSize
+     )
+     .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort projects by ID (ascending)
 
   return (
     <>
