@@ -11,17 +11,17 @@ export default function MultiSelectBox({
     control: (base, state) => ({
       ...base,
       minHeight: "35px", // Reduce the height of the box
-     // height: "30px", // Explicit height control
-      padding: "0px 4px", 
+      // height: "30px", // Explicit height control
+      padding: "0px 4px",
       //overflowY: "auto",
       position: "relative",
       zIndex: 10,
       border: "1px solid #ccc",
       boxShadow: state.isFocused ? "0 0 0 4px rgba(128, 189, 255, 0.5)" : base.boxShadow,
 
-      
+
     }),
-    
+
     valueContainer: (base) => ({
       ...base,
       overflowY: "auto",
@@ -36,6 +36,7 @@ export default function MultiSelectBox({
       zIndex: 9999,
       position: "absolute",
       top: "100%",
+      padding: "5px",
     }),
     option: (base, state) => ({
       ...base,
@@ -43,8 +44,8 @@ export default function MultiSelectBox({
       backgroundColor: state.isSelected
         ? "#D3D3D3"
         : state.isFocused
-        ? "#de7008"
-        : "transparent",
+          ? "#de7008"
+          : "transparent",
       color: state.isSelected ? "#333" : state.isFocused ? "white" : "black",
       cursor: "pointer",
       padding: "10px",
