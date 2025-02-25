@@ -8,6 +8,7 @@ import "../mor.css";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import MultiSelectBox from "../components/base/MultiSelectBox";
+import SelectBox from "../components/base/SelectBox";
 
 const ProjectDetailsEdit = () => {
   const { id } = useParams();
@@ -347,13 +348,16 @@ const ProjectDetailsEdit = () => {
         Object.entries(value).forEach(([subKey, subValue]) =>
           data.append(`project[Address][${subKey}]`, subValue)
         );
-      } 
-      else if (key === "brochure" && value) {
+      } else if (key === "brochure" && value) {
         const file = value instanceof File ? value : value.file; // Extract file if wrapped in an object
         if (file instanceof File) {
-            data.append("project[brochure]", file);
+          data.append("project[brochure]", file);
         }
-    } else if (key === "two_d_images" && Array.isArray(value) && value.length > 0) {
+      } else if (
+        key === "two_d_images" &&
+        Array.isArray(value) &&
+        value.length > 0
+      ) {
         value.forEach((fileObj) => {
           // Ensure `fileObj` is a File instance, not an object with metadata
           const file = fileObj instanceof File ? fileObj : fileObj.file;
@@ -365,7 +369,6 @@ const ProjectDetailsEdit = () => {
         data.append(`project[${key}]`, value);
       }
     });
-    
 
     try {
       const response = await axios.put(
@@ -385,7 +388,7 @@ const ProjectDetailsEdit = () => {
       toast.error("Failed to submit the form. Please try again.");
       console.error("Error submitting the form:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -394,8 +397,8 @@ const ProjectDetailsEdit = () => {
   if (error) return <p>{error}</p>;
 
   const handleCancel = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
 
   return (
     <>
@@ -412,31 +415,43 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Types
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
-                  <select
-                    className="form-control form-select"
-                    style={{ width: "100%" }}
-                    name="property_type"
-                    value={formData.property_type} // Handle default values
-                    onChange={handleChange}
-                  >
-                    {/* <option value="" disabled selected>
-                            {project?.property_type}
-                          </option> */}
-                    {projectsType?.map((type, index) => (
-                      <option key={index} value={type.id}>
-                        {type.property_type}
-                      </option>
-                    ))}
-                  </select>
+                  <SelectBox
+                    options={[
+                      {
+                        value: "",
+                        label: "-- Select Project Type --",
+                        isDisabled: true, // Disables the first option
+                      },
+                      ...projectsType.map((type) => ({
+                        value: type.id,
+                        label: type.property_type,
+                      })),
+                    ]}
+                    value={formData.property_type} // Ensuring selected value is controlled
+                    onChange={(selectedValue) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        property_type: selectedValue, // Updates state with selected value
+                      }))
+                    }
+                    isDisableFirstOption={true} // Ensuring first option remains disabled
+                  />
                 </div>
               </div>
+
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     SFDC Project ID
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -452,31 +467,40 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Construction Status
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
-                  <select
-                    className="form-control form-select"
-                    style={{ width: "100%" }}
-                    name="Project_Construction_Status"
+                  <SelectBox
+                    options={[
+                      { value: "", label: "Select status", isDisabled: true }, // Disabled default option
+                      { value: "Completed", label: "Completed" },
+                      { value: "Ready-To-Move-in", label: "Ready To Move in" },
+                    ]}
                     value={
                       formData.Project_Construction_Status ||
                       project?.building_type
+                    } // Controlled value
+                    onChange={(selectedValue) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Project_Construction_Status: selectedValue,
+                      }))
                     }
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled selected>
-                      Select status
-                    </option>
-                    <option value="Completed">Completed </option>
-                    <option value="Ready-To-Move-in">Ready To Move in </option>
-                  </select>
+                    isDisableFirstOption={true} // Disables first option
+                  />
                 </div>
               </div>
+
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     Configuration Type
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <MultiSelectBox
                     options={configurations.map((config) => ({
@@ -503,7 +527,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Name
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -518,7 +545,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Location
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -534,7 +564,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Description
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <textarea
                     className="form-control"
@@ -553,7 +586,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Price Onward
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
 
                   <input
@@ -570,7 +606,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Mtr.)
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -589,7 +628,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Ft.)
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -607,7 +649,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Rera Carpet Area (Sq. M)
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -626,7 +671,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Rare Carpet Area (Sq. Ft.)
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -645,7 +693,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Number of Towers
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -661,7 +712,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Number of Units
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -677,7 +731,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Rera Number
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -693,7 +750,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Amenities
-                    <span style={{ color: "red", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <MultiSelectBox
                     options={amenities.map((ammit) => ({
@@ -718,7 +778,7 @@ const ProjectDetailsEdit = () => {
                         ),
                       }))
                     }
-                    placeholder="Select amenities"
+                    placeholder="Select Amenities"
                   />
                   {console.log("amenities", amenities)}
                   {console.log("project_amenities", formData.project_amenities)}
@@ -729,28 +789,33 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Specifications
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <MultiSelectBox
                     options={specifications.map((spec) => ({
                       value: spec.id,
                       label: spec.name,
                     }))}
-                    value={
-                      specifications
-                        .filter((spec) => formData.specifications.includes(spec.id))
-                        .map((spec) => ({
-                          value: spec.id,
-                          label: spec.name,
-                        }))
-                    }
+                    value={specifications
+                      .filter((spec) =>
+                        formData.specifications.includes(spec.id)
+                      )
+                      .map((spec) => ({
+                        value: spec.id,
+                        label: spec.name,
+                      }))}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
-                        specifications: selectedOptions.map((option) => option.value),
+                        specifications: selectedOptions.map(
+                          (option) => option.value
+                        ),
                       }))
                     }
-                    placeholder="Select Type"
+                    placeholder="Select Specifications"
                   />
                   {console.log("specifications", specifications)}
                 </div>
@@ -760,7 +825,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Land Area
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -777,10 +845,7 @@ const ProjectDetailsEdit = () => {
         </div>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
-            <h3 className="card-title">
-              Address
-              <span style={{ color: "red", fontSize: "16px" }}>*</span>
-            </h3>
+            <h3 className="card-title">Address</h3>
           </div>
           <div className="card-body">
             <div className="row">
@@ -789,7 +854,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Address Line 1{" "}
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>{" "}
                   </label>
                   <input
                     className="form-control"
@@ -805,7 +873,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Address Line 2
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "}
+                    {/* <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "} */}
                   </label>
                   <input
                     className="form-control"
@@ -823,7 +891,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     City
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -839,7 +910,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     State
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -855,7 +929,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Pin Code
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -871,7 +948,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Country
-                    <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -890,7 +970,7 @@ const ProjectDetailsEdit = () => {
           <div className="card-header3">
             <h3 className="card-title">
               File Upload
-              <span style={{ color: "red", fontSize: "16px" }}>*</span>
+              <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
             </h3>
           </div>
           <div className="card-body">
@@ -901,7 +981,7 @@ const ProjectDetailsEdit = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
-                  <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
                 <button
@@ -910,8 +990,8 @@ const ProjectDetailsEdit = () => {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
+                    width={26}
+                    height={20}
                     fill="currentColor"
                     className="bi bi-plus"
                     viewBox="0 0 16 16"
@@ -971,7 +1051,7 @@ const ProjectDetailsEdit = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   2D Images{" "}
-                  <span style={{ color: "red", fontSize: "16px" }}>*</span>
+                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
                 <button
@@ -982,8 +1062,8 @@ const ProjectDetailsEdit = () => {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
+                    width={26}
+                    height={20}
                     fill="currentColor"
                     className="bi bi-plus"
                     viewBox="0 0 16 16"
@@ -1049,21 +1129,25 @@ const ProjectDetailsEdit = () => {
         </div>
         <div className="row mt-2 justify-content-center">
           <div className="col-md-2">
-            <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
+            <button
+              onClick={handleSubmit}
+              className="purple-btn2 w-100"
+              disabled={loading}
+            >
               Submit
             </button>
           </div>
-        
-        <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={handleCancel}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-      </div>
+
+          <div className="col-md-2">
+            <button
+              type="button"
+              className="purple-btn2 w-100"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       </div>
     </>
   );

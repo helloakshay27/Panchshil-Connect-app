@@ -84,9 +84,16 @@ const EventEdit = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setFormData((prev) => ({ ...prev, attachfile: files }));
+  const handleFileChange = (e, fieldName) => {
+    const file = e.target.files[0]; // Get the first selected file
+    if (file) {
+      const imageUrl = URL.createObjectURL(file); // Create a preview URL
+      setFormData((prev) => ({
+        ...prev,
+        [fieldName]: file, // Store the actual file
+        previewImage: imageUrl, // Update preview image
+      }));
+    }
   };
 
   const handleRadioChange = (e) => {
@@ -121,7 +128,7 @@ const EventEdit = () => {
       console.error("Error updating event:", error);
       toast.error("Failed to update event.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -132,8 +139,8 @@ const EventEdit = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
 
   return (
     <>
@@ -177,7 +184,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Types
+                        <label>
+                          Event Types
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -200,7 +208,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Name
+                        <label>
+                          Event Name
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -218,7 +227,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event At
+                        <label>
+                          Event At
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -236,7 +246,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event From
+                        <label>
+                          Event From
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -254,7 +265,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event To
+                        <label>
+                          Event To
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -273,7 +285,8 @@ const EventEdit = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>RSVP Action
+                        <label>
+                          RSVP Action
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -292,7 +305,8 @@ const EventEdit = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Description
+                        <label>
+                          Event Description
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -310,7 +324,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Publish
+                        <label>
+                          Event Publish
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -328,7 +343,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event User ID
+                        <label>
+                          Event User ID
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -340,9 +356,7 @@ const EventEdit = () => {
                           value={formData.user_id || event?.user_id}
                           onChange={handleChange}
                         >
-                          <option value="" >
-                            Select User ID
-                          </option>
+                          <option value="">Select User ID</option>
                           {eventUserID?.map((user, index) => (
                             <option
                               key={index}
@@ -357,7 +371,8 @@ const EventEdit = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Comment
+                        <label>
+                          Event Comment
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -375,7 +390,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Shared
+                        <label>
+                          Event Shared
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -393,7 +409,8 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Share Groups
+                        <label>
+                          Event Share Groups
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -409,23 +426,7 @@ const EventEdit = () => {
                         />
                       </div>
                     </div>
-
-                    <div className="col-md-3 d-flex gap-3">
-                      {formData.previewImage ? (
-                        <img
-                          src={formData.previewImage}
-                          alt="Uploaded Preview"
-                          className="img-fluid rounded mt-2"
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
-                        />
-                      ) : (
-                        <img
-                          src={formData?.attachfile?.document_url || "NA"}
-                          className="img-fluid rounded mt-2"
-                          alt={formData?.title || "Banner Image"}
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
-                        />
-                      )}
+                    <div className="col-md-3 d-flex flex-column gap-2">
                       <div className="form-group">
                         <label>
                           Attachment
@@ -439,11 +440,29 @@ const EventEdit = () => {
                           className="form-control"
                           type="file"
                           name="attachfile"
-                          accept="image/*" // Ensures only image files can be selected
-                          multiple
+                          accept="image/*"
                           onChange={(e) => handleFileChange(e, "attachfile")}
                         />
                       </div>
+
+                      {/* Updated Image Preview (Always shows the latest image) */}
+                      {formData.previewImage ? (
+                        <img
+                          src={formData.previewImage}
+                          alt="Uploaded Preview"
+                          className="img-fluid rounded mt-2"
+                          style={{ maxWidth: "100px", maxHeight: "100px" }}
+                        />
+                      ) : formData?.attachfile?.document_url ? (
+                        <img
+                          src={formData.attachfile.document_url}
+                          className="img-fluid rounded mt-2"
+                          alt="Banner Image"
+                          style={{ maxWidth: "100px", maxHeight: "100px" }}
+                        />
+                      ) : (
+                        <span>No image selected</span>
+                      )}
                     </div>
 
                     <div className="col-md-3">

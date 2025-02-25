@@ -78,16 +78,33 @@ const BannerEdit = () => {
     fetchCompany();
   }, []);
 
-  const handleFileChange = (e, fieldName) => {
-    const files = Array.from(e.target.files); // Convert FileList to an array
-    const filePreviews = files.map((file) => URL.createObjectURL(file));
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [fieldName]: files, // Store array of files
-      previewImage: filePreviews[0], // Store only the first image preview
-    }));
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  
+    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+  
+    if (validFiles.length !== files.length) {
+      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = "";
+      return;
+    }
+  
+    // Generate preview for the first image
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        attachfile: validFiles, // Store actual file objects
+        previewImage: reader.result, // Store preview URL
+      }));
+    };
+  
+    if (validFiles.length > 0) {
+      reader.readAsDataURL(validFiles[0]); // Read first image as preview
+    }
   };
+  
 
   const updateBanners = async () => {
     setLoading(true);
@@ -124,8 +141,8 @@ const BannerEdit = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
 
   return (
     <>
@@ -177,35 +194,38 @@ const BannerEdit = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3 d-flex gap-3">
-                      {formData.previewImage ? (
-                        <img
-                          src={formData.previewImage}
-                          alt="Uploaded Preview"
-                          className="img-fluid rounded mt-2"
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
-                        />
-                      ) : (
-                        <img
-                          src={formData?.attachfile?.document_url || "NA"}
-                          className="img-fluid rounded mt-2"
-                          alt={formData?.title || "Banner Image"}
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
-                        />
-                      )}
+                    <div className="col-md-3 d-flex flex-column gap-2">
+      <div className="form-group">
+        <label>Banner</label>
+        <input
+          className="form-control"
+          type="file"
+          name="attachfile"
+          accept="image/*"
+          onChange={(e) => handleFileChange(e, "attachfile")}
+          style={{ width: "100%" }}
+        />
+      </div>
 
-                      <div className="form-group">
-                        <label>Banner</label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="attachfile"
-                          multiple
-                          onChange={(e) => handleFileChange(e, "attachfile")}
-                          style={{ width: "170%" }}
-                        />
-                      </div>
-                    </div>
+      {/* Image Preview Below Input */}
+      {formData.previewImage ? (
+        <img
+          src={formData.previewImage}
+          alt="Uploaded Preview"
+          className="img-fluid rounded mt-2"
+          style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
+        />
+      ) : formData?.attachfile?.document_url ? (
+        <img
+          src={formData.attachfile.document_url}
+          className="img-fluid rounded mt-2"
+          alt="Banner Image"
+          style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
+        />
+      ) : (
+        <span>No image selected</span>
+      )}
+    </div>
                   </div>
                 )}
               </div>
@@ -231,7 +251,6 @@ const BannerEdit = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
