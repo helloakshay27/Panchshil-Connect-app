@@ -56,8 +56,8 @@ const Register = () => {
         toast.error("User already exists");
       }
     } catch (err) {
-      setError("An error occurred during registration. Please try again.");
-      toast.error("An error occurred during registration. Please try again.");
+      setError("User already exists");
+      toast.error("User already exists");
     } finally {
       setLoading(false);
     }
