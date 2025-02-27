@@ -47,7 +47,11 @@ import SitevisitEdit from "./pages/sitevisit-edit";
 import OrganizationList from "./pages/organization-list";
 import CompanyCreate from "./pages/company-create";
 import PressReleasesCreate from "./pages/press-releases-create";
+
 import SupportServiceList from "./pages/support-service-list";
+
+import PressReleasesList from "./pages/press-releases-list";
+
 
 // import EditGallery from './EditGallery';
 
@@ -122,7 +126,11 @@ function App() {
           />
           <Route path="/company-create" element={<CompanyCreate/>}/>
           <Route path="/pressreleases-create" element={<PressReleasesCreate/>}/>
+<<<<<<< HEAD
           <Route path="/support-service-list" element={<SupportServiceList/>}/>
+=======
+          <Route path="/pressreleases-list" element={<PressReleasesList/>}/>
+>>>>>>> f5a64c3fde6a8a84e4b5e25b7f76dbbbda43fb33
 
 
 

@@ -8,7 +8,7 @@ export default function SelectBox({
   onChange,
   style = {},
   className = "",
-  isDisableFirstOption = false, // New prop
+  isDisableFirstOption = false, 
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
 

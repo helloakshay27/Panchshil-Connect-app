@@ -14,7 +14,7 @@ const ProjectDetailsEdit = () => {
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
-    property_type: "",
+    Property_Type: "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
     Configuration_Type: [], // Ensure this is an array
@@ -29,14 +29,18 @@ const ProjectDetailsEdit = () => {
     Number_Of_Towers: "",
     no_of_apartments: "",
     Rera_Number: "",
-    project_amenities: [], // Ensure this is an array
-    specifications: [], // Ensure this is an array
+    Amenities: [], 
+    Specifications: [], 
     Land_Area: "",
-    location: {
-      address: "",
-      addressLine1: "",
-      address_line_two: "",
-      addressLine3: "",
+    project_tag: "",
+    virtual_tour_url: "",
+    map_url: "",
+    image: [],
+    Address: {
+      address_line_1: "",
+      // addressLine1: "",
+      address_line_2: "",
+      //addressLine3: "",
       city: "",
       state: "",
       pin_code: "",
@@ -45,6 +49,9 @@ const ProjectDetailsEdit = () => {
     brochure: null, // file input for brochure
     two_d_images: [], // array of file inputs for 2D images
   });
+
+
+  console.log("formData", formData);
 
   const [projectsType, setProjectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
@@ -99,7 +106,7 @@ const ProjectDetailsEdit = () => {
         );
         const projectData = response.data;
         setFormData({
-          property_type: projectData.property_type || "",
+          Property_Type: projectData.property_type || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
           Project_Construction_Status:
             projectData.Project_Construction_Status || "",
@@ -117,10 +124,19 @@ const ProjectDetailsEdit = () => {
           Number_Of_Towers: projectData.no_of_towers || "",
           no_of_apartments: projectData.no_of_apartments || "",
           Rera_Number: projectData.rera_number || "",
-          specifications: Array.isArray(projectData.specifications)
+          Amenities: Array.isArray(projectData.amenities)
+            ? projectData.amenities.map((ammit) => ammit.name)
+            : [],
+          Specifications: Array.isArray(projectData.specifications)
             ? projectData.specifications.map((spac) => spac.name)
             : [],
           Land_Area: projectData.land_area || "",
+          project_tag: Array.isArray(projectData.project_tag)
+            ? projectData.project_tag.map((tag) => tag.name)
+            : [],
+          virtual_tour_url: projectData.virtual_tour_url || "",
+          map_url: projectData.map_url || "",
+          image: projectData.image || "",
           location: {
             address: projectData.location?.address || "line 1",
             address_line_two:
@@ -143,6 +159,7 @@ const ProjectDetailsEdit = () => {
 
     fetchProjectDetails();
   }, []);
+
   const handleChange = (e) => {
     const { name, files, value } = e.target;
 
@@ -213,12 +230,8 @@ const ProjectDetailsEdit = () => {
     const errors = [];
 
     // Required fields (text fields)
-    if (!formData.property_type) {
+    if (!formData.Property_Type) {
       errors.push("Project Type is required.");
-      return errors; // Return the first error immediately
-    }
-    if (!formData.SFDC_Project_Id) {
-      errors.push("SFDC Project ID is required.");
       return errors; // Return the first error immediately
     }
     if (!formData.Project_Construction_Status) {
@@ -277,7 +290,7 @@ const ProjectDetailsEdit = () => {
     //   errors.push("Amenities are required.");
     //   return errors; // Return the first error immediately
     // }
-    if (!formData.specifications.length) {
+    if (!formData.Specifications.length) {
       errors.push("Specifications are required.");
       return errors; // Return the first error immediately
     }
@@ -422,76 +435,46 @@ const ProjectDetailsEdit = () => {
                   </label>
                   <SelectBox
                     options={[
-                      {
-                        value: "",
-                        label: "-- Select Project Type --",
-                        isDisabled: true, // Disables the first option
-                      },
-                      ...projectsType.map((type) => ({
-                        value: type.id,
-                        label: type.property_type,
-                      })),
+                      //{ value: "", label: "Select status", isDisabled: true },
+                      { value: "Commercial", label: "Commercial" },
+                      { value: "Residential", label: "Residential" },
                     ]}
-                    value={formData.property_type} // Ensuring selected value is controlled
+                    value={formData.Property_Type}
                     onChange={(selectedValue) =>
                       setFormData((prev) => ({
                         ...prev,
-                        property_type: selectedValue, // Updates state with selected value
+                        Property_Type: selectedValue,
                       }))
                     }
-                    isDisableFirstOption={true} // Ensuring first option remains disabled
+                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
+            
 
-              <div className="col-md-3">
-                <div className="form-group">
-                  <label>
-                    SFDC Project ID
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Default input"
-                    name="SFDC_Project_Id"
-                    value={formData.SFDC_Project_Id}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div className="col-md-3">
-                <div className="form-group">
-                  <label>
-                    Project Construction Status
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <SelectBox
-                    options={[
-                      { value: "", label: "Select status", isDisabled: true }, // Disabled default option
-                      { value: "Completed", label: "Completed" },
-                      { value: "Ready-To-Move-in", label: "Ready To Move in" },
-                    ]}
-                    value={
-                      formData.Project_Construction_Status ||
-                      project?.building_type
-                    } // Controlled value
-                    onChange={(selectedValue) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        Project_Construction_Status: selectedValue,
-                      }))
-                    }
-                    isDisableFirstOption={true} // Disables first option
-                  />
-                </div>
-              </div>
+<div className="col-md-3">
+  <div className="form-group">
+    <label>
+      Project Construction Status
+      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+    </label>
+    <SelectBox
+      options={[
+        { value: "Completed", label: "Completed" },
+        { value: "Ready-To-Move-in", label: "Ready To Move in" },
+      ]}
+      value={formData.Project_Construction_Status} // Controlled value
+      onChange={(selectedValue) =>
+        setFormData((prev) => ({
+          ...prev,
+          Project_Construction_Status: selectedValue,
+        }))
+      }
+    />
+  </div>
+</div>
+
+
 
               <div className="col-md-3">
                 <div className="form-group">
@@ -760,7 +743,7 @@ const ProjectDetailsEdit = () => {
                       value: ammit.id,
                       label: ammit.name,
                     }))}
-                    value={formData?.project_amenities
+                    value={formData?.Amenities
                       ?.map((id) => {
                         const ammit = amenities.find(
                           (ammit) => ammit.id === id
@@ -773,7 +756,7 @@ const ProjectDetailsEdit = () => {
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
-                        project_amenities: selectedOptions.map(
+                        Amenities: selectedOptions.map(
                           (option) => option.value
                         ),
                       }))
@@ -801,7 +784,7 @@ const ProjectDetailsEdit = () => {
                     }))}
                     value={specifications
                       .filter((spec) =>
-                        formData.specifications.includes(spec.id)
+                        formData.Specifications.includes(spec.id)
                       )
                       .map((spec) => ({
                         value: spec.id,
@@ -810,7 +793,7 @@ const ProjectDetailsEdit = () => {
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
-                        specifications: selectedOptions.map(
+                        Specifications: selectedOptions.map(
                           (option) => option.value
                         ),
                       }))
@@ -837,6 +820,89 @@ const ProjectDetailsEdit = () => {
                     name="Land_Area"
                     value={formData.Land_Area || project?.land_area}
                     onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>Project Tag</label>
+                  <SelectBox
+                    options={[
+                      //{ value: "", label: "Select status", isDisabled: true },
+                      { value: "Featured", label: "Featured" },
+                      { value: "Upcoming", label: "Upcoming" },
+                    ]}
+                    defaultValue={formData.Property_Type}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Property_Type: value,
+                      }))
+                    }
+                    isDisableFirstOption={true}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Virtual Tour URL
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="virtual_tour_url"
+                    placeholder="Enter Location"
+                    value={formData.virtual_tour_url}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Map URL
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="map_url"
+                    placeholder="Enter Location"
+                    value={formData.map_url}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Attach Image
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                    <span />
+                  </label>
+                  <input
+                    className="form-control"
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    multiple
+                    required
+                    onChange={(e) => handleFileChange(e, "image")}
                   />
                 </div>
               </div>

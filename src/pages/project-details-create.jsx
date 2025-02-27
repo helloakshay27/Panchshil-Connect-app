@@ -12,10 +12,11 @@ import MultiSelectBox from "../components/base/MultiSelectBox";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
-    property_type: "",
+    Property_Type: "",
+    building_type: "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
-    Configuration_Type: [], // Ensure this is an array
+    Configuration_Type: [],
     Project_Name: "",
     project_address: "",
     Project_Description: "",
@@ -27,54 +28,79 @@ const ProjectDetailsCreate = () => {
     Number_Of_Towers: "",
     Number_Of_Units: "",
     Rera_Number: "",
-    project_amenities: [], // Ensure this is an array
-    specifications: [], // Ensure this is an array
+    Amenities: [],
+    Specifications: [],
     Land_Area: "",
-    location: {
-      address: "",
-      address_line_two: "",
+    project_tag: "",
+    virtual_tour_url: "",
+    map_url: "",
+    image: [],
+    Address: {
+      address_line_1: "",
+      address_line_2: "",
       city: "",
       state: "",
       pin_code: "",
       country: "",
     },
-    brochure: null, // for file input
-    two_d_images: [], // for array of file inputs
+    brochure: null,
+    two_d_images: [],
   });
+
+  useEffect(() => {
+    console.log("formData updated:", formData);
+  }, [formData]);
+  
+
+  console.log("formD", formData);
 
   const [projectsType, setprojectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
   const [specifications, setSpecifications] = useState([]);
   const [amenities, setAmenities] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const Navigate = useNavigate();
+
+  const handleFileChange = (e, fieldName) => {
+    const files = Array.from(e.target.files);
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+
+    if (validFiles.length !== files.length) {
+      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = "";
+      return;
+    }
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      image: validFiles[0],
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
 
     if (type === "file") {
       if (name === "brochure") {
-        // Store only the first file for 'brochure'
         setFormData((prev) => ({
           ...prev,
           brochure: files[0],
         }));
       } else if (name === "two_d_images") {
-        // Convert FileList to an array to ensure we handle multiple files
         const newImages = Array.from(files);
-
         setFormData((prev) => ({
           ...prev,
           two_d_images: [...prev.two_d_images, ...newImages],
         }));
       }
     } else {
-      // Check if the field belongs to the "location" object
       if (
         [
-          "address",
-          "address_line_two",
+          "address_line_1",
+          "address_line_2",
           "city",
           "state",
           "pin_code",
@@ -83,9 +109,9 @@ const ProjectDetailsCreate = () => {
       ) {
         setFormData((prev) => ({
           ...prev,
-          location: {
-            ...prev.location, // Preserve existing location data
-            [name]: value, // Update specific field
+          Address: {
+            ...prev.Address,
+            [name]: value,
           },
         }));
       } else {
@@ -114,65 +140,65 @@ const ProjectDetailsCreate = () => {
     //   errors.push("Project Type is required.");
     //   return errors; // Return the first error immediately
     // }
-    if (!formData.SFDC_Project_Id) {
-      errors.push("SFDC Project ID is required.");
-      return errors; // Return the first error immediately
-    }
+    // if (!formData.SFDC_Project_Id) {
+    //   errors.push("SFDC Project ID is required.");
+    //   return errors; // Return the first error immediately
+    // }
     if (!formData.Project_Construction_Status) {
       errors.push("Construction Status is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Configuration_Type.length) {
       errors.push("Configuration Type is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Project_Name) {
       errors.push("Project Name is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.project_address) {
       errors.push("Location is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Project_Description) {
       errors.push("Project Description is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Price_Onward) {
       errors.push("Price Onward is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Project_Size_Sq_Mtr) {
       errors.push("Project Size (Sq. Mtr.) is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Project_Size_Sq_Ft) {
       errors.push("Project Size (Sq. Ft.) is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Rera_Carpet_Area_Sq_M) {
       errors.push("RERA Carpet Area (Sq. M) is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Rera_Carpet_Area_sqft) {
       errors.push("RERA Carpet Area (Sq. Ft.) is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Number_Of_Towers) {
       errors.push("Number of Towers is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Number_Of_Units) {
       errors.push("Number of Units is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Rera_Number) {
       errors.push("RERA Number is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
-    if (!formData.project_amenities.length) {
+    if (!formData.Amenities.length) {
       errors.push("Amenities are required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     // if (!formData.specifications.length) {
     //   errors.push("Specifications are required.");
@@ -184,7 +210,7 @@ const ProjectDetailsCreate = () => {
     }
 
     // Address validation (nested fields)
-    if (!formData.location || !formData.location.address) {
+    if (!formData.Address || !formData.Address.address_line_1) {
       errors.push("Address Line 1 is required.");
       return errors; // Return the first error immediately
     }
@@ -193,34 +219,32 @@ const ProjectDetailsCreate = () => {
     //   errors.push("Address Line 2 is required.");
     //   return errors; // Return the first error immediately
     // }
-    if (!formData.location || !formData.location.city) {
+    if (!formData.Address || !formData.Address.city) {
       errors.push("City is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
-    if (!formData.location || !formData.location.state) {
+    if (!formData.Address || !formData.Address.state) {
       errors.push("State is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
-    if (!formData.location || !formData.location.pin_code) {
+    if (!formData.Address || !formData.Address.pin_code) {
       errors.push("Pin Code is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
-    if (!formData.location || !formData.location.country) {
+    if (!formData.Address || !formData.Address.country) {
       errors.push("Country is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
-
-    // File validation (files must be present)
     if (!formData.brochure) {
       errors.push("Brochure is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (formData.two_d_images.length === 0) {
       errors.push("At least one 2D image is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
 
-    return errors; // Return the first error message if any
+    return errors;
   };
 
   const handleSubmit = async (e) => {
@@ -229,42 +253,36 @@ const ProjectDetailsCreate = () => {
     const validationErrors = validateForm(formData);
 
     if (validationErrors.length > 0) {
-      // Show only the first validation error
       toast.error(validationErrors[0]);
-      setLoading(false)
-      return; // Stop form submission if there are errors
+      setLoading(false);
+      return;
     }
 
     const data = new FormData();
 
     for (const key in formData) {
-      if (key === "location") {
-        // Append nested address fields
-        for (const addressKey in formData.location) {
+      if (key === "Address") {
+        for (const addressKey in formData.Address) {
           data.append(
             `project[Address][${addressKey}]`,
-            formData.location[addressKey]
+            formData.Address[addressKey]
           );
         }
       } else if (key === "brochure") {
-        // Append single file
         if (formData.brochure) {
           data.append("project[brochure]", formData.brochure);
         }
       } else if (key === "two_d_images") {
-        // Append multiple files
         if (formData.two_d_images && formData.two_d_images.length > 0) {
           Array.from(formData.two_d_images).forEach((file) => {
-            data.append("project[two_d_images][]", file); // Use [] to indicate an array
+            data.append("project[two_d_images][]", file);
           });
         }
       } else {
-        // Append all other fields
         data.append(`project[${key}]`, formData[key]);
       }
     }
 
-    // Debugging: Log FormData
     for (let [key, value] of data.entries()) {
       console.log(`${key}:`, value);
     }
@@ -276,7 +294,7 @@ const ProjectDetailsCreate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`, // Replace with actual token
+            Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
           },
         }
       );
@@ -287,7 +305,7 @@ const ProjectDetailsCreate = () => {
       console.error("Error submitting the form:", error);
       toast.error("Failed to submit the form. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -339,7 +357,7 @@ const ProjectDetailsCreate = () => {
       try {
         const response = await axios.get(url);
         if (response.data && response.data.specification_setups) {
-          setSpecifications(response.data.specification_setups); // Extract array correctly
+          setSpecifications(response.data.specification_setups);
         }
       } catch (error) {
         console.error("Error fetching specifications:", error);
@@ -372,7 +390,7 @@ const ProjectDetailsCreate = () => {
   }, []);
   const handleCancel = () => {
     setFormData({
-      property_type: "",
+      Property_Type: "",
       SFDC_Project_Id: "",
       Project_Construction_Status: "",
       Configuration_Type: [],
@@ -387,12 +405,16 @@ const ProjectDetailsCreate = () => {
       Number_Of_Towers: "",
       Number_Of_Units: "",
       Rera_Number: "",
-      project_amenities: [],
-      specifications: [],
+      Amenities: [],
+      Specifications: [],
       Land_Area: "",
-      location: {
-        address: "",
-        address_line_two: "",
+      project_tag: "",
+      virtual_tour_url: "",
+      map_url: "",
+      image: [],
+      Address: {
+        address_line_1: "",
+          address_line_2: "",
         city: "",
         state: "",
         pin_code: "",
@@ -401,9 +423,10 @@ const ProjectDetailsCreate = () => {
       brochure: null,
       two_d_images: [],
     });
-    Navigate(-1)
+    Navigate(-1);
   };
 
+  console.log("formData", formData);
   console.log("specification", specifications);
 
   return (
@@ -417,64 +440,43 @@ const ProjectDetailsCreate = () => {
           <div className="card-body">
             <div className="row">
               {/* Project Type */}
-              <div className="col-md-3">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Project Types
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <SelectBox
-                    options={[
-                      {
-                        value: "",
-                        label: "-- Select Project Type --",
-                        isDisabled: true,
-                      },
-                      ...projectsType.map((type) => ({
-                        value: type.id,
-                        label: type.property_type,
-                      })),
-                    ]}
-                    defaultValue={formData.type_of_project}
-                    onChange={(value) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        type_of_project: value,
-                      }))
-                    }
-                    isDisableFirstOption={true}
-                  />
+  options={[
+    { value: "Commercial", label: "Commercial" },
+    { value: "Residential", label: "Residential" },
+  ]}
+  value={formData?.Property_Type || ""} // Ensure it's controlled
+  onChange={(value) =>
+    setFormData((prev) => ({
+      ...prev,
+      Property_Type: value,
+    }))
+  }
+/>
+
                 </div>
               </div>
-
-              {/* SFDC Project ID */}
-              <div className="col-md-3">
-                <div className="form-group">
-                  <label>
-                    SFDC Project ID
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="SFDC_Project_Id"
-                    placeholder="Enter SFDC Project ID"
-                    value={formData.SFDC_Project_Id}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              {/* Construction Status */}
-              <div className="col-md-3">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Project Construction Status
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <SelectBox
                     options={[
-                      { value: "", label: "Select status", isDisabled: true },
+                      //{ value: "", label: "Select status", isDisabled: true },
                       { value: "Completed", label: "Completed" },
                       { value: "Ready-To-Move-in", label: "Ready To Move in" },
                     ]}
@@ -485,17 +487,19 @@ const ProjectDetailsCreate = () => {
                         Project_Construction_Status: value,
                       }))
                     }
-                    isDisableFirstOption={true}
+                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
 
-              {/* Configuration Type */}
-              <div className="col-md-3">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Configuration Type
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <MultiSelectBox
                     options={configurations?.map((config) => ({
@@ -514,17 +518,19 @@ const ProjectDetailsCreate = () => {
                         ),
                       }))
                     }
-                    placeholder="Select Type"
+                    placeholder="Select Configuration Type"
                   />
                 </div>
               </div>
 
-              {/* Project Name */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Project Name
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -537,12 +543,14 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              {/* Location */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Location
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -555,12 +563,14 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              {/* Project Description */}
               <div className="col-md-6 mt-2">
                 <div className="form-group">
                   <label>
                     Project Description
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <textarea
                     className="form-control"
@@ -577,7 +587,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Price Onward
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -594,7 +607,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Mtr.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -611,7 +627,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Ft.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -628,7 +647,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Carpet Area (Sq. M)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -645,7 +667,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Carpet Area (Sq. Ft.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -662,7 +687,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Number of Towers
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -679,7 +707,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Number of Units
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -696,7 +727,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Number
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -713,27 +747,26 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Amenities
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <MultiSelectBox
                     options={amenities.map((ammit) => ({
                       value: ammit.id,
                       label: ammit.name,
                     }))}
-                    value={formData.project_amenities
-                      .map((id) => {
-                        const ammit = amenities.find(
-                          (ammit) => ammit.id === id
-                        );
-                        return ammit
-                          ? { value: ammit.id, label: ammit.name }
-                          : null;
-                      })
-                      .filter(Boolean)}
+                    value={formData.Amenities.map((id) => {
+                      const ammit = amenities.find((ammit) => ammit.id === id);
+                      return ammit
+                        ? { value: ammit.id, label: ammit.name }
+                        : null;
+                    }).filter(Boolean)}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
-                        project_amenities: selectedOptions.map(
+                        Amenities: selectedOptions.map(
                           (option) => option.value
                         ),
                       }))
@@ -749,27 +782,24 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Specifications
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <MultiSelectBox
                     options={specifications.map((spec) => ({
                       value: spec.id,
                       label: spec.name,
                     }))}
-                    value={formData.specifications
-                      .map((specId) => {
-                        const spec = specifications.find(
-                          (s) => s.id === specId
-                        );
-                        return spec
-                          ? { value: spec.id, label: spec.name }
-                          : null;
-                      })
-                      .filter(Boolean)}
+                    value={formData.Specifications.map((specId) => {
+                      const spec = specifications.find((s) => s.id === specId);
+                      return spec ? { value: spec.id, label: spec.name } : null;
+                    }).filter(Boolean)}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
-                        specifications: selectedOptions.map(
+                        Specifications: selectedOptions.map(
                           (option) => option.value
                         ),
                       }))
@@ -783,7 +813,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Land Area
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
@@ -795,35 +828,89 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
-              {/* <div className="col-md-3 mt-2">
+
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Project Status
-                    <span style={{ color:"#de7008", fontSize: "16px" }}> *</span>
-                  </label>
-                  <SelectBox 
+                  <label>Project Tag</label>
+                  <SelectBox
                     options={[
-                      {
-                        value: "",
-                        label: "-- Select Project Status --",
-                        isDisabled: true,
-                      },
-                      ...projectsType.map((type) => ({
-                        value: type.id,
-                        label: type.property_type,
-                      })),
+                      //{ value: "", label: "Select status", isDisabled: true },
+                      { value: "Featured", label: "Featured" },
+                      { value: "Upcoming", label: "Upcoming" },
                     ]}
-                    defaultValue={formData.type_of_project}
+                    defaultValue={formData.project_tag}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
-                        type_of_project: value,
+                        project_tag: value,
                       }))
                     }
-                    isDisableFirstOption={true}
+                    //isDisableFirstOption={true}
                   />
                 </div>
-              </div> */}
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Virtual Tour URL
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="virtual_tour_url"
+                    placeholder="Enter Location"
+                    value={formData.virtual_tour_url}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Map URL
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="map_url"
+                    placeholder="Enter Location"
+                    value={formData.map_url}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Attach Image
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                    <span />
+                  </label>
+                  <input
+                    className="form-control"
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    multiple
+                    required
+                    onChange={(e) => handleFileChange(e, "image")}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -843,12 +930,11 @@ const ProjectDetailsCreate = () => {
                     </span>{" "}
                   </label>
                   <input
-                    //title="location.address"
                     className="form-control"
                     type="text"
                     placeholder="Address Line 1"
-                    name="address"
-                    value={formData.location.address}
+                    name="address_line_1"
+                    value={formData.Address.address_line_1}
                     onChange={handleChange}
                   />
                 </div>
@@ -866,42 +952,49 @@ const ProjectDetailsCreate = () => {
                     className="form-control"
                     type="text"
                     placeholder="Address Line 2"
-                    name="address_line_two"
-                    value={formData.location.address_line_two}
+                    name="address_line_2"
+                    value={formData.Address.address_line_2}
                     onChange={handleChange}
                   />
                 </div>
               </div>
 
-              {/* City, State, Pin, Country Section */}
+              
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     City
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
                     type="text"
                     placeholder="City"
                     name="city"
-                    value={formData.location.city}
+                    value={formData.Address.city}
                     onChange={handleChange}
                   />
                 </div>
               </div>
+
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     State
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
                     type="text"
                     placeholder="State"
                     name="state"
-                    value={formData.location.state}
+                    value={formData.Address.state}
                     onChange={handleChange}
                   />
                 </div>
@@ -910,14 +1003,17 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Pin Code
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
                     type="number"
                     placeholder="Pin Code"
                     name="pin_code"
-                    value={formData.location.pin_code}
+                    value={formData.Address.pin_code}
                     onChange={handleChange}
                   />
                 </div>
@@ -926,14 +1022,17 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Country
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <input
                     className="form-control"
                     type="text"
                     placeholder="Country"
                     name="country"
-                    value={formData.location.country}
+                    value={formData.Address.country}
                     onChange={handleChange}
                   />
                 </div>
@@ -1100,7 +1199,11 @@ const ProjectDetailsCreate = () => {
           </div>
           <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
-              <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
+              <button
+                onClick={handleSubmit}
+                className="purple-btn2 w-100"
+                disabled={loading}
+              >
                 Submit
               </button>
             </div>
