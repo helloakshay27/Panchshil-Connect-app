@@ -56,8 +56,9 @@ const Register = () => {
         toast.error("User already exists");
       }
     } catch (err) {
-      setError("User already exists");
       toast.error("User already exists");
+
+      setError("User already exists");
     } finally {
       setLoading(false);
     }
@@ -146,7 +147,7 @@ const Register = () => {
                       />
                     </div>
 
-                    {error && <p className="text-danger">{error}</p>}
+                    {error && <p className="text-danger text-left">{error}</p>}
                     <button type="submit" className="btn btn-danger mt-2">
                       {loading ? "Register in..." : "Register"}
                     </button>
