@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast } from 'react-hot-toast'
+import { toast } from "react-hot-toast";
 
 const CompanyCreate = () => {
   const [organizations, setOrganizations] = useState([]);
@@ -12,6 +12,7 @@ const CompanyCreate = () => {
   });
 
   // Fetch organizations from API
+  
   useEffect(() => {
     setLoading(true);
     fetch("https://panchshil-super.lockated.com/organizations.json", {
@@ -22,7 +23,15 @@ const CompanyCreate = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setOrganizations(data); // Assuming data is an array of organizations
+        console.log("Fetched organizations:", data); // Debugging
+        if (Array.isArray(data)) {
+          setOrganizations(data);
+        } else if (data && Array.isArray(data.organizations)) {
+          setOrganizations(data.organizations); // Adjust based on API response
+        } else {
+          console.error("Unexpected data format:", data);
+          setOrganizations([]); // Prevent errors if data is not an array
+        }
       })
       .catch((error) => {
         console.error("Error fetching organizations:", error);
@@ -31,7 +40,7 @@ const CompanyCreate = () => {
         setLoading(false);
       });
   }, []);
-
+  
   // Handle Input Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,18 +56,17 @@ const CompanyCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-
+  
     const formDataToSend = new FormData();
     formDataToSend.append("company_setup[name]", formData.companyName);
-    formDataToSend.append(
-      "company_setup[organization_id]",
-      formData.organizationId
-    );
+    formDataToSend.append("company_setup[organization_id]", formData.organizationId);
     if (formData.companyLogo) {
       formDataToSend.append("company_setup[logo]", formData.companyLogo);
     }
-
+  
     try {
+      console.log("Submitting form data:", Object.fromEntries(formDataToSend)); // Debugging
+  
       const response = await fetch(
         "https://panchshil-super.lockated.com/company_setups.json",
         {
@@ -66,10 +74,14 @@ const CompanyCreate = () => {
           headers: {
             Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
           },
-          body: formDataToSend, // Send FormData directly (no JSON stringify needed)
+          body: formDataToSend, // Send FormData directly
         }
       );
-
+  
+      console.log("Response Status:", response.status); // Debugging
+      const responseData = await response.json();
+      console.log("Response Data:", responseData); // Debugging
+  
       if (response.ok) {
         toast.success("Company created successfully!");
         setFormData({ companyName: "", companyLogo: null, organizationId: "" }); // Reset form
@@ -83,6 +95,7 @@ const CompanyCreate = () => {
       setSubmitting(false);
     }
   };
+  
 
   return (
     <div className="main-content">
@@ -152,12 +165,15 @@ const CompanyCreate = () => {
                         <option value="">Select Organization</option>
                         {loading ? (
                           <option>Loading...</option>
-                        ) : (
+                        ) : Array.isArray(organizations) &&
+                          organizations.length > 0 ? (
                           organizations.map((org) => (
                             <option key={org.id} value={org.id}>
                               {org.name}
                             </option>
                           ))
+                        ) : (
+                          <option>No organizations found</option>
                         )}
                       </select>
                     </div>
