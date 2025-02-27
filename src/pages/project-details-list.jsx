@@ -85,12 +85,12 @@ const ProjectDetailsList = () => {
     (i) => i + 1
   );
 
-   const displayedProjects = projects
-     .slice(
-       (pagination.current_page - 1) * pageSize,
-       pagination.current_page * pageSize
-     )
-     .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort projects by ID (ascending)
+  const displayedProjects = projects
+    .slice(
+      (pagination.current_page - 1) * pageSize,
+      pagination.current_page * pageSize
+    )
+    .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort projects by ID (ascending)
 
   return (
     <>
@@ -207,7 +207,7 @@ const ProjectDetailsList = () => {
                             <td>{project?.project_name || "N/A"}</td>
                             <td>{project?.property_type || "N/A"}</td>
                             <td>{project?.SFDC_Project_Id || "N/As"}</td>
-                            <td>{project?.status || "N/A"}</td>
+                            <td>{project?.building_type || "N/A"}</td>
                             <td>
                               <td style={{ width: "200px" }}>
                                 {project?.configurations?.length > 0

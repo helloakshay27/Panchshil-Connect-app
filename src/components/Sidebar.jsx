@@ -572,37 +572,36 @@ const Sidebar = () => {
                 </a>
               </li>
               <li className="menu-item d-flex">
-  <a
-    className="menu-link d-flex"
-    style={{ flexDirection: "column" }}
-    href="/sitevisit-list"
-    data-section="security"
-  >
-    {/* Replacing existing SVG with the location pin icon */}
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
-      <g
-        id="location-pin-3--navigation-map-maps-pin-gps-location"
-        stroke="#DD7007"
-        strokeWidth="2"
-      >
-        <path id="Vector" d="M20 17L22 23H2L4 17" />
-        <path id="Vector_2" d="M12.5 8.5h-1v-1h1v1Z" />
-        <path
-          id="Rectangle 2008"
-          d="M5 8.03447C5 12.7241 12 18 12 18s7 -5.2759 7 -9.96553c0 -3.88503 -3.134 -7.03448 -7 -7.03448 -3.86599 0 -7 3.14945 -7 7.03448Z"
-        />
-      </g>
-    </svg>
-    <span className="menu-link-text">Site visit</span>
-  </a>
-</li>
-
+                <a
+                  className="menu-link d-flex"
+                  style={{ flexDirection: "column" }}
+                  href="/sitevisit-list"
+                  data-section="security"
+                >
+                  {/* Replacing existing SVG with the location pin icon */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <g
+                      id="location-pin-3--navigation-map-maps-pin-gps-location"
+                      stroke="#DD7007"
+                      strokeWidth="2"
+                    >
+                      <path id="Vector" d="M20 17L22 23H2L4 17" />
+                      <path id="Vector_2" d="M12.5 8.5h-1v-1h1v1Z" />
+                      <path
+                        id="Rectangle 2008"
+                        d="M5 8.03447C5 12.7241 12 18 12 18s7 -5.2759 7 -9.96553c0 -3.88503 -3.134 -7.03448 -7 -7.03448 -3.86599 0 -7 3.14945 -7 7.03448Z"
+                      />
+                    </g>
+                  </svg>
+                  <span className="menu-link-text">Site visit</span>
+                </a>
+              </li>
               <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
@@ -629,7 +628,7 @@ const Sidebar = () => {
                 <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
-                  href=""
+                  href="/pressreleases-list"
                   data-section="security"
                 >
                   <svg
