@@ -203,33 +203,31 @@ const EventDetails = () => {
                         </div>
                       </div>
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
-                        <div className="col-6">
-                          <label>Event Description</label>
-                        </div>
-                        <div className="col-6">
-                          <p
-                            style={{
-                              display: "-webkit-box",
-                              WebkitLineClamp: isExpanded ? "unset" : 1, // Show only 1 line initially
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: isExpanded ? "normal" : "nowrap",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => setIsExpanded(!isExpanded)}
-                          >
-                            : {eventData.description}{" "}
-                            {!isExpanded && (
-                              <span
-                                style={{ color: "black", cursor: "pointer" }}
-                              >
-                                ...
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
+    <div className="col-6">
+      <label>Event Description</label>
+    </div>
+    <div className="col-6">
+      <p
+        style={{
+          display: "-webkit-box",
+          WebkitLineClamp: isExpanded ? "unset" : 1, // Initially 1 line
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "normal",
+          cursor: "pointer",
+        }}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        : {eventData.description}
+        {!isExpanded && (
+          <span style={{ color: "black", cursor: "pointer", fontWeight: "bold" }}>
+            ... Show More
+          </span>
+        )}
+      </p>
+    </div>
+  </div>
                     </div>
                   </div>
                 </div>

@@ -14,7 +14,7 @@ export default function SelectBox({
 
   useEffect(() => {
     if (defaultValue) {
-      const defaultOption = options.find((option) => option.value === defaultValue);
+      const defaultOption = options.find((option) => option.label === defaultValue);
       setSelectedOption(defaultOption);
     }
   }, [defaultValue, options]);
@@ -43,6 +43,7 @@ export default function SelectBox({
     menu: (base) => ({
       ...base,
       zIndex: 9999, // Ensure the dropdown appears above other elements
+      padding: "5px",
     }),
     menuPortal: (base) => ({
       ...base,
@@ -52,6 +53,9 @@ export default function SelectBox({
       ...base,
       backgroundColor: state.isSelected ? "#ccc" : state.isFocused ? "#de7008" : base.backgroundColor,
       color: state.isSelected ? "#000" : state.isFocused ? "#fff" : "#000", // Set text color to black
+      cursor: "pointer",
+      padding: "10px",
+      borderRadius: "4px",
     }),
     multiValueRemove: (base, state) => ({
       ...base,
@@ -74,9 +78,9 @@ export default function SelectBox({
   // Disable the first option if isDisableFirstOption is true
   const formattedOptions = isDisableFirstOption
     ? options.map((option, index) => ({
-        ...option,
-        isDisabled: index === 0,
-      }))
+      ...option,
+      isDisabled: index === 0,
+    }))
     : options;
 
   const handleChange = (selectedOption) => {

@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 const OrganizationCreate = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     domain: "",
@@ -14,7 +14,7 @@ const OrganizationCreate = () => {
     mobile: "",
     attachment: null,
   });
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   //input change
   const handleChange = (e) => {
@@ -35,7 +35,7 @@ const OrganizationCreate = () => {
   //form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
 
     const payload = new FormData();
     payload.append("organization[name]", formData.name);
@@ -65,11 +65,11 @@ const OrganizationCreate = () => {
       if (response.status === 201 || response.status === 200) {
         toast.success("Form submitted successfully");
       }
-      navigate('/organization-list')
+      navigate("/organization-list");
     } catch (error) {
       toast.error(`Error creating Organization: ${error.message}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -98,7 +98,7 @@ const OrganizationCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Name <span style={{ color: "red" }}> *</span>
+                        Name <span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -115,7 +115,7 @@ const OrganizationCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Domain <span style={{ color: "red" }}> *</span>
+                        Domain <span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -132,7 +132,7 @@ const OrganizationCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Sub-domain<span style={{ color: "red" }}> *</span>
+                        Sub-domain<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -149,7 +149,7 @@ const OrganizationCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Country ID<span style={{ color: "red" }}> *</span>
+                        Country ID<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -166,18 +166,20 @@ const OrganizationCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Mobile No. <span style={{ color: "red" }}> *</span>
+                        Mobile No<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
-                        type="number"
+                        type="text" // Use text to prevent increment/decrement buttons
+                        inputMode="numeric" // Helps mobile devices show the number keyboard
+                        pattern="\d{10}" // Ensures only numbers are entered
                         placeholder="Enter Mobile No"
                         name="mobile"
                         value={formData.mobile}
+                        maxLength={10} // Restrict to 10 digits
                         onChange={handleMobileChange}
-                        min="1000000000"
-                        max="9999999999"
                         required
+                        style={{ appearance: "textfield" }} // Removes number input arrows
                       />
                     </div>
                   </div>
@@ -185,7 +187,7 @@ const OrganizationCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Attachment <span style={{ color: "red" }}> *</span>
+                        Attachment <span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -200,7 +202,11 @@ const OrganizationCreate = () => {
 
                 <div className="row mt-3 justify-content-center">
                   <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                    <button
+                      type="submit"
+                      className="purple-btn2 w-100"
+                      disabled={loading}
+                    >
                       Submit
                     </button>
                   </div>

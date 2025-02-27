@@ -1,71 +1,81 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
-import "../mor.css";
-import { Link } from "react-router-dom";
 import axios from "axios";
-import toast from "react-hot-toast";
+import "../mor.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
-const BannerAdd = () => {
-  const navigate = useNavigate();
+const PressReleasesCreate = () => {
+  const [company, setCompany] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    banner_type: "",
-    banner_redirect: "",
-    company_id: "",
     title: "",
+    description: "",
+    company_id: "",
+    project_id: "",
+    release_date: "",
     attachfile: [],
   });
 
+  const fetchCompany = async () => {
+    try {
+      const response = await axios.get(
+        "https://panchshil-super.lockated.com/company_setups.json",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = response.data.company_setups;
+      console.log("Data", data);
+      setCompany(data);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchBanners = async () => {
+    fetchCompany();
+  }, []);
+
+  const handleCompanyChange = (e) => {
+    setFormData({ ...formData, company_id: e.target.value });
+  };
+
+  useEffect(() => {
+    const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/company_setups.json",
+          "https://panchshil-super.lockated.com/projects.json",
           {
-            method: "GET",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               "Content-Type": "application/json",
             },
           }
         );
-
-        // Ensure we are getting the correct structure (company_setups array)
-        if (response.data && Array.isArray(response.data.company_setups)) {
-          setProjects(response.data.company_setups); // Access company_setups instead of response.data
-        } else {
-          setProjects([]); // If it's not an array, set an empty array
-        }
-
-        setLoading(false);
+        setProjects(response.data.projects || []);
       } catch (error) {
-        console.error("Error fetching banners:", error);
-        setLoading(false);
+        console.error(
+          "Error fetching projects:",
+          error.response?.data || error.message
+        );
       }
     };
 
-    fetchBanners();
+    fetchProjects();
   }, []);
 
-  // Dropdown handler
-  const handleCompanyChange = (e) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      company_id: e.target.value,
-    }));
-  };
-
-  // Input handler
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // File input handler
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
@@ -103,7 +113,6 @@ const BannerAdd = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -116,19 +125,19 @@ const BannerAdd = () => {
 
     try {
       const sendData = new FormData();
-      sendData.append("banner[title]", formData.title);
-      sendData.append("banner[company_id]", formData.company_id);
+      sendData.append("title", formData.title);
+      sendData.append("company_id", formData.company_id);
       formData.attachfile.forEach((file) => {
-        sendData.append(`banner[banner_image]`, file);
+        sendData.append(`attachment`, file);
       });
 
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/banners.json",
+        "https://panchshil-super.lockated.com/press_releases.json",
         sendData
       );
 
       toast.success("Form submitted successfully");
-      navigate("/banner-list");
+      navigate("");
     } catch (error) {
       toast.error(`Error creating banner: ${error.message}`);
     } finally {
@@ -138,24 +147,25 @@ const BannerAdd = () => {
 
   const handleCancel = () => {
     navigate(-1);
-  }
+  };
 
   return (
     <>
       <div className="main-content">
-        <div className="website-content overflow-hidden">
-          <div className="module-data-section">
-            <div className="card mt-4 pb-2 mx-4">
+        <div className="website-content overflow-auto">
+          <div className="module-data-section container-fluid">
+            <div className="card mt-3 pb-4 mx-4">
               <div className="card-header">
-                <h3 className="card-title">Create Banner</h3>
+                <h3 className="card-title">Create Press Releases</h3>
               </div>
               <div className="card-body">
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Title{" "}
+                        Title
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {" "}
                           *
                         </span>
                       </label>
@@ -163,18 +173,51 @@ const BannerAdd = () => {
                         className="form-control"
                         type="text"
                         name="title"
+                        placeholder="Enter Title"
                         value={formData.title}
                         onChange={handleChange}
-                        placeholder="Enter title"
                       />
-                      {errors.title && (
-                        <span className="error text-danger">
-                          {errors.title}
-                        </span>
-                      )}
                     </div>
                   </div>
-
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Press Releases Date
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {" "}
+                          *
+                        </span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="Date"
+                        name="release_date"
+                        placeholder="Enter date"
+                        value={formData.release_date}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3 mt-1">
+                    <div className="form-group">
+                      <label>
+                        Project<span style={{ color: "#de7008" }}> *</span>
+                      </label>
+                      <select
+                        className="form-control form-select"
+                        value={selectedProjectId}
+                        required
+                        onChange={(e) => setSelectedProjectId(e.target.value)}
+                      >
+                        <option value="">Select Project</option>
+                        {projects.map((proj) => (
+                          <option key={proj.id} value={proj.id}>
+                            {proj.project_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
@@ -189,10 +232,12 @@ const BannerAdd = () => {
                         name="company_id"
                         onChange={handleCompanyChange}
                       >
-                        <option value="">Select a Company</option>
-                        {projects.map((project) => (
-                          <option key={project.id} value={project.id}>
-                            {project.name}
+                        <option value="">Select Company</option>
+
+                        {console.log("projects", projects)}
+                        {company.map((company) => (
+                          <option key={company.id} value={company.id}>
+                            {company.name}
                           </option>
                         ))}
                       </select>
@@ -203,11 +248,10 @@ const BannerAdd = () => {
                       )}
                     </div>
                   </div>
-
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Banner{" "}
+                        Attachment{" "}
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
@@ -258,4 +302,4 @@ const BannerAdd = () => {
   );
 };
 
-export default BannerAdd;
+export default PressReleasesCreate;

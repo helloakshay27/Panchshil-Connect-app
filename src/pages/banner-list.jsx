@@ -250,14 +250,22 @@ const BannerList = () => {
                           <td>Lockated, Pune</td>
                           <td>{banner.company_name || "No Name"}</td>
                           <td>{banner.title || "No Title"}</td>
-                          <td className="d-flex justify-content-center align-items-center">
+                          <td
+                            className="text-center"
+                            style={{
+                              border: "1px solid #ddd",
+                              padding: "5px",
+                              verticalAlign: "middle", // Aligns content properly
+                            }}
+                          >
                             <img
                               src={banner?.attachfile?.document_url || "NA"}
                               className="img-fluid rounded"
                               alt={banner.title || "Banner Image"}
                               style={{
-                                maxWidth: "100px",
+                                maxWidth: "100px", // Adjust for uniform size
                                 maxHeight: "100px",
+                                display: "block", // Prevents extra spacing
                               }}
                             />
                           </td>

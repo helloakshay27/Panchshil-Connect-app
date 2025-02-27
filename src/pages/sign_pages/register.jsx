@@ -27,11 +27,16 @@ const Register = () => {
       return;
     }
 
-
+    // Phone number validation (Indian format: 10 digits, starts with 6-9)
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(mobile)) {
+      setError("Please enter a valid 10-digit mobile number.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await axios.post(" https://panchshil-super.lockated.com/users", {
-
+      const response = await axios.post("https://panchshil-super.lockated.com/users", {
         email,
         firstname,
         lastname,
@@ -45,21 +50,24 @@ const Register = () => {
 
         // Redirect to the home page
         navigate("/");
-        toast.success("Register successfully");
+        toast.success("Registered successfully");
       } else {
-        setError("Login failed. Please check your credentials.");
+        setError("User already exists");
+        toast.error("User already exists");
       }
     } catch (err) {
-      setError("An error occurred during login. Please try again.");
+      setError("User already exists");
+      toast.error("User already exists");
     } finally {
       setLoading(false);
     }
   };
 
+
   const regiterPage = () => {
 
     navigate("/login")
-};
+  };
 
   return (
     <div>
