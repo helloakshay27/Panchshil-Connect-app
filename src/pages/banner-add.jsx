@@ -11,61 +11,64 @@ import { useNavigate } from "react-router-dom";
 const BannerAdd = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     banner_type: "",
     banner_redirect: "",
     company_id: "",
+    project_id: "",
     title: "",
     attachfile: [],
   });
 
+  // Fetch Companies
   useEffect(() => {
-    const fetchBanners = async () => {
+    const fetchCompanies = async () => {
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/company_setups.json",
           {
-            method: "GET",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               "Content-Type": "application/json",
             },
           }
         );
-
-        // Ensure we are getting the correct structure (company_setups array)
-        if (response.data && Array.isArray(response.data.company_setups)) {
-          setProjects(response.data.company_setups); // Access company_setups instead of response.data
-        } else {
-          setProjects([]); // If it's not an array, set an empty array
-        }
-
-        setLoading(false);
+        setCompanies(response.data.company_setups || []);
       } catch (error) {
-        console.error("Error fetching banners:", error);
-        setLoading(false);
+        console.error("Error fetching companies:", error);
       }
     };
 
-    fetchBanners();
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/projects.json",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setProjects(response.data.projects || []);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchCompanies();
+    fetchProjects();
+    setLoading(false);
   }, []);
 
-  // Dropdown handler
-  const handleCompanyChange = (e) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      company_id: e.target.value,
-    }));
-  };
-
-  // Input handler
+  // Input Handlers
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // File input handler
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
@@ -78,24 +81,23 @@ const BannerAdd = () => {
       return;
     }
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      attachfile: validFiles,
-    }));
+    setFormData({ ...formData, attachfile: validFiles });
   };
 
-  // Form validation
+  // Form Validation
   const validateForm = () => {
     let newErrors = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = "";
+      newErrors.title = "Title is required";
       toast.error("Title is mandatory");
-    } else if (!formData.company_id.trim()) {
-      newErrors.company_id = "";
+    }
+    if (!formData.company_id.trim()) {
+      newErrors.company_id = "Company is required";
       toast.error("Company is mandatory");
-    } else if (!formData.attachfile || formData.attachfile.length === 0) {
-      newErrors.attachfile = "";
+    }
+    if (!formData.attachfile.length) {
+      newErrors.attachfile = "Banner image is required";
       toast.error("Banner image is mandatory");
     }
 
@@ -103,7 +105,7 @@ const BannerAdd = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Form submit handler
+  // Form Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -111,23 +113,31 @@ const BannerAdd = () => {
     if (!validateForm()) {
       toast.error("Please fill in all the required fields.");
       setLoading(false);
-      return; // Prevent form submission if validation fails
+      return;
     }
 
     try {
       const sendData = new FormData();
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[company_id]", formData.company_id);
+      sendData.append("banner[project_id]", formData.project_id);
+
       formData.attachfile.forEach((file) => {
-        sendData.append(`banner[banner_image]`, file);
+        sendData.append("banner[banner_image]", file);
       });
 
-      const response = await axios.post(
+      await axios.post(
         "https://panchshil-super.lockated.com/banners.json",
-        sendData
+        sendData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
-      toast.success("Form submitted successfully");
+      toast.success("Banner created successfully");
       navigate("/banner-list");
     } catch (error) {
       toast.error(`Error creating banner: ${error.message}`);
@@ -138,7 +148,7 @@ const BannerAdd = () => {
 
   const handleCancel = () => {
     navigate(-1);
-  }
+  };
 
   return (
     <>
@@ -151,14 +161,10 @@ const BannerAdd = () => {
               </div>
               <div className="card-body">
                 <div className="row">
+                  {/* Title */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Title{" "}
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
-                      </label>
+                      <label>Title *</label>
                       <input
                         className="form-control"
                         type="text"
@@ -167,85 +173,57 @@ const BannerAdd = () => {
                         onChange={handleChange}
                         placeholder="Enter title"
                       />
-                      {errors.title && (
-                        <span className="error text-danger">
-                          {errors.title}
-                        </span>
-                      )}
+                      {errors.title && <span className="error text-danger">{errors.title}</span>}
                     </div>
                   </div>
 
+                  {/* Project */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Company{" "}
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
-                      </label>
-                      <select
-                        className="form-control form-select"
-                        value={formData.company_id}
-                        name="company_id"
-                        onChange={handleCompanyChange}
-                      >
-                        <option value="">Select a Company</option>
+                      <label>Project *</label>
+                      <select className="form-control" name="project_id" value={formData.project_id} onChange={handleChange}>
+                        <option value="">Select Project</option>
                         {projects.map((project) => (
-                          <option key={project.id} value={project.id}>
-                            {project.name}
-                          </option>
+                          <option key={project.id} value={project.id}>{project.project_name}</option>
                         ))}
                       </select>
-                      {errors.company_id && (
-                        <span className="error text-danger">
-                          {errors.company_id}
-                        </span>
-                      )}
                     </div>
                   </div>
 
+                  {/* Company */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Banner{" "}
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        name="attachfile"
-                        accept="image/*"
-                        multiple
-                        onChange={handleFileChange}
-                      />
-                      {errors.attachfile && (
-                        <span className="error text-danger">
-                          {errors.attachfile}
-                        </span>
-                      )}
+                      <label>Company *</label>
+                      <select className="form-control" name="company_id" value={formData.company_id} onChange={handleChange}>
+                        <option value="">Select a Company</option>
+                        {companies.map((company) => (
+                          <option key={company.id} value={company.id}>{company.name}</option>
+                        ))}
+                      </select>
+                      {errors.company_id && <span className="error text-danger">{errors.company_id}</span>}
+                    </div>
+                  </div>
+
+                  {/* Banner File Upload */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Banner Image *</label>
+                      <input className="form-control" type="file" name="attachfile" accept="image/*" multiple onChange={handleFileChange} />
+                      {errors.attachfile && <span className="error text-danger">{errors.attachfile}</span>}
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Submit and Cancel Buttons */}
               <div className="row mt-2 justify-content-center">
                 <div className="col-md-2">
-                  <button
-                    onClick={handleSubmit}
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
+                  <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
                     Submit
                   </button>
                 </div>
                 <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={handleCancel}
-                  >
+                  <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
                     Cancel
                   </button>
                 </div>
