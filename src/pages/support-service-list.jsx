@@ -6,6 +6,12 @@ const SupportServiceList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+  });
+  const pageSize = 10;
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -16,6 +22,11 @@ const SupportServiceList = () => {
           },
         });
         setServices(response.data);
+        setPagination({
+          current_page: 1,
+          total_count: response.data.length,
+          total_pages: Math.ceil(response.data.length / pageSize),
+        });
       } catch (error) {
         setError('Failed to fetch data');
       } finally {
@@ -25,9 +36,14 @@ const SupportServiceList = () => {
     fetchServices();
   }, []);
 
-  const filteredServices = services.filter((service) =>
-    service.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handlePageChange = (pageNumber) => {
+    setPagination((prev) => ({ ...prev, current_page: pageNumber }));
+  };
+
+  const startIndex = (pagination.current_page - 1) * pageSize;
+  const paginatedData = services
+    .filter((service) => service.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .slice(startIndex, startIndex + pageSize);
 
   return (
     <div className="main-content">
@@ -111,9 +127,8 @@ const SupportServiceList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredServices.map((service, index) => (
+                    {paginatedData.map((service, index) => (
                         <tr key={service.id}>
-                          <td>{index + 1}</td>
                           <td>{service.name}</td>
                           <td>{service.email}</td>
                           <td>{service.mobile_number}</td>
@@ -126,9 +141,35 @@ const SupportServiceList = () => {
                       ))}
                     </tbody>
                   </table>
+                 
                 </div>
+                
               )}
             </div>
+            <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                    <ul className="pagination justify-content-center d-flex">
+                      <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
+                        <button className="page-link" onClick={() => handlePageChange(1)}>First</button>
+                      </li>
+                      <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
+                        <button className="page-link" onClick={() => handlePageChange(pagination.current_page - 1)}>Prev</button>
+                      </li>
+                      {Array.from({ length: pagination.total_pages }, (_, index) => index + 1).map((pageNumber) => (
+                        <li key={pageNumber} className={`page-item ${pagination.current_page === pageNumber ? "active" : ""}`}>
+                          <button className="page-link" onClick={() => handlePageChange(pageNumber)}>{pageNumber}</button>
+                        </li>
+                      ))}
+                      <li className={`page-item ${pagination.current_page === pagination.total_pages ? "disabled" : ""}`}>
+                        <button className="page-link" onClick={() => handlePageChange(pagination.current_page + 1)}>Next</button>
+                      </li>
+                      <li className={`page-item ${pagination.current_page === pagination.total_pages ? "disabled" : ""}`}>
+                        <button className="page-link" onClick={() => handlePageChange(pagination.total_pages)}>Last</button>
+                      </li>
+                    </ul>
+                    <p>
+                      Showing {startIndex + 1} to {Math.min(startIndex + pageSize, pagination.total_count)} of {pagination.total_count} entries
+                    </p>
+                  </div>
           </div>
         </div>
       </div>
