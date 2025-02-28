@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import SelectBox from "../components/base/SelectBox";
 
 const BannerAdd = () => {
   const navigate = useNavigate();
@@ -181,12 +182,23 @@ const BannerAdd = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Project *</label>
-                      <select className="form-control" name="project_id" value={formData.project_id} onChange={handleChange}>
+                      {/* <select className="form-control" name="project_id" value={formData.project_id} onChange={handleChange}>
                         <option value="">Select Project</option>
                         {projects.map((project) => (
                           <option key={project.id} value={project.id}>{project.project_name}</option>
                         ))}
-                      </select>
+                      </select> */}
+
+                      <SelectBox
+                        options={
+                          projects.map((project) => ({
+                            label: project.project_name,
+                            value: project.id,
+                          }))
+                        }
+                        defaultValue={formData.project_id}
+                        onChange={(value) => setFormData({ ...formData, project_id: value })}
+                      />
                     </div>
                   </div>
 
@@ -194,12 +206,22 @@ const BannerAdd = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Company *</label>
-                      <select className="form-control" name="company_id" value={formData.company_id} onChange={handleChange}>
+                      {/* <select className="form-control" name="company_id" value={formData.company_id} onChange={handleChange}>
                         <option value="">Select a Company</option>
                         {companies.map((company) => (
                           <option key={company.id} value={company.id}>{company.name}</option>
                         ))}
-                      </select>
+                      </select> */}
+                      <SelectBox
+                        options={
+                          companies.map((company) => ({
+                            label: company.name,
+                            value: company.id,
+                          }))
+                        }
+                        defaultValue={formData.company_id}
+                        onChange={(value) => setFormData({ ...formData, company_id: value })}
+                      />
                       {errors.company_id && <span className="error text-danger">{errors.company_id}</span>}
                     </div>
                   </div>

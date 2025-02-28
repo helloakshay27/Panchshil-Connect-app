@@ -3,6 +3,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-hot-toast'
+import SelectBox from '../components/base/SelectBox'
 import "../mor.css";
 
 const Testimonials = () => {
@@ -123,7 +124,7 @@ const Testimonials = () => {
                             *
                           </span>
                         </label>
-                        <select
+                        {/* <select
                           className="form-control form-select"
                           name="companysetupid"
                           value={companySetupId}
@@ -143,7 +144,25 @@ const Testimonials = () => {
                           ) : (
                             <option disabled>No options available</option>
                           )}
-                        </select>
+                        </select> */}
+                        <SelectBox
+                          options={
+                            companySetupOptions.length > 0 ? (
+                              companySetupOptions.map((option) => (
+                                {
+                                  label: option.name,
+                                  value: option.id
+                                }
+                              ))
+                            ) : (
+                              <option disabled>No options available</option>
+                            )
+                          }
+                          defaultValue={companySetupId}
+                          onChange={(value) =>
+                            setCompanySetupId(value)
+                          }
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -175,7 +194,7 @@ const Testimonials = () => {
                             *
                           </span>
                         </label>
-                        <select
+                        {/* <select
                           className="form-control form-select"
                           name="userType"
                           value={userType}
@@ -186,7 +205,16 @@ const Testimonials = () => {
                             Select User Type
                           </option>
                           <option value="User">User</option>
-                        </select>
+                        </select> */}
+                        <SelectBox
+                          options={[
+                            { label: "User", value: "User" },
+                          ]}
+                          defaultValue={userType}
+                          onChange={(value) =>
+                            setUserType(value)
+                          }
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">

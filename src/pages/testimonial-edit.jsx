@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import SelectBox from "../components/base/SelectBox";
 
 const TestimonialEdit = () => {
   const { state } = useLocation();
@@ -26,7 +27,7 @@ const TestimonialEdit = () => {
           {
             headers: {
               Authorization:
-                "Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE",
+                `Bearer ${localStorage.getItem("access_token")}`,
             },
           }
         );
@@ -94,12 +95,12 @@ const TestimonialEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company Setup Id
+                        Company Name
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
-                      <select
+                      {/* <select
                         className="form-control form-select"
                         style={{ width: "100%" }}
                         name="company_setup_id"
@@ -118,7 +119,21 @@ const TestimonialEdit = () => {
                             </option>
                           ))
                           : []}
-                      </select>
+                      </select> */}
+
+                      <SelectBox
+                        options={
+                          Array.isArray(companySetupOptions)
+                            ? companySetupOptions.map((option) => (
+                              {
+                                value: option.id,
+                                label: option.name || option.company_name || "No Name"
+                              }
+                            ))
+                            : []
+                        }
+                        defaultValue={formData.company_setup_id}
+                      />
                     </div>
                   </div>
                   <div className="col-md-3">
@@ -145,7 +160,7 @@ const TestimonialEdit = () => {
                           *
                         </span>
                       </label>
-                      <select
+                      {/* <select
                         className="form-control"
                         name="user_type"
                         value={formData.user_type}
@@ -153,7 +168,17 @@ const TestimonialEdit = () => {
                       >
                         <option value="">Select Type</option>
                         <option value="User">User</option>
-                      </select>
+                      </select> */}
+
+                      <SelectBox
+                        options={[
+                          { value: "User", label: "User" }
+                        ]}
+                        defaultValue={formData.user_type}
+                        onChange={(value) =>
+                          setFormData({ ...formData, user_type: value })
+                        }
+                      />
                     </div>
                   </div>
                   <div className="col-md-3">

@@ -79,9 +79,9 @@ const OrganizationCreate = () => {
       domain: "",
       mobile: "",
       sub_domain: "",
-      country_id,
+      country_id: "",
     });
-    setSelectedProjectId("");
+    // setSelectedProjectId("");
     navigate(-1);
   };
   return (

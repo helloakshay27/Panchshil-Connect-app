@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import SelectBox from "../components/base/SelectBox";
 const SiteVisitSlotConfig = () => {
   const [startHour, setStartHour] = useState("");
   const [startMinute, setStartMinute] = useState("");
@@ -165,7 +166,7 @@ const SiteVisitSlotConfig = () => {
                             *
                           </span>
                         </label>
-                        <select
+                        {/* <select
                           className="form-control"
                           value={startHour}
                           required
@@ -179,7 +180,18 @@ const SiteVisitSlotConfig = () => {
                               {hour.toString().padStart(2, "0")}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+
+                        <SelectBox
+                          options={
+                            hours.map((hour) => ({
+                              label: hour.toString().padStart(2, "0"),
+                              value: hour,
+                            }))
+                          }
+                          defaultValue={startHour}
+                          onChange={(value) => setStartHour(value)}
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -191,7 +203,7 @@ const SiteVisitSlotConfig = () => {
                             *
                           </span>
                         </label>
-                        <select
+                        {/* <select
                           className="form-control"
                           value={startMinute}
                           required
@@ -207,7 +219,18 @@ const SiteVisitSlotConfig = () => {
                               {minute.toString().padStart(2, "0")}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+
+                        <SelectBox
+                          options={
+                            minutes.map((minute) => ({
+                              label: minute.toString().padStart(2, "0"),
+                              value: minute,
+                            }))
+                          }
+                          defaultValue={startMinute}
+                          onChange={(value) => setStartMinute(value)}
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -219,7 +242,7 @@ const SiteVisitSlotConfig = () => {
                             *
                           </span>
                         </label>
-                        <select
+                        {/* <select
                           className="form-control"
                           value={endHour}
                           required
@@ -234,7 +257,18 @@ const SiteVisitSlotConfig = () => {
                               {hour.toString().padStart(2, "0")}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+
+                        <SelectBox
+                          options={
+                            hours.map((hour) => ({
+                              label: hour.toString().padStart(2, "0"),
+                              value: hour,
+                            }))
+                          }
+                          defaultValue={endHour}
+                          onChange={(value) => setEndHour(value)}
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -246,7 +280,7 @@ const SiteVisitSlotConfig = () => {
                             *
                           </span>
                         </label>
-                        <select
+                        {/* <select
                           className="form-control"
                           value={endMinute}
                           required
@@ -261,7 +295,18 @@ const SiteVisitSlotConfig = () => {
                               {minute.toString().padStart(2, "0")}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+
+                        <SelectBox
+                          options={
+                            minutes.map((minute) => ({
+                              label: minute.toString().padStart(2, "0"),
+                              value: minute,
+                            }))
+                          }
+                          defaultValue={endMinute}
+                          onChange={(value) => setEndMinute(value)}
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -273,7 +318,7 @@ const SiteVisitSlotConfig = () => {
                             *
                           </span>
                         </label>
-                        <select
+                        {/* <select
                           className="form-control form-select"
                           value={selectedProject}
                           onChange={handleProjectChange}
@@ -287,7 +332,17 @@ const SiteVisitSlotConfig = () => {
                               {project.project_name}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+                        <SelectBox
+                          options={
+                            projects.map((project) => ({
+                              label: project.project_name,
+                              value: project.id,
+                            }))
+                          }
+                          defaultValue={selectedProject}
+                          onChange={(value) => setSelectedProject(value)}
+                        />
                       </div>
                     </div>
 

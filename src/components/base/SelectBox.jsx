@@ -8,13 +8,13 @@ export default function SelectBox({
   onChange,
   style = {},
   className = "",
-  isDisableFirstOption = false, 
+  isDisableFirstOption = false,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
     if (defaultValue) {
-      const defaultOption = options.find((option) => option.label === defaultValue);
+      const defaultOption = options.find((option) => option.label === defaultValue || option.value === defaultValue);
       setSelectedOption(defaultOption);
     }
   }, [defaultValue, options]);

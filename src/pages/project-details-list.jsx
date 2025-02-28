@@ -54,11 +54,13 @@ const ProjectDetailsList = () => {
       console.error("Error fetching projects:", error);
       setError("Unable to fetch project data");
     }
+
   };
 
   useEffect(() => {
     fetchProjects();
   }, []);
+  console.log(projects)
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -99,11 +101,11 @@ const ProjectDetailsList = () => {
           <div className="module-data-section container-fluid">
             <div className="d-flex justify-content-end px-4 pt-2 mt-3 ">
               <div className="col-md-4 pe-2 pt-2">
-                <form 
-                onSubmit={handleSearchSubmit}
-                action="/pms/departments"
-                acceptCharset="UTF-8"
-                method="get"
+                <form
+                  onSubmit={handleSearchSubmit}
+                  action="/pms/departments"
+                  acceptCharset="UTF-8"
+                  method="get"
                 >
                   <div className="input-group">
                     <input
@@ -207,25 +209,25 @@ const ProjectDetailsList = () => {
                             <td>{project?.project_name || "N/A"}</td>
                             <td>{project?.property_type || "N/A"}</td>
                             <td>{project?.SFDC_Project_Id || "N/As"}</td>
-                            <td>{project?.building_type || "N/A"}</td>
+                            <td>{project?.Project_Construction_Status || "N/A"}</td>
                             <td>
                               <td style={{ width: "200px" }}>
                                 {project?.configurations?.length > 0
                                   ? project?.configurations.map(
-                                      (configurations, idx) => (
-                                        <div key={idx}>
-                                          {configurations.name}{" "}
-                                          <img
-                                            src={configurations.icon_url}
-                                            alt={configurations.name}
-                                            style={{
-                                              width: "20px",
-                                              marginLeft: "5px",
-                                            }}
-                                          />
-                                        </div>
-                                      )
+                                    (configurations, idx) => (
+                                      <div key={idx}>
+                                        {configurations.name}{" "}
+                                        <img
+                                          src={configurations.icon_url}
+                                          alt={configurations.name}
+                                          style={{
+                                            width: "20px",
+                                            marginLeft: "5px",
+                                          }}
+                                        />
+                                      </div>
                                     )
+                                  )
                                   : "No amenities"}
                               </td>
                             </td>
@@ -248,25 +250,25 @@ const ProjectDetailsList = () => {
                             <td style={{ width: "200px" }}>
                               {project?.amenities?.length > 0
                                 ? project?.amenities.map((amenity, idx) => (
-                                    <div key={idx}>
-                                      {amenity.name}{" "}
-                                      <img
-                                        src={amenity.icon_url}
-                                        alt={amenity.name}
-                                        style={{
-                                          width: "20px",
-                                          marginLeft: "5px",
-                                        }}
-                                      />
-                                    </div>
-                                  ))
+                                  <div key={idx}>
+                                    {amenity.name}{" "}
+                                    <img
+                                      src={amenity.icon_url}
+                                      alt={amenity.name}
+                                      style={{
+                                        width: "20px",
+                                        marginLeft: "5px",
+                                      }}
+                                    />
+                                  </div>
+                                ))
                                 : "No amenities"}
                             </td>
                             <td>
                               {project?.specifications?.length > 0
                                 ? project?.specifications.map((spec, idx) => (
-                                    <div key={idx}>{spec.name}</div>
-                                  ))
+                                  <div key={idx}>{spec.name}</div>
+                                ))
                                 : "No specifications"}
                             </td>
                             <td>
@@ -317,9 +319,8 @@ const ProjectDetailsList = () => {
                     <ul className="pagination">
                       {/* First Page Button */}
                       <li
-                        className={`page-item ${
-                          pagination.current_page === 1 ? "disabled" : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -332,9 +333,8 @@ const ProjectDetailsList = () => {
 
                       {/* Previous Page Button */}
                       <li
-                        className={`page-item ${
-                          pagination.current_page === 1 ? "disabled" : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -354,9 +354,8 @@ const ProjectDetailsList = () => {
                       ).map((page) => (
                         <li
                           key={page}
-                          className={`page-item ${
-                            pagination.current_page === page ? "active" : ""
-                          }`}
+                          className={`page-item ${pagination.current_page === page ? "active" : ""
+                            }`}
                         >
                           <button
                             className="page-link"
@@ -369,11 +368,10 @@ const ProjectDetailsList = () => {
 
                       {/* Next Page Button */}
                       <li
-                        className={`page-item ${
-                          pagination.current_page === pagination.total_pages
-                            ? "disabled"
-                            : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === pagination.total_pages
+                          ? "disabled"
+                          : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -390,11 +388,10 @@ const ProjectDetailsList = () => {
 
                       {/* Last Page Button */}
                       <li
-                        className={`page-item ${
-                          pagination.current_page === pagination.total_pages
-                            ? "disabled"
-                            : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === pagination.total_pages
+                          ? "disabled"
+                          : ""
+                          }`}
                       >
                         <button
                           className="page-link"

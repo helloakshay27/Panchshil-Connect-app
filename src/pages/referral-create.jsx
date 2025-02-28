@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import SelectBox from "../components/base/SelectBox"
 
 const ReferralCreate = () => {
   const [projects, setProjects] = useState([]);
@@ -181,7 +182,7 @@ const ReferralCreate = () => {
                       <label>
                         Project<span style={{ color: "#de7008" }}> *</span>
                       </label>
-                      <select
+                      {/* <select
                         className="form-control form-select"
                         value={selectedProjectId}
                         required
@@ -195,7 +196,20 @@ const ReferralCreate = () => {
                             {proj.project_name}
                           </option>
                         ))}
-                      </select>
+                      </select> */}
+
+                      <SelectBox
+                        options={
+                          projects.map((proj) => ({
+                            label: proj.project_name,
+                            value: proj.id
+                          }))
+                        }
+                        value={selectedProjectId}
+                        onChange={(value) =>
+                          setSelectedProjectId(value)
+                        }
+                      />
                     </div>
                   </div>
                 </div>

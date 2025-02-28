@@ -5,13 +5,15 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import SelectBox from "../components/base/SelectBox";
 
 const ProjectDetailsEdit = () => {
   const { id } = useParams();
+
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     Property_Type: "",
@@ -36,6 +38,7 @@ const ProjectDetailsEdit = () => {
     virtual_tour_url: "",
     map_url: "",
     image: [],
+    videos: [],
     Address: {
       address_line_1: "",
       // addressLine1: "",
@@ -105,6 +108,9 @@ const ProjectDetailsEdit = () => {
           }
         );
         const projectData = response.data;
+
+        console.log("this is project data", projectData)
+
         setFormData({
           Property_Type: projectData.property_type || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
@@ -131,12 +137,11 @@ const ProjectDetailsEdit = () => {
             ? projectData.specifications.map((spac) => spac.name)
             : [],
           Land_Area: projectData.land_area || "",
-          project_tag: Array.isArray(projectData.project_tag)
-            ? projectData.project_tag.map((tag) => tag.name)
-            : [],
+          project_tag: projectData.project_tag || "",
           virtual_tour_url: projectData.virtual_tour_url || "",
           map_url: projectData.map_url || "",
           image: projectData.image || "",
+          videos: projectData.videos || [],
           location: {
             address: projectData.location?.address || "line 1",
             address_line_two:
@@ -156,9 +161,9 @@ const ProjectDetailsEdit = () => {
         setLoading(false);
       }
     };
-
     fetchProjectDetails();
   }, []);
+  console.log("this is the form data", formData);
 
   const handleChange = (e) => {
     const { name, files, value } = e.target;
@@ -383,6 +388,8 @@ const ProjectDetailsEdit = () => {
       }
     });
 
+    console.log("this is the passsing data", data)
+
     try {
       const response = await axios.put(
         `${API_BASE_URL}/projects/${id}.json`,
@@ -396,7 +403,7 @@ const ProjectDetailsEdit = () => {
       );
       toast.success("Project Updated successfully");
       console.log(response.data);
-      Navigate("/project-list");
+      navigate("/project-list");
     } catch (error) {
       toast.error("Failed to submit the form. Please try again.");
       console.error("Error submitting the form:", error);
@@ -751,16 +758,21 @@ const ProjectDetailsEdit = () => {
                       value: ammit.id,
                       label: ammit.name,
                     }))}
-                    value={formData?.Amenities
-                      ?.map((id) => {
-                        const ammit = amenities.find(
-                          (ammit) => ammit.id === id
-                        );
-                        return ammit
-                          ? { value: ammit.id, label: ammit.name }
-                          : null;
-                      })
-                      .filter(Boolean)}
+                    // value={formData?.Amenities
+                    //   ?.map((id) => {
+                    //     const ammit = amenities.find(
+                    //       (ammit) => ammit.id === id
+                    //     );
+                    //     return ammit
+                    //       ? { value: ammit.id, label: ammit.name }
+                    //       : null;
+                    //   })
+                    //   .filter(Boolean)}
+
+                    value={formData.Amenities.map((amenitie) => ({
+                      value: amenitie,
+                      label: amenitie
+                    }))}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -790,14 +802,18 @@ const ProjectDetailsEdit = () => {
                       value: spec.id,
                       label: spec.name,
                     }))}
-                    value={specifications
-                      .filter((spec) =>
-                        formData.Specifications.includes(spec.id)
-                      )
-                      .map((spec) => ({
-                        value: spec.id,
-                        label: spec.name,
-                      }))}
+                    // value={specifications
+                    //   .filter((spec) =>
+                    //     formData.Specifications.includes(spec.id)
+                    //   )
+                    //   .map((spec) => ({
+                    //     value: spec.id,
+                    //     label: spec.name,
+                    //   }))}
+                    value={formData.Specifications.map((spec) => ({
+                      value: spec,
+                      label: spec
+                    }))}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -841,14 +857,14 @@ const ProjectDetailsEdit = () => {
                       { value: "Featured", label: "Featured" },
                       { value: "Upcoming", label: "Upcoming" },
                     ]}
-                    defaultValue={formData.Property_Type}
+                    defaultValue={formData.project_tag}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
-                        Property_Type: value,
+                        project_tag: value,
                       }))
                     }
-                    isDisableFirstOption={true}
+                  // isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -1187,6 +1203,88 @@ const ProjectDetailsEdit = () => {
                               className="purple-btn2"
                               onClick={() =>
                                 handleDiscardFile("two_d_images", index)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Videos{" "}
+                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                </h5>
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  onClick={() =>
+                    document.getElementById("videos").click()
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+                <input
+                  id="videos"
+                  type="file"
+                  accept="image/*"
+                  name="videos"
+                  onChange={handleChange}
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* 2D Images */}
+                      {formData.videos.map((file, index) => (
+                        <tr key={index}>
+                          <td> {file.name}</td>
+                          <td>
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={
+                                file.type.startsWith("video")
+                                  ? URL.createObjectURL(file)
+                                  : null
+                              }
+                              alt=""
+                            />
+                          </td>
+
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardFile("videos", index)
                               }
                             >
                               x
