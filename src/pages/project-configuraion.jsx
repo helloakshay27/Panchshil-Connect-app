@@ -132,7 +132,7 @@ const ProjectConfiguraion = () => {
             </div>
             <div className="row mt-3 justify-content-center">
               <div className="col-md-2">
-                <button type="submit" className="purple-btn2 w-100">
+                <button type="submit" className="purple-btn2-shadow w-100">
                   Submit
                 </button>
               </div>
