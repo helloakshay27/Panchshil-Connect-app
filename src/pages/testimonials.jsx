@@ -183,7 +183,7 @@ const Testimonials = () => {
                           required
                         >
                           <option value="" disabled>
-                            Select status
+                            Select User Type
                           </option>
                           <option value="User">User</option>
                         </select>

@@ -130,7 +130,7 @@ const SiteVisitSlotConfigList = () => {
                 <table className="w-100">
                   <thead>
                     <tr>
-                      <th>Sr</th>
+                      <th>Sr No</th>
                       <th>Project Id</th>
                       <th>Scheduled Date</th>
                       <th>Scheduled Time</th>
