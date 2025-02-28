@@ -129,6 +129,9 @@ const Members = () => {
               <li>
                 <Link to="/pressreleases-list">Press Releases List</Link>
               </li>
+              <li>
+                <Link to="/project-configuration">Project Configuraion</Link>
+              </li>
               <li className="pb-5">{/* add above this li */}</li>
             </ul>
           </div>
