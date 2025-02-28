@@ -50,7 +50,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     console.log("formData updated:", formData);
   }, [formData]);
-  
+
 
   console.log("formD", formData);
 
@@ -414,7 +414,7 @@ const ProjectDetailsCreate = () => {
       image: [],
       Address: {
         address_line_1: "",
-          address_line_2: "",
+        address_line_2: "",
         city: "",
         state: "",
         pin_code: "",
@@ -424,6 +424,17 @@ const ProjectDetailsCreate = () => {
       two_d_images: [],
     });
     Navigate(-1);
+  };
+
+  const statusOptions = {
+    "Office Parks": [
+      { value: "Completed", label: "Completed" },
+      { value: "Under-Construction", label: "Under Construction" },
+    ],
+    Residential: [
+      { value: "Completed", label: "Completed" },
+      { value: "Ready-To-Move-in", label: "Ready To Move in" },
+    ],
   };
 
   console.log("formData", formData);
@@ -450,18 +461,18 @@ const ProjectDetailsCreate = () => {
                     </span>
                   </label>
                   <SelectBox
-  options={[
-    { value: "Commercial", label: "Commercial" },
-    { value: "Residential", label: "Residential" },
-  ]}
-  value={formData?.Property_Type || ""} // Ensure it's controlled
-  onChange={(value) =>
-    setFormData((prev) => ({
-      ...prev,
-      Property_Type: value,
-    }))
-  }
-/>
+                    options={[
+                      { value: "Office Parks", label: "Office Parks" },
+                      { value: "Residential", label: "Residential" },
+                    ]}
+                    value={formData?.Property_Type || ""} // Ensure it's controlled
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Property_Type: value,
+                      }))
+                    }
+                  />
 
                 </div>
               </div>
@@ -475,11 +486,9 @@ const ProjectDetailsCreate = () => {
                     </span>
                   </label>
                   <SelectBox
-                    options={[
-                      //{ value: "", label: "Select status", isDisabled: true },
-                      { value: "Completed", label: "Completed" },
-                      { value: "Ready-To-Move-in", label: "Ready To Move in" },
-                    ]}
+                    options={
+                      statusOptions[formData.Property_Type] || []
+                    }
                     defaultValue={formData.Project_Construction_Status}
                     onChange={(value) =>
                       setFormData((prev) => ({
@@ -487,7 +496,7 @@ const ProjectDetailsCreate = () => {
                         Project_Construction_Status: value,
                       }))
                     }
-                    //isDisableFirstOption={true}
+                  //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -845,7 +854,7 @@ const ProjectDetailsCreate = () => {
                         project_tag: value,
                       }))
                     }
-                    //isDisableFirstOption={true}
+                  //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -959,7 +968,7 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              
+
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>

@@ -29,8 +29,8 @@ const ProjectDetailsEdit = () => {
     Number_Of_Towers: "",
     no_of_apartments: "",
     Rera_Number: "",
-    Amenities: [], 
-    Specifications: [], 
+    Amenities: [],
+    Specifications: [],
     Land_Area: "",
     project_tag: "",
     virtual_tour_url: "",
@@ -405,6 +405,17 @@ const ProjectDetailsEdit = () => {
     }
   };
 
+  const statusOptions = {
+    "Office Parks": [
+      { value: "Completed", label: "Completed" },
+      { value: "Under-Construction", label: "Under Construction" },
+    ],
+    Residential: [
+      { value: "Completed", label: "Completed" },
+      { value: "Ready-To-Move-in", label: "Ready To Move in" },
+    ],
+  };
+
   // Render loading or error states
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -436,43 +447,40 @@ const ProjectDetailsEdit = () => {
                   <SelectBox
                     options={[
                       //{ value: "", label: "Select status", isDisabled: true },
-                      { value: "Commercial", label: "Commercial" },
-                      { value: "Residential", label: "Residential" },
+                      { value: "Office Parks", label: "Office Parks" },
+                      { value: "Residential", label: "Residential" }
                     ]}
-                    value={formData.Property_Type}
+                    defaultValue={formData.Property_Type}
                     onChange={(selectedValue) =>
                       setFormData((prev) => ({
                         ...prev,
                         Property_Type: selectedValue,
                       }))
                     }
-                    //isDisableFirstOption={true}
+                  //isDisableFirstOption={true}
                   />
                 </div>
               </div>
-            
 
-<div className="col-md-3">
-  <div className="form-group">
-    <label>
-      Project Construction Status
-      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
-    </label>
-    <SelectBox
-      options={[
-        { value: "Completed", label: "Completed" },
-        { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      ]}
-      value={formData.Project_Construction_Status} // Controlled value
-      onChange={(selectedValue) =>
-        setFormData((prev) => ({
-          ...prev,
-          Project_Construction_Status: selectedValue,
-        }))
-      }
-    />
-  </div>
-</div>
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <label>
+                    Project Construction Status
+                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  </label>
+                  <SelectBox
+                    options={statusOptions[formData.Property_Type] || []}
+                    defaultValue={formData.Project_Construction_Status} // Controlled value
+                    onChange={(selectedValue) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Project_Construction_Status: selectedValue,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
 
 
 
