@@ -45,12 +45,12 @@ const ProjectDetailsCreate = () => {
     },
     brochure: null,
     two_d_images: [],
+    videos: [],
   });
 
   useEffect(() => {
     console.log("formData updated:", formData);
   }, [formData]);
-
 
   console.log("formD", formData);
 
@@ -95,6 +95,12 @@ const ProjectDetailsCreate = () => {
           ...prev,
           two_d_images: [...prev.two_d_images, ...newImages],
         }));
+      } else if (name === "videos") {
+        const newVideos = Array.from(files);
+        setFormData((prev) => ({
+          ...prev,
+          videos: [...prev.videos, ...newVideos],
+        }));
       }
     } else {
       if (
@@ -130,6 +136,10 @@ const ProjectDetailsCreate = () => {
       const updatedFiles = [...formData.two_d_images];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, two_d_images: updatedFiles });
+    } else if (fileType === "videos") {
+      const updatedVideos = [...formData.videos];
+      updatedVideos.splice(index, 1);
+      setFormData({ ...formData, videos: updatedVideos });
     }
   };
   const validateForm = (formData) => {
@@ -243,6 +253,10 @@ const ProjectDetailsCreate = () => {
       errors.push("At least one 2D image is required.");
       return errors;
     }
+    if (formData.videos.length === 0) {
+      errors.push("At least one video is required.");
+      return errors;
+    }
 
     return errors;
   };
@@ -274,8 +288,14 @@ const ProjectDetailsCreate = () => {
         }
       } else if (key === "two_d_images") {
         if (formData.two_d_images && formData.two_d_images.length > 0) {
-          Array.from(formData.two_d_images).forEach((file) => {
+          formData.two_d_images.forEach((file) => {
             data.append("project[two_d_images][]", file);
+          });
+        }
+      } else if (key === "videos") {
+        if (formData.videos && formData.videos.length > 0) {
+          formData.videos.forEach((file) => {
+            data.append("project[videos][]", file);
           });
         }
       } else {
@@ -299,7 +319,7 @@ const ProjectDetailsCreate = () => {
         }
       );
       console.log(response.data);
-      toast.success("Project submited successfully");
+      toast.success("Project submitted successfully");
       Navigate("/project-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
@@ -318,8 +338,9 @@ const ProjectDetailsCreate = () => {
       try {
         const response = await axios.get(url, {
           // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
+          //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          //     "Content-Type": "application/json",
+          //    },
         });
 
         setprojectsType(response.data?.property_types);
@@ -375,7 +396,8 @@ const ProjectDetailsCreate = () => {
       try {
         const response = await axios.get(url, {
           // headers: {
-          //   Authorization: `Bearer ${token}`,
+          //   Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          //   "Content-Type": "application/json",
           // },
         });
 
@@ -422,6 +444,7 @@ const ProjectDetailsCreate = () => {
       },
       brochure: null,
       two_d_images: [],
+      videos: [],
     });
     Navigate(-1);
   };
@@ -473,7 +496,43 @@ const ProjectDetailsCreate = () => {
                       }))
                     }
                   />
-
+                </div>
+              </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Project Bulding Type
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <SelectBox
+                    options={[
+                      { value: "All Properties", label: "All Properties" },
+                      {
+                        value: "Mixed-Use-Development",
+                        label: "Mixed Use Development",
+                      },
+                      {
+                        value: "Special-Economic-Zone",
+                        label: "Special Economic Zone",
+                      },
+                      { value: "Tech-Parks", label: "Tech Parks" },
+                      { value: "Built-to-Suit", label: "Built to Suit" },
+                      {
+                        value: "Upcoming-Developments",
+                        label: "Upcoming Developments",
+                      },
+                    ]}
+                    value={formData?.building_type || ""} // Ensure it's controlled
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        building_type: value,
+                      }))
+                    }
+                  />
                 </div>
               </div>
               <div className="col-md-3 mt-2">
@@ -486,9 +545,7 @@ const ProjectDetailsCreate = () => {
                     </span>
                   </label>
                   <SelectBox
-                    options={
-                      statusOptions[formData.Property_Type] || []
-                    }
+                    options={statusOptions[formData.Property_Type] || []}
                     defaultValue={formData.Project_Construction_Status}
                     onChange={(value) =>
                       setFormData((prev) => ({
@@ -496,7 +553,7 @@ const ProjectDetailsCreate = () => {
                         Project_Construction_Status: value,
                       }))
                     }
-                  //isDisableFirstOption={true}
+                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -854,7 +911,7 @@ const ProjectDetailsCreate = () => {
                         project_tag: value,
                       }))
                     }
-                  //isDisableFirstOption={true}
+                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -967,7 +1024,6 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
-
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
@@ -1194,6 +1250,78 @@ const ProjectDetailsCreate = () => {
                               onClick={() =>
                                 handleDiscardFile("two_d_images", index)
                               }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Videos{" "}
+                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                </h5>
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  onClick={() => document.getElementById("videos").click()}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+                <input
+                  id="videos"
+                  type="file"
+                  accept="video/mp4,video/webm,video/ogg"
+                  name="videos"
+                  onChange={handleChange}
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.videos.map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.name}</td>
+                          <td>
+                            <video
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              controls
+                              src={URL.createObjectURL(file)}
+                            />
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => handleDiscardFile("videos", index)}
                             >
                               x
                             </button>

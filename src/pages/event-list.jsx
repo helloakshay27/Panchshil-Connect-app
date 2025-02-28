@@ -21,9 +21,14 @@ const Eventlist = () => {
     const fetchEvents = async () => {
       try {
         const response = await fetch(
-          "https://panchshil-super.lockated.com/events.json"
-        );
-
+          "https://panchshil-super.lockated.com/events.json",
+        {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        }
+      }
+      );
         const data = await response.json();
 
         if (Array.isArray(data.events)) {
@@ -56,9 +61,12 @@ const Eventlist = () => {
     setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
 
-  const filteredEvents = events.filter((event) =>
+  const filteredEvents = events
+  .filter((event) => event.event_name) // Remove null values first
+  .filter((event) =>
     event.event_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
 
   const displayedEvents = filteredEvents
     //.sort((a, b) => (b.id || 0) - (a.id || 0))
@@ -171,7 +179,7 @@ const Eventlist = () => {
                   <thead>
                     <tr>
                       <th>Sr No</th>
-                      <th>Project ID</th>
+                      <th>Project Name</th>
                       <th>Event Name</th>
                       <th>Event At</th>
                       <th>From Time</th>
@@ -195,7 +203,7 @@ const Eventlist = () => {
                               1}
                           </td>
 
-                          <td>{event.project_id}</td>
+                          <td>{event.project_name}</td>
                           <td>{event.event_name}</td>
                           <td>{event.event_at}</td>
 

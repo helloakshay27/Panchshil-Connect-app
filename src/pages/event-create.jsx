@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import SelectBox from "../components/base/SelectBox";
 
 const EventCreate = () => {
   const navigate = useNavigate();
@@ -28,7 +29,9 @@ const EventCreate = () => {
   const [eventUserID, setEventUserID] = useState([]);
   const [files, setFiles] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
 
   console.log("AA", eventType);
   console.log("bb", eventUserID);
@@ -157,14 +160,14 @@ const EventCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
     // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
       toast.error(validationErrors.join("\n")); // Show all errors in an alert
-      setLoading(false)
+      setLoading(false);
       return; // Stop form submission
     }
 
@@ -214,8 +217,8 @@ const EventCreate = () => {
         data,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
-            // Authorization: `Bearer <your-token>`, // Replace with actual token
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -223,11 +226,11 @@ const EventCreate = () => {
       toast.success("Event created successfully");
       navigate("/event-list");
     } catch (error) {
-      console.error("Error submitting the form:", error);
+      //console.error("Error submitting the form:", error);
       toast.error("Failed to submit the form. Please try again.");
-      setError("Failed to submit the form. Please try again.");
+      //setError("Failed to submit the form. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -239,7 +242,13 @@ const EventCreate = () => {
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/events.json",
-          {}
+
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
         );
 
         setEventType(response?.data?.events);
@@ -260,10 +269,12 @@ const EventCreate = () => {
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/users/get_users",
+
           {
-            // headers: {
-            //   Authorization: `Bearer ${token}`,
-            // },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
           }
         );
 
@@ -277,9 +288,34 @@ const EventCreate = () => {
     fetchEvent();
   }, []);
 
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/projects.json",
+
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setProjects(response.data.projects || []);
+      } catch (error) {
+        console.error(
+          "Error fetching projects:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   const handleCancel = () => {
     navigate(-1);
-  }
+  };
 
   return (
     <>
@@ -295,58 +331,40 @@ const EventCreate = () => {
                 <div className="card-body">
                   {error && <p className="text-danger">{error}</p>}
                   <div className="row">
-                    <div className="col-md-3">
+                    <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>
-                          Project ID
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
+                          Project
+                          <span style={{ color: "#de7008" }}> *</span>
                         </label>
-                        <select
-                          className="form-control form-select"
-                          name="project_id"
-                          value={formData.project_id}
-                          onChange={handleChange}
-                          required
-                        >
-                          <option value="" >
-                            Select Event ID
-                          </option>
-                          {eventType?.map((type, index) => (
-                            <option key={index} value={type.id}>
-                              {type.project_id}
-                            </option>
-                          ))}
-                        </select>
+                        <SelectBox
+                          options={projects.map((proj) => ({
+                            value: proj.id,
+                            label: proj.project_name,
+                          }))}
+                          value={selectedProjectId || ""} // Ensure it's controlled
+                          onChange={(value) => setSelectedProjectId(value)}
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Event Types
+                          Event Type
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
                         </label>
-                        <select
-                          className="form-control form-select"
+                        <input
+                          className="form-control"
+                          type="text"
                           name="event_type"
+                          placeholder="Enter Event Type"
                           value={formData.event_type}
                           onChange={handleChange}
                           required
-                        >
-                          <option value="" disabled>
-                            Select Event Type
-                          </option>
-                          {eventType?.map((type, index) => (
-                            <option key={index} value={type.id}>
-                              {type.event_type}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -491,7 +509,7 @@ const EventCreate = () => {
                           className="form-control"
                           rows={1}
                           name="description"
-                          placeholder="Enter Project Description"
+                          placeholder="Enter Description"
                           value={formData.description}
                           onChange={handleChange}
                           required
@@ -527,25 +545,19 @@ const EventCreate = () => {
                             *
                           </span>
                         </label>
-                        <select
-                          className="form-control form-select"
-                          name="user_id"
-                          value={formData.user_id}
-                          required
-                          onChange={handleChange}
-                        >
-                          <option value="" disabled>
-                            Select User ID
-                          </option>
-                          {eventUserID?.map((user, index) => (
-                            <option
-                              key={index}
-                              value={user.firstname + " " + user.lastname}
-                            >
-                              {user.firstname} {user.lastname}
-                            </option>
-                          ))}
-                        </select>
+                        <SelectBox
+                          options={eventUserID?.map((user) => ({
+                            value: `${user.firstname} ${user.lastname}`,
+                            label: `${user.firstname} ${user.lastname}`,
+                          }))}
+                          value={formData?.user_id || ""} // Ensure it's controlled
+                          onChange={(value) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              user_id: value,
+                            }))
+                          }
+                        />
                       </div>
                     </div>
 
@@ -562,7 +574,7 @@ const EventCreate = () => {
                           className="form-control"
                           rows={1}
                           name="comment"
-                          placeholder="Enter Project Description"
+                          placeholder="Enter Comment"
                           value={formData.comment}
                           onChange={handleChange}
                           required
@@ -703,7 +715,6 @@ const EventCreate = () => {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
