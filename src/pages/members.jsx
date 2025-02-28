@@ -132,6 +132,9 @@ const Members = () => {
               <li>
                 <Link to="/project-configuration">Project Configuraion</Link>
               </li>
+              <li>
+                <Link to="/project-configuration-list">Project Configuraion List</Link>
+              </li>
               <li className="pb-5">{/* add above this li */}</li>
             </ul>
           </div>

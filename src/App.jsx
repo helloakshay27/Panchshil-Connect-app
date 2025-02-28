@@ -52,6 +52,7 @@ import SupportServiceList from "./pages/support-service-list";
 
 import PressReleasesList from "./pages/press-releases-list";
 import ProjectConfiguraion from "./pages/project-configuraion";
+import ProjectConfiguraionList from "./pages/project-configuraion-list";
 
 
 // import EditGallery from './EditGallery';
@@ -130,6 +131,7 @@ function App() {
           <Route path="/support-service-list" element={<SupportServiceList/>}/>
           <Route path="/pressreleases-list" element={<PressReleasesList/>}/>
           <Route path="/project-configuration" element={<ProjectConfiguraion/>}/>
+          <Route path="/project-configuration-list" element={<ProjectConfiguraionList/>}/>
 
 
 
