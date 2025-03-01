@@ -53,6 +53,7 @@ import SupportServiceList from "./pages/support-service-list";
 import PressReleasesList from "./pages/press-releases-list";
 import ProjectConfiguraion from "./pages/project-configuraion";
 import ProjectConfiguraionList from "./pages/project-configuraion-list";
+import PressReleasesEdit from "./pages/press-releases-edit";
 
 
 // import EditGallery from './EditGallery';
@@ -130,6 +131,7 @@ function App() {
           <Route path="/pressreleases-create" element={<PressReleasesCreate/>}/>
           <Route path="/support-service-list" element={<SupportServiceList/>}/>
           <Route path="/pressreleases-list" element={<PressReleasesList/>}/>
+          <Route path="/pressreleases-edit/:id" element={<PressReleasesEdit/>}/>
           <Route path="/project-configuration" element={<ProjectConfiguraion/>}/>
           <Route path="/project-configuration-list" element={<ProjectConfiguraionList/>}/>
 

@@ -198,12 +198,13 @@ const EventCreate = () => {
     }
 
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === "attachfile" && value.length > 0) {
-        value.forEach((file) => data.append("event[event_image]", file));
+      if (key === "attachfile" && Array.isArray(value) && value.length > 0) {
+        value.forEach((file) => data.append("event_image", file));
       } else {
-        data.append(`event[${key}]`, value);
+        data.append(key, value);
       }
     });
+    
 
     // Log the data object to see what it contains
     for (let [key, value] of data.entries()) {

@@ -130,6 +130,9 @@ const Members = () => {
                 <Link to="/pressreleases-list">Press Releases List</Link>
               </li>
               <li>
+                <Link to="/pressreleases-edit/:id">Press Releases Edit</Link>
+              </li>
+              <li>               
                 <Link to="/project-configuration">Project Configuraion</Link>
               </li>
               <li>

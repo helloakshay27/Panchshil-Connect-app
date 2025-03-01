@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import SelectBox from "../components/base/SelectBox";
 
 const EventEdit = () => {
   const { id } = useParams();
@@ -38,7 +39,13 @@ const EventEdit = () => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/events/${id}.json`
+          `https://panchshil-super.lockated.com/events/${id}.json`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
         );
 
         console.log("resp", response);
@@ -51,25 +58,37 @@ const EventEdit = () => {
     if (id) fetchEvent();
   }, [id]);
 
-  useEffect(() => {
-    const fetchEventTypes = async () => {
-      try {
-        const response = await axios.get(
-          "https://panchshil-super.lockated.com/events.json"
-        );
-        setEventType(response.data.events);
-      } catch (error) {
-        console.error("Error fetching event types:", error);
-      }
-    };
-    fetchEventTypes();
-  }, []);
+  // useEffect(() => {
+  //   const fetchEventTypes = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "https://panchshil-super.lockated.com/events.json",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+  //       setEventType(response.data.events);
+  //     } catch (error) {
+  //       console.error("Error fetching event types:", error);
+  //     }
+  //   };
+  //   fetchEventTypes();
+  // }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/users/get_users"
+          "https://panchshil-super.lockated.com/users/get_users",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
         );
         setEventUserID(response.data.users || []);
       } catch (error) {
@@ -120,7 +139,13 @@ const EventEdit = () => {
       await axios.put(
         `https://panchshil-super.lockated.com/events/${id}.json`,
         data,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+        //{ headers: { "Content-Type": "multipart/form-data" } }
       );
       toast.success("Event updated successfully!");
       navigate("/event-list");

@@ -77,6 +77,17 @@ const PressReleasesList = () => {
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
   };
 
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > pagination.total_pages) return;
+  
+    setPagination((prev) => ({
+      ...prev,
+      current_page: pageNumber,
+    }));
+  
+    localStorage.setItem("press_list_currentPage", pageNumber);
+  };
+  
   return (
     <>
       {/* <Header /> */}
@@ -212,7 +223,7 @@ const PressReleasesList = () => {
                               <a
                                 href=""
                                 onClick={() =>
-                                  navigate(`/pressrelease-edit/${release.id}`)
+                                  navigate(`/pressreleases-edit/${release.id}`)
                                 }
                               >
                                 <svg

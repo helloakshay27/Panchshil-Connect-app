@@ -17,7 +17,8 @@ const PressReleasesCreate = () => {
     company_id: "",
     project_id: "",
     release_date: "",
-    attachfile: [],
+    pr_image: [],
+    pr_pdf: [],
   });
 
   const fetchCompany = async () => {
@@ -76,74 +77,111 @@ const PressReleasesCreate = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleProjectChange = (e) => {
+    setFormData({ ...formData, project_id: e.target.value });
+  };
+  
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-
-    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
-
-    if (validFiles.length !== files.length) {
-      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = "";
-      return;
+    const fieldName = e.target.name;
+  
+    if (fieldName === "pr_image") {
+      const allowedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      const validImages = files.filter((file) => allowedImageTypes.includes(file.type));
+  
+      if (validImages.length !== files.length) {
+        toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+        e.target.value = "";
+        return;
+      }
+  
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        pr_image: validImages,
+      }));
+    } else if (fieldName === "pr_pdf") {
+      const allowedPdfTypes = ["application/pdf"];
+      const validPdfs = files.filter((file) => allowedPdfTypes.includes(file.type));
+  
+      if (validPdfs.length !== files.length) {
+        toast.error("Only PDF files are allowed.");
+        e.target.value = "";
+        return;
+      }
+  
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        pr_pdf: validPdfs,
+      }));
     }
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      attachfile: validFiles,
-    }));
   };
+  
 
   // Form validation
   const validateForm = () => {
     let newErrors = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = "";
-      toast.error("Title is mandatory");
-    } else if (!formData.company_id.trim()) {
-      newErrors.company_id = "";
-      toast.error("Company is mandatory");
-    } else if (!formData.attachfile || formData.attachfile.length === 0) {
-      newErrors.attachfile = "";
-      toast.error("Banner image is mandatory");
-    }
-
+  
+    if (!formData.title.trim()) newErrors.title = "Title is mandatory";
+    if (!formData.company_id.trim()) newErrors.company_id = "Company is mandatory";
+    if (!formData.pr_image || formData.pr_image.length === 0)
+      newErrors.pr_image = "At least one image is required";
+    if (!formData.pr_pdf || formData.pr_pdf.length === 0)
+      newErrors.pr_pdf = "At least one PDF is required";
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+  
     setLoading(true);
-
-    if (!validateForm()) {
-      toast.error("Please fill in all the required fields.");
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      toast.error("Authentication error: Please log in again.");
       setLoading(false);
-      return; // Prevent form submission if validation fails
+      return;
     }
-
+  
     try {
       const sendData = new FormData();
       sendData.append("title", formData.title);
       sendData.append("company_id", formData.company_id);
-      formData.attachfile.forEach((file) => {
-        sendData.append(`attachment`, file);
+      sendData.append("release_date", formData.release_date);
+      sendData.append("description", formData.description);
+      sendData.append("project_id", formData.project_id);
+  
+      formData.pr_image.forEach((file) => {
+        sendData.append("attachment[]", file);
       });
-
-      const response = await axios.post(
+  
+      formData.pr_pdf.forEach((file) => {
+        sendData.append("attachment[]", file);
+      });
+  
+      await axios.post(
         "https://panchshil-super.lockated.com/press_releases.json",
-        sendData
+        sendData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
-
-      toast.success("Form submitted successfully");
-      navigate("");
+  
+      toast.success("Press release created successfully!");
+      navigate("/pressreleases-list");
     } catch (error) {
-      toast.error(`Error creating banner: ${error.message}`);
+      console.error("Error response:", error.response);
+      toast.error(`Error: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleCancel = () => {
     navigate(-1);
@@ -204,11 +242,12 @@ const PressReleasesCreate = () => {
                         Project<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <select
-                        className="form-control form-select"
-                        value={selectedProjectId}
-                        required
-                        onChange={(e) => setSelectedProjectId(e.target.value)}
-                      >
+  className="form-control form-select"
+  name="project_id"
+  value={formData.project_id}
+  required
+  onChange={handleProjectChange}
+>
                         <option value="">Select Project</option>
                         {projects.map((proj) => (
                           <option key={proj.id} value={proj.id}>
@@ -251,7 +290,27 @@ const PressReleasesCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Attachment{" "}
+                        Description
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {" "}
+                          *
+                        </span>
+                      </label>
+                      <textarea
+                        className="form-control"
+                        rows={1}
+                        name="description"
+                        placeholder="Enter Description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Attachment (Image)
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
@@ -259,14 +318,38 @@ const PressReleasesCreate = () => {
                       <input
                         className="form-control"
                         type="file"
-                        name="attachfile"
+                        name="pr_image"
                         accept="image/*"
                         multiple
                         onChange={handleFileChange}
                       />
-                      {errors.attachfile && (
+                      {errors.pr_image && (
                         <span className="error text-danger">
-                          {errors.attachfile}
+                          {errors.pr_image}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Attachment (PDF)
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {" "}
+                          *
+                        </span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="pr_pdf"
+                        accept="application/pdf"
+                        multiple
+                        onChange={handleFileChange}
+                      />
+                      {errors.pr_pdf && (
+                        <span className="error text-danger">
+                          {errors.pr_pdf}
                         </span>
                       )}
                     </div>
@@ -279,7 +362,7 @@ const PressReleasesCreate = () => {
                     onClick={handleSubmit}
                     type="submit"
                     className="purple-btn2 w-100"
-                    disabled={loading}
+                    //disabled={loading}
                   >
                     Submit
                   </button>
