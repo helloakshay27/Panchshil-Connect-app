@@ -98,7 +98,7 @@ const Amenities = () => {
                         <input
                           className="form-control"
                           type="file"
-                          accept=".png,.jpg,.jpeg,.svg"
+                          accept=".png,.jpg,.jpeg"
                           placeholder="Default input"
                           required
                           onChange={handleFileChange}
