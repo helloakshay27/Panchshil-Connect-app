@@ -18,6 +18,7 @@ const ProjectDetailsEdit = () => {
   const [formData, setFormData] = useState({
     Property_Type: "",
     SFDC_Project_Id: "",
+    Building_Type: "",
     Project_Construction_Status: "",
     Configuration_Type: [], // Ensure this is an array
     project_name: "",
@@ -38,7 +39,6 @@ const ProjectDetailsEdit = () => {
     virtual_tour_url: "",
     map_url: "",
     image: [],
-    videos: [],
     Address: {
       address_line_1: "",
       // addressLine1: "",
@@ -51,6 +51,7 @@ const ProjectDetailsEdit = () => {
     },
     brochure: null, // file input for brochure
     two_d_images: [], // array of file inputs for 2D images
+    videos: [],
   });
 
 
@@ -114,6 +115,7 @@ const ProjectDetailsEdit = () => {
         setFormData({
           Property_Type: projectData.property_type || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
+          Building_Type: projectData.building_type || "",
           Project_Construction_Status:
             projectData.Project_Construction_Status || "",
           Configuration_Type: Array.isArray(projectData.configurations)
@@ -140,8 +142,8 @@ const ProjectDetailsEdit = () => {
           project_tag: projectData.project_tag || "",
           virtual_tour_url: projectData.virtual_tour_url || "",
           map_url: projectData.map_url || "",
-          image: projectData.image || "",
-          videos: projectData.videos || [],
+          image: projectData.image_url || "",
+
           location: {
             address: projectData.location?.address || "line 1",
             address_line_two:
@@ -153,6 +155,8 @@ const ProjectDetailsEdit = () => {
           },
           brochure: projectData.brochure || null,
           two_d_images: projectData.two_d_images || [],
+          videos: projectData.videos || [],
+
         });
         setProject(response.data);
       } catch (err) {
@@ -237,6 +241,10 @@ const ProjectDetailsEdit = () => {
     // Required fields (text fields)
     if (!formData.Property_Type) {
       errors.push("Project Type is required.");
+      return errors; // Return the first error immediately
+    }
+    if (!formData.Building_Type) {
+      errors.push("Building Type is required.");
       return errors; // Return the first error immediately
     }
     if (!formData.Project_Construction_Status) {
@@ -383,6 +391,18 @@ const ProjectDetailsEdit = () => {
             data.append("project[two_d_images][]", file);
           }
         });
+      } else if (
+        key === 'videos' &&
+        Array.isArray(value) &&
+        value.length > 0
+      ) {
+        value.forEach((fileObj) => {
+          // Ensure `fileObj` is a File instance, not an object with metadata
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
+            data.append("project[videos][]", file);
+          }
+        })
       } else {
         data.append(`project[${key}]`, value);
       }
@@ -465,6 +485,44 @@ const ProjectDetailsEdit = () => {
                       }))
                     }
                   //isDisableFirstOption={true}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <label>
+                    Project Bulding Type
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <SelectBox
+                    options={[
+                      { value: "All Properties", label: "All Properties" },
+                      {
+                        value: "Mixed-Use-Development",
+                        label: "Mixed Use Development",
+                      },
+                      {
+                        value: "Special-Economic-Zone",
+                        label: "Special Economic Zone",
+                      },
+                      { value: "Tech-Parks", label: "Tech Parks" },
+                      { value: "Built-to-Suit", label: "Built to Suit" },
+                      {
+                        value: "Upcoming-Developments",
+                        label: "Upcoming Developments",
+                      },
+                    ]}
+                    defaultValue={formData.Building_Type} // Ensure it's controlled
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Building_Type: value,
+                      }))
+                    }
                   />
                 </div>
               </div>
@@ -929,6 +987,19 @@ const ProjectDetailsEdit = () => {
                     onChange={(e) => handleFileChange(e, "image")}
                   />
                 </div>
+
+                {
+                  formData.image ? (
+                    <img
+                      src={formData.image}
+                      alt="Uploaded Preview"
+                      className="img-fluid rounded mt-2"
+                      style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <span>No image selected</span>
+                  )
+                }
               </div>
             </div>
           </div>
@@ -1243,7 +1314,7 @@ const ProjectDetailsEdit = () => {
                 <input
                   id="videos"
                   type="file"
-                  accept="image/*"
+                  accept="video/mp4,video/webm,video/ogg"
                   name="videos"
                   onChange={handleChange}
                   multiple
@@ -1257,25 +1328,22 @@ const ProjectDetailsEdit = () => {
                     <thead>
                       <tr>
                         <th>File Name</th>
-                        <th>Image</th>
+                        <th>Videos</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* 2D Images */}
+                      {/* Videos */}
                       {formData.videos.map((file, index) => (
                         <tr key={index}>
-                          <td> {file.name}</td>
+                          <td> {file.document_file_name}</td>
                           <td>
-                            <img
+                            <video
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              src={
-                                file.type.startsWith("video")
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt=""
+                              src={file.document_url}
+                              alt={file.document_file_name}
+                              autoPlay
                             />
                           </td>
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import SelectBox from "../components/base/SelectBox";
 
 const SitevisitEdit = () => {
   const [formData, setFormData] = useState({
@@ -194,7 +195,7 @@ const SitevisitEdit = () => {
                           *
                         </span>
                       </label>
-                      <select
+                      {/* <select
                         className="form-control form-select"
                         name="project_id"
                         value={formData.project_id || "N/A"}
@@ -209,7 +210,23 @@ const SitevisitEdit = () => {
                             {project.project_name}
                           </option>
                         ))}
-                      </select>
+                      </select> */}
+
+                      <SelectBox
+                        options={
+                          projectsType.map((project) => ({
+                            label: project.project_name,
+                            value: project.id,
+                          }))
+                        }
+                        defaultValue={formData.project_id}
+                        onChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            project_id: value,
+                          }))
+                        }}
+                      />
                     </div>
 
                     {/* Date Selection */}

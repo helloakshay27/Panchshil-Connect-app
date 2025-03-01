@@ -553,7 +553,7 @@ const ProjectDetailsCreate = () => {
                         Project_Construction_Status: value,
                       }))
                     }
-                    //isDisableFirstOption={true}
+                  //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -911,7 +911,7 @@ const ProjectDetailsCreate = () => {
                         project_tag: value,
                       }))
                     }
-                    //isDisableFirstOption={true}
+                  //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -1313,7 +1313,8 @@ const ProjectDetailsCreate = () => {
                             <video
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              controls
+                              autoPlay
+                              muted
                               src={URL.createObjectURL(file)}
                             />
                           </td>
