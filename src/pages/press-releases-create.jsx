@@ -21,6 +21,8 @@ const PressReleasesCreate = () => {
     pr_pdf: [],
   });
 
+  console.log("Data", formData);
+
   const fetchCompany = async () => {
     try {
       const response = await axios.get(
@@ -147,27 +149,32 @@ const PressReleasesCreate = () => {
   
     try {
       const sendData = new FormData();
-      sendData.append("title", formData.title);
-      sendData.append("company_id", formData.company_id);
-      sendData.append("release_date", formData.release_date);
-      sendData.append("description", formData.description);
-      sendData.append("project_id", formData.project_id);
+      sendData.append("press_release[title]", formData.title);
+      sendData.append("press_release[company_id]", formData.company_id);
+      sendData.append("press_release[release_date]", formData.release_date);
+      sendData.append("press_release[description]", formData.description);
+      sendData.append("press_release[project_id]", formData.project_id);
   
-      formData.pr_image.forEach((file) => {
-        sendData.append("attachment[]", file);
-      });
+      // Append multiple images
+      if (formData.pr_image?.length) {
+        formData.pr_image.forEach((file) => {
+          sendData.append("pr_image", file); // Use array notation
+        });
+      }
   
-      formData.pr_pdf.forEach((file) => {
-        sendData.append("attachment[]", file);
-      });
+      // Append multiple PDFs
+      if (formData.pr_pdf?.length) {
+        formData.pr_pdf.forEach((file) => {
+          sendData.append("pr_pdf", file);
+        });
+      }
   
       await axios.post(
         "https://panchshil-super.lockated.com/press_releases.json",
         sendData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Don't set "Content-Type"; let Axios handle it
           },
         }
       );
@@ -181,6 +188,7 @@ const PressReleasesCreate = () => {
       setLoading(false);
     }
   };
+  
   
 
   const handleCancel = () => {
