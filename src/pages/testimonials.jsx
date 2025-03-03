@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-hot-toast'
-import SelectBox from '../components/base/SelectBox'
+import { toast } from "react-hot-toast";
+import SelectBox from "../components/base/SelectBox";
 import "../mor.css";
 
 const Testimonials = () => {
@@ -12,7 +12,7 @@ const Testimonials = () => {
   const [userName, setUserName] = useState("");
   const [userType, setUserType] = useState("");
   const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -86,7 +86,7 @@ const Testimonials = () => {
       setUserName("");
       setUserType("");
       setContent("");
-      navigate('/testimonial-list')
+      navigate("/testimonial-list");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
       if (error.response) {
@@ -94,7 +94,7 @@ const Testimonials = () => {
       }
       toast.error("Failed to submit. Please check your input.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -118,7 +118,7 @@ const Testimonials = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Company Setup Id
+                          Company Name
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -148,20 +148,16 @@ const Testimonials = () => {
                         <SelectBox
                           options={
                             companySetupOptions.length > 0 ? (
-                              companySetupOptions.map((option) => (
-                                {
-                                  label: option.name,
-                                  value: option.id
-                                }
-                              ))
+                              companySetupOptions.map((option) => ({
+                                label: option.name,
+                                value: option.id,
+                              }))
                             ) : (
                               <option disabled>No options available</option>
                             )
                           }
                           defaultValue={companySetupId}
-                          onChange={(value) =>
-                            setCompanySetupId(value)
-                          }
+                          onChange={(value) => setCompanySetupId(value)}
                         />
                       </div>
                     </div>
@@ -194,29 +190,18 @@ const Testimonials = () => {
                             *
                           </span>
                         </label>
-                        {/* <select
-                          className="form-control form-select"
+                        <input
+                          className="form-control"
+                          type="text"
                           name="userType"
+                          placeholder="Enter User Type"
                           value={userType}
                           onChange={(e) => setUserType(e.target.value)}
                           required
-                        >
-                          <option value="" disabled>
-                            Select User Type
-                          </option>
-                          <option value="User">User</option>
-                        </select> */}
-                        <SelectBox
-                          options={[
-                            { label: "User", value: "User" },
-                          ]}
-                          defaultValue={userType}
-                          onChange={(value) =>
-                            setUserType(value)
-                          }
                         />
                       </div>
                     </div>
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -240,7 +225,11 @@ const Testimonials = () => {
                   </div>
                   <div className="row mt-2 justify-content-center">
                     <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                      <button
+                        type="submit"
+                        className="purple-btn2 w-100"
+                        disabled={loading}
+                      >
                         Submit
                       </button>
                     </div>
