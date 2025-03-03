@@ -133,19 +133,27 @@ const TestimonialEdit = () => {
                       <label>
                         User Type
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {" "}
                           *
                         </span>
                       </label>
-
-                      <SelectBox
-                        options={[{ value: "User", label: "User" }]}
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="userType"
+                        placeholder="Enter User Type"
                         value={formData.user_type}
-                        onChange={(value) =>
-                          setFormData({ ...formData, user_type: value })
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            user_type: e.target.value,
+                          })
                         }
+                        required
                       />
                     </div>
                   </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
