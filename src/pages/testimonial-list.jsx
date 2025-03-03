@@ -50,12 +50,12 @@ const TestimonialList = () => {
 
   const filteredTestimonials = searchQuery
     ? testimonials.filter(
-      (testimonial) =>
-        testimonial.user_name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        testimonial.content.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+        (testimonial) =>
+          testimonial.user_name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          testimonial.content.toLowerCase().includes(searchQuery.toLowerCase())
+      )
     : testimonials;
 
   const handlePageChange = (pageNumber) => {
@@ -67,11 +67,11 @@ const TestimonialList = () => {
   };
 
   const displayedTestimonials = filteredTestimonials
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Sort by created_at (latest first)
     .slice(
       (pagination.current_page - 1) * pageSize,
       pagination.current_page * pageSize
-    )
-    .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort testimonials by ID (asc)
+    );
 
   return (
     <div className="main-content">
@@ -241,8 +241,9 @@ const TestimonialList = () => {
                 <ul className="pagination justify-content-center d-flex">
                   {/* First Button */}
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -254,8 +255,9 @@ const TestimonialList = () => {
 
                   {/* Previous Button */}
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -275,8 +277,9 @@ const TestimonialList = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
-                        }`}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -289,10 +292,11 @@ const TestimonialList = () => {
 
                   {/* Next Button */}
                   <li
-                    className={`page-item ${pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -309,10 +313,11 @@ const TestimonialList = () => {
 
                   {/* Last Button */}
                   <li
-                    className={`page-item ${pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
                   >
                     <button
                       className="page-link"

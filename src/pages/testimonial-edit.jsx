@@ -7,7 +7,7 @@ import SelectBox from "../components/base/SelectBox";
 const TestimonialEdit = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const { testimonial, setTestimonials } = state || {};
+  const { testimonial } = state || {}; // Removed setTestimonials
 
   const [formData, setFormData] = useState({
     company_setup_id: testimonial?.company_setup_id || "",
@@ -17,7 +17,7 @@ const TestimonialEdit = () => {
   });
 
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -26,22 +26,19 @@ const TestimonialEdit = () => {
           "https://panchshil-super.lockated.com/company_setups.json",
           {
             headers: {
-              Authorization:
-                `Bearer ${localStorage.getItem("access_token")}`,
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
           }
         );
-        console.log("response", response.data);
 
-        // Ensure response is an array before setting state
         if (Array.isArray(response.data)) {
           setCompanySetupOptions(response.data);
         } else {
-          setCompanySetupOptions([]); // Default to empty array
+          setCompanySetupOptions([]);
         }
       } catch (error) {
         console.error("Error fetching company setup data:", error);
-        setCompanySetupOptions([]); // Default to empty array on error
+        setCompanySetupOptions([]);
       }
     };
 
@@ -62,24 +59,19 @@ const TestimonialEdit = () => {
         formData
       );
 
-      setTestimonials((prevTestimonials) =>
-        prevTestimonials.map((t) =>
-          t.id === testimonial.id ? { ...t, ...formData } : t
-        )
-      );
       toast.success("Testimonial updated successfully!");
-      navigate("/testimonials");
+      navigate("/testimonials"); // Redirect after update
     } catch (error) {
       console.error("Error updating testimonial:", error);
       toast.error("Error updating testimonial. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   const handleCancel = () => {
     navigate(-1);
-  }
+  };
 
   return (
     <div className="main-content">
@@ -95,44 +87,28 @@ const TestimonialEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company Name
+                        Company Setup ID
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
-                      {/* <select
-                        className="form-control form-select"
-                        style={{ width: "100%" }}
-                        name="company_setup_id"
-                        value={formData.company_setup_id}
-                        onChange={handleChange}
-                      >
-                        <option value="" disabled>
-                          Select ID
-                        </option>
-                        {Array.isArray(companySetupOptions)
-                          ? companySetupOptions.map((option) => (
-                            <option key={option.id} value={option.id}>
-                              {option.name ||
-                                option.company_name ||
-                                "No Name"}
-                            </option>
-                          ))
-                          : []}
-                      </select> */}
 
                       <SelectBox
                         options={
-                          Array.isArray(companySetupOptions)
-                            ? companySetupOptions.map((option) => (
-                              {
+                          companySetupOptions.length > 0
+                            ? companySetupOptions.map((option) => ({
                                 value: option.id,
-                                label: option.name || option.company_name || "No Name"
-                              }
-                            ))
+                                label: option.id.toString(),
+                              }))
                             : []
                         }
-                        defaultValue={formData.company_setup_id}
+                        value={formData.company_setup_id || ""}
+                        onChange={(selectedValue) =>
+                          setFormData({
+                            ...formData,
+                            company_setup_id: selectedValue,
+                          })
+                        }
                       />
                     </div>
                   </div>
@@ -160,21 +136,10 @@ const TestimonialEdit = () => {
                           *
                         </span>
                       </label>
-                      {/* <select
-                        className="form-control"
-                        name="user_type"
-                        value={formData.user_type}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select Type</option>
-                        <option value="User">User</option>
-                      </select> */}
 
                       <SelectBox
-                        options={[
-                          { value: "User", label: "User" }
-                        ]}
-                        defaultValue={formData.user_type}
+                        options={[{ value: "User", label: "User" }]}
+                        value={formData.user_type}
                         onChange={(value) =>
                           setFormData({ ...formData, user_type: value })
                         }
@@ -200,12 +165,20 @@ const TestimonialEdit = () => {
                 </div>
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2 mt-3">
-                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                    <button
+                      type="submit"
+                      className="purple-btn2 w-100"
+                      disabled={loading}
+                    >
                       Submit
                     </button>
                   </div>
                   <div className="col-md-2 mt-3">
-                    <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={handleCancel}
+                    >
                       Cancel
                     </button>
                   </div>
