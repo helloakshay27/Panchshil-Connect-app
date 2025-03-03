@@ -90,7 +90,7 @@ const TestimonialEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company Setup ID
+                        Company Name
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
