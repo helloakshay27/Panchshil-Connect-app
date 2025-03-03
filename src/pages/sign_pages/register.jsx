@@ -14,6 +14,11 @@ const Register = () => {
 
   const navigate = useNavigate();
 
+  const handleMobileChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 10) return;
+    setMobile(value);
+  };
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
     setError(""); // Reset error state
@@ -36,12 +41,15 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post("https://panchshil-super.lockated.com/users", {
-        email,
-        firstname,
-        lastname,
-        mobile,
-      });
+      const response = await axios.post(
+        "https://panchshil-super.lockated.com/users",
+        {
+          email,
+          firstname,
+          lastname,
+          mobile,
+        }
+      );
 
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);
@@ -63,10 +71,8 @@ const Register = () => {
     }
   };
 
-
   const regiterPage = () => {
-
-    navigate("/login")
+    navigate("/login");
   };
 
   return (
@@ -132,17 +138,22 @@ const Register = () => {
                       />
                     </div>
                     <div className="form-group position-relative">
-                      <label className="mb-1" htmlFor="email">
-                        Mobile
+                      <label className="mb-1" htmlFor="mobile">
+                        Mobile<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
-                        type="tel"
-                        id="email"
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]{10}"
                         className="form-control mb-2"
                         placeholder="Enter mobile"
+                        id="mobile"
+                        name="mobile"
                         value={mobile}
-                        onChange={(e) => setMobile(e.target.value)}
+                        maxLength={10}
+                        onChange={handleMobileChange}
                         required
+                        style={{ appearance: "textfield" }}
                       />
                     </div>
 
@@ -150,10 +161,17 @@ const Register = () => {
                     <button type="submit" className="btn btn-danger mt-2">
                       {loading ? "Register in..." : "Register"}
                     </button>
-                    <button className="btn purple-btn2 mt-3 " onClick={regiterPage} style={{ width: "100%", background: "white", color: "black" }}>
+                    <button
+                      className="btn purple-btn2 mt-3 "
+                      onClick={regiterPage}
+                      style={{
+                        width: "100%",
+                        background: "white",
+                        color: "black",
+                      }}
+                    >
                       {loading ? "Signing In..." : "Sign In"}
                     </button>
-
                   </form>
                 </div>
               </div>
