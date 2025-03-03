@@ -93,7 +93,7 @@ const BannerAdd = () => {
       newErrors.title = "Title is required";
       toast.error("Title is mandatory");
     }
-    if (!formData.company_id.trim()) {
+    if (!formData.company_id || String(formData.company_id).trim() === "") {
       newErrors.company_id = "Company is required";
       toast.error("Company is mandatory");
     }
@@ -174,7 +174,11 @@ const BannerAdd = () => {
                         onChange={handleChange}
                         placeholder="Enter title"
                       />
-                      {errors.title && <span className="error text-danger">{errors.title}</span>}
+                      {errors.title && (
+                        <span className="error text-danger">
+                          {errors.title}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -190,14 +194,14 @@ const BannerAdd = () => {
                       </select> */}
 
                       <SelectBox
-                        options={
-                          projects.map((project) => ({
-                            label: project.project_name,
-                            value: project.id,
-                          }))
-                        }
+                        options={projects.map((project) => ({
+                          label: project.project_name,
+                          value: project.id,
+                        }))}
                         defaultValue={formData.project_id}
-                        onChange={(value) => setFormData({ ...formData, project_id: value })}
+                        onChange={(value) =>
+                          setFormData({ ...formData, project_id: value })
+                        }
                       />
                     </div>
                   </div>
@@ -213,16 +217,20 @@ const BannerAdd = () => {
                         ))}
                       </select> */}
                       <SelectBox
-                        options={
-                          companies.map((company) => ({
-                            label: company.name,
-                            value: company.id,
-                          }))
-                        }
+                        options={companies.map((company) => ({
+                          label: company.name,
+                          value: company.id,
+                        }))}
                         defaultValue={formData.company_id}
-                        onChange={(value) => setFormData({ ...formData, company_id: value })}
+                        onChange={(value) =>
+                          setFormData({ ...formData, company_id: value })
+                        }
                       />
-                      {errors.company_id && <span className="error text-danger">{errors.company_id}</span>}
+                      {errors.company_id && (
+                        <span className="error text-danger">
+                          {errors.company_id}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -230,8 +238,19 @@ const BannerAdd = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Banner Image *</label>
-                      <input className="form-control" type="file" name="attachfile" accept="image/*" multiple onChange={handleFileChange} />
-                      {errors.attachfile && <span className="error text-danger">{errors.attachfile}</span>}
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="attachfile"
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileChange}
+                      />
+                      {errors.attachfile && (
+                        <span className="error text-danger">
+                          {errors.attachfile}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -240,12 +259,20 @@ const BannerAdd = () => {
               {/* Submit and Cancel Buttons */}
               <div className="row mt-2 justify-content-center">
                 <div className="col-md-2">
-                  <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
+                  <button
+                    onClick={handleSubmit}
+                    className="purple-btn2 w-100"
+                    disabled={loading}
+                  >
                     Submit
                   </button>
                 </div>
                 <div className="col-md-2">
-                  <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
+                  <button
+                    type="button"
+                    className="purple-btn2 w-100"
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </button>
                 </div>

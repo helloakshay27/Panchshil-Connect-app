@@ -204,7 +204,6 @@ const EventCreate = () => {
         data.append(key, value);
       }
     });
-    
 
     // Log the data object to see what it contains
     for (let [key, value] of data.entries()) {
@@ -474,15 +473,32 @@ const EventCreate = () => {
                             *
                           </span>
                         </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="rsvp_action"
-                          placeholder="Enter RSVP Action"
-                          value={formData.rsvp_action}
-                          onChange={handleChange}
-                          required
-                        />
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="yes"
+                              checked={formData.rsvp_action === "yes"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="no"
+                              checked={formData.rsvp_action === "no"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     {/* <div className="col-md-3">
@@ -526,17 +542,35 @@ const EventCreate = () => {
                             *
                           </span>
                         </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="publish"
-                          placeholder="Enter Event Publish"
-                          value={formData.publish}
-                          onChange={handleChange}
-                          required
-                        />
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="publish"
+                              value="true"
+                              checked={formData.publish === "true"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="publish"
+                              value="false"
+                              checked={formData.publish === "false"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>

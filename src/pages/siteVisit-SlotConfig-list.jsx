@@ -131,7 +131,7 @@ const SiteVisitSlotConfigList = () => {
                   <thead>
                     <tr>
                       <th>Sr No</th>
-                      <th>Project Id</th>
+                      <th>Project Name</th>
                       <th>Scheduled Date</th>
                       <th>Scheduled Time</th>
                     </tr>
@@ -163,8 +163,9 @@ const SiteVisitSlotConfigList = () => {
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -175,8 +176,9 @@ const SiteVisitSlotConfigList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -194,8 +196,9 @@ const SiteVisitSlotConfigList = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
-                        }`}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -206,10 +209,11 @@ const SiteVisitSlotConfigList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -224,10 +228,11 @@ const SiteVisitSlotConfigList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === pagination.total_pages
+                        ? "disabled"
+                        : ""
+                    }`}
                   >
                     <button
                       className="page-link"
