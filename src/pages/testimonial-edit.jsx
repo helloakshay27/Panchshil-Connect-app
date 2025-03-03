@@ -30,9 +30,11 @@ const TestimonialEdit = () => {
             },
           }
         );
+        console.log(response.data);
 
-        if (Array.isArray(response.data)) {
-          setCompanySetupOptions(response.data);
+        if (Array.isArray(response.data.company_setups)) {
+          setCompanySetupOptions(response.data.company_setups);
+          console.log(response.company_setups);
         } else {
           setCompanySetupOptions([]);
         }
@@ -49,6 +51,7 @@ const TestimonialEdit = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  // console.log(companySetupOptions);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +63,7 @@ const TestimonialEdit = () => {
       );
 
       toast.success("Testimonial updated successfully!");
-      navigate("/testimonials"); // Redirect after update
+      navigate("/testimonial-list"); // Redirect after update
     } catch (error) {
       console.error("Error updating testimonial:", error);
       toast.error("Error updating testimonial. Please try again.");
@@ -98,11 +101,11 @@ const TestimonialEdit = () => {
                           companySetupOptions.length > 0
                             ? companySetupOptions.map((option) => ({
                                 value: option.id,
-                                label: option.id.toString(),
+                                label: option.name.toString(),
                               }))
                             : []
                         }
-                        value={formData.company_setup_id || ""}
+                        defaultValue={formData.company_setup_id || ""}
                         onChange={(selectedValue) =>
                           setFormData({
                             ...formData,
