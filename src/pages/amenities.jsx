@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../mor.css";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-hot-toast'
+import { toast } from "react-hot-toast";
 
 const Amenities = () => {
   const [name, setName] = useState("");
@@ -41,10 +41,10 @@ const Amenities = () => {
       setName("");
       setIcon(null);
       toast.success("Amenity added successfully");
-      navigate('/amenities-list')
+      navigate("/amenities-list");
     } catch (err) {
       console.error("Error Response:", err.response?.data || err.message);
-      toast.error(err.message)
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -98,7 +98,7 @@ const Amenities = () => {
                         <input
                           className="form-control"
                           type="file"
-                          accept=".png,.jpg,.jpeg"
+                          accept=".png,.jpg,.jpeg,.svg"
                           placeholder="Default input"
                           required
                           onChange={handleFileChange}
