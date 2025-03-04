@@ -20,7 +20,7 @@ const ProjectDetailsEdit = () => {
     SFDC_Project_Id: "",
     Building_Type: "",
     Project_Construction_Status: "",
-    Configuration_Type: [], // Ensure this is an array
+    Configuration_Type: [], 
     project_name: "",
     project_address: "",
     project_description: "",
@@ -47,8 +47,8 @@ const ProjectDetailsEdit = () => {
       pin_code: "",
       country: "",
     },
-    brochure: null, // file input for brochure
-    two_d_images: [], // array of file inputs for 2D images
+    brochure: null, 
+    two_d_images: [], 
     videos: [],
   });
 
@@ -63,9 +63,9 @@ const ProjectDetailsEdit = () => {
   const [error, setError] = useState(null);
 
   const API_BASE_URL = "https://panchshil-super.lockated.com";
-  const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
+  const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; 
 
-  // Unified API Fetcher
+  
   const fetchData = async (endpoint, setter) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/${endpoint}`, {
@@ -78,7 +78,7 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-  // Fetch all dropdown data on mount
+  
   useEffect(() => {
     fetchData("get_property_types.json", (data) =>
       setProjectsType(data?.property_types || [])
@@ -95,7 +95,7 @@ const ProjectDetailsEdit = () => {
   }, []);
 
   console.log("data", projectsType);
-  // Fetch specific project details on mount
+  
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
@@ -224,19 +224,17 @@ const ProjectDetailsEdit = () => {
       e.target.value = "";
       return;
     }
-
-    // Generate preview for the first image
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        attachfile: validFiles, // Store actual file objects
-        previewImage: reader.result, // Store preview URL
+        attachfile: validFiles, 
+        previewImage: reader.result, 
       }));
     };
 
     if (validFiles.length > 0) {
-      reader.readAsDataURL(validFiles[0]); // Read first image as preview
+      reader.readAsDataURL(validFiles[0]); 
     }
   };
 
@@ -296,83 +294,75 @@ const ProjectDetailsEdit = () => {
     }
     if (!formData.project_size_sq_mtr) {
       errors.push("Project Size (Sq. Mtr.) is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Project_Size_Sq_Ft) {
       errors.push("Project Size (Sq. Ft.) is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Rera_Carpet_Area_Sq_M) {
       errors.push("RERA Carpet Area (Sq. M) is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Rera_Carpet_Area_sqft) {
       errors.push("RERA Carpet Area (Sq. Ft.) is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Number_Of_Towers) {
       errors.push("Number of Towers is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.no_of_apartments) {
       errors.push("Number of Units is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Rera_Number) {
       errors.push("RERA Number is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
-    // if (!formData.project_amenities.length) {
-    //   errors.push("Amenities are required.");
-    //   return errors; // Return the first error immediately
-    // }
     if (!formData.Specifications.length) {
       errors.push("Specifications are required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Land_Area) {
       errors.push("Land Area is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
-
-    // Address validation (nested fields)
     if (!formData.Address || !formData.Address.address_line_1) {
       errors.push("Address Line 1 is required.");
-      return errors; // Return the first error immediately
-    }
-    // Address validation (nested fields)
+      return errors; 
+    }    
     if (!formData.Address || !formData.Address.address_line_2) {
       errors.push("Address Line 2 is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Address || !formData.Address.city) {
       errors.push("City is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Address || !formData.Address.state) {
       errors.push("State is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Address || !formData.Address.pin_code) {
       errors.push("Pin Code is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (!formData.Address || !formData.Address.country) {
       errors.push("Country is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
 
-    // File validation (files must be present)
     if (!formData.brochure) {
       errors.push("Brochure is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
     if (formData.two_d_images.length === 0) {
       errors.push("At least one 2D image is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
 
-    return errors; // Return the first error message if any
+    return errors; 
   };
 
   const handleSubmit = async (e) => {
@@ -389,27 +379,38 @@ const ProjectDetailsEdit = () => {
     const data = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === "Address" && typeof value === "object") {
-        Object.entries(value).forEach(([addressKey, addressValue]) => {
-          data.append(`project[Address][${addressKey}]`, addressValue);
-        });
-      } else if (key === "brochure" && value instanceof File) {
-        data.append("project[brochure]", value);
-      } else if (key === "two_d_images" && Array.isArray(value)) {
-        value.forEach((file) => {
-          if (file instanceof File) {
+      if (key === "Address") {
+        for (const addressKey in formData.Address) {
+          data.append(
+            `project[Address][${addressKey}]`,
+            formData.Address[addressKey]
+          );
+        }
+      } else if (key === "brochure" && value) {
+        const file = value instanceof File ? value : value.file;
+        if (file instanceof File) {
+          data.append("project[brochure]", file);
+        }
+      } else if (key === "two_d_images" && Array.isArray(value) && value.length > 0) {
+        value.forEach((fileObj) => {
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
             data.append("project[two_d_images][]", file);
           }
         });
-      } else if (key === "videos" && Array.isArray(value)) {
-        value.forEach((file) => {
-          if (file instanceof File) {
+      } else if (key === "videos" && Array.isArray(value) && value.length > 0) {
+        value.forEach((fileObj) => {
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
             data.append("project[videos][]", file);
           }
         });
-      } else if (Array.isArray(value)) {
-        // Fix: Take only the first value if it's an array to prevent duplicates
-        data.append(`project[${key}]`, value[0]);
+      } else if (key === "image" && value) { 
+        // Ensure image is a File instance before appending
+        const file = value instanceof File ? value : value.file;
+        if (file instanceof File) {
+          data.append("project[image]", file);
+        }
       } else {
         data.append(`project[${key}]`, value);
       }
@@ -450,7 +451,7 @@ const ProjectDetailsEdit = () => {
     ],
   };
 
-  // Render loading or error states
+  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -654,7 +655,7 @@ const ProjectDetailsEdit = () => {
 
                   <input
                     className="form-control"
-                    type="text"
+                    type="number"
                     placeholder="Default input"
                     name="price"
                     value={formData.price}
@@ -1193,7 +1194,9 @@ const ProjectDetailsEdit = () => {
                       {/* Brochure */}
                       {formData.brochure && (
                         <tr>
-                          <td>{formData.brochure?.name || ""}</td>
+                          <td>
+                          {formData.brochure.name || formData.brochure.document_file_name || "No File"}
+                            </td>
 
                           <td>
                             <button

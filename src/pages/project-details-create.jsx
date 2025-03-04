@@ -146,16 +146,6 @@ const ProjectDetailsCreate = () => {
   };
   const validateForm = (formData) => {
     const errors = [];
-
-    // Required fields (text fields)
-    // if (!formData.property_type) {
-    //   errors.push("Project Type is required.");
-    //   return errors; // Return the first error immediately
-    // }
-    // if (!formData.SFDC_Project_Id) {
-    //   errors.push("SFDC Project ID is required.");
-    //   return errors; // Return the first error immediately
-    // }
     if (!formData.Project_Construction_Status) {
       errors.push("Construction Status is required.");
       return errors;
@@ -212,25 +202,14 @@ const ProjectDetailsCreate = () => {
       errors.push("Amenities are required.");
       return errors;
     }
-    // if (!formData.specifications.length) {
-    //   errors.push("Specifications are required.");
-    //   return errors; // Return the first error immediately
-    // }
     if (!formData.Land_Area) {
       errors.push("Land Area is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
-
-    // Address validation (nested fields)
     if (!formData.Address || !formData.Address.address_line_1) {
       errors.push("Address Line 1 is required.");
-      return errors; // Return the first error immediately
+      return errors; 
     }
-    // // Address validation (nested fields)
-    // if (!formData.address_line_two || !formData.location.address_line_two) {
-    //   errors.push("Address Line 2 is required.");
-    //   return errors; // Return the first error immediately
-    // }
     if (!formData.Address || !formData.Address.city) {
       errors.push("City is required.");
       return errors;
@@ -276,35 +255,44 @@ const ProjectDetailsCreate = () => {
 
     const data = new FormData();
 
-    // Append fields to FormData correctly
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === "Address" && typeof value === "object") {
-        Object.entries(value).forEach(([addressKey, addressValue]) => {
-          data.append(`project[Address][${addressKey}]`, addressValue);
-        });
-      } else if (key === "brochure" && value instanceof File) {
-        data.append("project[brochure]", value);
-      } else if (key === "two_d_images" && Array.isArray(value)) {
-        value.forEach((file) => {
-          if (file instanceof File) {
+      if (key === "Address") {
+        for (const addressKey in formData.Address) {
+          data.append(
+            `project[Address][${addressKey}]`,
+            formData.Address[addressKey]
+          );
+        }
+      } else if (key === "brochure" && value) {
+        const file = value instanceof File ? value : value.file;
+        if (file instanceof File) {
+          data.append("project[brochure]", file);
+        }
+      } else if (key === "two_d_images" && Array.isArray(value) && value.length > 0) {
+        value.forEach((fileObj) => {
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
             data.append("project[two_d_images][]", file);
           }
         });
-      } else if (key === "videos" && Array.isArray(value)) {
-        value.forEach((file) => {
-          if (file instanceof File) {
+      } else if (key === "videos" && Array.isArray(value) && value.length > 0) {
+        value.forEach((fileObj) => {
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
             data.append("project[videos][]", file);
           }
         });
-      } else if (Array.isArray(value)) {
-        
-        data.append(`project[${key}]`, value[0]);
+      } else if (key === "image" && value) { 
+        // Ensure image is a File instance before appending
+        const file = value instanceof File ? value : value.file;
+        if (file instanceof File) {
+          data.append("project[image]", file);
+        }
       } else {
         data.append(`project[${key}]`, value);
       }
     });
 
-    // Debug: Check FormData before sending
     for (let [key, value] of data.entries()) {
       console.log(`${key}:`, value);
     }
@@ -476,7 +464,6 @@ const ProjectDetailsCreate = () => {
           </div>
           <div className="card-body">
             <div className="row">
-              {/* Project Type */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -491,7 +478,7 @@ const ProjectDetailsCreate = () => {
                       { value: "Office Parks", label: "Office Parks" },
                       { value: "Residential", label: "Residential" },
                     ]}
-                    value={formData?.Property_Type || ""} // Ensure it's controlled
+                    value={formData?.Property_Type || ""} 
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -528,7 +515,7 @@ const ProjectDetailsCreate = () => {
                         label: "Upcoming Developments",
                       },
                     ]}
-                    value={formData?.building_type || ""} // Ensure it's controlled
+                    value={formData?.building_type || ""} 
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -1349,7 +1336,10 @@ const ProjectDetailsCreate = () => {
               </div>
             </div>
           </div>
-          <div className="row mt-2 justify-content-center">
+          
+        </div>
+      </div>
+      <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
               <button
                 onClick={handleSubmit}
@@ -1369,8 +1359,7 @@ const ProjectDetailsCreate = () => {
               </button>
             </div>
           </div>
-        </div>
-      </div>
+      
     </>
   );
 };

@@ -105,7 +105,8 @@ const ProjectDetails = () => {
           .form-disabled input,
           .form-disabled textarea,
           .form-disabled select {
-            pointer-events: none;
+            pointer-events: none;Image
+
             background-color: #f9f9f9;
             color: #6c757d;
             border: 1px solid #ccc;
