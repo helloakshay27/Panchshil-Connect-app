@@ -86,7 +86,7 @@ const Header = () => {
             <span className="navbar-toggler-icon" />
           </button>
           <img
-            style={{ height: 70 }}
+            style={{ height: 50 }}
             src="https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png"
             alt="Logo"
           />
