@@ -373,10 +373,10 @@ const NewGallery = () => {
                   </div>
                 )}
               </div>
-             
+            
             </div>
-             {/* Submit Button */}
-             <div className="row mt-3 justify-content-center">
+              {/* Submit Button */}
+              <div className="row mt-3 justify-content-center">
                 <div className="col-md-2">
                   <button
                     type="submit"
@@ -389,7 +389,7 @@ const NewGallery = () => {
                 <div className="col-md-2">
                   <button
                     type="button"
-                    className="purple-btn2 w-100"
+                    className="purple-btn2-shadow w-100"
                     onClick={handleCancel}
                   >
                     Cancel
