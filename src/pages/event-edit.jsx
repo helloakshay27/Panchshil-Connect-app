@@ -48,8 +48,12 @@ const EventEdit = () => {
           }
         );
 
-        console.log("resp", response);
-        setFormData(response?.data);
+        setFormData((prev) => ({
+          ...prev,
+          ...response.data,
+          attachfile: null, // Reset file input
+          previewImage: response?.data?.attachfile?.document_url || "", // Set existing image preview
+        }));
       } catch (error) {
         console.error("Error fetching event:", error);
       }
@@ -57,6 +61,7 @@ const EventEdit = () => {
 
     if (id) fetchEvent();
   }, [id]);
+
   const [projects, setProjects] = useState([]); // State to store projects
 
   useEffect(() => {
@@ -128,14 +133,13 @@ const EventEdit = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e, fieldName) => {
-    const file = e.target.files[0]; // Get the first selected file
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file); // Create a preview URL
       setFormData((prev) => ({
         ...prev,
-        [fieldName]: file, // Store the actual file
-        previewImage: imageUrl, // Update preview image
+        attachfile: file, // Store actual file
+        previewImage: URL.createObjectURL(file), // Generate preview
       }));
     }
   };
@@ -148,13 +152,11 @@ const EventEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const data = new FormData();
 
+    const data = new FormData();
     Object.keys(formData).forEach((key) => {
-      if (key === "attachfile" && formData.attachfile.length > 0) {
-        formData.attachfile.forEach((file) => {
-          data.append("event[event_image]", file);
-        });
+      if (key === "attachfile" && formData.attachfile) {
+        data.append("event[event_image]", formData.attachfile); // Ensure file is appended
       } else {
         data.append(`event[${key}]`, formData[key]);
       }
@@ -167,10 +169,9 @@ const EventEdit = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data", // Important for file uploads
           },
         }
-        //{ headers: { "Content-Type": "multipart/form-data" } }
       );
       toast.success("Event updated successfully!");
       navigate("/event-list");
@@ -513,44 +514,6 @@ const EventEdit = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 d-flex flex-column gap-2">
-                      <div className="form-group">
-                        <label>
-                          Attachment
-                          <span />
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="attachfile"
-                          accept="image/*"
-                          onChange={(e) => handleFileChange(e, "attachfile")}
-                        />
-                      </div>
-
-                      {/* Updated Image Preview (Always shows the latest image) */}
-                      {formData.previewImage ? (
-                        <img
-                          src={formData.previewImage}
-                          alt="Uploaded Preview"
-                          className="img-fluid rounded mt-2"
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
-                        />
-                      ) : formData?.attachfile?.document_url ? (
-                        <img
-                          src={formData.attachfile.document_url}
-                          className="img-fluid rounded mt-2"
-                          alt="Banner Image"
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
-                        />
-                      ) : (
-                        <span>No image selected</span>
-                      )}
-                    </div>
 
                     <div className="col-md-3">
                       <div className="form-check mt-4">
@@ -576,27 +539,49 @@ const EventEdit = () => {
                     </div>
 
                     <div className="col-md-3">
-                      <div className="form-check mt-4">
-                        <label className="form-group">
-                          Event Email Trigger Enabled
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="email_trigger_enabled"
-                          value="true"
-                          checked={formData.email_trigger_enabled === "true"}
-                          onChange={handleRadioChange}
-                        />
+                      <div className="form-group">
+                        <label>Event Email Trigger Enabled</label>
+                        <div className="d-flex">
+                          {/* Yes Option */}
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="true"
+                              checked={formData.email_trigger_enabled === true} // Compare as boolean
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled:
+                                    e.target.value === "true", // Convert to boolean
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
 
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="email_trigger_enabled"
-                          value="false"
-                          checked={formData.email_trigger_enabled === "false"}
-                          onChange={handleRadioChange}
-                        />
+                          {/* No Option */}
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="false"
+                              checked={formData.email_trigger_enabled === false} // Compare as boolean
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled:
+                                    e.target.value === "true", // Convert to boolean
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
