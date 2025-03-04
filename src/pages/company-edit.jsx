@@ -105,12 +105,12 @@ const CompanyEdit = () => {
         <div className="main-content">
             <div className="website-content overflow-auto">
                 <div className="module-data-section container-fluid">
-                    <div className="card mt-3 pb-4 mx-4">
-                        <div className="card-header">
-                            <h3 className="card-title">Company Edit</h3>
-                        </div>
-                        <div className="card-body">
-                            <form>
+                    <form onSubmit={handleSubmit}>
+                        <div className="card mt-3 pb-4 mx-4">
+                            <div className="card-header">
+                                <h3 className="card-title">Company Edit</h3>
+                            </div>
+                            <div className="card-body">
                                 <div className="row">
                                     <div className="col-md-3">
                                         <div className="form-group">
@@ -188,29 +188,29 @@ const CompanyEdit = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row mt-2 justify-content-center">
-                        <div className="col-md-2">
-                            <button
-                                type="submit"
-                                className="purple-btn2 purple-btn2-shadow w-100"
-                                disabled={loading}
-                                onClick={handleSubmit}
-                            >
-                                {loading ? "Submitting..." : "Submit"}
-                            </button>
+                        <div className="row mt-2 justify-content-center">
+                            <div className="col-md-2">
+                                <button
+                                    type="submit"
+                                    className="purple-btn2 purple-btn2-shadow w-100"
+                                    disabled={loading}
+                                >
+                                    {loading ? "Submitting..." : "Submit"}
+                                </button>
+                            </div>
+                            <div className="col-md-2">
+                                <button
+                                    type="button"
+                                    className="purple-btn2 purple-btn2-shadow w-100"
+                                    onClick={() => navigate(-1)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
-                        <div className="col-md-2">
-                            <button
-                                type="button"
-                                className="purple-btn2 purple-btn2-shadow w-100"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

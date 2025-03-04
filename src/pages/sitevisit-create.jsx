@@ -163,12 +163,12 @@ const SitevisitCreate = () => {
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
           <div className="module-data-section p-3">
-            <div className="card mt-3 pb-4 mx-4">
-              <div className="card-header3">
-                <h3 className="card-title">Create Site Visit</h3>
-              </div>
-              <div className="card-body">
-                <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
+              <div className="card mt-3 pb-4 mx-4">
+                <div className="card-header3">
+                  <h3 className="card-title">Create Site Visit</h3>
+                </div>
+                <div className="card-body">
                   <div className="row">
                     {/* Project Selection */}
                     <div className="col-md-3">
@@ -258,30 +258,31 @@ const SitevisitCreate = () => {
                       </div>
                     </div>
                   )}
-                </form>
+
+                </div>
               </div>
-            </div>
-            {/* Submit Button */}
-            <div className="row mt-4 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 purple-btn2-shadow w-100"
-                  disabled={loading}
-                >
-                  Submit
-                </button>
+              {/* Submit Button */}
+              <div className="row mt-4 justify-content-center">
+                <div className="col-md-2">
+                  <button
+                    type="submit"
+                    className="purple-btn2 purple-btn2-shadow w-100"
+                    disabled={loading}
+                  >
+                    Submit
+                  </button>
+                </div>
+                <div className="col-md-2">
+                  <button
+                    type="button"
+                    className="purple-btn2 purple-btn2-shadow w-100"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-              <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 purple-btn2-shadow w-100"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>

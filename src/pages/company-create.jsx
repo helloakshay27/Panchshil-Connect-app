@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const CompanyCreate = () => {
+  const navigate = useNavigate()
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -101,12 +103,12 @@ const CompanyCreate = () => {
     <div className="main-content">
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
-          <div className="card mt-3 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Company Setup</h3>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
+            <div className="card mt-3 pb-4 mx-4">
+              <div className="card-header">
+                <h3 className="card-title">Company Setup</h3>
+              </div>
+              <div className="card-body">
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
@@ -179,35 +181,39 @@ const CompanyCreate = () => {
                     </div>
                   </div>
                 </div>
-              </form>
+
+              </div>
             </div>
-          </div>
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                disabled={submitting}
-              >
-                {submitting ? "Submitting..." : "Submit"}
-              </button>
+            <div className="row mt-2 justify-content-center">
+              <div className="col-md-2">
+                <button
+                  type="submit"
+                  className="purple-btn2 purple-btn2-shadow w-100"
+                  disabled={submitting}
+                >
+                  {submitting ? "Submitting..." : "Submit"}
+                </button>
+              </div>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 purple-btn2-shadow w-100"
+                  onClick={() => {
+                    setFormData({
+                      companyName: "",
+                      companyLogo: null,
+                      organizationId: "",
+                    })
+                    navigate(-1)
+                  }
+
+                  }
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                onClick={() =>
-                  setFormData({
-                    companyName: "",
-                    companyLogo: null,
-                    organizationId: "",
-                  })
-                }
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
