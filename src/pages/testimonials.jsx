@@ -190,18 +190,15 @@ const Testimonials = () => {
                             *
                           </span>
                         </label>
-                        <select
-                          className="form-control form-select"
-                          name="userType"
-                          value={userType}
-                          onChange={(e) => setUserType(e.target.value)}
-                          required
-                        >
-                          <option value="">Select User Type</option>
-                          <option value="User">User</option>
-                          <option value="Admin">Admin</option>
-                          <option value="Resident">Resident</option>
-                        </select>
+                        <SelectBox
+                          options={[
+                            { label: "User", value: "User" },
+                            { label: "Admin", value: "Admin" },
+                            { label: "Resident", value: "Resident" },
+                          ]}
+                          defaultValue={userType}
+                          onChange={(value) => setUserType(value)}
+                        />
                       </div>
                     </div>
 

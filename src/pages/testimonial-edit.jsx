@@ -140,23 +140,20 @@ const TestimonialEdit = () => {
                           *
                         </span>
                       </label>
-                      <select
-                        className="form-control form-select"
-                        name="user_type"
-                        value={formData.user_type || ""}
-                        onChange={(e) =>
+                      <SelectBox
+                        options={[
+                          { label: "User", value: "User" },
+                          { label: "Admin", value: "Admin" },
+                          { label: "Resident", value: "Resident" },
+                        ]}
+                        defaultValue={formData.user_type || ""} // Ensure correct pre-selected value
+                        onChange={(value) =>
                           setFormData((prev) => ({
                             ...prev,
-                            user_type: e.target.value,
+                            user_type: value, // Store selected value in formData
                           }))
                         }
-                        required
-                      >
-                        <option value="">Select User Type</option>
-                        <option value="User">User</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Resident">Resident</option>
-                      </select>
+                      />
                     </div>
                   </div>
 
