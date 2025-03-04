@@ -734,27 +734,48 @@ const EventCreate = () => {
                     </div>
 
                     <div className="col-md-3">
-                      <div className="form-check mt-4">
-                        <label className="form-group">
-                          Event Email Trigger Enabled
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="email_trigger_enabled"
-                          value="true"
-                          checked={formData.email_trigger_enabled === "true"}
-                          onChange={handleRadioChange}
-                        />
-
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="email_trigger_enabled"
-                          value="false"
-                          checked={formData.email_trigger_enabled === "false"}
-                          onChange={handleRadioChange}
-                        />
+                      <div className="form-group">
+                        <label>Event Email Trigger Enabled</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="true"
+                              checked={
+                                formData.email_trigger_enabled === "true"
+                              }
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled: e.target.value, // Store "true" as string
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="false"
+                              checked={
+                                formData.email_trigger_enabled === "false"
+                              }
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled: e.target.value, // Store "false" as string
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
