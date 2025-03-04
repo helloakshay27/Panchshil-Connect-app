@@ -46,24 +46,30 @@ const EventCreate = () => {
   };
 
   //for files into array
-  const handleFileChange = (e, fieldName) => {
-    const files = Array.from(e.target.files); // Convert FileList to Array
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files); // Convert FileList to array
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
-    // Filter only valid image files
-    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+    // ✅ Filter only valid image files
+    const validFiles = selectedFiles.filter((file) =>
+      allowedTypes.includes(file.type)
+    );
 
-    if (validFiles.length !== files.length) {
+    if (validFiles.length !== selectedFiles.length) {
       toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = ""; // Reset the input if invalid file is detected
+      e.target.value = ""; // Reset input field
       return;
     }
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      attachfile: validFiles, // Store only valid images
+      attachfile: [...prevFormData.attachfile, ...validFiles], // Append files
     }));
   };
+
+  useEffect(() => {
+    console.log("Updated attachfile:", formData.attachfile);
+  }, [formData.attachfile]);
 
   const handleRadioChange = (event) => {
     const { name, value } = event.target;
@@ -189,12 +195,28 @@ const EventCreate = () => {
     data.append("event[share_groups]", formData.share_groups);
     data.append("event[is_important]", formData.is_important);
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
+    data.append("event[project_id]", selectedProjectId);
 
-    // Append files to FormData
-    if (formData.attachfile.length > 0) {
-      formData.attachfile.forEach((file, index) => {
-        data.append("event[event_image]", file);
+    // if (formData.attachfile && formData.attachfile.length > 0) {
+    //   formData.attachfile.forEach((file, index) => {
+    //     data.append(`event[event_image][${index}]`, file); // ✅ Fix appending multiple files
+    //   });
+    // } else {
+    //   console.warn("No files to upload."); // Debugging log
+    // }
+    if (formData.attachfile && formData.attachfile.length > 0) {
+      formData.attachfile.forEach((file) => {
+        if (file instanceof File) {
+          data.append("event[event_image]", file);
+        } else {
+          console.warn("Invalid file detected:", file);
+        }
       });
+    } else {
+      console.warn("No files to upload.");
+    }
+    for (let pair of data.entries()) {
+      console.log(pair[0], pair[1]);
     }
 
     Object.entries(formData).forEach(([key, value]) => {
@@ -218,7 +240,6 @@ const EventCreate = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
           },
         }
       );
@@ -548,9 +569,14 @@ const EventCreate = () => {
                               className="form-check-input"
                               type="radio"
                               name="publish"
-                              value="true"
-                              checked={formData.publish === "true"}
-                              onChange={handleChange}
+                              value="1"
+                              checked={parseInt(formData.publish) === 1} // Convert to number for proper comparison
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  publish: parseInt(e.target.value), // Ensure value is stored as number
+                                }))
+                              }
                               required
                             />
                             <label className="form-check-label">Yes</label>
@@ -560,9 +586,14 @@ const EventCreate = () => {
                               className="form-check-input"
                               type="radio"
                               name="publish"
-                              value="false"
-                              checked={formData.publish === "false"}
-                              onChange={handleChange}
+                              value="0"
+                              checked={parseInt(formData.publish) === 0} // Convert to number for proper comparison
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  publish: parseInt(e.target.value), // Ensure value is stored as number
+                                }))
+                              }
                               required
                             />
                             <label className="form-check-label">No</label>
@@ -582,14 +613,14 @@ const EventCreate = () => {
                         </label>
                         <SelectBox
                           options={eventUserID?.map((user) => ({
-                            value: `${user.firstname} ${user.lastname}`,
-                            label: `${user.firstname} ${user.lastname}`,
+                            value: user.id, // Ensure we use user.id instead of full name
+                            label: `${user.firstname} ${user.lastname}`, // Display full name but store ID
                           }))}
-                          value={formData?.user_id || ""} // Ensure it's controlled
+                          value={formData.user_id || ""} // Ensure the correct user_id is preselected
                           onChange={(value) =>
                             setFormData((prev) => ({
                               ...prev,
-                              user_id: value,
+                              user_id: value, // Store user.id instead of full name
                             }))
                           }
                         />

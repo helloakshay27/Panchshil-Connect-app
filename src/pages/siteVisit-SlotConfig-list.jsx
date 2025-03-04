@@ -145,7 +145,7 @@ const SiteVisitSlotConfigList = () => {
                               index +
                               1}
                           </td>
-                          <td>{slot.project_id}</td>
+                          <td>{slot.project_name}</td>
                           <td>{slot.scheduled_date}</td>
                           <td>{slot.ampm_timing}</td>
                         </tr>

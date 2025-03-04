@@ -190,15 +190,18 @@ const Testimonials = () => {
                             *
                           </span>
                         </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <select
+                          className="form-control form-select"
                           name="userType"
-                          placeholder="Enter User Type"
                           value={userType}
                           onChange={(e) => setUserType(e.target.value)}
                           required
-                        />
+                        >
+                          <option value="">Select User Type</option>
+                          <option value="User">User</option>
+                          <option value="Admin">Admin</option>
+                          <option value="Resident">Resident</option>
+                        </select>
                       </div>
                     </div>
 

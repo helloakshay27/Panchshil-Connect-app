@@ -12,6 +12,8 @@ const NewGallery = () => {
 
   const [imagePreviews, setImagePreviews] = useState([]);
   const [seeAll, setSeeAll] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
 
   const [formData, setFormData] = useState({
     galleryType: "",
@@ -84,11 +86,8 @@ const NewGallery = () => {
   const validateForm = () => {
     let newErrors = {};
 
-    if (!formData.galleryType.trim()) {
-      newErrors.galleryType = "Gallery type is mandatory";
-      toast.error("Gallery type is mandatory");
-    } else if (!formData.projectId.trim()) {
-      newErrors.projectId = "Project types  is mandatory";
+    if (!formData.projectId || String(formData.projectId).trim() === "") {
+      newErrors.projectId = "Project type is mandatory";
       toast.error("Project type is mandatory");
     } else if (!formData.name.trim()) {
       newErrors.name = "Name is mandatory";
@@ -96,8 +95,8 @@ const NewGallery = () => {
     } else if (!formData.title.trim()) {
       newErrors.title = "Title is mandatory";
       toast.error("Title is mandatory");
-    } else if (!formData.attachfile || formData.attachfile.length === 0) {
-      newErrors.attachfile = "Banner image is mandatory";
+    } else if (!formData.attachment || formData.attachment.length === 0) {
+      newErrors.attachment = "Banner image is mandatory";
       toast.error("Banner image is mandatory");
     }
 
@@ -115,7 +114,7 @@ const NewGallery = () => {
     setLoading(true);
 
     const data = new FormData();
-    data.append("gallery[project_id]", formData.projectId);
+    data.append("gallery[project_id]", selectedProjectId);
     data.append("gallery[gallery_type_id]", formData.galleryType);
     data.append("gallery[name]", formData.name);
     data.append("gallery[title]", formData.title);
@@ -124,8 +123,8 @@ const NewGallery = () => {
     }
 
     try {
-      const response = await axios.put(
-        `https://panchshil-super.lockated.com/galleries/${id}.json`,
+      const response = await axios.post(
+        `https://panchshil-super.lockated.com/galleries.json`,
         data
       );
       toast.success("Gallery updated successfully!");
@@ -157,29 +156,28 @@ const NewGallery = () => {
         console.error("Error fetching projects:", error);
       }
     };
-
-    fetchProjects();
-  }, []);
-  useEffect(() => {
-    const fetchProjects = async () => {
-      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url =
-        "https://panchshil-super.lockated.com/gallery_types.json?project_id=1";
-
+    const fetchProject = async () => {
       try {
-        const response = await axios.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/projects.json",
 
-        setGalleryType(response.data?.gallery_types);
-        // console.log("projectsType", projectsType);
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setProjects(response.data.projects || []);
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error(
+          "Error fetching projects:",
+          error.response?.data || error.message
+        );
       }
     };
 
+    fetchProject();
     fetchProjects();
   }, []);
 
@@ -233,7 +231,7 @@ const NewGallery = () => {
                         </select>
                       </div>
                     </div> */}
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Gallery Type<span style={{ color: "#de7008" }}> *</span>
@@ -256,12 +254,29 @@ const NewGallery = () => {
                           className="custom-selectbox"
                         />
                       </div>
+                    </div> */}
+                    <div className="col-md-3 mt-1">
+                      <div className="form-group">
+                        <label>
+                          Project
+                          <span style={{ color: "#de7008" }}> *</span>
+                        </label>
+                        <SelectBox
+                          options={projects.map((proj) => ({
+                            value: proj.id,
+                            label: proj.project_name,
+                          }))}
+                          value={selectedProjectId || ""} // Ensure it's controlled
+                          onChange={(value) => setSelectedProjectId(value)}
+                        />
+                      </div>
                     </div>
 
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Project Types<span style={{ color: "#de7008" }}> *</span>
+                          Project Types
+                          <span style={{ color: "#de7008" }}> *</span>
                         </label>
                         <SelectBox
                           options={projectsType.map((type) => ({
@@ -353,7 +368,7 @@ const NewGallery = () => {
                                 height: 20,
                                 width: 20,
                                 backgroundColor: "var(--red)",
-                                color: "white"
+                                color: "white",
                               }}
                               onClick={() => handleRemoveImage(index)}
                             >
@@ -362,40 +377,41 @@ const NewGallery = () => {
                           </div>
                         )
                       )}
-                      {imagePreviews.length > 3 && <span
-                        className="mt-2"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => setSeeAll(!seeAll)}
-                      >
-                        {seeAll ? "See Less" : "See All"}
-                      </span>}
+                      {imagePreviews.length > 3 && (
+                        <span
+                          className="mt-2"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => setSeeAll(!seeAll)}
+                        >
+                          {seeAll ? "See Less" : "See All"}
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
-            
             </div>
-              {/* Submit Button */}
-              <div className="row mt-3 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    type="submit"
-                    className="purple-btn2-shadow w-100"
-                    disabled={loading}
-                  >
-                    Submit
-                  </button>
-                </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2-shadow w-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
+            {/* Submit Button */}
+            <div className="row mt-3 justify-content-center">
+              <div className="col-md-2">
+                <button
+                  type="submit"
+                  className="purple-btn2-shadow w-100"
+                  disabled={loading}
+                >
+                  Submit
+                </button>
               </div>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 w-100"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </form>
         </div>
       </div>

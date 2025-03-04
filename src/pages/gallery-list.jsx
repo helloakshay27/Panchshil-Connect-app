@@ -8,7 +8,7 @@ const GalleryList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("gallery_list_currentPage")) || 1;
-  }
+  };
   const [pagination, setPagination] = useState({
     current_page: getPageFromStorage(),
     total_count: 0,
@@ -22,7 +22,7 @@ const GalleryList = () => {
     const fetchGalleryData = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/galleries.json?project_id=1.json"
+          "https://panchshil-super.lockated.com/galleries.json"
         );
         console.log("API Response:", response.data.galleries);
         const galleryList = Array.isArray(response.data.galleries)
@@ -181,7 +181,7 @@ const GalleryList = () => {
                       </thead>
                       <tbody>
                         {Array.isArray(displayedGalleries) &&
-                          displayedGalleries.length > 0 ? (
+                        displayedGalleries.length > 0 ? (
                           displayedGalleries.map((item, index) => (
                             <tr key={item.id}>
                               <td>
@@ -246,8 +246,9 @@ const GalleryList = () => {
                   <ul className="pagination justify-content-center d-flex">
                     {/* First Button */}
                     <li
-                      className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                        }`}
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -259,8 +260,9 @@ const GalleryList = () => {
 
                     {/* Previous Button */}
                     <li
-                      className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                        }`}
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -280,8 +282,9 @@ const GalleryList = () => {
                     ).map((pageNumber) => (
                       <li
                         key={pageNumber}
-                        className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
-                          }`}
+                        className={`page-item ${
+                          pagination.current_page === pageNumber ? "active" : ""
+                        }`}
                       >
                         <button
                           className="page-link"
@@ -294,10 +297,11 @@ const GalleryList = () => {
 
                     {/* Next Button */}
                     <li
-                      className={`page-item ${pagination.current_page === pagination.total_pages
+                      className={`page-item ${
+                        pagination.current_page === pagination.total_pages
                           ? "disabled"
                           : ""
-                        }`}
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -314,10 +318,11 @@ const GalleryList = () => {
 
                     {/* Last Button */}
                     <li
-                      className={`page-item ${pagination.current_page === pagination.total_pages
+                      className={`page-item ${
+                        pagination.current_page === pagination.total_pages
                           ? "disabled"
                           : ""
-                        }`}
+                      }`}
                     >
                       <button
                         className="page-link"

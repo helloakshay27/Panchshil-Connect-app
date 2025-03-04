@@ -7,7 +7,7 @@ import SelectBox from "../components/base/SelectBox";
 const TestimonialEdit = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const { testimonial } = state || {}; // Removed setTestimonials
+  const { testimonial } = state || {};
 
   const [formData, setFormData] = useState({
     company_setup_id: testimonial?.company_setup_id || "",
@@ -140,20 +140,23 @@ const TestimonialEdit = () => {
                           *
                         </span>
                       </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="userType"
-                        placeholder="Enter User Type"
-                        value={formData.user_type}
+                      <select
+                        className="form-control form-select"
+                        name="user_type"
+                        value={formData.user_type || ""}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
+                          setFormData((prev) => ({
+                            ...prev,
                             user_type: e.target.value,
-                          })
+                          }))
                         }
                         required
-                      />
+                      >
+                        <option value="">Select User Type</option>
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Resident">Resident</option>
+                      </select>
                     </div>
                   </div>
 

@@ -57,6 +57,31 @@ const EventEdit = () => {
 
     if (id) fetchEvent();
   }, [id]);
+  const [projects, setProjects] = useState([]); // State to store projects
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/get_all_projects.json",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Fetched Projects:", response.data);
+
+        setProjects(response.data.projects || []); // Ensure data structure is correct
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   // useEffect(() => {
   //   const fetchEventTypes = async () => {
@@ -190,11 +215,11 @@ const EventEdit = () => {
                           </span>
                         </label>
                         <SelectBox
-                          options={eventType?.map((type) => ({
-                            value: type.id,
-                            label: type.project_id,
+                          options={projects.map((project) => ({
+                            value: project.id, // Ensure this matches API response field
+                            label: project.project_name, // Ensure correct field name
                           }))}
-                          value={formData?.project_id || ""}
+                          defaultValue={formData.project_id || ""}
                           onChange={(value) =>
                             setFormData((prev) => ({
                               ...prev,
@@ -208,27 +233,22 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Event Types
+                          Event Type
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
                           </span>
                         </label>
-                        <select
+                        <input
+                          className="form-control"
+                          type="text"
                           name="event_type"
-                          className="form-control form-select"
-                          value={formData.event_type || "NA"}
+                          value={formData.event_type || ""}
                           onChange={handleChange}
-                        >
-                          {/* <option value="">Select Event Type</option> */}
-                          {eventType.map((type, index) => (
-                            <option key={index} value={type.id}>
-                              {type.event_type}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </div>
                     </div>
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -315,14 +335,32 @@ const EventEdit = () => {
                             *
                           </span>
                         </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="rsvp_action"
-                          placeholder="Enter RSVP Action"
-                          value={formData.rsvp_action || "NA"}
-                          onChange={handleChange}
-                        />
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="yes"
+                              checked={formData.rsvp_action === "yes"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="no"
+                              checked={formData.rsvp_action === "no"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -354,16 +392,45 @@ const EventEdit = () => {
                             *
                           </span>
                         </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="publish"
-                          placeholder="Enter Event Publish"
-                          value={formData.publish || "NA"}
-                          onChange={handleChange}
-                        />
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="publish"
+                              value="1"
+                              checked={parseInt(formData.publish) === 1} // Ensure correct value selection
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  publish: parseInt(e.target.value), // Store as number
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="publish"
+                              value="0"
+                              checked={parseInt(formData.publish) === 0} // Ensure correct value selection
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  publish: parseInt(e.target.value), // Store as number
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
+
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -373,22 +440,19 @@ const EventEdit = () => {
                             *
                           </span>
                         </label>
-                        <select
-                          className="form-control form-select"
-                          name="user_id"
-                          value={formData.user_id || event?.user_id}
-                          onChange={handleChange}
-                        >
-                          <option value="">Select User ID</option>
-                          {eventUserID?.map((user, index) => (
-                            <option
-                              key={index}
-                              value={user.firstname + " " + user.lastname}
-                            >
-                              {user.firstname} {user.lastname}
-                            </option>
-                          ))}
-                        </select>
+                        <SelectBox
+                          options={eventUserID?.map((user) => ({
+                            value: user.id, // Store user.id instead of full name
+                            label: `${user.firstname} ${user.lastname}`, // Display full name
+                          }))}
+                          defaultValue={formData.user_id || ""} // Ensure the correct user_id is preselected
+                          onChange={(value) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              user_id: value, // Store user.id instead of full name
+                            }))
+                          }
+                        />
                       </div>
                     </div>
 
