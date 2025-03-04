@@ -294,7 +294,145 @@ const SitevisitEdit = () => {
                   )}
                 </div>
               </div>
-              <div className="row mt-4 justify-content-center">
+
+              <div className="card mt-3 pb-4 mx-4">
+                <div className="card-header3">
+                  <h3 className="card-title">Address</h3>
+                </div>
+                <div className="card-body mt-0 pb-0">
+                  <div className="row">
+                    {/* Address Section */}
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>
+                          Address Line 1
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            *
+                          </span>{" "}
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Address Line 1"
+                          name="address_line_1"
+                        // value={formData.Address.address_line_1}
+                        // onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>
+                          Address Line 2
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            *
+                          </span>{" "}
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Address Line 2"
+                          name="address_line_2"
+                        // value={formData.Address.address_line_2}
+                        // onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>
+                          City
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="City"
+                          name="city"
+                        // value={formData.Address.city}
+                        // onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>
+                          State
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="State"
+                          name="state"
+                        // value={formData.Address.state}
+                        // onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>
+                          Pin Code
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Pin Code"
+                          name="pin_code"
+                          // value={formData.Address.pin_code}
+                          maxLength={6} // Restrict input to 6 characters
+                        // onChange={(e) => {
+                        //   const { name, value } = e.target;
+                        //   // Allow only numbers and max 6 digits
+                        //   if (/^\d{0,6}$/.test(value)) {
+                        //     setFormData((prevData) => ({
+                        //       ...prevData,
+                        //       Address: { ...prevData.Address, [name]: value },
+                        //     }));
+                        //   }
+                        // }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>
+                          Country
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Country"
+                          name="country"
+                        // value={formData.Address.country}
+                        // onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="row my-4 justify-content-center">
                 <div className="col-md-2">
                   <button
                     type="submit"
