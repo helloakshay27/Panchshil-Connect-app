@@ -284,12 +284,9 @@ const EventCreate = () => {
 
   useEffect(() => {
     const fetchEvent = async () => {
-      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url = "https://panchshil-super.lockated.com/users/get_users";
-
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/users/get_users",
+          "https://panchshil-super.lockated.com/users/get_users.json",
 
           {
             headers: {
