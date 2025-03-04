@@ -6,7 +6,7 @@ import SelectBox from "../components/base/SelectBox";
 
 const SitevisitCreate = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     project_id: "",
@@ -22,7 +22,7 @@ const SitevisitCreate = () => {
   const projectsApiUrl =
     "https://panchshil-super.lockated.com/get_all_projects.json";
   const slotsApiUrl =
-    "https://panchshil-super.lockated.com/site_schedule/get_site_schedules_for_user.json";
+    "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json";
   const authToken = "4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs";
   const projectsAuthToken = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY";
 
@@ -68,6 +68,8 @@ const SitevisitCreate = () => {
         headers: { Authorization: `Bearer ${authToken}` },
         params: { project_id: selectedProjectId, date: formattedDate },
       });
+
+      console.log("site visit slots response", response);
 
       console.log(
         "Fetching slots for project:",
@@ -120,7 +122,7 @@ const SitevisitCreate = () => {
       !formData.selected_slot
     ) {
       toast.error("Please fill all required fields, including a time slot.");
-      setLoading(false)
+      setLoading(false);
       return;
     }
 
@@ -148,7 +150,7 @@ const SitevisitCreate = () => {
       console.error("Error submitting form:", error);
       toast.error(`Error submitting schedule: ${error.message}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -172,7 +174,8 @@ const SitevisitCreate = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Project Name <span style={{ color: "#de7008" }}> *</span>
+                          Project Name{" "}
+                          <span style={{ color: "#de7008" }}> *</span>
                         </label>
                         {/* <select
                           className="form-control form-select"
@@ -191,18 +194,16 @@ const SitevisitCreate = () => {
                           ))}
                         </select> */}
                         <SelectBox
-                          options={
-                            projectsType.map((project) => ({
-                              label: project.project_name,
-                              value: project.id,
-                            }))
-                          }
+                          options={projectsType.map((project) => ({
+                            label: project.project_name,
+                            value: project.id,
+                          }))}
                           defaultValue={formData.project_id}
                           onChange={(value) => {
                             setFormData((prev) => ({
                               ...prev,
-                              project_id: value
-                            }))
+                              project_id: value,
+                            }));
                           }}
                         />
                       </div>
@@ -257,25 +258,28 @@ const SitevisitCreate = () => {
                       </div>
                     </div>
                   )}
-
-                  {/* Submit Button */}
-                  <div className="row mt-4 justify-content-center">
-                    <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                        Submit
-                      </button>
-                    </div>
-                    <div className="col-md-2">
-                      <button
-                        type="button"
-                        className="purple-btn2 w-100"
-                        onClick={handleCancel}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
                 </form>
+              </div>
+            </div>
+            {/* Submit Button */}
+            <div className="row mt-4 justify-content-center">
+              <div className="col-md-2">
+                <button
+                  type="submit"
+                  className="purple-btn2 purple-btn2-shadow w-100"
+                  disabled={loading}
+                >
+                  Submit
+                </button>
+              </div>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 purple-btn2-shadow w-100"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>

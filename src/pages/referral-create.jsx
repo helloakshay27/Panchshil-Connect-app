@@ -213,28 +213,28 @@ const ReferralCreate = () => {
                     </div>
                   </div>
                 </div>
-                <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={loading}
-                    >
-                      Submit
-                    </button>
-                  </div>
-
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={handleCancel}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
               </form>
+            </div>
+          </div>
+          <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button
+                type="submit"
+                className="purple-btn2 purple-btn2-shadow w-100"
+                disabled={loading}
+              >
+                Submit
+              </button>
+            </div>
+
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 purple-btn2-shadow w-100"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>

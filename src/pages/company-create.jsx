@@ -12,7 +12,7 @@ const CompanyCreate = () => {
   });
 
   // Fetch organizations from API
-  
+
   useEffect(() => {
     setLoading(true);
     fetch("https://panchshil-super.lockated.com/organizations.json", {
@@ -40,7 +40,7 @@ const CompanyCreate = () => {
         setLoading(false);
       });
   }, []);
-  
+
   // Handle Input Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,17 +56,17 @@ const CompanyCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-  
+
     const formDataToSend = new FormData();
     formDataToSend.append("company_setup[name]", formData.companyName);
     formDataToSend.append("company_setup[organization_id]", formData.organizationId);
     if (formData.companyLogo) {
       formDataToSend.append("company_setup[logo]", formData.companyLogo);
     }
-  
+
     try {
       console.log("Submitting form data:", Object.fromEntries(formDataToSend)); // Debugging
-  
+
       const response = await fetch(
         "https://panchshil-super.lockated.com/company_setups.json",
         {
@@ -77,11 +77,11 @@ const CompanyCreate = () => {
           body: formDataToSend, // Send FormData directly
         }
       );
-  
+
       console.log("Response Status:", response.status); // Debugging
       const responseData = await response.json();
       console.log("Response Data:", responseData); // Debugging
-  
+
       if (response.ok) {
         toast.success("Company created successfully!");
         setFormData({ companyName: "", companyLogo: null, organizationId: "" }); // Reset form
@@ -95,7 +95,7 @@ const CompanyCreate = () => {
       setSubmitting(false);
     }
   };
-  
+
 
   return (
     <div className="main-content">
@@ -179,33 +179,33 @@ const CompanyCreate = () => {
                     </div>
                   </div>
                 </div>
-                <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={submitting}
-                    >
-                      {submitting ? "Submitting..." : "Submit"}
-                    </button>
-                  </div>
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={() =>
-                        setFormData({
-                          companyName: "",
-                          companyLogo: null,
-                          organizationId: "",
-                        })
-                      }
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
               </form>
+            </div>
+          </div>
+          <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button
+                type="submit"
+                className="purple-btn2 purple-btn2-shadow w-100"
+                disabled={submitting}
+              >
+                {submitting ? "Submitting..." : "Submit"}
+              </button>
+            </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 purple-btn2-shadow w-100"
+                onClick={() =>
+                  setFormData({
+                    companyName: "",
+                    companyLogo: null,
+                    organizationId: "",
+                  })
+                }
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>

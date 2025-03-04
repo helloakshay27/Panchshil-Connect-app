@@ -121,6 +121,12 @@ const Members = () => {
                 <Link to="/company-create">Company Create</Link>
               </li>
               <li>
+                <Link to="/company-list">Company List</Link>
+              </li>
+              <li>
+                <Link to="/company-edit">Company Edit</Link>
+              </li>
+              <li>
                 <Link to="/support-service-list">Support Service List</Link>
               </li>
               <li>
@@ -132,7 +138,7 @@ const Members = () => {
               <li>
                 <Link to="/pressreleases-edit/:id">Press Releases Edit</Link>
               </li>
-              <li>               
+              <li>
                 <Link to="/project-configuration">Project Configuraion</Link>
               </li>
               <li>

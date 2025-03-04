@@ -70,6 +70,9 @@ const Referrallist = () => {
     referral.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const totalFiltered = filteredReferrals.length;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
+
   const displayedReferrals = filteredReferrals.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
@@ -88,7 +91,10 @@ const Referrallist = () => {
                   className="form-control tbl-search table_search"
                   placeholder="Search"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPagination(prev => ({ ...prev, current_page: 1 }))
+                  }}
                 />
                 <div className="input-group-append">
                   <button type="submit" className="btn btn-md btn-default">
@@ -180,9 +186,8 @@ const Referrallist = () => {
               <ul className="pagination justify-content-center d-flex">
                 {/* First Button */}
                 <li
-                  className={`page-item ${
-                    pagination.current_page === 1 ? "disabled" : ""
-                  }`}
+                  className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                 >
                   <button
                     className="page-link"
@@ -195,9 +200,8 @@ const Referrallist = () => {
 
                 {/* Previous Button */}
                 <li
-                  className={`page-item ${
-                    pagination.current_page === 1 ? "disabled" : ""
-                  }`}
+                  className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                 >
                   <button
                     className="page-link"
@@ -212,14 +216,13 @@ const Referrallist = () => {
 
                 {/* Dynamic Page Numbers */}
                 {Array.from(
-                  { length: pagination.total_pages },
+                  { length: totalPages },
                   (_, index) => index + 1
                 ).map((pageNumber) => (
                   <li
                     key={pageNumber}
-                    className={`page-item ${
-                      pagination.current_page === pageNumber ? "active" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -232,11 +235,10 @@ const Referrallist = () => {
 
                 {/* Next Button */}
                 <li
-                  className={`page-item ${
-                    pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                  }`}
+                  className={`page-item ${pagination.current_page === totalPages
+                    ? "disabled"
+                    : ""
+                    }`}
                 >
                   <button
                     className="page-link"
@@ -244,7 +246,7 @@ const Referrallist = () => {
                       handlePageChange(pagination.current_page + 1)
                     }
                     disabled={
-                      pagination.current_page === pagination.total_pages
+                      pagination.current_page === totalPages
                     }
                   >
                     Next
@@ -253,17 +255,16 @@ const Referrallist = () => {
 
                 {/* Last Button */}
                 <li
-                  className={`page-item ${
-                    pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
-                  }`}
+                  className={`page-item ${pagination.current_page === totalPages
+                    ? "disabled"
+                    : ""
+                    }`}
                 >
                   <button
                     className="page-link"
-                    onClick={() => handlePageChange(pagination.total_pages)}
+                    onClick={() => handlePageChange(totalPages)}
                     disabled={
-                      pagination.current_page === pagination.total_pages
+                      pagination.current_page === totalPages
                     }
                   >
                     Last

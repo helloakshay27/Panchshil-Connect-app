@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const SitevisitList = () => {
   const [siteVisits, setSiteVisits] = useState([]);
-  const [filteredSiteVisits, setFilteredSiteVisits] = useState([]);
+  // const [filteredSiteVisits, setFilteredSiteVisits] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,6 +20,8 @@ const SitevisitList = () => {
   });
   const pageSize = 10;
 
+  console.log(siteVisits)
+
   useEffect(() => {
     const fetchSiteVisits = async () => {
       try {
@@ -34,7 +36,7 @@ const SitevisitList = () => {
         );
         const data = response.data.site_visits;
         setSiteVisits(data);
-        setFilteredSiteVisits;
+        // setFilteredSiteVisits;
         setPagination({
           current_page: getPageFromStorage(),
           total_count: data.length,
@@ -49,16 +51,16 @@ const SitevisitList = () => {
     fetchSiteVisits();
   }, []);
 
- useEffect(() => {
-    if (!searchQuery) {
-      setFilteredSiteVisits(siteVisits);
-      return;
-    }
-    const filteredData = siteVisits.filter(
-      (visit) => visit.project_name && visit.project_name.includes(searchQuery)
-    );
-    setFilteredSiteVisits(filteredData);
-  }, [searchQuery, siteVisits]);
+  // useEffect(() => {
+  //   if (!searchQuery) {
+  //     setFilteredSiteVisits(siteVisits);
+  //     return;
+  //   }
+  //   const filteredData = siteVisits.filter(
+  //     (visit) => visit.project_name && visit.project_name.includes(searchQuery)
+  //   );
+  //   setFilteredSiteVisits(filteredData);
+  // }, [searchQuery, siteVisits]);
 
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({
@@ -73,6 +75,13 @@ const SitevisitList = () => {
     setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
 
+  const filteredData = siteVisits.filter((visit) =>
+    visit.project_name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const totalFiltered = filteredData.length;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
+
   const handleSearchSubmit = (event) => {
     event.preventDefault();
     const params = new URLSearchParams();
@@ -83,9 +92,14 @@ const SitevisitList = () => {
   };
 
   const startIndex = (pagination.current_page - 1) * pageSize;
-  const paginatedData = filteredSiteVisits.slice(
-    startIndex,
-    startIndex + pageSize
+  // const paginatedData = filteredSiteVisits.slice(
+  //   startIndex,
+  //   startIndex + pageSize
+  // );
+
+  const displayedVisits = filteredData.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
   );
 
   return (
@@ -181,8 +195,8 @@ const SitevisitList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {paginatedData.length > 0 ? (
-                        paginatedData.map((visit, index) => (
+                      {displayedVisits.length > 0 ? (
+                        displayedVisits.map((visit, index) => (
                           <tr key={visit.id}>
                             <td>{startIndex + index + 1}</td>
                             <td>{visit.status}</td>
@@ -231,9 +245,8 @@ const SitevisitList = () => {
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -243,9 +256,8 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -257,14 +269,13 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   {Array.from(
-                    { length: pagination.total_pages },
+                    { length: totalPages },
                     (_, index) => index + 1
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${
-                        pagination.current_page === pageNumber ? "active" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -275,11 +286,10 @@ const SitevisitList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === totalPages
+                      ? "disabled"
+                      : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -291,15 +301,14 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === totalPages
+                      ? "disabled"
+                      : ""
+                      }`}
                   >
                     <button
                       className="page-link"
-                      onClick={() => handlePageChange(pagination.total_pages)}
+                      onClick={() => handlePageChange(totalPages)}
                     >
                       Last
                     </button>

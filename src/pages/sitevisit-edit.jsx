@@ -24,11 +24,11 @@ const SitevisitEdit = () => {
   const projectsApiUrl =
     "https://panchshil-super.lockated.com/get_all_projects.json";
   const slotsApiUrl =
-    "https://panchshil-super.lockated.com/site_schedule/get_site_schedules_for_user.json";
+    "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json";
 
-  const authToken = "4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs";
-  const projectsAuthToken = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY";
-  const authenticationToken = "eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA";
+  const authToken = localStorage.getItem('access_token');
+  // const projectsAuthToken = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY";
+  // const authenticationToken = "eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA";
 
   // Helper function to format date as DD-MM-YYYY
   const formatDateForApi = (dateString) => {
@@ -36,40 +36,58 @@ const SitevisitEdit = () => {
     return `${day}-${month}-${year}`;
   };
 
+
+  const fetchSites = async () => {
+
+    const response = await axios.get(`https://panchshil-super.lockated.com/site_schedule_requests/${id}.json`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`
+      }
+    })
+
+    setFormData(response.data)
+  }
+
+  console.log("Respp", formData)
+
+  useEffect(() => {
+    fetchSites()
+  }, [])
   // Fetch project list on mount
   useEffect(() => {
     axios
       .get(projectsApiUrl, {
-        headers: { Authorization: `Bearer ${projectsAuthToken}` },
+        headers: { Authorization: `Bearer ${authToken}` },
       })
       .then((response) => setProjectsType(response.data.projects))
       .catch((error) => console.error("Error fetching projects:", error));
   }, []);
 
   // Fetch site visit details when editing
-  useEffect(() => {
-    if (id) {
-      axios
-        .get(`${apiUrl}`, {
-          headers: { Authorization: `Bearer ${authenticationToken}` },
-        })
-        .then((response) => {
-          const siteVisit = response.data;
-          setFormData({
-            project_id: siteVisit.project_id,
-            project_name: siteVisit.project_name,
-            scheduled_at: siteVisit.scheduled_at,
-            selected_slot: siteVisit.selected_slot,
-          });
+  // useEffect(() => {
+  //   if (id) {
+  //     axios
+  //       .get(`${apiUrl}`, {
+  //         headers: { Authorization: `Bearer ${authToken}` },
+  //       })
+  //       .then((response) => {
+  //         const siteVisit = response.data;
+  //         console.log(siteVisit)
+  //         setFormData({
+  //           project_id: siteVisit.project_id,
+  //           project_name: siteVisit.project_name,
+  //           scheduled_at: siteVisit.scheduled_at,
+  //           selected_slot: siteVisit.selected_slot,
+  //         });
 
-          // Fetch slots for this project & date
-          fetchSlots(siteVisit.scheduled_at, siteVisit.project_id);
-        })
-        .catch((error) =>
-          console.error("Error fetching site visit data:", error)
-        );
-    }
-  }, [id]);
+  //         // Fetch slots for this project & date
+  //         fetchSlots(siteVisit.scheduled_at, siteVisit.project_id);
+  //       })
+  //       .catch((error) =>
+  //         console.error("Error fetching site visit data:", error)
+  //       );
+  //   }
+  // }, []);
 
   // Fetch slots dynamically when project or date changes
   useEffect(() => {
@@ -95,6 +113,8 @@ const SitevisitEdit = () => {
       setSlots([]);
     }
   };
+
+  console.log(slots)
 
   // Handle input changes
   const handleChange = (e) => {
@@ -146,7 +166,7 @@ const SitevisitEdit = () => {
         response = await axios.put(`${apiUrl}`, requestData, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authenticationToken}`,
+            Authorization: `Bearer ${authToken}`,
           },
         });
         toast.success("Schedule updated successfully!");
@@ -190,7 +210,7 @@ const SitevisitEdit = () => {
                     {/* Project Selection */}
                     <div className="col-md-3">
                       <label>
-                        Project Name
+                        Project Name trerngfggh
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
@@ -273,28 +293,28 @@ const SitevisitEdit = () => {
                     </div>
                   )}
 
-                  <div className="row mt-4 justify-content-center">
-                    <div className="col-md-2">
-                      <button
-                        onClick={handleSubmit}
-                        type="submit"
-                        className="purple-btn2 w-100"
-                        disabled={loading}
-                      >
-                        Submit
-                      </button>
-                    </div>
-                    <div className="col-md-2">
-                      <button
-                        type="button"
-                        className="purple-btn2 w-100"
-                        onClick={handleCancel}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
                 </form>
+              </div>
+            </div>
+            <div className="row mt-4 justify-content-center">
+              <div className="col-md-2">
+                <button
+                  onClick={handleSubmit}
+                  type="submit"
+                  className="purple-btn2 purple-btn2-shadow w-100"
+                  disabled={loading}
+                >
+                  Submit
+                </button>
+              </div>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 purple-btn2-shadow w-100"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
