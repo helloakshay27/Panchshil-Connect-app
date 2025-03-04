@@ -48,6 +48,8 @@ const ProjectDetailsCreate = () => {
     videos: [],
   });
 
+ 
+
   useEffect(() => {
     console.log("formData updated:", formData);
   }, [formData]);
@@ -264,8 +266,8 @@ const ProjectDetailsCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const validationErrors = validateForm(formData);
 
+    const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
       toast.error(validationErrors[0]);
       setLoading(false);
@@ -274,35 +276,35 @@ const ProjectDetailsCreate = () => {
 
     const data = new FormData();
 
-    for (const key in formData) {
-      if (key === "Address") {
-        for (const addressKey in formData.Address) {
-          data.append(
-            `project[Address][${addressKey}]`,
-            formData.Address[addressKey]
-          );
-        }
-      } else if (key === "brochure") {
-        if (formData.brochure) {
-          data.append("project[brochure]", formData.brochure);
-        }
-      } else if (key === "two_d_images") {
-        if (formData.two_d_images && formData.two_d_images.length > 0) {
-          formData.two_d_images.forEach((file) => {
+    // Append fields to FormData correctly
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key === "Address" && typeof value === "object") {
+        Object.entries(value).forEach(([addressKey, addressValue]) => {
+          data.append(`project[Address][${addressKey}]`, addressValue);
+        });
+      } else if (key === "brochure" && value instanceof File) {
+        data.append("project[brochure]", value);
+      } else if (key === "two_d_images" && Array.isArray(value)) {
+        value.forEach((file) => {
+          if (file instanceof File) {
             data.append("project[two_d_images][]", file);
-          });
-        }
-      } else if (key === "videos") {
-        if (formData.videos && formData.videos.length > 0) {
-          formData.videos.forEach((file) => {
+          }
+        });
+      } else if (key === "videos" && Array.isArray(value)) {
+        value.forEach((file) => {
+          if (file instanceof File) {
             data.append("project[videos][]", file);
-          });
-        }
+          }
+        });
+      } else if (Array.isArray(value)) {
+        
+        data.append(`project[${key}]`, value[0]);
       } else {
-        data.append(`project[${key}]`, formData[key]);
+        data.append(`project[${key}]`, value);
       }
-    }
+    });
 
+    // Debug: Check FormData before sending
     for (let [key, value] of data.entries()) {
       console.log(`${key}:`, value);
     }
@@ -313,11 +315,12 @@ const ProjectDetailsCreate = () => {
         data,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            // No need to manually set "Content-Type" for FormData
           },
         }
       );
+
       console.log(response.data);
       toast.success("Project submitted successfully");
       Navigate("/project-list");
@@ -553,7 +556,7 @@ const ProjectDetailsCreate = () => {
                         Project_Construction_Status: value,
                       }))
                     }
-                  //isDisableFirstOption={true}
+                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -660,7 +663,7 @@ const ProjectDetailsCreate = () => {
                   </label>
                   <input
                     className="form-control"
-                    type="text-number"
+                    type="number"
                     name="Price_Onward"
                     placeholder="Enter Price Onward"
                     value={formData.Price_Onward}
@@ -878,7 +881,7 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Land Area
+                    Land Area (Acres)
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -911,7 +914,7 @@ const ProjectDetailsCreate = () => {
                         project_tag: value,
                       }))
                     }
-                  //isDisableFirstOption={true}
+                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -1075,14 +1078,25 @@ const ProjectDetailsCreate = () => {
                   </label>
                   <input
                     className="form-control"
-                    type="number"
+                    type="text"
                     placeholder="Pin Code"
                     name="pin_code"
                     value={formData.Address.pin_code}
-                    onChange={handleChange}
+                    maxLength={6} // Restrict input to 6 characters
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      // Allow only numbers and max 6 digits
+                      if (/^\d{0,6}$/.test(value)) {
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          Address: { ...prevData.Address, [name]: value },
+                        }));
+                      }
+                    }}
                   />
                 </div>
               </div>
+
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -1216,7 +1230,7 @@ const ProjectDetailsCreate = () => {
               </div>
 
               <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
+                <div className="mt-4 tbl-container" style={{ maxHeight: "300px", overflowY: "auto" }} >
                   <table className="w-100">
                     <thead>
                       <tr>
@@ -1225,7 +1239,7 @@ const ProjectDetailsCreate = () => {
                         <th>Action</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody> 
                       {/* 2D Images */}
                       {formData.two_d_images.map((file, index) => (
                         <tr key={index}>

@@ -23,6 +23,16 @@ const ProjectDetailsList = () => {
     total_count: 50, // total number of entries
   });
 
+  const [expandedConfigs, setExpandedConfigs] = useState({});
+
+const toggleExpand = (index) => {
+  setExpandedConfigs((prev) => ({
+    ...prev,
+    [index]: !prev[index], // Toggle the specific configuration's expansion
+  }));
+};
+
+
   const [loading, setLoading] = useState(true);
 
   const pageSize = 10; // Items per page
@@ -210,7 +220,7 @@ const ProjectDetailsList = () => {
                             <td>{project?.property_type || "N/A"}</td>
                             <td>{project?.SFDC_Project_Id || "N/As"}</td>
                             <td>{project?.Project_Construction_Status || "N/A"}</td>
-                            <td>
+                            
                               <td style={{ width: "200px" }}>
                                 {project?.configurations?.length > 0
                                   ? project?.configurations.map(
@@ -228,9 +238,9 @@ const ProjectDetailsList = () => {
                                       </div>
                                     )
                                   )
-                                  : "No amenities"}
+                                  : "No Configuration Type"}
                               </td>
-                            </td>
+                            
                             {/* <td>
                         {project?.location
                           ? `${project.location}, ${

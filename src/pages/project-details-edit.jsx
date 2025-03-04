@@ -41,9 +41,7 @@ const ProjectDetailsEdit = () => {
     image: [],
     Address: {
       address_line_1: "",
-      // addressLine1: "",
       address_line_2: "",
-      //addressLine3: "",
       city: "",
       state: "",
       pin_code: "",
@@ -53,7 +51,6 @@ const ProjectDetailsEdit = () => {
     two_d_images: [], // array of file inputs for 2D images
     videos: [],
   });
-
 
   console.log("formData", formData);
 
@@ -110,7 +107,7 @@ const ProjectDetailsEdit = () => {
         );
         const projectData = response.data;
 
-        console.log("this is project data", projectData)
+        console.log("this is project data", projectData);
 
         setFormData({
           Property_Type: projectData.property_type || "",
@@ -144,19 +141,17 @@ const ProjectDetailsEdit = () => {
           map_url: projectData.map_url || "",
           image: projectData.image_url || "",
 
-          location: {
-            address: projectData.location?.address || "line 1",
-            address_line_two:
-              projectData.location?.address_line_two || "line 1",
-            city: projectData.location?.city || "Pune",
-            state: projectData.location?.state || "Maharashtra",
-            pin_code: projectData.location?.pin_code || "400709",
-            country: projectData.location?.country || "India",
+          Address: {
+            address_line_1: projectData.location?.address || "",
+            address_line_2: projectData.location?.address_line_two || "",
+            city: projectData.location?.city || "",
+            state: projectData.location?.state || "",
+            pin_code: projectData.location?.pin_code || "",
+            country: projectData.location?.country || "",
           },
           brochure: projectData.brochure || null,
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
-
         });
         setProject(response.data);
       } catch (err) {
@@ -170,67 +165,96 @@ const ProjectDetailsEdit = () => {
   console.log("this is the form data", formData);
 
   const handleChange = (e) => {
-    const { name, files, value } = e.target;
+    const { name, type, files, value } = e.target;
 
-    if (name === "brochure") {
-      setFormData((prev) => ({
-        ...prev,
-        brochure: {
-          file: files[0],
-          document_file_name: files[0]?.name,
-        },
-      }));
-    } else if (name === "two_d_images") {
-      const newImages = Array.from(files).map((file) => ({
-        file: file,
-        file_name: file.name,
-        file_url: URL.createObjectURL(file),
-      }));
-
-      setFormData((prev) => ({
-        ...prev,
-        two_d_images: [...prev.two_d_images, ...newImages],
-      }));
-    } else if (
-      [
-        "address",
-        "address_line_two",
-        "city",
-        "state",
-        "pin_code",
-        "country",
-      ].includes(name)
-    ) {
-      // Handle location-specific inputs properly
-      setFormData((prev) => ({
-        ...prev,
-        location: {
-          ...prev.location,
-          [name]: value, // Correctly updating the location object
-        },
-      }));
+    if (type === "file") {
+      if (name === "brochure") {
+        setFormData((prev) => ({
+          ...prev,
+          brochure: files[0],
+        }));
+      } else if (name === "two_d_images") {
+        const newImages = Array.from(files);
+        setFormData((prev) => ({
+          ...prev,
+          two_d_images: [...prev.two_d_images, ...newImages],
+        }));
+      } else if (name === "videos") {
+        const newVideos = Array.from(files);
+        setFormData((prev) => ({
+          ...prev,
+          videos: [...prev.videos, ...newVideos],
+        }));
+      }
     } else {
-      // For all other top-level form fields
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      if (
+        [
+          "address_line_1",
+          "address_line_2",
+          "city",
+          "state",
+          "pin_code",
+          "country",
+        ].includes(name)
+      ) {
+        setFormData((prev) => ({
+          ...prev,
+          Address: {
+            ...prev.Address,
+            [name]: value,
+          },
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
     }
   };
 
-  // Handle file discard
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+
+    if (validFiles.length !== files.length) {
+      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = "";
+      return;
+    }
+
+    // Generate preview for the first image
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        attachfile: validFiles, // Store actual file objects
+        previewImage: reader.result, // Store preview URL
+      }));
+    };
+
+    if (validFiles.length > 0) {
+      reader.readAsDataURL(validFiles[0]); // Read first image as preview
+    }
+  };
+
   const handleDiscardFile = (type, index) => {
     if (type === "brochure") {
-      // Remove brochure
       setFormData((prev) => ({
         ...prev,
         brochure: null,
       }));
     } else if (type === "two_d_images") {
-      // Remove specific 2D image
       setFormData((prev) => ({
         ...prev,
         two_d_images: prev.two_d_images.filter((_, i) => i !== index),
+      }));
+    } else if (type === "videos") {
+      setFormData((prev) => ({
+        ...prev,
+        videos: prev.videos.filter((_, i) => i !== index),
       }));
     }
   };
@@ -238,38 +262,37 @@ const ProjectDetailsEdit = () => {
   const validateForm = (formData) => {
     const errors = [];
 
-    // Required fields (text fields)
     if (!formData.Property_Type) {
       errors.push("Project Type is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Building_Type) {
       errors.push("Building Type is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Project_Construction_Status) {
       errors.push("Construction Status is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.Configuration_Type.length) {
       errors.push("Configuration Type is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.project_name) {
       errors.push("Project Name is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.project_address) {
       errors.push("Location is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.project_description) {
       errors.push("Project Description is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.price) {
       errors.push("Price Onward is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
     if (!formData.project_size_sq_mtr) {
       errors.push("Project Size (Sq. Mtr.) is required.");
@@ -313,28 +336,28 @@ const ProjectDetailsEdit = () => {
     }
 
     // Address validation (nested fields)
-    if (!formData.location || !formData.location.address) {
+    if (!formData.Address || !formData.Address.address_line_1) {
       errors.push("Address Line 1 is required.");
       return errors; // Return the first error immediately
     }
     // Address validation (nested fields)
-    if (!formData.location || !formData.location.address_line_two) {
+    if (!formData.Address || !formData.Address.address_line_2) {
       errors.push("Address Line 2 is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.location || !formData.location.city) {
+    if (!formData.Address || !formData.Address.city) {
       errors.push("City is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.location || !formData.location.state) {
+    if (!formData.Address || !formData.Address.state) {
       errors.push("State is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.location || !formData.location.pin_code) {
+    if (!formData.Address || !formData.Address.pin_code) {
       errors.push("Pin Code is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.location || !formData.location.country) {
+    if (!formData.Address || !formData.Address.country) {
       errors.push("Country is required.");
       return errors; // Return the first error immediately
     }
@@ -352,63 +375,47 @@ const ProjectDetailsEdit = () => {
     return errors; // Return the first error message if any
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     const validationErrors = validateForm(formData);
 
     if (validationErrors.length > 0) {
-      // Show only the first validation error
       toast.error(validationErrors[0]);
       setLoading(false);
-      return; // Stop form submission if there are errors
+      return;
     }
 
     const data = new FormData();
 
-    // Append form data
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === "location") {
-        // Append nested address fields
-        Object.entries(value).forEach(([subKey, subValue]) =>
-          data.append(`project[Address][${subKey}]`, subValue)
-        );
-      } else if (key === "brochure" && value) {
-        const file = value instanceof File ? value : value.file; // Extract file if wrapped in an object
-        if (file instanceof File) {
-          data.append("project[brochure]", file);
-        }
-      } else if (
-        key === "two_d_images" &&
-        Array.isArray(value) &&
-        value.length > 0
-      ) {
-        value.forEach((fileObj) => {
-          // Ensure `fileObj` is a File instance, not an object with metadata
-          const file = fileObj instanceof File ? fileObj : fileObj.file;
-          if (file) {
+      if (key === "Address" && typeof value === "object") {
+        Object.entries(value).forEach(([addressKey, addressValue]) => {
+          data.append(`project[Address][${addressKey}]`, addressValue);
+        });
+      } else if (key === "brochure" && value instanceof File) {
+        data.append("project[brochure]", value);
+      } else if (key === "two_d_images" && Array.isArray(value)) {
+        value.forEach((file) => {
+          if (file instanceof File) {
             data.append("project[two_d_images][]", file);
           }
         });
-      } else if (
-        key === 'videos' &&
-        Array.isArray(value) &&
-        value.length > 0
-      ) {
-        value.forEach((fileObj) => {
-          // Ensure `fileObj` is a File instance, not an object with metadata
-          const file = fileObj instanceof File ? fileObj : fileObj.file;
-          if (file) {
+      } else if (key === "videos" && Array.isArray(value)) {
+        value.forEach((file) => {
+          if (file instanceof File) {
             data.append("project[videos][]", file);
           }
-        })
+        });
+      } else if (Array.isArray(value)) {
+        // Fix: Take only the first value if it's an array to prevent duplicates
+        data.append(`project[${key}]`, value[0]);
       } else {
         data.append(`project[${key}]`, value);
       }
     });
 
-    console.log("this is the passsing data", data)
+    console.log("this is the passsing data", data);
 
     try {
       const response = await axios.put(
@@ -416,8 +423,8 @@ const ProjectDetailsEdit = () => {
         data,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer BQsUyW98rCwspkXZ9ZJuHAxr34TEIiaugiFlpyUySpA`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -475,7 +482,7 @@ const ProjectDetailsEdit = () => {
                     options={[
                       //{ value: "", label: "Select status", isDisabled: true },
                       { value: "Office Parks", label: "Office Parks" },
-                      { value: "Residential", label: "Residential" }
+                      { value: "Residential", label: "Residential" },
                     ]}
                     defaultValue={formData.Property_Type}
                     onChange={(selectedValue) =>
@@ -484,7 +491,7 @@ const ProjectDetailsEdit = () => {
                         Property_Type: selectedValue,
                       }))
                     }
-                  //isDisableFirstOption={true}
+                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -509,34 +516,36 @@ const ProjectDetailsEdit = () => {
                         value: "Special-Economic-Zone",
                         label: "Special Economic Zone",
                       },
-                      { value: "Tech-Parks", label: "Tech Parks" },
+                      { value: "Tech-Park", label: "Tech Park" },
                       { value: "Built-to-Suit", label: "Built to Suit" },
                       {
                         value: "Upcoming-Developments",
                         label: "Upcoming Developments",
                       },
                     ]}
-                    defaultValue={formData.Building_Type} // Ensure it's controlled
-                    onChange={(value) =>
+                    defaultValue={formData.Building_Type}
+                    onChange={(selectedOption) =>
                       setFormData((prev) => ({
                         ...prev,
-                        Building_Type: value,
+                        Building_Type: selectedOption,
                       }))
                     }
                   />
                 </div>
               </div>
 
-
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     Project Construction Status
-                    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                   </label>
                   <SelectBox
                     options={statusOptions[formData.Property_Type] || []}
-                    defaultValue={formData.Project_Construction_Status} // Controlled value
+                    defaultValue={formData.Project_Construction_Status}
                     onChange={(selectedValue) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -546,8 +555,6 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-
-
 
               <div className="col-md-3">
                 <div className="form-group">
@@ -592,7 +599,7 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="text"
                     name="project_name"
-                    value={formData.project_name || project?.project_name}
+                    value={formData.project_name}
                     onChange={handleChange}
                   />
                 </div>
@@ -611,7 +618,7 @@ const ProjectDetailsEdit = () => {
                     type="text"
                     placeholder="Default input"
                     name="project_address"
-                    value={formData.project_address || project?.project_address}
+                    value={formData.project_address}
                     onChange={handleChange}
                   />
                 </div>
@@ -630,10 +637,7 @@ const ProjectDetailsEdit = () => {
                     rows={1}
                     placeholder="Enter ..."
                     name="project_description"
-                    value={
-                      formData.project_description ||
-                      project?.project_description
-                    }
+                    value={formData.project_description}
                     onChange={handleChange}
                   />
                 </div>
@@ -653,7 +657,7 @@ const ProjectDetailsEdit = () => {
                     type="text"
                     placeholder="Default input"
                     name="price"
-                    value={formData.price || project?.price}
+                    value={formData.price}
                     onChange={handleChange}
                   />
                 </div>
@@ -672,10 +676,7 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="project_size_sq_mtr"
-                    value={
-                      formData.project_size_sq_mtr ||
-                      project?.project_size_sq_mtr
-                    }
+                    value={formData.project_size_sq_mtr}
                     onChange={handleChange}
                   />
                 </div>
@@ -693,10 +694,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="number"
                     placeholder="Default input"
-                    name=" "
-                    value={
-                      formData.Project_Size_Sq_Ft || project?.project_size_sq_ft
-                    }
+                    name="Project_Size_Sq_Ft"
+                    value={formData.Project_Size_Sq_Ft}
                     onChange={handleChange}
                   />
                 </div>
@@ -715,10 +714,7 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="Rera_Carpet_Area_Sq_M"
-                    value={
-                      formData.Rera_Carpet_Area_Sq_M ||
-                      project?.rera_carpet_area_sq_mtr
-                    }
+                    value={formData.Rera_Carpet_Area_Sq_M}
                     onChange={handleChange}
                   />
                 </div>
@@ -737,10 +733,7 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="Rera_Carpet_Area_sqft"
-                    value={
-                      formData.Rera_Carpet_Area_sqft ||
-                      project?.rera_carpet_area_sqft
-                    }
+                    value={formData.Rera_Carpet_Area_sqft}
                     onChange={handleChange}
                   />
                 </div>
@@ -759,7 +752,7 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="Number_Of_Towers"
-                    value={formData.Number_Of_Towers || project?.no_of_towers}
+                    value={formData.Number_Of_Towers}
                     onChange={handleChange}
                   />
                 </div>
@@ -797,7 +790,7 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="Rera_Number"
-                    value={formData.Rera_Number || project?.rera_number}
+                    value={formData.Rera_Number}
                     onChange={handleChange}
                   />
                 </div>
@@ -813,7 +806,7 @@ const ProjectDetailsEdit = () => {
                   </label>
                   <MultiSelectBox
                     options={amenities.map((ammit) => ({
-                      value: ammit.id,
+                      value: ammit.name,
                       label: ammit.name,
                     }))}
                     // value={formData?.Amenities
@@ -829,7 +822,7 @@ const ProjectDetailsEdit = () => {
 
                     value={formData.Amenities.map((amenitie) => ({
                       value: amenitie,
-                      label: amenitie
+                      label: amenitie,
                     }))}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
@@ -857,7 +850,7 @@ const ProjectDetailsEdit = () => {
                   </label>
                   <MultiSelectBox
                     options={specifications.map((spec) => ({
-                      value: spec.id,
+                      value: spec.name,
                       label: spec.name,
                     }))}
                     // value={specifications
@@ -870,7 +863,7 @@ const ProjectDetailsEdit = () => {
                     //   }))}
                     value={formData.Specifications.map((spec) => ({
                       value: spec,
-                      label: spec
+                      label: spec,
                     }))}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
@@ -889,7 +882,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Land Area
+                    Land Area (Acres)
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -900,7 +893,7 @@ const ProjectDetailsEdit = () => {
                     type="number"
                     placeholder="Default input"
                     name="Land_Area"
-                    value={formData.Land_Area || project?.land_area}
+                    value={formData.Land_Area}
                     onChange={handleChange}
                   />
                 </div>
@@ -922,7 +915,7 @@ const ProjectDetailsEdit = () => {
                         project_tag: value,
                       }))
                     }
-                  // isDisableFirstOption={true}
+                    // isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -988,18 +981,20 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
 
-                {
-                  formData.image ? (
-                    <img
-                      src={formData.image}
-                      alt="Uploaded Preview"
-                      className="img-fluid rounded mt-2"
-                      style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
-                    />
-                  ) : (
-                    <span>No image selected</span>
-                  )
-                }
+                {formData.image ? (
+                  <img
+                    src={formData.image}
+                    alt="Uploaded Preview"
+                    className="img-fluid rounded mt-2"
+                    style={{
+                      maxWidth: "100px",
+                      maxHeight: "100px",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  <span>No image selected</span>
+                )}
               </div>
             </div>
           </div>
@@ -1024,8 +1019,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="text"
                     placeholder="Address Line 1"
-                    name="address"
-                    value={formData.location.address}
+                    name="address_line_1"
+                    value={formData.Address.address_line_1}
                     onChange={handleChange}
                   />
                 </div>
@@ -1040,8 +1035,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="text"
                     placeholder="Address Line 2"
-                    name="address_line_two"
-                    value={formData.location.address_line_two}
+                    name="address_line_2"
+                    value={formData.Address.address_line_2}
                     onChange={handleChange}
                   />
                 </div>
@@ -1062,7 +1057,7 @@ const ProjectDetailsEdit = () => {
                     type="text"
                     placeholder="City"
                     name="city"
-                    value={formData.location.city}
+                    value={formData.Address.city}
                     onChange={handleChange}
                   />
                 </div>
@@ -1081,7 +1076,7 @@ const ProjectDetailsEdit = () => {
                     type="text"
                     placeholder="State"
                     name="state"
-                    value={formData.location.state}
+                    value={formData.Address.state}
                     onChange={handleChange}
                   />
                 </div>
@@ -1097,14 +1092,25 @@ const ProjectDetailsEdit = () => {
                   </label>
                   <input
                     className="form-control"
-                    type="number"
+                    type="text"
                     placeholder="Pin Code"
                     name="pin_code"
-                    value={formData.location.pin_code}
-                    onChange={handleChange}
+                    value={formData.Address.pin_code}
+                    maxLength={6} // Restricts input to 6 digits
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      // Allow only numbers and ensure max 6 digits
+                      if (/^\d{0,6}$/.test(value)) {
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          Address: { ...prevData.Address, [name]: value },
+                        }));
+                      }
+                    }}
                   />
                 </div>
               </div>
+
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -1119,7 +1125,7 @@ const ProjectDetailsEdit = () => {
                     type="text"
                     placeholder="Country"
                     name="country"
-                    value={formData.location.country}
+                    value={formData.Address.country}
                     onChange={handleChange}
                   />
                 </div>
@@ -1187,10 +1193,7 @@ const ProjectDetailsEdit = () => {
                       {/* Brochure */}
                       {formData.brochure && (
                         <tr>
-                          <td>
-                            {formData.brochure?.document_file_name ||
-                              "No file selected"}
-                          </td>
+                          <td>{formData.brochure?.name || ""}</td>
 
                           <td>
                             <button
@@ -1247,7 +1250,10 @@ const ProjectDetailsEdit = () => {
 
               {/* Table to Display Images */}
               <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
+                <div
+                  className="mt-4 tbl-container"
+                  style={{ maxHeight: "300px", overflowY: "auto" }}
+                >
                   <table className="w-100">
                     <thead>
                       <tr>
@@ -1257,15 +1263,25 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
+                      {/* 2D Images */}
                       {formData.two_d_images.map((file, index) => (
                         <tr key={index}>
-                          <td>{file.document_file_name}</td>
+                          <td>{file.document_file_name || file.name}</td>{" "}
+                          {/* Show name from API or uploaded file */}
                           <td>
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
-                              src={file.document_url} // Use document_url for image preview
-                              alt={file.document_file_name} // Use document_file_name as alt text for accessibility
                               className="img-fluid rounded"
+                              src={
+                                file.document_url // API response images
+                                  ? file.document_url
+                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
+                                    ? URL.createObjectURL(file)
+                                    : null
+                              }
+                              alt={
+                                file.document_file_name || file.name || "Image"
+                              }
                             />
                           </td>
                           <td>
@@ -1295,9 +1311,7 @@ const ProjectDetailsEdit = () => {
                 <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("videos").click()
-                  }
+                  onClick={() => document.getElementById("videos").click()}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1336,24 +1350,30 @@ const ProjectDetailsEdit = () => {
                       {/* Videos */}
                       {formData.videos.map((file, index) => (
                         <tr key={index}>
-                          <td> {file.document_file_name}</td>
+                          {/* Ensure filename is displayed correctly */}
+                          <td>
+                            {file.document_file_name || file.name || "No Name"}
+                          </td>
                           <td>
                             <video
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              src={file.document_url}
-                              alt={file.document_file_name}
+                              src={
+                                file.document_url // API response video
+                                  ? file.document_url
+                                  : file instanceof File // Uploaded video file
+                                    ? URL.createObjectURL(file)
+                                    : ""
+                              }
                               autoPlay
+                              muted
                             />
                           </td>
-
                           <td>
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardFile("videos", index)
-                              }
+                              onClick={() => handleDiscardFile("videos", index)}
                             >
                               x
                             </button>
