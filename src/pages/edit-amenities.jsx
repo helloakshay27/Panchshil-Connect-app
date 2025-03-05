@@ -81,7 +81,7 @@ const EditAmenities = () => {
     <div className="main-content">
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
-          <div className="card mt-3 pb-4 mx-4">
+          <div className="card mt-4 pb-4 mx-4">
             <div className="card-header">
               <h3 className="card-title">Edit Amenity</h3>
             </div>

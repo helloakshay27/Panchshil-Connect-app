@@ -118,7 +118,7 @@ const ReferralCreate = () => {
       <div className="website-content overflow-auto">
         <div className="module-data-section p-3">
           <form onSubmit={handleSubmit}>
-            <div className="card mt-5 pb-4 mx-4">
+            <div className="card mt-4 pb-4 mx-4">
               <div className="card-header">
                 <h3 className="card-title">Create Referral</h3>
               </div>

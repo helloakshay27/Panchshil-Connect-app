@@ -202,7 +202,8 @@ const NewGallery = () => {
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
           <form onSubmit={handleSubmit}>
-            <div className="card mx-4 pb-4 mt-4">
+            <div className="card mx-4 pb-4 mt-4
+            ">
               <div className="card-header">
                 <h3 className="card-title">Create Gallery</h3>
               </div>

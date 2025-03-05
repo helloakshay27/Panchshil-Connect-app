@@ -104,7 +104,7 @@ const CompanyCreate = () => {
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
           <form onSubmit={handleSubmit}>
-            <div className="card mt-3 pb-4 mx-4">
+            <div className="card mt-4 pb-4 mx-4">
               <div className="card-header">
                 <h3 className="card-title">Company Setup</h3>
               </div>
