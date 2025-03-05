@@ -5,11 +5,11 @@ import "../mor.css";
 import { toast } from "react-hot-toast";
 
 const EditAmenities = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { id } = useParams(); // Get ID from URL
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   // Fetch existing amenity details
   useEffect(() => {
@@ -65,28 +65,29 @@ const EditAmenities = () => {
     } catch (error) {
       console.error("API Error:", error.response?.data || error.message);
       toast.error(
-        `Failed to update amenity: ${error.response?.data?.error || "Unknown error"
+        `Failed to update amenity: ${
+          error.response?.data?.error || "Unknown error"
         }`
       );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
 
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Edit Amenity</h3>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
+            <div className="card mt-4 pb-4 mx-4">
+              <div className="card-header">
+                <h3 className="card-title">Edit Amenity</h3>
+              </div>
+              <div className="card-body">
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
@@ -112,21 +113,29 @@ const EditAmenities = () => {
                     </div>
                   </div>
                 </div>
-                <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                      Submit
-                    </button>
-                  </div>
-                  <div className="col-md-2">
-                    <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </form>
+              </div>
             </div>
-          </div>
+            <div className="row mt-2 justify-content-center">
+              <div className="col-md-2">
+                <button
+                  type="submit"
+                  className="purple-btn2 w-100"
+                  disabled={loading}
+                >
+                  Submit
+                </button>
+              </div>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 w-100"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ const SiteVisitSlotConfig = () => {
   const [selectedProject, setSelectedProject] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const hours = Array.from({ length: 24 }, (_, i) => i); // 0-23 hours
   const minutes = Array.from({ length: 60 }, (_, i) => i); // 0-59 minutes
@@ -49,7 +49,7 @@ const SiteVisitSlotConfig = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
 
     const postData = {
       project_id: selectedProject,
@@ -74,7 +74,7 @@ const SiteVisitSlotConfig = () => {
       );
       toast.success("Slot created successfully!");
       console.log("Data successfully submitted:", response.data);
-      navigate('/siteVisit-SlotConfig-list')
+      navigate("/siteVisit-SlotConfig-list");
     } catch (error) {
       console.error(
         "Error submitting data:",
@@ -82,7 +82,7 @@ const SiteVisitSlotConfig = () => {
       );
       toast.error("Failed to create slot. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
 
     // Log the form data (You can replace this with further logic if needed)
@@ -106,12 +106,12 @@ const SiteVisitSlotConfig = () => {
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
           <div className="module-data-section p-3">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Create Site Slot</h3>
-              </div>
-              <div className="card-body">
-                <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
+              <div className="card mt-4 pb-4 mx-4">
+                <div className="card-header">
+                  <h3 className="card-title">Create Site Slot</h3>
+                </div>
+                <div className="card-body">
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
@@ -183,12 +183,10 @@ const SiteVisitSlotConfig = () => {
                         </select> */}
 
                         <SelectBox
-                          options={
-                            hours.map((hour) => ({
-                              label: hour.toString().padStart(2, "0"),
-                              value: hour,
-                            }))
-                          }
+                          options={hours.map((hour) => ({
+                            label: hour.toString().padStart(2, "0"),
+                            value: hour,
+                          }))}
                           defaultValue={startHour}
                           onChange={(value) => setStartHour(value)}
                         />
@@ -222,12 +220,10 @@ const SiteVisitSlotConfig = () => {
                         </select> */}
 
                         <SelectBox
-                          options={
-                            minutes.map((minute) => ({
-                              label: minute.toString().padStart(2, "0"),
-                              value: minute,
-                            }))
-                          }
+                          options={minutes.map((minute) => ({
+                            label: minute.toString().padStart(2, "0"),
+                            value: minute,
+                          }))}
                           defaultValue={startMinute}
                           onChange={(value) => setStartMinute(value)}
                         />
@@ -260,12 +256,10 @@ const SiteVisitSlotConfig = () => {
                         </select> */}
 
                         <SelectBox
-                          options={
-                            hours.map((hour) => ({
-                              label: hour.toString().padStart(2, "0"),
-                              value: hour,
-                            }))
-                          }
+                          options={hours.map((hour) => ({
+                            label: hour.toString().padStart(2, "0"),
+                            value: hour,
+                          }))}
                           defaultValue={endHour}
                           onChange={(value) => setEndHour(value)}
                         />
@@ -298,12 +292,10 @@ const SiteVisitSlotConfig = () => {
                         </select> */}
 
                         <SelectBox
-                          options={
-                            minutes.map((minute) => ({
-                              label: minute.toString().padStart(2, "0"),
-                              value: minute,
-                            }))
-                          }
+                          options={minutes.map((minute) => ({
+                            label: minute.toString().padStart(2, "0"),
+                            value: minute,
+                          }))}
                           defaultValue={endMinute}
                           onChange={(value) => setEndMinute(value)}
                         />
@@ -334,12 +326,10 @@ const SiteVisitSlotConfig = () => {
                           ))}
                         </select> */}
                         <SelectBox
-                          options={
-                            projects.map((project) => ({
-                              label: project.project_name,
-                              value: project.id,
-                            }))
-                          }
+                          options={projects.map((project) => ({
+                            label: project.project_name,
+                            value: project.id,
+                          }))}
                           defaultValue={selectedProject}
                           onChange={(value) => setSelectedProject(value)}
                         />
@@ -348,25 +338,29 @@ const SiteVisitSlotConfig = () => {
 
                     {/* Submit Button Section */}
                   </div>
-                  <div className="row mt-2 justify-content-center">
-                    <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                        Submit
-                      </button>
-                    </div>
-                    <div className="col-md-2">
-                      <button
-                        type="button"
-                        className="purple-btn2 w-100 "
-                        onClick={handleCancel}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                </form>
+                </div>
               </div>
-            </div>
+              <div className="row mt-2 justify-content-center">
+                <div className="col-md-2">
+                  <button
+                    type="submit"
+                    className="purple-btn2 w-100"
+                    disabled={loading}
+                  >
+                    Submit
+                  </button>
+                </div>
+                <div className="col-md-2">
+                  <button
+                    type="button"
+                    className="purple-btn2 w-100 "
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
