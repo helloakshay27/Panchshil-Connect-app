@@ -61,8 +61,6 @@ const ProjectDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -167,20 +165,29 @@ const ProjectDetails = () => {
                     </label>
                   </div>
                 </div>
-                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
-                  <div className="col-6 ">
+                <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                  <div className="col-6">
                     <label>Configuration Type</label>
                   </div>
                   <div className="col-6">
                     <label className="text">
                       <span className="me-3">
                         <span className="text-dark">
-                          : {formData.configurations.name}
+                          :{" "}
+                          {formData.configurations?.map((config, index) => (
+                            <span key={index}>
+                              {config.name}
+                              {index !== formData.configurations.length - 1
+                                ? ", "
+                                : ""}
+                            </span>
+                          ))}
                         </span>
                       </span>
                     </label>
                   </div>
                 </div>
+
                 <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
                     <label>Project Name</label>
@@ -353,12 +360,21 @@ const ProjectDetails = () => {
                     <label className="text">
                       <span className="me-3">
                         <span className="text-dark">
-                          : {formData.amenities.name}
+                          :{" "}
+                          {formData.amenities?.map((amenity, index) => (
+                            <span key={index}>
+                              {amenity.name}
+                              {index !== formData.amenities.length - 1
+                                ? ", "
+                                : ""}
+                            </span>
+                          ))}
                         </span>
                       </span>
                     </label>
                   </div>
                 </div>
+
                 <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
                     <label>Specifications</label>
@@ -367,12 +383,21 @@ const ProjectDetails = () => {
                     <label className="text">
                       <span className="me-3">
                         <span className="text-dark">
-                          : {formData.specifications.name}
+                          :{" "}
+                          {formData.specifications?.map((spec, index) => (
+                            <span key={index}>
+                              {spec.name}
+                              {index !== formData.specifications.length - 1
+                                ? ", "
+                                : ""}
+                            </span>
+                          ))}
                         </span>
                       </span>
                     </label>
                   </div>
                 </div>
+
                 <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
                     <label>Land Area</label>

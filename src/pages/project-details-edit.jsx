@@ -17,20 +17,20 @@ const ProjectDetailsEdit = () => {
 
   const [formData, setFormData] = useState({
     Property_Type: "",
+    building_type: "",
     SFDC_Project_Id: "",
-    Building_Type: "",
     Project_Construction_Status: "",
-    Configuration_Type: [], 
-    project_name: "",
+    Configuration_Type: [],
+    Project_Name: "",
     project_address: "",
-    project_description: "",
-    price: "",
-    project_size_sq_mtr: "",
+    Project_Description: "",
+    Price_Onward: "",
+    Project_Size_Sq_Mtr: "",
     Project_Size_Sq_Ft: "",
     Rera_Carpet_Area_Sq_M: "",
     Rera_Carpet_Area_sqft: "",
     Number_Of_Towers: "",
-    no_of_apartments: "",
+    Number_Of_Units: "",
     Rera_Number: "",
     Amenities: [],
     Specifications: [],
@@ -47,8 +47,8 @@ const ProjectDetailsEdit = () => {
       pin_code: "",
       country: "",
     },
-    brochure: null, 
-    two_d_images: [], 
+    brochure: null,
+    two_d_images: [],
     videos: [],
   });
 
@@ -63,26 +63,26 @@ const ProjectDetailsEdit = () => {
   const [error, setError] = useState(null);
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
-  // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; 
+  // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
 
-  
   const fetchData = async (endpoint, setter) => {
     try {
-      const response = await axios.get(`https://panchshil-super.lockated.com/${endpoint}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-      
+      const response = await axios.get(
+        `https://panchshil-super.lockated.com/${endpoint}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
       setter(response.data);
       console.log("response:---", response.data);
     } catch (error) {
       console.error(`Error fetching data from ${endpoint}:`, error);
     }
   };
-  
 
-  
   useEffect(() => {
     fetchData("get_property_types.json", (data) =>
       setProjectsType(data?.property_types || [])
@@ -99,36 +99,40 @@ const ProjectDetailsEdit = () => {
   }, []);
 
   // console.log("data", projectsType);
-  
+
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
-        const response = await axios.get(`https://panchshil-super.lockated.com/projects/${id}.json`, { 
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        });
-        
+        const response = await axios.get(
+          `https://panchshil-super.lockated.com/projects/${id}.json`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+
         const projectData = response.data;
-  
+
         setFormData({
           Property_Type: projectData.property_type || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
           Building_Type: projectData.building_type || "",
-          Project_Construction_Status: projectData.Project_Construction_Status || "",
+          Project_Construction_Status:
+            projectData.Project_Construction_Status || "",
           Configuration_Type: Array.isArray(projectData.configurations)
             ? projectData.configurations.map((config) => config.name)
             : [],
-          project_name: projectData.project_name || "",
+          Project_Name: projectData.project_name || "",
           project_address: projectData.project_address || "",
-          project_description: projectData.project_description || "",
-          price: projectData.price || "",
-          project_size_sq_mtr: projectData.project_size_sq_mtr || "",
+          Project_Description: projectData.project_description || "",
+          Price_Onward: projectData.price || "",
+          Project_Size_Sq_Mtr: projectData.project_size_sq_mtr || "",
           Project_Size_Sq_Ft: projectData.project_size_sq_ft || "",
           Rera_Carpet_Area_Sq_M: projectData.rera_carpet_area_sq_mtr || "",
           Rera_Carpet_Area_sqft: projectData.rera_carpet_area_sqft || "",
           Number_Of_Towers: projectData.no_of_towers || "",
-          no_of_apartments: projectData.no_of_apartments || "",
+          Number_Of_Units: projectData.no_of_apartments || "",
           Rera_Number: projectData.rera_number || "",
           Amenities: Array.isArray(projectData.amenities)
             ? projectData.amenities.map((ammit) => ammit.name)
@@ -153,7 +157,7 @@ const ProjectDetailsEdit = () => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
         });
-  
+
         setProject(response.data);
       } catch (err) {
         setError("Failed to fetch project details.");
@@ -163,7 +167,7 @@ const ProjectDetailsEdit = () => {
     };
     fetchProjectDetails();
   }, []);
-  
+
   // console.log("this is the form data", formData);
 
   const handleChange = (e) => {
@@ -230,14 +234,13 @@ const ProjectDetailsEdit = () => {
     reader.onloadend = () => {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        image: validFiles,  // Store images correctly
-        previewImage: reader.result, 
+        image: validFiles, // Store images correctly
+        previewImage: reader.result,
       }));
-      
     };
 
     if (validFiles.length > 0) {
-      reader.readAsDataURL(validFiles[0]); 
+      reader.readAsDataURL(validFiles[0]);
     }
   };
 
@@ -279,7 +282,7 @@ const ProjectDetailsEdit = () => {
       errors.push("Configuration Type is required.");
       return errors;
     }
-    if (!formData.project_name) {
+    if (!formData.Project_Name) {
       errors.push("Project Name is required.");
       return errors;
     }
@@ -287,92 +290,96 @@ const ProjectDetailsEdit = () => {
       errors.push("Location is required.");
       return errors;
     }
-    if (!formData.project_description) {
+    if (!formData.Project_Description) {
       errors.push("Project Description is required.");
       return errors;
     }
-    if (!formData.price) {
+    if (!formData.Price_Onward) {
       errors.push("Price Onward is required.");
       return errors;
     }
-    if (!formData.project_size_sq_mtr) {
+    if (!formData.Project_Size_Sq_Mtr) {
       errors.push("Project Size (Sq. Mtr.) is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Project_Size_Sq_Ft) {
       errors.push("Project Size (Sq. Ft.) is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Rera_Carpet_Area_Sq_M) {
       errors.push("RERA Carpet Area (Sq. M) is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Rera_Carpet_Area_sqft) {
       errors.push("RERA Carpet Area (Sq. Ft.) is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Number_Of_Towers) {
       errors.push("Number of Towers is required.");
-      return errors; 
+      return errors;
     }
-    if (!formData.no_of_apartments) {
+    if (!formData.Number_Of_Units) {
       errors.push("Number of Units is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Rera_Number) {
       errors.push("RERA Number is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Specifications.length) {
       errors.push("Specifications are required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Land_Area) {
       errors.push("Land Area is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Address || !formData.Address.address_line_1) {
       errors.push("Address Line 1 is required.");
-      return errors; 
-    }    
+      return errors;
+    }
     if (!formData.Address || !formData.Address.address_line_2) {
       errors.push("Address Line 2 is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Address || !formData.Address.city) {
       errors.push("City is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Address || !formData.Address.state) {
       errors.push("State is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Address || !formData.Address.pin_code) {
       errors.push("Pin Code is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Address || !formData.Address.country) {
       errors.push("Country is required.");
-      return errors; 
+      return errors;
     }
 
     if (!formData.brochure) {
       errors.push("Brochure is required.");
-      return errors; 
+      return errors;
     }
     if (formData.two_d_images.length === 0) {
       errors.push("At least one 2D image is required.");
-      return errors; 
+      return errors;
+    }
+    if (formData.videos.length === 0) {
+      errors.push("At least one video is required.");
+      return errors;
     }
 
-    return errors; 
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const validationErrors = validateForm(formData);
   
+    const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
       toast.error(validationErrors[0]);
       setLoading(false);
@@ -383,36 +390,41 @@ const ProjectDetailsEdit = () => {
   
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
-        for (const addressKey in formData.Address) {
-          data.append(`project[Address][${addressKey}]`, formData.Address[addressKey]);
-        }
+        Object.entries(value).forEach(([addressKey, addressValue]) => {
+          data.append(`project[Address][${addressKey}]`, addressValue);
+        });
       } else if (key === "brochure" && value) {
-        // Ensure we're only appending new files, not API response files
-        if (value instanceof File) {
-          data.append("project[brochure]", value);
+        const file = value instanceof File ? value : value.file;
+        if (file) {
+          data.append("project[brochure]", file);
         }
-      } else if (key === "two_d_images" && Array.isArray(value) && value.length > 0) {
+      } else if (key === "two_d_images" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
-          if (fileObj instanceof File) {
-            data.append("project[two_d_images][]", fileObj);
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
+            data.append("project[two_d_images][]", file);
           }
         });
-      } else if (key === "videos" && Array.isArray(value) && value.length > 0) {
+      } else if (key === "videos" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
-          if (fileObj instanceof File) {
-            data.append("project[videos][]", fileObj);
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
+            data.append("project[videos][]", file);
           }
         });
-      } else if (key === "image" && Array.isArray(value) && value.length > 0) {
-        value.forEach((fileObj) => {
-          if (fileObj instanceof File) {
-            data.append("project[image][]", fileObj);
-          }
-        });
+      } else if (key === "image" && value) {
+        const file = value instanceof File ? value : value.file;
+        if (file) {
+          data.append("project[image]", file);
+        }
       } else {
         data.append(`project[${key}]`, value);
       }
     });
+  
+    for (let [key, value] of data.entries()) {
+      console.log(`${key}:`, value);
+    }
   
     try {
       const response = await axios.put(
@@ -425,17 +437,16 @@ const ProjectDetailsEdit = () => {
         }
       );
   
-      toast.success("Project Updated successfully");
       console.log(response.data);
+      toast.success("Project updated successfully");
       navigate("/project-list");
     } catch (error) {
-      toast.error("Failed to submit the form. Please try again.");
-      console.error("Error submitting the form:", error);
+      console.error("Error updating the project:", error);
+      toast.error("Failed to update the project. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-  
   
   const statusOptions = {
     "Office Parks": [
@@ -448,7 +459,6 @@ const ProjectDetailsEdit = () => {
     ],
   };
 
-  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -596,8 +606,8 @@ const ProjectDetailsEdit = () => {
                   <input
                     className="form-control"
                     type="text"
-                    name="project_name"
-                    value={formData.project_name}
+                    name="Project_Name"
+                    value={formData.Project_Name}
                     onChange={handleChange}
                   />
                 </div>
@@ -634,8 +644,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     rows={1}
                     placeholder="Enter ..."
-                    name="project_description"
-                    value={formData.project_description}
+                    name="Project_Description"
+                    value={formData.Project_Description}
                     onChange={handleChange}
                   />
                 </div>
@@ -654,8 +664,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="text-number"
                     placeholder="Default input"
-                    name="price"
-                    value={formData.price}
+                    name="Price_Onward"
+                    value={formData.Price_Onward}
                     onChange={handleChange}
                   />
                 </div>
@@ -673,8 +683,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="number"
                     placeholder="Default input"
-                    name="project_size_sq_mtr"
-                    value={formData.project_size_sq_mtr}
+                    name="Project_Size_Sq_Mtr"
+                    value={formData.Project_Size_Sq_Mtr}
                     onChange={handleChange}
                   />
                 </div>
@@ -768,8 +778,8 @@ const ProjectDetailsEdit = () => {
                     className="form-control"
                     type="number"
                     placeholder="Default input"
-                    name="no_of_apartments"
-                    value={formData.no_of_apartments}
+                    name="Number_Of_Units"
+                    value={formData.Number_Of_Units}
                     onChange={handleChange}
                   />
                 </div>
@@ -1094,14 +1104,24 @@ const ProjectDetailsEdit = () => {
                     placeholder="Pin Code"
                     name="pin_code"
                     value={formData.Address.pin_code}
-                    maxLength={6} // Restricts input to 6 digits
+                    maxLength={6} // Restricts input to 6 characters
                     onChange={(e) => {
                       const { name, value } = e.target;
                       // Allow only numbers and ensure max 6 digits
-                      if (/^\d{0,6}$/.test(value)) {
+                      if (/^\d*$/.test(value) && value.length <= 6) {
                         setFormData((prevData) => ({
                           ...prevData,
                           Address: { ...prevData.Address, [name]: value },
+                        }));
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const { name, value } = e.target;
+                      if (value.length !== 6) {
+                        toast.error("Pin Code must be exactly 6 digits");
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          Address: { ...prevData.Address, [name]: "" }, // Reset field on incorrect input
                         }));
                       }
                     }}
@@ -1192,9 +1212,10 @@ const ProjectDetailsEdit = () => {
                       {formData.brochure && (
                         <tr>
                           <td>
-                          {formData.brochure?.name || formData.brochure?.document_file_name || "No File"}
-
-                            </td>
+                            {formData.brochure?.name ||
+                              formData.brochure?.document_file_name ||
+                              "No File"}
+                          </td>
 
                           <td>
                             <button

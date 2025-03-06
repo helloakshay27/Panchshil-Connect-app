@@ -1055,34 +1055,42 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
               <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Pin Code
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Pin Code"
-                    name="pin_code"
-                    value={formData.Address.pin_code}
-                    maxLength={6} // Restrict input to 6 characters
-                    onChange={(e) => {
-                      const { name, value } = e.target;
-                      // Allow only numbers and max 6 digits
-                      if (/^\d{0,6}$/.test(value)) {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          Address: { ...prevData.Address, [name]: value },
-                        }));
-                      }
-                    }}
-                  />
-                </div>
-              </div>
+  <div className="form-group">
+    <label>
+      Pin Code
+      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+    </label>
+    <input
+      className="form-control"
+      type="text"
+      placeholder="Pin Code"
+      name="pin_code"
+      value={formData.Address.pin_code}
+      maxLength={6} // Prevents typing more than 6 digits
+      onChange={(e) => {
+        const { name, value } = e.target;
+        // Allow only numbers (0-9) and ensure max 6 digits
+        if (/^\d{0,6}$/.test(value)) {
+          setFormData((prevData) => ({
+            ...prevData,
+            Address: { ...prevData.Address, [name]: value },
+          }));
+        }
+      }}
+      onBlur={(e) => {
+        const { name, value } = e.target;
+        if (value.length !== 6) {
+          toast.error("Pin Code must be exactly 6 digits");
+          setFormData((prevData) => ({
+            ...prevData,
+            Address: { ...prevData.Address, [name]: "" }, // Reset field on incorrect input
+          }));
+        }
+      }}
+    />
+  </div>
+</div>
+
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
