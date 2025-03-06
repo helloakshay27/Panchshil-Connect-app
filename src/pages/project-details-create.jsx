@@ -650,7 +650,7 @@ const ProjectDetailsCreate = () => {
                   </label>
                   <input
                     className="form-control"
-                    type="number"
+                    type="text-number"
                     name="Price_Onward"
                     placeholder="Enter Price Onward"
                     value={formData.Price_Onward}

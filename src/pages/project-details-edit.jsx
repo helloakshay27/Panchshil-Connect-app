@@ -62,21 +62,25 @@ const ProjectDetailsEdit = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_BASE_URL = "https://panchshil-super.lockated.com";
-  const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; 
+  // const API_BASE_URL = "https://panchshil-super.lockated.com";
+  // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; 
 
   
   const fetchData = async (endpoint, setter) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/${endpoint}`, {
-        headers: { Authorization: AUTH_TOKEN },
+      const response = await axios.get(`https://panchshil-super.lockated.com/${endpoint}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       });
+      
       setter(response.data);
       console.log("response:---", response.data);
     } catch (error) {
       console.error(`Error fetching data from ${endpoint}:`, error);
     }
   };
+  
 
   
   useEffect(() => {
@@ -94,27 +98,24 @@ const ProjectDetailsEdit = () => {
     );
   }, []);
 
-  console.log("data", projectsType);
+  // console.log("data", projectsType);
   
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/projects/${id}.json`,
-          {
-            headers: { Authorization: AUTH_TOKEN },
-          }
-        );
+        const response = await axios.get(`https://panchshil-super.lockated.com/projects/${id}.json`, { 
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        });
+        
         const projectData = response.data;
-
-        console.log("this is project data", projectData);
-
+  
         setFormData({
           Property_Type: projectData.property_type || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
           Building_Type: projectData.building_type || "",
-          Project_Construction_Status:
-            projectData.Project_Construction_Status || "",
+          Project_Construction_Status: projectData.Project_Construction_Status || "",
           Configuration_Type: Array.isArray(projectData.configurations)
             ? projectData.configurations.map((config) => config.name)
             : [],
@@ -140,7 +141,6 @@ const ProjectDetailsEdit = () => {
           virtual_tour_url: projectData.virtual_tour_url || "",
           map_url: projectData.map_url || "",
           image: projectData.image_url || "",
-
           Address: {
             address_line_1: projectData.location?.address || "",
             address_line_2: projectData.location?.address_line_two || "",
@@ -153,6 +153,7 @@ const ProjectDetailsEdit = () => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
         });
+  
         setProject(response.data);
       } catch (err) {
         setError("Failed to fetch project details.");
@@ -162,7 +163,8 @@ const ProjectDetailsEdit = () => {
     };
     fetchProjectDetails();
   }, []);
-  console.log("this is the form data", formData);
+  
+  // console.log("this is the form data", formData);
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
@@ -228,9 +230,10 @@ const ProjectDetailsEdit = () => {
     reader.onloadend = () => {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        attachfile: validFiles, 
+        image: validFiles,  // Store images correctly
         previewImage: reader.result, 
       }));
+      
     };
 
     if (validFiles.length > 0) {
@@ -369,66 +372,59 @@ const ProjectDetailsEdit = () => {
     e.preventDefault();
     setLoading(true);
     const validationErrors = validateForm(formData);
-
+  
     if (validationErrors.length > 0) {
       toast.error(validationErrors[0]);
       setLoading(false);
       return;
     }
-
+  
     const data = new FormData();
-
+  
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
         for (const addressKey in formData.Address) {
-          data.append(
-            `project[Address][${addressKey}]`,
-            formData.Address[addressKey]
-          );
+          data.append(`project[Address][${addressKey}]`, formData.Address[addressKey]);
         }
       } else if (key === "brochure" && value) {
-        const file = value instanceof File ? value : value.file;
-        if (file instanceof File) {
-          data.append("project[brochure]", file);
+        // Ensure we're only appending new files, not API response files
+        if (value instanceof File) {
+          data.append("project[brochure]", value);
         }
       } else if (key === "two_d_images" && Array.isArray(value) && value.length > 0) {
         value.forEach((fileObj) => {
-          const file = fileObj instanceof File ? fileObj : fileObj.file;
-          if (file) {
-            data.append("project[two_d_images][]", file);
+          if (fileObj instanceof File) {
+            data.append("project[two_d_images][]", fileObj);
           }
         });
       } else if (key === "videos" && Array.isArray(value) && value.length > 0) {
         value.forEach((fileObj) => {
-          const file = fileObj instanceof File ? fileObj : fileObj.file;
-          if (file) {
-            data.append("project[videos][]", file);
+          if (fileObj instanceof File) {
+            data.append("project[videos][]", fileObj);
           }
         });
-      } else if (key === "image" && value) { 
-        // Ensure image is a File instance before appending
-        const file = value instanceof File ? value : value.file;
-        if (file instanceof File) {
-          data.append("project[image]", file);
-        }
+      } else if (key === "image" && Array.isArray(value) && value.length > 0) {
+        value.forEach((fileObj) => {
+          if (fileObj instanceof File) {
+            data.append("project[image][]", fileObj);
+          }
+        });
       } else {
         data.append(`project[${key}]`, value);
       }
     });
-
-    console.log("this is the passsing data", data);
-
+  
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/projects/${id}.json`,
+        `https://panchshil-super.lockated.com/projects/${id}.json`,
         data,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
           },
         }
       );
+  
       toast.success("Project Updated successfully");
       console.log(response.data);
       navigate("/project-list");
@@ -439,7 +435,8 @@ const ProjectDetailsEdit = () => {
       setLoading(false);
     }
   };
-
+  
+  
   const statusOptions = {
     "Office Parks": [
       { value: "Completed", label: "Completed" },
@@ -655,7 +652,7 @@ const ProjectDetailsEdit = () => {
 
                   <input
                     className="form-control"
-                    type="number"
+                    type="text-number"
                     placeholder="Default input"
                     name="price"
                     value={formData.price}
@@ -835,8 +832,8 @@ const ProjectDetailsEdit = () => {
                     }
                     placeholder="Select Amenities"
                   />
-                  {console.log("amenities", amenities)}
-                  {console.log("project_amenities", formData.project_amenities)}
+                  {/* {console.log("amenities", amenities)} */}
+                  {/* {console.log("project_amenities", formData.project_amenities)} */}
                 </div>
               </div>
 
@@ -876,7 +873,7 @@ const ProjectDetailsEdit = () => {
                     }
                     placeholder="Select Specifications"
                   />
-                  {console.log("specifications", specifications)}
+                  {/* {console.log("specifications", specifications)} */}
                 </div>
               </div>
 
@@ -1195,7 +1192,8 @@ const ProjectDetailsEdit = () => {
                       {formData.brochure && (
                         <tr>
                           <td>
-                          {formData.brochure.name || formData.brochure.document_file_name || "No File"}
+                          {formData.brochure?.name || formData.brochure?.document_file_name || "No File"}
+
                             </td>
 
                           <td>
