@@ -76,7 +76,7 @@ const TestimonialList = () => {
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
-        <div className="module-data-section p-3">
+        <div className="module-data-section container-fluid">
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
             <div className="col-md-4 pe-2 pt-2">
               <form
@@ -147,7 +147,7 @@ const TestimonialList = () => {
             <div className="card-header">
               <h3 className="card-title">Testimonials List</h3>
             </div>
-            <div className="card-body  mt-4 pb-4 pt-0">
+            <div className="card-body ">
               {loading ? (
                 <p>Loading...</p>
               ) : error ? (
@@ -192,7 +192,7 @@ const TestimonialList = () => {
                                 testimonial.updated_at
                               ).toLocaleString()}
                             </td>
-                            <td className="text-center">
+                            <td>
                               <button
                                 className="btn btn-link"
                                 onClick={() =>
@@ -204,6 +204,9 @@ const TestimonialList = () => {
                                   background: "none",
                                   border: "none",
                                   padding: "0",
+                                  display: "flex", // Ensure flexbox is applied
+                                  alignItems: "center", // Align vertically
+                                  justifyContent: "flex-start",
                                 }}
                               >
                                 <svg

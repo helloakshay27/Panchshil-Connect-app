@@ -1,145 +1,139 @@
 import React, { useEffect, useState } from "react";
-import SelectBox from "../components/base/SingleSelect";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import toast from "react-hot-toast";
+// import SelectBox from "../components/base/SingleSelect";
+import { toast } from "react-hot-toast";
 
 const EditGallery = () => {
-  const navigate = useNavigate()
-  const { id } = useParams(); // Corrected ID extraction
-  const [projectsType, setprojectsType] = useState([]);
-  const [galleryType, setGalleryType] = useState([]);
-  const [galleryData, setGalleryData] = useState([]);
+  const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState([]);
   const [formData, setFormData] = useState({
-    galleryType: "",
-    projectId: "",
-    name: "",
-    title: "",
+    projectId: location.state?.gallery?.project_id || "",
+    name: location.state?.gallery?.name || "",
+    title: location.state?.gallery?.title || "",
     attachment: null,
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  // Handle input changes
-  const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: files ? files[0] : value,
-    }));
-  };
+  console.log(formData.projectId);
+  const [imagePreview, setImagePreview] = useState(
+    location.state?.gallery?.attachfile?.document_url || null
+  );
 
   useEffect(() => {
-    if (!id) return;
-
     const fetchGallery = async () => {
       setLoading(true);
-      setError(""); // Reset error state
-
       try {
         const response = await axios.get(
           `https://panchshil-super.lockated.com/galleries/${id}.json`
         );
+        const data = response.data;
 
-        setFormData({
-          galleryType: response.data?.gallery_type_id || "",
-          projectId: response.data?.project_id || "",
-          name: response.data?.name || "",
-          title: response.data?.title || "",
+        setFormData((prev) => ({
+          ...prev,
+          projectId: data.project_id || prev.projectId, // ✅ Ensure projectId is set properly
+          name: data.name || "",
+          title: data.title || "",
           attachment: null,
-        });
+        }));
 
-        setGalleryData(response.data);
+        if (data.attachfile?.document_url) {
+          setImagePreview(data.attachfile.document_url);
+        }
       } catch (error) {
-        console.error("Error fetching gallery:", error);
-        setError("Failed to fetch gallery details. Please try again.");
+        toast.error("Failed to fetch gallery data.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchGallery();
-  }, [id]);
+    if (!location.state?.gallery) {
+      fetchGallery();
+    }
+  }, [id, location.state?.gallery]);
 
-  // Handle form submission
+  // Fetch Projects List
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/projects.json",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setProjects(response.data.projects || []);
+
+        setFormData((prev) => ({
+          ...prev,
+          projectId: prev.projectId || response.data.projects[0]?.id || "", // Set first project as default if none is set
+        }));
+      } catch (error) {
+        toast.error("Failed to fetch projects.");
+      }
+    };
+
+    fetchProjects();
+    console.log("Projects:", projects);
+  }, []);
+
+  // Handle Input Changes
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (files) {
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, attachment: file }));
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  // Handle Form Submission (Update Gallery)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
+    setLoading(true);
     const data = new FormData();
     data.append("gallery[project_id]", formData.projectId);
-    data.append("gallery[gallery_type_id]", formData.galleryType);
     data.append("gallery[name]", formData.name);
     data.append("gallery[title]", formData.title);
+
     if (formData.attachment) {
       data.append("gallery[attachment]", formData.attachment);
     }
 
     try {
-      const response = await axios.put(
+      await axios.put(
         `https://panchshil-super.lockated.com/galleries/${id}.json`,
-        data
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
+
       toast.success("Gallery updated successfully!");
-      console.log("Success:", response.data);
+      navigate("/gallery-list");
     } catch (error) {
-      setError("Failed to update the gallery. Please try again.");
-      toast.error("Failed to update the gallery. Please try again.");
-      console.error("Error:", error.response?.data || error.message);
+      toast.error("Failed to update gallery.");
     } finally {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    const fetchProjects = async () => {
-      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url =
-        "https://panchshil-super.lockated.com/get_property_types.json";
 
-      try {
-        const response = await axios.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-
-        setprojectsType(response.data?.property_types);
-        // console.log("projectsType", projectsType);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-
-    fetchProjects();
-  }, []);
-  useEffect(() => {
-    const fetchProjects = async () => {
-      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url =
-        "https://panchshil-super.lockated.com/gallery_types.json?project_id=1";
-
-      try {
-        const response = await axios.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-
-        setGalleryType(response.data?.gallery_types);
-        // console.log("projectsType", projectsType);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-
-    fetchProjects();
-  }, []);
-
+  // Handle Cancel
   const handleCancel = () => {
     navigate(-1);
-  }
+  };
 
   return (
     <div className="main-content">
@@ -155,92 +149,31 @@ const EditGallery = () => {
                   <div className="text-center">Loading...</div>
                 ) : (
                   <div className="row">
-                    {/* <div className="col-md-3">
+                    {/* Project Dropdown */}
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Gallery Type</label>
+                        <label>Project</label>
                         <select
-                          className="form-control form-select"
-                          name="galleryType"
-                          value={formData.galleryType || galleryData.gallery_type_id} 
-                          onChange={handleInputChange}
+                          className="form-control"
+                          value={formData.projectId || ""}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              projectId: e.target.value,
+                            }))
+                          }
                         >
-                          <option value="" disabled>
-                            {galleryData.gallery_type}
-                          </option>
-                          {galleryType.map((type, index) => (
-                            <option key={index} value={type.id}>
-                              {type.name}
+                          <option value="">Select Project</option>
+                          {projects.map((proj) => (
+                            <option key={proj.id} value={proj.id}>
+                              {proj.project_name}
                             </option>
                           ))}
                         </select>
                       </div>
-                    </div> */}
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Gallery Type</label>
-                        <SelectBox
-                          options={galleryType.map((type) => ({
-                            value: type.id,
-                            label: type.name,
-                          }))}
-                          defaultValue={
-                            formData.galleryType || galleryData.gallery_type_id
-                          }
-                          onChange={(value) =>
-                            setFormData((prevData) => ({
-                              ...prevData,
-                              galleryType: value,
-                            }))
-                          }
-                          isDisableFirstOption={true}
-                          className="custom-selectbox"
-                        />
-                      </div>
                     </div>
 
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Project Types</label>
-                        <select
-                          className="form-control form-select"
-                          name="type_of_project"
-                          value={formData.projectId || galleryData.project_id}
-                          onChange={handleInputChange}
-                        >
-                          <option value="" disabled>
-                            {galleryData.project_name}
-                          </option>
-                          {projectsType.map((type, index) => (
-                            <option key={index} value={type.id}>
-                              {type.property_type}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div> */}
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Project Types</label>
-                        <SelectBox
-                          options={projectsType.map((type) => ({
-                            value: type.id,
-                            label: type.property_type,
-                          }))}
-                          defaultValue={
-                            formData.projectId || galleryData.project_id
-                          }
-                          onChange={(value) =>
-                            setFormData((prevData) => ({
-                              ...prevData,
-                              projectId: value,
-                            }))
-                          }
-                          isDisableFirstOption={true}
-                          className="custom-selectbox"
-                        />
-                      </div>
-                    </div>
-
+                    {/* Name Input */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Name</label>
@@ -248,12 +181,14 @@ const EditGallery = () => {
                           className="form-control"
                           type="text"
                           name="name"
-                          placeholder="Enter name"
-                          value={formData.name || galleryData.name}
+                          value={formData.name}
                           onChange={handleInputChange}
+                          placeholder="Enter name"
                         />
                       </div>
                     </div>
+
+                    {/* Title Input */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Title</label>
@@ -261,12 +196,14 @@ const EditGallery = () => {
                           className="form-control"
                           type="text"
                           name="title"
-                          placeholder="Enter title"
-                          value={formData.title || galleryData.title}
+                          value={formData.title}
                           onChange={handleInputChange}
+                          placeholder="Enter title"
                         />
                       </div>
                     </div>
+
+                    {/* Attachment Input */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Attachment</label>
@@ -276,31 +213,41 @@ const EditGallery = () => {
                           name="attachment"
                           onChange={handleInputChange}
                         />
+                        {imagePreview && (
+                          <div className="mt-2">
+                            <img
+                              src={imagePreview}
+                              alt="Preview"
+                              style={{ maxWidth: "100px", maxHeight: "100px" }}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 )}
               </div>
-              {/* Submit Button */}
-              <div className="row mt-3 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    Submit
-                  </button>
-                </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="row mt-3 justify-content-center">
+              <div className="col-md-2">
+                <button
+                  type="submit"
+                  className="purple-btn2 w-100"
+                  disabled={loading}
+                >
+                  {loading ? "Saving..." : "Submit"}
+                </button>
+              </div>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 w-100"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </form>
