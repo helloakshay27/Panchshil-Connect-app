@@ -62,6 +62,7 @@ const EditAmenities = () => {
       );
       console.log("API Response:", response.data);
       toast.success("Amenity updated successfully!");
+      navigate("/amenities-list");
     } catch (error) {
       console.error("API Error:", error.response?.data || error.message);
       toast.error(
