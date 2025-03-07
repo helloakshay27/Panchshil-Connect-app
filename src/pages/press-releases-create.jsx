@@ -3,6 +3,7 @@ import axios from "axios";
 import "../mor.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import SelectBox from "../components/base/SelectBox";
 
 const PressReleasesCreate = () => {
   const [company, setCompany] = useState([]);
@@ -82,63 +83,71 @@ const PressReleasesCreate = () => {
   const handleProjectChange = (e) => {
     setFormData({ ...formData, project_id: e.target.value });
   };
-  
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const fieldName = e.target.name;
-  
+
     if (fieldName === "pr_image") {
-      const allowedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-      const validImages = files.filter((file) => allowedImageTypes.includes(file.type));
-  
+      const allowedImageTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      const validImages = files.filter((file) =>
+        allowedImageTypes.includes(file.type)
+      );
+
       if (validImages.length !== files.length) {
         toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
         e.target.value = "";
         return;
       }
-  
+
       setFormData((prevFormData) => ({
         ...prevFormData,
         pr_image: validImages,
       }));
     } else if (fieldName === "pr_pdf") {
       const allowedPdfTypes = ["application/pdf"];
-      const validPdfs = files.filter((file) => allowedPdfTypes.includes(file.type));
-  
+      const validPdfs = files.filter((file) =>
+        allowedPdfTypes.includes(file.type)
+      );
+
       if (validPdfs.length !== files.length) {
         toast.error("Only PDF files are allowed.");
         e.target.value = "";
         return;
       }
-  
+
       setFormData((prevFormData) => ({
         ...prevFormData,
         pr_pdf: validPdfs,
       }));
     }
   };
-  
 
   // Form validation
   const validateForm = () => {
     let newErrors = {};
-  
+
     if (!formData.title.trim()) newErrors.title = "Title is mandatory";
-    if (!formData.company_id.trim()) newErrors.company_id = "Company is mandatory";
+    if (!formData.company_id.trim())
+      newErrors.company_id = "Company is mandatory";
     if (!formData.pr_image || formData.pr_image.length === 0)
       newErrors.pr_image = "At least one image is required";
     if (!formData.pr_pdf || formData.pr_pdf.length === 0)
       newErrors.pr_pdf = "At least one PDF is required";
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
+
     setLoading(true);
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -146,7 +155,7 @@ const PressReleasesCreate = () => {
       setLoading(false);
       return;
     }
-  
+
     try {
       const sendData = new FormData();
       sendData.append("press_release[title]", formData.title);
@@ -154,21 +163,21 @@ const PressReleasesCreate = () => {
       sendData.append("press_release[release_date]", formData.release_date);
       sendData.append("press_release[description]", formData.description);
       sendData.append("press_release[project_id]", formData.project_id);
-  
+
       // Append multiple images
       if (formData.pr_image?.length) {
         formData.pr_image.forEach((file) => {
           sendData.append("pr_image", file); // Use array notation
         });
       }
-  
+
       // Append multiple PDFs
       if (formData.pr_pdf?.length) {
         formData.pr_pdf.forEach((file) => {
           sendData.append("pr_pdf", file);
         });
       }
-  
+
       await axios.post(
         "https://panchshil-super.lockated.com/press_releases.json",
         sendData,
@@ -178,7 +187,7 @@ const PressReleasesCreate = () => {
           },
         }
       );
-  
+
       toast.success("Press release created successfully!");
       navigate("/pressreleases-list");
     } catch (error) {
@@ -188,8 +197,6 @@ const PressReleasesCreate = () => {
       setLoading(false);
     }
   };
-  
-  
 
   const handleCancel = () => {
     navigate(-1);
@@ -249,45 +256,38 @@ const PressReleasesCreate = () => {
                       <label>
                         Project<span style={{ color: "#de7008" }}> *</span>
                       </label>
-                      <select
-  className="form-control form-select"
-  name="project_id"
-  value={formData.project_id}
-  required
-  onChange={handleProjectChange}
->
-                        <option value="">Select Project</option>
-                        {projects.map((proj) => (
-                          <option key={proj.id} value={proj.id}>
-                            {proj.project_name}
-                          </option>
-                        ))}
-                      </select>
+                      <SelectBox
+                        options={projects.map((proj) => ({
+                          label: proj.project_name,
+                          value: proj.id,
+                        }))}
+                        defaultValue={formData.project_id}
+                        onChange={(value) =>
+                          setFormData({ ...formData, project_id: value })
+                        }
+                      />
                     </div>
                   </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Company{" "}
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {" "}
                           *
                         </span>
                       </label>
-                      <select
-                        className="form-control form-select"
-                        value={formData.company_id}
-                        name="company_id"
-                        onChange={handleCompanyChange}
-                      >
-                        <option value="">Select Company</option>
-
-                        {console.log("projects", projects)}
-                        {company.map((company) => (
-                          <option key={company.id} value={company.id}>
-                            {company.name}
-                          </option>
-                        ))}
-                      </select>
+                      <SelectBox
+                        options={company.map((comp) => ({
+                          label: comp.name,
+                          value: comp.id,
+                        }))}
+                        defaultValue={formData.company_id}
+                        onChange={(value) =>
+                          setFormData({ ...formData, company_id: value })
+                        }
+                      />
                       {errors.company_id && (
                         <span className="error text-danger">
                           {errors.company_id}
@@ -295,6 +295,7 @@ const PressReleasesCreate = () => {
                       )}
                     </div>
                   </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>

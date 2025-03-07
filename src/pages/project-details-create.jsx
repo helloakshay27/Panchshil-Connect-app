@@ -23,14 +23,18 @@ const ProjectDetailsCreate = () => {
     Price_Onward: "",
     Project_Size_Sq_Mtr: "",
     Project_Size_Sq_Ft: "",
+    development_area_sqft: "",
+    development_area_sqmt: "",
     Rera_Carpet_Area_Sq_M: "",
     Rera_Carpet_Area_sqft: "",
     Number_Of_Towers: "",
     Number_Of_Units: "",
+    no_of_floors: "",
     Rera_Number: "",
     Amenities: [],
     Specifications: [],
     Land_Area: "",
+    land_uom: "",
     project_tag: "",
     virtual_tour_url: "",
     map_url: "",
@@ -47,8 +51,6 @@ const ProjectDetailsCreate = () => {
     two_d_images: [],
     videos: [],
   });
-
- 
 
   useEffect(() => {
     console.log("formData updated:", formData);
@@ -178,6 +180,14 @@ const ProjectDetailsCreate = () => {
       errors.push("Project Size (Sq. Ft.) is required.");
       return errors;
     }
+    if (!formData.development_area_sqmt) {
+      errors.push("Development_area_sqmt is required.");
+      return errors;
+    }
+    if (!formData.development_area_sqft) {
+      errors.push("Development_area_sqft is required.");
+      return errors;
+    }
     if (!formData.Rera_Carpet_Area_Sq_M) {
       errors.push("RERA Carpet Area (Sq. M) is required.");
       return errors;
@@ -188,6 +198,10 @@ const ProjectDetailsCreate = () => {
     }
     if (!formData.Number_Of_Towers) {
       errors.push("Number of Towers is required.");
+      return errors;
+    }
+    if (!formData.no_of_floors) {
+      errors.push("Number of Floors is required.");
       return errors;
     }
     if (!formData.Number_Of_Units) {
@@ -204,11 +218,15 @@ const ProjectDetailsCreate = () => {
     }
     if (!formData.Land_Area) {
       errors.push("Land Area is required.");
-      return errors; 
+      return errors;
+    }
+    if (!formData.land_uom) {
+      errors.push("Land UOM is required.");
+      return errors;
     }
     if (!formData.Address || !formData.Address.address_line_1) {
       errors.push("Address Line 1 is required.");
-      return errors; 
+      return errors;
     }
     if (!formData.Address || !formData.Address.city) {
       errors.push("City is required.");
@@ -268,7 +286,11 @@ const ProjectDetailsCreate = () => {
         if (file instanceof File) {
           data.append("project[brochure]", file);
         }
-      } else if (key === "two_d_images" && Array.isArray(value) && value.length > 0) {
+      } else if (
+        key === "two_d_images" &&
+        Array.isArray(value) &&
+        value.length > 0
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -282,7 +304,7 @@ const ProjectDetailsCreate = () => {
             data.append("project[videos][]", file);
           }
         });
-      } else if (key === "image" && value) { 
+      } else if (key === "image" && value) {
         // Ensure image is a File instance before appending
         const file = value instanceof File ? value : value.file;
         if (file instanceof File) {
@@ -413,14 +435,18 @@ const ProjectDetailsCreate = () => {
       Price_Onward: "",
       Project_Size_Sq_Mtr: "",
       Project_Size_Sq_Ft: "",
+      development_area_sqft: "",
+      development_area_sqmt: "",
       Rera_Carpet_Area_Sq_M: "",
       Rera_Carpet_Area_sqft: "",
       Number_Of_Towers: "",
       Number_Of_Units: "",
+      no_of_floors: "",
       Rera_Number: "",
       Amenities: [],
       Specifications: [],
       Land_Area: "",
+      land_uom: "",
       project_tag: "",
       virtual_tour_url: "",
       map_url: "",
@@ -478,7 +504,7 @@ const ProjectDetailsCreate = () => {
                       { value: "Office Parks", label: "Office Parks" },
                       { value: "Residential", label: "Residential" },
                     ]}
-                    value={formData?.Property_Type || ""} 
+                    value={formData?.Property_Type || ""}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -515,7 +541,7 @@ const ProjectDetailsCreate = () => {
                         label: "Upcoming Developments",
                       },
                     ]}
-                    value={formData?.building_type || ""} 
+                    value={formData?.building_type || ""}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -557,13 +583,24 @@ const ProjectDetailsCreate = () => {
                       *
                     </span>
                   </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="Configuration_Type"
-                    placeholder="Enter Configuration Type"
-                    value={formData.Configuration_Type}
-                    onChange={handleChange}
+                  <MultiSelectBox
+                    options={configurations?.map((config) => ({
+                      value: config.name,
+                      label: config.name,
+                    }))}
+                    value={formData.Configuration_Type.map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Configuration_Type: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      }))
+                    }
+                    placeholder="Select Configuration Type"
                   />
                 </div>
               </div>
@@ -691,6 +728,46 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
+                    Development Area (Sq. Mtr.)
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="development_area_sqmt"
+                    placeholder="Enter Area Sq. Mt."
+                    value={formData.development_area_sqmt}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Development Area (Sq. Ft.)
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="development_area_sqft"
+                    placeholder="Enter Area in Sq. Ft."
+                    value={formData.development_area_sqft}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
                     RERA Carpet Area (Sq. M)
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
@@ -743,6 +820,26 @@ const ProjectDetailsCreate = () => {
                     name="Number_Of_Towers"
                     placeholder="Enter Number of Towers"
                     value={formData.Number_Of_Towers}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Number of Floors
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="no_of_floors"
+                    placeholder="Enter Number of Floors"
+                    value={formData.no_of_floors}
                     onChange={handleChange}
                   />
                 </div>
@@ -869,6 +966,26 @@ const ProjectDetailsCreate = () => {
                     name="Land_Area"
                     placeholder="Enter Land Area"
                     value={formData.Land_Area}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Land UOM
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="land_uom"
+                    placeholder="Enter Land UOM"
+                    value={formData.land_uom}
                     onChange={handleChange}
                   />
                 </div>
@@ -1044,42 +1161,44 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
               <div className="col-md-3 mt-2">
-  <div className="form-group">
-    <label>
-      Pin Code
-      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
-    </label>
-    <input
-      className="form-control"
-      type="text"
-      placeholder="Pin Code"
-      name="pin_code"
-      value={formData.Address.pin_code}
-      maxLength={6} // Prevents typing more than 6 digits
-      onChange={(e) => {
-        const { name, value } = e.target;
-        // Allow only numbers (0-9) and ensure max 6 digits
-        if (/^\d{0,6}$/.test(value)) {
-          setFormData((prevData) => ({
-            ...prevData,
-            Address: { ...prevData.Address, [name]: value },
-          }));
-        }
-      }}
-      onBlur={(e) => {
-        const { name, value } = e.target;
-        if (value.length !== 6) {
-          toast.error("Pin Code must be exactly 6 digits");
-          setFormData((prevData) => ({
-            ...prevData,
-            Address: { ...prevData.Address, [name]: "" }, // Reset field on incorrect input
-          }));
-        }
-      }}
-    />
-  </div>
-</div>
-
+                <div className="form-group">
+                  <label>
+                    Pin Code
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Pin Code"
+                    name="pin_code"
+                    value={formData.Address.pin_code}
+                    maxLength={6} // Prevents typing more than 6 digits
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      // Allow only numbers (0-9) and ensure max 6 digits
+                      if (/^\d{0,6}$/.test(value)) {
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          Address: { ...prevData.Address, [name]: value },
+                        }));
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const { name, value } = e.target;
+                      if (value.length !== 6) {
+                        toast.error("Pin Code must be exactly 6 digits");
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          Address: { ...prevData.Address, [name]: "" }, // Reset field on incorrect input
+                        }));
+                      }
+                    }}
+                  />
+                </div>
+              </div>
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
@@ -1214,7 +1333,10 @@ const ProjectDetailsCreate = () => {
               </div>
 
               <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container" style={{ maxHeight: "300px", overflowY: "auto" }} >
+                <div
+                  className="mt-4 tbl-container"
+                  style={{ maxHeight: "300px", overflowY: "auto" }}
+                >
                   <table className="w-100">
                     <thead>
                       <tr>
@@ -1223,7 +1345,7 @@ const ProjectDetailsCreate = () => {
                         <th>Action</th>
                       </tr>
                     </thead>
-                    <tbody> 
+                    <tbody>
                       {/* 2D Images */}
                       {formData.two_d_images.map((file, index) => (
                         <tr key={index}>
@@ -1333,30 +1455,28 @@ const ProjectDetailsCreate = () => {
               </div>
             </div>
           </div>
-          
         </div>
       </div>
       <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                onClick={handleSubmit}
-                className="purple-btn2 w-100"
-                disabled={loading}
-              >
-                Submit
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="purple-btn2 w-100"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-      
+        <div className="col-md-2">
+          <button
+            onClick={handleSubmit}
+            className="purple-btn2 w-100"
+            disabled={loading}
+          >
+            Submit
+          </button>
+        </div>
+        <div className="col-md-2">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="purple-btn2 w-100"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </>
   );
 };

@@ -27,14 +27,18 @@ const ProjectDetailsEdit = () => {
     Price_Onward: "",
     Project_Size_Sq_Mtr: "",
     Project_Size_Sq_Ft: "",
+    development_area_sqft: "",
+    development_area_sqmt: "",
     Rera_Carpet_Area_Sq_M: "",
     Rera_Carpet_Area_sqft: "",
     Number_Of_Towers: "",
     Number_Of_Units: "",
+    no_of_floors: "",
     Rera_Number: "",
     Amenities: [],
     Specifications: [],
     Land_Area: "",
+    land_uom: "",
     project_tag: "",
     virtual_tour_url: "",
     map_url: "",
@@ -129,9 +133,12 @@ const ProjectDetailsEdit = () => {
           Price_Onward: projectData.price || "",
           Project_Size_Sq_Mtr: projectData.project_size_sq_mtr || "",
           Project_Size_Sq_Ft: projectData.project_size_sq_ft || "",
+          development_area_sqmt: projectData.development_area_sqmt || "",
+          development_area_sqft: projectData.development_area_sqft || "",
           Rera_Carpet_Area_Sq_M: projectData.rera_carpet_area_sq_mtr || "",
           Rera_Carpet_Area_sqft: projectData.rera_carpet_area_sqft || "",
           Number_Of_Towers: projectData.no_of_towers || "",
+          no_of_floors: projectData.no_of_floors || "",
           Number_Of_Units: projectData.no_of_apartments || "",
           Rera_Number: projectData.rera_number || "",
           Amenities: Array.isArray(projectData.amenities)
@@ -141,6 +148,7 @@ const ProjectDetailsEdit = () => {
             ? projectData.specifications.map((spac) => spac.name)
             : [],
           Land_Area: projectData.land_area || "",
+          land_uom: projectData.land_uom || "",
           project_tag: projectData.project_tag || "",
           virtual_tour_url: projectData.virtual_tour_url || "",
           map_url: projectData.map_url || "",
@@ -306,6 +314,14 @@ const ProjectDetailsEdit = () => {
       errors.push("Project Size (Sq. Ft.) is required.");
       return errors;
     }
+    if (!formData.development_area_sqmt) {
+      errors.push("Development_area_sqmt is required.");
+      return errors;
+    }
+    if (!formData.development_area_sqft) {
+      errors.push("Development_area_sqft is required.");
+      return errors;
+    }
     if (!formData.Rera_Carpet_Area_Sq_M) {
       errors.push("RERA Carpet Area (Sq. M) is required.");
       return errors;
@@ -378,16 +394,16 @@ const ProjectDetailsEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
       toast.error(validationErrors[0]);
       setLoading(false);
       return;
     }
-  
+
     const data = new FormData();
-  
+
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
@@ -398,7 +414,11 @@ const ProjectDetailsEdit = () => {
         if (file) {
           data.append("project[brochure]", file);
         }
-      } else if (key === "two_d_images" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "two_d_images" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -421,11 +441,11 @@ const ProjectDetailsEdit = () => {
         data.append(`project[${key}]`, value);
       }
     });
-  
+
     for (let [key, value] of data.entries()) {
       console.log(`${key}:`, value);
     }
-  
+
     try {
       const response = await axios.put(
         `https://panchshil-super.lockated.com/projects/${id}.json`,
@@ -436,7 +456,7 @@ const ProjectDetailsEdit = () => {
           },
         }
       );
-  
+
       console.log(response.data);
       toast.success("Project updated successfully");
       navigate("/project-list");
@@ -447,7 +467,7 @@ const ProjectDetailsEdit = () => {
       setLoading(false);
     }
   };
-  
+
   const statusOptions = {
     "Office Parks": [
       { value: "Completed", label: "Completed" },
@@ -564,7 +584,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-3 mt-2">
+              <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     Configuration Type
@@ -573,13 +593,24 @@ const ProjectDetailsEdit = () => {
                       *
                     </span>
                   </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="Configuration_Type"
-                    placeholder="Enter Configuration Type"
-                    value={formData.Configuration_Type}
-                    onChange={handleChange}
+                  <MultiSelectBox
+                    options={configurations.map((config) => ({
+                      value: config.name,
+                      label: config.name,
+                    }))}
+                    value={formData.Configuration_Type.map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Configuration_Type: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      }))
+                    }
+                    placeholder="Select Type"
                   />
                 </div>
               </div>
@@ -700,6 +731,45 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
+                    Development Area (Sq. Mtr.)
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="development_area_sqmt"
+                    placeholder="Enter Area Sq. Mt."
+                    value={formData.development_area_sqmt}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Development Area (Sq. Ft.)
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="development_area_sqft"
+                    placeholder="Enter Area in Sq. Ft."
+                    value={formData.development_area_sqft}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
                     Rera Carpet Area (Sq. M)
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
@@ -750,6 +820,25 @@ const ProjectDetailsEdit = () => {
                     placeholder="Default input"
                     name="Number_Of_Towers"
                     value={formData.Number_Of_Towers}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Number of Floors
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="no_of_floors"
+                    placeholder="Enter Number of Floors"
+                    value={formData.no_of_floors}
                     onChange={handleChange}
                   />
                 </div>
@@ -891,6 +980,26 @@ const ProjectDetailsEdit = () => {
                     placeholder="Default input"
                     name="Land_Area"
                     value={formData.Land_Area}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Land UOM
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="land_uom"
+                    placeholder="Enter Land UOM"
+                    value={formData.land_uom}
                     onChange={handleChange}
                   />
                 </div>

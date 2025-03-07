@@ -25,13 +25,12 @@ const ProjectDetailsList = () => {
 
   const [expandedConfigs, setExpandedConfigs] = useState({});
 
-const toggleExpand = (index) => {
-  setExpandedConfigs((prev) => ({
-    ...prev,
-    [index]: !prev[index], // Toggle the specific configuration's expansion
-  }));
-};
-
+  const toggleExpand = (index) => {
+    setExpandedConfigs((prev) => ({
+      ...prev,
+      [index]: !prev[index], // Toggle the specific configuration's expansion
+    }));
+  };
 
   const [loading, setLoading] = useState(true);
 
@@ -40,13 +39,13 @@ const toggleExpand = (index) => {
   const navigate = useNavigate();
 
   const fetchProjects = async (searchTerm = "") => {
-    const token = "ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4"; // Replace with your actual token
-    const url = " https://panchshil-super.lockated.com/get_all_projects.json";
+    // const token = "ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4"; // Replace with your actual token
+    const url = " https://panchshil-super.lockated.com/get_projects_all.json";
 
     try {
       const response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
         params: {
           "q[Project_Name_cont]": searchTerm, // Passing search query
@@ -64,13 +63,12 @@ const toggleExpand = (index) => {
       console.error("Error fetching projects:", error);
       setError("Unable to fetch project data");
     }
-
   };
 
   useEffect(() => {
     fetchProjects();
   }, []);
-  console.log(projects)
+  console.log(projects);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -219,11 +217,13 @@ const toggleExpand = (index) => {
                             <td>{project?.project_name || "N/A"}</td>
                             <td>{project?.property_type || "N/A"}</td>
                             <td>{project?.SFDC_Project_Id || "N/As"}</td>
-                            <td>{project?.Project_Construction_Status || "N/A"}</td>
-                            
-                              <td style={{ width: "200px" }}>
-                                {project?.configurations?.length > 0
-                                  ? project?.configurations.map(
+                            <td>
+                              {project?.Project_Construction_Status || "N/A"}
+                            </td>
+
+                            <td style={{ width: "200px" }}>
+                              {project?.configurations?.length > 0
+                                ? project?.configurations.map(
                                     (configurations, idx) => (
                                       <div key={idx}>
                                         {configurations.name}{" "}
@@ -238,9 +238,9 @@ const toggleExpand = (index) => {
                                       </div>
                                     )
                                   )
-                                  : "No Configuration Type"}
-                              </td>
-                            
+                                : "No Configuration Type"}
+                            </td>
+
                             {/* <td>
                         {project?.location
                           ? `${project.location}, ${
@@ -260,25 +260,25 @@ const toggleExpand = (index) => {
                             <td style={{ width: "200px" }}>
                               {project?.amenities?.length > 0
                                 ? project?.amenities.map((amenity, idx) => (
-                                  <div key={idx}>
-                                    {amenity.name}{" "}
-                                    <img
-                                      src={amenity.icon_url}
-                                      alt={amenity.name}
-                                      style={{
-                                        width: "20px",
-                                        marginLeft: "5px",
-                                      }}
-                                    />
-                                  </div>
-                                ))
+                                    <div key={idx}>
+                                      {amenity.name}{" "}
+                                      <img
+                                        src={amenity.icon_url}
+                                        alt={amenity.name}
+                                        style={{
+                                          width: "20px",
+                                          marginLeft: "5px",
+                                        }}
+                                      />
+                                    </div>
+                                  ))
                                 : "No amenities"}
                             </td>
                             <td>
                               {project?.specifications?.length > 0
                                 ? project?.specifications.map((spec, idx) => (
-                                  <div key={idx}>{spec.name}</div>
-                                ))
+                                    <div key={idx}>{spec.name}</div>
+                                  ))
                                 : "No specifications"}
                             </td>
                             <td>
@@ -329,8 +329,9 @@ const toggleExpand = (index) => {
                     <ul className="pagination">
                       {/* First Page Button */}
                       <li
-                        className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                          }`}
+                        className={`page-item ${
+                          pagination.current_page === 1 ? "disabled" : ""
+                        }`}
                       >
                         <button
                           className="page-link"
@@ -343,8 +344,9 @@ const toggleExpand = (index) => {
 
                       {/* Previous Page Button */}
                       <li
-                        className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                          }`}
+                        className={`page-item ${
+                          pagination.current_page === 1 ? "disabled" : ""
+                        }`}
                       >
                         <button
                           className="page-link"
@@ -364,8 +366,9 @@ const toggleExpand = (index) => {
                       ).map((page) => (
                         <li
                           key={page}
-                          className={`page-item ${pagination.current_page === page ? "active" : ""
-                            }`}
+                          className={`page-item ${
+                            pagination.current_page === page ? "active" : ""
+                          }`}
                         >
                           <button
                             className="page-link"
@@ -378,10 +381,11 @@ const toggleExpand = (index) => {
 
                       {/* Next Page Button */}
                       <li
-                        className={`page-item ${pagination.current_page === pagination.total_pages
-                          ? "disabled"
-                          : ""
-                          }`}
+                        className={`page-item ${
+                          pagination.current_page === pagination.total_pages
+                            ? "disabled"
+                            : ""
+                        }`}
                       >
                         <button
                           className="page-link"
@@ -398,10 +402,11 @@ const toggleExpand = (index) => {
 
                       {/* Last Page Button */}
                       <li
-                        className={`page-item ${pagination.current_page === pagination.total_pages
-                          ? "disabled"
-                          : ""
-                          }`}
+                        className={`page-item ${
+                          pagination.current_page === pagination.total_pages
+                            ? "disabled"
+                            : ""
+                        }`}
                       >
                         <button
                           className="page-link"

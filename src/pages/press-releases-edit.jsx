@@ -3,6 +3,7 @@ import axios from "axios";
 import "../mor.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import SelectBox from "../components/base/SelectBox";
 
 const PressReleasesEdit = () => {
   const [company, setCompany] = useState([]);
@@ -42,7 +43,6 @@ const PressReleasesEdit = () => {
     fetchCompany();
   }, []);
 
- 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -63,7 +63,6 @@ const PressReleasesEdit = () => {
     fetchProjects();
   }, []);
 
- 
   useEffect(() => {
     if (id) {
       const fetchPressRelease = async () => {
@@ -78,7 +77,6 @@ const PressReleasesEdit = () => {
             }
           );
           const data = response.data;
-          
 
           setFormData({
             title: data.title || "",
@@ -87,20 +85,27 @@ const PressReleasesEdit = () => {
             project_id: data.project_id || "",
             release_date: data.release_date
               ? data.release_date.split("T")[0]
-              : "", // Ensure proper format
-            pr_image: data.pr_image || [],
-            pr_pdf: data.pr_pdf || [],
+              : "",
+            attachfile: data.attachfile?.document_url
+              ? [data.attachfile.document_url]
+              : [],
+            pr_pdf: data.pr_pdf?.document_url ? [data.pr_pdf.document_url] : [],
           });
         } catch (error) {
           console.error("Error fetching press release:", error);
         }
       };
+
       fetchPressRelease();
     }
   }, [id]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === "release_date" ? formatDateForAPI(value) : value, // Ensure correct format on change
+    });
   };
 
   const handleFileChange = (e) => {
@@ -124,11 +129,14 @@ const PressReleasesEdit = () => {
         return;
       }
 
+      // Replace previous image with the new one
       setFormData((prevFormData) => ({
         ...prevFormData,
-        pr_image: [...prevFormData.pr_image, ...validImages],
+        attachfile: validImages,
       }));
-    } else if (fieldName === "pr_pdf") {
+    }
+
+    if (fieldName === "pr_pdf") {
       const allowedPdfTypes = ["application/pdf"];
       const validPdfs = files.filter((file) =>
         allowedPdfTypes.includes(file.type)
@@ -140,9 +148,10 @@ const PressReleasesEdit = () => {
         return;
       }
 
+      // Replace previous PDF with the new one
       setFormData((prevFormData) => ({
         ...prevFormData,
-        pr_pdf: [...prevFormData.pr_pdf, ...validPdfs],
+        pr_pdf: validPdfs,
       }));
     }
   };
@@ -152,10 +161,10 @@ const PressReleasesEdit = () => {
     let newErrors = {};
 
     if (!formData.title.trim()) newErrors.title = "Title is mandatory";
-    if (!formData.company_id.trim())
-      newErrors.company_id = "Company is mandatory";
-    if (!formData.pr_image || formData.pr_image.length === 0)
-      newErrors.pr_image = "At least one image is required";
+    // if (!formData.company_id.trim())
+    //   newErrors.company_id = "Company is mandatory";
+    // if (!formData.pr_image || formData.pr_image.length === 0)
+    //   newErrors.pr_image = "At least one image is required";
     if (!formData.pr_pdf || formData.pr_pdf.length === 0)
       newErrors.pr_pdf = "At least one PDF is required";
 
@@ -176,13 +185,18 @@ const PressReleasesEdit = () => {
       sendData.append("description", formData.description);
       sendData.append("project_id", formData.project_id);
 
-      formData.pr_image.forEach((file) => {
-        sendData.append("attachment[]", file);
-      });
+      // Append only file objects (ignore URLs)
+      formData.attachfile
+        .filter((file) => file instanceof File)
+        .forEach((file) => {
+          sendData.append("pr_image", file);
+        });
 
-      formData.pr_pdf.forEach((file) => {
-        sendData.append("attachment[]", file);
-      });
+      formData.pr_pdf
+        .filter((file) => file instanceof File)
+        .forEach((file) => {
+          sendData.append("pr_pdf", file);
+        });
 
       await axios.put(
         `https://panchshil-super.lockated.com/press_releases/${id}.json`,
@@ -197,11 +211,25 @@ const PressReleasesEdit = () => {
 
       toast.success("Press release updated successfully!");
       navigate("/pressreleases-list");
+      console.log("formdata", sendData);
     } catch (error) {
+      console.error("Error submitting form:", error);
       toast.error(`Error: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return ""; // Handle empty case
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0]; // Convert to YYYY-MM-DD
+  };
+
+  const formatDateForAPI = (dateString) => {
+    if (!dateString) return "";
+    const [year, month, day] = dateString.split("-"); // Split YYYY-MM-DD
+    return `${day}-${month}-${year}`; // Convert to DD-MM-YYYY
   };
 
   const handleCancel = () => {
@@ -249,10 +277,10 @@ const PressReleasesEdit = () => {
                       </label>
                       <input
                         className="form-control"
-                        type="Date"
+                        type="date"
                         name="release_date"
                         placeholder="Enter date"
-                        value={formData.release_date}
+                        value={formatDateForInput(formData.release_date)}
                         onChange={handleChange}
                       />
                     </div>
@@ -262,45 +290,38 @@ const PressReleasesEdit = () => {
                       <label>
                         Project<span style={{ color: "#de7008" }}> *</span>
                       </label>
-                      <select
-                        className="form-control form-select"
-                        name="project_id"
-                        value={formData.project_id}
-                        required
-                        onChange={handleChange}
-                      >
-                        <option value="">Select Project</option>
-                        {projects.map((proj) => (
-                          <option key={proj.id} value={proj.id}>
-                            {proj.project_name}
-                          </option>
-                        ))}
-                      </select>
+                      <SelectBox
+                        options={projects.map((proj) => ({
+                          label: proj.project_name,
+                          value: proj.id,
+                        }))}
+                        defaultValue={formData.project_id}
+                        onChange={(value) =>
+                          setFormData({ ...formData, project_id: value })
+                        }
+                      />
                     </div>
                   </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Company{" "}
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {" "}
                           *
                         </span>
                       </label>
-                      <select
-                        className="form-control form-select"
-                        value={formData.company_id}
-                        name="company_id"
-                        onChange={handleChange}
-                      >
-                        <option value="">Select Company</option>
-
-                        {console.log("projects", projects)}
-                        {company.map((company) => (
-                          <option key={company.id} value={company.id}>
-                            {company.name}
-                          </option>
-                        ))}
-                      </select>
+                      <SelectBox
+                        options={company.map((comp) => ({
+                          label: comp.name,
+                          value: comp.id,
+                        }))}
+                        defaultValue={formData.company_id}
+                        onChange={(value) =>
+                          setFormData({ ...formData, company_id: value })
+                        }
+                      />
                       {errors.company_id && (
                         <span className="error text-danger">
                           {errors.company_id}
@@ -308,6 +329,7 @@ const PressReleasesEdit = () => {
                       )}
                     </div>
                   </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
@@ -344,8 +366,10 @@ const PressReleasesEdit = () => {
                         multiple
                         onChange={handleFileChange}
                       />
-                      {formData.pr_image.length > 0 &&
-                        formData.pr_image.map((image, index) => (
+
+                      {/* Display Existing & New Images */}
+                      {formData.attachfile?.length > 0 &&
+                        formData.attachfile.map((image, index) => (
                           <div key={index} className="mt-2">
                             <img
                               src={
@@ -353,11 +377,16 @@ const PressReleasesEdit = () => {
                                   ? image
                                   : URL.createObjectURL(image)
                               }
-                              alt="Uploaded"
-                              style={{ width: "100px", height: "100px" }}
+                              alt={`Uploaded ${index + 1}`}
+                              style={{
+                                width: "100px",
+                                height: "100px",
+                                objectFit: "cover",
+                              }}
                             />
                           </div>
                         ))}
+
                       {errors.pr_image && (
                         <span className="error text-danger">
                           {errors.pr_image}
@@ -367,50 +396,48 @@ const PressReleasesEdit = () => {
                   </div>
 
                   <div className="col-md-3">
-  <div className="form-group">
-    <label>
-      Attachment (PDF)
-      <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
-    </label>
-    <input
-      className="form-control"
-      type="file"
-      name="pr_pdf"
-      accept="application/pdf"
-      multiple
-      onChange={handleFileChange}
-    />
+                    <div className="form-group">
+                      <label>
+                        Attachment (PDF)
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          *
+                        </span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="pr_pdf"
+                        accept="application/pdf"
+                        multiple
+                        onChange={handleFileChange}
+                      />
 
-    {/* Display existing PDFs */}
-    {formData.pr_pdf.length > 0 &&
-      formData.pr_pdf.map((pdf, index) => (
-        <div key={index} className="mt-2">
-          {typeof pdf === "string" ? (
-            <a
-              href={pdf}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary"
-            >
-              View PDF {index + 1}
-            </a>
-          ) : (
-            <a
-              href={URL.createObjectURL(pdf)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary"
-            >
-              Preview PDF {index + 1}
-            </a>
-          )}
-        </div>
-      ))}
+                      {/* Display Existing & New PDFs */}
+                      {formData.pr_pdf?.length > 0 &&
+                        formData.pr_pdf.map((pdf, index) => (
+                          <div key={index} className="mt-2">
+                            <a
+                              href={
+                                typeof pdf === "string"
+                                  ? pdf
+                                  : URL.createObjectURL(pdf)
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary"
+                            >
+                              View PDF {index + 1}
+                            </a>
+                          </div>
+                        ))}
 
-    {errors.pr_pdf && <span className="error text-danger">{errors.pr_pdf}</span>}
-  </div>
-</div>
-
+                      {errors.pr_pdf && (
+                        <span className="error text-danger">
+                          {errors.pr_pdf}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="row mt-2 justify-content-center">

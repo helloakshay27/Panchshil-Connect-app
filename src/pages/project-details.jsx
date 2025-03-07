@@ -25,14 +25,18 @@ const ProjectDetails = () => {
     price: "",
     project_size_sq_mtr: "",
     project_size_sq_ft: "",
+    development_area_sqft: "",
+    development_area_sqmt: "",
     rera_carpet_area_sq_mtr: "",
     rera_carpet_area_sqft: "",
     no_of_towers: "",
+    no_of_floors: "",
     no_of_apartments: "",
     rera_number: "",
     amenities: [],
     specifications: [],
     land_area: "",
+    land_uom: "",
     project_tag: "",
     virtual_tour_url: "",
     map_url: "",
@@ -284,6 +288,34 @@ const ProjectDetails = () => {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
+                    <label>Development Area (Sq. Mtr.)</label>
+                  </div>
+                  <div className="col-6">
+                    <label className="text">
+                      <span className="me-3">
+                        <span className="text-dark">
+                          : {formData.development_area_sqmt}
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                  <div className="col-6 ">
+                    <label>Development Area(Sq.Ft.)</label>
+                  </div>
+                  <div className="col-6">
+                    <label className="text">
+                      <span className="me-3">
+                        <span className="text-dark">
+                          : {formData.development_area_sqft}
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                  <div className="col-6 ">
                     <label>Rera Carpet Area(Sq. M)</label>
                   </div>
                   <div className="col-6">
@@ -319,6 +351,20 @@ const ProjectDetails = () => {
                       <span className="me-3">
                         <span className="text-dark">
                           : {formData.no_of_towers}
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                  <div className="col-6 ">
+                    <label>Number of Floors</label>
+                  </div>
+                  <div className="col-6">
+                    <label className="text">
+                      <span className="me-3">
+                        <span className="text-dark">
+                          : {formData.no_of_floors}
                         </span>
                       </span>
                     </label>
@@ -408,6 +454,18 @@ const ProjectDetails = () => {
                         <span className="text-dark">
                           : {formData.land_area}
                         </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                  <div className="col-6 ">
+                    <label>Land UOM</label>
+                  </div>
+                  <div className="col-6">
+                    <label className="text">
+                      <span className="me-3">
+                        <span className="text-dark">: {formData.land_uom}</span>
                       </span>
                     </label>
                   </div>
