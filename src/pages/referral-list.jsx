@@ -20,7 +20,7 @@ const Referrallist = () => {
     const fetchReferrals = async () => {
       try {
         const response = await fetch(
-          "https://panchshil-super.lockated.com/referrals.json",
+          "https://panchshil-super.lockated.com/referrals/get_all_referrals",
           {
             method: "GET",
             headers: {
@@ -93,7 +93,7 @@ const Referrallist = () => {
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
-                    setPagination(prev => ({ ...prev, current_page: 1 }))
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
                   }}
                 />
                 <div className="input-group-append">
@@ -186,8 +186,9 @@ const Referrallist = () => {
               <ul className="pagination justify-content-center d-flex">
                 {/* First Button */}
                 <li
-                  className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                  className={`page-item ${
+                    pagination.current_page === 1 ? "disabled" : ""
+                  }`}
                 >
                   <button
                     className="page-link"
@@ -200,8 +201,9 @@ const Referrallist = () => {
 
                 {/* Previous Button */}
                 <li
-                  className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                  className={`page-item ${
+                    pagination.current_page === 1 ? "disabled" : ""
+                  }`}
                 >
                   <button
                     className="page-link"
@@ -221,8 +223,9 @@ const Referrallist = () => {
                 ).map((pageNumber) => (
                   <li
                     key={pageNumber}
-                    className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === pageNumber ? "active" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -235,19 +238,16 @@ const Referrallist = () => {
 
                 {/* Next Button */}
                 <li
-                  className={`page-item ${pagination.current_page === totalPages
-                    ? "disabled"
-                    : ""
-                    }`}
+                  className={`page-item ${
+                    pagination.current_page === totalPages ? "disabled" : ""
+                  }`}
                 >
                   <button
                     className="page-link"
                     onClick={() =>
                       handlePageChange(pagination.current_page + 1)
                     }
-                    disabled={
-                      pagination.current_page === totalPages
-                    }
+                    disabled={pagination.current_page === totalPages}
                   >
                     Next
                   </button>
@@ -255,17 +255,14 @@ const Referrallist = () => {
 
                 {/* Last Button */}
                 <li
-                  className={`page-item ${pagination.current_page === totalPages
-                    ? "disabled"
-                    : ""
-                    }`}
+                  className={`page-item ${
+                    pagination.current_page === totalPages ? "disabled" : ""
+                  }`}
                 >
                   <button
                     className="page-link"
                     onClick={() => handlePageChange(totalPages)}
-                    disabled={
-                      pagination.current_page === totalPages
-                    }
+                    disabled={pagination.current_page === totalPages}
                   >
                     Last
                   </button>
