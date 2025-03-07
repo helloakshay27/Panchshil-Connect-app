@@ -15,7 +15,7 @@ const EditGallery = () => {
     projectId: location.state?.gallery?.project_id || "",
     name: location.state?.gallery?.name || "",
     title: location.state?.gallery?.title || "",
-    attachment: null,
+    gallery_image: null,
   });
   console.log(formData.projectId);
   const [imagePreview, setImagePreview] = useState(
@@ -36,7 +36,7 @@ const EditGallery = () => {
           projectId: data.project_id || prev.projectId, // ✅ Ensure projectId is set properly
           name: data.name || "",
           title: data.title || "",
-          attachment: null,
+          gallery_image: null,
         }));
 
         if (data.attachfile?.document_url) {
@@ -106,7 +106,7 @@ const EditGallery = () => {
     data.append("gallery[title]", formData.title);
 
     if (formData.attachment) {
-      data.append("gallery[attachment]", formData.attachment);
+      data.append("gallery[gallery_image]", formData.attachment);
     }
 
     try {
