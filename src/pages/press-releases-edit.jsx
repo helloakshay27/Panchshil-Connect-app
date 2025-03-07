@@ -42,7 +42,7 @@ const PressReleasesEdit = () => {
     fetchCompany();
   }, []);
 
-  // Fetch projects
+ 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -63,7 +63,7 @@ const PressReleasesEdit = () => {
     fetchProjects();
   }, []);
 
-  // Fetch existing press release data
+ 
   useEffect(() => {
     if (id) {
       const fetchPressRelease = async () => {

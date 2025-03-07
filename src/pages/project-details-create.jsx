@@ -557,24 +557,13 @@ const ProjectDetailsCreate = () => {
                       *
                     </span>
                   </label>
-                  <MultiSelectBox
-                    options={configurations?.map((config) => ({
-                      value: config.name,
-                      label: config.name,
-                    }))}
-                    value={formData.Configuration_Type.map((type) => ({
-                      value: type,
-                      label: type,
-                    }))}
-                    onChange={(selectedOptions) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        Configuration_Type: selectedOptions.map(
-                          (option) => option.value
-                        ),
-                      }))
-                    }
-                    placeholder="Select Configuration Type"
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="Configuration_Type"
+                    placeholder="Enter Configuration Type"
+                    value={formData.Configuration_Type}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
