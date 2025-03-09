@@ -152,7 +152,7 @@ const ProjectDetailsEdit = () => {
           project_tag: projectData.project_tag || "",
           virtual_tour_url: projectData.virtual_tour_url || "",
           map_url: projectData.map_url || "",
-          image: projectData.image_url || "",
+          image: projectData.image_url || [],
           Address: {
             address_line_1: projectData.location?.address || "",
             address_line_2: projectData.location?.address_line_two || "",
@@ -404,6 +404,10 @@ const ProjectDetailsEdit = () => {
 
     const data = new FormData();
 
+    if (formData.image) {
+      data.append("project[image]", formData.image);
+    }
+  
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
@@ -414,11 +418,7 @@ const ProjectDetailsEdit = () => {
         if (file) {
           data.append("project[brochure]", file);
         }
-      } else if (
-        key === "two_d_images" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "two_d_images" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -432,11 +432,6 @@ const ProjectDetailsEdit = () => {
             data.append("project[videos][]", file);
           }
         });
-      } else if (key === "image" && value) {
-        const file = value instanceof File ? value : value.file;
-        if (file) {
-          data.append("project[image]", file);
-        }
       } else {
         data.append(`project[${key}]`, value);
       }
@@ -468,6 +463,13 @@ const ProjectDetailsEdit = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value,
+    }));
+  };
   const statusOptions = {
     "Office Parks": [
       { value: "Completed", label: "Completed" },
@@ -1083,7 +1085,7 @@ const ProjectDetailsEdit = () => {
                     accept="image/*"
                     multiple
                     required
-                    onChange={(e) => handleFileChange(e, "image")}
+                    onChange={handleInputChange}
                   />
                 </div>
 
@@ -1102,7 +1104,7 @@ const ProjectDetailsEdit = () => {
                   <span>No image selected</span>
                 )}
               </div>
-            </div>
+              </div>
           </div>
         </div>
         <div className="card mt-3 pb-4 mx-4">
