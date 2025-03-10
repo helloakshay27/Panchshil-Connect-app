@@ -138,7 +138,7 @@ const NewGallery = () => {
     // ✅ Append multiple files as gallery[attachments][]
     if (formData.attachment.length > 0) {
       formData.attachment.forEach((file) => {
-        data.append("gallery[attachments][]", file);
+        data.append("gallery[gallery_image][]", file);
       });
     }
 

@@ -157,24 +157,28 @@ const PressReleasesEdit = () => {
   };
 
   // Form validation
-  const validateForm = () => {
-    let newErrors = {};
+  // const validateForm = () => {
+  //   let newErrors = {};
 
-    if (!formData.title.trim()) newErrors.title = "Title is mandatory";
-    // if (!formData.company_id.trim())
-    //   newErrors.company_id = "Company is mandatory";
-    // if (!formData.pr_image || formData.pr_image.length === 0)
-    //   newErrors.pr_image = "At least one image is required";
-    if (!formData.pr_pdf || formData.pr_pdf.length === 0)
-      newErrors.pr_pdf = "At least one PDF is required";
+  //   if (!formData.title.trim()) newErrors.title = "Title is mandatory";
+  //   // if (!formData.company_id.trim())
+  //   //   newErrors.company_id = "Company is mandatory";
+  //   // if (!formData.pr_image || formData.pr_image.length === 0)
+  //   //   newErrors.pr_image = "At least one image is required";
+  //   if (!formData.pr_pdf || formData.pr_pdf.length === 0)
+  //     newErrors.pr_pdf = "At least one PDF is required";
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  //   setErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0;
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+
+    if (!formData.title || !formData.company_id || !formData.release_date || !formData.description || !formData.project_id) {
+         toast.error("Please fill all required fields before submitting.");
+         return;
+       }
 
     setLoading(true);
     try {
@@ -189,13 +193,13 @@ const PressReleasesEdit = () => {
       formData.attachfile
         .filter((file) => file instanceof File)
         .forEach((file) => {
-          sendData.append("pr_image", file);
+          sendData.append("press_release[pr_image]", file);
         });
 
       formData.pr_pdf
         .filter((file) => file instanceof File)
         .forEach((file) => {
-          sendData.append("pr_pdf", file);
+          sendData.append("press_release[pr_pdf]", file);
         });
 
       await axios.put(

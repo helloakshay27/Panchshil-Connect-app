@@ -39,6 +39,7 @@ const ProjectDetailsList = () => {
   const navigate = useNavigate();
 
   const fetchProjects = async (searchTerm = "") => {
+    setLoading(true);
     // const token = "ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4"; // Replace with your actual token
     const url = " https://panchshil-super.lockated.com/get_projects_all.json";
 
@@ -62,6 +63,8 @@ const ProjectDetailsList = () => {
     } catch (error) {
       console.error("Error fetching projects:", error);
       setError("Unable to fetch project data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,8 +102,7 @@ const ProjectDetailsList = () => {
     .slice(
       (pagination.current_page - 1) * pageSize,
       pagination.current_page * pageSize
-    )
-    .sort((a, b) => (a.id || 0) - (b.id || 0)); // Sort projects by ID (ascending)
+    ) // Sort projects by ID (ascending)
 
   return (
     <>
@@ -180,7 +182,12 @@ const ProjectDetailsList = () => {
                 </div>
                 <div className="card-body mt-4 pb-4 pt-0">
                   <div className="tbl-container mt-4 ">
-                    <table className="w-110" style={{ width: "max-content" }}>
+                  {loading ? (
+      <div className="loader-container">
+        <div className="spinner"></div>
+      </div>
+    ) : (
+      <table className="w-110" style={{ width: "max-content" }}>
                       <thead>
                         <tr>
                           <th>Sr No</th>
@@ -320,6 +327,8 @@ const ProjectDetailsList = () => {
                         ))}
                       </tbody>
                     </table>
+ )}
+                    
                   </div>
 
                   {/* Pagination */}

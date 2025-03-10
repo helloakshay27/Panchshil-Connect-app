@@ -5,188 +5,213 @@ import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 
 const SitevisitEdit = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [error, setError] = useState([]);
+
   const [formData, setFormData] = useState({
-    id: "",
     project_id: "",
     project_name: "",
     scheduled_at: "",
     selected_slot: "",
+    site_schedule_id: "",
+    status: "",
   });
 
   const { id } = useParams(); // Get ID from URL params for editing
   const [projectsType, setProjectsType] = useState([]);
   const [slots, setSlots] = useState([]);
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate();
+  //const [loading, setLoading] = useState(false)
 
-  const apiUrl =
-    `https://panchshil-super.lockated.com/site_schedule_requests/${id}.json`;
-  const projectsApiUrl =
-    "https://panchshil-super.lockated.com/get_all_projects.json";
-  const slotsApiUrl =
-    "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json";
-
-  const authToken = localStorage.getItem('access_token');
-  // const projectsAuthToken = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY";
-  // const authenticationToken = "eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA";
-
-  // Helper function to format date as DD-MM-YYYY
   const formatDateForApi = (dateString) => {
     const [year, month, day] = dateString.split("-");
     return `${day}-${month}-${year}`;
   };
 
-
-  const fetchSites = async () => {
-
-    const response = await axios.get(`https://panchshil-super.lockated.com/site_schedule_requests/${id}.json`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`
+  const fetchProjects = async () => {
+    try {
+     
+      const cachedProjects = localStorage.getItem("projects");
+  
+      if (cachedProjects) {
+        setProjects(JSON.parse(cachedProjects)); 
       }
-    })
-
-    setFormData(response.data)
-  }
-
-  console.log("Respp", formData)
-
-  useEffect(() => {
-    fetchSites()
-  }, [])
-  // Fetch project list on mount
-  useEffect(() => {
-    axios
-      .get(projectsApiUrl, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      })
-      .then((response) => setProjectsType(response.data.projects))
-      .catch((error) => console.error("Error fetching projects:", error));
-  }, []);
-
-  // Fetch site visit details when editing
-  // useEffect(() => {
-  //   if (id) {
-  //     axios
-  //       .get(`${apiUrl}`, {
-  //         headers: { Authorization: `Bearer ${authToken}` },
-  //       })
-  //       .then((response) => {
-  //         const siteVisit = response.data;
-  //         console.log(siteVisit)
-  //         setFormData({
-  //           project_id: siteVisit.project_id,
-  //           project_name: siteVisit.project_name,
-  //           scheduled_at: siteVisit.scheduled_at,
-  //           selected_slot: siteVisit.selected_slot,
-  //         });
-
-  //         // Fetch slots for this project & date
-  //         fetchSlots(siteVisit.scheduled_at, siteVisit.project_id);
-  //       })
-  //       .catch((error) =>
-  //         console.error("Error fetching site visit data:", error)
-  //       );
-  //   }
-  // }, []);
-
-  // Fetch slots dynamically when project or date changes
-  useEffect(() => {
-    if (formData.project_id && formData.scheduled_at) {
-      fetchSlots(formData.scheduled_at, formData.project_id);
+ 
+      const response = await axios.get(
+        "https://panchshil-super.lockated.com/projects.json",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      const projectData = response.data.projects || [];
+  
+      // ✅ Update cache
+      localStorage.setItem("projects", JSON.stringify(projectData));
+      setProjects(projectData);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
     }
-  }, [formData.project_id, formData.scheduled_at]);
-
-  const fetchSlots = async (selectedDate, selectedProjectId) => {
-    if (!selectedDate || !selectedProjectId) return;
-
+  };
+  
+  const fetchSlots = async (selectedDate, selectedProjectId, existingSiteScheduleId) => {
+    if (!selectedDate || !selectedProjectId) {
+      console.error("Project ID and date are required to fetch slots.");
+      return;
+    }
+  
     try {
       const formattedDate = formatDateForApi(selectedDate);
-      const response = await axios.get(slotsApiUrl, {
-        headers: { Authorization: `Bearer ${authToken}` },
-        params: { project_id: selectedProjectId, date: formattedDate },
-      });
-
-      setSlots(response.data?.slots || []);
+      const response = await axios.get(
+        "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+          params: { project_id: selectedProjectId, date: formattedDate },
+        }
+      );
+  
+      const availableSlots = response.data?.slots || [];
+      console.log("Fetched slots:", availableSlots);
+      setSlots(availableSlots);
+  
+      // ✅ Ensure the selected slot is set correctly after fetching slots
+      if (existingSiteScheduleId) {
+        const selectedSlot = availableSlots.find(slot => slot.id === existingSiteScheduleId);
+        setFormData(prev => ({
+          ...prev,
+          selected_slot: selectedSlot ? selectedSlot.id : "",
+        }));
+      }
     } catch (error) {
       console.error("Error fetching slots:", error);
       toast.error("Failed to fetch slots.");
       setSlots([]);
     }
   };
+  
+  
 
-  console.log(slots)
+  const fetchSiteVisits = async () => {
+    try {
+      const response = await axios.get(
+        "https://panchshil-super.lockated.com/site_schedule_requests.json",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+  
+      const siteVisit = response.data.site_visits || [];
+      const selectedVisit = siteVisit.find((visit) => visit.id.toString() === id);
+  
+      if (!selectedVisit) {
+        console.error("No site visit found for ID:", id);
+        return;
+      }
+  
+      setFormData({
+        scheduled_at: selectedVisit.scheduled_at,
+        project_id: selectedVisit.project_id,
+        site_schedule_id: selectedVisit.site_schedule_id,
+        selected_slot: "", // Reset slot before fetching
+        status: selectedVisit.status
+      });
+  
+      fetchSlots(selectedVisit.scheduled_at, selectedVisit.project_id, selectedVisit.site_schedule_id);
+    } catch (error) {
+      setError("Failed to fetch site visits. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
-  // Handle input changes
+
+  useEffect(() => {
+    fetchProjects();
+      fetchSiteVisits();
+  }, []);
+
+  console.log("Respp", formData);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+  
     setFormData((prev) => {
       let updatedForm = { ...prev, [name]: value };
-
-      if (name === "project_id") {
-        const selectedProject = projectsType.find(
-          (p) => p.id === parseInt(value)
-        );
+  
+      if (name === "project_name") {
+        const selectedProject = projects.find((p) => p.id === parseInt(value));
         updatedForm.project_name = selectedProject?.project_name || "";
+        updatedForm.project_id = selectedProject?.id || "";
       }
-
+  
+      if (updatedForm.project_id && updatedForm.scheduled_at) {
+        fetchSlots(updatedForm.scheduled_at, updatedForm.project_id);
+      }
+  
       return updatedForm;
     });
   };
+  
 
-  // Handle form submission (Create or Update)
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (
-      !formData.scheduled_at ||
-      !formData.project_id ||
-      !formData.selected_slot
-    ) {
-      toast.error("Please fill all required fields, including a time slot.");
-      setLoading(false)
-      return;
-    }
+    // if (
+    //   !formData.scheduled_at ||
+    //   !formData.project_id ||
+    //   !formData.selected_slot
+    // ) {
+    //   toast.error("Please fill all required fields, including a time slot.");
+    //   setLoading(false);
+    //   return;
+    // }
 
+    // Prepare request payload
     const requestData = {
       site_schedule_request: {
-        scheduled_at: formatDateForApi(formData.scheduled_at),
-        site_schedule_id: 2,
+        scheduled_at: formData.scheduled_at,
+        site_schedule_id: formData.selected_slot  ,
+        // selected_slot: formData.selected_slot,
         project_id: formData.project_id,
-        selected_slot: formData.selected_slot,
+        // status: formData.status
       },
     };
 
     try {
-      let response;
-
-      if (id) {
-        // If ID exists, update the existing record
-        response = await axios.put(`${apiUrl}`, requestData, {
+      const response = await axios.put(
+        `https://panchshil-super.lockated.com/site_schedule_requests/${id}.json`,
+        requestData,
+        {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        });
-        toast.success("Schedule updated successfully!");
-      } else {
-        // If no ID, create a new record
-        response = await axios.post(apiUrl, requestData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
-        toast.success("Form submitted successfully!");
-      }
+        }
+      );
 
+      toast.success("Site visit updated successfully");
+      console.log("Response from API:", response.data);
       navigate("/sitevisit-list");
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error(`Error submitting schedule: ${error.message}`);
+      console.error("Error updating site visit:", error);
+      toast.error(
+        `Error updating schedule: ${error.response?.data?.message || error.message}`
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -194,244 +219,84 @@ const SitevisitEdit = () => {
     navigate(-1); // This navigates back one step in history
   };
 
-
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
           <div className="module-data-section p-3">
             <form onSubmit={handleSubmit}>
-              <div className="card mt-3 pb-4 mx-4">
+              <div className="card mt-4 pb-4 mx-4">
                 <div className="card-header3">
-                  <h3 className="card-title">Edit Site Visit</h3>
+                  <h3 className="card-title">Create Site Visit</h3>
                 </div>
                 <div className="card-body">
                   <div className="row">
                     {/* Project Selection */}
                     <div className="col-md-3">
-                      <label>
-                        Project Name trerngfggh
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
-                      </label>
-                      {/* <select
-                        className="form-control form-select"
-                        name="project_id"
-                        value={formData.project_id || "N/A"}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">
-                          Select Project
-                        </option>
-                        {projectsType.map((project) => (
-                          <option key={project.id} value={project.id}>
-                            {project.project_name}
-                          </option>
-                        ))}
-                      </select> */}
-
-                      <SelectBox
-                        options={
-                          projectsType.map((project) => ({
-                            label: project.project_name,
-                            value: project.id,
-                          }))
-                        }
-                        defaultValue={formData.project_id}
-                        onChange={(value) => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            project_id: value,
-                          }))
-                        }}
-                      />
+                       <div className="form-group">
+                                            <label>
+                                              Project<span style={{ color: "#de7008" }}> *</span>
+                                            </label>
+                                            <SelectBox
+                                              options={projects.map((proj) => ({
+                                                label: proj.project_name,
+                                                value: proj.id,
+                                              }))}
+                                              defaultValue={formData.project_id}
+                                              onChange={(value) =>
+                                                setFormData({ ...formData, project_id: value })
+                                              }
+                                            />
+                                          </div>
                     </div>
 
                     {/* Date Selection */}
                     <div className="col-md-3">
-                      <label>
-                        Date
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="date"
-                        name="scheduled_at"
-                        value={formData.scheduled_at}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Slot Selection */}
-                  {slots.length > 0 && (
-                    <div className="row mt-3">
-                      <div className="col-md-6">
-                        <label>Select Available Slot</label>
-                        <select
-                          className="form-control form-select"
-                          name="selected_slot"
-                          value={formData.selected_slot}
+                      <div className="form-group">
+                        <label>
+                          Date <span style={{ color: "#de7008" }}> *</span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="date"
+                          name="scheduled_at"
+                          value={formData.scheduled_at}
                           onChange={handleChange}
                           required
-                        >
-                          <option value="" disabled>
-                            Select a time slot
-                          </option>
-                          {slots.map((slot) => (
-                            <option key={slot.id} value={slot.id}>
-                              {slot.ampm_timing}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="card mt-3 pb-4 mx-4">
-                <div className="card-header3">
-                  <h3 className="card-title">Address</h3>
-                </div>
-                <div className="card-body mt-0 pb-0">
-                  <div className="row">
-                    {/* Address Section */}
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>
-                          Address Line 1
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            *
-                          </span>{" "}
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Address Line 1"
-                          name="address_line_1"
-                        // value={formData.Address.address_line_1}
-                        // onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>
-                          Address Line 2
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            *
-                          </span>{" "}
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Address Line 2"
-                          name="address_line_2"
-                        // value={formData.Address.address_line_2}
-                        // onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>
-                          City
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="City"
-                          name="city"
-                        // value={formData.Address.city}
-                        // onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>
-                          State
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="State"
-                          name="state"
-                        // value={formData.Address.state}
-                        // onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>
-                          Pin Code
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Pin Code"
-                          name="pin_code"
-                          // value={formData.Address.pin_code}
-                          maxLength={6} // Restrict input to 6 characters
-                        // onChange={(e) => {
-                        //   const { name, value } = e.target;
-                        //   // Allow only numbers and max 6 digits
-                        //   if (/^\d{0,6}$/.test(value)) {
-                        //     setFormData((prevData) => ({
-                        //       ...prevData,
-                        //       Address: { ...prevData.Address, [name]: value },
-                        //     }));
-                        //   }
-                        // }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-3 mt-2">
-                      <div className="form-group">
-                        <label>
-                          Country
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Country"
-                          name="country"
-                        // value={formData.Address.country}
-                        // onChange={handleChange}
                         />
                       </div>
                     </div>
                   </div>
+
+                  
+                  {/* Slot Selection */}
+                 
+                    <div className="row mt-3">
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <label>Select Available Slot</label>
+                          <SelectBox
+                            options={slots.map((slot) => ({
+                              label: `${slot.start_time} to ${slot.end_time}`,
+                              value: slot.id,
+                              disabled: slot.slot_disabled,
+                            }))}
+                            defaultValue={formData.selected_slot || ""}
+                            onChange={(value) => {
+                              setFormData({
+                                ...formData,
+                                selected_slot: value,
+                              });
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                 
                 </div>
               </div>
 
+              {/* Submit Button */}
               <div className="row my-4 justify-content-center">
                 <div className="col-md-2">
                   <button

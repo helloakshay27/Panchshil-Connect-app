@@ -134,11 +134,11 @@ const PressReleasesCreate = () => {
 
     if (!formData.title.trim()) newErrors.title = "Title is mandatory";
     if (!formData.company_id.trim())
-      newErrors.company_id = "Company is mandatory";
+      newErrors.company_id = "";
     if (!formData.pr_image || formData.pr_image.length === 0)
-      newErrors.pr_image = "At least one image is required";
+      newErrors.pr_image = "";
     if (!formData.pr_pdf || formData.pr_pdf.length === 0)
-      newErrors.pr_pdf = "At least one PDF is required";
+      newErrors.pr_pdf = "";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -146,7 +146,12 @@ const PressReleasesCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+   
+    if (!formData.title || !formData.company_id || !formData.release_date || !formData.description || !formData.project_id) {
+      toast.error("Please fill all required fields before submitting.");
+      return;
+    }
+    
 
     setLoading(true);
     const token = localStorage.getItem("access_token");
@@ -167,14 +172,14 @@ const PressReleasesCreate = () => {
       // Append multiple images
       if (formData.pr_image?.length) {
         formData.pr_image.forEach((file) => {
-          sendData.append("pr_image", file); // Use array notation
+          sendData.append("press_release[pr_image]", file); // Use array notation
         });
       }
 
       // Append multiple PDFs
       if (formData.pr_pdf?.length) {
         formData.pr_pdf.forEach((file) => {
-          sendData.append("pr_pdf", file);
+          sendData.append("press_release[pr_pdf]", file);
         });
       }
 
@@ -193,6 +198,7 @@ const PressReleasesCreate = () => {
     } catch (error) {
       console.error("Error response:", error.response);
       toast.error(`Error: ${error.response?.data?.message || error.message}`);
+      
     } finally {
       setLoading(false);
     }

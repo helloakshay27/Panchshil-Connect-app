@@ -29,8 +29,8 @@ const SitevisitList = () => {
           "https://panchshil-super.lockated.com/site_schedule_requests.json",
           {
             headers: {
-              Authorization:
-                "Bearer 4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
           }
         );
