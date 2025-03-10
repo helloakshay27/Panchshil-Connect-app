@@ -22,7 +22,7 @@ const ProjectConfiguraionList = () => {
   }, [pagination.current_page]);
 
   const fetchConfigurations = async () => {
-    setLoading(true); // Set loading to true when data fetching starts
+    setLoading(true); // Set loading to true 
     try {
       const response = await axios.get(
         "http://panchshil-super.lockated.com/configuration_setups.json"
@@ -36,7 +36,7 @@ const ProjectConfiguraionList = () => {
     } catch (error) {
       console.error("Error fetching configurations:", error);
     } finally {
-      setLoading(false); // Set loading to false once data is fetched
+      setLoading(false); // Set loading to false 
     }
   };
 
@@ -55,12 +55,13 @@ const ProjectConfiguraionList = () => {
                 <h3 className="card-title">Project Configuration</h3>
               </div>
               <div className="card-body">
-                {/* Loader conditionally rendered */}
+                {/* Loader rendered */}
                 {loading ? (
                   <div className="text-center">
                     <div className="spinner-border" role="status">
                       <span className="visually-hidden">Loading...</span>
                     </div>
+                    <p>Loading data, please wait...</p>
                   </div>
                 ) : (
                   <div className="tbl-container mt-4 ">
