@@ -13,6 +13,7 @@ const ProjectConfiguraionList = () => {
     total_pages: 0,
   });
   const [configurations, setConfigurations] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
   const pageSize = 10; // Define page size
   const navigate = useNavigate();
 
@@ -21,6 +22,7 @@ const ProjectConfiguraionList = () => {
   }, [pagination.current_page]);
 
   const fetchConfigurations = async () => {
+    setLoading(true); // Set loading to true when data fetching starts
     try {
       const response = await axios.get(
         "http://panchshil-super.lockated.com/configuration_setups.json"
@@ -33,6 +35,8 @@ const ProjectConfiguraionList = () => {
       }));
     } catch (error) {
       console.error("Error fetching configurations:", error);
+    } finally {
+      setLoading(false); // Set loading to false once data is fetched
     }
   };
 
@@ -51,45 +55,55 @@ const ProjectConfiguraionList = () => {
                 <h3 className="card-title">Project Configuration</h3>
               </div>
               <div className="card-body">
-                <div className="tbl-container mt-4 ">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>Sr. No.</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Attachment</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {configurations
-                        .slice(
-                          (pagination.current_page - 1) * pageSize,
-                          pagination.current_page * pageSize
-                        )
-                        .map((config, index) => (
-                          <tr key={config.id}>
-                            <td>
-                              {(pagination.current_page - 1) * pageSize +
-                                index +
-                                1}
-                            </td>
-                            <td>{config.name}</td>
-                            <td>{config.active ? "Active" : "Inactive"}</td>
-                            <td>
-                              <a
-                                href={config.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                View
-                              </a>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
+                {/* Loader conditionally rendered */}
+                {loading ? (
+                  <div className="text-center">
+                    <div className="spinner-border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="tbl-container mt-4 ">
+                    <table className="w-100">
+                      <thead>
+                        <tr>
+                          <th>Sr. No.</th>
+                          <th>Name</th>
+                          <th>Status</th>
+                          <th>Attachment</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {configurations
+                          .slice(
+                            (pagination.current_page - 1) * pageSize,
+                            pagination.current_page * pageSize
+                          )
+                          .map((config, index) => (
+                            <tr key={config.id}>
+                              <td>
+                                {(pagination.current_page - 1) * pageSize +
+                                  index +
+                                  1}
+                              </td>
+                              <td>{config.name}</td>
+                              <td>{config.active ? "Active" : "Inactive"}</td>
+                              <td>
+                                <a
+                                  href={config.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  View
+                                </a>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
                 <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                   <ul className="pagination justify-content-center d-flex">
                     <li
