@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 const Referrallist = () => {
   const [referrals, setReferrals] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState("");
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("referral_list_currentPage")) || 1;
@@ -18,6 +19,7 @@ const Referrallist = () => {
 
   useEffect(() => {
     const fetchReferrals = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await fetch(
           "https://panchshil-super.lockated.com/referrals/get_all_referrals",
@@ -52,6 +54,8 @@ const Referrallist = () => {
         console.error("Error fetching referral data:", error);
         setError("Failed to fetch data.");
         setReferrals([]);
+      } finally {
+        setLoading(false); // Stop loading after fetching
       }
     };
 
@@ -143,44 +147,56 @@ const Referrallist = () => {
               <h3 className="card-title">Referral List</h3>
             </div>
             <div className="card-body mt-4 pb-4 pt-0">
-              <div className="tbl-container mt-4 ">
-                <table className="w-100">
-                  <thead>
-                    <tr>
-                      <th>Sr No</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Mobile No</th>
-                      <th>Referral Code</th>
-                      <th>Project Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displayedReferrals.length > 0 ? (
-                      displayedReferrals.map((referral, index) => (
-                        <tr key={referral.id}>
-                          <td>
-                            {(pagination.current_page - 1) * pageSize +
-                              index +
-                              1}
-                          </td>
-                          <td>{referral.name}</td>
-                          <td>{referral.email}</td>
-                          <td>{referral.mobile}</td>
-                          <td>{referral.referral_code || "N/A"}</td>
-                          <td>{referral.project_name}</td>
-                        </tr>
-                      ))
-                    ) : (
+              {loading ? (
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="tbl-container mt-4 ">
+                  <table className="w-100">
+                    <thead>
                       <tr>
-                        <td colSpan="7" className="text-center">
-                          No referrals found.
-                        </td>
+                        <th>Sr No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile No</th>
+                        <th>Referral Code</th>
+                        <th>Project Name</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {displayedReferrals.length > 0 ? (
+                        displayedReferrals.map((referral, index) => (
+                          <tr key={referral.id}>
+                            <td>
+                              {(pagination.current_page - 1) * pageSize +
+                                index +
+                                1}
+                            </td>
+                            <td>{referral.name}</td>
+                            <td>{referral.email}</td>
+                            <td>{referral.mobile}</td>
+                            <td>{referral.referral_code || "N/A"}</td>
+                            <td>{referral.project_name}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="7" className="text-center">
+                            No referrals found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
             <div className="d-flex justify-content-between align-items-center px-3 mt-2">
               <ul className="pagination justify-content-center d-flex">

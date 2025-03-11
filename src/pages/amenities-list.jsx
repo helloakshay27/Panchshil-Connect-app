@@ -162,9 +162,15 @@ const AmenitiesList = () => {
             </div>
             <div className="card-body mt-4 pb-4 pt-0">
               {loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-danger">{error}</p>
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
               ) : (
                 <div className="tbl-container mt-3 ">
                   <table className="w-100">
@@ -172,7 +178,7 @@ const AmenitiesList = () => {
                       <tr>
                         <th>Sr No</th>
                         <th>Name</th>
-                        
+
                         <th>Icon</th>
                         <th>Action</th>
                       </tr>
@@ -187,7 +193,7 @@ const AmenitiesList = () => {
                                 1}
                             </td>
                             <td>{amenity.name || "No Name"}</td>
-                            
+
                             <td>
                               {amenity.icon_url ? (
                                 <img
