@@ -756,9 +756,11 @@ const Sidebar = () => {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
+                    id="Outline"
+                    version="1.1"
+                    viewBox="0 0 24 24"
                     width="24"
                     height="24"
-                    viewBox="0 0 24 24"
                     fill="none"
                   >
                     <desc>
@@ -767,24 +769,21 @@ const Sidebar = () => {
                     <g id="give-star--reward-social-rating-media-hand-star">
                       <path
                         id="Star 5"
-                        stroke="#000000"
-                        fill="#F58220"
                         d="M19.075 4.7 17.5 2l-1.575 2.7L13 5.6l2.025 2.025L14.35 11l3.15 -1.42105L20.65 11l-0.675 -3.375L22 5.6l-2.925 -0.9Z"
                         stroke-width="2"
+                        stroke="#F58220"
                       ></path>
                       <path
                         id="Vector 172"
-                        stroke="#000000"
-                        fill="#F58220"
                         d="M0.25 22H11.5l9.5 -3v-0.3921C21 17.1676 19.8324 16 18.3921 16c-0.2599 0 -0.5184 0.0389 -0.7669 0.1153l-5.9527 1.8316c-0.1144 0.0352 -0.2333 0.0531 -0.353 0.0531l-4.81951 0"
                         stroke-width="2"
+                        stroke="#F58220"
                       ></path>
                       <path
                         id="Vector 173"
-                        stroke="#000000"
-                        fill="#F58220"
                         d="M11.5 18v-3l-6.67218 -1.4298c-0.21794 -0.0467 -0.44021 -0.0702 -0.6631 -0.0702C2.41689 13.5 1 14.9169 1 16.6647V17"
                         stroke-width="2"
+                        stroke="#F58220"
                       ></path>
                     </g>
                   </svg>
