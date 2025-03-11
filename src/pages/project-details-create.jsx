@@ -876,7 +876,7 @@ const ProjectDetailsCreate = () => {
                   </label>
                   <input
                     className="form-control"
-                    type="text"
+                    type="text-number"
                     name="Rera_Number"
                     placeholder="Enter RERA Number"
                     value={formData.Rera_Number}

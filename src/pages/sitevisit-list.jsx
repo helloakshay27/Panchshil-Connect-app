@@ -6,7 +6,7 @@ const SitevisitList = () => {
   const [siteVisits, setSiteVisits] = useState([]);
   // const [filteredSiteVisits, setFilteredSiteVisits] = useState([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -20,10 +20,11 @@ const SitevisitList = () => {
   });
   const pageSize = 10;
 
-  console.log(siteVisits)
+  console.log(siteVisits);
 
   useEffect(() => {
     const fetchSiteVisits = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/site_schedule_requests.json",
@@ -45,7 +46,7 @@ const SitevisitList = () => {
       } catch (error) {
         setError("Failed to fetch site visits. Please try again later.");
       } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading after fetching
       }
     };
     fetchSiteVisits();
@@ -77,7 +78,7 @@ const SitevisitList = () => {
 
   const filteredData = siteVisits.filter((visit) =>
     visit.project_name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  );
 
   const totalFiltered = filteredData.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
@@ -178,9 +179,15 @@ const SitevisitList = () => {
             </div>
             <div className="card-body mt-3 pb-4 pt-0">
               {loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-danger">{error}</p>
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="stastus"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
               ) : (
                 <div className="tbl-container mt-4">
                   <table className="w-100">
@@ -245,8 +252,9 @@ const SitevisitList = () => {
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -256,8 +264,9 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -274,8 +283,9 @@ const SitevisitList = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
-                        }`}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
                     >
                       <button
                         className="page-link"
@@ -286,10 +296,9 @@ const SitevisitList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${pagination.current_page === totalPages
-                      ? "disabled"
-                      : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === totalPages ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
@@ -301,10 +310,9 @@ const SitevisitList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${pagination.current_page === totalPages
-                      ? "disabled"
-                      : ""
-                      }`}
+                    className={`page-item ${
+                      pagination.current_page === totalPages ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
