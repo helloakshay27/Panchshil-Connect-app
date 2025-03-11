@@ -57,7 +57,7 @@ const Register = () => {
         sessionStorage.setItem("firstname", response.data.firstname);
 
         // Redirect to the home page
-        navigate("/");
+        navigate("/login");
         toast.success("Registered successfully");
       } else {
         setError("User already exists");
