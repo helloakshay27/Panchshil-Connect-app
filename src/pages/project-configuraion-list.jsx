@@ -58,7 +58,7 @@ const ProjectConfiguraionList = () => {
                 {/* Loader rendered */}
                 {loading ? (
                   <div className="text-center">
-                    <div className="spinner-border" role="status">
+                    <div className="spinner-border" role="status" style={{color:"var(--red)"}}>
                       <span className="visually-hidden">Loading...</span>
                     </div>
                     <p>Loading data, please wait...</p>
