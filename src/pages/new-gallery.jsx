@@ -132,11 +132,9 @@ const NewGallery = () => {
 
     if (formData.attachment.length > 0) {
       formData.attachment.forEach((file) => {
-<<<<<<< Updated upstream
+
         data.append("gallery[gallery_image][]", file);
-=======
-        data.append("gallery[gallery_image]", file);
->>>>>>> Stashed changes
+
       });
     }
 
