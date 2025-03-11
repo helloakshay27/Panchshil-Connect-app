@@ -106,7 +106,7 @@ const EditGallery = () => {
     data.append("gallery[title]", formData.title);
 
     if (formData.attachment) {
-      data.append("gallery[gallery_image]", formData.attachment);
+      data.append("gallery[gallery_image][]", formData.attachment);
     }
 
     try {

@@ -16,10 +16,9 @@ const CompanyList = () => {
     total_pages: 0,
   });
   const pageSize = 10;
-
   useEffect(() => {
     const fetchCompanyList = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/company_setups.json",
@@ -29,20 +28,24 @@ const CompanyList = () => {
             },
           }
         );
-        setCompanyList(response.data.company_setups);
+
+        const companies = response.data.company_setups || [];
+        setCompanyList(companies);
         setPagination({
           current_page: getPageFromStorage(),
-          total_count: data.length,
-          total_pages: Math.ceil(data.length / pageSize),
+          total_count: companies.length, // ✅ Fix total count
+          total_pages: Math.ceil(companies.length / pageSize),
         });
       } catch (error) {
         console.error("Error fetching companies:", error);
+        setCompanyList([]);
       } finally {
-        setLoading(false); // Stop loading after fetching
+        setLoading(false);
       }
     };
     fetchCompanyList();
   }, []);
+
   console.log(companyList);
 
   const handlePageChange = (pageNumber) => {
@@ -174,7 +177,7 @@ const CompanyList = () => {
                       <tbody>
                         {displayedCompanies.map((company, index) => (
                           <tr key={company.id}>
-                            <td>{index + 1}</td>
+                            <td>{startIndex + index + 1}</td>
                             <td>{company.name}</td>
                             <td
                               className="text-center"
@@ -302,10 +305,22 @@ const CompanyList = () => {
                         </button>
                       </li>
                     </ul>
+
+                    {/* ✅ Corrected Pagination Count */}
                     <p>
-                      Showing {startIndex + 1} to{" "}
-                      {Math.min(startIndex + pageSize, pagination.total_count)}{" "}
-                      of {pagination.total_count} entries
+                      {pagination.total_count > 0 ? (
+                        <>
+                          Showing{" "}
+                          {pagination.total_count === 0 ? 0 : startIndex + 1} to{" "}
+                          {Math.min(
+                            startIndex + displayedCompanies.length,
+                            pagination.total_count
+                          )}{" "}
+                          of {pagination.total_count} entries
+                        </>
+                      ) : (
+                        "No entries found"
+                      )}
                     </p>
                   </div>
                 </>

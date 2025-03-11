@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const CompanyCreate = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -61,9 +61,12 @@ const CompanyCreate = () => {
 
     const formDataToSend = new FormData();
     formDataToSend.append("company_setup[name]", formData.companyName);
-    formDataToSend.append("company_setup[organization_id]", formData.organizationId);
+    formDataToSend.append(
+      "company_setup[organization_id]",
+      formData.organizationId
+    );
     if (formData.companyLogo) {
-      formDataToSend.append("company_setup[logo]", formData.companyLogo);
+      formDataToSend.append("company_logo", formData.companyLogo);
     }
 
     try {
@@ -86,7 +89,8 @@ const CompanyCreate = () => {
 
       if (response.ok) {
         toast.success("Company created successfully!");
-        setFormData({ companyName: "", companyLogo: null, organizationId: "" }); // Reset form
+        setFormData({ companyName: "", companyLogo: null, organizationId: "" });
+        navigate("/company-list");
       } else {
         toast.error("Failed to create company. Please try again.");
       }
@@ -97,7 +101,6 @@ const CompanyCreate = () => {
       setSubmitting(false);
     }
   };
-
 
   return (
     <div className="main-content">
@@ -181,7 +184,6 @@ const CompanyCreate = () => {
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
             <div className="row mt-2 justify-content-center">
@@ -203,11 +205,9 @@ const CompanyCreate = () => {
                       companyName: "",
                       companyLogo: null,
                       organizationId: "",
-                    })
-                    navigate(-1)
-                  }
-
-                  }
+                    });
+                    navigate(-1);
+                  }}
                 >
                   Cancel
                 </button>
