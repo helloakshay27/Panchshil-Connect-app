@@ -17,7 +17,7 @@ const NewGallery = () => {
     projectId: "",
     name: "",
     title: "",
-    attachment: [],
+    gallery_image: null,
   });
 
   // Fetch Gallery Data if Editing
@@ -37,7 +37,6 @@ const NewGallery = () => {
           projectId: data?.project_id || "",
           name: data?.name || "",
           title: data?.title || "",
-          attachment: [],
         });
       } catch (error) {
         console.error("Error fetching gallery:", error);
@@ -89,7 +88,6 @@ const NewGallery = () => {
         attachment: fileArray,
       }));
 
-      // Generate preview URLs
       const previews = fileArray.map((file) => URL.createObjectURL(file));
       setImagePreviews(previews);
     } else {
@@ -100,7 +98,6 @@ const NewGallery = () => {
     }
   };
 
-  // Validate Form
   const validateForm = () => {
     let errors = {};
 
@@ -121,7 +118,6 @@ const NewGallery = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -129,16 +125,18 @@ const NewGallery = () => {
     setLoading(true);
     const data = new FormData();
 
-    // Append text fields
     data.append("gallery[project_id]", formData.projectId);
     data.append("gallery[gallery_type_id]", formData.galleryType);
     data.append("gallery[name]", formData.name);
     data.append("gallery[title]", formData.title);
 
-    // ✅ Append multiple files as gallery[attachments][]
     if (formData.attachment.length > 0) {
       formData.attachment.forEach((file) => {
+<<<<<<< Updated upstream
         data.append("gallery[gallery_image][]", file);
+=======
+        data.append("gallery[gallery_image]", file);
+>>>>>>> Stashed changes
       });
     }
 

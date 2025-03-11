@@ -118,6 +118,9 @@ const Members = () => {
                 <Link to="/organization-list">Organization List</Link>
               </li>
               <li>
+                <Link to="organization-update">Organization Update</Link>
+              </li>
+              <li>
                 <Link to="/company-create">Company Create</Link>
               </li>
               <li>
@@ -142,7 +145,9 @@ const Members = () => {
                 <Link to="/project-configuration">Project Configuraion</Link>
               </li>
               <li>
-                <Link to="/project-configuration-list">Project Configuraion List</Link>
+                <Link to="/project-configuration-list">
+                  Project Configuraion List
+                </Link>
               </li>
               <li className="pb-5">{/* add above this li */}</li>
             </ul>

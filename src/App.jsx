@@ -42,7 +42,7 @@ import SitevisitCreate from "./pages/sitevisit-create";
 import SiteVisitSlotConfig from "./pages/siteVisit-SlotConfig";
 import SiteVisitSlotConfigList from "./pages/siteVisit-SlotConfig-list";
 import SitevisitList from "./pages/sitevisit-list";
-import OrganizationCreate from "./pages/organization-create"
+import OrganizationCreate from "./pages/organization-create";
 import SitevisitEdit from "./pages/sitevisit-edit";
 import OrganizationList from "./pages/organization-list";
 import CompanyCreate from "./pages/company-create";
@@ -56,7 +56,7 @@ import ProjectConfiguraionList from "./pages/project-configuraion-list";
 import PressReleasesEdit from "./pages/press-releases-edit";
 import CompanyList from "./pages/company-list";
 import CompanyEdit from "./pages/company-edit";
-
+import OrganizationUpdate from "./pages/organization-update";
 
 // import EditGallery from './EditGallery';
 
@@ -114,6 +114,10 @@ function App() {
           <Route path="/organization-create" element={<OrganizationCreate />} />
           <Route path="/organization-list" element={<OrganizationList />} />
           <Route
+            path="/organization-update/:id"
+            element={<OrganizationUpdate />}
+          />
+          <Route
             path="/specification-update/:id"
             element={<SpecificationUpdate />}
           />
@@ -132,17 +136,28 @@ function App() {
           <Route path="/company-create" element={<CompanyCreate />} />
           <Route path="/company-list" element={<CompanyList />} />
           <Route path="/company-edit/:id" element={<CompanyEdit />} />
-          <Route path="/pressreleases-create" element={<PressReleasesCreate />} />
-          <Route path="/support-service-list" element={<SupportServiceList />} />
+          <Route
+            path="/pressreleases-create"
+            element={<PressReleasesCreate />}
+          />
+          <Route
+            path="/support-service-list"
+            element={<SupportServiceList />}
+          />
           <Route path="/pressreleases-list" element={<PressReleasesList />} />
-          <Route path="/pressreleases-edit/:id" element={<PressReleasesEdit />} />
-          <Route path="/project-configuration" element={<ProjectConfiguraion />} />
-          <Route path="/project-configuration-list" element={<ProjectConfiguraionList />} />
-
-
-
+          <Route
+            path="/pressreleases-edit/:id"
+            element={<PressReleasesEdit />}
+          />
+          <Route
+            path="/project-configuration"
+            element={<ProjectConfiguraion />}
+          />
+          <Route
+            path="/project-configuration-list"
+            element={<ProjectConfiguraionList />}
+          />
         </Route>
-
       </Routes>
     </BrowserRouter>
   );

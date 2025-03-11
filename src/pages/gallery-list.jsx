@@ -134,7 +134,11 @@ const GalleryList = () => {
                       )
                       .map((gallery, index) => (
                         <tr key={gallery.id}>
-                          <td>{index + 1}</td>
+                          <td>
+                            {(pagination.current_page - 1) * pageSize +
+                              index +
+                              1}
+                          </td>
                           <td>{gallery.title}</td>
                           <td>{gallery.project_name || "N/A"}</td>
                           <td>

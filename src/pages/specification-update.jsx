@@ -8,31 +8,48 @@ const SpecificationUpdate = () => {
   const navigate = useNavigate();
   const [setupName, setSetupName] = useState("");
   const [icon, setIcon] = useState(null);
-  // alert(id);
-  const [loading, setLoading] = useState(false)
+  const [iconPreview, setIconPreview] = useState(""); // Store the existing image URL
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     axios
       .get(
-        `http://panchshil-super.lockated.com/specification_setups/${id}.json`
+        `https://panchshil-super.lockated.com/specification_setups/${id}.json`
       )
       .then((response) => {
+        console.log("Fetched Data:", response.data); // Debugging API Response
         setSetupName(response.data.name);
+        if (response.data.icon_url) {
+          setIconPreview(
+            response.data.icon_url.includes("http")
+              ? response.data.icon_url
+              : `https://panchshil-super.lockated.com${response.data.icon_url}`
+          );
+        }
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, [id]);
+
   const handleCancel = () => {
     setSetupName("");
     setIcon(null);
-    navigate(-1)
+    setIconPreview("");
+    navigate(-1);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setIcon(file);
+    setIconPreview(URL.createObjectURL(file)); // Show preview for new file
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     const formData = new FormData();
     formData.append("specification_setup[name]", setupName);
-    if (icon) formData.append("icon", icon);
+    if (icon) formData.append("icon", icon); // Append only if a new file is selected
 
     try {
       await axios.put(
@@ -48,7 +65,7 @@ const SpecificationUpdate = () => {
       console.error("Error updating specification:", error);
       toast.error("Failed to update specification. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -82,14 +99,34 @@ const SpecificationUpdate = () => {
                         className="form-control"
                         type="file"
                         accept=".png,.jpg,.jpeg,.svg"
-                        onChange={(e) => setIcon(e.target.files[0])}
+                        onChange={handleFileChange}
                       />
+                      {/* Show Existing Icon Preview */}
+                      {iconPreview && (
+                        <div className="mt-2">
+                          <p>Current Icon:</p>
+                          <img
+                            src={iconPreview}
+                            alt="Existing Icon"
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              objectFit: "contain",
+                              border: "1px solid #ddd",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                    <button
+                      type="submit"
+                      className="purple-btn2 w-100"
+                      disabled={loading}
+                    >
                       Submit
                     </button>
                   </div>
