@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Header from "../components/Header";
@@ -63,6 +63,9 @@ const ProjectDetailsCreate = () => {
   const [specifications, setSpecifications] = useState([]);
   const [amenities, setAmenities] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const errorToastRef = useRef(null);
+  
 
   const Navigate = useNavigate();
 
@@ -262,35 +265,44 @@ const ProjectDetailsCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    if (isSubmitting) return; // Prevent duplicate submissions
+  
+    setIsSubmitting(true);
     setLoading(true);
-
+  
+    // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
-      toast.error(validationErrors[0]);
+      if (!errorToastRef.current) {
+        errorToastRef.current = toast.error(validationErrors[0], {
+          toastId: "errorToast",
+        });
+      }
+  
+      setTimeout(() => {
+        errorToastRef.current = null; // Reset after a few seconds
+      }, 3000);
+  
       setLoading(false);
+      setIsSubmitting(false);
       return;
     }
-
+  
+    // Create FormData
     const data = new FormData();
-
+  
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
         for (const addressKey in formData.Address) {
-          data.append(
-            `project[Address][${addressKey}]`,
-            formData.Address[addressKey]
-          );
+          data.append(`project[Address][${addressKey}]`, formData.Address[addressKey]);
         }
       } else if (key === "brochure" && value) {
         const file = value instanceof File ? value : value.file;
         if (file instanceof File) {
           data.append("project[brochure]", file);
         }
-      } else if (
-        key === "two_d_images" &&
-        Array.isArray(value) &&
-        value.length > 0
-      ) {
+      } else if (key === "two_d_images" && Array.isArray(value) && value.length > 0) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -305,7 +317,6 @@ const ProjectDetailsCreate = () => {
           }
         });
       } else if (key === "image" && value) {
-        // Ensure image is a File instance before appending
         const file = value instanceof File ? value : value.file;
         if (file instanceof File) {
           data.append("project[image]", file);
@@ -314,11 +325,12 @@ const ProjectDetailsCreate = () => {
         data.append(`project[${key}]`, value);
       }
     });
-
+  
+    // Debugging: Log form data
     for (let [key, value] of data.entries()) {
       console.log(`${key}:`, value);
     }
-
+  
     try {
       const response = await axios.post(
         "https://panchshil-super.lockated.com/projects.json",
@@ -326,19 +338,30 @@ const ProjectDetailsCreate = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            // No need to manually set "Content-Type" for FormData
           },
         }
       );
-
+  
       console.log(response.data);
       toast.success("Project submitted successfully");
       Navigate("/project-list");
+  
     } catch (error) {
       console.error("Error submitting the form:", error);
-      toast.error("Failed to submit the form. Please try again.");
+  
+      if (!errorToastRef.current) {
+        errorToastRef.current = toast.error("Failed to submit the form. Please try again.", {
+          toastId: "errorToast",
+        });
+      }
+  
+      setTimeout(() => {
+        errorToastRef.current = null;
+      }, 3000);
+  
     } finally {
       setLoading(false);
+      setIsSubmitting(false);
     }
   };
 

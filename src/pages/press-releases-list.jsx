@@ -15,6 +15,7 @@ const PressReleasesList = () => {
   const [pressReleases, setPressReleases] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("press_list_currentPage")) || 1;
@@ -205,7 +206,34 @@ const PressReleasesList = () => {
                               <td>{release.title || "N/A"}</td>
                               <td>{release.company_id || "N/A"}</td>
                               <td>{release.project_id || "N/A"}</td>
-                              <td>{release.description || "No description"}</td>
+                              <td
+                                style={{
+                                  maxWidth: "200px", // Adjust based on your table size
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: isExpanded ? "normal" : "nowrap",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => setIsExpanded(!isExpanded)}
+                              >
+                                {release.description ? (
+                                  <>
+                                    {release.description}
+                                    {!isExpanded && (
+                                      <span
+                                        style={{
+                                          color: "black",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        ... Show More
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  "No description"
+                                )}
+                              </td>
                               <td>{release.release_date || "Unknown"}</td>
                               <td
                                 className="text-center"
