@@ -149,9 +149,15 @@ const TestimonialList = () => {
             </div>
             <div className="card-body ">
               {loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-danger">{error}</p>
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
               ) : (
                 <div className="tbl-container mt-4 ">
                   <table className="w-100">

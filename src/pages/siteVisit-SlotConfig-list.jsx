@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const SiteVisitSlotConfigList = () => {
   const [slots, setSlots] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total_count: 0,
@@ -12,6 +13,7 @@ const SiteVisitSlotConfigList = () => {
   const pageSize = 10;
 
   const fetchSlots = async () => {
+    setLoading(true); // Start loading
     try {
       const response = await axios.get(
         "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json",
@@ -40,6 +42,8 @@ const SiteVisitSlotConfigList = () => {
         error.response?.data || error.message
       );
       setSlots([]);
+    } finally {
+      setLoading(false); // Ensure loading stops
     }
   };
   const navigate = useNavigate();
@@ -126,40 +130,52 @@ const SiteVisitSlotConfigList = () => {
               <h3 className="card-title">Site Slot List</h3>
             </div>
             <div className="card-body mt-3 pb-4 pt-0">
-              <div className="tbl-container mt-4 ">
-                <table className="w-100">
-                  <thead>
-                    <tr>
-                      <th>Sr No</th>
-                      <th>Project Name</th>
-                      <th>Scheduled Date</th>
-                      <th>Scheduled Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displayedSlots.length > 0 ? (
-                      displayedSlots.map((slot, index) => (
-                        <tr key={slot.id || index}>
-                          <td>
-                            {(pagination.current_page - 1) * pageSize +
-                              index +
-                              1}
-                          </td>
-                          <td>{slot.project_name}</td>
-                          <td>{slot.scheduled_date}</td>
-                          <td>{slot.ampm_timing}</td>
-                        </tr>
-                      ))
-                    ) : (
+              {loading ? (
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="tbl-container mt-4 ">
+                  <table className="w-100">
+                    <thead>
                       <tr>
-                        <td colSpan="4" className="text-center">
-                          No data available
-                        </td>
+                        <th>Sr No</th>
+                        <th>Project Name</th>
+                        <th>Scheduled Date</th>
+                        <th>Scheduled Time</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {displayedSlots.length > 0 ? (
+                        displayedSlots.map((slot, index) => (
+                          <tr key={slot.id || index}>
+                            <td>
+                              {(pagination.current_page - 1) * pageSize +
+                                index +
+                                1}
+                            </td>
+                            <td>{slot.project_name}</td>
+                            <td>{slot.scheduled_date}</td>
+                            <td>{slot.ampm_timing}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="4" className="text-center">
+                            No data available
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
