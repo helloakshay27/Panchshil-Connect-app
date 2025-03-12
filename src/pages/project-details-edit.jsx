@@ -465,11 +465,18 @@ const ProjectDetailsEdit = () => {
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: files ? files[0] : value,
-    }));
+  
+    if (files && files[0]) {
+      const imageURL = URL.createObjectURL(files[0]); // Generate a preview URL
+  
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0], // Store the actual file for submission
+        previewImage: imageURL, // Store preview URL for display
+      }));
+    }
   };
+  
   const statusOptions = {
     "Office Parks": [
       { value: "Completed", label: "Completed" },
@@ -493,7 +500,7 @@ const ProjectDetailsEdit = () => {
       {/* <Header /> */}
 
       <div className="module-data-section p-3">
-        <div className="card mt-3 pb-4 mx-4">
+        <div className="card mt-4 pb-4 mx-4">
           <div className="card-header">
             <h3 className="card-title">Project Update</h3>
           </div>
@@ -1069,41 +1076,38 @@ const ProjectDetailsEdit = () => {
               </div>
 
               <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Attach Image
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                    <span />
-                  </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    name="image"
-                    accept="image/*"
-                    multiple
-                    required
-                    onChange={handleInputChange}
-                  />
-                </div>
+  <div className="form-group">
+    <label>
+      Attach Image
+      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+    </label>
+    <input
+      className="form-control"
+      type="file"
+      name="image"
+      accept="image/*"
+      required
+      onChange={handleInputChange}
+    />
+  </div>
 
-                {formData.image ? (
-                  <img
-                    src={formData.image}
-                    alt="Uploaded Preview"
-                    className="img-fluid rounded mt-2"
-                    style={{
-                      maxWidth: "100px",
-                      maxHeight: "100px",
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : (
-                  <span>No image selected</span>
-                )}
-              </div>
+  {/* Show selected or previously uploaded image */}
+  {formData.previewImage || formData.image ? (
+    <img
+      src={formData.previewImage || formData.image} // Show updated image first
+      alt="Uploaded Preview"
+      className="img-fluid rounded mt-2"
+      style={{
+        maxWidth: "100px",
+        maxHeight: "100px",
+        objectFit: "cover",
+      }}
+    />
+  ) : (
+    <span>No image selected</span>
+  )}
+</div>
+
               </div>
           </div>
         </div>

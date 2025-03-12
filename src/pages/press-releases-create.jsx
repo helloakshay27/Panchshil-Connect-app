@@ -188,7 +188,8 @@ const PressReleasesCreate = () => {
         sendData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Don't set "Content-Type"; let Axios handle it
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );

@@ -104,7 +104,7 @@ const PressReleasesEdit = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === "release_date" ? formatDateForAPI(value) : value, // Ensure correct format on change
+      [name]: name === "release_date" ? formatDateForAPI(value) : value, 
     });
   };
 
@@ -129,7 +129,6 @@ const PressReleasesEdit = () => {
         return;
       }
 
-      // Replace previous image with the new one
       setFormData((prevFormData) => ({
         ...prevFormData,
         attachfile: validImages,
@@ -148,7 +147,6 @@ const PressReleasesEdit = () => {
         return;
       }
 
-      // Replace previous PDF with the new one
       setFormData((prevFormData) => ({
         ...prevFormData,
         pr_pdf: validPdfs,
@@ -156,29 +154,19 @@ const PressReleasesEdit = () => {
     }
   };
 
-  // Form validation
-  // const validateForm = () => {
-  //   let newErrors = {};
-
-  //   if (!formData.title.trim()) newErrors.title = "Title is mandatory";
-  //   // if (!formData.company_id.trim())
-  //   //   newErrors.company_id = "Company is mandatory";
-  //   // if (!formData.pr_image || formData.pr_image.length === 0)
-  //   //   newErrors.pr_image = "At least one image is required";
-  //   if (!formData.pr_pdf || formData.pr_pdf.length === 0)
-  //     newErrors.pr_pdf = "At least one PDF is required";
-
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.company_id || !formData.release_date || !formData.description || !formData.project_id) {
-         toast.error("Please fill all required fields before submitting.");
-         return;
-       }
+    if (
+      !formData.title ||
+      !formData.company_id ||
+      !formData.release_date ||
+      !formData.description ||
+      !formData.project_id
+    ) {
+      toast.error("Please fill all required fields before submitting.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -189,7 +177,7 @@ const PressReleasesEdit = () => {
       sendData.append("description", formData.description);
       sendData.append("project_id", formData.project_id);
 
-      // Append only file objects (ignore URLs)
+     
       formData.attachfile
         .filter((file) => file instanceof File)
         .forEach((file) => {
@@ -382,9 +370,10 @@ const PressReleasesEdit = () => {
                                   : URL.createObjectURL(image)
                               }
                               alt={`Uploaded ${index + 1}`}
+                              className="img-fluid rounded"
                               style={{
-                                width: "100px",
-                                height: "100px",
+                                maxWidth: "100px",
+                                maxHeight: "100px",
                                 objectFit: "cover",
                               }}
                             />
@@ -428,9 +417,38 @@ const PressReleasesEdit = () => {
                               }
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-primary"
                             >
-                              View PDF {index + 1}
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="25"
+                                height="25"
+                                viewBox="0 0 25 25"
+                                fill="none"
+                              >
+                                <mask
+                                  id={`mask${index}`}
+                                  style={{ maskType: "alpha" }}
+                                  maskUnits="userSpaceOnUse"
+                                  x="0"
+                                  y="0"
+                                  width="25"
+                                  height="25"
+                                >
+                                  <rect
+                                    x="0.341797"
+                                    y="0.0665283"
+                                    width="24"
+                                    height="24"
+                                    fill="#D9D9D9"
+                                  />
+                                </mask>
+                                <g mask={`url(#mask${index})`}>
+                                  <path
+                                    d="M9.3418 12.5665H10.3418V10.5665H11.3418C11.6251 10.5665 11.8626 10.4707 12.0543 10.279C12.246 10.0874 12.3418 9.84986 12.3418 9.56653V8.56653C12.3418 8.28319 12.246 8.04569 12.0543 7.85403C11.8626 7.66236 11.6251 7.56653 11.3418 7.56653H9.3418V12.5665ZM10.3418 9.56653V8.56653H11.3418V9.56653H10.3418ZM13.3418 12.5665H15.3418C15.6251 12.5665 15.8626 12.4707 16.0543 12.279C16.246 12.0874 16.3418 11.8499 16.3418 11.5665V8.56653C16.3418 8.28319 16.246 8.04569 16.0543 7.85403C15.8626 7.66236 15.6251 7.56653 15.3418 7.56653H13.3418V12.5665ZM14.3418 11.5665V8.56653H15.3418V11.5665H14.3418ZM17.3418 12.5665H18.3418V10.5665H19.3418V9.56653H18.3418V8.56653H19.3418V7.56653H17.3418V12.5665ZM8.3418 18.0665C7.7918 18.0665 7.32096 17.8707 6.9293 17.479C6.53763 17.0874 6.3418 16.6165 6.3418 16.0665V4.06653C6.3418 3.51653 6.53763 3.0457 6.9293 2.65403C7.32096 2.26236 7.7918 2.06653 8.3418 2.06653H20.3418C20.8918 2.06653 21.3626 2.26236 21.7543 2.65403C22.146 3.0457 22.3418 3.51653 22.3418 4.06653V16.0665C22.3418 16.6165 22.146 17.0874 21.7543 17.479C21.3626 17.8707 20.8918 18.0665 20.3418 18.0665H8.3418ZM8.3418 16.0665H20.3418V4.06653H8.3418V16.0665ZM4.3418 22.0665C3.7918 22.0665 3.32096 21.8707 2.9293 21.479C2.53763 21.0874 2.3418 20.6165 2.3418 20.0665V6.06653H4.3418V20.0665H18.3418V22.0665H4.3418Z"
+                                    fill="#F58220"
+                                  />
+                                </g>
+                              </svg>
                             </a>
                           </div>
                         ))}

@@ -35,6 +35,7 @@ const PressReleasesList = () => {
     try {
       const response = await fetch(
         "https://panchshil-super.lockated.com/press_releases.json"
+        
       );
 
       const data = await response.json();
@@ -204,9 +205,9 @@ const PressReleasesList = () => {
                             <tr key={release.id}>
                               <td>{index + 1}</td>
                               <td>{release.title || "N/A"}</td>
-                              <td>{release.company_id || "N/A"}</td>
-                              <td>{release.project_id || "N/A"}</td>
-                              <td
+                              <td>{release.company_name || "N/A"}</td>
+                              <td>{release.project_name || "N/A"}</td>
+                              <td title="release.description"
                                 style={{
                                   maxWidth: "200px", // Adjust based on your table size
                                   overflow: "hidden",
@@ -214,7 +215,7 @@ const PressReleasesList = () => {
                                   whiteSpace: isExpanded ? "normal" : "nowrap",
                                   cursor: "pointer",
                                 }}
-                                onClick={() => setIsExpanded(!isExpanded)}
+                                //onClick={() => setIsExpanded(!isExpanded)}
                               >
                                 {release.description ? (
                                   <>

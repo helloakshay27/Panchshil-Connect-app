@@ -3,6 +3,7 @@ import SelectBox from "../components/base/SingleSelect";
 
 const ProjectConfiguraion = () => {
   const [imagePreviews, setImagePreviews] = useState([]);
+   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     attachment: [],
   });
@@ -130,13 +131,26 @@ const ProjectConfiguraion = () => {
                 </div>
               </div>
             </div>
-            <div className="row mt-3 justify-content-center">
-              <div className="col-md-2">
-                <button type="submit" className="purple-btn2-shadow w-100">
-                  Submit
-                </button>
-              </div>
-            </div>
+            <div className="row mt-2 justify-content-center">
+        <div className="col-md-2">
+          <button
+            //onClick={handleSubmit}
+            className="purple-btn2 w-100"
+            disabled={loading}
+          >
+            Submit
+          </button>
+        </div>
+        <div className="col-md-2">
+          <button
+            type="button"
+            //onClick={handleCancel}
+            className="purple-btn2 w-100"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
           </div>
         </div>
       </div>

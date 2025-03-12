@@ -111,23 +111,24 @@ const ProjectDetailsList = () => {
           <div className="module-data-section container-fluid">
             <div className="d-flex justify-content-end px-4 pt-2 mt-3 ">
               <div className="col-md-4 pe-2 pt-2">
-                <form
+                {/* <form
                   onSubmit={handleSearchSubmit}
                   action="/pms/departments"
                   acceptCharset="UTF-8"
                   method="get"
-                >
+                > */}
                   <div className="input-group">
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                      name="s[name_cont]"
-                      id="s_name_cont"
-                      className="form-control tbl-search table_search"
-                      placeholder="Search"
-                      fdprocessedid="u38fp"
-                    />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
+                  }}
+                  className="form-control tbl-search table_search"
+                  placeholder="Search Project"
+                />
+            
                     <div className="input-group-append">
                       <button
                         type="submit"
@@ -153,7 +154,7 @@ const ProjectDetailsList = () => {
                       </button>
                     </div>
                   </div>
-                </form>{" "}
+                {/* </form>{" "} */}
               </div>
               <div className="card-tools mt-1">
                 <button
