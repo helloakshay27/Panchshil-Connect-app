@@ -148,7 +148,7 @@ const SiteVisitSlotConfigList = () => {
                         <th>Sr No</th>
                         <th>Project Name</th>
                         <th>Scheduled Date</th>
-                        <th>Scheduled Time</th>
+                        <th>Start Time & End Time</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -162,7 +162,9 @@ const SiteVisitSlotConfigList = () => {
                             </td>
                             <td>{slot.project_name}</td>
                             <td>{slot.scheduled_date}</td>
-                            <td>{slot.ampm_timing}</td>
+                            <td>
+                              {slot.start_time} to {slot.end_time}
+                            </td>
                           </tr>
                         ))
                       ) : (

@@ -157,7 +157,6 @@ const CompanyEdit = () => {
                         className="form-control"
                         type="file"
                         onChange={handleFileChange}
-                        required
                         accept=".png,.jpg,.jpeg,.svg"
                       />
                     </div>

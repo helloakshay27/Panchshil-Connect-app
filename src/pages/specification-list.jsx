@@ -181,7 +181,7 @@ const SpecificationList = () => {
                                 1}
                             </td>
                             <td>{spec.name || "N/A"}</td>
-                            <td className="d-flex justify-content-center align-items-center">
+                            <td>
                               {spec.icon_url ? (
                                 <img
                                   src={spec.icon_url}

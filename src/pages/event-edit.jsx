@@ -6,9 +6,9 @@ import SelectBox from "../components/base/SelectBox";
 
 const EventEdit = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   console.log("id", id);
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     project_id: "",
@@ -25,6 +25,7 @@ const EventEdit = () => {
     shared: "",
     share_groups: "",
     attachfile: [],
+    previewImage: "",
     is_important: "false",
     email_trigger_enabled: "false",
   });
@@ -47,7 +48,7 @@ const EventEdit = () => {
             },
           }
         );
-
+        // console.log(response?.data);
         setFormData((prev) => ({
           ...prev,
           ...response.data,
@@ -60,6 +61,7 @@ const EventEdit = () => {
     };
 
     if (id) fetchEvent();
+    console.log("project_id: " + formData.project_id);
   }, [id]);
 
   const [projects, setProjects] = useState([]); // State to store projects
@@ -209,7 +211,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Project ID
+                          Project
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
@@ -514,27 +516,66 @@ const EventEdit = () => {
                         />
                       </div>
                     </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Attachment
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="attachfile"
+                          accept="image/*"
+                          onChange={handleFileChange} // Handle file selection
+                        />
+                      </div>
+
+                      {/* Image Preview */}
+                      {formData.previewImage && (
+                        <img
+                          src={formData.previewImage}
+                          alt="Uploaded Preview"
+                          className="img-fluid rounded mt-2"
+                          style={{
+                            maxWidth: "100px",
+                            maxHeight: "100px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      )}
+                    </div>
 
                     <div className="col-md-3">
-                      <div className="form-check mt-4">
-                        <label className="form-group">Event is Important</label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="is_important"
-                          value="true"
-                          checked={formData.is_important === "true"}
-                          onChange={handleRadioChange}
-                        />
-
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="is_important"
-                          value="false"
-                          checked={formData.is_important === "false"}
-                          onChange={handleRadioChange}
-                        />
+                      <div className="form-group">
+                        <label>Event is Important</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="is_important"
+                              value="true"
+                              checked={formData.is_important == true}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="is_important"
+                              value="false"
+                              checked={formData.is_important == false}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
 

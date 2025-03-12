@@ -708,25 +708,42 @@ const EventCreate = () => {
                     </div>
 
                     <div className="col-md-3">
-                      <div className="form-check mt-4">
-                        <label className="form-group">Event is Important</label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="is_important"
-                          value="true"
-                          checked={formData.is_important === "true"}
-                          onChange={handleRadioChange}
-                        />
-
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="is_important"
-                          value="false"
-                          checked={formData.is_important === "false"}
-                          onChange={handleRadioChange}
-                        />
+                      <div className="form-group">
+                        <label>Event is Important</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="is_important"
+                              value="true"
+                              checked={formData.is_important == true}
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  is_important: e.target.value, // Store "true" as string
+                                }))
+                              }
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="is_important"
+                              value="false"
+                              checked={formData.is_important == false}
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  is_important: e.target.value, // Store "false" as string
+                                }))
+                              }
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
