@@ -167,20 +167,18 @@ const EventCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    toast.dismiss(); // Clears previous toasts to prevent duplicates
 
     // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
-      toast.error(validationErrors.join("\n")); // Show all errors in an alert
+      validationErrors.forEach((error) => toast.error(error)); // Show each error separately
       setLoading(false);
       return; // Stop form submission
     }
 
     // Create FormData to send with the request
     const data = new FormData();
-
-    // Populate FormData with values from formData
     data.append("event[event_type]", formData.event_type);
     data.append("event[event_name]", formData.event_name);
     data.append("event[event_at]", formData.event_at);
@@ -197,13 +195,7 @@ const EventCreate = () => {
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
     data.append("event[project_id]", selectedProjectId);
 
-    // if (formData.attachfile && formData.attachfile.length > 0) {
-    //   formData.attachfile.forEach((file, index) => {
-    //     data.append(`event[event_image][${index}]`, file); // ✅ Fix appending multiple files
-    //   });
-    // } else {
-    //   console.warn("No files to upload."); // Debugging log
-    // }
+    // Handling Attachments (Only Append Valid Files)
     if (formData.attachfile && formData.attachfile.length > 0) {
       formData.attachfile.forEach((file) => {
         if (file instanceof File) {
@@ -213,23 +205,9 @@ const EventCreate = () => {
         }
       });
     } else {
-      console.warn("No files to upload.");
-    }
-    for (let pair of data.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key === "attachfile" && Array.isArray(value) && value.length > 0) {
-        value.forEach((file) => data.append("event_image", file));
-      } else {
-        data.append(key, value);
-      }
-    });
-
-    // Log the data object to see what it contains
-    for (let [key, value] of data.entries()) {
-      console.log(`${key}:`, value);
+      toast.error("Attachment is required.");
+      setLoading(false);
+      return;
     }
 
     try {
@@ -240,16 +218,44 @@ const EventCreate = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      console.log(response.data);
-      toast.success("Event created successfully");
+
+      // ✅ Success Toast (Styled like Testimonial & Specification)
+      toast.success("Event created successfully!");
+
+      // Reset Form After Successful Submission
+      setFormData({
+        event_type: "",
+        event_name: "",
+        event_at: "",
+        from_time: "",
+        to_time: "",
+        rsvp_action: "",
+        description: "",
+        publish: "",
+        user_id: "",
+        comment: "",
+        shared: "",
+        share_groups: "",
+        attachfile: [],
+        is_important: "",
+        email_trigger_enabled: "",
+      });
+
       navigate("/event-list");
     } catch (error) {
-      //console.error("Error submitting the form:", error);
-      toast.error("Failed to submit the form. Please try again.");
-      //setError("Failed to submit the form. Please try again.");
+      console.error("Error submitting the form:", error);
+
+      if (error.response && error.response.data) {
+        toast.error(
+          `Error: ${error.response.data.message || "Submission failed"}`
+        );
+      } else {
+        toast.error("Failed to submit the form. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
