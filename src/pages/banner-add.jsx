@@ -286,10 +286,11 @@ const BannerAdd = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Submit and Cancel Buttons */}
-              <div className="row mt-2 justify-content-center">
+              </div>          
+            </div>
+          </div>
+             {/* Submit and Cancel Buttons */}
+             <div className="row mt-2 justify-content-center">
                 <div className="col-md-2">
                   <button
                     onClick={handleSubmit}
@@ -309,8 +310,6 @@ const BannerAdd = () => {
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
         </div>
       </div>
     </>

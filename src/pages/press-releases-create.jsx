@@ -434,7 +434,10 @@ const handleSubmit = async (e) => {
                   </div>
                 </div>
               </div>
-              <div className="row mt-2 justify-content-center">
+             
+            </div>
+          </div>
+          <div className="row mt-2 justify-content-center">
                 <div className="col-md-2">
                   <button
                     onClick={handleSubmit}
@@ -455,10 +458,9 @@ const handleSubmit = async (e) => {
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
         </div>
       </div>
+      
     </>
   );
 };
