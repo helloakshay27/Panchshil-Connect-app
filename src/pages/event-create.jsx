@@ -794,26 +794,26 @@ const EventCreate = () => {
                     </div>
                   </div>
                 </div>
-                <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      onClick={handleSubmit}
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={loading}
-                    >
-                      Submit
-                    </button>
-                  </div>
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={handleCancel}
-                    >
-                      Cancel
-                    </button>
-                  </div>
+              </div>
+              <div className="row mt-2 justify-content-center">
+                <div className="col-md-2">
+                  <button
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="purple-btn2 w-100"
+                    disabled={loading}
+                  >
+                    Submit
+                  </button>
+                </div>
+                <div className="col-md-2">
+                  <button
+                    type="button"
+                    className="purple-btn2 w-100"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
