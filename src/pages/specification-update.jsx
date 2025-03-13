@@ -8,26 +8,33 @@ const SpecificationUpdate = () => {
   const navigate = useNavigate();
   const [setupName, setSetupName] = useState("");
   const [icon, setIcon] = useState(null);
-  const [iconPreview, setIconPreview] = useState(""); // Store the existing image URL
+  const [iconPreview, setIconPreview] = useState(""); // Store existing image URL
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(
-        `https://panchshil-super.lockated.com/specification_setups/${id}.json`
-      )
-      .then((response) => {
-        console.log("Fetched Data:", response.data); // Debugging API Response
-        setSetupName(response.data.name);
-        if (response.data.icon_url) {
-          setIconPreview(
-            response.data.icon_url.includes("http")
-              ? response.data.icon_url
-              : `https://panchshil-super.lockated.com${response.data.icon_url}`
-          );
+    const fetchSpecification = async () => {
+      try {
+        // Fetching data from LIST API to get the icon_url
+        const listResponse = await axios.get(
+          `https://panchshil-super.lockated.com/specification_setups.json`
+        );
+
+        // Find the specific item by ID
+        const spec = listResponse.data.specification_setups.find(
+          (item) => item.id === Number(id)
+        );
+
+        if (spec) {
+          setSetupName(spec.name);
+          setIconPreview(spec.icon_url || ""); // Set image if exists
         }
-      })
-      .catch((error) => console.error("Error fetching data:", error));
+      } catch (error) {
+        console.error("Error fetching specification:", error);
+        toast.error("Failed to fetch specification details.");
+      }
+    };
+
+    fetchSpecification();
   }, [id]);
 
   const handleCancel = () => {
@@ -39,8 +46,10 @@ const SpecificationUpdate = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setIcon(file);
-    setIconPreview(URL.createObjectURL(file)); // Show preview for new file
+    if (file) {
+      setIcon(file);
+      setIconPreview(URL.createObjectURL(file)); // Show preview for new image
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -49,7 +58,9 @@ const SpecificationUpdate = () => {
 
     const formData = new FormData();
     formData.append("specification_setup[name]", setupName);
-    if (icon) formData.append("icon", icon); // Append only if a new file is selected
+    if (icon) {
+      formData.append("icon", icon);
+    }
 
     try {
       await axios.put(
@@ -80,6 +91,7 @@ const SpecificationUpdate = () => {
             <div className="card-body">
               <form onSubmit={handleSubmit}>
                 <div className="row">
+                  {/* Name Input */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Name</label>
@@ -89,9 +101,12 @@ const SpecificationUpdate = () => {
                         value={setupName}
                         onChange={(e) => setSetupName(e.target.value)}
                         placeholder="Enter name"
+                        required
                       />
                     </div>
                   </div>
+
+                  {/* File Input & Preview */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Icon</label>
@@ -101,18 +116,18 @@ const SpecificationUpdate = () => {
                         accept=".png,.jpg,.jpeg,.svg"
                         onChange={handleFileChange}
                       />
-                      {/* Show Existing Icon Preview */}
+
+                      {/* Image Preview */}
                       {iconPreview && (
                         <div className="mt-2">
-                          <p>Current Icon:</p>
+                          <p>Preview:</p>
                           <img
                             src={iconPreview}
-                            alt="Existing Icon"
+                            alt="Specification Icon"
                             style={{
-                              width: "50px",
-                              height: "50px",
+                              width: "140px",
+                              height: "140px",
                               objectFit: "contain",
-                              border: "1px solid #ddd",
                             }}
                           />
                         </div>
@@ -120,6 +135,8 @@ const SpecificationUpdate = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Submit & Cancel Buttons */}
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
                     <button
@@ -127,7 +144,7 @@ const SpecificationUpdate = () => {
                       className="purple-btn2 w-100"
                       disabled={loading}
                     >
-                      Submit
+                      {loading ? "Updating..." : "Submit"}
                     </button>
                   </div>
                   <div className="col-md-2">
