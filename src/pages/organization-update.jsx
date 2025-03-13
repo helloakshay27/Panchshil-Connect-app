@@ -7,6 +7,7 @@ const OrganizationUpdate = () => {
   const { id } = useParams(); // Get organization ID from URL
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -56,7 +57,12 @@ const OrganizationUpdate = () => {
 
   // Handle file upload
   const handleFileChange = (e) => {
-    setFormData({ ...formData, attachment: e.target.files[0] });
+    const files = Array.from(e.target.files);
+    setFormData({ ...formData, attachment: files[0] });
+
+    // Generate image preview URLs
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews(previews);
   };
 
   // Handle form submission (Update Organization)
@@ -72,7 +78,7 @@ const OrganizationUpdate = () => {
     payload.append("organization[mobile]", formData.mobile);
 
     if (formData.attachment) {
-      payload.append("organization[logo]", formData.attachment);
+      payload.append("organization[org_image]", formData.attachment);
     }
 
     try {
@@ -211,11 +217,27 @@ const OrganizationUpdate = () => {
                         type="file"
                         name="attachment"
                         onChange={handleFileChange}
+                        multiple // Allow multiple file selection
                       />
-                      {formData.attachment && (
-                        <p className="mt-2">
-                          Current File: {formData.attachment.name}
-                        </p>
+
+                      {/* Image Preview Section */}
+                      {imagePreviews.length > 0 && (
+                        <div className="mt-2 d-flex flex-wrap">
+                          {imagePreviews.map((src, index) => (
+                            <div key={index} className="position-relative me-2">
+                              <img
+                                src={src}
+                                alt={`Preview ${index}`}
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  borderRadius: "5px",
+                                  marginTop: "10px", // Space between input & previews
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </div>

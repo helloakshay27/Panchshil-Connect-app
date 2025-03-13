@@ -52,6 +52,9 @@ const Testimonials = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Dismiss previous toast notifications before showing new ones
+    toast.dismiss();
+
     if (!companySetupId || !userName.trim() || !userType || !content.trim()) {
       toast.error("All fields are required.");
       setLoading(false);
@@ -81,17 +84,22 @@ const Testimonials = () => {
         }
       );
       console.log("Response from POST:", response.data);
+
       toast.success("Data saved successfully!");
+
+      // Reset form fields
       setCompanySetupId("");
       setUserName("");
       setUserType("");
       setContent("");
+
       navigate("/testimonial-list");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
       if (error.response) {
         console.error("Response data:", error.response.data);
       }
+
       toast.error("Failed to submit. Please check your input.");
     } finally {
       setLoading(false);
@@ -177,7 +185,6 @@ const Testimonials = () => {
                           placeholder="Enter user name"
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
-                          required
                         />
                       </div>
                     </div>
@@ -218,7 +225,6 @@ const Testimonials = () => {
                           placeholder="Enter Description"
                           value={content}
                           onChange={(e) => setContent(e.target.value)}
-                          required
                         />
                       </div>
                     </div>

@@ -19,6 +19,11 @@ const Amenities = () => {
     e.preventDefault();
     setLoading(true);
 
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("amenity_setup[name]", name);
     if (icon) {
@@ -26,34 +31,65 @@ const Amenities = () => {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         "https://panchshil-super.lockated.com/amenity_setups.json",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
             Accept: "application/json",
-            Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Ensure proper authentication
+            Authorization: `Bearer YOUR_ACCESS_TOKEN`,
           },
         }
       );
-      console.log("Success:", response.data);
+
+      toast.success("Amenity added successfully");
       setName("");
       setIcon(null);
-      toast.success("Amenity added successfully");
       navigate("/amenities-list");
     } catch (err) {
-      console.error("Error Response:", err.response?.data || err.message);
-      toast.error(err.message);
+      toast.error(`Error adding amenity: ${err.message}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    // If all fields are empty, show a single error message
+    if (!name.trim() && !icon) {
+      toast.dismiss();
+      toast.error("Please fill in all the required fields.");
+      return false;
+    }
+
+    // Check Name
+    if (!name.trim()) {
+      newErrors.name = "Name is mandatory";
+      toast.dismiss();
+      toast.error("Name is mandatory");
+    }
+
+    // Check Icon (Attachment)
+    if (!icon) {
+      newErrors.icon = "Icon is mandatory";
+      toast.dismiss();
+      toast.error("Icon is mandatory");
+    }
+
+    // Update errors state
+    setErrors(newErrors);
+
+    // If there are any errors, return false
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleCancel = () => {
     setName("");
     setIcon(null);
     navigate(-1);
+    toast.success("Action cancelled");
   };
 
   return (
@@ -82,7 +118,6 @@ const Amenities = () => {
                           placeholder="Enter name"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          required
                         />
                       </div>
                     </div>
@@ -100,7 +135,6 @@ const Amenities = () => {
                           type="file"
                           accept=".png,.jpg,.jpeg,.svg"
                           placeholder="Default input"
-                          required
                           onChange={handleFileChange}
                         />
                       </div>

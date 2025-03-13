@@ -50,6 +50,44 @@ const SiteVisitSlotConfig = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    toast.dismiss(); // Clears previous toasts to prevent duplicates
+
+    // Validation - Ensures only one error toast appears
+    if (!selectedProject) {
+      toast.error("Project selection is required.");
+      setLoading(false);
+      return;
+    }
+    if (!startDate) {
+      toast.error("Start date is required.");
+      setLoading(false);
+      return;
+    }
+    if (!endDate) {
+      toast.error("End date is required.");
+      setLoading(false);
+      return;
+    }
+    if (!startHour && startHour !== 0) {
+      toast.error("Start hour is required.");
+      setLoading(false);
+      return;
+    }
+    if (!startMinute && startMinute !== 0) {
+      toast.error("Start minute is required.");
+      setLoading(false);
+      return;
+    }
+    if (!endHour && endHour !== 0) {
+      toast.error("End hour is required.");
+      setLoading(false);
+      return;
+    }
+    if (!endMinute && endMinute !== 0) {
+      toast.error("End minute is required.");
+      setLoading(false);
+      return;
+    }
 
     const postData = {
       project_id: selectedProject,
@@ -72,6 +110,7 @@ const SiteVisitSlotConfig = () => {
           },
         }
       );
+
       toast.success("Slot created successfully!");
       console.log("Data successfully submitted:", response.data);
       navigate("/siteVisit-SlotConfig-list");
@@ -84,18 +123,8 @@ const SiteVisitSlotConfig = () => {
     } finally {
       setLoading(false);
     }
-
-    // Log the form data (You can replace this with further logic if needed)
-    console.log("Form Submitted with data:", {
-      startHour,
-      startMinute,
-      endHour,
-      endMinute,
-      selectedProject,
-      startDate,
-      endDate,
-    });
   };
+
   const navigate = useNavigate();
   const handleCancel = () => {
     navigate(-1); // This navigates back one step in history
@@ -127,7 +156,6 @@ const SiteVisitSlotConfig = () => {
                           type="date"
                           name="start_date"
                           value={startDate}
-                          required
                           min={new Date().toISOString().split("T")[0]}
                           onChange={(e) => setStartDate(e.target.value)}
                           placeholder="Enter Event Start Date"
@@ -147,7 +175,6 @@ const SiteVisitSlotConfig = () => {
                           className="form-control"
                           type="date"
                           name="end_date"
-                          required
                           value={endDate}
                           min={
                             startDate || new Date().toISOString().split("T")[0]

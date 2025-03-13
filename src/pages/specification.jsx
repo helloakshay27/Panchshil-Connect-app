@@ -17,12 +17,25 @@ const Specification = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    toast.dismiss(); // Clear previous toasts
 
-    const formData = new FormData();
-    formData.append("specification_setup[name]", name);
-    if (icon) {
-      formData.append("icon", icon);
+    // Validation Checks (One at a Time)
+    if (!name.trim()) {
+      toast.error("Name is mandatory");
+      setLoading(false);
+      return;
     }
+
+    if (!icon) {
+      toast.error("Icon is mandatory");
+      setLoading(false);
+      return;
+    }
+
+    // Form Submission
+    const formData = new FormData();
+    formData.append("specification_setup[name]", name.trim());
+    formData.append("icon", icon);
 
     try {
       const response = await axios.post(
@@ -37,9 +50,12 @@ const Specification = () => {
         }
       );
       console.log("Success:", response.data);
+
+      toast.success("Specification added successfully");
+
+      // Reset form fields
       setName("");
       setIcon(null);
-      toast.success("Specification added successfully");
       navigate("/specification-list");
     } catch (err) {
       console.error("Error Response:", err.response?.data || err.message);
@@ -81,7 +97,6 @@ const Specification = () => {
                         placeholder="Enter name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        required
                       />
                     </div>
                   </div>
@@ -97,7 +112,6 @@ const Specification = () => {
                       <input
                         className="form-control"
                         type="file"
-                        required
                         accept=".png,.jpg,.jpeg,.svg"
                         onChange={handleFileChange}
                       />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import SelectBox from "../components/base/SelectBox";
 
 const CompanyCreate = () => {
   const navigate = useNavigate();
@@ -160,27 +161,25 @@ const CompanyCreate = () => {
                           *
                         </span>
                       </label>
-                      <select
-                        className="form-control form-select"
+                      <SelectBox
                         name="organizationId"
+                        options={
+                          loading
+                            ? [{ value: "", label: "Loading..." }]
+                            : Array.isArray(organizations) &&
+                              organizations.length > 0
+                            ? organizations.map((org) => ({
+                                value: org.id,
+                                label: org.name,
+                              }))
+                            : [{ value: "", label: "No organizations found" }]
+                        }
                         value={formData.organizationId}
-                        onChange={handleChange}
+                        onChange={(value) =>
+                          setFormData({ ...formData, organizationId: value })
+                        }
                         required
-                      >
-                        <option value="">Select Organization</option>
-                        {loading ? (
-                          <option>Loading...</option>
-                        ) : Array.isArray(organizations) &&
-                          organizations.length > 0 ? (
-                          organizations.map((org) => (
-                            <option key={org.id} value={org.id}>
-                              {org.name}
-                            </option>
-                          ))
-                        ) : (
-                          <option>No organizations found</option>
-                        )}
-                      </select>
+                      />
                     </div>
                   </div>
                 </div>

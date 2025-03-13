@@ -196,9 +196,9 @@ const OrganizationList = () => {
                             <td>{org.domain || "N/A"}</td>
                             <td>{org.sub_domain || "N/A"}</td>
                             <td>
-                              {org.logo ? (
+                              {org.attachfile?.document_url ? (
                                 <img
-                                  src={org.logo}
+                                  src={org?.attachfile?.document_url}
                                   alt="Organization Logo"
                                   style={{
                                     width: "50px",

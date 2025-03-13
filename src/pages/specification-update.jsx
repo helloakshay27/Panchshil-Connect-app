@@ -55,9 +55,17 @@ const SpecificationUpdate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    toast.dismiss(); // Clear previous toasts
+
+    // Validation - Ensures only one error toast appears
+    if (!setupName.trim()) {
+      toast.error("Name is mandatory");
+      setLoading(false);
+      return;
+    }
 
     const formData = new FormData();
-    formData.append("specification_setup[name]", setupName);
+    formData.append("specification_setup[name]", setupName.trim());
     if (icon) {
       formData.append("icon", icon);
     }
@@ -70,6 +78,7 @@ const SpecificationUpdate = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+
       toast.success("Specification updated successfully!");
       navigate("/specification-list");
     } catch (error) {
@@ -101,7 +110,6 @@ const SpecificationUpdate = () => {
                         value={setupName}
                         onChange={(e) => setSetupName(e.target.value)}
                         placeholder="Enter name"
-                        required
                       />
                     </div>
                   </div>

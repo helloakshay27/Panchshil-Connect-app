@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import SelectBox from "../components/base/SelectBox"
+import SelectBox from "../components/base/SelectBox";
 
 const ReferralCreate = () => {
   const [projects, setProjects] = useState([]);
@@ -46,17 +46,31 @@ const ReferralCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    toast.dismiss(); // Clears previous toasts to prevent duplicates
 
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.mobile ||
-      !selectedProjectId
-    ) {
-      toast.error("Please fill all required fields.");
+    // Validation - Ensures only one error toast appears
+    if (!formData.name) {
+      toast.error("Name is required.");
+      setLoading(false);
       return;
     }
-    setLoading(true);
+    if (!formData.email) {
+      toast.error("Email is required.");
+      setLoading(false);
+      return;
+    }
+    if (!formData.mobile || formData.mobile.length !== 10) {
+      toast.error("Mobile number must be 10 digits.");
+      setLoading(false);
+      return;
+    }
+    if (!selectedProjectId) {
+      toast.error("Project selection is required.");
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       referral: {
         name: formData.name,
@@ -86,11 +100,10 @@ const ReferralCreate = () => {
         name: "",
         email: "",
         mobile: "",
+        referralCode: "",
       });
-      navigate("/referral-list");
-      console.log("Response:", response.data);
-
-      navigate("/referral-list"); // Redirect to referral list page after success
+      setSelectedProjectId("");
+      navigate("/referral-list"); // Redirect to referral list after success
     } catch (error) {
       console.error(
         "Error creating referral:",
@@ -134,7 +147,6 @@ const ReferralCreate = () => {
                         type="text"
                         placeholder="Enter Name"
                         name="name"
-                        required
                         value={formData.name}
                         onChange={handleChange}
                       />
@@ -150,7 +162,6 @@ const ReferralCreate = () => {
                         type="email"
                         placeholder="Enter Email"
                         name="email"
-                        required
                         value={formData.email}
                         onChange={handleChange}
                       />
@@ -171,7 +182,6 @@ const ReferralCreate = () => {
                         value={formData.mobile}
                         maxLength={10} // Restrict to 10 digits
                         onChange={handleMobileChange}
-                        required
                         style={{ appearance: "textfield" }} // Removes number input arrows
                       />
                     </div>
@@ -199,21 +209,16 @@ const ReferralCreate = () => {
                       </select> */}
 
                       <SelectBox
-                        options={
-                          projects.map((proj) => ({
-                            label: proj.project_name,
-                            value: proj.id
-                          }))
-                        }
+                        options={projects.map((proj) => ({
+                          label: proj.project_name,
+                          value: proj.id,
+                        }))}
                         value={selectedProjectId}
-                        onChange={(value) =>
-                          setSelectedProjectId(value)
-                        }
+                        onChange={(value) => setSelectedProjectId(value)}
                       />
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
             <div className="row mt-2 justify-content-center">
