@@ -86,24 +86,57 @@ const BannerAdd = () => {
   };
 
   // Form Validation
+  // Form Validation
   const validateForm = () => {
     let newErrors = {};
 
-    if (!formData.title.trim()) {
-      newErrors.title = "Title is required";
-      toast.error("Title is mandatory");
-    }
-    if (!formData.company_id || String(formData.company_id).trim() === "") {
-      newErrors.company_id = "Company is required";
-      toast.error("Company is mandatory");
-    }
-    if (!formData.attachfile.length) {
-      newErrors.attachfile = "Banner image is required";
-      toast.error("Banner image is mandatory");
+    // If all fields are empty, show only one message and return early
+    if (
+      !formData.title.trim() &&
+      (!formData.company_id || String(formData.company_id).trim() === "") &&
+      !formData.attachfile.length
+    ) {
+      toast.dismiss(); // Clear any previous toasts
+      toast.error("Please fill in all the required fields.");
+      return false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // Sequential validation - check one field at a time and return as soon as we find an error
+    if (!formData.title.trim()) {
+      newErrors.title = "";
+      setErrors(newErrors);
+      toast.dismiss(); // Clear previous toasts
+      toast.error("Title is mandatory");
+      return false;
+    }
+
+    if (!formData.project_id || String(formData.project_id).trim() === "") {
+      newErrors.project_id = "";
+      setErrors(newErrors);
+      toast.dismiss(); // Clear previous toasts
+      toast.error("Project is mandatory");
+      return false;
+    }
+
+    if (!formData.company_id || String(formData.company_id).trim() === "") {
+      newErrors.company_id = "";
+      setErrors(newErrors);
+      toast.dismiss(); // Clear previous toasts
+      toast.error("Company is mandatory");
+      return false;
+    }
+
+    if (!formData.attachfile.length) {
+      newErrors.attachfile = "";
+      setErrors(newErrors);
+      toast.dismiss(); // Clear previous toasts
+      toast.error("Banner image is mandatory");
+      return false;
+    }
+
+    // If we reach here, all validations passed
+    setErrors({});
+    return true;
   };
 
   // Form Submit Handler
@@ -112,7 +145,7 @@ const BannerAdd = () => {
     setLoading(true);
 
     if (!validateForm()) {
-      toast.error("Please fill in all the required fields.");
+      //toast.error("Please fill in all the required fields.");
       setLoading(false);
       return;
     }
@@ -165,7 +198,7 @@ const BannerAdd = () => {
                   {/* Title */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Title *</label>
+                      <label>Title <span style={{ color: "#de7008" }}> *</span></label>
                       <input
                         className="form-control"
                         type="text"
@@ -183,16 +216,10 @@ const BannerAdd = () => {
                   </div>
 
                   {/* Project */}
+                  {/* Project */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Project *</label>
-                      {/* <select className="form-control" name="project_id" value={formData.project_id} onChange={handleChange}>
-                        <option value="">Select Project</option>
-                        {projects.map((project) => (
-                          <option key={project.id} value={project.id}>{project.project_name}</option>
-                        ))}
-                      </select> */}
-
+                      <label>Project <span style={{ color: "#de7008" }}> *</span></label>
                       <SelectBox
                         options={projects.map((project) => ({
                           label: project.project_name,
@@ -203,13 +230,18 @@ const BannerAdd = () => {
                           setFormData({ ...formData, project_id: value })
                         }
                       />
+                      {errors.project_id && (
+                        <span className="error text-danger">
+                          {errors.project_id}
+                        </span>
+                      )}
                     </div>
                   </div>
 
                   {/* Company */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Company *</label>
+                      <label>Company <span style={{ color: "#de7008" }}> *</span></label>
                       {/* <select className="form-control" name="company_id" value={formData.company_id} onChange={handleChange}>
                         <option value="">Select a Company</option>
                         {companies.map((company) => (
@@ -237,7 +269,7 @@ const BannerAdd = () => {
                   {/* Banner File Upload */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Banner Image *</label>
+                      <label>Banner Image <span style={{ color: "#de7008" }}> *</span></label>
                       <input
                         className="form-control"
                         type="file"

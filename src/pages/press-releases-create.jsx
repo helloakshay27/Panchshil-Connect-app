@@ -129,81 +129,143 @@ const PressReleasesCreate = () => {
   };
 
   // Form validation
-  const validateForm = () => {
-    let newErrors = {};
-
-    if (!formData.title.trim()) newErrors.title = "Title is mandatory";
-    if (!formData.company_id.trim())
-      newErrors.company_id = "";
-    if (!formData.pr_image || formData.pr_image.length === 0)
-      newErrors.pr_image = "";
-    if (!formData.pr_pdf || formData.pr_pdf.length === 0)
-      newErrors.pr_pdf = "";
-
+ // Form validation
+const validateForm = () => {
+  let newErrors = {};
+  
+  // If all mandatory fields are empty, show a general message
+  if (!formData.title.trim() && 
+      (!formData.company_id || String(formData.company_id).trim() === "") && 
+      !formData.release_date && 
+      !formData.description.trim() && 
+      (!formData.project_id || String(formData.project_id).trim() === "") &&
+      (!formData.pr_image || formData.pr_image.length === 0) &&
+      (!formData.pr_pdf || formData.pr_pdf.length === 0)) {
+    toast.dismiss(); // Clear any previous toasts
+    toast.error("Please fill in all the required fields.");
+    return false;
+  }
+  
+  // Sequential validation - check one field at a time
+  if (!formData.title.trim()) {
+    newErrors.title = "Title is mandatory";
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    toast.dismiss();
+    toast.error("Title is mandatory");
+    return false;
+  }
+  
+  if (!formData.release_date) {
+    newErrors.release_date = "Press Releases Date is mandatory";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Press Releases Date is mandatory");
+    return false;
+  }
+  
+  if (!formData.project_id || String(formData.project_id).trim() === "") {
+    newErrors.project_id = "Project is mandatory";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Project is mandatory");
+    return false;
+  }
+  
+  if (!formData.company_id || String(formData.company_id).trim() === "") {
+    newErrors.company_id = "Company is mandatory";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Company is mandatory");
+    return false;
+  }
+  
+  if (!formData.description.trim()) {
+    newErrors.description = "Description is mandatory";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Description is mandatory");
+    return false;
+  }
+  
+  if (!formData.pr_image || formData.pr_image.length === 0) {
+    newErrors.pr_image = "Attachment (Image) is mandatory";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Attachment (Image) is mandatory");
+    return false;
+  }
+  
+  if (!formData.pr_pdf || formData.pr_pdf.length === 0) {
+    newErrors.pr_pdf = "Attachment (PDF) is mandatory";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Attachment (PDF) is mandatory");
+    return false;
+  }
+  
+  // If we reach here, all validations passed
+  setErrors({});
+  return true;
+};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-   
-    if (!formData.title || !formData.company_id || !formData.release_date || !formData.description || !formData.project_id) {
-      toast.error("Please fill all required fields before submitting.");
-      return;
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Use the new validation function instead of the inline validation
+  if (!validateForm()) {
+    return;
+  }
+
+  setLoading(true);
+  const token = localStorage.getItem("access_token");
+  if (!token) {
+    toast.error("Authentication error: Please log in again.");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const sendData = new FormData();
+    sendData.append("press_release[title]", formData.title);
+    sendData.append("press_release[company_id]", formData.company_id);
+    sendData.append("press_release[release_date]", formData.release_date);
+    sendData.append("press_release[description]", formData.description);
+    sendData.append("press_release[project_id]", formData.project_id);
+
+    // Append multiple images
+    if (formData.pr_image?.length) {
+      formData.pr_image.forEach((file) => {
+        sendData.append("press_release[pr_image]", file);
+      });
     }
-    
 
-    setLoading(true);
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      toast.error("Authentication error: Please log in again.");
-      setLoading(false);
-      return;
+    // Append multiple PDFs
+    if (formData.pr_pdf?.length) {
+      formData.pr_pdf.forEach((file) => {
+        sendData.append("press_release[pr_pdf]", file);
+      });
     }
 
-    try {
-      const sendData = new FormData();
-      sendData.append("press_release[title]", formData.title);
-      sendData.append("press_release[company_id]", formData.company_id);
-      sendData.append("press_release[release_date]", formData.release_date);
-      sendData.append("press_release[description]", formData.description);
-      sendData.append("press_release[project_id]", formData.project_id);
-
-      // Append multiple images
-      if (formData.pr_image?.length) {
-        formData.pr_image.forEach((file) => {
-          sendData.append("press_release[pr_image]", file); // Use array notation
-        });
+    await axios.post(
+      "https://panchshil-super.lockated.com/press_releases.json",
+      sendData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
       }
+    );
 
-      // Append multiple PDFs
-      if (formData.pr_pdf?.length) {
-        formData.pr_pdf.forEach((file) => {
-          sendData.append("press_release[pr_pdf]", file);
-        });
-      }
-
-      await axios.post(
-        "https://panchshil-super.lockated.com/press_releases.json",
-        sendData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      toast.success("Press release created successfully!");
-      navigate("/pressreleases-list");
-    } catch (error) {
-      console.error("Error response:", error.response);
-      toast.error(`Error: ${error.response?.data?.message || error.message}`);
-      
-    } finally {
-      setLoading(false);
-    }
-  };
+    toast.success("Press release created successfully!");
+    navigate("/pressreleases-list");
+  } catch (error) {
+    console.error("Error response:", error.response);
+    toast.error(`Error: ${error.response?.data?.message || error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCancel = () => {
     navigate(-1);

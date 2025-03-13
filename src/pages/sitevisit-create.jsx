@@ -8,7 +8,7 @@ const SitevisitCreate = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
-
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     project_id: "",
     project_name: "",
@@ -113,52 +113,92 @@ const SitevisitCreate = () => {
     });
   };
 
+  // Add this validation function to your SitevisitCreate component
+const validateForm = () => {
+  let newErrors = {};
+  
+  // If all mandatory fields are empty, show a general message
+  if ((!formData.project_id || String(formData.project_id).trim() === "") && 
+  (!formData.scheduled_at || String(formData.scheduled_at).trim() === "") && 
+      (!formData.selected_slot || String(formData.selected_slot).trim() === "")) {
+    toast.dismiss(); // Clear any previous toasts
+    toast.error("Please fill in all the required fields.");
+    return false;
+  }
+  
+  // Sequential validation - check one field at a time
+  if (!formData.project_id || String(formData.project_id).trim() === "") {
+    newErrors.project_id = "";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Project is mandatory");
+    return false;
+  }
+  
+  if (!formData.scheduled_at) {
+    newErrors.scheduled_at = "";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Date is mandatory");
+    return false;
+  }
+  
+  if (!formData.selected_slot || String(formData.selected_slot).trim() === "") {
+    newErrors.selected_slot = "Selecting a time slot is mandatory";
+    setErrors(newErrors);
+    toast.dismiss();
+    toast.error("Please select an available time slot");
+    return false;
+  }
+  
+  // If we reach here, all validations passed
+  setErrors({});
+  return true;
+};
+
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  // Replace your current handleSubmit function with this one
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Use the new validation function
+  if (!validateForm()) {
+    return;
+  }
+  
+  setLoading(true);
 
-    if (
-      !formData.scheduled_at ||
-      !formData.project_id ||
-      !formData.selected_slot
-    ) {
-      toast.error("Please fill all required fields, including a time slot.");
-      setLoading(false);
-      return;
-    }
-
-    const requestData = {
-      site_schedule_request: {
-        scheduled_at: formatDateForApi(formData.scheduled_at),
-        site_schedule_id: formData.selected_slot,
-        project_id: formData.project_id,
-        selected_slot: formData.selected_slot,
-      },
-    };
-
-    try {
-      const response = await axios.post(
-        "https://panchshil-super.lockated.com/site_schedule_requests.json",
-        requestData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-
-      toast.success("Form submitted successfully");
-      console.log("Response from API:", response.data);
-      navigate("/sitevisit-list");
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error(`Error submitting schedule: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
+  const requestData = {
+    site_schedule_request: {
+      scheduled_at: formatDateForApi(formData.scheduled_at),
+      site_schedule_id: formData.selected_slot,
+      project_id: formData.project_id,
+      selected_slot: formData.selected_slot,
+    },
   };
+
+  try {
+    const response = await axios.post(
+      "https://panchshil-super.lockated.com/site_schedule_requests.json",
+      requestData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
+
+    toast.success("Form submitted successfully");
+    console.log("Response from API:", response.data);
+    navigate("/sitevisit-list");
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    toast.error(`Error submitting schedule: ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
   console.log("formdata", formData);
 
@@ -171,7 +211,7 @@ const SitevisitCreate = () => {
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
           <div className="module-data-section p-3">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <div className="card mt-4 pb-4 mx-4">
                 <div className="card-header3">
                   <h3 className="card-title">Create Site Visit</h3>

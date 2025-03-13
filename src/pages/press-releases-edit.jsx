@@ -104,7 +104,7 @@ const PressReleasesEdit = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === "release_date" ? formatDateForAPI(value) : value, 
+      [name]: name === "release_date" ? value : value, 
     });
   };
 
@@ -167,29 +167,26 @@ const PressReleasesEdit = () => {
       toast.error("Please fill all required fields before submitting.");
       return;
     }
-
     setLoading(true);
     try {
       const sendData = new FormData();
-      sendData.append("title", formData.title);
-      sendData.append("company_id", formData.company_id);
-      sendData.append("release_date", formData.release_date);
-      sendData.append("description", formData.description);
-      sendData.append("project_id", formData.project_id);
+      sendData.append("press_release[title]", formData.title);
+      sendData.append("press_release[company_id]", formData.company_id);
+     sendData.append("press_release[release_date]", formatDateForAPI(formData.release_date));
 
-     
+      sendData.append("press_release[description]", formData.description);
+      sendData.append("press_release[project_id]", formData.project_id);
+
       formData.attachfile
         .filter((file) => file instanceof File)
         .forEach((file) => {
           sendData.append("press_release[pr_image]", file);
         });
-
       formData.pr_pdf
         .filter((file) => file instanceof File)
         .forEach((file) => {
           sendData.append("press_release[pr_pdf]", file);
         });
-
       await axios.put(
         `https://panchshil-super.lockated.com/press_releases/${id}.json`,
         sendData,
@@ -200,7 +197,6 @@ const PressReleasesEdit = () => {
           },
         }
       );
-
       toast.success("Press release updated successfully!");
       navigate("/pressreleases-list");
       console.log("formdata", sendData);
@@ -211,22 +207,42 @@ const PressReleasesEdit = () => {
       setLoading(false);
     }
   };
-
+  
   const formatDateForInput = (dateString) => {
     if (!dateString) return ""; // Handle empty case
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0]; // Convert to YYYY-MM-DD
+  
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+    }
+  
+    console.warn("Invalid date format received:", dateString);
+    return "";
   };
+
+
+  console.log("formData", formData)
+  
 
   const formatDateForAPI = (dateString) => {
     if (!dateString) return "";
-    const [year, month, day] = dateString.split("-"); // Split YYYY-MM-DD
-    return `${day}-${month}-${year}`; // Convert to DD-MM-YYYY
+  
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      const [year, month, day] = parts;
+      return `${day}-${month}-${year}`; // Convert to DD-MM-YYYY
+    }
+  
+    console.warn("Invalid date format before posting:", dateString);
+    return "";
   };
+  
 
   const handleCancel = () => {
     navigate(-1);
   };
+
 
   return (
     <>
@@ -272,7 +288,7 @@ const PressReleasesEdit = () => {
                         type="date"
                         name="release_date"
                         placeholder="Enter date"
-                        value={formatDateForInput(formData.release_date)}
+                        value={formData.release_date}
                         onChange={handleChange}
                       />
                     </div>

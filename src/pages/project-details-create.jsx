@@ -151,6 +151,14 @@ const ProjectDetailsCreate = () => {
   };
   const validateForm = (formData) => {
     const errors = [];
+    if (!formData.Property_Type) {
+      errors.push("Property Type is required.");
+      return errors;
+    }
+    if (!formData.building_type) {
+      errors.push("Building Type is required.");
+      return errors;
+    }
     if (!formData.Project_Construction_Status) {
       errors.push("Construction Status is required.");
       return errors;
@@ -516,7 +524,7 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Types
+                    Property Types
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
