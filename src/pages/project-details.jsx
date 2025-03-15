@@ -124,7 +124,7 @@ const ProjectDetails = () => {
         `}
       </style>
       <div className="module-data-section p-3">
-        <div className="card mt-3 pb-4 mx-4">
+        <div className="card mt-4 pb-4 mx-4">
           <div className="card-header3">
             <h3 className="card-title">Project Details</h3>
             <div className="card-body">

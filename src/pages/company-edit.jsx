@@ -113,9 +113,9 @@ const CompanyEdit = () => {
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
           <form onSubmit={handleSubmit}>
-            <div className="card mt-3 pb-4 mx-4">
+            <div className="card mt-4 pb-4 mx-4">
               <div className="card-header">
-                <h3 className="card-title">Company Edit</h3>
+                <h3 className="card-title">Edit Company</h3>
               </div>
               <div className="card-body">
                 <div className="row">

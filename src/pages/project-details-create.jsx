@@ -69,44 +69,169 @@ const ProjectDetailsCreate = () => {
 
   const Navigate = useNavigate();
 
-  const handleFileChange = (e, fieldName) => {
+  const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_BROCHURE_SIZE = 20 * 1024 * 1024; // 20MB
+
+// Format file size to human-readable format
+const formatFileSize = (bytes) => {
+  if (bytes < 1024) return bytes + ' B';
+  else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+  else if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+};
+
+// Function to check file size
+const isFileSizeValid = (file, maxSize) => {
+  if (file.size > maxSize) {
+    return {
+      valid: false,
+      name: file.name,
+      size: formatFileSize(file.size)
+    };
+  }
+  return { valid: true };
+};
+
+
+const handleFileChange = (e, fieldName) => {
+  if (fieldName === "image") {
     const files = Array.from(e.target.files);
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
-    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
+    const validTypeFiles = files.filter((file) => allowedTypes.includes(file.type));
 
-    if (validFiles.length !== files.length) {
+    if (validTypeFiles.length !== files.length) {
       toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
       e.target.value = "";
+      return;
+    }
+    
+    // Check file size
+    const file = validTypeFiles[0];
+    const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
+    
+    if (!sizeCheck.valid) {
+      toast.error(`Image file too large: ${sizeCheck.name} (${sizeCheck.size}). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`);
+      e.target.value = ''; // Reset input
       return;
     }
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      image: validFiles[0],
+      image: file,
     }));
-  };
+  }
+};
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
-
+  
     if (type === "file") {
       if (name === "brochure") {
+        const file = files[0];
+        const sizeCheck = isFileSizeValid(file, MAX_BROCHURE_SIZE);
+        
+        if (!sizeCheck.valid) {
+          toast.error(`Brochure file too large: ${sizeCheck.name} (${sizeCheck.size}). Maximum allowed size is ${formatFileSize(MAX_BROCHURE_SIZE)}.`);
+          e.target.value = ''; // Reset input
+          return;
+        }
+        
         setFormData((prev) => ({
           ...prev,
-          brochure: files[0],
+          brochure: file,
         }));
       } else if (name === "two_d_images") {
         const newImages = Array.from(files);
-        setFormData((prev) => ({
-          ...prev,
-          two_d_images: [...prev.two_d_images, ...newImages],
-        }));
+        const validImages = [];
+        const tooLargeFiles = [];
+        
+        newImages.forEach(file => {
+          const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
+          if (!sizeCheck.valid) {
+            tooLargeFiles.push(sizeCheck);
+          } else {
+            validImages.push(file);
+          }
+        });
+        
+        if (tooLargeFiles.length > 0) {
+          const fileList = tooLargeFiles.map(f => `${f.name} (${f.size})`).join(', ');
+          toast.error(`Image file(s) too large: ${fileList}. Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)} per file.`, {
+            duration: 5000,
+          });
+          
+          if (tooLargeFiles.length === newImages.length) {
+            e.target.value = ''; // Reset input if all files are invalid
+            return;
+          }
+        }
+        
+        if (validImages.length > 0) {
+          setFormData((prev) => ({
+            ...prev,
+            two_d_images: [...prev.two_d_images, ...validImages],
+          }));
+        }
       } else if (name === "videos") {
         const newVideos = Array.from(files);
-        setFormData((prev) => ({
-          ...prev,
-          videos: [...prev.videos, ...newVideos],
+        const validVideos = [];
+        const tooLargeFiles = [];
+        
+        newVideos.forEach(file => {
+          const sizeCheck = isFileSizeValid(file, MAX_VIDEO_SIZE);
+          if (!sizeCheck.valid) {
+            tooLargeFiles.push(sizeCheck);
+          } else {
+            validVideos.push(file);
+          }
+        });
+        
+        if (tooLargeFiles.length > 0) {
+          const fileList = tooLargeFiles.map(f => `${f.name} (${f.size})`).join(', ');
+          toast.error(`Video file(s) too large: ${fileList}. Maximum allowed size is ${formatFileSize(MAX_VIDEO_SIZE)} per file.`, {
+            duration: 5000,
+          });
+          
+          if (tooLargeFiles.length === newVideos.length) {
+            e.target.value = ''; // Reset input if all files are invalid
+            return;
+          }
+        }
+        
+        if (validVideos.length > 0) {
+          setFormData((prev) => ({
+            ...prev,
+            videos: [...prev.videos, ...validVideos],
+          }));
+        }
+      } else if (name === "image") {
+        const files = Array.from(e.target.files);
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+        
+        // First check file type
+        const validTypeFiles = files.filter((file) => allowedTypes.includes(file.type));
+        
+        if (validTypeFiles.length !== files.length) {
+          toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+          e.target.value = "";
+          return;
+        }
+        
+        // Then check file size
+        const file = validTypeFiles[0];
+        const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
+        
+        if (!sizeCheck.valid) {
+          toast.error(`Image file too large: ${sizeCheck.name} (${sizeCheck.size}). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`);
+          e.target.value = ''; // Reset input
+          return;
+        }
+        
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          image: file,
         }));
       }
     } else {

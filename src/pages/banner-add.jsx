@@ -189,7 +189,7 @@ const BannerAdd = () => {
       <div className="main-content">
         <div className="website-content overflow-hidden">
           <div className="module-data-section">
-            <div className="card mt-4 pb-2 mx-4">
+            <div className="card mt-4 pb-4 mx-4">
               <div className="card-header">
                 <h3 className="card-title">Create Banner</h3>
               </div>
