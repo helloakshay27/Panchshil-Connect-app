@@ -627,7 +627,9 @@ const EventEdit = () => {
                     </div>
                   </div>
                 </div>
-                <div className="row mt-2 justify-content-center">
+                
+              </div>
+              <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
                     <button
                       onClick={handleSubmit}
@@ -649,7 +651,6 @@ const EventEdit = () => {
                     </button>
                   </div>
                 </div>
-              </div>
             </div>
           </div>
         </div>

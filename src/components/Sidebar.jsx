@@ -685,7 +685,7 @@ const Sidebar = () => {
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
-                    fill="none"
+                    fill="none" 
                   >
                     <g
                       id="location-pin-3--navigation-map-maps-pin-gps-location"

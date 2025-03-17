@@ -93,12 +93,14 @@ const SpecificationUpdate = () => {
     <div className="main-content">
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
+        <form onSubmit={handleSubmit}>
           <div className="card mt-4 pb-4 mx-4">
+          
             <div className="card-header">
               <h3 className="card-title">Edit Specification</h3>
             </div>
             <div className="card-body">
-              <form onSubmit={handleSubmit}>
+              
                 <div className="row">
                   {/* Name Input */}
                   <div className="col-md-3">
@@ -145,7 +147,11 @@ const SpecificationUpdate = () => {
                 </div>
 
                 {/* Submit & Cancel Buttons */}
-                <div className="row mt-2 justify-content-center">
+                
+            </div>
+            
+          </div>
+          <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
                     <button
                       type="submit"
@@ -166,8 +172,6 @@ const SpecificationUpdate = () => {
                   </div>
                 </div>
               </form>
-            </div>
-          </div>
         </div>
       </div>
     </div>
