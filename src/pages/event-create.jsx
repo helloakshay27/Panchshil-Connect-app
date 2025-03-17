@@ -723,11 +723,11 @@ const EventCreate = () => {
                               type="radio"
                               name="is_important"
                               value="true"
-                              checked={formData.is_important == true}
-                              onChange={(e) =>
+                              checked={formData.is_important === true} // Ensure boolean comparison
+                              onChange={() =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  is_important: e.target.value, // Store "true" as string
+                                  is_important: true, // Store as boolean
                                 }))
                               }
                             />
@@ -739,11 +739,11 @@ const EventCreate = () => {
                               type="radio"
                               name="is_important"
                               value="false"
-                              checked={formData.is_important == false}
-                              onChange={(e) =>
+                              checked={formData.is_important === false} // Ensure boolean comparison
+                              onChange={() =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  is_important: e.target.value, // Store "false" as string
+                                  is_important: false, // Store as boolean
                                 }))
                               }
                             />
