@@ -57,6 +57,7 @@ import PressReleasesEdit from "./pages/press-releases-edit";
 import CompanyList from "./pages/company-list";
 import CompanyEdit from "./pages/company-edit";
 import OrganizationUpdate from "./pages/organization-update";
+import ProjectConfigEdit from "./pages/project-config-edit";
 
 // import EditGallery from './EditGallery';
 
@@ -153,6 +154,8 @@ function App() {
             path="/project-configuration"
             element={<ProjectConfiguraion />}
           />
+          <Route path="project-config-edit/:id"
+          element={<ProjectConfigEdit/>}/>
           <Route
             path="/project-configuration-list"
             element={<ProjectConfiguraionList />}

@@ -145,6 +145,9 @@ const Members = () => {
                 <Link to="/project-configuration">Project Configuraion</Link>
               </li>
               <li>
+                <Link to="/project-config-edit">Project Configuraion Edit</Link>
+              </li>
+              <li>
                 <Link to="/project-configuration-list">
                   Project Configuraion List
                 </Link>

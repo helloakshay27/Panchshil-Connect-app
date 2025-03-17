@@ -1,99 +1,158 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SingleSelect";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
-const ProjectConfiguraion = () => {
-  const [imagePreviews, setImagePreviews] = useState([]);
-   const [loading, setLoading] = useState(false);
+const ProjectConfiguration = () => {
+  const [iconPreview, setIconPreview] = useState(null); // ✅ Holds icon preview
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    attachment: [],
+    name: "",
+    active: "1", // ✅ Default: Active
+    icon: null, // ✅ New: Track icon separately
   });
-  const [seeAll, setSeeAll] = useState(false);
 
-  // file changes
-  const handleFileChange = (event) => {
-    const files = event.target.files;
-    const fileArray = Array.from(files).map((file) =>
-      URL.createObjectURL(file)
-    );
-    setImagePreviews((prevPreviews) => [...prevPreviews, ...fileArray]);
-
-    // Add files to formData
+  // Handle Icon Change
+  const handleIconChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFormData((prevData) => ({
+        ...prevData,
+        icon: file, // ✅ Save the selected file
+      }));
+      setIconPreview(URL.createObjectURL(file)); 
+    }
+  };
+ 
+  // Remove Icon
+  const handleRemoveIcon = () => {
     setFormData((prevData) => ({
       ...prevData,
-      attachment: [...prevData.attachment, ...files],
+      icon: null,
     }));
+    setIconPreview(null);
   };
 
-  // removing an image
-  const handleRemoveImage = (index) => {
-    setImagePreviews((prevPreviews) =>
-      prevPreviews.filter((_, i) => i !== index)
-    );
-    setFormData((prevData) => ({
-      ...prevData,
-      attachment: prevData.attachment.filter((_, i) => i !== index),
-    }));
+  // Handle Input Change
+  const handleInputChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // Log updated state of imagePreviews
-  useEffect(() => {
-    console.log(imagePreviews.length);
-  }, [imagePreviews]);
+  // Handle Form Submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (!formData.name.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    if (!formData.icon) {
+      toast.error("Icon is required");
+      return;
+    }
+
+    setLoading(true);
+    const formDataToSend = new FormData();
+    formDataToSend.append("configuration_setup[name]", formData.name);
+    formDataToSend.append("configuration_setup[active]", formData.active);
+    formDataToSend.append("configuration_setup[icon]", formData.icon);
+
+    try {
+      const response = await axios.post(
+        "https://panchshil-super.lockated.com/configuration_setups.json",
+        formDataToSend,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      toast.success("Project configuration created successfully!");
+      navigate("/project-configuration-list");
+    } catch (error) {
+      console.error("Submission failed:", error);
+      toast.error("Submission Failed!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="main-content">
         <div className="website-content overflow-auto">
           <div className="module-data-section container-fluid">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Project Configuraion</h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Name <span style={{ color: "#de7008" }}> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="name"
-                        placeholder="Enter Name"
-                      />
+            <form onSubmit={handleSubmit}>
+              <div className="card mt-4 pb-4 mx-4">
+                <div className="card-header">
+                  <h3 className="card-title">Project Configuration</h3>
+                </div>
+                <div className="card-body">
+                  <div className="row">
+                    {/* Name Field */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Name <span style={{ color: "#de7008" }}> *</span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          placeholder="Enter Name"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  {/* <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Status<span style={{ color: "#de7008" }}> *</span>
-                      </label>
-                      <SelectBox />
-                    </div>
-                  </div> */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Attachment <span style={{ color: "#de7008" }}> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        name="attachment"
-                        multiple
-                        onChange={handleFileChange}
-                      />
-                    </div>
-                  </div>
 
-                  <div className="row mt-3">
-                    {(seeAll ? imagePreviews : imagePreviews.slice(0, 3)).map(
-                      (preview, index) => (
-                        <div key={index} className="col-md-1 position-relative">
+                    {/* Active Status */}
+                    {/* <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Status <span style={{ color: "#de7008" }}> *</span>
+                        </label>
+                        <select
+                          className="form-control"
+                          name="active"
+                          value={formData.active}
+                          onChange={handleInputChange}
+                        >
+                          <option value="1">Active</option>
+                          <option value="0">Inactive</option>
+                        </select>
+                      </div>
+                    </div> */}
+
+                    {/* Icon Upload */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Icon <span style={{ color: "#de7008" }}> *</span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="icon"
+                          onChange={handleIconChange} // ✅ Handles only icon upload
+                        />
+                      </div>
+                    </div>
+
+                    {/* Icon Preview */}
+                    {iconPreview && (
+                      <div className="col-md-3 mt-2">
+                        <label>Preview:</label>
+                        <div className="position-relative">
                           <img
-                            src={preview}
-                            alt={`Preview ${index}`}
-                            className="img-thumbnail mt-2"
+                            src={iconPreview}
+                            alt="Icon Preview"
+                            className="img-thumbnail"
                             style={{
                               maxWidth: "100px",
                               maxHeight: "100px",
@@ -111,46 +170,31 @@ const ProjectConfiguraion = () => {
                               backgroundColor: "var(--red)",
                               color: "white",
                             }}
-                            onClick={() => handleRemoveImage(index)}
+                            onClick={handleRemoveIcon}
                           >
                             x
                           </button>
                         </div>
-                      )
-                    )}
-                    {imagePreviews.length > 3 && (
-                      <span
-                        className="mt-2"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => setSeeAll(!seeAll)}
-                      >
-                        {seeAll ? "See Less" : "See All"}
-                      </span>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="row mt-2 justify-content-center">
-        <div className="col-md-2">
-          <button
-            //onClick={handleSubmit}
-            className="purple-btn2 w-100"
-            disabled={loading}
-          >
-            Submit
-          </button>
-        </div>
-        <div className="col-md-2">
-          <button
-            type="button"
-            //onClick={handleCancel}
-            className="purple-btn2 w-100"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
+
+              {/* Submit & Cancel Buttons */}
+              <div className="row mt-2 justify-content-center">
+                <div className="col-md-2">
+                  <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                    {loading ? "Submitting..." : "Submit"}
+                  </button>
+                </div>
+                <div className="col-md-2">
+                  <button type="button" className="purple-btn2 w-100" onClick={() => navigate(-1)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -158,4 +202,4 @@ const ProjectConfiguraion = () => {
   );
 };
 
-export default ProjectConfiguraion;
+export default ProjectConfiguration;
