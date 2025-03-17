@@ -1049,24 +1049,47 @@ const ProjectDetailsEdit = () => {
               </div>
 
               <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Land UOM
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="number"
-                    name="land_uom"
-                    placeholder="Enter Land UOM"
-                    value={formData.land_uom}
-                    onChange={handleChange}
+                             <div className="form-group">
+                               <label>
+                                 Land UOM
+                                 <span style={{ color: "#de7008", fontSize: "16px" }}>
+                                   {" "}
+                                   *
+                                 </span>
+                               </label>
+                               <SelectBox
+                                 options={[
+                                   { value: "Square Meter", label: "Square Meter" },
+                                   {
+                                     value: "Square Feet",
+                                     label: "Square Feet",
+                                   },
+                                   {
+                                     value: "Acre",
+                                     label: "Acre",
+                                   },
+                                   { value: "Hectare", label: "Hectare" },
+                                   { value: "Yard", label: "Yard" },
+                                   {
+                                     value: "Guntha",
+                                     label: "Guntha",
+                                   },
+                                   { value: "Bigha", label: "Bigha" },
+                                   { value: "Kanal", label: "Kanal" },
+                                   { value: "Marla", label: "Marla" },
+                                   { value: "Cent", label: "Cent" },
+                                   { value: "Ropani", label: "Ropani" },
+                                 ]}
+                                 defaultValue={formData.land_uom}
+                    onChange={(selectedOption) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        land_uom: selectedOption,
+                      }))
+                    }
                   />
-                </div>
-              </div>
+                             </div>
+                           </div>
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">

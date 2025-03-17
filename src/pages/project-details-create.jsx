@@ -1136,13 +1136,36 @@ const handleFileChange = (e, fieldName) => {
                       *
                     </span>
                   </label>
-                  <input
-                    className="form-control"
-                    type="number"
-                    name="land_uom"
-                    placeholder="Enter Land UOM"
-                    value={formData.land_uom}
-                    onChange={handleChange}
+                  <SelectBox
+                    options={[
+                      { value: "Square Meter", label: "Square Meter" },
+                      {
+                        value: "Square Feet",
+                        label: "Square Feet",
+                      },
+                      {
+                        value: "Acre",
+                        label: "Acre",
+                      },
+                      { value: "Hectare", label: "Hectare" },
+                      { value: "Yard", label: "Yard" },
+                      {
+                        value: "Guntha",
+                        label: "Guntha",
+                      },
+                      { value: "Bigha", label: "Bigha" },
+                      { value: "Kanal", label: "Kanal" },
+                      { value: "Marla", label: "Marla" },
+                      { value: "Cent", label: "Cent" },
+                      { value: "Ropani", label: "Ropani" },
+                    ]}
+                    value={formData?.land_uom || ""}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        land_uom: value,
+                      }))
+                    }
                   />
                 </div>
               </div>
