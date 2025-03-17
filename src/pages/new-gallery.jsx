@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import SelectBox from "../components/base/SingleSelect";
+import SelectBox from "../components/base/SelectBox";
+
 import { toast } from "react-hot-toast";
 
 const NewGallery = () => {
@@ -9,6 +10,7 @@ const NewGallery = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
+
   const [imagePreviews, setImagePreviews] = useState([]);
   const [seeAll, setSeeAll] = useState(false);
 
@@ -28,7 +30,8 @@ const NewGallery = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/galleries/${id}.json`
+          `https://panchshil-super.lockated.com/galleries/get_galleries/${id}.json`
+          
         );
         const data = response.data;
 
@@ -97,6 +100,23 @@ const NewGallery = () => {
       }));
     }
   };
+  const handleRemoveImage = (index) => {
+    setImagePreviews((prevPreviews) =>
+      prevPreviews.filter((_, i) => i !== index)
+    );
+
+    setFormData((prevData) => {
+      // Create a new FileList-like array without the removed file
+      const updatedAttachments = [...prevData.attachment].filter(
+        (_, i) => i !== index
+      );
+
+      return {
+        ...prevData,
+        attachment: updatedAttachments, // Update the attachment list
+      };
+    });
+  };
 
   const validateForm = () => {
     let errors = {};
@@ -132,9 +152,7 @@ const NewGallery = () => {
 
     if (formData.attachment.length > 0) {
       formData.attachment.forEach((file) => {
-
         data.append("gallery[gallery_image][]", file);
-
       });
     }
 
@@ -181,7 +199,7 @@ const NewGallery = () => {
                           value: proj.id,
                           label: proj.project_name,
                         }))}
-                        value={formData.projectId} // ✅ Use value, not defaultValue
+                        value={formData.projectId} 
                         onChange={(value) =>
                           setFormData((prev) => ({
                             ...prev,
@@ -223,6 +241,7 @@ const NewGallery = () => {
                   </div>
 
                   {/* Attachment */}
+                  {/* Attachment */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Attachment</label>
@@ -233,6 +252,42 @@ const NewGallery = () => {
                         multiple
                         onChange={handleInputChange}
                       />
+
+                      {/* Image Previews */}
+                      {imagePreviews.length > 0 && (
+                        <div className="mt-2 d-flex flex-wrap">
+                          {imagePreviews.map((src, index) => (
+                            <div key={index} className="position-relative me-2">
+                              <img
+                                src={src}
+                                alt={`Preview ${index}`}
+                                 className="img-thumbnail mt-2"
+                                 style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                              {/* Discard Button */}
+                              <button
+                                type="button"
+                               className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                                style={{
+                                  top: 2,
+                                  right: -5,
+                                  height: 20,
+                                  width: 20,
+                                  backgroundColor: "var(--red)",
+                                  color: "white",
+                                }}
+                                onClick={() => handleRemoveImage(index)}
+                              >
+                                ✖
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
