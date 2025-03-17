@@ -63,14 +63,14 @@ const ProjectConfiguraion = () => {
                       />
                     </div>
                   </div>
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Status<span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <SelectBox />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>

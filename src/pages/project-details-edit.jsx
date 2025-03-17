@@ -252,24 +252,78 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-  const handleDiscardFile = (type, index) => {
-    if (type === "brochure") {
-      setFormData((prev) => ({
-        ...prev,
-        brochure: null,
-      }));
-    } else if (type === "two_d_images") {
-      setFormData((prev) => ({
-        ...prev,
-        two_d_images: prev.two_d_images.filter((_, i) => i !== index),
-      }));
-    } else if (type === "videos") {
-      setFormData((prev) => ({
-        ...prev,
-        videos: prev.videos.filter((_, i) => i !== index),
-      }));
+  const handleDiscardFile = async (key, index) => {
+    const image = formData[key][index]; // Get the selected image
+    if (!image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+  
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_twoD_image/${image.id}.json`, 
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete image");
+      }
+  
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+  
+      console.log(`Image with ID ${image.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
     }
   };
+
+  const handleFileDiscard = async (key, index) => {
+    const videos = formData[key][index]; // Get the selected image
+    if (!videos.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+  
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_videos/${videos.id}.json`, 
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
+      }
+  
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+  
+      console.log(`Image with ID ${videos.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
+  };
+  
 
   const validateForm = (formData) => {
     const errors = [];
@@ -1322,13 +1376,14 @@ const ProjectDetailsEdit = () => {
                           </td>
 
                           <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handleDiscardFile("brochure")}
-                            >
-                              x
-                            </button>
+                          <button
+  type="button"
+  className="purple-btn2"
+  onClick={() => handleDiscardFile("two_d_images", index)}
+>
+  x
+</button>
+
                           </td>
                         </tr>
                       )}
@@ -1499,7 +1554,7 @@ const ProjectDetailsEdit = () => {
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() => handleDiscardFile("videos", index)}
+                              onClick={() => handleFileDiscard("videos", index)}
                             >
                               x
                             </button>
