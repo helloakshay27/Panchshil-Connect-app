@@ -7,12 +7,24 @@ import { toast } from "react-hot-toast";
 const Amenities = () => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null); // ✅ Preview state
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
-    setIcon(e.target.files[0]);
+    const file = e.target.files[0];
+    setIcon(file);
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result); // ✅ Set preview
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewImage(null); // Clear preview if no file is selected
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -46,6 +58,7 @@ const Amenities = () => {
       toast.success("Amenity added successfully");
       setName("");
       setIcon(null);
+      setPreviewImage(null); // ✅ Reset preview
       navigate("/amenities-list");
     } catch (err) {
       toast.error(`Error adding amenity: ${err.message}`);
@@ -55,37 +68,36 @@ const Amenities = () => {
   };
 
   const validateForm = () => {
-    // If both fields are empty, show a single error message
     if (!name.trim() && !icon) {
       toast.dismiss();
       toast.error("Please fill in all the required fields.");
       return false;
     }
-  
-    // Check Name
     if (!name.trim()) {
       toast.dismiss();
       toast.error("Name is mandatory");
-      return false; // Stop validation if this field is empty
+      return false;
     }
-  
-    // Check Icon (Attachment)
     if (!icon) {
       toast.dismiss();
       toast.error("Icon is mandatory");
       return false;
     }
-  
-    return true; // Return true if all validations pass
+    return true;
   };
-  
 
   const handleCancel = () => {
     setName("");
     setIcon(null);
+    setPreviewImage(null); // ✅ Reset preview
     navigate(-1);
     toast.success("Action cancelled");
   };
+  const handleRemoveIcon = () => {
+    setIcon(null);
+    setPreviewImage(null);
+  };
+  
 
   return (
     <>
@@ -123,16 +135,45 @@ const Amenities = () => {
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             *
                           </span>
-                          <span />
                         </label>
                         <input
                           className="form-control"
                           type="file"
                           accept=".png,.jpg,.jpeg,.svg"
-                          placeholder="Default input"
                           onChange={handleFileChange}
                         />
                       </div>
+                      {/* ✅ Preview Image Section */}
+                      {previewImage && (
+                        <div className="mt-2">
+                          <img
+                            src={previewImage}
+                            alt="Uploaded Preview"
+                            className="img-fluid rounded"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                              border: "1px solid #ccc",
+                              padding: "5px",
+                            }}
+                          />
+                          <button
+                            type="button"
+                            className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                            style={{
+                              height: 20,
+                              width: 20,
+                              
+                              backgroundColor: "var(--red)",
+                              color: "white",
+                            }}
+                            onClick={handleRemoveIcon}
+                          >
+                            x
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
