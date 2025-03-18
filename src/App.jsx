@@ -58,6 +58,7 @@ import CompanyList from "./pages/company-list";
 import CompanyEdit from "./pages/company-edit";
 import OrganizationUpdate from "./pages/organization-update";
 import ProjectConfigEdit from "./pages/project-config-edit";
+import EnquiryList from "./pages/Enquiry-list";
 
 // import EditGallery from './EditGallery';
 
