@@ -114,6 +114,7 @@ function App() {
           <Route path="/specification" element={<Specification />} />
           <Route path="/organization-create" element={<OrganizationCreate />} />
           <Route path="/organization-list" element={<OrganizationList />} />
+          <Route path="/enquiry-list" element={<EnquiryList />} />
           <Route
             path="/organization-update/:id"
             element={<OrganizationUpdate />}

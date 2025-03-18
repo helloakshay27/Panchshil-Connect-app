@@ -69,7 +69,7 @@ const ProjectDetailsCreate = () => {
 
   const Navigate = useNavigate();
 
-  const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
+const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_BROCHURE_SIZE = 20 * 1024 * 1024; // 20MB
 
@@ -275,126 +275,129 @@ const handleFileChange = (e, fieldName) => {
     }
   };
   const validateForm = (formData) => {
-    const errors = [];
+    // Clear previous toasts
+    toast.dismiss();
+  
     if (!formData.Property_Type) {
-      errors.push("Property Type is required.");
-      return errors;
+      toast.error("Property Type is required.");
+      return false;
     }
     if (!formData.building_type) {
-      errors.push("Building Type is required.");
-      return errors;
+      toast.error("Building Type is required.");
+      return false;
     }
     if (!formData.Project_Construction_Status) {
-      errors.push("Construction Status is required.");
-      return errors;
+      toast.error("Construction Status is required.");
+      return false;
     }
     if (!formData.Configuration_Type.length) {
-      errors.push("Configuration Type is required.");
-      return errors;
+      toast.error("Configuration Type is required.");
+      return false;
     }
     if (!formData.Project_Name) {
-      errors.push("Project Name is required.");
-      return errors;
+      toast.error("Project Name is required.");
+      return false;
     }
     if (!formData.project_address) {
-      errors.push("Location is required.");
-      return errors;
+      toast.error("Location is required.");
+      return false;
     }
     if (!formData.Project_Description) {
-      errors.push("Project Description is required.");
-      return errors;
+      toast.error("Project Description is required.");
+      return false;
     }
     if (!formData.Price_Onward) {
-      errors.push("Price Onward is required.");
-      return errors;
+      toast.error("Price Onward is required.");
+      return false;
     }
     if (!formData.Project_Size_Sq_Mtr) {
-      errors.push("Project Size (Sq. Mtr.) is required.");
-      return errors;
+      toast.error("Project Size (Sq. Mtr.) is required.");
+      return false;
     }
     if (!formData.Project_Size_Sq_Ft) {
-      errors.push("Project Size (Sq. Ft.) is required.");
-      return errors;
+      toast.error("Project Size (Sq. Ft.) is required.");
+      return false;
     }
     if (!formData.development_area_sqmt) {
-      errors.push("Development_area_sqmt is required.");
-      return errors;
+      toast.error("Development Area (Sq. Mtr.) is required.");
+      return false;
     }
     if (!formData.development_area_sqft) {
-      errors.push("Development_area_sqft is required.");
-      return errors;
+      toast.error("Development Area (Sq. Ft.) is required.");
+      return false;
     }
     if (!formData.Rera_Carpet_Area_Sq_M) {
-      errors.push("RERA Carpet Area (Sq. M) is required.");
-      return errors;
+      toast.error("RERA Carpet Area (Sq. M) is required.");
+      return false;
     }
     if (!formData.Rera_Carpet_Area_sqft) {
-      errors.push("RERA Carpet Area (Sq. Ft.) is required.");
-      return errors;
+      toast.error("RERA Carpet Area (Sq. Ft.) is required.");
+      return false;
     }
     if (!formData.Number_Of_Towers) {
-      errors.push("Number of Towers is required.");
-      return errors;
+      toast.error("Number of Towers is required.");
+      return false;
     }
     if (!formData.no_of_floors) {
-      errors.push("Number of Floors is required.");
-      return errors;
+      toast.error("Number of Floors is required.");
+      return false;
     }
     if (!formData.Number_Of_Units) {
-      errors.push("Number of Units is required.");
-      return errors;
+      toast.error("Number of Units is required.");
+      return false;
     }
     if (!formData.Rera_Number) {
-      errors.push("RERA Number is required.");
-      return errors;
+      toast.error("RERA Number is required.");
+      return false;
     }
     if (!formData.Amenities.length) {
-      errors.push("Amenities are required.");
-      return errors;
+      toast.error("Amenities are required.");
+      return false;
     }
     if (!formData.Land_Area) {
-      errors.push("Land Area is required.");
-      return errors;
+      toast.error("Land Area is required.");
+      return false;
     }
     if (!formData.land_uom) {
-      errors.push("Land UOM is required.");
-      return errors;
+      toast.error("Land UOM is required.");
+      return false;
     }
     if (!formData.Address || !formData.Address.address_line_1) {
-      errors.push("Address Line 1 is required.");
-      return errors;
+      toast.error("Address Line 1 is required.");
+      return false;
     }
     if (!formData.Address || !formData.Address.city) {
-      errors.push("City is required.");
-      return errors;
+      toast.error("City is required.");
+      return false;
     }
     if (!formData.Address || !formData.Address.state) {
-      errors.push("State is required.");
-      return errors;
+      toast.error("State is required.");
+      return false;
     }
     if (!formData.Address || !formData.Address.pin_code) {
-      errors.push("Pin Code is required.");
-      return errors;
+      toast.error("Pin Code is required.");
+      return false;
     }
     if (!formData.Address || !formData.Address.country) {
-      errors.push("Country is required.");
-      return errors;
+      toast.error("Country is required.");
+      return false;
     }
     if (!formData.brochure) {
-      errors.push("Brochure is required.");
-      return errors;
+      toast.error("Brochure is required.");
+      return false;
     }
     if (formData.two_d_images.length === 0) {
-      errors.push("At least one 2D image is required.");
-      return errors;
+      toast.error("At least one 2D image is required.");
+      return false;
     }
     if (formData.videos.length === 0) {
-      errors.push("At least one video is required.");
-      return errors;
+      toast.error("At least one video is required.");
+      return false;
     }
-
-    return errors;
+  
+    return true;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -482,11 +485,11 @@ const handleFileChange = (e, fieldName) => {
     } catch (error) {
       console.error("Error submitting the form:", error);
   
-      if (!errorToastRef.current) {
-        errorToastRef.current = toast.error("Failed to submit the form. Please try again.", {
-          toastId: "errorToast",
-        });
-      }
+      // if (!errorToastRef.current) {
+      //   errorToastRef.current = toast.error("Failed to submit the form. Please try again.", {
+      //     toastId: "errorToast",
+      //   });
+      // }
   
       setTimeout(() => {
         errorToastRef.current = null;
@@ -1641,7 +1644,7 @@ const handleFileChange = (e, fieldName) => {
           <button
             onClick={handleSubmit}
             className="purple-btn2 w-100"
-            disabled={loading}
+            //disabled={loading}
           >
             Submit
           </button>

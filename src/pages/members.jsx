@@ -152,6 +152,11 @@ const Members = () => {
                   Project Configuraion List
                 </Link>
               </li>
+              <li>
+                <Link to="/enquiry-list">
+                    Enquiry List
+                </Link>
+              </li>
               <li className="pb-5">{/* add above this li */}</li>
             </ul>
           </div>

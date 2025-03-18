@@ -188,7 +188,7 @@ const validateForm = () => {
   }
   
   if (!formData.pr_image || formData.pr_image.length === 0) {
-    newErrors.pr_image = "Attachment (Image) is mandatory";
+    newErrors.pr_image = "";
     setErrors(newErrors);
     toast.dismiss();
     toast.error("Attachment (Image) is mandatory");
@@ -196,7 +196,7 @@ const validateForm = () => {
   }
   
   if (!formData.pr_pdf || formData.pr_pdf.length === 0) {
-    newErrors.pr_pdf = "Attachment (PDF) is mandatory";
+    newErrors.pr_pdf = "";
     setErrors(newErrors);
     toast.dismiss();
     toast.error("Attachment (PDF) is mandatory");

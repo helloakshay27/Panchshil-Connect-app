@@ -39,18 +39,14 @@ const ProjectDetailsList = () => {
 
   const navigate = useNavigate();
 
-  const fetchProjects = async (searchTerm = "") => {
+  const fetchProjects = async () => {
     setLoading(true);
-    // const token = "ZGehSTAEWJ728O8k2DZHr3t2wpdpngrH7n8KFN5s6x4"; // Replace with your actual token
-    const url = " https://panchshil-super.lockated.com/get_projects_all.json";
+    const url = "https://panchshil-super.lockated.com/get_projects_all.json";
 
     try {
       const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-        params: {
-          "q[Project_Name_cont]": searchTerm, // Passing search query
         },
       });
       const projectsData = response.data?.projects || [];
@@ -72,37 +68,49 @@ const ProjectDetailsList = () => {
   useEffect(() => {
     fetchProjects();
   }, []);
-  console.log(projects);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
+    setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    fetchProjects(searchQuery);
+    // Instead of fetching new data, we'll update the URL params like BannerList
+    const params = new URLSearchParams();
+    if (searchQuery) {
+      params.set("s[name_cont]", searchQuery);
+    }
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
   };
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= pagination.total_pages) {
-      // Update the current page in state and fetch new data if needed
       setPagination({
         ...pagination,
         current_page: pageNumber,
       });
       localStorage.setItem("project_details_list_currentPage", pageNumber);
-      // Optional: Fetch the data for the new page if required
     }
   };
 
-  const pageNumbers = [...Array(pagination.total_pages).keys()].map(
-    (i) => i + 1
-  );
+  // Filter projects based on search query (client-side filtering like BannerList)
+  const filteredProjects = searchQuery
+    ? projects.filter((project) =>
+        (project.project_name?.toLowerCase() || "").includes(
+          searchQuery.toLowerCase()
+        )
+      )
+    : projects;
 
-  const displayedProjects = projects.slice(
+  // Update pagination based on filtered results
+  const totalFilteredPages = Math.ceil(filteredProjects.length / pageSize);
+
+  // Get the current page of projects to display
+  const displayedProjects = filteredProjects.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
-  ); // Sort projects by ID (ascending)
+  );
 
   return (
     <>
@@ -197,15 +205,11 @@ const ProjectDetailsList = () => {
                         <thead>
                           <tr>
                             <th>Sr No</th>
-
                             <th>Project Name</th>
-
                             <th>Property Type</th>
                             <th>SFDC Project ID</th>
                             <th>Project Construction Status</th>
                             <th>Configuration Type</th>
-                            {/* <th>Location</th>
-                    <th>Project Description</th> */}
                             <th>Price Onward</th>
                             <th>Project Size (Sq. Mtr)</th>
                             <th>Project Size (Sq. Ft)</th>
@@ -254,14 +258,6 @@ const ProjectDetailsList = () => {
                                   : "No Configuration Type"}
                               </td>
 
-                              {/* <td>
-                        {project?.location
-                          ? `${project.location}, ${
-                              project.location || "N/A"
-                            }, ${project.location || "N/A"}`
-                          : "N/A"}
-                      </td>
-                      <td>{project?.project_description || "N/A"}</td> */}
                               <td>{project?.price || "N/A"}</td>
                               <td>{project?.project_size_sq_mtr || "N/A"}</td>
                               <td>{project?.project_size_sq_ft || "N/A"}</td>
@@ -341,7 +337,6 @@ const ProjectDetailsList = () => {
                   )}
 
                   {/* Pagination */}
-
                   <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                     {/* Pagination Section */}
                     <ul className="pagination">
@@ -379,7 +374,9 @@ const ProjectDetailsList = () => {
 
                       {/* Page Number Buttons */}
                       {Array.from(
-                        { length: pagination.total_pages },
+                        {
+                          length: Math.ceil(filteredProjects.length / pageSize),
+                        },
                         (_, index) => index + 1
                       ).map((page) => (
                         <li
@@ -400,7 +397,7 @@ const ProjectDetailsList = () => {
                       {/* Next Page Button */}
                       <li
                         className={`page-item ${
-                          pagination.current_page === pagination.total_pages
+                          pagination.current_page === totalFilteredPages
                             ? "disabled"
                             : ""
                         }`}
@@ -411,7 +408,7 @@ const ProjectDetailsList = () => {
                             handlePageChange(pagination.current_page + 1)
                           }
                           disabled={
-                            pagination.current_page === pagination.total_pages
+                            pagination.current_page === totalFilteredPages
                           }
                         >
                           Next
@@ -421,18 +418,16 @@ const ProjectDetailsList = () => {
                       {/* Last Page Button */}
                       <li
                         className={`page-item ${
-                          pagination.current_page === pagination.total_pages
+                          pagination.current_page === totalFilteredPages
                             ? "disabled"
                             : ""
                         }`}
                       >
                         <button
                           className="page-link"
-                          onClick={() =>
-                            handlePageChange(pagination.total_pages)
-                          }
+                          onClick={() => handlePageChange(totalFilteredPages)}
                           disabled={
-                            pagination.current_page === pagination.total_pages
+                            pagination.current_page === totalFilteredPages
                           }
                         >
                           Last
@@ -444,16 +439,18 @@ const ProjectDetailsList = () => {
                     <div>
                       <p>
                         Showing{" "}
-                        {Math.min(
-                          (pagination.current_page - 1) * 10 + 1,
-                          pagination.total_count
-                        )}{" "}
+                        {filteredProjects.length > 0
+                          ? Math.min(
+                              (pagination.current_page - 1) * pageSize + 1,
+                              filteredProjects.length
+                            )
+                          : 0}{" "}
                         to{" "}
                         {Math.min(
-                          pagination.current_page * 10,
-                          pagination.total_count
+                          pagination.current_page * pageSize,
+                          filteredProjects.length
                         )}{" "}
-                        of {pagination.total_count} entries
+                        of {filteredProjects.length} entries
                       </p>
                     </div>
                   </div>
