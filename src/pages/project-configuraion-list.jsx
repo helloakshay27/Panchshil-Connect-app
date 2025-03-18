@@ -10,6 +10,7 @@ const ProjectConfigurationList = () => {
   const [configurations, setConfigurations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // ✅ Added search state
   const navigate = useNavigate();
 
   const [pagination, setPagination] = useState({
@@ -62,9 +63,13 @@ const ProjectConfigurationList = () => {
       setError("Failed to update status");
     }
   };
+  const filteredConfigurations = configurations.filter((config) =>
+    config.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const totalPages = pagination.total_pages;
-  const paginatedData = configurations.slice(
+  const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
+
+  const paginatedData = filteredConfigurations.slice(
     (pagination.current_page - 1) * itemsPerPage,
     pagination.current_page * itemsPerPage
   );
@@ -80,7 +85,29 @@ const ProjectConfigurationList = () => {
                   type="text"
                   className="form-control tbl-search table_search"
                   placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
+                <div className="input-group-append">
+                  <button type="submit" className="btn btn-md btn-default">
+                    <svg
+                      width={16}
+                      height={16}
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"
+                        fill="#8B0203"
+                      />
+                      <path
+                        d="M14.6676 14.5644C14.5409 14.5644 14.4143 14.5206 14.3143 14.4269L12.9809 13.1769C12.7876 12.9956 12.7876 12.6956 12.9809 12.5144C13.1743 12.3331 13.4943 12.3331 13.6876 12.5144L15.0209 13.7644C15.2143 13.9456 15.2143 14.2456 15.0209 14.4269C14.9209 14.5206 14.7943 14.5644 14.6676 14.5644Z"
+                        fill="#8B0203"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
             <div className="card-tools mt-1">
@@ -201,7 +228,7 @@ const ProjectConfigurationList = () => {
                             <td>
                               {/* Edit Icon */}
                               <a
-                                href={`/project-config-edit/${config.id}`} 
+                                href={`/project-config-edit/${config.id}`}
                                 className="me-2"
                               >
                                 <svg

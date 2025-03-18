@@ -1,55 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SelectBox from "../components/base/SelectBox";
-
 import { toast } from "react-hot-toast";
 
 const NewGallery = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
-
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [seeAll, setSeeAll] = useState(false);
-
+  
   const [formData, setFormData] = useState({
     galleryType: "",
     projectId: "",
     name: "",
     title: "",
-    gallery_image: null,
+    attachment: [],
   });
-
-  // Fetch Gallery Data if Editing
-  useEffect(() => {
-    if (!id) return;
-
-    const fetchGallery = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `https://panchshil-super.lockated.com/galleries/get_galleries/${id}.json`
-          
-        );
-        const data = response.data;
-
-        setFormData({
-          galleryType: data?.gallery_type_id || "",
-          projectId: data?.project_id || "",
-          name: data?.name || "",
-          title: data?.title || "",
-        });
-      } catch (error) {
-        console.error("Error fetching gallery:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGallery();
-  }, [id]);
 
   // Fetch Projects
   useEffect(() => {
@@ -66,8 +33,6 @@ const NewGallery = () => {
         );
 
         setProjects(response.data.projects || []);
-
-        // Ensure default project is set after projects are loaded
         setFormData((prev) => ({
           ...prev,
           projectId: prev.projectId || response.data.projects[0]?.id || "",
@@ -100,24 +65,20 @@ const NewGallery = () => {
       }));
     }
   };
+
+  // Remove Image Preview
   const handleRemoveImage = (index) => {
     setImagePreviews((prevPreviews) =>
       prevPreviews.filter((_, i) => i !== index)
     );
 
-    setFormData((prevData) => {
-      // Create a new FileList-like array without the removed file
-      const updatedAttachments = [...prevData.attachment].filter(
-        (_, i) => i !== index
-      );
-
-      return {
-        ...prevData,
-        attachment: updatedAttachments, // Update the attachment list
-      };
-    });
+    setFormData((prevData) => ({
+      ...prevData,
+      attachment: prevData.attachment.filter((_, i) => i !== index),
+    }));
   };
 
+  // Validate Form
   const validateForm = () => {
     let errors = {};
 
@@ -130,7 +91,7 @@ const NewGallery = () => {
     } else if (!formData.title.trim()) {
       errors.title = "Title is mandatory";
       toast.error("Title is mandatory");
-    } else if (!formData.attachment || formData.attachment.length === 0) {
+    } else if (!formData.attachment.length) {
       errors.attachment = "Gallery image is mandatory";
       toast.error("Gallery image is mandatory");
     }
@@ -138,6 +99,7 @@ const NewGallery = () => {
     return Object.keys(errors).length === 0;
   };
 
+  // Submit Form Data
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -150,11 +112,9 @@ const NewGallery = () => {
     data.append("gallery[name]", formData.name);
     data.append("gallery[title]", formData.title);
 
-    if (formData.attachment.length > 0) {
-      formData.attachment.forEach((file) => {
-        data.append("gallery[gallery_image][]", file);
-      });
-    }
+    formData.attachment.forEach((file) => {
+      data.append("gallery[gallery_image][]", file);
+    });
 
     try {
       await axios.post(
@@ -177,8 +137,6 @@ const NewGallery = () => {
     }
   };
 
-  const handleCancel = () => navigate(-1);
-
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
@@ -199,7 +157,7 @@ const NewGallery = () => {
                           value: proj.id,
                           label: proj.project_name,
                         }))}
-                        value={formData.projectId} 
+                        value={formData.projectId}
                         onChange={(value) =>
                           setFormData((prev) => ({
                             ...prev,
@@ -241,7 +199,6 @@ const NewGallery = () => {
                   </div>
 
                   {/* Attachment */}
-                  {/* Attachment */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Attachment</label>
@@ -261,8 +218,8 @@ const NewGallery = () => {
                               <img
                                 src={src}
                                 alt={`Preview ${index}`}
-                                 className="img-thumbnail mt-2"
-                                 style={{
+                                className="img-thumbnail mt-2"
+                                style={{
                                   maxWidth: "100px",
                                   maxHeight: "100px",
                                   objectFit: "cover",
@@ -271,7 +228,7 @@ const NewGallery = () => {
                               {/* Discard Button */}
                               <button
                                 type="button"
-                               className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                                className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
                                 style={{
                                   top: 2,
                                   right: -5,
@@ -297,20 +254,12 @@ const NewGallery = () => {
             {/* Submit Buttons */}
             <div className="row mt-3 justify-content-center">
               <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={loading}
-                >
+                <button type="submit" className="purple-btn2 w-100" disabled={loading}>
                   Submit
                 </button>
               </div>
               <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 w-100"
-                  onClick={handleCancel}
-                >
+                <button type="button" className="purple-btn2 w-100" onClick={() => navigate(-1)}>
                   Cancel
                 </button>
               </div>

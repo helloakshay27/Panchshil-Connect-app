@@ -136,7 +136,7 @@ const GalleryList = () => {
                         <th className="text-start">Title Name</th>
                         <th className="text-start">Project Name</th>
                         <th className="text-start">Created At</th>
-                        <th className="text-start">Image</th>
+                        {/* <th className="text-start">Image</th> */}
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -160,7 +160,7 @@ const GalleryList = () => {
                                 gallery.created_at
                               ).toLocaleDateString()}
                             </td>
-                            <td>
+                            {/* <td>
                               {gallery.attachfile?.document_url ? (
                                 <img
                                   src={gallery.attachfile.document_url}
@@ -170,7 +170,7 @@ const GalleryList = () => {
                               ) : (
                                 "No Image"
                               )}
-                            </td>
+                            </td> */}
                             <td style={{ textAlign: "left" }}>
                               <button
                                 className="btn btn-link"
