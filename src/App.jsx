@@ -129,11 +129,11 @@ function App() {
           <Route path="/sitevisit-list" element={<SitevisitList />} />
           <Route path="/sitevisit-edit/:id" element={<SitevisitEdit />} />
           <Route
-            path="/siteVisit-SlotConfig"
+            path="/siteslot-create"
             element={<SiteVisitSlotConfig />}
           />
           <Route
-            path="/siteVisit-SlotConfig-list"
+            path="/siteslot-list"
             element={<SiteVisitSlotConfigList />}
           />
           <Route path="/company-create" element={<CompanyCreate />} />

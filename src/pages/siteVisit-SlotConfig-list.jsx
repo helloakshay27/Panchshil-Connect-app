@@ -109,7 +109,7 @@ const SiteVisitSlotConfigList = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/siteVisit-SlotConfig")}
+                onClick={() => navigate("/siteslot-create")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
