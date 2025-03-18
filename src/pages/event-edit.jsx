@@ -148,8 +148,12 @@ const EventEdit = () => {
 
   const handleRadioChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value === "true", // Convert string to boolean
+    }));
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
