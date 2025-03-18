@@ -91,7 +91,7 @@ const Amenities = () => {
     setIcon(null);
     setPreviewImage(null); // ✅ Reset preview
     navigate(-1);
-    toast.success("Action cancelled");
+    // toast.success("Action cancelled");
   };
   const handleRemoveIcon = () => {
     setIcon(null);
