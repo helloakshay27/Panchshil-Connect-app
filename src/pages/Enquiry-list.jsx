@@ -49,6 +49,8 @@ const EnquiryList = () => {
     fetchEnquiries();
   }, []);
 
+  console.log("Enquiry Data:", enquiries);
+
 
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({
@@ -78,7 +80,9 @@ const EnquiryList = () => {
       params.set("s[name_cont]", searchQuery);
     }
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+    
   };
+  
 
   const startIndex = (pagination.current_page - 1) * pageSize;
   // const paginatedData = filteredSiteVisits.slice(
@@ -195,7 +199,7 @@ const EnquiryList = () => {
                         enquiries.map((enquiry, index) => (
                           <tr key={enquiry.id}>
                             <td>{index + 1}</td>
-                            <td>{enquiry.project}</td>
+                            <td>{enquiry.project?.project_name}</td>
                             <td>{enquiry.segment}</td>
                             <td>{enquiry.name}</td>
                             <td>{enquiry.mobile_number}</td>
