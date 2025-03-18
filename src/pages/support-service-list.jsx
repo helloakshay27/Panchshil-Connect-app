@@ -141,6 +141,7 @@ const SupportServiceList = () => {
                     <tbody>
                       {paginatedData.map((service, index) => (
                         <tr key={service.id}>
+                           <td>{startIndex + index + 1}</td> 
                           <td>{service.name}</td>
                           <td>{service.email}</td>
                           <td>{service.mobile_number}</td>

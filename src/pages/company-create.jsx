@@ -14,8 +14,7 @@ const CompanyCreate = () => {
     organizationId: "",
   });
 
-  // Fetch organizations from API
-
+  // Fetch Organizations
   useEffect(() => {
     setLoading(true);
     fetch("https://panchshil-super.lockated.com/organizations.json", {
@@ -26,82 +25,94 @@ const CompanyCreate = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Fetched organizations:", data); // Debugging
-        if (Array.isArray(data)) {
-          setOrganizations(data);
-        } else if (data && Array.isArray(data.organizations)) {
-          setOrganizations(data.organizations); // Adjust based on API response
+        if (Array.isArray(data.organizations)) {
+          setOrganizations(data.organizations);
         } else {
-          console.error("Unexpected data format:", data);
-          setOrganizations([]); // Prevent errors if data is not an array
+          setOrganizations([]);
         }
       })
       .catch((error) => {
         console.error("Error fetching organizations:", error);
+        toast.error("Failed to fetch organizations.");
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, []);
 
   // Handle Input Changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // Handle File Input
   const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, companyLogo: e.target.files[0] }));
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, companyLogo: file }));
+    }
+  };
+
+  // ✅ Validate Form Before Submission
+  const validateForm = () => {
+    if (!formData.companyName.trim()) {
+      toast.error("Company Name is required.");
+      return false;
+    }
+    if (!formData.companyLogo) {
+      toast.error("Company Logo is required.");
+      return false;
+    }
+    if (!formData.organizationId) {
+      toast.error("Organization ID is required.");
+      return false;
+    }
+    return true;
   };
 
   // Handle Form Submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
+// Handle Form Submission
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("company_setup[name]", formData.companyName);
-    formDataToSend.append(
-      "company_setup[organization_id]",
-      formData.organizationId
-    );
-    if (formData.companyLogo) {
-      formDataToSend.append("company_logo", formData.companyLogo);
-    }
+  // Dismiss existing toasts before showing a new one
+  toast.dismiss();
 
-    try {
-      console.log("Submitting form data:", Object.fromEntries(formDataToSend)); // Debugging
+  if (!validateForm()) return;
 
-      const response = await fetch(
-        "https://panchshil-super.lockated.com/company_setups.json",
-        {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
-          },
-          body: formDataToSend, // Send FormData directly
-        }
-      );
+  setSubmitting(true);
 
-      console.log("Response Status:", response.status); // Debugging
-      const responseData = await response.json();
-      console.log("Response Data:", responseData); // Debugging
+  const formDataToSend = new FormData();
+  formDataToSend.append("company_setup[name]", formData.companyName);
+  formDataToSend.append("company_setup[organization_id]", formData.organizationId);
+  formDataToSend.append("company_logo", formData.companyLogo);
 
-      if (response.ok) {
-        toast.success("Company created successfully!");
-        setFormData({ companyName: "", companyLogo: null, organizationId: "" });
-        navigate("/company-list");
-      } else {
-        toast.error("Failed to create company. Please try again.");
+  try {
+    const response = await fetch(
+      "https://panchshil-super.lockated.com/company_setups.json",
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
+        },
+        body: formDataToSend,
       }
-    } catch (error) {
-      console.error("Error submitting company:", error);
-      toast.error("Something went wrong.");
-    } finally {
-      setSubmitting(false);
+    );
+
+    if (response.ok) {
+      toast.success("Company created successfully!");
+      setFormData({ companyName: "", companyLogo: null, organizationId: "" });
+      navigate("/company-list");
+    } else {
+      const errorData = await response.json();
+      console.error("API Error:", errorData);
+      toast.error(errorData.message || "Failed to create company.");
     }
-  };
+  } catch (error) {
+    console.error("Error submitting company:", error);
+    toast.error("Something went wrong.");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div className="main-content">
@@ -114,14 +125,11 @@ const CompanyCreate = () => {
               </div>
               <div className="card-body">
                 <div className="row">
+                  {/* Company Name */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company Name
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        Company Name <span style={{ color: "red" }}>*</span>
                       </label>
                       <input
                         className="form-control"
@@ -130,44 +138,37 @@ const CompanyCreate = () => {
                         value={formData.companyName}
                         onChange={handleChange}
                         placeholder="Enter name"
-                        required
                       />
                     </div>
                   </div>
+
+                  {/* Company Logo */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company Logo
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        Company Logo <span style={{ color: "red" }}>*</span>
                       </label>
                       <input
                         className="form-control"
                         type="file"
                         onChange={handleFileChange}
-                        required
                         accept=".png,.jpg,.jpeg,.svg"
                       />
                     </div>
                   </div>
+
+                  {/* Organization ID */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Organization Id
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        Organization ID <span style={{ color: "red" }}>*</span>
                       </label>
                       <SelectBox
                         name="organizationId"
                         options={
                           loading
                             ? [{ value: "", label: "Loading..." }]
-                            : Array.isArray(organizations) &&
-                              organizations.length > 0
+                            : organizations.length > 0
                             ? organizations.map((org) => ({
                                 value: org.id,
                                 label: org.name,
@@ -178,13 +179,14 @@ const CompanyCreate = () => {
                         onChange={(value) =>
                           setFormData({ ...formData, organizationId: value })
                         }
-                        required
                       />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Submit & Cancel Buttons */}
             <div className="row mt-2 justify-content-center">
               <div className="col-md-2">
                 <button

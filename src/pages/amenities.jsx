@@ -55,35 +55,30 @@ const Amenities = () => {
   };
 
   const validateForm = () => {
-    let newErrors = {};
-
-    // If all fields are empty, show a single error message
+    // If both fields are empty, show a single error message
     if (!name.trim() && !icon) {
       toast.dismiss();
       toast.error("Please fill in all the required fields.");
       return false;
     }
-
+  
     // Check Name
     if (!name.trim()) {
-      newErrors.name = "Name is mandatory";
       toast.dismiss();
       toast.error("Name is mandatory");
+      return false; // Stop validation if this field is empty
     }
-
+  
     // Check Icon (Attachment)
     if (!icon) {
-      newErrors.icon = "Icon is mandatory";
       toast.dismiss();
       toast.error("Icon is mandatory");
+      return false;
     }
-
-    // Update errors state
-    setErrors(newErrors);
-
-    // If there are any errors, return false
-    return Object.keys(newErrors).length === 0;
+  
+    return true; // Return true if all validations pass
   };
+  
 
   const handleCancel = () => {
     setName("");

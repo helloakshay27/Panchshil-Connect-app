@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const SiteVisitSlotConfigList = () => {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
     current_page: 1,
     total_count: 0,
@@ -67,7 +68,14 @@ const SiteVisitSlotConfigList = () => {
     localStorage.setItem("siteSlotVisitCurrentPage", pageNumber);
   };
 
-  const displayedSlots = slots.slice(
+  const filteredSlots = slots.filter((slot) =>
+    (slot.project_name ? slot.project_name.toLowerCase() : "").includes(
+      searchQuery.toLowerCase()
+    )
+  );
+  
+
+  const displayedSlots = filteredSlots.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
@@ -83,6 +91,8 @@ const SiteVisitSlotConfigList = () => {
                   type="text"
                   className="form-control tbl-search table_search"
                   placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <div className="input-group-append">
                   <button type="submit" className="btn btn-md btn-default">
