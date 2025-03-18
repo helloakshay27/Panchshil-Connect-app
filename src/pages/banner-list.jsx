@@ -59,43 +59,32 @@ const BannerList = () => {
     }
   };
 
-  const filteredEvents = searchQuery
-    ? banners.filter((banner) =>
-        (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
-      )
-    : banners;
+  // Filter banners based on search query
+  const filteredBanners = banners.filter((banner) =>
+    searchQuery
+      ? (banner.title?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+      : true
+  ).sort((a, b) => (b.id || 0) - (a.id || 0)); // Sort in descending order by ID
 
-  const displayedBanners = filteredEvents
-    .sort((a, b) => (b.id || 0) - (a.id || 0))
-    .slice(
-      (pagination.current_page - 1) * pageSize,
-      pagination.current_page * pageSize
-    );
+  // Update pagination whenever filtered results change
+  useEffect(() => {
+    setPagination(prev => ({
+      ...prev,
+      total_count: filteredBanners.length,
+      total_pages: Math.ceil(filteredBanners.length / pageSize),
+      current_page: searchQuery ? 1 : prev.current_page // Reset to page 1 when searching
+    }));
+  }, [filteredBanners.length, pageSize, searchQuery]);
+
+  // Get current page's banners
+  const displayedBanners = filteredBanners.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
+  );
 
   useEffect(() => {
     const fetchBanners = async () => {
-      try {
-        const response = await axios.get(
-          "https://panchshil-super.lockated.com/banners.json"
-        );
-        setBanners(response.data.banners);
-        setPagination({
-          current_page: getPageFromStorage(),
-          total_count: response.data.banners.length, // Or use pagination data from API if available
-          total_pages: Math.ceil(response.data.banners.length / pageSize),
-        });
-        setLoading(false);
-      } catch (error) {
-        setError("Failed to fetch banners. Please try again later.");
-        setLoading(false);
-      }
-    };
-
-    fetchBanners();
-  }, []);
-
-  useEffect(() => {
-    const fetchBanners = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/banners.json",
@@ -106,15 +95,16 @@ const BannerList = () => {
           }
         );
         setBanners(response.data.banners);
+        setLoading(false);
       } catch (error) {
+        setError("Failed to fetch banners. Please try again later.");
         console.error("Error fetching banners:", error);
+        setLoading(false);
       }
     };
 
     fetchBanners();
   }, []);
-
-  console.log("data", banners);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -126,9 +116,10 @@ const BannerList = () => {
     }));
     localStorage.setItem("banner_list_currentPage", pageNumber);
   };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setPagination((prevState) => ({ ...prevState, current_page: 1 }));
+    // Pagination reset is now handled in the useEffect
   };
 
   const handleSearchSubmit = (event) => {
@@ -139,13 +130,6 @@ const BannerList = () => {
     }
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
   };
-
-  // const displayedBanners = banners
-  //   .slice(
-  //     (pagination.current_page - 1) * pageSize,
-  //     pagination.current_page * pageSize
-  //   )
-  //   .sort((a, b) => (b.id || 0) - (a.id || 0));
 
   return (
     <>
@@ -242,7 +226,6 @@ const BannerList = () => {
                       <thead>
                         <tr>
                           <th>Sr No</th>
-
                           <th>Site</th>
                           <th> Company Name</th>
                           <th>Title</th>
@@ -252,219 +235,227 @@ const BannerList = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {/* Sort banners in descending order and then map over them */}
-                        {displayedBanners.map((banner, index) => (
-                          <tr key={banner.id}>
-                            <td>
-                              {(pagination.current_page - 1) * pageSize +
-                                index +
-                                1}
-                            </td>
-
-                            <td>Lockated, Pune</td>
-                            <td>{banner.company_name || "No Name"}</td>
-                            <td>{banner.title || "No Title"}</td>
-                            <td
-                              className="text-center"
-                              style={{
-                                border: "1px solid #ddd",
-                                padding: "5px",
-                                verticalAlign: "middle", // Aligns content properly
-                              }}
-                            >
-                              <img
-                                src={banner?.attachfile?.document_url || "NA"}
-                                className="img-fluid rounded"
-                                alt={banner.title || "Banner Image"}
+                        {displayedBanners.length > 0 ? (
+                          displayedBanners.map((banner, index) => (
+                            <tr key={banner.id}>
+                              <td>
+                                {(pagination.current_page - 1) * pageSize +
+                                  index +
+                                  1}
+                              </td>
+                              <td>Lockated, Pune</td>
+                              <td>{banner.company_name || "No Name"}</td>
+                              <td>{banner.title || "No Title"}</td>
+                              <td
+                                className="text-center"
                                 style={{
-                                  maxWidth: "100px", // Adjust for uniform size
-                                  maxHeight: "100px",
-                                  display: "block", // Prevents extra spacing
-                                }}
-                              />
-                            </td>
-                            <td>
-                              <button
-                                onClick={() =>
-                                  onToggle(banner.id, banner.active)
-                                }
-                                className="toggle-button"
-                                style={{
-                                  border: "none",
-                                  background: "none",
-                                  cursor: "pointer",
-                                  padding: 0,
-                                  width: "70px",
+                                  border: "1px solid #ddd",
+                                  padding: "5px",
+                                  verticalAlign: "middle",
                                 }}
                               >
-                                {banner.active ? (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="40"
-                                    height="25"
-                                    fill="#de7008"
-                                    className="bi bi-toggle-on"
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
-                                  </svg>
-                                ) : (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="40"
-                                    height="25"
-                                    fill="#667085"
-                                    className="bi bi-toggle-off"
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
-                                  </svg>
-                                )}
-                              </button>
-                            </td>
-
-                            <td>
-                              {/* Edit Icon */}
-                              <a
-                                href={`/banner-edit/${banner.id}`}
-                                className="me-2"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="24"
-                                  height="24"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
+                                <img
+                                  src={banner?.attachfile?.document_url || "NA"}
+                                  className="img-fluid rounded"
+                                  alt={banner.title || "Banner Image"}
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                    display: "block",
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                <button
+                                  onClick={() =>
+                                    onToggle(banner.id, banner.active)
+                                  }
+                                  className="toggle-button"
+                                  style={{
+                                    border: "none",
+                                    background: "none",
+                                    cursor: "pointer",
+                                    padding: 0,
+                                    width: "70px",
+                                  }}
                                 >
-                                  <path
-                                    d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
-                                    fill="#667085"
-                                  />
-                                  <path
-                                    d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
-                                    fill="#667085"
-                                  />
-                                </svg>
-                              </a>
+                                  {banner.active ? (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="40"
+                                      height="25"
+                                      fill="#de7008"
+                                      className="bi bi-toggle-on"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="40"
+                                      height="25"
+                                      fill="#667085"
+                                      className="bi bi-toggle-off"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                                    </svg>
+                                  )}
+                                </button>
+                              </td>
+                              <td>
+                                {/* Edit Icon */}
+                                <a
+                                  href={`/banner-edit/${banner.id}`}
+                                  className="me-2"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
+                                      fill="#667085"
+                                    />
+                                    <path
+                                      d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
+                                      fill="#667085"
+                                    />
+                                  </svg>
+                                </a>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="7" className="text-center">
+                              No banners found matching your search criteria
                             </td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>
                 )}
 
-                <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                  <ul className="pagination justify-content-center d-flex">
-                    {/* First Button */}
-                    <li
-                      className={`page-item ${
-                        pagination.current_page === 1 ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(1)}
-                      >
-                        First
-                      </button>
-                    </li>
-
-                    {/* Previous Button */}
-                    <li
-                      className={`page-item ${
-                        pagination.current_page === 1 ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() =>
-                          handlePageChange(pagination.current_page - 1)
-                        }
-                        disabled={pagination.current_page === 1}
-                      >
-                        Prev
-                      </button>
-                    </li>
-
-                    {/* Dynamic Page Numbers */}
-                    {Array.from(
-                      { length: pagination.total_pages },
-                      (_, index) => index + 1
-                    ).map((pageNumber) => (
+                {!loading && displayedBanners.length > 0 && (
+                  <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                    <ul className="pagination justify-content-center d-flex">
+                      {/* First Button */}
                       <li
-                        key={pageNumber}
                         className={`page-item ${
-                          pagination.current_page === pageNumber ? "active" : ""
+                          pagination.current_page === 1 ? "disabled" : ""
                         }`}
                       >
                         <button
                           className="page-link"
-                          onClick={() => handlePageChange(pageNumber)}
+                          onClick={() => handlePageChange(1)}
+                          disabled={pagination.current_page === 1}
                         >
-                          {pageNumber}
+                          First
                         </button>
                       </li>
-                    ))}
 
-                    {/* Next Button */}
-                    <li
-                      className={`page-item ${
-                        pagination.current_page === pagination.total_pages
-                          ? "disabled"
-                          : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() =>
-                          handlePageChange(pagination.current_page + 1)
-                        }
-                        disabled={
-                          pagination.current_page === pagination.total_pages
-                        }
+                      {/* Previous Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === 1 ? "disabled" : ""
+                        }`}
                       >
-                        Next
-                      </button>
-                    </li>
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            handlePageChange(pagination.current_page - 1)
+                          }
+                          disabled={pagination.current_page === 1}
+                        >
+                          Prev
+                        </button>
+                      </li>
 
-                    {/* Last Button */}
-                    <li
-                      className={`page-item ${
-                        pagination.current_page === pagination.total_pages
-                          ? "disabled"
-                          : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(pagination.total_pages)}
-                        disabled={
+                      {/* Dynamic Page Numbers */}
+                      {Array.from(
+                        { length: pagination.total_pages },
+                        (_, index) => index + 1
+                      ).map((pageNumber) => (
+                        <li
+                          key={pageNumber}
+                          className={`page-item ${
+                            pagination.current_page === pageNumber ? "active" : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(pageNumber)}
+                          >
+                            {pageNumber}
+                          </button>
+                        </li>
+                      ))}
+
+                      {/* Next Button */}
+                      <li
+                        className={`page-item ${
                           pagination.current_page === pagination.total_pages
-                        }
+                            ? "disabled"
+                            : ""
+                        }`}
                       >
-                        Last
-                      </button>
-                    </li>
-                  </ul>
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            handlePageChange(pagination.current_page + 1)
+                          }
+                          disabled={
+                            pagination.current_page === pagination.total_pages
+                          }
+                        >
+                          Next
+                        </button>
+                      </li>
 
-                  {/* Showing entries count */}
-                  <div>
-                    <p>
-                      Showing{" "}
-                      {Math.min(
-                        (pagination.current_page - 1) * pageSize + 1 || 1,
-                        pagination.total_count
-                      )}{" "}
-                      to{" "}
-                      {Math.min(
-                        pagination.current_page * pageSize,
-                        pagination.total_count
-                      )}{" "}
-                      of {pagination.total_count} entries
-                    </p>
+                      {/* Last Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === pagination.total_pages
+                            ? "disabled"
+                            : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(pagination.total_pages)}
+                          disabled={
+                            pagination.current_page === pagination.total_pages
+                          }
+                        >
+                          Last
+                        </button>
+                      </li>
+                    </ul>
+
+                    {/* Showing entries count */}
+                    <div>
+                      <p>
+                        Showing{" "}
+                        {Math.min(
+                          (pagination.current_page - 1) * pageSize + 1 || 1,
+                          pagination.total_count
+                        )}{" "}
+                        to{" "}
+                        {Math.min(
+                          pagination.current_page * pageSize,
+                          pagination.total_count
+                        )}{" "}
+                        of {pagination.total_count} entries
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
