@@ -6,8 +6,11 @@ const SupportServiceList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("service_list_currentPage")) || 1;
+  };
   const [pagination, setPagination] = useState({
-    current_page: 1,
+    current_page: getPageFromStorage(),
     total_count: 0,
     total_pages: 0,
   });
@@ -15,19 +18,19 @@ const SupportServiceList = () => {
 
   useEffect(() => {
     const fetchServices = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/osr_services.json",
           {
             headers: {
-              Authorization:
-                "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
           }
         );
         setServices(response.data);
         setPagination({
-          current_page: 1,
+          current_page: getPageFromStorage(),
           total_count: response.data.length,
           total_pages: Math.ceil(response.data.length / pageSize),
         });
@@ -41,15 +44,23 @@ const SupportServiceList = () => {
   }, []);
 
   const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) return;
     setPagination((prev) => ({ ...prev, current_page: pageNumber }));
+    localStorage.setItem("service_list_currentPage", pageNumber);
   };
+  
 
-  const startIndex = (pagination.current_page - 1) * pageSize;
-  const paginatedData = services
-    .filter((service) =>
-      service.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .slice(startIndex, startIndex + pageSize);
+  const filteredServices = services.filter((service) =>
+    service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalFiltered = filteredServices.length;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  const displayedServices = filteredServices.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
+  );
 
   return (
     <div className="main-content">
@@ -63,7 +74,10 @@ const SupportServiceList = () => {
                   className="form-control tbl-search table_search"
                   placeholder="Search"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
+                  }}
                 />
                 <div className="input-group-append">
                   <button type="submit" className="btn btn-md btn-default">
@@ -88,23 +102,23 @@ const SupportServiceList = () => {
               </div>
             </div>
             {/* <div className="card-tools mt-1">
-              <button
-                className="purple-btn2 rounded-3"
-                onClick={() => navigate("/specification")}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={26}
-                  height={20}
-                  fill="currentColor"
-                  className="bi bi-plus"
-                  viewBox="0 0 16 16"
+                <button
+                  className="purple-btn2 rounded-3"
+                  onClick={() => navigate("/specification")}
                 >
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                </svg>
-                <span>Add</span>
-              </button>
-            </div> */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={26}
+                    height={20}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+              </div> */}
           </div>
 
           <div className="card mt-3 pb-4 mx-4">
@@ -139,19 +153,29 @@ const SupportServiceList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {paginatedData.map((service, index) => (
-                        <tr key={service.id}>
-                           <td>{startIndex + index + 1}</td> 
-                          <td>{service.name}</td>
-                          <td>{service.email}</td>
-                          <td>{service.mobile_number}</td>
-                          <td>{service.service_category}</td>
-                          <td>{service.property_type}</td>
-                          <td>{service.unit_type}</td>
-                          <td>{service.price_range_from}</td>
-                          <td>{service.price_range_to}</td>
+                      {displayedServices.length > 0 ? (
+                        displayedServices.map((service, index) => (
+                          <tr key={service.id}>
+                            {(pagination.current_page - 1) * pageSize +
+                              index +
+                              1}
+                            <td>{service.name}</td>
+                            <td>{service.email}</td>
+                            <td>{service.mobile_number}</td>
+                            <td>{service.service_category}</td>
+                            <td>{service.property_type}</td>
+                            <td>{service.unit_type}</td>
+                            <td>{service.price_range_from}</td>
+                            <td>{service.price_range_to}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            No services found.
+                          </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -171,6 +195,7 @@ const SupportServiceList = () => {
                     First
                   </button>
                 </li>
+
                 <li
                   className={`page-item ${
                     pagination.current_page === 1 ? "disabled" : ""
@@ -182,32 +207,28 @@ const SupportServiceList = () => {
                       handlePageChange(pagination.current_page - 1)
                     }
                   >
-                    Prev
+                    Previous
                   </button>
                 </li>
-                {Array.from(
-                  { length: pagination.total_pages },
-                  (_, index) => index + 1
-                ).map((pageNumber) => (
+
+                {[...Array(totalPages)].map((_, index) => (
                   <li
-                    key={pageNumber}
+                    key={index + 1}
                     className={`page-item ${
-                      pagination.current_page === pageNumber ? "active" : ""
+                      pagination.current_page === index + 1 ? "active" : ""
                     }`}
                   >
                     <button
                       className="page-link"
-                      onClick={() => handlePageChange(pageNumber)}
+                      onClick={() => handlePageChange(index + 1)}
                     >
-                      {pageNumber}
+                      {index + 1}
                     </button>
                   </li>
                 ))}
                 <li
                   className={`page-item ${
-                    pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
+                    pagination.current_page === totalPages ? "disabled" : ""
                   }`}
                 >
                   <button
@@ -221,23 +242,29 @@ const SupportServiceList = () => {
                 </li>
                 <li
                   className={`page-item ${
-                    pagination.current_page === pagination.total_pages
-                      ? "disabled"
-                      : ""
+                    pagination.current_page === totalPages ? "disabled" : ""
                   }`}
                 >
                   <button
                     className="page-link"
-                    onClick={() => handlePageChange(pagination.total_pages)}
+                    onClick={() => handlePageChange(totalPages)}
                   >
                     Last
                   </button>
                 </li>
               </ul>
               <p>
-                Showing {startIndex + 1} to{" "}
-                {Math.min(startIndex + pageSize, pagination.total_count)} of{" "}
-                {pagination.total_count} entries
+                Showing{" "}
+                {Math.min(
+                  (pagination.current_page - 1) * pageSize + 1,
+                  pagination.total_count
+                )}{" "}
+                to
+                {Math.min(
+                  pagination.current_page * pageSize,
+                  pagination.total_count
+                )}{" "}
+                of {pagination.total_count} entries
               </p>
             </div>
           </div>
