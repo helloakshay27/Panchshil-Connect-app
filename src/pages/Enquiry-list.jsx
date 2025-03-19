@@ -1,30 +1,22 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const EnquiryList = () => {
-  const [siteVisits, setSiteVisits] = useState([]);
-  // const [filteredSiteVisits, setFilteredSiteVisits] = useState([]);
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
-  const navigate = useNavigate();
-
- 
   const [searchQuery, setSearchQuery] = useState("");
   
-  const getPageFromStorage = () => {
-    return parseInt(localStorage.getItem("sitevisit_list_currentPage")) || 1;
-  };
-  const [pagination, setPagination] = useState({
-    current_page: getPageFromStorage(),
-    total_count: 0,
-    total_pages: 0,
-  });
-  const pageSize = 10;
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  console.log(siteVisits);
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("enquiry_list_currentPage")) || 1;
+  };
+  
+  const [currentPage, setCurrentPage] = useState(getPageFromStorage());
+  const pageSize = 10;
 
   useEffect(() => {
     const fetchEnquiries = async () => {
@@ -47,52 +39,63 @@ const EnquiryList = () => {
       }
     };
     fetchEnquiries();
-  }, []);
-
-  console.log("Enquiry Data:", enquiries);
-
+    
+    // Parse search query from URL if any
+    const params = new URLSearchParams(location.search);
+    const searchParam = params.get("s[name_cont]");
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, [location.search]);
 
   const handlePageChange = (pageNumber) => {
-    setPagination((prevState) => ({
-      ...prevState,
-      current_page: pageNumber,
-    }));
-    localStorage.setItem("sitevisit_list_currentPage", pageNumber);
+    // Ensure page is within valid range
+    const validPage = Math.max(1, Math.min(pageNumber, totalPages));
+    setCurrentPage(validPage);
+    localStorage.setItem("enquiry_list_currentPage", validPage);
   };
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
-
-  const filteredData = (enquiries || []).filter(
-    (visit) => visit.project_name && visit.project_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  
-
-  const totalFiltered = filteredData.length;
-  const totalPages = Math.ceil(totalFiltered / pageSize);
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
+    setCurrentPage(1); // Reset to first page on new search
+    localStorage.setItem("enquiry_list_currentPage", 1);
+    
     const params = new URLSearchParams();
     if (searchQuery) {
       params.set("s[name_cont]", searchQuery);
     }
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-    
   };
+
+  // Filter data by project name
+  const filteredData = enquiries.filter(
+    (enquiry) => 
+      !searchQuery || 
+      (enquiry.project?.project_name && 
+       enquiry.project.project_name.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  // Calculate pagination values
+  const totalFiltered = filteredData.length;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / pageSize));
   
+  // Ensure current page is valid after filtering
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+      localStorage.setItem("enquiry_list_currentPage", 1);
+    }
+  }, [totalPages, currentPage]);
 
-  const startIndex = (pagination.current_page - 1) * pageSize;
-  // const paginatedData = filteredSiteVisits.slice(
-  //   startIndex,
-  //   startIndex + pageSize
-  // );
-
-  const displayedVisits = filteredData.slice(
-    (pagination.current_page - 1) * pageSize,
-    pagination.current_page * pageSize
+  // Get current page data
+  const startIndex = (currentPage - 1) * pageSize;
+  const displayedEnquiries = filteredData.slice(
+    startIndex,
+    startIndex + pageSize
   );
 
   return (
@@ -143,27 +146,8 @@ const EnquiryList = () => {
                     </button>
                   </div>
                 </div>
-              </form>{" "}
+              </form>
             </div>
-            {/* <div className="card-tools mt-1">
-              <button
-                className="purple-btn2 rounded-3"
-                fdprocessedid="xn3e6n"
-                onClick={() => navigate("/sitevisit-create")}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={16}
-                  height={16}
-                  fill="currentColor"
-                  className="bi bi-plus"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                </svg>
-                <span>Add</span>
-              </button>
-            </div> */}
           </div>
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
@@ -174,7 +158,7 @@ const EnquiryList = () => {
                 <div className="text-center">
                   <div
                     className="spinner-border"
-                    role="stastus"
+                    role="status"
                     style={{ color: "var(--red)" }}
                   >
                     <span className="visually-hidden">Loading...</span>
@@ -195,10 +179,10 @@ const EnquiryList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {enquiries.length > 0 ? (
-                        enquiries.map((enquiry, index) => (
+                      {displayedEnquiries.length > 0 ? (
+                        displayedEnquiries.map((enquiry, index) => (
                           <tr key={enquiry.id}>
-                            <td>{index + 1}</td>
+                            <td>{startIndex + index + 1}</td>
                             <td>{enquiry.project?.project_name}</td>
                             <td>{enquiry.segment}</td>
                             <td>{enquiry.name}</td>
@@ -209,7 +193,7 @@ const EnquiryList = () => {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="4" className="text-center">
+                          <td colSpan="7" className="text-center">
                             No enquiries found.
                           </td>
                         </tr>
@@ -220,85 +204,79 @@ const EnquiryList = () => {
               )}
 
               {/* Pagination Controls */}
-              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                <ul className="pagination justify-content-center d-flex">
-                  <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(1)}
-                    >
-                      First
-                    </button>
-                  </li>
-                  <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() =>
-                        handlePageChange(pagination.current_page - 1)
-                      }
-                    >
-                      Prev
-                    </button>
-                  </li>
-                  {Array.from(
-                    { length: totalPages },
-                    (_, index) => index + 1
-                  ).map((pageNumber) => (
-                    <li
-                      key={pageNumber}
-                      className={`page-item ${
-                        pagination.current_page === pageNumber ? "active" : ""
-                      }`}
-                    >
+              {!loading && totalFiltered > 0 && (
+                <div className="d-flex justify-content-between align-items-center px-3 mt-4">
+                  <ul className="pagination justify-content-center d-flex">
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                       <button
                         className="page-link"
-                        onClick={() => handlePageChange(pageNumber)}
+                        onClick={() => handlePageChange(1)}
+                        disabled={currentPage === 1}
                       >
-                        {pageNumber}
+                        First
                       </button>
                     </li>
-                  ))}
-                  <li
-                    className={`page-item ${
-                      pagination.current_page === totalPages ? "disabled" : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() =>
-                        handlePageChange(pagination.current_page + 1)
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Prev
+                      </button>
+                    </li>
+                    {Array.from(
+                      { length: Math.min(5, totalPages) },
+                      (_, i) => {
+                        // Show pages around current page
+                        let pageToShow;
+                        if (totalPages <= 5) {
+                          pageToShow = i + 1;
+                        } else {
+                          const startPage = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
+                          pageToShow = startPage + i;
+                        }
+                        return pageToShow;
                       }
-                    >
-                      Next
-                    </button>
-                  </li>
-                  <li
-                    className={`page-item ${
-                      pagination.current_page === totalPages ? "disabled" : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(totalPages)}
-                    >
-                      Last
-                    </button>
-                  </li>
-                </ul>
-                <p>
-                  Showing {startIndex + 1} to{" "}
-                  {Math.min(startIndex + pageSize, pagination.total_count)} of{" "}
-                  {pagination.total_count} entries
-                </p>
-              </div>
+                    ).map((pageNumber) => (
+                      <li
+                        key={pageNumber}
+                        className={`page-item ${currentPage === pageNumber ? "active" : ""}`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </button>
+                    </li>
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(totalPages)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Last
+                      </button>
+                    </li>
+                  </ul>
+                  <p>
+                    Showing {totalFiltered > 0 ? startIndex + 1 : 0} to{" "}
+                    {Math.min(startIndex + pageSize, totalFiltered)} of{" "}
+                    {totalFiltered} entries
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
