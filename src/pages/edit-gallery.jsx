@@ -9,6 +9,8 @@ const EditGallery = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  console.log(location.state);
+
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [formData, setFormData] = useState({
@@ -18,9 +20,7 @@ const EditGallery = () => {
     gallery_image: null,
   });
   console.log(formData.projectId);
-  const [imagePreview, setImagePreview] = useState(
-    location.state?.gallery?.attachfile?.document_url || null
-  );
+  const [imagePreview, setImagePreview] = useState([]);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -31,17 +31,18 @@ const EditGallery = () => {
         );
         const data = response.data;
 
+        console.log("Gallery Data:", data); // 🔍 Debug API response
+
         setFormData((prev) => ({
           ...prev,
-          projectId: data.project_id || prev.projectId, // ✅ Ensure projectId is set properly
+          projectId: data.project_id || prev.projectId,
           name: data.name || "",
           title: data.title || "",
           gallery_image: null,
         }));
 
-        if (data.attachfile?.document_url) {
-          setImagePreview(data.attachfile.document_url);
-        }
+        // ✅ Ensure default image is set
+        setImagePreview(data.attachfile?.document_url || null);
       } catch (error) {
         toast.error("Failed to fetch gallery data.");
       } finally {
@@ -49,7 +50,27 @@ const EditGallery = () => {
       }
     };
 
-    if (!location.state?.gallery) {
+    if (location.state?.gallery) {
+      setFormData((prev) => ({
+        ...prev,
+        projectId: location.state.gallery.project_id || prev.projectId,
+        name: location.state.gallery.name || "",
+        title: location.state.gallery.title || "",
+      }));
+
+      // setImagePreview(location.state.gallery.attachfiles?.document_url || null);
+      if (
+        location.state?.gallery.attachfiles &&
+        location.state?.gallery.attachfiles.length > 0
+      ) {
+        const imageUrls = location.state?.gallery.attachfiles.map(
+          (file) => file.document_url
+        );
+        setImagePreview(imageUrls); // Set an array of image URLs
+      } else {
+        setImagePreview([]);
+      }
+    } else {
       fetchGallery();
     }
   }, [id, location.state?.gallery]);
@@ -89,7 +110,7 @@ const EditGallery = () => {
     if (files) {
       const file = files[0];
       setFormData((prev) => ({ ...prev, attachment: file }));
-      setImagePreview(URL.createObjectURL(file));
+      setImagePreview(URL.createObjectURL(file)); // ✅ Update preview on file selection
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -213,13 +234,22 @@ const EditGallery = () => {
                           name="attachment"
                           onChange={handleInputChange}
                         />
-                        {imagePreview && (
-                          <div className="mt-2">
-                            <img
-                              src={imagePreview}
-                              alt="Preview"
-                              style={{ maxWidth: "100px", maxHeight: "100px" }}
-                            />
+                        {/* Image Preview */}
+                        {imagePreview.length > 0 && (
+                          <div className="mt-2 d-flex gap-2">
+                            {imagePreview.map((url, index) => (
+                              <img
+                                key={index}
+                                src={url}
+                                alt={`Preview ${index}`}
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            ))}
                           </div>
                         )}
                       </div>
