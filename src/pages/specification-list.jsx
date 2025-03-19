@@ -17,17 +17,18 @@ const SpecificationList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedPage = localStorage.getItem("currentPage");
-    const currentPage = savedPage ? parseInt(savedPage) : 1;
-
-    // Set the page number based on localStorage or default to 1
-    setPagination((prevState) => ({
-      ...prevState,
-      current_page: currentPage,
-    }));
-    axios
-      .get("https://panchshil-super.lockated.com/specification_setups.json")
-      .then((response) => {
+    const fetchSpecifications = async () => {
+      try {
+        const response = await axios.get(
+          `https://panchshil-super.lockated.com/specification_setups.json`,
+          {
+            params: {
+              page: pagination.current_page,
+              per_page: pageSize,
+              search: searchQuery, // Include search filter
+            },
+          }
+        );
         if (
           response.data &&
           Array.isArray(response.data.specification_setups)
@@ -35,21 +36,21 @@ const SpecificationList = () => {
           setSpecifications(response.data.specification_setups);
           setPagination((prevState) => ({
             ...prevState,
-            total_count: response.data.specification_setups.length,
-            total_pages: Math.ceil(
-              response.data.specification_setups.length / pageSize
-            ),
+            total_count: response.data.total_count,
+            total_pages: Math.ceil(response.data.total_count / pageSize),
           }));
         } else {
           setSpecifications([]);
         }
-        setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         setError(error.message);
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    fetchSpecifications();
+  }, [pagination.current_page, searchQuery]); // Re-run when page or searchQuery changes
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
@@ -76,15 +77,21 @@ const SpecificationList = () => {
     }
   };
   const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > pagination.total_pages) return;
+
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
     }));
-    localStorage.setItem("currentPage", pageNumber);
+
+    localStorage.setItem("specification_list_currentPage", pageNumber);
   };
+
   const filteredSpecifications = specifications.filter((spec) =>
     spec.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const totalFiltered = filteredSpecifications.length;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
   const displayedSpecifications = filteredSpecifications.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
@@ -102,7 +109,10 @@ const SpecificationList = () => {
                   className="form-control tbl-search table_search"
                   placeholder="Search"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
+                  }}
                 />
                 <div className="input-group-append">
                   <button type="submit" className="btn btn-md btn-default">
@@ -258,101 +268,48 @@ const SpecificationList = () => {
                   </table>
                 </div>
               )}
-              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                <ul className="pagination justify-content-center d-flex">
-                  <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(1)}
-                    >
-                      First
+              
+            <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+              <ul className="pagination justify-content-center d-flex">
+                <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => handlePageChange(1)}>
+                    First
+                  </button>
+                </li>
+                <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => handlePageChange(pagination.current_page - 1)}>
+                    Prev
+                  </button>
+                </li>
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                  <li key={pageNumber} className={`page-item ${pagination.current_page === pageNumber ? "active" : ""}`}>
+                    <button className="page-link" onClick={() => handlePageChange(pageNumber)}>
+                      {pageNumber}
                     </button>
                   </li>
-                  <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() =>
-                        handlePageChange(pagination.current_page - 1)
-                      }
-                    >
-                      Prev
-                    </button>
-                  </li>
-                  {Array.from(
-                    { length: pagination.total_pages },
-                    (_, index) => index + 1
-                  ).map((pageNumber) => (
-                    <li
-                      key={pageNumber}
-                      className={`page-item ${
-                        pagination.current_page === pageNumber ? "active" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(pageNumber)}
-                      >
-                        {pageNumber}
-                      </button>
-                    </li>
-                  ))}
-                  <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() =>
-                        handlePageChange(pagination.current_page + 1)
-                      }
-                    >
-                      Next
-                    </button>
-                  </li>
-                  <li
-                    className={`page-item ${
-                      pagination.current_page === pagination.total_pages
-                        ? "disabled"
-                        : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(pagination.total_pages)}
-                    >
-                      Last
-                    </button>
-                  </li>
-                </ul>
-                <div>
-                  <p>
-                    Showing{" "}
-                    {Math.min(
-                      (pagination.current_page - 1) * pageSize + 1 || 1,
-                      pagination.total_count
-                    )}{" "}
-                    to{" "}
-                    {Math.min(
-                      pagination.current_page * pageSize,
-                      pagination.total_count
-                    )}{" "}
-                    of {pagination.total_count} entries
-                  </p>
-                </div>
+                ))}
+                <li className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => handlePageChange(pagination.current_page + 1)}>
+                    Next
+                  </button>
+                </li>
+                <li className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => handlePageChange(totalPages)}>
+                    Last
+                  </button>
+                </li>
+              </ul>
+              <div>
+                <p>
+                  Showing {Math.min((pagination.current_page - 1) * pageSize + 1 || 1, pagination.total_count)} to {Math.min(pagination.current_page * pageSize, pagination.total_count)} of {pagination.total_count} entries
+                </p>
               </div>
             </div>
+          
+            </div>
+            
           </div>
+          
         </div>
       </div>
     </div>

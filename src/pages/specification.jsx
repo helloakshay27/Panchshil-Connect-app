@@ -9,9 +9,19 @@ const Specification = () => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleFileChange = (e) => {
-    setIcon(e.target.files[0]);
+    const file = e.target.files[0];
+    setIcon(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -115,6 +125,20 @@ const Specification = () => {
                         accept=".png,.jpg,.jpeg,.svg"
                         onChange={handleFileChange}
                       />
+                      {imagePreview && (
+                        <div className="mt-2">
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="img-thumbnail"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
