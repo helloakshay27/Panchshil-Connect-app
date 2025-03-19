@@ -106,30 +106,38 @@ const EditGallery = () => {
   // Handle Input Changes
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-
+  
     if (files) {
-      const file = files[0];
-      setFormData((prev) => ({ ...prev, attachment: file }));
-      setImagePreview(URL.createObjectURL(file)); // ✅ Update preview on file selection
+      const newImages = Array.from(files);
+      const imageUrls = newImages.map((file) => URL.createObjectURL(file));
+  
+      setFormData((prev) => ({
+        ...prev,
+        attachment: [...(prev.attachment || []), ...newImages],
+      }));
+  
+      setImagePreview((prev) => [...prev, ...imageUrls]);
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
-
-  // Handle Form Submission (Update Gallery)
+  
+  // ✅ Corrected Image Upload in PUT Request
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
+  
     const data = new FormData();
     data.append("gallery[project_id]", formData.projectId);
     data.append("gallery[name]", formData.name);
     data.append("gallery[title]", formData.title);
-
-    if (formData.attachment) {
-      data.append("gallery[gallery_image][]", formData.attachment);
+  
+    if (formData.attachment.length > 0) {
+      formData.attachment.forEach((file) => {
+        data.append("gallery[gallery_image][]", file);
+      });
     }
-
+  
     try {
       await axios.put(
         `https://panchshil-super.lockated.com/galleries/${id}.json`,
@@ -141,20 +149,33 @@ const EditGallery = () => {
           },
         }
       );
-
+  
       toast.success("Gallery updated successfully!");
       navigate("/gallery-list");
     } catch (error) {
       toast.error("Failed to update gallery.");
+      console.error("Update error:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   // Handle Cancel
   const handleCancel = () => {
     navigate(-1);
   };
+  const handleRemoveImage = (index) => {
+    setImagePreview((prev) => prev.filter((_, i) => i !== index));
+  
+    setFormData((prev) => {
+      const updatedAttachments = prev.attachment ? [...prev.attachment] : [];
+      updatedAttachments.splice(index, 1); // Remove the selected image
+  
+      return { ...prev, attachment: updatedAttachments };
+    });
+  };
+  
 
   return (
     <div className="main-content">
@@ -238,6 +259,7 @@ const EditGallery = () => {
                         {imagePreview.length > 0 && (
                           <div className="mt-2 d-flex gap-2">
                             {imagePreview.map((url, index) => (
+                              <div key={index} className="position-relative me-2">
                               <img
                                 key={index}
                                 src={url}
@@ -249,7 +271,24 @@ const EditGallery = () => {
                                   objectFit: "cover",
                                 }}
                               />
+                              <button
+                                type="button"
+                                className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                                style={{
+                                  top: 2,
+                                  right: -5,
+                                  height: 20,
+                                  width: 20,
+                                  backgroundColor: "var(--red)",
+                                  color: "white",
+                                }}
+                                onClick={() => handleRemoveImage(index)}
+                              >
+                                ✖
+                              </button>
+                              </div>
                             ))}
+                            
                           </div>
                         )}
                       </div>
