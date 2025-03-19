@@ -499,27 +499,35 @@ const ProjectDetails = () => {
                         whiteSpace: "normal",
                         cursor: "pointer",
                       }}
-                      onClick={() => setIsExpanded(!isExpanded)}
                     >
-                      <a
-                        href={formData.virtual_tour_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-dark"
-                        style={{ textDecoration: "none" }}
-                      >
-                        : {formData.virtual_tour_url}
-                      </a>
-                      {!isExpanded && (
-                        <span
-                          style={{
-                            color: "black",
-                            cursor: "pointer",
-                            fontWeight: "bold",
-                          }}
+                      {isExpanded ? (
+                        <a
+                          href={formData.virtual_tour_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-dark"
+                          style={{ textDecoration: "none" }}
                         >
-                          ... Show More
-                        </span>
+                          {formData.virtual_tour_url}
+                        </a>
+                      ) : (
+                        <>
+                          {formData.virtual_tour_url.substring(0, 30)}{" "}
+                          {/* Show part of the URL */}
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevents the <a> from triggering
+                              setIsExpanded(true);
+                            }}
+                            style={{
+                              color: "black",
+                              cursor: "pointer",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            ...
+                          </span>
+                        </>
                       )}
                     </p>
                   </div>
@@ -559,7 +567,7 @@ const ProjectDetails = () => {
                             fontWeight: "bold",
                           }}
                         >
-                          ... Show More
+                          ...
                         </span>
                       )}
                     </p>

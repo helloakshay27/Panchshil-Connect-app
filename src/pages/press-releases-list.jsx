@@ -238,34 +238,18 @@ const PressReleasesList = () => {
                                 <td>{release.company_name || "N/A"}</td>
                                 <td>{release.project_name || "N/A"}</td>
                                 <td
-                                  title={release.description}
-                                  style={{
-                                    maxWidth: "200px",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: isExpanded ? "normal" : "nowrap",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() => setIsExpanded(!isExpanded)}
-                                >
-                                  {release.description ? (
-                                    <>
-                                      {release.description}
-                                      {!isExpanded && (
-                                        <span
-                                          style={{
-                                            color: "black",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
-                                          ... Show More
-                                        </span>
-                                      )}
-                                    </>
-                                  ) : (
-                                    "No description"
-                                  )}
-                                </td>
+  title={release.description} // This automatically shows full text on hover
+  style={{
+    maxWidth: "200px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+  }}
+>
+  {release.description || "No description"}
+</td>
+
                                 <td>{release.release_date || "Unknown"}</td>
                                 <td
                                   className="text-center"

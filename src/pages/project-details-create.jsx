@@ -743,14 +743,16 @@ const handleFileChange = (e, fieldName) => {
                     </span>
                   </label>
                   <MultiSelectBox
-                    options={configurations?.map((config) => ({
-                      value: config.name,
+                    options={configurations.map((config) => ({
+                      value: config.id,
                       label: config.name,
                     }))}
-                    value={formData.Configuration_Type.map((type) => ({
-                      value: type,
-                      label: type,
-                    }))}
+                    value={formData.Configuration_Type.map((id) => {
+                      const config = configurations.find((config) => config.id === id);
+                      return config
+                        ? { value: config.id, label: config.name }
+                        : null;
+                    }).filter(Boolean)}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -759,7 +761,7 @@ const handleFileChange = (e, fieldName) => {
                         ),
                       }))
                     }
-                    placeholder="Select Configuration Type"
+                    placeholder="Select amenities"
                   />
                 </div>
               </div>
@@ -1516,7 +1518,7 @@ const handleFileChange = (e, fieldName) => {
 
               <div className="col-md-12 mt-2">
                 <div
-                  className="mt-4 tbl-container"
+                  className="mt-4 tbl-container" 
                   style={{ maxHeight: "300px", overflowY: "auto" }}
                 >
                   <table className="w-100">

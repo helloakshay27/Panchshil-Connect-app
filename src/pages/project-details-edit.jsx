@@ -121,7 +121,7 @@ const ProjectDetailsEdit = () => {
         setFormData({
           Property_Type: projectData.property_type || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
-          Building_Type: projectData.building_type || "",
+          building_type: projectData.building_type || "",
           Project_Construction_Status:
             projectData.Project_Construction_Status || "",
           Configuration_Type: Array.isArray(projectData.configurations)
@@ -448,7 +448,7 @@ const isFileSizeValid = (file, maxSize) => {
       errors.push("Project Type is required.");
       return errors;
     }
-    if (!formData.Building_Type) {
+    if (!formData.building_type) {
       errors.push("Building Type is required.");
       return errors;
     }
@@ -730,11 +730,12 @@ const isFileSizeValid = (file, maxSize) => {
                         label: "Upcoming Developments",
                       },
                     ]}
-                    defaultValue={formData.Building_Type}
-                    onChange={(selectedOption) =>
+                    
+                    defaultValue={formData.building_type}
+                    onChange={(selectedValue) =>
                       setFormData((prev) => ({
                         ...prev,
-                        Building_Type: selectedOption,
+                        building_type: selectedValue,
                       }))
                     }
                   />
