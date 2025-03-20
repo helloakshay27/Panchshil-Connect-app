@@ -734,12 +734,12 @@ a.purple-btn1:hover {
 }
 
 .purple-btn2 {
-  padding: 10px 1.5rem;
+  padding: 5px 1.5rem;
   border: 2px solid var(--red) !important;
   border-radius: 5px;
   color: var(--body-bg-color);
   background-color: var(--red);
-  margin: 4px 8px 8px 0px;
+  margin: 8px 8px 8px 0px;
 }
 
 .purple-btn2-shadow {
