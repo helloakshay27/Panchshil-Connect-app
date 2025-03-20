@@ -67,6 +67,7 @@ import ProjectBuildingTypeEdit from "./pages/project-building-type-edit";
 import ConstructionStatus from "./pages/construction-status";
 import ConstructionStatusList from "./pages/construction-status-list";
 import ConstructionStatusEdit from "./pages/construction-status-edit";
+import PropertyTypeEdit from "./pages/property-type-edit";
 
 // import EditGallery from './EditGallery';
 
@@ -98,6 +99,7 @@ function App() {
           <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
           <Route path="/project-details/:id" element={<ProjectDetails />} />
           <Route path="/property-type" element={<PropertyType />}/>
+          <Route path="/property-type-edit" element={<PropertyTypeEdit />}/>
           <Route path="/property-type-list" element={<PropertyTypeList/>}/>
           <Route path="/project-building-type" element={<ProjectBuildingType/>}/>
           <Route path="/project-building-type-edit/:id" element={<ProjectBuildingTypeEdit/>}/>

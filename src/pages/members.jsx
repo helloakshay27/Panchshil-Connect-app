@@ -156,6 +156,9 @@ const Members = () => {
                 <Link to="/property-type">Property Type</Link>
               </li>
               <li>
+                <Link to="/property-type-edit">Property Type Edit</Link>
+              </li>
+              <li>
                 <Link to="/property-type-list">Property Type List</Link>
               </li>
               <li>
