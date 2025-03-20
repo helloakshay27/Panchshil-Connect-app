@@ -162,6 +162,9 @@ const Members = () => {
                 <Link to="/project-building-type">Project Building Type</Link>
               </li>
               <li>
+                <Link to="/project-building-type-edit">Project Building Edit</Link>
+              </li>
+              <li>
                 <Link to="/project-building-type-list">Project Building Type List</Link>
               </li>
 
