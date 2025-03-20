@@ -59,6 +59,10 @@ import CompanyEdit from "./pages/company-edit";
 import OrganizationUpdate from "./pages/organization-update";
 import ProjectConfigEdit from "./pages/project-config-edit";
 import EnquiryList from "./pages/Enquiry-list";
+import PropertyType from "./pages/property-type";
+import PropertyTypeList from "./pages/property-type-list";
+import ProjectBuildingType from "./pages/project-building-type";
+import ProjectBuildingTypeList from "./pages/project-building-type-list";
 
 // import EditGallery from './EditGallery';
 
@@ -89,6 +93,13 @@ function App() {
           <Route path="/project-create" element={<ProjectDetailsCreate />} />
           <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
           <Route path="/project-details/:id" element={<ProjectDetails />} />
+          <Route path="/property-type" element={<PropertyType />}/>
+          <Route path="/property-type-list" element={<PropertyTypeList/>}/>
+          <Route path="/project-building-type" element={<ProjectBuildingType/>}/>
+
+          <Route path="/project-building-type-list" element={<ProjectBuildingTypeList/>}/>
+          
+          
 
           <Route path="/project-list" element={<ProjectDetailsList />} />
           <Route path="/banner-list" element={<BannerList />} />
@@ -162,6 +173,7 @@ function App() {
             path="/project-configuration-list"
             element={<ProjectConfiguraionList />}
           />
+          
         </Route>
       </Routes>
     </BrowserRouter>

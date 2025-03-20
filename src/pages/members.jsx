@@ -153,10 +153,26 @@ const Members = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/property-type">Property Type</Link>
+              </li>
+              <li>
+                <Link to="/property-type-list">Property Type List</Link>
+              </li>
+              <li>
+                <Link to="/project-building-type">Project Building Type</Link>
+              </li>
+              <li>
+                <Link to="/project-building-type-list">Project Building Type List</Link>
+              </li>
+
+
+
+              <li>
                 <Link to="/enquiry-list">
                     Enquiry List
                 </Link>
               </li>
+            
               <li className="pb-5">{/* add above this li */}</li>
             </ul>
           </div>
