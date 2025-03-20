@@ -734,12 +734,12 @@ a.purple-btn1:hover {
 }
 
 .purple-btn2 {
-  padding: 5px 1.5rem;
+  padding: 6px 1.5rem;
   border: 2px solid var(--red) !important;
   border-radius: 5px;
   color: var(--body-bg-color);
   background-color: var(--red);
-  margin: 8px 8px 8px 0px;
+  margin: 4px 8px 8px 0px;
 }
 
 .purple-btn2-shadow {
@@ -5059,6 +5059,10 @@ option {
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 4px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
 }
 
 /* date picker code  en purple-btn1d */
@@ -5329,6 +5333,10 @@ iframe .website-content {
   border: 1px solid var(--red) !important;
   border-radius: 4px;
   padding: 10px 15px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
 }
 
 .event-input {
@@ -5560,7 +5568,7 @@ ul.pagination.justify-content-center {
 
 /* Logo */
 .logo {
-  height: 70px; /* Adjust logo size */
+  height: 80px; /* Adjust logo size */
   max-width: 150px;
 }
 
@@ -5612,6 +5620,10 @@ ul.pagination.justify-content-center {
     width: 20px;
     height: 20px;
   }
+}
+
+.justify-content-center{
+  padding-bottom: 30px;
 }
 
 

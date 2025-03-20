@@ -1261,10 +1261,10 @@ const handleFileChange = (e, fieldName) => {
           </div>
         </div>
         <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
+          <div className="card-header">
             <h3 className="card-title">Address</h3>
           </div>
-          <div className="card-body mt-0 pb-0">
+          <div className="card-body">
             <div className="row">
               {/* Address Section */}
               <div className="col-md-3 mt-2">
@@ -1407,7 +1407,7 @@ const handleFileChange = (e, fieldName) => {
           </div>
         </div>
         <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
+          <div className="card-header">
             <h3 className="card-title">File Upload</h3>
           </div>
           <div className="card-body">
@@ -1640,8 +1640,7 @@ const handleFileChange = (e, fieldName) => {
             </div>
           </div>
         </div>
-      </div>
-      <div className="row mt-2 justify-content-center">
+        <div className="row mt-2 justify-content-center">
         <div className="col-md-2">
           <button
             onClick={handleSubmit}
@@ -1661,6 +1660,8 @@ const handleFileChange = (e, fieldName) => {
           </button>
         </div>
       </div>
+      </div>
+     
     </>
   );
 };

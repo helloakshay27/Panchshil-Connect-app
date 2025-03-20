@@ -661,7 +661,7 @@ const Sidebar = () => {
                   <span className="menu-link-text">Event</span>
                 </a>
               </li>
-              <li className="menu-item d-flex">
+              {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
@@ -682,7 +682,7 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text">Specification</span>
                 </a>
-              </li>
+              </li> */}
               <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
@@ -820,7 +820,7 @@ const Sidebar = () => {
                       ></path>
                     </g>
                   </svg>
-                  <span className="menu-link-text">Support Service</span>
+                  <span className="menu-link-text">Support <br /> Service</span>
                 </a>
               </li>
               <li className="menu-item d-flex">
@@ -842,7 +842,7 @@ const Sidebar = () => {
                       fill="#F58220"
                     />
                   </svg>
-                  <span className="menu-link-text">Project Config</span>
+                  <span className="menu-link-text">Project <br /> Config</span>
                 </a>
               </li>
               <li className="menu-item d-flex">
@@ -868,7 +868,7 @@ const Sidebar = () => {
                       fill="#DD7007"
                     />
                   </svg>
-                  <span className="menu-link-text">Press Releases</span>
+                  <span className="menu-link-text text-center">Press <br /> Releases</span>
                 </a>
               </li>
                          
