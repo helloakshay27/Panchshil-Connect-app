@@ -20,14 +20,15 @@ const PropertyType = () => {
     setLoading(true);
 
     try {
-      const payload = { property_type: { name } }; // ✅ Ensure correct backend format
+      const payload = new FormData();
+      payload.append("property_type[property_type]", name); // ✅ Correct format
 
       await axios.post(
         "https://panchshil-super.lockated.com/property_types.json",
-        payload, // Send JSON directly
+        payload,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data", // ✅ Required for FormData
           },
         }
       );
@@ -38,7 +39,7 @@ const PropertyType = () => {
     } catch (error) {
       console.error("Error submitting property type:", error);
 
-      // Extract detailed backend error message if available
+      // Extract backend error message if available
       const errorMessage =
         error.response?.data?.message || "Failed to add Property Type.";
       toast.error(errorMessage);
@@ -80,30 +81,31 @@ const PropertyType = () => {
                 </div>
 
                 {/* ✅ Submit & Cancel Buttons */}
-                <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={loading}
-                    >
-                      {loading ? "Submitting..." : "Submit"}
-                    </button>
-                  </div>
 
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={() => navigate("/property-type-list")}
-                      disabled={loading}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
                 {/* ✅ End of Buttons */}
               </form>
+            </div>
+          </div>
+          <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button
+                type="submit"
+                className="purple-btn2 w-100"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            </div>
+
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 w-100"
+                onClick={() => navigate("/property-type-list")}
+                disabled={loading}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
