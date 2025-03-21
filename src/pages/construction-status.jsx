@@ -66,7 +66,11 @@ const ConstructionStatus = () => {
                   </div>
                 </div>
 
-                <div className="row mt-2 justify-content-center">
+                
+              </form>
+            </div>
+          </div>
+          <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
                     <button
                       type="submit"
@@ -88,9 +92,6 @@ const ConstructionStatus = () => {
                     </button>
                   </div>
                 </div>
-              </form>
-            </div>
-          </div>
         </div>
       </div>
     </div>

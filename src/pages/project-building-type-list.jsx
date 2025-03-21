@@ -94,7 +94,7 @@ const ProjectBuildingTypeList = () => {
               </button>
             </div>
           </div>
-          <div className="card mx-3 mt-4">
+          <div className="card mt-4 pb-4 mx-3">
             <div className="card-header">
               <h3 className="card-title">Property Type List</h3>
             </div>
