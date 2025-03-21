@@ -156,7 +156,8 @@ const AmenitiesList = () => {
               </button>
             </div>
           </div>
-          <div className="card mt-3 pb-4 mx-4">
+          <div className="module-data-section container-fluid">
+          <div className="card mt-4 pb-4 mx-3">
             <div className="card-header">
               <h3 className="card-title">Amenities Setup List</h3>
             </div>
@@ -256,8 +257,8 @@ const AmenitiesList = () => {
                   {/* Pagination */}
                 </div>
               )}
-              <div className="d-flex justify-content-between align-items-center mt-4">
-                <ul className="pagination">
+              <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
+                <ul className="pagination" role="navigation" aria-label="pager">
                   <li
                     className={`page-item ${
                       pagination.current_page === 1 ? "disabled" : ""
@@ -348,6 +349,7 @@ const AmenitiesList = () => {
                 </p>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>

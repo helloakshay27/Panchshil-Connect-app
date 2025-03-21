@@ -83,9 +83,12 @@ const PressReleasesList = () => {
       const query = searchQuery.toLowerCase();
       return (
         (release.title && release.title.toLowerCase().includes(query)) ||
-        (release.company_name && release.company_name.toLowerCase().includes(query)) ||
-        (release.project_name && release.project_name.toLowerCase().includes(query)) ||
-        (release.description && release.description.toLowerCase().includes(query))
+        (release.company_name &&
+          release.company_name.toLowerCase().includes(query)) ||
+        (release.project_name &&
+          release.project_name.toLowerCase().includes(query)) ||
+        (release.description &&
+          release.description.toLowerCase().includes(query))
       );
     });
 
@@ -124,7 +127,7 @@ const PressReleasesList = () => {
       <div className="main-content">
         <div className="website-content overflow-auto">
           <div className="module-data-section container-fluid">
-            <div className="d-flex justify-content-end px-4 pt-2 mt-3">
+            <div className="d-flex justify-content-end px-4 pt-2 mt-3 ">
               <div className="col-md-4 pe-2 pt-2">
                 <form
                   onSubmit={handleSearchSubmit}
@@ -192,7 +195,8 @@ const PressReleasesList = () => {
             </div>
 
             {/* {Table content} */}
-            <div className="card mx-3 mt-4">
+            <div className="module-data-section container-fluid">
+          <div className="card mt-4 pb-4 mx-3">
               <div className="card-header">
                 <h3 className="card-title">Press Releases List</h3>
               </div>
@@ -232,23 +236,25 @@ const PressReleasesList = () => {
                             .map((release, index) => (
                               <tr key={release.id}>
                                 <td>
-                                  {(pagination.current_page - 1) * pageSize + index + 1}
+                                  {(pagination.current_page - 1) * pageSize +
+                                    index +
+                                    1}
                                 </td>
                                 <td>{release.title || "N/A"}</td>
                                 <td>{release.company_name || "N/A"}</td>
                                 <td>{release.project_name || "N/A"}</td>
                                 <td
-  title={release.description} // This automatically shows full text on hover
-  style={{
-    maxWidth: "200px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    cursor: "pointer",
-  }}
->
-  {release.description || "No description"}
-</td>
+                                  title={release.description} // This automatically shows full text on hover
+                                  style={{
+                                    maxWidth: "200px",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  {release.description || "No description"}
+                                </td>
 
                                 <td>{release.release_date || "Unknown"}</td>
                                 <td
@@ -308,7 +314,8 @@ const PressReleasesList = () => {
                         ) : (
                           <tr>
                             <td colSpan="8" className="text-center">
-                              No press releases found matching your search criteria.
+                              No press releases found matching your search
+                              criteria.
                             </td>
                           </tr>
                         )}
@@ -319,8 +326,8 @@ const PressReleasesList = () => {
 
                 {/* Always show pagination when there are results */}
                 {filteredReleases.length > 0 && (
-                  <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                    <ul className="pagination justify-content-center d-flex">
+                  <div className="d-flex align-items-center justify-content-between px-3 pagination-section"> 
+                  <ul className="pagination" role="navigation" aria-label="pager">
                       {/* First Button */}
                       <li
                         className={`page-item ${
@@ -360,7 +367,9 @@ const PressReleasesList = () => {
                         <li
                           key={pageNumber}
                           className={`page-item ${
-                            pagination.current_page === pageNumber ? "active" : ""
+                            pagination.current_page === pageNumber
+                              ? "active"
+                              : ""
                           }`}
                         >
                           <button
@@ -403,7 +412,9 @@ const PressReleasesList = () => {
                       >
                         <button
                           className="page-link"
-                          onClick={() => handlePageChange(pagination.total_pages)}
+                          onClick={() =>
+                            handlePageChange(pagination.total_pages)
+                          }
                           disabled={
                             pagination.current_page === pagination.total_pages
                           }
@@ -434,6 +445,7 @@ const PressReleasesList = () => {
                   </div>
                 )}
               </div>
+            </div>
             </div>
           </div>
         </div>

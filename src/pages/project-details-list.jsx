@@ -184,7 +184,7 @@ const ProjectDetailsList = () => {
               </div>
             </div>
             <div className="module-data-section container-fluid">
-              <div className="card mx-3 mt-4">
+            <div className="card mt-4 pb-4 mx-3">
                 <div className="card-header">
                   <h3 className="card-title">Project List</h3>
                 </div>
@@ -200,7 +200,7 @@ const ProjectDetailsList = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="tbl-container mt-4 ">
+                    <div className="tbl-container mt-3 ">
                       <table className="w-110" style={{ width: "max-content" }}>
                         <thead>
                           <tr>
@@ -337,9 +337,9 @@ const ProjectDetailsList = () => {
                   )}
 
                   {/* Pagination */}
-                  <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                    {/* Pagination Section */}
-                    <ul className="pagination">
+                  <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
+                  
+                    <ul className="pagination" role="navigation" aria-label="pager">
                       {/* First Page Button */}
                       <li
                         className={`page-item ${

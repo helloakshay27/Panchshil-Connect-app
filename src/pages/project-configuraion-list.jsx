@@ -74,12 +74,27 @@ const ProjectConfigurationList = () => {
     pagination.current_page * itemsPerPage
   );
 
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) {
+      params.set("s[name_cont]", searchQuery);
+    }
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section p3">
-          <div className="d-flex justify-content-end px-4 pt-2 mt-3">
-            <div className="col-md-4 pe-2 pt-2">
+    <div className="website-content overflow-auto">
+      <div className="module-data-section container-fluid">
+        <div className="d-flex justify-content-end px-4 pt-2 mt-3 ">
+          <div className="col-md-4 pe-2 pt-2">
+          <form
+                onSubmit={handleSearchSubmit}
+                action="/pms/departments"
+                acceptCharset="UTF-8"
+                method="get"
+              >
               <div className="input-group">
                 <input
                   type="text"
@@ -109,6 +124,7 @@ const ProjectConfigurationList = () => {
                   </button>
                 </div>
               </div>
+              </form>
             </div>
             <div className="card-tools mt-1">
               <button
@@ -129,7 +145,8 @@ const ProjectConfigurationList = () => {
               </button>
             </div>
           </div>
-          <div className="card mt-3 pb-4 mx-4">
+          <div className="module-data-section container-fluid">
+          <div className="card mt-4 pb-4 mx-3">
             <div className="card-header">
               <h3 className="card-title">Project Configuration</h3>
             </div>
@@ -262,8 +279,8 @@ const ProjectConfigurationList = () => {
                   </table>
                 </div>
               )}
-              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                <ul className="pagination justify-content-center d-flex">
+              <div className="d-flex align-items-center justify-content-between px-3 pagination-section"> 
+              <ul className="pagination" role="navigation" aria-label="pager">
                   <li
                     className={`page-item ${
                       pagination.current_page === 1 ? "disabled" : ""
@@ -356,6 +373,7 @@ const ProjectConfigurationList = () => {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>

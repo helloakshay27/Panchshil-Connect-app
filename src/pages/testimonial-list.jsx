@@ -75,10 +75,10 @@ const TestimonialList = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <div className="d-flex justify-content-end px-4 pt-2 mt-3">
-            <div className="col-md-4 pe-2 pt-2">
+    <div className="website-content overflow-auto">
+      <div className="module-data-section container-fluid">
+        <div className="d-flex justify-content-end px-4 pt-2 mt-3 ">
+          <div className="col-md-4 pe-2 pt-2">
               <form
                 action="/pms/departments"
                 acceptCharset="UTF-8"
@@ -143,11 +143,12 @@ const TestimonialList = () => {
             </div>
           </div>
 
+          <div className="module-data-section container-fluid">
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
               <h3 className="card-title">Testimonials List</h3>
             </div>
-            <div className="card-body ">
+            <div className="card-body mt-4 pb-4 pt-0">
               {loading ? (
                 <div className="text-center">
                   <div
@@ -159,7 +160,7 @@ const TestimonialList = () => {
                   </div>
                 </div>
               ) : (
-                <div className="tbl-container mt-4 ">
+                <div className="tbl-container mt-3 ">
                   <table className="w-100">
                     <thead>
                       <tr>
@@ -246,8 +247,8 @@ const TestimonialList = () => {
                   </table>
                 </div>
               )}
-              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                <ul className="pagination justify-content-center d-flex">
+                <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
+                <ul className="pagination" role="navigation" aria-label="pager">
                   {/* First Button */}
                   <li
                     className={`page-item ${
@@ -359,8 +360,8 @@ const TestimonialList = () => {
               </div>
             </div>
           </div>
+          </div>
 
-          {/* Pagination */}
         </div>
       </div>
     </div>

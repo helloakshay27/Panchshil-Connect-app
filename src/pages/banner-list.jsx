@@ -205,7 +205,8 @@ const BannerList = () => {
             </div>
 
             {/* {Table content} */}
-            <div className="card mx-3 mt-4">
+            <div className="module-data-section container-fluid">
+            <div className="card mt-4 pb-4 mx-3">
               <div className="card-header">
                 <h3 className="card-title">Banner List</h3>
               </div>
@@ -343,8 +344,8 @@ const BannerList = () => {
                 )}
 
                 {!loading && displayedBanners.length > 0 && (
-                  <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                    <ul className="pagination justify-content-center d-flex">
+                  <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
+                    <ul className="pagination" role="navigation" aria-label="pager">
                       {/* First Button */}
                       <li
                         className={`page-item ${
@@ -457,6 +458,7 @@ const BannerList = () => {
                   </div>
                 )}
               </div>
+            </div>
             </div>
           </div>
         </div>

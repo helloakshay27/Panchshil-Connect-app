@@ -639,7 +639,7 @@ section .locked img {
 
 .module-data-section {
   padding: 0rem !important;
-  margin-bottom: 20px;
+  margin-bottom: 60px;
 }
 
 .sidebar ul li a {
@@ -873,7 +873,7 @@ input[type="checkbox"] {
 
 .tbl-container thead {
   background-color: #dee2e6;
-  /* position: sticky; */
+  position: sticky;
   top: 0;
   min-height: 50px;
   z-index: 111;
@@ -5449,10 +5449,12 @@ iframe .website-content {
   color: var(--bs-pagination-active-color) !important;
   background-color: var(--red) !important;
   border-color: var(--red) !important;
+  
 }
 
 .page-link {
   color: var(--black) !important;
+  font-size: 13px;
 }
 
 .page-link:hover {
@@ -5622,9 +5624,18 @@ ul.pagination.justify-content-center {
   }
 }
 
-.justify-content-center{
+/* .justify-content-center{
   padding-bottom: 30px;
+} */
+
+.pagination-section .pagination {
+  margin: 10px 0;
+  text-align: center;
+  display: flex;
+  align-items: center !important;
+  
 }
+
 
 
 /*# sourceMappingURL=mor.css-ed871f49aadae569d66f8e115a43114d30eed9833a2ddcbeef011041744e80a7.map */

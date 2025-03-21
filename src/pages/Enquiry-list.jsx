@@ -101,7 +101,7 @@ const EnquiryList = () => {
   return (
     <div className="main-content">
       <div className="website-content overflow-auto">
-        <div className="module-data-section p-3">
+        <div className="module-data-section container-fluid">
           <div className="d-flex justify-content-end px-4 pt-2 mt-3">
             <div className="col-md-4 pe-2 pt-2">
               <form
@@ -149,7 +149,8 @@ const EnquiryList = () => {
               </form>
             </div>
           </div>
-          <div className="card mt-3 pb-4 mx-4">
+          <div className="module-data-section container-fluid">
+          <div className="card mt-4 pb-4 mx-3">
             <div className="card-header">
               <h3 className="card-title">Enquiry List</h3>
             </div>
@@ -165,7 +166,7 @@ const EnquiryList = () => {
                   </div>
                 </div>
               ) : (
-                <div className="tbl-container mt-4">
+                <div className="tbl-container mt-3">
                   <table className="w-100">
                     <thead>
                       <tr>
@@ -205,8 +206,8 @@ const EnquiryList = () => {
 
               {/* Pagination Controls */}
               {!loading && totalFiltered > 0 && (
-                <div className="d-flex justify-content-between align-items-center px-3 mt-4">
-                  <ul className="pagination justify-content-center d-flex">
+               <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
+                <ul className="pagination" role="navigation" aria-label="pager">
                     <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                       <button
                         className="page-link"
@@ -278,6 +279,7 @@ const EnquiryList = () => {
                 </div>
               )}
             </div>
+          </div>
           </div>
         </div>
       </div>
