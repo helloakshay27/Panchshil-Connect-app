@@ -56,7 +56,7 @@ const Header = () => {
               <a className="nav-link active px-4 d-flex align-items-center" href="/members">
                 Home
               </a>
-              <a className="nav-link px-4 d-flex align-items-center" href="./31Dashboard_Daily.html">
+              <a className="nav-link px-4 d-flex align-items-center" href="/setup-member">
                 Setup
               </a>
             </div>

@@ -68,6 +68,7 @@ import ConstructionStatus from "./pages/construction-status";
 import ConstructionStatusList from "./pages/construction-status-list";
 import ConstructionStatusEdit from "./pages/construction-status-edit";
 import PropertyTypeEdit from "./pages/property-type-edit";
+import SetupMember from "./pages/setup-member";
 
 // import EditGallery from './EditGallery';
 
@@ -95,6 +96,7 @@ function App() {
           <Route index element={<Navigate to="/members" />} />
 
           <Route path="/members" element={<Members />} />
+          <Route path="/setup-member" element={<SetupMember />} />
           <Route path="/project-create" element={<ProjectDetailsCreate />} />
           <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
           <Route path="/project-details/:id" element={<ProjectDetails />} />
