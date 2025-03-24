@@ -16,6 +16,9 @@ const SiteVisitSlotConfigList = () => {
     total_pages: 0,
   });
 
+const [formData, setFormData] = useState({
+  active: true
+  });
   const pageSize = 10;
   const navigate = useNavigate();
 
@@ -70,6 +73,72 @@ const SiteVisitSlotConfigList = () => {
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
+
+
+  const handleSubmit = async (e) => {
+
+    const data = new FormData();
+
+    try {
+      const response = await axios.put(
+        `https://panchshil-super.lockated.com/site_schedules/${selectedId}.json`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer 4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Slot created successfully!");
+      console.log("Data successfully submitted:", response.data);
+      navigate("/setup-member/siteVisit-SlotConfig-list");
+    } catch (error) {
+      console.error(
+        "Error submitting data:",
+        error.response?.data || error.message
+      );
+      toast.error("Failed to create slot. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleToggle = async (slotId, currentStatus) => {
+    try {
+      const updatedStatus = currentStatus ? 0 : 1; // Convert true/false to 1/0 if needed
+  
+      const postData = {
+        active: updatedStatus,
+      };
+  
+      console.log("Sending payload:", JSON.stringify(postData));
+  
+      await axios.put(
+        `https://panchshil-super.lockated.com/site_schedules/${slotId}.json`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer 4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      // ✅ Update UI after successful API call
+      setSlots((prevSlots) =>
+        prevSlots.map((slot) =>
+          slot.id === slotId ? { ...slot, active: updatedStatus } : slot
+        )
+      );
+  
+      console.log("Status updated successfully!");
+    } catch (error) {
+      console.error("Error updating slot status:", error.response?.data || error);
+    }
+  };
+  
+  
 
   return (
     <div className="main-content">
@@ -150,6 +219,7 @@ const SiteVisitSlotConfigList = () => {
                         <th>Sr No</th>
                         <th>Project Name</th>
                         <th>Scheduled Date</th>
+                        <th>Active</th>
                         <th>Start Time & End Time</th>
                       </tr>
                     </thead>
@@ -164,6 +234,46 @@ const SiteVisitSlotConfigList = () => {
                             </td>
                             <td>{slot.project_name || "N/A"}</td>
                             <td>{slot.scheduled_date || "N/A"}</td>
+                            <td>
+                                <button
+                                  onClick={() =>
+                                    handleToggle(
+                                      slot.id,
+                                      slot.active
+                                    )
+                                  }
+                                  className="toggle-button"
+                                  style={{
+                                    border: "none",
+                                    background: "none",
+                                    cursor: "pointer",
+                                    padding: 0,
+                                    width: "70px",
+                                  }}
+                                >
+                                  {slot.active ? (
+                                    <svg
+                                      width="40"
+                                      height="25"
+                                      fill="#de7008"
+                                      className="bi bi-toggle-on"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      width="40"
+                                      height="25"
+                                      fill="#667085"
+                                      className="bi bi-toggle-off"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                                    </svg>
+                                  )}
+                                </button>
+                              </td>
                             <td>
                               {slot.start_time} to {slot.end_time}
                             </td>
