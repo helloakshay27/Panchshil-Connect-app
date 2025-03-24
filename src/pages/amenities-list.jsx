@@ -139,7 +139,7 @@ const AmenitiesList = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/amenities")}
+                onClick={() => navigate("/setup-member/amenities")}
                 aria-label="Add a new amenity"
               >
                 <svg
@@ -214,7 +214,7 @@ const AmenitiesList = () => {
                               <button
                                 className="btn btn-link"
                                 onClick={() =>
-                                  navigate(`/edit-amenities/${amenity.id}`)
+                                  navigate(`/setup-member/edit-amenities/${amenity.id}`)
                                 }
                                 style={{
                                   background: "none",

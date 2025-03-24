@@ -88,7 +88,7 @@ const ConstructionStatusList = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/construction-status")}
+                onClick={() => navigate("/setup-member/construction-status")}
               >
                 <svg
                   width={26}
@@ -176,7 +176,7 @@ const ConstructionStatusList = () => {
                                 className="btn btn-link p-0"
                                 onClick={() =>
                                   navigate(
-                                    `/construction-status-edit/${status.id}`
+                                    `/setup-member/construction-status-edit/${status.id}`
                                   )
                                 }
                               >

@@ -113,7 +113,7 @@ const SiteVisitSlotConfig = () => {
 
       toast.success("Slot created successfully!");
       console.log("Data successfully submitted:", response.data);
-      navigate("/siteVisit-SlotConfig-list");
+      navigate("/setup-member/siteVisit-SlotConfig-list");
     } catch (error) {
       console.error(
         "Error submitting data:",

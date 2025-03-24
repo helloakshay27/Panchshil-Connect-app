@@ -100,25 +100,25 @@ function App() {
           <Route path="/project-create" element={<ProjectDetailsCreate />} />
           <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
           <Route path="/project-details/:id" element={<ProjectDetails />} />
-          <Route path="/property-type" element={<PropertyType />}/>
-          <Route path="/property-type-edit/:id" element={<PropertyTypeEdit />}/>
-          <Route path="/property-type-list" element={<PropertyTypeList/>}/>
-          <Route path="/project-building-type" element={<ProjectBuildingType/>}/>
-          <Route path="/project-building-type-edit/:id" element={<ProjectBuildingTypeEdit/>}/>
+          <Route path="/setup-member/property-type" element={<PropertyType />}/>
+          <Route path="/setup-member/property-type-edit/:id" element={<PropertyTypeEdit />}/>
+          <Route path="/setup-member/property-type-list" element={<PropertyTypeList/>}/>
+          <Route path="/setup-member/project-building-type" element={<ProjectBuildingType/>}/>
+          <Route path="/setup-member/project-building-type-edit/:id" element={<ProjectBuildingTypeEdit/>}/>
 
-          <Route path="/project-building-type-list" element={<ProjectBuildingTypeList/>}/>
-          <Route path="/construction-status" element={<ConstructionStatus />} />
-          <Route path="/construction-status-edit/:id" element={<ConstructionStatusEdit />} />
+          <Route path="/setup-member/project-building-type-list" element={<ProjectBuildingTypeList/>}/>
+          <Route path="/setup-member/construction-status" element={<ConstructionStatus />} />
+          <Route path="/setup-member/construction-status-edit/:id" element={<ConstructionStatusEdit />} />
 
-          <Route path="/construction-status-list" element={<ConstructionStatusList />} />
+          <Route path="/setup-member/construction-status-list" element={<ConstructionStatusList />} />
           
 
           <Route path="/project-list" element={<ProjectDetailsList />} />
           <Route path="/banner-list" element={<BannerList />} />
           <Route path="/banner-add" element={<BannerAdd />} />
-          <Route path="/amenities" element={<Amenities />} />
-          <Route path="/amenities-list" element={<AmenitiesList />} />
-          <Route path="/edit-amenities/:id" element={<EditAmenities />} />
+          <Route path="/setup-member/amenities" element={<Amenities />} />
+          <Route path="/setup-member/amenities-list" element={<AmenitiesList />} />
+          <Route path="/setup-member/edit-amenities/:id" element={<EditAmenities />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonial-list" element={<TestimonialList />} />
           <Route path="/testimonial-edit" element={<TestimonialEdit />} />
@@ -152,11 +152,11 @@ function App() {
           <Route path="/sitevisit-list" element={<SitevisitList />} />
           <Route path="/sitevisit-edit/:id" element={<SitevisitEdit />} />
           <Route
-            path="/siteslot-create"
+            path="/setup-member/siteslot-create"
             element={<SiteVisitSlotConfig />}
           />
           <Route
-            path="/siteslot-list"
+            path="/setup-member/siteslot-list"
             element={<SiteVisitSlotConfigList />}
           />
           <Route path="/company-create" element={<CompanyCreate />} />
@@ -176,13 +176,13 @@ function App() {
             element={<PressReleasesEdit />}
           />
           <Route
-            path="/project-configuration"
+            path="/setup-member/project-configuration"
             element={<ProjectConfiguraion />}
           />
-          <Route path="project-config-edit/:id"
+          <Route path="/setup-member/project-config-edit/:id"
           element={<ProjectConfigEdit/>}/>
           <Route
-            path="/project-configuration-list"
+            path="/setup-member/project-configuration-list"
             element={<ProjectConfiguraionList />}
           />
           

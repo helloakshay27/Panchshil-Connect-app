@@ -40,7 +40,7 @@ const Amenities = () => {
 
     const formData = new FormData();
     formData.append("amenity_setup[name]", name);
-    formData.append("amenity_setup[amenity_type]", amenityType); // ✅ Correct Key for Backend
+    formData.append("amenity_setup[amenity_type]", amenityType); 
     if (icon) {
       formData.append("icon", icon);
     }
@@ -63,7 +63,7 @@ const Amenities = () => {
       setAmenityType(""); // ✅ Reset state
       setIcon(null);
       setPreviewImage(null);
-      navigate("/amenities-list");
+      navigate("/setup-member/amenities-list");
     } catch (err) {
       toast.error(`Error adding amenity: ${err.message}`);
     } finally {

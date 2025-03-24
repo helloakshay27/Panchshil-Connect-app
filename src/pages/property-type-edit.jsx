@@ -48,7 +48,7 @@ const PropertyTypeEdit = () => {
       );
 
       toast.success("Property Type updated successfully!");
-      navigate("/property-type-list"); // ✅ Navigate after success
+      navigate("/setup-member/property-type-list"); // ✅ Navigate after success
     } catch (error) {
       console.error("Error updating property type:", error);
 
@@ -109,7 +109,7 @@ const PropertyTypeEdit = () => {
                     <button
                       type="button"
                       className="purple-btn2 w-100"
-                      onClick={() => navigate("/property-type-list")}
+                      onClick={() => navigate("/setup-member/property-type-list")}
                       disabled={loading}
                     >
                       Cancel

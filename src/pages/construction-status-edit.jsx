@@ -50,7 +50,7 @@ const ConstructionStatusEdit = () => {
         { construction_status: formData }
       );
       toast.success("Construction status updated successfully!");
-      navigate("/construction-status-list");
+      navigate("/setup-member/construction-status-list");
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status.");
@@ -105,7 +105,7 @@ const ConstructionStatusEdit = () => {
                       <button
                         type="button"
                         className="purple-btn2 w-100"
-                        onClick={() => navigate("/construction-status-list")}
+                        onClick={() => navigate("/setup-member/construction-status-list")}
                       >
                         Cancel
                       </button>

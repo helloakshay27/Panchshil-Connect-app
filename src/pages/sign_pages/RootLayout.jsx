@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import SetupSidebar from '../../components/setup-sidebar';
 
 export default function RootLayout() {
   const location = useLocation();
@@ -16,7 +17,8 @@ export default function RootLayout() {
 
       <div className="main-content">
         <div>
-          <Sidebar />
+          {location.pathname.startsWith("/setup-member")?<SetupSidebar/>:<Sidebar />}
+          
         </div>
 
         <div className="website-content flex-grow-1">

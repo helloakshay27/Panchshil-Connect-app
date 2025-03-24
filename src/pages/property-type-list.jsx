@@ -98,7 +98,7 @@ const PropertyTypeList = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/property-type")}
+                onClick={() => navigate("/setup-member/property-type")}
                 aria-label="Add a new amenity"
               >
                 <svg
@@ -182,7 +182,7 @@ const PropertyTypeList = () => {
                             <button
                               className="btn btn-link p-0"
                               onClick={() =>
-                                navigate(`/property-type-edit/${property.id}`)
+                                navigate(`/setup-member/property-type-edit/${property.id}`)
                               }
                               style={{
                                 background: "none",

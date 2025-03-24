@@ -3,7 +3,6 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-
 const ProjectBuildingType = () => {
   const [buildingType, setBuildingType] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +26,7 @@ const ProjectBuildingType = () => {
         }
       );
       toast.success("Building type added successfully");
-      navigate("/project-building-type-list")
+      navigate("/setup-member/project-building-type-list");
       setBuildingType(""); // Reset input field
     } catch (error) {
       console.error("Error adding building type:", error);
@@ -40,7 +39,6 @@ const ProjectBuildingType = () => {
   const handleCancel = () => {
     navigate(-1); // This navigates back one step in history
   };
-  
 
   return (
     <div className="main-content">
@@ -58,7 +56,9 @@ const ProjectBuildingType = () => {
                     <div className="form-group">
                       <label>
                         Name
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          *
+                        </span>
                       </label>
                       <input
                         className="form-control"
@@ -70,32 +70,30 @@ const ProjectBuildingType = () => {
                     </div>
                   </div>
                 </div>
-                
-                
               </form>
             </div>
           </div>
           <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={loading}
-                    >
-                      Submit
-                    </button>
-                  </div>
+            <div className="col-md-2">
+              <button
+                type="submit"
+                className="purple-btn2 w-100"
+                disabled={loading}
+              >
+                Submit
+              </button>
+            </div>
 
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={handleCancel}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 w-100"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

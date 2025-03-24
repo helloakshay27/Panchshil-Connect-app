@@ -28,7 +28,7 @@ const ConstructionStatus = () => {
 
       toast.success("Construction status added successfully!");
       setName(""); // Reset form
-      navigate("/construction-status-list"); // Redirect after success
+      navigate("/setup-member/construction-status-list"); // Redirect after success
     } catch (error) {
       console.error("Error adding construction status:", error);
       toast.error("Failed to add construction status");
@@ -53,7 +53,9 @@ const ConstructionStatus = () => {
                     <div className="form-group">
                       <label>
                         Name
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          *
+                        </span>
                       </label>
                       <input
                         className="form-control"
@@ -65,33 +67,31 @@ const ConstructionStatus = () => {
                     </div>
                   </div>
                 </div>
-
-                
               </form>
             </div>
           </div>
           <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={loading}
-                    >
-                      {loading ? "Submitting..." : "Submit"}
-                    </button>
-                  </div>
+            <div className="col-md-2">
+              <button
+                type="submit"
+                className="purple-btn2 w-100"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            </div>
 
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={() => navigate("/construction-status-list")}
-                      disabled={loading}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 w-100"
+                onClick={() => navigate("/setup-member/construction-status-list")}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

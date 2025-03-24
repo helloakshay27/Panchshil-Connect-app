@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../mor.css";
 
 const Header = () => {
@@ -53,12 +53,12 @@ const Header = () => {
               alt="Logo"
             />
             <div className="nav-links ms-4">
-              <a className="nav-link active px-4 d-flex align-items-center" href="/members">
+              <NavLink className="nav-link px-4 d-flex align-items-center" to="/members">
                 Home
-              </a>
-              <a className="nav-link px-4 d-flex align-items-center" href="/setup-member">
+              </NavLink>
+              <NavLink className="nav-link px-4 d-flex align-items-center" to="/setup-member">
                 Setup
-              </a>
+              </NavLink>
             </div>
           </div>
 

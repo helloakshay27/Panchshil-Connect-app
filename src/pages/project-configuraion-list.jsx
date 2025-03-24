@@ -129,7 +129,7 @@ const ProjectConfigurationList = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/project-configuration")}
+                onClick={() => navigate("/setup-member/project-configuration")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -245,7 +245,7 @@ const ProjectConfigurationList = () => {
                             <td>
                               {/* Edit Icon */}
                               <a
-                                href={`/project-config-edit/${config.id}`}
+                                href={`/setup-member/project-config-edit/${config.id}`}
                                 className="me-2"
                               >
                                 <svg

@@ -35,7 +35,7 @@ const ProjectBuildingTypeEdit = () => {
         building_type: { building_type: buildingType },
       });
       toast.success("Building type updated successfully");
-      navigate("/project-building-type-list");
+      navigate("/setup-member/project-building-type-list");
     } catch (error) {
       console.error("Error updating building type:", error);
       toast.error("Failed to update building type");
@@ -78,7 +78,7 @@ const ProjectBuildingTypeEdit = () => {
                     </button>
                   </div>
                   <div className="col-md-2">
-                    <button type="button" className="purple-btn2 w-100" onClick={() => navigate("/project-building-type-list")}>
+                    <button type="button" className="purple-btn2 w-100" onClick={() => navigate("/setup-member/project-building-type-list")}>
                       Cancel
                     </button>
                   </div>

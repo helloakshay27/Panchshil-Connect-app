@@ -92,7 +92,7 @@ const ProjectConfigEdit = () => {
         }
       );
       toast.success("Project configuration updated successfully!");
-      navigate("/project-configuration-list");
+      navigate("/setup-member/project-configuration-list");
     } catch (error) {
       toast.error("Failed to update configuration");
     } finally {

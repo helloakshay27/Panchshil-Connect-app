@@ -35,7 +35,7 @@ const PropertyType = () => {
 
       toast.success("Property Type added successfully!");
       setName(""); // Reset form
-      navigate("/property-type-list"); // ✅ Navigate after success
+      navigate("/setup-member/property-type-list"); // ✅ Navigate after success
     } catch (error) {
       console.error("Error submitting property type:", error);
 
@@ -101,7 +101,7 @@ const PropertyType = () => {
               <button
                 type="button"
                 className="purple-btn2 w-100"
-                onClick={() => navigate("/property-type-list")}
+                onClick={() => navigate("/setup-member/property-type-list")}
                 disabled={loading}
               >
                 Cancel

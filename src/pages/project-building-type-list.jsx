@@ -78,7 +78,7 @@ const ProjectBuildingTypeList = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/project-building-type")}
+                onClick={() => navigate("/setup-member/project-building-type")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +96,7 @@ const ProjectBuildingTypeList = () => {
           </div>
           <div className="card mt-4 pb-4 mx-3">
             <div className="card-header">
-              <h3 className="card-title">Property Type List</h3>
+              <h3 className="card-title">Project Building Type </h3>
             </div>
             <div className="card-body mt-4 pb-4 pt-0">
               <div className="tbl-container mt-3">
@@ -159,7 +159,7 @@ const ProjectBuildingTypeList = () => {
                               className="btn btn-link p-0"
                               onClick={() =>
                                 navigate(
-                                  `/project-building-type-edit/${type.id}`
+                                  `/setup-member/project-building-type-edit/${type.id}`
                                 )
                               }
                             >
