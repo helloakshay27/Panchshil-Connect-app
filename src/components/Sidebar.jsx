@@ -417,7 +417,7 @@ const Sidebar = () => {
                   <span className="menu-link-text">Banner</span>
                 </a>
               </li>
-              <li className="menu-item d-flex">
+              {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
@@ -438,7 +438,7 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text">Amenities</span>
                 </a>
-              </li>
+              </li> */}
               <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
@@ -661,7 +661,7 @@ const Sidebar = () => {
                   <span className="menu-link-text">Event</span>
                 </a>
               </li>
-              {/* <li className="menu-item d-flex">
+              <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
@@ -682,8 +682,8 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text">Specification</span>
                 </a>
-              </li> */}
-              <li className="menu-item d-flex">
+              </li>
+              {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
@@ -704,7 +704,7 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text">Site Slot </span>
                 </a>
-              </li>
+              </li> */}
               <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
@@ -823,7 +823,7 @@ const Sidebar = () => {
                   <span className="menu-link-text">Support <br /> Service</span>
                 </a>
               </li>
-              <li className="menu-item d-flex">
+              {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
@@ -844,7 +844,7 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text">Project <br /> Config</span>
                 </a>
-              </li>
+              </li> */}
               <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"

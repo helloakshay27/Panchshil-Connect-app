@@ -36,7 +36,7 @@ const Members = () => {
                 <Link to="/banner-edit/:id">Banner Edit</Link>
               </li>
 
-              <li>
+              {/* <li>
                 <Link to="/amenities">Amenities Setup</Link>
               </li>
               <li>
@@ -44,7 +44,7 @@ const Members = () => {
               </li>
               <li>
                 <Link to="/edit-amenities">Edit Amenities</Link>
-              </li>
+              </li> */}
               <li>
                 <Link to="/testimonials">Testimonials</Link>
               </li>
@@ -103,14 +103,14 @@ const Members = () => {
               <li>
                 <Link to="/sitevisit-edit/">Site Visit Edit</Link>
               </li>
-              <li>
+              {/* <li>
                 <Link to="/siteslot-create">Site Visit Slot Config</Link>
               </li>
               <li>
                 <Link to="/siteslot-list">
                   Site Visit Slot Config List
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link to="/organization-create">Organization Create</Link>
               </li>
@@ -141,7 +141,7 @@ const Members = () => {
               <li>
                 <Link to="/pressreleases-edit/:id">Press Releases Edit</Link>
               </li>
-              <li>
+              {/* <li>
                 <Link to="/project-configuration">Project Configuraion</Link>
               </li>
               <li>
@@ -152,8 +152,8 @@ const Members = () => {
                   Project Configuraion List
                 </Link>
               </li>
-              <li>
-                <Link to="/property-type">Property Type</Link>
+              <li> */}
+                {/* <Link to="/property-type">Property Type</Link>
               </li>
               <li>
                 <Link to="/property-type-edit">Property Type Edit</Link>
@@ -169,8 +169,8 @@ const Members = () => {
               </li>
               <li>
                 <Link to="/project-building-type-list">Project Building Type List</Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link to="/construction-status">
                     Construction Status
                 </Link>
@@ -184,7 +184,7 @@ const Members = () => {
                 <Link to="/construction-status-list">
                     Construction Status List
                 </Link>
-              </li>
+              </li> */}
 
 
 
