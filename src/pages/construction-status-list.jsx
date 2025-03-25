@@ -7,17 +7,36 @@ const ConstructionStatusList = () => {
   const [statuses, setStatuses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const getPageFromStorage = () => {
+    return (
+      parseInt(localStorage.getItem("construction_status_currentPage")) || 1
+    );
+  };
+  const [pagination, setPagination] = useState({
+    current_page: getPageFromStorage(),
+    total_count: 0,
+    total_pages: 0,
+  });
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   // ✅ Fetch Construction Statuses
   useEffect(() => {
     const fetchStatuses = async () => {
+      setLoading(true);
+
       setLoading(true); // Ensure loading starts before API call
       try {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/construction_statuses.json"
         );
         setStatuses(response.data);
+        setPagination((prevState) => ({
+          ...prevState,
+          total_count: response.data.length,
+          total_pages: Math.ceil(response.data.length / itemsPerPage),
+          current_page: getPageFromStorage(),
+        }));
       } catch (error) {
         console.error("Error fetching statuses:", error);
         toast.error("Failed to load construction statuses.");
@@ -28,6 +47,25 @@ const ConstructionStatusList = () => {
 
     fetchStatuses();
   }, []);
+  const handlePageChange = (pageNumber) => {
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber,
+    }));
+    localStorage.setItem("construction_status_currentPage", pageNumber);
+  };
+
+  const filteredStatuses = statuses.filter((status) =>
+    status.construction_status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalFiltered = filteredStatuses.length;
+  const totalPages = Math.ceil(totalFiltered / itemsPerPage);
+
+  const displayedStatuses = filteredStatuses.slice(
+    (pagination.current_page - 1) * itemsPerPage,
+    pagination.current_page * itemsPerPage
+  );
 
   // ✅ Toggle Active/Inactive Status
   const handleToggle = async (id, currentStatus) => {
@@ -61,7 +99,10 @@ const ConstructionStatusList = () => {
                   className="form-control tbl-search table_search"
                   placeholder="Search"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
+                  }}
                 />
                 <div className="input-group-append">
                   <button type="submit" className="btn btn-md btn-default">
@@ -122,15 +163,14 @@ const ConstructionStatusList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {statuses
-                        .filter((status) =>
-                          status.construction_status
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase())
-                        )
-                        .map((status, index) => (
+                      {displayedStatuses.length > 0 ? (
+                        displayedStatuses.map((status, index) => (
                           <tr key={status.id}>
-                            <td>{index + 1}</td>
+                            <td>
+                              {(pagination.current_page - 1) * itemsPerPage +
+                                index +
+                                1}
+                            </td>{" "}
                             <td>{status.construction_status}</td>
                             <td>
                               <button
@@ -199,10 +239,95 @@ const ConstructionStatusList = () => {
                               </button>
                             </td>
                           </tr>
-                        ))}
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="2" className="text-center">
+                            No statuses found.
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 )}
+              </div>
+              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                <ul className="pagination justify-content-center d-flex">
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(1)}
+                      disabled={pagination.current_page === 1}
+                    >
+                      First
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                      disabled={pagination.current_page === 1}
+                    >
+                      Prev
+                    </button>
+                  </li>
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
+                    <li
+                      key={pageNumber}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === totalPages ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                      disabled={pagination.current_page === totalPages}
+                    >
+                      Next
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === totalPages ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(totalPages)}
+                      disabled={pagination.current_page === totalPages}
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>

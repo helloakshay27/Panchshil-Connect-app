@@ -85,6 +85,8 @@ const AmenitiesList = () => {
   const filteredAmenities = amenities.filter((amenity) =>
     (amenity.name?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
+  const totalFiltered = filteredAmenities.length;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
 
   const displayedAmenities = filteredAmenities
     .slice(
@@ -339,7 +341,7 @@ const AmenitiesList = () => {
                       </button>
                     </li>
                     {Array.from(
-                      { length: pagination.total_pages },
+                      { length: totalPages },
                       (_, i) => i + 1
                     ).map((page) => (
                       <li
@@ -358,7 +360,7 @@ const AmenitiesList = () => {
                     ))}
                     <li
                       className={`page-item ${
-                        pagination.current_page === pagination.total_pages
+                        pagination.current_page === totalPages
                           ? "disabled"
                           : ""
                       }`}
@@ -374,14 +376,14 @@ const AmenitiesList = () => {
                     </li>
                     <li
                       className={`page-item ${
-                        pagination.current_page === pagination.total_pages
+                        pagination.current_page === totalPages
                           ? "disabled"
                           : ""
                       }`}
                     >
                       <button
                         className="page-link"
-                        onClick={() => handlePageChange(pagination.total_pages)}
+                        onClick={() => handlePageChange(totalPages)}
                       >
                         Last
                       </button>
