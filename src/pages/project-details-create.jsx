@@ -69,6 +69,8 @@ const ProjectDetailsCreate = () => {
   const [virtualTourName, setVirtualTourName] = useState("");
   const [towerName, setTowerName] = useState("");
   const [reraNumber, setReraNumber] = useState("");
+  const [selectedType, setSelectedType] = useState(null);
+  const [filteredAmenities, setFilteredAmenities] = useState([]);
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
 
@@ -139,6 +141,21 @@ const ProjectDetailsCreate = () => {
       }));
     }
   };
+
+  const amenityTypes = [
+    ...new Set(amenities.map((ammit) => ammit.amenity_type)),
+  ].map((type) => ({ value: type, label: type }));
+
+  // Filter amenities based on selected type
+  useEffect(() => {
+    if (selectedType) {
+      setFilteredAmenities(
+        amenities.filter((ammit) => ammit.amenity_type === selectedType.value)
+      );
+    } else {
+      setFilteredAmenities([]);
+    }
+  }, [selectedType, amenities]);
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
@@ -504,22 +521,23 @@ const ProjectDetailsCreate = () => {
         data.append("project[image]", value);
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
-          if (typeof item === "object" && item !== null) {
-            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_url]`, item.virtual_tour_url || "");
-            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name || "");
+          if (item.virtual_tour_url && item.virtual_tour_name) {
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_url]`, item.virtual_tour_url);
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name);
           }
         });
       } else if (key === "rera_number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
-          if (typeof item === "object" && item !== null) {
-            data.append(`project[rera_number_multiple][${index}][tower_name]`, item.tower_name || "");
-            data.append(`project[rera_number_multiple][${index}][rera_number]`, item.rera_number || "");
+          if (item.tower_name && item.rera_number) {
+            data.append(`project[rera_number_multiple][${index}][tower_name]`, item.tower_name);
+            data.append(`project[rera_number_multiple][${index}][rera_number]`, item.rera_number);
           }
         });
       } else {
         data.append(`project[${key}]`, value);
       }
     });
+    
 
     try {
       const response = await axios.post(
@@ -610,10 +628,10 @@ const ProjectDetailsCreate = () => {
 
       try {
         const response = await axios.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          //   "Content-Type": "application/json",
-          // },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
         });
 
         setAmenities(response.data?.amenities_setups);
@@ -1402,42 +1420,47 @@ const ProjectDetailsCreate = () => {
             <h3 className="card-title">Amenities</h3>
           </div>
           <div className="card-body mt-0 pb-0">
-            <div className="row">
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Amenities
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <MultiSelectBox
-                    options={amenities.map((ammit) => ({
-                      value: ammit.id,
-                      label: ammit.name,
-                    }))}
-                    value={formData.Amenities.map((id) => {
-                      const ammit = amenities.find((ammit) => ammit.id === id);
-                      return ammit
-                        ? { value: ammit.id, label: ammit.name }
-                        : null;
-                    }).filter(Boolean)}
-                    onChange={(selectedOptions) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        Amenities: selectedOptions.map(
-                          (option) => option.value
-                        ),
-                      }))
-                    }
-                    placeholder="Select amenities"
-                  />
-                  {console.log("amenities", amenities)}
-                  {console.log("project_amenities", formData.project_amenities)}
-                </div>
-              </div>
-            </div>
+          <div className="row">
+      {/* Amenity Type Dropdown */}
+      <div className="col-md-3 mt-2">
+        <div className="form-group">
+          <label>Amenity Type</label>
+          <SelectBox
+            options={amenityTypes}
+            value={selectedType}
+            onChange={setSelectedType}
+            placeholder="Select Amenity Type"
+          />
+        </div>
+      </div>
+
+      {/* Multi-Select Amenities Dropdown */}
+      <div className="col-md-3 mt-2">
+        <div className="form-group">
+          <label>
+            Amenities
+            <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+          </label>
+          <MultiSelectBox
+            options={filteredAmenities.map((ammit) => ({
+              value: ammit.id,
+              label: ammit.name,
+            }))}
+            value={formData.Amenities.map((id) => {
+              const ammit = filteredAmenities.find((ammit) => ammit.id === id);
+              return ammit ? { value: ammit.id, label: ammit.name } : null;
+            }).filter(Boolean)}
+            onChange={(selectedOptions) =>
+              setFormData((prev) => ({
+                ...prev,
+                Amenities: selectedOptions.map((option) => option.value),
+              }))
+            }
+            placeholder="Select amenities"
+          />
+        </div>
+      </div>
+    </div>
           </div>
         </div>
         <div className="card mt-3 pb-4 mx-4">

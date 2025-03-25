@@ -34,13 +34,13 @@ const ProjectDetailsEdit = () => {
     Number_Of_Towers: "",
     Number_Of_Units: "",
     no_of_floors: "",
-    Rera_Number: "",
+    rera_number_multiple: [],
     Amenities: [],
     Specifications: [],
     Land_Area: "",
     land_uom: "",
     project_tag: "",
-    virtual_tour_url: "",
+    virtual_tour_url_multiple: [],
     map_url: "",
     image: [],
     Address: {
@@ -51,9 +51,10 @@ const ProjectDetailsEdit = () => {
       pin_code: "",
       country: "",
     },
-    brochure: null,
+    brochure: [],
     two_d_images: [],
     videos: [],
+    gallery_images: [],
   });
 
   console.log("formData", formData);
@@ -65,6 +66,9 @@ const ProjectDetailsEdit = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+   const [towerName, setTowerName] = useState("");
+    const [reraNumber, setReraNumber] = useState("");
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
   // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
@@ -140,7 +144,7 @@ const ProjectDetailsEdit = () => {
           Number_Of_Towers: projectData.no_of_towers || "",
           no_of_floors: projectData.no_of_floors || "",
           Number_Of_Units: projectData.no_of_apartments || "",
-          Rera_Number: projectData.rera_number || "",
+          rera_number_multiple: projectData.rera_number_multiple || [],
           Amenities: Array.isArray(projectData.amenities)
             ? projectData.amenities.map((ammit) => ammit.name)
             : [],
@@ -150,7 +154,7 @@ const ProjectDetailsEdit = () => {
           Land_Area: projectData.land_area || "",
           land_uom: projectData.land_uom || "",
           project_tag: projectData.project_tag || "",
-          virtual_tour_url: projectData.virtual_tour_url || "",
+          virtual_tour_url_multiple: projectData.virtual_tour_url_multiple || [],
           map_url: projectData.map_url || "",
           image: projectData.image_url || [],
           Address: {
@@ -161,9 +165,10 @@ const ProjectDetailsEdit = () => {
             pin_code: projectData.location?.pin_code || "",
             country: projectData.location?.country || "",
           },
-          brochure: projectData.brochure || null,
+          brochure: projectData.brochure || [],
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
+          gallery_images: projectData.gallery_images || [],
         });
 
         setProject(response.data);
@@ -177,45 +182,50 @@ const ProjectDetailsEdit = () => {
   }, []);
 
   const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
-const MAX_BROCHURE_SIZE = 20 * 1024 * 1024; // 20MB
+  const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+  const MAX_BROCHURE_SIZE = 20 * 1024 * 1024; // 20MB
 
-// Format file size to human-readable format
-const formatFileSize = (bytes) => {
-  if (bytes < 1024) return bytes + ' B';
-  else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-  else if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-  return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
-};
+  // Format file size to human-readable format
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + " B";
+    else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " KB";
+    else if (bytes < 1024 * 1024 * 1024)
+      return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+  };
 
-// Function to check file size
-const isFileSizeValid = (file, maxSize) => {
-  if (file.size > maxSize) {
-    return {
-      valid: false,
-      name: file.name,
-      size: formatFileSize(file.size)
-    };
-  }
-  return { valid: true };
-};
+  // Function to check file size
+  const isFileSizeValid = (file, maxSize) => {
+    if (file.size > maxSize) {
+      return {
+        valid: false,
+        name: file.name,
+        size: formatFileSize(file.size),
+      };
+    }
+    return { valid: true };
+  };
 
   // console.log("this is the form data", formData);
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
-  
+
     if (type === "file") {
       if (name === "brochure") {
         const file = files[0];
         const sizeCheck = isFileSizeValid(file, MAX_BROCHURE_SIZE);
-        
+
         if (!sizeCheck.valid) {
-          toast.error(`Brochure file too large: ${sizeCheck.name} (${sizeCheck.size}). Maximum allowed size is ${formatFileSize(MAX_BROCHURE_SIZE)}.`);
-          e.target.value = ''; // Reset input
+          toast.error(
+            `Brochure file too large: ${sizeCheck.name} (${
+              sizeCheck.size
+            }). Maximum allowed size is ${formatFileSize(MAX_BROCHURE_SIZE)}.`
+          );
+          e.target.value = ""; // Reset input
           return;
         }
-        
+
         setFormData((prev) => ({
           ...prev,
           brochure: file,
@@ -224,8 +234,8 @@ const isFileSizeValid = (file, maxSize) => {
         const newImages = Array.from(files);
         const validImages = [];
         const tooLargeFiles = [];
-        
-        newImages.forEach(file => {
+
+        newImages.forEach((file) => {
           const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
           if (!sizeCheck.valid) {
             tooLargeFiles.push(sizeCheck);
@@ -233,19 +243,26 @@ const isFileSizeValid = (file, maxSize) => {
             validImages.push(file);
           }
         });
-        
+
         if (tooLargeFiles.length > 0) {
-          const fileList = tooLargeFiles.map(f => `${f.name} (${f.size})`).join(', ');
-          toast.error(`Image file(s) too large: ${fileList}. Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)} per file.`, {
-            duration: 5000,
-          });
-          
+          const fileList = tooLargeFiles
+            .map((f) => `${f.name} (${f.size})`)
+            .join(", ");
+          toast.error(
+            `Image file(s) too large: ${fileList}. Maximum allowed size is ${formatFileSize(
+              MAX_IMAGE_SIZE
+            )} per file.`,
+            {
+              duration: 5000,
+            }
+          );
+
           if (tooLargeFiles.length === newImages.length) {
-            e.target.value = ''; // Reset input if all files are invalid
+            e.target.value = ""; // Reset input if all files are invalid
             return;
           }
         }
-        
+
         if (validImages.length > 0) {
           setFormData((prev) => ({
             ...prev,
@@ -256,8 +273,8 @@ const isFileSizeValid = (file, maxSize) => {
         const newVideos = Array.from(files);
         const validVideos = [];
         const tooLargeFiles = [];
-        
-        newVideos.forEach(file => {
+
+        newVideos.forEach((file) => {
           const sizeCheck = isFileSizeValid(file, MAX_VIDEO_SIZE);
           if (!sizeCheck.valid) {
             tooLargeFiles.push(sizeCheck);
@@ -265,19 +282,26 @@ const isFileSizeValid = (file, maxSize) => {
             validVideos.push(file);
           }
         });
-        
+
         if (tooLargeFiles.length > 0) {
-          const fileList = tooLargeFiles.map(f => `${f.name} (${f.size})`).join(', ');
-          toast.error(`Video file(s) too large: ${fileList}. Maximum allowed size is ${formatFileSize(MAX_VIDEO_SIZE)} per file.`, {
-            duration: 5000,
-          });
-          
+          const fileList = tooLargeFiles
+            .map((f) => `${f.name} (${f.size})`)
+            .join(", ");
+          toast.error(
+            `Video file(s) too large: ${fileList}. Maximum allowed size is ${formatFileSize(
+              MAX_VIDEO_SIZE
+            )} per file.`,
+            {
+              duration: 5000,
+            }
+          );
+
           if (tooLargeFiles.length === newVideos.length) {
-            e.target.value = ''; // Reset input if all files are invalid
+            e.target.value = ""; // Reset input if all files are invalid
             return;
           }
         }
-        
+
         if (validVideos.length > 0) {
           setFormData((prev) => ({
             ...prev,
@@ -286,27 +310,38 @@ const isFileSizeValid = (file, maxSize) => {
         }
       } else if (name === "image") {
         const files = Array.from(e.target.files);
-        const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-        
+        const allowedTypes = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+
         // First check file type
-        const validTypeFiles = files.filter((file) => allowedTypes.includes(file.type));
-        
+        const validTypeFiles = files.filter((file) =>
+          allowedTypes.includes(file.type)
+        );
+
         if (validTypeFiles.length !== files.length) {
           toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
           e.target.value = "";
           return;
         }
-        
+
         // Then check file size
         const file = validTypeFiles[0];
         const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
-        
+
         if (!sizeCheck.valid) {
-          toast.error(`Image file too large: ${sizeCheck.name} (${sizeCheck.size}). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`);
-          e.target.value = ''; // Reset input
+          toast.error(
+            `Image file too large: ${sizeCheck.name} (${
+              sizeCheck.size
+            }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
+          );
+          e.target.value = ""; // Reset input
           return;
         }
-        
+
         setFormData((prevFormData) => ({
           ...prevFormData,
           image: file,
@@ -342,26 +377,37 @@ const isFileSizeValid = (file, maxSize) => {
   const handleFileChange = (e, fieldName) => {
     if (fieldName === "image") {
       const files = Array.from(e.target.files);
-      const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-  
-      const validTypeFiles = files.filter((file) => allowedTypes.includes(file.type));
-  
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+
+      const validTypeFiles = files.filter((file) =>
+        allowedTypes.includes(file.type)
+      );
+
       if (validTypeFiles.length !== files.length) {
         toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
         e.target.value = "";
         return;
       }
-      
+
       // Check file size
       const file = validTypeFiles[0];
       const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
-      
+
       if (!sizeCheck.valid) {
-        toast.error(`Image file too large: ${sizeCheck.name} (${sizeCheck.size}). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`);
-        e.target.value = ''; // Reset input
+        toast.error(
+          `Image file too large: ${sizeCheck.name} (${
+            sizeCheck.size
+          }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
+        );
+        e.target.value = ""; // Reset input
         return;
       }
-  
+
       setFormData((prevFormData) => ({
         ...prevFormData,
         image: file,
@@ -377,10 +423,10 @@ const isFileSizeValid = (file, maxSize) => {
       toast.success("Image removed successfully!");
       return;
     }
-  
+
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_twoD_image/${image.id}.json`, 
+        `https://panchshil-super.lockated.com/projects/${id}/remove_twoD_image/${image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -388,15 +434,15 @@ const isFileSizeValid = (file, maxSize) => {
           },
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to delete image");
       }
-  
+
       // Remove the deleted image from the state
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
-  
+
       console.log(`Image with ID ${image.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
@@ -413,10 +459,10 @@ const isFileSizeValid = (file, maxSize) => {
       toast.success("Image removed successfully!");
       return;
     }
-  
+
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_videos/${videos.id}.json`, 
+        `https://panchshil-super.lockated.com/projects/${id}/remove_videos/${videos.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -424,22 +470,21 @@ const isFileSizeValid = (file, maxSize) => {
           },
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to delete videos");
       }
-  
+
       // Remove the deleted image from the state
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
-  
+
       console.log(`Image with ID ${videos.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
     }
   };
-  
 
   const validateForm = (formData) => {
     const errors = [];
@@ -577,7 +622,7 @@ const isFileSizeValid = (file, maxSize) => {
     if (formData.image) {
       data.append("project[image]", formData.image);
     }
-  
+
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
@@ -588,7 +633,11 @@ const isFileSizeValid = (file, maxSize) => {
         if (file) {
           data.append("project[brochure]", file);
         }
-      } else if (key === "two_d_images" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "two_d_images" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -635,10 +684,10 @@ const isFileSizeValid = (file, maxSize) => {
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-  
+
     if (files && files[0]) {
       const imageURL = URL.createObjectURL(files[0]); // Generate a preview URL
-  
+
       setFormData((prevData) => ({
         ...prevData,
         [name]: files[0], // Store the actual file for submission
@@ -646,7 +695,7 @@ const isFileSizeValid = (file, maxSize) => {
       }));
     }
   };
-  
+
   const statusOptions = {
     "Office Parks": [
       { value: "Completed", label: "Completed" },
@@ -665,6 +714,47 @@ const isFileSizeValid = (file, maxSize) => {
     navigate(-1);
   };
 
+  const handleTowerChange = (e) => {
+      setTowerName(e.target.value);
+    };
+  
+    const handleReraNumberChange = (e) => {
+      setReraNumber(e.target.value);
+    };
+  
+    // Handle Adding a RERA Entry
+    const handleAddRera = () => {
+      if (!towerName.trim() || !reraNumber.trim()) {
+        toast.error("Both Tower and RERA Number are required.");
+        return;
+      }
+  
+      setFormData((prev) => ({
+        ...prev,
+        rera_number_multiple: [
+          ...prev.rera_number_multiple,
+          {
+            tower_name: towerName,
+            rera_number: reraNumber,
+          },
+        ],
+      }));
+  
+      // Clear input fields after adding
+      setTowerName("");
+      setReraNumber("");
+    };
+  
+    // Handle Deleting a RERA Entry
+    const handleDeleteRera = (index) => {
+      setFormData((prev) => ({
+        ...prev,
+        rera_number_multiple: prev.rera_number_multiple.filter(
+          (_, i) => i !== index
+        ),
+      }));
+    };
+
   return (
     <>
       {/* <Header /> */}
@@ -676,6 +766,41 @@ const isFileSizeValid = (file, maxSize) => {
           </div>
           <div className="card-body">
             <div className="row">
+            <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Attach Image
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    required
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                {/* Show selected or previously uploaded image */}
+                {formData.previewImage || formData.image ? (
+                  <img
+                    src={formData.previewImage || formData.image} // Show updated image first
+                    alt="Uploaded Preview"
+                    className="img-fluid rounded mt-2"
+                    style={{
+                      maxWidth: "100px",
+                      maxHeight: "100px",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  <span>No image selected</span>
+                )}
+              </div>
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
@@ -730,7 +855,6 @@ const isFileSizeValid = (file, maxSize) => {
                         label: "Upcoming Developments",
                       },
                     ]}
-                    
                     defaultValue={formData.building_type}
                     onChange={(selectedValue) =>
                       setFormData((prev) => ({
@@ -828,6 +952,26 @@ const isFileSizeValid = (file, maxSize) => {
                     name="project_address"
                     value={formData.project_address}
                     onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>Project Tag</label>
+                  <SelectBox
+                    options={[
+                      //{ value: "", label: "Select status", isDisabled: true },
+                      { value: "Featured", label: "Featured" },
+                      { value: "Upcoming", label: "Upcoming" },
+                    ]}
+                    defaultValue={formData.project_tag}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        project_tag: value,
+                      }))
+                    }
+                    // isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -1061,7 +1205,7 @@ const isFileSizeValid = (file, maxSize) => {
                   />
                 </div>
               </div>
-              <div className="col-md-3 mt-2">
+              {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Amenities
@@ -1100,10 +1244,9 @@ const isFileSizeValid = (file, maxSize) => {
                     }
                     placeholder="Select Amenities"
                   />
-                  {/* {console.log("amenities", amenities)} */}
-                  {/* {console.log("project_amenities", formData.project_amenities)} */}
+               
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
@@ -1166,38 +1309,38 @@ const isFileSizeValid = (file, maxSize) => {
               </div>
 
               <div className="col-md-3 mt-2">
-                             <div className="form-group">
-                               <label>
-                                 Land UOM
-                                 <span style={{ color: "#de7008", fontSize: "16px" }}>
-                                   {" "}
-                                   *
-                                 </span>
-                               </label>
-                               <SelectBox
-                                 options={[
-                                   { value: "Square Meter", label: "Square Meter" },
-                                   {
-                                     value: "Square Feet",
-                                     label: "Square Feet",
-                                   },
-                                   {
-                                     value: "Acre",
-                                     label: "Acre",
-                                   },
-                                   { value: "Hectare", label: "Hectare" },
-                                   { value: "Yard", label: "Yard" },
-                                   {
-                                     value: "Guntha",
-                                     label: "Guntha",
-                                   },
-                                   { value: "Bigha", label: "Bigha" },
-                                   { value: "Kanal", label: "Kanal" },
-                                   { value: "Marla", label: "Marla" },
-                                   { value: "Cent", label: "Cent" },
-                                   { value: "Ropani", label: "Ropani" },
-                                 ]}
-                                 defaultValue={formData.land_uom}
+                <div className="form-group">
+                  <label>
+                    Land UOM
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <SelectBox
+                    options={[
+                      { value: "Square Meter", label: "Square Meter" },
+                      {
+                        value: "Square Feet",
+                        label: "Square Feet",
+                      },
+                      {
+                        value: "Acre",
+                        label: "Acre",
+                      },
+                      { value: "Hectare", label: "Hectare" },
+                      { value: "Yard", label: "Yard" },
+                      {
+                        value: "Guntha",
+                        label: "Guntha",
+                      },
+                      { value: "Bigha", label: "Bigha" },
+                      { value: "Kanal", label: "Kanal" },
+                      { value: "Marla", label: "Marla" },
+                      { value: "Cent", label: "Cent" },
+                      { value: "Ropani", label: "Ropani" },
+                    ]}
+                    defaultValue={formData.land_uom}
                     onChange={(selectedOption) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -1205,31 +1348,9 @@ const isFileSizeValid = (file, maxSize) => {
                       }))
                     }
                   />
-                             </div>
-                           </div>
-
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>Project Tag</label>
-                  <SelectBox
-                    options={[
-                      //{ value: "", label: "Select status", isDisabled: true },
-                      { value: "Featured", label: "Featured" },
-                      { value: "Upcoming", label: "Upcoming" },
-                    ]}
-                    defaultValue={formData.project_tag}
-                    onChange={(value) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        project_tag: value,
-                      }))
-                    }
-                    // isDisableFirstOption={true}
-                  />
                 </div>
               </div>
-
-              <div className="col-md-3 mt-2">
+              {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Virtual Tour URL
@@ -1247,12 +1368,22 @@ const isFileSizeValid = (file, maxSize) => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
-
+              </div>              */}
+            </div>
+          </div>
+        </div>
+        {/* RERA Number Section */}
+        <div className="card mt-3 pb-4 mx-4">
+          <div className="card-header3 d-flex justify-content-between align-items-center">
+            <h3 className="card-title">RERA Number</h3>
+          </div>
+          <div className="card-body mt-0 pb-0">
+           
+            <div className="row align-items-end">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Map URL
+                    Tower{" "}
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -1261,50 +1392,144 @@ const isFileSizeValid = (file, maxSize) => {
                   <input
                     className="form-control"
                     type="text"
-                    name="map_url"
-                    placeholder="Enter Location"
-                    value={formData.map_url}
-                    onChange={handleChange}
+                    name="tower_name"
+                    placeholder="Enter Tower Name"
+                    value={towerName}
+                    onChange={handleTowerChange}
                   />
                 </div>
               </div>
 
               <div className="col-md-3 mt-2">
-  <div className="form-group">
-    <label>
-      Attach Image
-      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
-    </label>
-    <input
-      className="form-control"
-      type="file"
-      name="image"
-      accept="image/*"
-      required
-      onChange={handleInputChange}
-    />
-  </div>
-
-  {/* Show selected or previously uploaded image */}
-  {formData.previewImage || formData.image ? (
-    <img
-      src={formData.previewImage || formData.image} // Show updated image first
-      alt="Uploaded Preview"
-      className="img-fluid rounded mt-2"
-      style={{
-        maxWidth: "100px",
-        maxHeight: "100px",
-        objectFit: "cover",
-      }}
-    />
-  ) : (
-    <span>No image selected</span>
-  )}
-</div>
-
+                <div className="form-group">
+                  <label>
+                    RERA Number{" "}
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="rera_number"
+                    placeholder="Enter RERA Number"
+                    value={reraNumber}
+                    onChange={handleReraNumberChange}
+                  />
+                </div>
               </div>
+
+              
+              <div className="col-md-2 mt-4">
+                <button
+                  className="purple-btn2 rounded-3"
+                  onClick={handleAddRera}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={26}
+                    height={20}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span> Add</span>
+                </button>
+              </div>
+            </div>
+
+            
+            {formData.rera_number_multiple.length > 0 && (
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container w-100">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Sr No</th>
+                        <th>Tower Name</th>
+                        <th>RERA Number</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.rera_number_multiple.map((item, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{item.tower_name}</td>
+                          <td>{item.rera_number}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => handleDeleteRera(index)}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+         <div className="card mt-3 pb-4 mx-4">
+                  <div className="card-header3">
+                    <h3 className="card-title">Amenities</h3>
+                  </div>
+                  <div className="card-body mt-0 pb-0">
+                    <div className="row">
+                    <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Amenities
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <MultiSelectBox
+                    options={amenities.map((ammit) => ({
+                      value: ammit.name,
+                      label: ammit.name,
+                    }))}
+                    // value={formData?.Amenities
+                    //   ?.map((id) => {
+                    //     const ammit = amenities.find(
+                    //       (ammit) => ammit.id === id
+                    //     );
+                    //     return ammit
+                    //       ? { value: ammit.id, label: ammit.name }
+                    //       : null;
+                    //   })
+                    //   .filter(Boolean)}
+
+                    value={formData.Amenities.map((amenitie) => ({
+                      value: amenitie,
+                      label: amenitie,
+                    }))}
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Amenities: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      }))
+                    }
+                    placeholder="Select Amenities"
+                  />
+                  {/* {console.log("amenities", amenities)} */}
+                  {/* {console.log("project_amenities", formData.project_amenities)} */}
+                </div>
+              </div>
+                    </div>
+                  </div>
+                </div>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
             <h3 className="card-title">Address</h3>
@@ -1446,6 +1671,25 @@ const isFileSizeValid = (file, maxSize) => {
                   />
                 </div>
               </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Map URL
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="map_url"
+                    placeholder="Enter Location"
+                    value={formData.map_url}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1516,14 +1760,15 @@ const isFileSizeValid = (file, maxSize) => {
                           </td>
 
                           <td>
-                          <button
-  type="button"
-  className="purple-btn2"
-  onClick={() => handleDiscardFile("two_d_images", index)}
->
-  x
-</button>
-
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardFile("two_d_images", index)
+                              }
+                            >
+                              x
+                            </button>
                           </td>
                         </tr>
                       )}
@@ -1597,8 +1842,8 @@ const isFileSizeValid = (file, maxSize) => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
+                                  ? URL.createObjectURL(file)
+                                  : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -1611,6 +1856,91 @@ const isFileSizeValid = (file, maxSize) => {
                               className="purple-btn2"
                               onClick={() =>
                                 handleDiscardFile("two_d_images", index)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Gallery Images{" "}
+                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                </h5>
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  onClick={() =>
+                    document.getElementById("gallery_images").click()
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+                <input
+                  id="gallery_images"
+                  type="file"
+                  accept="image/*"
+                  name="gallery_images"
+                  onChange={handleChange}
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              <div className="col-md-12 mt-2">
+                <div
+                  className="mt-4 tbl-container"
+                  style={{ maxHeight: "300px", overflowY: "auto" }}
+                >
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Gallery Name</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Gallery Images */}
+                      {formData.gallery_images.map((file, index) => (
+                        <tr key={index}>
+                          <td> {file.name}</td>
+                          <td>
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={
+                                file.type.startsWith("image")
+                                  ? URL.createObjectURL(file)
+                                  : null
+                              }
+                              alt=""
+                            />
+                          </td>
+
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardFile("gallery_images", index)
                               }
                             >
                               x
@@ -1683,8 +2013,8 @@ const isFileSizeValid = (file, maxSize) => {
                                 file.document_url // API response video
                                   ? file.document_url
                                   : file instanceof File // Uploaded video file
-                                    ? URL.createObjectURL(file)
-                                    : ""
+                                  ? URL.createObjectURL(file)
+                                  : ""
                               }
                               autoPlay
                               muted
@@ -1707,6 +2037,112 @@ const isFileSizeValid = (file, maxSize) => {
               </div>
             </div>
           </div>
+        </div>
+        <div className="card mt-3 pb-4 mx-4">
+          <div className="card-header3 d-flex justify-content-between align-items-center">
+            <h3 className="card-title">Virtual Tour</h3>
+          </div>
+          {/* <div className="card-body">
+            <div className="row align-items-end">
+              
+              <div className="col-md-4 mt-2">
+                <div className="form-group">
+                  <label>
+                    Virtual Tour Name{" "}
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="virtual_tour_name"
+                    placeholder="Enter Virtual Tour Name"
+                    value={virtualTourName}
+                    onChange={handleVirtualTourNameChange}
+                  />
+                </div>
+              </div>
+
+             
+              <div className="col-md-4 mt-2">
+                <div className="form-group">
+                  <label>
+                    Virtual Tour URL{" "}
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="url"
+                    name="virtual_tour_url"
+                    placeholder="Enter Virtual Tour URL"
+                    value={virtualTourUrl}
+                    onChange={handleVirtualTourChange}
+                  />
+                </div>
+              </div>
+
+             
+              <div className="col-md-2 mt-4">
+                <button
+                  className="purple-btn2 rounded-3"
+                  onClick={handleAddVirtualTour}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={26}
+                    height={20}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span> Add</span>
+                </button>
+              </div>
+            </div>
+
+          
+            {formData.virtual_tour_url_multiple.length > 0 && (
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container w-100">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Sr No</th>
+                        <th>Tour Name</th>
+                        <th>Tour URL</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.virtual_tour_url_multiple.map((tour, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{tour.virtual_tour_name}</td>
+                          <td>{tour.virtual_tour_url}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => handleDeleteVirtualTour(index)}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div> */}
         </div>
         <div className="row mt-2 justify-content-center">
           <div className="col-md-2">

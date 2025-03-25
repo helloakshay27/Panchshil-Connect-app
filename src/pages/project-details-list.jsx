@@ -219,7 +219,7 @@ const ProjectDetailsList = () => {
                             <th>Number Of Units</th>
                             <th>Rera Number</th>
                             <th>Amenities</th>
-                            <th>Specifications</th>
+                            {/* <th>Specifications</th> */}
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -285,13 +285,13 @@ const ProjectDetailsList = () => {
                                     ))
                                   : "No amenities"}
                               </td>
-                              <td>
+                              {/* <td>
                                 {project?.specifications?.length > 0
                                   ? project?.specifications.map((spec, idx) => (
                                       <div key={idx}>{spec.name}</div>
                                     ))
                                   : "No specifications"}
-                              </td>
+                              </td> */}
                               <td>
                                 <a
                                   href={`/project-edit/${project?.id || "N/A"}`}
