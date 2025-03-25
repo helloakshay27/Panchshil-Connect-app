@@ -503,19 +503,18 @@ const ProjectDetailsCreate = () => {
       } else if (key === "image" && value instanceof File) {
         data.append("project[image]", value);
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
-        value.forEach((url) =>
-          data.append("project[virtual_tour_url_multiple][]", url)
-        );
+        value.forEach((item, index) => {
+          if (typeof item === "object" && item !== null) {
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_url]`, item.virtual_tour_url || "");
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name || "");
+          }
+        });
       } else if (key === "rera_number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
-          data.append(
-            `project[rera_number_multiple][${index}][tower_name]`,
-            item.tower_name
-          );
-          data.append(
-            `project[rera_number_multiple][${index}][rera_number]`,
-            item.rera_number
-          );
+          if (typeof item === "object" && item !== null) {
+            data.append(`project[rera_number_multiple][${index}][tower_name]`, item.tower_name || "");
+            data.append(`project[rera_number_multiple][${index}][rera_number]`, item.rera_number || "");
+          }
         });
       } else {
         data.append(`project[${key}]`, value);
