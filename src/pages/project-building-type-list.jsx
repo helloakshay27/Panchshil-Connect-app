@@ -6,17 +6,36 @@ import { useNavigate } from "react-router-dom";
 const ProjectBuildingTypeList = () => {
   const [buildingTypes, setBuildingTypes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const getPageFromStorage = () => {
+    return parseInt(localStorage.getItem("building_type_currentPage")) || 1;
+  };
+
+  const [pagination, setPagination] = useState({
+    current_page: getPageFromStorage(),
+    total_count: 0,
+    total_pages: 0,
+  });
+
+  const pageSize = 10;
 
   useEffect(() => {
     fetchBuildingTypes();
   }, []);
 
   const fetchBuildingTypes = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         "https://panchshil-super.lockated.com/building_types.json"
       );
       setBuildingTypes(response.data);
+      setPagination({
+        current_page: getPageFromStorage(),
+        total_count: response.data.length,
+        total_pages: Math.ceil(response.data.length / pageSize),
+      });
     } catch (error) {
       console.error("Error fetching building types:", error);
       toast.error("Failed to fetch building types");
@@ -24,6 +43,21 @@ const ProjectBuildingTypeList = () => {
       setLoading(false);
     }
   };
+  const handlePageChange = (pageNumber) => {
+    setPagination((prev) => ({ ...prev, current_page: pageNumber }));
+    localStorage.setItem("building_type_currentPage", pageNumber);
+  };
+
+  const filteredBuildingTypes = buildingTypes.filter((type) =>
+    type.building_type?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const totalFiltered = filteredBuildingTypes.length;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  const displayedBuildingTypes = filteredBuildingTypes.slice(
+    (pagination.current_page - 1) * pageSize,
+    pagination.current_page * pageSize
+  );
 
   const handleToggle = async (id, currentStatus) => {
     try {
@@ -52,6 +86,11 @@ const ProjectBuildingTypeList = () => {
                   type="text"
                   className="form-control tbl-search table_search"
                   placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
+                  }}
                 />
                 <div className="input-group-append">
                   <button type="submit" className="btn btn-md btn-default">
@@ -113,9 +152,13 @@ const ProjectBuildingTypeList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {buildingTypes.map((type, index) => (
+                      {displayedBuildingTypes.map((type, index) => (
                         <tr key={type.id}>
-                          <td>{index + 1}</td>
+                          <td>
+                            {(pagination.current_page - 1) * pageSize +
+                              index +
+                              1}
+                          </td>
                           <td>{type.building_type}</td>
                           <td>
                             <button
@@ -186,6 +229,84 @@ const ProjectBuildingTypeList = () => {
                     </tbody>
                   </table>
                 )}
+              </div>
+              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                <ul className="pagination justify-content-center d-flex">
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(1)}
+                    >
+                      First
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                    >
+                      Prev
+                    </button>
+                  </li>
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
+                    <li
+                      key={pageNumber}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === totalPages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                    >
+                      Next
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === totalPages
+                        ? "disabled"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(totalPages)}
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
