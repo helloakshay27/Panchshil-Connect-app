@@ -61,6 +61,10 @@ const SupportServiceList = () => {
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
+  const handleSearchSubmit = (e) => {
+    e.preventDefault(); // Prevents page reload
+  };
+  
 
   return (
     <div className="main-content">
