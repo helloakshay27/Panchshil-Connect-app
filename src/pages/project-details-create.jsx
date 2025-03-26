@@ -30,7 +30,7 @@ const ProjectDetailsCreate = () => {
     Number_Of_Towers: "",
     Number_Of_Units: "",
     no_of_floors: "",
-    rera_number_multiple: [],
+    Rera_Number_multiple: [],
     Amenities: [],
     Specifications: [],
     Land_Area: "",
@@ -422,7 +422,7 @@ const ProjectDetailsCreate = () => {
       toast.error("Number of Units is required.");
       return false;
     }
-    if (!formData.rera_number_multiple) {
+    if (!formData.Rera_Number_multiple) {
       toast.error("RERA Number is required.");
       return false;
     }
@@ -526,11 +526,11 @@ const ProjectDetailsCreate = () => {
             data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name);
           }
         });
-      } else if (key === "rera_number_multiple" && Array.isArray(value)) {
+      } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.tower_name && item.rera_number) {
-            data.append(`project[rera_number_multiple][${index}][tower_name]`, item.tower_name);
-            data.append(`project[rera_number_multiple][${index}][rera_number]`, item.rera_number);
+            data.append(`project[Rera_Number_multiple][${index}][tower_name]`, item.tower_name);
+            data.append(`project[Rera_Number_multiple][${index}][rera_number]`, item.rera_number);
           }
         });
       } else {
@@ -717,8 +717,8 @@ const ProjectDetailsCreate = () => {
 
     setFormData((prev) => ({
       ...prev,
-      rera_number_multiple: [
-        ...prev.rera_number_multiple,
+      Rera_Number_multiple: [
+        ...prev.Rera_Number_multiple,
         {
           tower_name: towerName,
           rera_number: reraNumber,
@@ -735,7 +735,7 @@ const ProjectDetailsCreate = () => {
   const handleDeleteRera = (index) => {
     setFormData((prev) => ({
       ...prev,
-      rera_number_multiple: prev.rera_number_multiple.filter(
+      Rera_Number_multiple: prev.Rera_Number_multiple.filter(
         (_, i) => i !== index
       ),
     }));
@@ -1378,7 +1378,7 @@ const ProjectDetailsCreate = () => {
             </div>
 
             {/* RERA List Table */}
-            {formData.rera_number_multiple.length > 0 && (
+            {formData.Rera_Number_multiple.length > 0 && (
               <div className="col-md-12 mt-2">
                 <div className="mt-4 tbl-container w-100">
                   <table className="w-100">
@@ -1391,7 +1391,7 @@ const ProjectDetailsCreate = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.rera_number_multiple.map((item, index) => (
+                      {formData.Rera_Number_multiple.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{item.tower_name}</td>
@@ -1415,53 +1415,64 @@ const ProjectDetailsCreate = () => {
           </div>
         </div>
 
-        <div className="card mt-3 pb-4 mx-4">
+      
+          <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
             <h3 className="card-title">Amenities</h3>
           </div>
           <div className="card-body mt-0 pb-0">
-          <div className="row">
-      {/* Amenity Type Dropdown */}
-      <div className="col-md-3 mt-2">
-        <div className="form-group">
-          <label>Amenity Type</label>
-          <SelectBox
-            options={amenityTypes}
-            value={selectedType}
-            onChange={setSelectedType}
-            placeholder="Select Amenity Type"
-          />
-        </div>
-      </div>
+            <div className="row">
+              {/* Amenity Type Dropdown */}
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>Amenity Type</label>
+                  <Select
+                    options={amenityTypes}
+                    value={selectedType}
+                    onChange={setSelectedType}
+                    placeholder="Select Amenity Type"
+                  />
+                </div>
+              </div>
 
-      {/* Multi-Select Amenities Dropdown */}
-      <div className="col-md-3 mt-2">
-        <div className="form-group">
-          <label>
-            Amenities
-            <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
-          </label>
-          <MultiSelectBox
-            options={filteredAmenities.map((ammit) => ({
-              value: ammit.id,
-              label: ammit.name,
-            }))}
-            value={formData.Amenities.map((id) => {
-              const ammit = filteredAmenities.find((ammit) => ammit.id === id);
-              return ammit ? { value: ammit.id, label: ammit.name } : null;
-            }).filter(Boolean)}
-            onChange={(selectedOptions) =>
-              setFormData((prev) => ({
-                ...prev,
-                Amenities: selectedOptions.map((option) => option.value),
-              }))
-            }
-            placeholder="Select amenities"
-          />
-        </div>
-      </div>
-    </div>
+              {/* Multi-Select Amenities Dropdown */}
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Amenities
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <MultiSelectBox
+                    options={filteredAmenities.map((ammit) => ({
+                      value: ammit.id,
+                      label: ammit.name,
+                    }))}
+                    value={formData.Amenities.map((id) => {
+                      const ammit = filteredAmenities.find(
+                        (ammit) => ammit.id === id
+                      );
+                      return ammit
+                        ? { value: ammit.id, label: ammit.name }
+                        : null;
+                    }).filter(Boolean)}
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Amenities: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      }))
+                    }
+                    placeholder="Select amenities"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
+      
         </div>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
@@ -1602,6 +1613,25 @@ const ProjectDetailsCreate = () => {
                     placeholder="Country"
                     name="country"
                     value={formData.Address.country}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Map URL
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="url"
+                    name="map_url"
+                    placeholder="Enter Location"
+                    value={formData.map_url}
                     onChange={handleChange}
                   />
                 </div>

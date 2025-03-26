@@ -34,7 +34,7 @@ const ProjectDetailsEdit = () => {
     Number_Of_Towers: "",
     Number_Of_Units: "",
     no_of_floors: "",
-    rera_number_multiple: [],
+    Rera_Number_multiple: [],
     Amenities: [],
     Specifications: [],
     Land_Area: "",
@@ -69,6 +69,8 @@ const ProjectDetailsEdit = () => {
 
    const [towerName, setTowerName] = useState("");
     const [reraNumber, setReraNumber] = useState("");
+     const [virtualTourUrl, setVirtualTourUrl] = useState("");
+      const [virtualTourName, setVirtualTourName] = useState("");
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
   // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
@@ -553,14 +555,14 @@ const ProjectDetailsEdit = () => {
       errors.push("Number of Units is required.");
       return errors;
     }
-    if (!formData.Rera_Number) {
+    if (!formData.rera_number_multiple) {
       errors.push("RERA Number is required.");
       return errors;
     }
-    if (!formData.Specifications.length) {
-      errors.push("Specifications are required.");
-      return errors;
-    }
+    // if (!formData.Specifications.length) {
+    //   errors.push("Specifications are required.");
+    //   return errors;
+    // }
     if (!formData.Land_Area) {
       errors.push("Land Area is required.");
       return errors;
@@ -651,7 +653,8 @@ const ProjectDetailsEdit = () => {
             data.append("project[videos][]", file);
           }
         });
-      } else {
+      } 
+      else {
         data.append(`project[${key}]`, value);
       }
     });
@@ -750,6 +753,46 @@ const ProjectDetailsEdit = () => {
       setFormData((prev) => ({
         ...prev,
         rera_number_multiple: prev.rera_number_multiple.filter(
+          (_, i) => i !== index
+        ),
+      }));
+    };
+
+
+    const handleVirtualTourChange = (e) => {
+      setVirtualTourUrl(e.target.value);
+    };
+  
+    const handleVirtualTourNameChange = (e) => {
+      setVirtualTourName(e.target.value);
+    };
+  
+    const handleAddVirtualTour = () => {
+      if (!virtualTourUrl.trim() || !virtualTourName.trim()) {
+        toast.error("Both URL and Name are required.");
+        return;
+      }
+  
+      setFormData((prev) => ({
+        ...prev,
+        virtual_tour_url_multiple: [
+          ...prev.virtual_tour_url_multiple,
+          {
+            virtual_tour_url: virtualTourUrl,
+            virtual_tour_name: virtualTourName,
+          },
+        ],
+      }));
+  
+      // Clear input fields after adding
+      setVirtualTourUrl("");
+      setVirtualTourName("");
+    };
+  
+    const handleDeleteVirtualTour = (index) => {
+      setFormData((prev) => ({
+        ...prev,
+        virtual_tour_url_multiple: prev.virtual_tour_url_multiple.filter(
           (_, i) => i !== index
         ),
       }));
@@ -1186,7 +1229,7 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-              <div className="col-md-3 mt-2">
+              {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Rera Number
@@ -1204,7 +1247,7 @@ const ProjectDetailsEdit = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
+              </div> */}
               {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -1248,7 +1291,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div> */}
 
-              <div className="col-md-3 mt-2">
+              {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Specifications
@@ -1284,9 +1327,9 @@ const ProjectDetailsEdit = () => {
                     }
                     placeholder="Select Specifications"
                   />
-                  {/* {console.log("specifications", specifications)} */}
+                
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
@@ -1934,7 +1977,6 @@ const ProjectDetailsEdit = () => {
                               alt=""
                             />
                           </td>
-
                           <td>
                             <button
                               type="button"
@@ -2042,7 +2084,7 @@ const ProjectDetailsEdit = () => {
           <div className="card-header3 d-flex justify-content-between align-items-center">
             <h3 className="card-title">Virtual Tour</h3>
           </div>
-          {/* <div className="card-body">
+          <div className="card-body">
             <div className="row align-items-end">
               
               <div className="col-md-4 mt-2">
@@ -2142,7 +2184,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
             )}
-          </div> */}
+          </div>
         </div>
         <div className="row mt-2 justify-content-center">
           <div className="col-md-2">
