@@ -146,7 +146,7 @@ const ProjectDetailsEdit = () => {
           Number_Of_Towers: projectData.no_of_towers || "",
           no_of_floors: projectData.no_of_floors || "",
           Number_Of_Units: projectData.no_of_apartments || "",
-          rera_number_multiple: projectData.rera_number_multiple || [],
+          Rera_Number_multiple: projectData.rera_number_multiple || [],
           Amenities: Array.isArray(projectData.amenities)
             ? projectData.amenities.map((ammit) => ammit.name)
             : [],
@@ -555,7 +555,7 @@ const ProjectDetailsEdit = () => {
       errors.push("Number of Units is required.");
       return errors;
     }
-    if (!formData.rera_number_multiple) {
+    if (!formData.Rera_Number_multiple) {
       errors.push("RERA Number is required.");
       return errors;
     }
@@ -654,6 +654,12 @@ const ProjectDetailsEdit = () => {
           }
         });
       } 
+      else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
+        value.forEach((reraEntry, index) => {
+          data.append(`project[Rera_Number_multiple][${index}][tower_name]`, reraEntry.tower_name);
+          data.append(`project[Rera_Number_multiple][${index}][rera_number]`, reraEntry.rera_number);
+        });
+      } 
       else {
         data.append(`project[${key}]`, value);
       }
@@ -726,37 +732,77 @@ const ProjectDetailsEdit = () => {
     };
   
     // Handle Adding a RERA Entry
-    const handleAddRera = () => {
-      if (!towerName.trim() || !reraNumber.trim()) {
-        toast.error("Both Tower and RERA Number are required.");
-        return;
-      }
+    // const handleAddRera = () => {
+    //   if (!towerName.trim() || !reraNumber.trim()) {
+    //     toast.error("Both Tower and RERA Number are required.");
+    //     return;
+    //   }
   
-      setFormData((prev) => ({
-        ...prev,
-        rera_number_multiple: [
-          ...prev.rera_number_multiple,
-          {
-            tower_name: towerName,
-            rera_number: reraNumber,
-          },
-        ],
-      }));
+    //   setFormData((prev) => ({
+    //     ...prev,
+    //     Rera_Number_multiple: [
+    //       ...prev.Rera_Number_multiple,
+    //       {
+    //         tower_name: towerName,
+    //         rera_number: reraNumber,
+    //       },
+    //     ],
+    //   }));
   
-      // Clear input fields after adding
-      setTowerName("");
-      setReraNumber("");
-    };
+    //   // Clear input fields after adding
+    //   setTowerName("");
+    //   setReraNumber("");
+    // };
   
-    // Handle Deleting a RERA Entry
-    const handleDeleteRera = (index) => {
-      setFormData((prev) => ({
-        ...prev,
-        rera_number_multiple: prev.rera_number_multiple.filter(
-          (_, i) => i !== index
-        ),
-      }));
-    };
+    // // Handle Deleting a RERA Entry
+    // const handleDeleteRera = (index) => {
+    //   setFormData((prev) => ({
+    //     ...prev,
+    //     Rera_Number_multiple: prev.Rera_Number_multiple.filter(
+    //       (_, i) => i !== index
+    //     ),
+    //   }));
+    // };
+
+    // Handles adding a new RERA entry
+const handleAddRera = () => {
+  if (!towerName || !reraNumber) {
+    toast.error("Both fields are required.");
+    return;
+  }
+
+  setFormData((prevData) => ({
+    ...prevData,
+    Rera_Number_multiple: [
+      ...prevData.Rera_Number_multiple,
+      { tower_name: towerName, rera_number: reraNumber },
+    ],
+  }));
+
+  // Clear input fields after adding
+  setTowerName("");
+  setReraNumber("");
+};
+
+// Handles editing existing RERA entries
+const handleEditRera = (index, field, value) => {
+  setFormData((prevData) => {
+    const updatedRera = [...prevData.Rera_Number_multiple];
+    updatedRera[index][field] = value; // Update the correct field
+    return { ...prevData, Rera_Number_multiple: updatedRera };
+  });
+};
+
+// Handles deleting an entry
+const handleDeleteRera = (index) => {
+  setFormData((prevData) => ({
+    ...prevData,
+    Rera_Number_multiple: prevData.Rera_Number_multiple.filter(
+      (_, i) => i !== index
+    ),
+  }));
+};
+
 
 
     const handleVirtualTourChange = (e) => {
@@ -1417,110 +1463,116 @@ const ProjectDetailsEdit = () => {
         </div>
         {/* RERA Number Section */}
         <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3 d-flex justify-content-between align-items-center">
-            <h3 className="card-title">RERA Number</h3>
-          </div>
-          <div className="card-body mt-0 pb-0">
-           
-            <div className="row align-items-end">
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Tower{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="tower_name"
-                    placeholder="Enter Tower Name"
-                    value={towerName}
-                    onChange={handleTowerChange}
-                  />
-                </div>
-              </div>
-
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    RERA Number{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="rera_number"
-                    placeholder="Enter RERA Number"
-                    value={reraNumber}
-                    onChange={handleReraNumberChange}
-                  />
-                </div>
-              </div>
-
-              
-              <div className="col-md-2 mt-4">
-                <button
-                  className="purple-btn2 rounded-3"
-                  onClick={handleAddRera}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={26}
-                    height={20}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span> Add</span>
-                </button>
-              </div>
-            </div>
-
-            
-            {formData.rera_number_multiple.length > 0 && (
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container w-100">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>Sr No</th>
-                        <th>Tower Name</th>
-                        <th>RERA Number</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {formData.rera_number_multiple.map((item, index) => (
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{item.tower_name}</td>
-                          <td>{item.rera_number}</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handleDeleteRera(index)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </div>
+  <div className="card-header3 d-flex justify-content-between align-items-center">
+    <h3 className="card-title">RERA Number</h3>
+  </div>
+  <div className="card-body mt-0 pb-0">
+    {/* Input Fields for New Entry */}
+    <div className="row align-items-end">
+      <div className="col-md-3 mt-2">
+        <div className="form-group">
+          <label>
+            Tower{" "}
+            <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            name="tower_name"
+            placeholder="Enter Tower Name"
+            value={towerName}
+            onChange={handleTowerChange}
+          />
         </div>
+      </div>
+
+      <div className="col-md-3 mt-2">
+        <div className="form-group">
+          <label>
+            RERA Number{" "}
+            <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            name="rera_number"
+            placeholder="Enter RERA Number"
+            value={reraNumber}
+            onChange={handleReraNumberChange}
+          />
+        </div>
+      </div>
+
+      {/* Add Button */}
+      <div className="col-md-2 mt-4">
+        <button className="purple-btn2 rounded-3" onClick={handleAddRera}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={26}
+            height={20}
+            fill="currentColor"
+            className="bi bi-plus"
+            viewBox="0 0 16 16"
+          >
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+          </svg>
+          <span> Add</span>
+        </button>
+      </div>
+    </div>
+
+    {/* Editable RERA List Table */}
+    {formData.Rera_Number_multiple.length > 0 && (
+      <div className="col-md-12 mt-2">
+        <div className="mt-4 tbl-container w-100">
+          <table className="w-100">
+            <thead>
+              <tr>
+                <th>Sr No</th>
+                <th>Tower Name</th>
+                <th>RERA Number</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {formData.Rera_Number_multiple.map((item, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={item.tower_name}
+                      onChange={(e) => handleEditRera(index, "tower_name", e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={item.rera_number}
+                      onChange={(e) => handleEditRera(index, "rera_number", e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="purple-btn2"
+                      onClick={() => handleDeleteRera(index)}
+                    >
+                      x
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+
          <div className="card mt-3 pb-4 mx-4">
                   <div className="card-header3">
                     <h3 className="card-title">Amenities</h3>
