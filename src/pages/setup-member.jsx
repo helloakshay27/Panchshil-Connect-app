@@ -16,7 +16,15 @@ const SetupMember = () => {
                   <div className="module-data-section container-fluid">
                    
                     <ul>
-                      
+                    <li>
+                        <Link to="category-types">Category Type</Link>
+                      </li>
+                      <li>
+                        <Link to="category-types-list">Category Type List</Link>
+                      </li>
+                      <li>
+                        <Link to="category-types-edit">Category Type Edit</Link>
+                      </li>
                     <li>
                         <Link to="property-type">Property Type</Link>
                       </li>
@@ -85,6 +93,7 @@ const SetupMember = () => {
                           Site Visit Slot Config List
                         </Link>
                       </li>
+                      
                       
                       
                       

@@ -69,6 +69,7 @@ import ConstructionStatusList from "./pages/construction-status-list";
 import ConstructionStatusEdit from "./pages/construction-status-edit";
 import PropertyTypeEdit from "./pages/property-type-edit";
 import SetupMember from "./pages/setup-member";
+import CategoryTypes from "./pages/category-types";
 
 // import EditGallery from './EditGallery';
 
@@ -162,6 +163,8 @@ function App() {
           <Route path="/company-create" element={<CompanyCreate />} />
           <Route path="/company-list" element={<CompanyList />} />
           <Route path="/company-edit/:id" element={<CompanyEdit />} />
+          <Route path="/setup-member/category-types" element={<CategoryTypes />} />
+
           <Route
             path="/pressreleases-create"
             element={<PressReleasesCreate />}
