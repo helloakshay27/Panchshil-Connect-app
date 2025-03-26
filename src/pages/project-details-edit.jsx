@@ -71,6 +71,8 @@ const ProjectDetailsEdit = () => {
     const [reraNumber, setReraNumber] = useState("");
      const [virtualTourUrl, setVirtualTourUrl] = useState("");
       const [virtualTourName, setVirtualTourName] = useState("");
+       const [selectedType, setSelectedType] = useState(null);
+        const [filteredAmenities, setFilteredAmenities] = useState([]);
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
   // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
@@ -653,13 +655,24 @@ const ProjectDetailsEdit = () => {
             data.append("project[videos][]", file);
           }
         });
-      } 
-      else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
-        value.forEach((reraEntry, index) => {
-          data.append(`project[Rera_Number_multiple][${index}][tower_name]`, reraEntry.tower_name);
-          data.append(`project[Rera_Number_multiple][${index}][rera_number]`, reraEntry.rera_number);
+      } else if (key === "gallery_images" && Array.isArray(value)) {
+        value.forEach((file) => data.append("project[gallery_images][]", file));
+      }
+      else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
+        value.forEach((item, index) => {
+          if (item.virtual_tour_url && item.virtual_tour_name) {
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_url]`, item.virtual_tour_url);
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name);
+          }
         });
-      } 
+      } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
+        value.forEach((item, index) => {
+          if (item.tower_name && item.rera_number) {
+            data.append(`project[Rera_Number_multiple][${index}][tower_name]`, item.tower_name);
+            data.append(`project[Rera_Number_multiple][${index}][rera_number]`, item.rera_number);
+          }
+        });
+      }
       else {
         data.append(`project[${key}]`, value);
       }
@@ -818,22 +831,19 @@ const handleDeleteRera = (index) => {
         toast.error("Both URL and Name are required.");
         return;
       }
-  
+    
       setFormData((prev) => ({
         ...prev,
-        virtual_tour_url_multiple: [
-          ...prev.virtual_tour_url_multiple,
-          {
-            virtual_tour_url: virtualTourUrl,
-            virtual_tour_name: virtualTourName,
-          },
-        ],
+        virtual_tour_url_multiple: Array.isArray(prev.virtual_tour_url_multiple)
+          ? [...prev.virtual_tour_url_multiple, { virtual_tour_url: virtualTourUrl, virtual_tour_name: virtualTourName }]
+          : [{ virtual_tour_url: virtualTourUrl, virtual_tour_name: virtualTourName }], // Initialize as array if undefined
       }));
-  
+    
       // Clear input fields after adding
       setVirtualTourUrl("");
       setVirtualTourName("");
     };
+    
   
     const handleDeleteVirtualTour = (index) => {
       setFormData((prev) => ({
@@ -844,6 +854,11 @@ const handleDeleteRera = (index) => {
       }));
     };
 
+    const amenityTypes = [
+      ...new Set(amenities.map((ammit) => ammit.amenity_type)),
+    ].map((type) => ({ value: type, label: type }));
+  
+
   return (
     <>
       {/* <Header /> */}
@@ -851,14 +866,14 @@ const handleDeleteRera = (index) => {
       <div className="module-data-section p-3">
         <div className="card mt-4 pb-4 mx-4">
           <div className="card-header">
-            <h3 className="card-title">Project Update</h3>
+            <h3 className="card-title">Edit Project</h3>
           </div>
           <div className="card-body">
             <div className="row">
             <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Attach Image
+                    Project Logo
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -1579,6 +1594,21 @@ const handleDeleteRera = (index) => {
                   </div>
                   <div className="card-body mt-0 pb-0">
                     <div className="row">
+                    
+                    {/* Amenity Type Dropdown */}
+                                  <div className="col-md-3 mt-2">
+                                    <div className="form-group">
+                                      <label>Amenity Type</label>
+                                      <Select
+                                        options={amenityTypes}
+                                        value={selectedType}
+                                        onChange={setSelectedType}
+                                        placeholder="Select Amenity Type"
+                                      />
+                                    </div>
+                                  </div>
+                    
+
                     <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -2181,7 +2211,7 @@ const handleDeleteRera = (index) => {
               </div>
 
              
-              <div className="col-md-2 mt-4">
+              <div className="col-md-4 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
                   onClick={handleAddVirtualTour}

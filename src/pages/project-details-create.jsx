@@ -51,6 +51,7 @@ const ProjectDetailsCreate = () => {
     two_d_images: [],
     videos: [],
     gallery_images: [],
+    project_ppt: [],
   });
 
   useEffect(() => {
@@ -682,6 +683,7 @@ const ProjectDetailsCreate = () => {
       brochures: null,
       two_d_images: [],
       videos: [],
+      gallery_images: [],
     });
     Navigate(-1);
   };
@@ -793,7 +795,7 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Hero Image
+                    Project Logo
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -1856,7 +1858,8 @@ const ProjectDetailsCreate = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                        <th>Gallery Name</th>
+                        <th>Image Category</th>
+                        <th>Image Name</th>
                         <th>Image</th>
                         <th>Action</th>
                       </tr>
@@ -1970,6 +1973,70 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
               </div>
+              <div className="d-flex justify-content-between align-items-end mx-1">
+  <h5 className="mt-3">
+    Project PPT{" "}
+    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+  </h5>
+
+  <button
+    className="purple-btn2 rounded-3"
+    onClick={() => document.getElementById("project_ppt").click()}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={16}
+      height={16}
+      fill="currentColor"
+      className="bi bi-plus"
+      viewBox="0 0 16 16"
+    >
+      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+    </svg>
+    <span>Add</span>
+  </button>
+
+  <input
+    id="project_ppt"
+    className="form-control"
+    type="file"
+    name="project_ppt"
+    accept=".ppt, .pptx"
+    onChange={(e) => handleFileUpload("project_ppt", e.target.files)}
+    multiple
+    style={{ display: "none" }}
+  />
+</div>
+
+<div className="col-md-12 mt-2">
+  <div className="mt-4 tbl-container">
+    <table className="w-100">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {formData.project_ppt.map((file, index) => (
+          <tr key={index}>
+            <td>{file.name}</td>
+            <td>
+              <button
+                type="button"
+                className="purple-btn2"
+                onClick={() => handleDiscardFile("project_ppt", index)}
+              >
+                x
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
             </div>
           </div>
         </div>
