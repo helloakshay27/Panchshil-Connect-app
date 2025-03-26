@@ -489,7 +489,7 @@ const Sidebar = () => {
                   <span className="menu-link-text">Testimonial</span>
                 </a>
               </li>
-              <li className="menu-item d-flex">
+              {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
@@ -526,7 +526,7 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text">Gallery</span>
                 </a>
-              </li>
+              </li> */}
               <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"

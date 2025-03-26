@@ -55,7 +55,7 @@ const Members = () => {
                 <Link to="/testimonial-edit">Testimonial Edit</Link>
               </li>
 
-              <li>
+              {/* <li>
                 <Link to="/gallery-details">Gallery Details</Link>
               </li>
               <li>
@@ -66,7 +66,7 @@ const Members = () => {
               </li>
               <li>
                 <Link to="/edit-gallery">Edit Gallery</Link>
-              </li>
+              </li> */}
               <li>
                 <Link to="/referral-create">Referral Create</Link>
               </li>

@@ -4,6 +4,7 @@ import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import SetupSidebar from '../../components/setup-sidebar';
+import Breadcrumbs from '../../components/breadcrumb';
 
 export default function RootLayout() {
   const location = useLocation();
@@ -14,15 +15,18 @@ export default function RootLayout() {
   return (
     <main className="h-100 w-100">
       <Header noTier={noTier} /> {/* Pass noTier based on the current path */}
-
+      
       <div className="main-content">
+      
         <div>
-          {location.pathname.startsWith("/setup-member")?<SetupSidebar/>:<Sidebar />}
-          
+          {location.pathname.startsWith("/setup-member") ? <SetupSidebar /> : <Sidebar />}
         </div>
 
         <div className="website-content flex-grow-1">
+        <Breadcrumbs />
+          
           <Outlet /> {/* Dynamic content rendering */}
+          
           <footer className="footer">
             <Footer />
           </footer>
@@ -31,4 +35,3 @@ export default function RootLayout() {
     </main>
   );
 }
-  
