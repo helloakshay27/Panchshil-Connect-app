@@ -1976,8 +1976,16 @@ const ProjectDetailsCreate = () => {
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              src={URL.createObjectURL(file.gallery_image)}
-                              alt={file.gallery_image_file_name}
+                              src={
+                                file.attachfile?.document_url // If image URL is from API
+                                  ? file.attachfile.document_url
+                                  : file instanceof File || file instanceof Blob // Check if it's a valid File/Blob
+                                  ? URL.createObjectURL(file)
+                                  : null
+                              }
+                              alt={
+                                file.document_file_name || file.name || "Image"
+                              }
                             />
                           </td>
                           <td>

@@ -55,6 +55,7 @@ const ProjectDetailsEdit = () => {
     two_d_images: [],
     videos: [],
     gallery_image: [],
+    fetched_gallery_image: [],
     Project_PPT: [],
     creative_images: [],
   });
@@ -201,7 +202,8 @@ const ProjectDetailsEdit = () => {
           brochure: projectData.brochure || [],
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
-          gallery_image: projectData.gallery_image || [],
+          fetched_gallery_image: projectData.gallery_image || [],
+          // gallery_image: projectData.gallery_image || [],
           Project_PPT: projectData.Project_PPT || [],
         });
 
@@ -483,8 +485,17 @@ const ProjectDetailsEdit = () => {
       alert("Failed to delete image. Please try again.");
     }
   };
+  const handleImageNameChange = (e, index) => {
+    const { value } = e.target;
 
-  const handleDiscardGallery = async (key, index, imageId) => {
+    setFormData((prev) => {
+      const updatedGallery = [...prev.gallery_image];
+      updatedGallery[index].gallery_image_file_name = value;
+
+      return { ...prev, gallery_image: updatedGallery };
+    });
+  };
+  const handleFetchedDiscardGallery = async (key, index, imageId) => {
     if (!imageId) {
       console.error("Error: No image ID found for deletion.");
       toast.error("Failed to delete image. Image ID is missing.");
@@ -500,7 +511,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_gallery_image/${imageId}.json`,
+        `https://panchshil-super.lockated.com/${id}/remove_gallery_image/${imageId}.json`,
         {
           method: "DELETE",
           headers: {
@@ -736,7 +747,17 @@ const ProjectDetailsEdit = () => {
           }
         });
       } else if (key === "gallery_image" && Array.isArray(value)) {
-        value.forEach((file) => data.append("project[gallery_image][]", file));
+        value.forEach((fileObj, index) => {
+          if (fileObj.gallery_image instanceof File) {
+            // ✅ Check for actual File
+            data.append("project[gallery_image][]", fileObj.gallery_image); // ✅ Send actual File
+            data.append(`project[gallery_image_file_name][]`, fileObj.gallery_image_file_name);;
+            data.append(
+              `project[gallery_type]`,
+              fileObj.gallery_image_file_type
+            );
+          }
+        });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
@@ -990,6 +1011,29 @@ const ProjectDetailsEdit = () => {
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
+
+    if (!selectedCategory) {
+      alert("Please select an image category first.");
+      return;
+    }
+
+    const updatedImages = files.map((file) => ({
+      gallery_image: file, // ✅ Store the actual File object
+      gallery_image_file_name: file.name,
+      gallery_image_file_type: selectedCategory,
+      attachfile: { document_url: URL.createObjectURL(file) }, // ✅ Add temporary URL
+    }));
+
+    setFormData((prev) => ({
+      ...prev,
+      gallery_image: [...(prev.gallery_image || []), ...updatedImages], // ✅ Preserve previous images
+    }));
+
+    event.target.value = ""; // Reset file input
+  };
+
+  const handleGalleryImageUpload = (event) => {
+    const files = Array.from(event.target.files);
     if (!files.length) return;
 
     const newFiles = files.map((file) => ({
@@ -999,22 +1043,18 @@ const ProjectDetailsEdit = () => {
       document_url: URL.createObjectURL(file), // Temporary preview
       file, // Store the actual file for upload later
     }));
-
     setFormData((prev) => ({
       ...prev,
-      gallery_image: {
-        ...prev.gallery_image,
-        attachfiles: [...(prev.gallery_image?.attachfiles || []), ...newFiles], // Preserve old files
-      },
+      gallery_image: [...prev.gallery_image, ...files], // Append new images
     }));
   };
 
-  // const handleDiscardGallery = (index) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gallery_image: prev.gallery_image.filter((_, i) => i !== index),
-  //   }));
-  // };
+  const handleDiscardGallery = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      gallery_image: prev.gallery_image.filter((_, i) => i !== index),
+    }));
+  };
 
   const handleDiscardPpt = (key, index) => {
     setFormData((prev) => {
@@ -2163,6 +2203,8 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body">
             <div className="row">
+              {/* Gallery Section */}
+
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Gallery Images{" "}
@@ -2212,7 +2254,8 @@ const ProjectDetailsEdit = () => {
                 />
               </div>
 
-              {/* Gallery Table */}
+              {/* Main Section */}
+
               <div className="col-md-12 mt-2">
                 <div
                   className="mt-4 tbl-container"
@@ -2228,45 +2271,107 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.gallery_image?.attachfiles?.map(
-                        (file, index) => (
-                          <tr key={index}>
-                            <td>{file.document_content_type}</td>
-                            <td>
-                              <input
-                                className="form-control"
-                                type="text"
-                                name="gallery_image_file_name"
-                                placeholder="Enter Image Name"
-                                value={file.document_file_name}
-                                onChange={(e) =>
-                                  handleImageNameChange(e, index)
-                                }
-                              />
-                            </td>
-                            <td>
+                      {(formData.gallery_image ?? []).map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.gallery_image_file_type || "N/A"}</td>
+                          <td>
+                            <input
+                              className="form-control"
+                              type="text"
+                              name="gallery_image_file_name"
+                              placeholder="Enter Image Name"
+                              value={file.gallery_image_file_name}
+                              onChange={(e) => handleImageNameChange(e, index)}
+                            />
+                          </td>
+                          <td>
+                            {file.gallery_image && (
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.document_url} // ✅ Use actual document URL from API response
-                                alt={file.document_file_name}
+                                src={
+                                  file.attachfile?.document_url ||
+                                  URL.createObjectURL(file.gallery_image)
+                                }
+                                alt="Preview"
                               />
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() =>
-                                  handleDiscardGallery(
-                                    "gallery_image",
-                                    index,
-                                    file.id
-                                  )
-                                } // ✅ Pass the correct ID
-                              >
-                                x
-                              </button>
-                            </td>
+                            )}
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => handleDiscardGallery(index)}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <h5 className="mt-3">
+                Previous Gallery Images
+              </h5>
+              {/* Fetched Section */}
+              <div className="col-md-12">
+                <div
+                  className="tbl-container"
+                  style={{ maxHeight: "300px", overflowY: "auto" }}
+                >
+                  <table className="table table-bordered table-striped">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th style={{ width: "25%" }}>Image Category</th>
+                        <th style={{ width: "25%" }}>Image Name</th>
+                        <th style={{ width: "25%" }}>Image</th>
+                        <th style={{ width: "25%" }}>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.fetched_gallery_image?.map((file, index) =>
+                        file.attachfiles?.length > 0 ? (
+                          file.attachfiles.map((attachment, idx) => (
+                            <tr key={`${index}-${idx}`}>
+                              <td>{file.gallery_type || "N/A"}</td>
+                              <td>{attachment.file_name || "N/A"}</td>
+                              <td className="text-center">
+                                {attachment.document_url ? (
+                                  <img
+                                    src={attachment.document_url}
+                                    alt={
+                                      attachment.document_file_name ||
+                                      "Fetched Image"
+                                    }
+                                    style={{
+                                      maxWidth: "80px",
+                                      maxHeight: "80px",
+                                    }}
+                                  />
+                                ) : (
+                                  <p>No Image</p>
+                                )}
+                              </td>
+                              <td className="text-center">
+                                <button
+                                  type="button"
+                                  className="btn btn-danger"
+                                  onClick={() => handleDiscardGallery(index)}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr key={index}>
+                            <td>{file.gallery_type || "N/A"}</td>
+                            <td>N/A</td>
+                            <td>No Attachments</td>
+                            <td></td>
                           </tr>
                         )
                       )}
@@ -2274,7 +2379,6 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
-
               {/* Brochure Upload */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -2605,7 +2709,7 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
-              <div className="d-flex justify-content-between align-items-end mx-1">
+              {/* <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project PPT{" "}
                   <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
@@ -2668,10 +2772,10 @@ const ProjectDetailsEdit = () => {
                           </td>
                         </tr>
                       ))}
-                    </tbody> */}
+                    </tbody> 
                   </table>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
