@@ -33,7 +33,6 @@ const ProjectConfigEdit = () => {
         toast.error("Failed to load configuration data");
       }
     };
-
     fetchConfiguration();
   }, [id]);
 

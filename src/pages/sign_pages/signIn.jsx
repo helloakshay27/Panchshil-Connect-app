@@ -37,7 +37,7 @@ const SignIn = () => {
         }
 
         try {
-            const response = await axios.post("https://panchshil-super.lockated.com/users/signin.json", {
+            const response = await axios.post("http://localhost:3000/users/signin.json", {
                 user: {
                     email,
                     password,

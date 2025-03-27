@@ -661,7 +661,7 @@ const ProjectDetailsCreate = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/projects.json",
+        "http://localhost:3000/projects.json",
         data,
         {
           headers: {
@@ -686,7 +686,7 @@ const ProjectDetailsCreate = () => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
       const url =
-        "https://panchshil-super.lockated.com/get_property_types.json";
+        "http://localhost:3000/get_property_types.json";
 
       try {
         const response = await axios.get(url, {
@@ -709,7 +709,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchConfigurations = async () => {
       const url =
-        "https://panchshil-super.lockated.com/configuration_setups.json";
+        "http://localhost:3000/configuration_setups.json";
 
       try {
         const response = await axios.get(url);
@@ -775,7 +775,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchSpecifications = async () => {
       const url =
-        "https://panchshil-super.lockated.com/specification_setups.json";
+        "http://localhost:3000/specification_setups.json";
 
       try {
         const response = await axios.get(url);
@@ -793,7 +793,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url = "https://panchshil-super.lockated.com/amenity_setups.json";
+      const url = "http://localhost:3000/amenity_setups.json";
 
       try {
         const response = await axios.get(url, {
@@ -817,7 +817,7 @@ const ProjectDetailsCreate = () => {
     const fetchCategoryTypes = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/category_types.json"
+          "http://localhost:3000/category_types.json"
         );
 
         if (response.data) {

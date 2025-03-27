@@ -684,7 +684,7 @@ const ProjectDetails = () => {
           <div className="card-body pb-2 mb-1 mt-0">
             <div className="row ">
               <div className="col-md-12 ">
-                <h5 class=" ">Brochure</h5>
+                <h5 className=" ">Brochure</h5>
                 <div className=" tbl-container w-100">
                   <table className=" w-100">
                     <thead>
@@ -726,7 +726,7 @@ const ProjectDetails = () => {
               </div>
 
               <div className="col-md-12 mt-2">
-                <h5 class=" ">2D Image</h5>
+                <h5 className=" ">2D Image</h5>
 
                 <div className="mt-4 tbl-container">
                   <table className="   w-100">
@@ -771,7 +771,7 @@ const ProjectDetails = () => {
               </div>
 
               <div className="col-md-12 mt-2">
-                <h5 class=" ">2D Image</h5>
+                <h5 className=" ">2D Image</h5>
 
                 <div className="mt-4 tbl-container">
                   <table className="   w-100">
