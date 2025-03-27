@@ -41,7 +41,7 @@ const ProjectDetailsList = () => {
 
   const fetchProjects = async () => {
     setLoading(true);
-    const url = "http://localhost:3000/get_projects_all.json";
+    const url = "https://panchshil-super.lockated.com/get_projects_all.json";
 
     try {
       const response = await axios.get(url, {
