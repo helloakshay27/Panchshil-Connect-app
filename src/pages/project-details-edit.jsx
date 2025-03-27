@@ -54,7 +54,7 @@ const ProjectDetailsEdit = () => {
     brochure: [],
     two_d_images: [],
     videos: [],
-    gallery_images: [],
+    gallery_image: [],
     Project_PPT: [],
     creative_images: [],
   });
@@ -74,6 +74,9 @@ const ProjectDetailsEdit = () => {
   const [virtualTourName, setVirtualTourName] = useState("");
   const [selectedType, setSelectedType] = useState(null);
   const [filteredAmenities, setFilteredAmenities] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [projectCreatives, setProjectCreatives] = useState([]);
+  const [categoryTypes, setCategoryTypes] = useState([]);
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
   // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
@@ -109,6 +112,30 @@ const ProjectDetailsEdit = () => {
     fetchData("amenity_setups.json", (data) =>
       setAmenities(data?.amenities_setups || [])
     );
+  }, []);
+
+  useEffect(() => {
+    const fetchCategoryTypes = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/category_types.json"
+        );
+
+        if (response.data) {
+          // Extract only category_type from each object
+          const formattedCategories = response.data.map((item) => ({
+            value: item.category_type, // Assign category_type as value
+            label: item.category_type, // Assign category_type as label
+          }));
+
+          setCategoryTypes(formattedCategories);
+        }
+      } catch (error) {
+        console.error("Error fetching category types:", error);
+      }
+    };
+
+    fetchCategoryTypes();
   }, []);
 
   // console.log("data", projectsType);
@@ -174,7 +201,8 @@ const ProjectDetailsEdit = () => {
           brochure: projectData.brochure || [],
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
-          gallery_images: projectData.gallery_images || [],
+          gallery_image: projectData.gallery_image || [],
+          Project_PPT: projectData.Project_PPT || [],
         });
 
         setProject(response.data);
@@ -456,6 +484,56 @@ const ProjectDetailsEdit = () => {
     }
   };
 
+  const handleDiscardGallery = async (key, index, imageId) => {
+    if (!imageId) {
+      console.error("Error: No image ID found for deletion.");
+      toast.error("Failed to delete image. Image ID is missing.");
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this image?"
+    );
+    if (!confirmDelete) return;
+
+    console.log(`Attempting to delete image with ID: ${imageId}`);
+
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_gallery_image/${imageId}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to delete image. Server response: ${errorText}`
+        );
+      }
+
+      // Update state to remove the deleted image
+      setFormData((prev) => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          attachfiles: prev[key].attachfiles.filter((_, i) => i !== index),
+        },
+      }));
+
+      toast.success("Image deleted successfully!");
+      console.log(`Image with ID ${imageId} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error.message);
+      toast.error(`Failed to delete image: ${error.message}`);
+    }
+  };
+
   const handleFileDiscard = async (key, index) => {
     const videos = formData[key][index]; // Get the selected image
     if (!videos.id) {
@@ -657,8 +735,8 @@ const ProjectDetailsEdit = () => {
             data.append("project[videos][]", file);
           }
         });
-      } else if (key === "gallery_images" && Array.isArray(value)) {
-        value.forEach((file) => data.append("project[gallery_images][]", file));
+      } else if (key === "gallery_image" && Array.isArray(value)) {
+        value.forEach((file) => data.append("project[gallery_image][]", file));
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
@@ -837,32 +915,42 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleAddVirtualTour = () => {
-    if (!virtualTourUrl.trim() || !virtualTourName.trim()) {
-      toast.error("Both URL and Name are required.");
+    if (!virtualTourName || !virtualTourUrl) {
+      alert("Please enter both Tour Name and URL.");
       return;
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      virtual_tour_url_multiple: Array.isArray(prev.virtual_tour_url_multiple)
-        ? [
-            ...prev.virtual_tour_url_multiple,
-            {
-              virtual_tour_url: virtualTourUrl,
-              virtual_tour_name: virtualTourName,
-            },
-          ]
-        : [
-            {
-              virtual_tour_url: virtualTourUrl,
-              virtual_tour_name: virtualTourName,
-            },
-          ], // Initialize as array if undefined
-    }));
+    setFormData((prev) => {
+      console.log("Previous state:", prev); // Debugging
+      return {
+        ...prev,
+        virtual_tour_url_multiple: [
+          ...(Array.isArray(prev.virtual_tour_url_multiple)
+            ? prev.virtual_tour_url_multiple
+            : []),
+          {
+            virtual_tour_name: virtualTourName,
+            virtual_tour_url: virtualTourUrl,
+          },
+        ],
+      };
+    });
 
     // Clear input fields after adding
-    setVirtualTourUrl("");
     setVirtualTourName("");
+    setVirtualTourUrl("");
+  };
+
+  const handleEditVirtualTour = (index, field, value) => {
+    setFormData((prevData) => {
+      const updatedTours = [...prevData.virtual_tour_url_multiple]; // Create a new array
+      updatedTours[index] = { ...updatedTours[index], [field]: value }; // Update specific entry
+
+      return {
+        ...prevData,
+        virtual_tour_url_multiple: updatedTours, // Update state immutably
+      };
+    });
   };
 
   const handleDeleteVirtualTour = (index) => {
@@ -877,6 +965,216 @@ const ProjectDetailsEdit = () => {
   const amenityTypes = [
     ...new Set(amenities.map((ammit) => ammit.amenity_type)),
   ].map((type) => ({ value: type, label: type }));
+
+  // const handleImageUpload = (event) => {
+  //   const files = Array.from(event.target.files);
+
+  //   if (!selectedCategory) {
+  //     alert("Please select an image category first.");
+  //     return;
+  //   }
+
+  //   const updatedImages = files.map((file) => ({
+  //     gallery_image: file, // ✅ Store actual File
+  //     gallery_image_file_name: file.name,
+  //     gallery_image_file_type: selectedCategory,
+  //   }));
+
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     gallery_image: [...(prev.gallery_image || []), ...updatedImages], // ✅ Ensure existing images are not overwritten
+  //   }));
+
+  //   event.target.value = ""; // Reset file input
+  // };
+
+  const handleImageUpload = (event) => {
+    const files = Array.from(event.target.files);
+    if (!files.length) return;
+
+    const newFiles = files.map((file) => ({
+      id: null, // No ID for new uploads
+      document_file_name: file.name,
+      document_content_type: file.type,
+      document_url: URL.createObjectURL(file), // Temporary preview
+      file, // Store the actual file for upload later
+    }));
+
+    setFormData((prev) => ({
+      ...prev,
+      gallery_image: {
+        ...prev.gallery_image,
+        attachfiles: [...(prev.gallery_image?.attachfiles || []), ...newFiles], // Preserve old files
+      },
+    }));
+  };
+
+  // const handleDiscardGallery = (index) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     gallery_image: prev.gallery_image.filter((_, i) => i !== index),
+  //   }));
+  // };
+
+  const handleDiscardPpt = (key, index) => {
+    setFormData((prev) => {
+      if (!prev[key] || !Array.isArray(prev[key])) return prev; // Ensure key exists and is an array
+
+      const updatedFiles = prev[key].filter((_, i) => i !== index);
+
+      console.log(`Updated ${key} after deletion:`, updatedFiles); // Debugging log
+
+      return { ...prev, [key]: updatedFiles };
+    });
+  };
+
+  const MAX_PPT_SIZE = 10 * 1024 * 1024; // 10MB
+
+  // Modify the handleFileUpload function to handle gallery_images
+  const handleFileUpload = (name, files) => {
+    const MAX_SIZES = {
+      brochures: MAX_BROCHURE_SIZE,
+      two_d_images: MAX_IMAGE_SIZE,
+      videos: MAX_VIDEO_SIZE,
+      image: MAX_IMAGE_SIZE,
+      gallery_image: MAX_IMAGE_SIZE,
+      Project_PPT: MAX_PPT_SIZE, // ✅ Ensure Project_PPT is included
+    };
+
+    const allowedTypes = {
+      image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
+      brochures: [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ],
+      Project_PPT: [
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ], // ✅ PPT & PPTX support
+    };
+
+    if (!files || !files.length) return;
+
+    if (name === "Project_PPT") {
+      // Handle multiple PPT files
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.Project_PPT.includes(file.type)) {
+          toast.error("Only PPT and PPTX files are allowed for Project PPT.");
+          return;
+        }
+
+        if (file.size > MAX_SIZES.Project_PPT) {
+          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          Project_PPT: [...prev.Project_PPT, ...validFiles], // ✅ Ensure multiple files are added
+        }));
+      }
+    }
+
+    if (name === "brochures") {
+      // Handle multiple brochure files
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.brochures.includes(file.type)) {
+          toast.error("Only PDF and DOCX files are allowed for brochures.");
+          return;
+        }
+
+        if (!validateFile(file, MAX_SIZES[name])) return;
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          brochures: [...prev.brochures, ...validFiles],
+        }));
+      }
+    } else if (
+      name === "two_d_images" ||
+      name === "videos" ||
+      name === "gallery_image"
+    ) {
+      // Handle multiple files for images, videos, gallery
+      const newFiles = Array.from(files);
+      const validFiles = [];
+      const tooLargeFiles = [];
+
+      newFiles.forEach((file) => {
+        // Check file type if there are allowed types specified
+        if (allowedTypes[name] && !allowedTypes[name].includes(file.type)) {
+          const fileType = name === "videos" ? "video" : "image";
+          toast.error(
+            `Only supported ${fileType} formats are allowed for ${name.replace(
+              "_",
+              " "
+            )}.`
+          );
+          return;
+        }
+
+        const sizeCheck = isFileSizeValid(file, MAX_SIZES[name]);
+        if (!sizeCheck.valid) {
+          tooLargeFiles.push(sizeCheck);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (tooLargeFiles.length > 0) {
+        tooLargeFiles.forEach((file) => {
+          toast.error(
+            `File too large: ${file.name} (${
+              file.size
+            }). Max size: ${formatFileSize(MAX_SIZES[name])}`
+          );
+        });
+      }
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: [...(prev[name] || []), ...validFiles],
+        }));
+      }
+    } else if (name === "image") {
+      // Handle single image
+      const file = files[0];
+      if (!allowedTypes.image.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+
+      const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
+      if (!sizeCheck.valid) {
+        toast.error(
+          `File too large: ${sizeCheck.name} (${
+            sizeCheck.size
+          }). Max size: ${formatFileSize(MAX_SIZES.image)}`
+        );
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, image: file }));
+    }
+  };
 
   return (
     <>
@@ -1865,9 +2163,119 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body">
             <div className="row">
-              {/* Brochure Upload */}
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Gallery Images{" "}
+                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                </h5>
 
-              {/* File Upload Section */}
+                {/* Category Dropdown and Add Button in one row */}
+                <div className="d-flex align-items-center">
+                  {/* Dropdown for Category Selection */}
+                  <div className="me-2">
+                    <SelectBox
+                      options={categoryTypes} // Already formatted in the correct format
+                      defaultValue={selectedCategory}
+                      onChange={(value) => setSelectedCategory(value)}
+                    />
+                  </div>
+
+                  {/* Add Button */}
+                  <button
+                    className="purple-btn2 rounded-3"
+                    onClick={() =>
+                      document.getElementById("gallery_image").click()
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={16}
+                      height={16}
+                      fill="currentColor"
+                      className="bi bi-plus"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                    </svg>
+                    <span>Add</span>
+                  </button>
+                </div>
+
+                <input
+                  id="gallery_image"
+                  type="file"
+                  accept="image/*"
+                  name="gallery_image"
+                  onChange={handleImageUpload}
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              {/* Gallery Table */}
+              <div className="col-md-12 mt-2">
+                <div
+                  className="mt-4 tbl-container"
+                  style={{ maxHeight: "300px", overflowY: "auto" }}
+                >
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Image Category</th>
+                        <th>Image Name</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.gallery_image?.attachfiles?.map(
+                        (file, index) => (
+                          <tr key={index}>
+                            <td>{file.document_content_type}</td>
+                            <td>
+                              <input
+                                className="form-control"
+                                type="text"
+                                name="gallery_image_file_name"
+                                placeholder="Enter Image Name"
+                                value={file.document_file_name}
+                                onChange={(e) =>
+                                  handleImageNameChange(e, index)
+                                }
+                              />
+                            </td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.document_url} // ✅ Use actual document URL from API response
+                                alt={file.document_file_name}
+                              />
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleDiscardGallery(
+                                    "gallery_image",
+                                    index,
+                                    file.id
+                                  )
+                                } // ✅ Pass the correct ID
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Brochure Upload */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
@@ -2031,7 +2439,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="d-flex justify-content-between align-items-end mx-1">
+              {/* <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Gallery Images{" "}
                   <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
@@ -2081,7 +2489,7 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* Gallery Images */}
+                    
                       {formData.gallery_images.map((file, index) => (
                         <tr key={index}>
                           <td> {file.name}</td>
@@ -2113,7 +2521,7 @@ const ProjectDetailsEdit = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </div> */}
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -2194,6 +2602,73 @@ const ProjectDetailsEdit = () => {
                         </tr>
                       ))}
                     </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Project PPT{" "}
+                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                </h5>
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  onClick={() => document.getElementById("Project_PPT").click()}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+                <input
+                  id="Project_PPT"
+                  className="form-control"
+                  type="file"
+                  name="Project_PPT"
+                  accept=".ppt, .pptx"
+                  onChange={(e) =>
+                    handleFileUpload("Project_PPT", e.target.files)
+                  }
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    {/* <tbody>
+                      {formData.Project_PPT.map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.name}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardPpt("Project_PPT", index)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody> */}
                   </table>
                 </div>
               </div>
@@ -2282,8 +2757,37 @@ const ProjectDetailsEdit = () => {
                       {formData.virtual_tour_url_multiple.map((tour, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
-                          <td>{tour.virtual_tour_name}</td>
-                          <td>{tour.virtual_tour_url}</td>
+                          {/* Editable Tour Name */}
+                          <td>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={tour.virtual_tour_name}
+                              onChange={(e) =>
+                                handleEditVirtualTour(
+                                  index,
+                                  "virtual_tour_name",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </td>
+                          {/* Editable Tour URL */}
+                          <td>
+                            <input
+                              type="url"
+                              className="form-control"
+                              value={tour.virtual_tour_url}
+                              onChange={(e) =>
+                                handleEditVirtualTour(
+                                  index,
+                                  "virtual_tour_url",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </td>
+                          {/* Delete Button */}
                           <td>
                             <button
                               type="button"

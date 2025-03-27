@@ -53,7 +53,7 @@ const ProjectDetailsCreate = () => {
     gallery_image: [],
     Project_PPT: [],
     //project_creatives: [],
-    creative_images:[],
+    creative_images: [],
   });
 
   useEffect(() => {
@@ -78,7 +78,6 @@ const ProjectDetailsCreate = () => {
   const [projectCreatives, setProjectCreatives] = useState([]);
   const [categoryTypes, setCategoryTypes] = useState([]);
   const [selectedCreativeType, setSelectedCreativeType] = useState("");
-
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -204,10 +203,15 @@ const ProjectDetailsCreate = () => {
     if (!files || files.length === 0) return;
 
     const allowedTypes = [
-        "image/jpeg", "image/png", "image/gif", "image/webp",
-        "application/pdf", "application/vnd.ms-powerpoint",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "video/mp4", "video/mov"
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "application/pdf",
+      "application/vnd.ms-powerpoint",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "video/mp4",
+      "video/mov",
     ];
 
     const MAX_SIZE = 50 * 1024 * 1024; // 50MB max per file
@@ -216,30 +220,28 @@ const ProjectDetailsCreate = () => {
     const validFiles = [];
 
     newFiles.forEach((file) => {
-        if (!allowedTypes.includes(file.type)) {
-            toast.error(`Invalid file type: ${file.name}`);
-            return;
-        }
+      if (!allowedTypes.includes(file.type)) {
+        toast.error(`Invalid file type: ${file.name}`);
+        return;
+      }
 
-        if (file.size > MAX_SIZE) {
-            toast.error(`File too large: ${file.name}. Max size is 50MB.`);
-            return;
-        }
+      if (file.size > MAX_SIZE) {
+        toast.error(`File too large: ${file.name}. Max size is 50MB.`);
+        return;
+      }
 
-        validFiles.push({ file, type: "" }); // Default type empty, user will select
+      validFiles.push({ file, type: "" }); // Default type empty, user will select
     });
 
     if (validFiles.length > 0) {
-        setFormData((prev) => ({
-            ...prev,
-            project_creatives: [...prev.project_creatives, ...validFiles],
-        }));
+      setFormData((prev) => ({
+        ...prev,
+        project_creatives: [...prev.project_creatives, ...validFiles],
+      }));
     }
-};
-
+  };
 
   const MAX_PPT_SIZE = 10 * 1024 * 1024; // 10MB
-
 
   // Modify the handleFileUpload function to handle gallery_images
   const handleFileUpload = (name, files) => {
@@ -257,12 +259,17 @@ const ProjectDetailsCreate = () => {
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
-      brochures: ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
-      Project_PPT: ["application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation"], // ✅ PPT & PPTX support
+      brochures: [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ],
+      Project_PPT: [
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ], // ✅ PPT & PPTX support
     };
 
     if (!files || !files.length) return;
-
 
     if (name === "Project_PPT") {
       // Handle multiple PPT files
@@ -591,17 +598,21 @@ const ProjectDetailsCreate = () => {
         value.forEach((file) => data.append("project[two_d_images][]", file));
       } else if (key === "videos" && Array.isArray(value)) {
         value.forEach((file) => data.append("project[videos][]", file));
-      }
-      else if (key === "gallery_image" && Array.isArray(value)) {
+      } else if (key === "gallery_image" && Array.isArray(value)) {
         value.forEach((fileObj, index) => {
-            if (fileObj.gallery_image instanceof File) {  // ✅ Check for actual File
-                data.append("project[gallery_image][]", fileObj.gallery_image); // ✅ Send actual File
-                data.append(`project[gallery_image_file_name][${index}]`, fileObj.gallery_image_file_name);
-                data.append(`project[gallery_type]`, fileObj.gallery_image_file_type);
-
-            }
+          if (fileObj.gallery_image instanceof File) {
+            // ✅ Check for actual File
+            data.append("project[gallery_image][]", fileObj.gallery_image); // ✅ Send actual File
+            data.append(
+              `project[gallery_image_file_name][${index}]`,
+              fileObj.gallery_image_file_name
+            );
+            data.append(
+              `project[gallery_type]`,
+              fileObj.gallery_image_file_type
+            );
+          }
         });
-              
       } else if (key === "image" && value instanceof File) {
         data.append("project[image]", value);
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
@@ -638,13 +649,12 @@ const ProjectDetailsCreate = () => {
         });
       } else if (key === "project_creatives" && Array.isArray(value)) {
         value.forEach(({ file, type }) => {
-            if (file instanceof File) {
-                data.append("project[project_creatives][]", file); // Upload file
-                data.append(`project[project_creatives_types][]`, type); // Store selected type
-            }
+          if (file instanceof File) {
+            data.append("project[project_creatives][]", file); // Upload file
+            data.append(`project[project_creatives_types][]`, type); // Store selected type
+          }
         });
-    }    
-      else {
+      } else {
         data.append(`project[${key}]`, value);
       }
     });
@@ -713,58 +723,54 @@ const ProjectDetailsCreate = () => {
     fetchConfigurations();
   }, []);
 
-
   const handleImageNameChange = (e, index) => {
     const { value } = e.target;
-  
+
     setFormData((prev) => {
       const updatedGallery = [...prev.gallery_image];
       updatedGallery[index].gallery_image_file_name = value;
-      
+
       return { ...prev, gallery_image: updatedGallery };
     });
   };
-  
 
   const handleCreativeImageNameChange = (e, index) => {
     const { value } = e.target;
     setFormData((prev) => {
-        const updatedCreatives = [...prev.creative_images];
-        updatedCreatives[index].creative_image_file_name = value;
-        return { ...prev, creative_images: updatedCreatives };
+      const updatedCreatives = [...prev.creative_images];
+      updatedCreatives[index].creative_image_file_name = value;
+      return { ...prev, creative_images: updatedCreatives };
     });
-};
+  };
 
-const handleDiscardCreative = (index) => {
-  setFormData((prev) => ({
+  const handleDiscardCreative = (index) => {
+    setFormData((prev) => ({
       ...prev,
       creative_images: prev.creative_images.filter((_, i) => i !== index),
-  }));
-};
+    }));
+  };
 
-const handleCreativeImageUpload = (event, type) => {
-  const files = Array.from(event.target.files);
+  const handleCreativeImageUpload = (event, type) => {
+    const files = Array.from(event.target.files);
 
-  if (!selectedCreativeType) {
-    alert("Please select a creative type first.");
-    return;
-  }
+    if (!selectedCreativeType) {
+      alert("Please select a creative type first.");
+      return;
+    }
 
-  const updatedImages = files.map((file) => ({
-    creative_image: file, // Actual image file
-    creative_image_file_name: file.name, // Image name
-    creative_type: selectedCreativeType, // Selected type
-  }));
+    const updatedImages = files.map((file) => ({
+      creative_image: file, // Actual image file
+      creative_image_file_name: file.name, // Image name
+      creative_type: selectedCreativeType, // Selected type
+    }));
 
-  setFormData((prev) => ({
-    ...prev,
-    [`${type}_images`]: [...(prev[`${type}_images`] || []), ...updatedImages],
-  }));
+    setFormData((prev) => ({
+      ...prev,
+      [`${type}_images`]: [...(prev[`${type}_images`] || []), ...updatedImages],
+    }));
 
-  event.target.value = ""; // Reset file input
-};
-
-
+    event.target.value = ""; // Reset file input
+  };
 
   useEffect(() => {
     const fetchSpecifications = async () => {
@@ -813,26 +819,24 @@ const handleCreativeImageUpload = (event, type) => {
         const response = await axios.get(
           "https://panchshil-super.lockated.com/category_types.json"
         );
-  
+
         if (response.data) {
           // Extract only category_type from each object
           const formattedCategories = response.data.map((item) => ({
             value: item.category_type, // Assign category_type as value
             label: item.category_type, // Assign category_type as label
           }));
-  
+
           setCategoryTypes(formattedCategories);
         }
       } catch (error) {
         console.error("Error fetching category types:", error);
       }
     };
-  
+
     fetchCategoryTypes();
   }, []);
-  
 
-  
   const handleCancel = () => {
     setFormData({
       Property_Type: "",
@@ -979,44 +983,42 @@ const handleCreativeImageUpload = (event, type) => {
     const files = Array.from(event.target.files);
 
     if (!selectedCategory) {
-        alert("Please select an image category first.");
-        return;
+      alert("Please select an image category first.");
+      return;
     }
 
     const updatedImages = files.map((file) => ({
-        gallery_image: file,  // ✅ Store actual File
-        gallery_image_file_name: file.name,
-        gallery_image_file_type: selectedCategory,
+      gallery_image: file, // ✅ Store actual File
+      gallery_image_file_name: file.name,
+      gallery_image_file_type: selectedCategory,
     }));
 
     setFormData((prev) => ({
-        ...prev,
-        gallery_image: [...(prev.gallery_image || []), ...updatedImages], // ✅ Ensure existing images are not overwritten
+      ...prev,
+      gallery_image: [...(prev.gallery_image || []), ...updatedImages], // ✅ Ensure existing images are not overwritten
     }));
 
     event.target.value = ""; // Reset file input
-};
+  };
 
-const handleDiscardGallery = (index) => {
-  setFormData((prev) => ({
+  const handleDiscardGallery = (index) => {
+    setFormData((prev) => ({
       ...prev,
       gallery_image: prev.gallery_image.filter((_, i) => i !== index),
-  }));
-};
+    }));
+  };
 
-const handleDiscardPpt = (key, index) => {
-  setFormData((prev) => {
-    if (!prev[key] || !Array.isArray(prev[key])) return prev; // Ensure key exists and is an array
+  const handleDiscardPpt = (key, index) => {
+    setFormData((prev) => {
+      if (!prev[key] || !Array.isArray(prev[key])) return prev; // Ensure key exists and is an array
 
-    const updatedFiles = prev[key].filter((_, i) => i !== index);
+      const updatedFiles = prev[key].filter((_, i) => i !== index);
 
-    console.log(`Updated ${key} after deletion:`, updatedFiles); // Debugging log
+      console.log(`Updated ${key} after deletion:`, updatedFiles); // Debugging log
 
-    return { ...prev, [key]: updatedFiles };
-  });
-};
-
-
+      return { ...prev, [key]: updatedFiles };
+    });
+  };
 
   return (
     <>
@@ -1545,7 +1547,7 @@ const handleDiscardPpt = (key, index) => {
             </div>
           </div>
         </div>
-        
+
         {/* RERA Number Section */}
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3 d-flex justify-content-between align-items-center">
@@ -1883,118 +1885,116 @@ const handleDiscardPpt = (key, index) => {
 
           <div className="card-body">
             <div className="row">
-             
-      {/* Gallery Section */}
-<div className="d-flex justify-content-between align-items-end mx-1">
-  <h5 className="mt-3">
-    Gallery Images{" "}
-    <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
-  </h5>
+              {/* Gallery Section */}
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Gallery Images{" "}
+                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                </h5>
 
-  {/* Category Dropdown and Add Button in one row */}
-  <div className="d-flex align-items-center">
-    {/* Dropdown for Category Selection */}
-    <div className="me-2">
-  <SelectBox
-    options={categoryTypes} // Already formatted in the correct format
-    defaultValue={selectedCategory}
-    onChange={(value) => setSelectedCategory(value)}
-  />
-</div>
+                {/* Category Dropdown and Add Button in one row */}
+                <div className="d-flex align-items-center">
+                  {/* Dropdown for Category Selection */}
+                  <div className="me-2">
+                    <SelectBox
+                      options={categoryTypes} // Already formatted in the correct format
+                      defaultValue={selectedCategory}
+                      onChange={(value) => setSelectedCategory(value)}
+                    />
+                  </div>
 
+                  {/* Add Button */}
+                  <button
+                    className="purple-btn2 rounded-3"
+                    onClick={() =>
+                      document.getElementById("gallery_image").click()
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={16}
+                      height={16}
+                      fill="currentColor"
+                      className="bi bi-plus"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                    </svg>
+                    <span>Add</span>
+                  </button>
+                </div>
 
+                <input
+                  id="gallery_image"
+                  type="file"
+                  accept="image/*"
+                  name="gallery_image"
+                  onChange={handleImageUpload}
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
 
-    {/* Add Button */}
-    <button
-      className="purple-btn2 rounded-3"
-      onClick={() => document.getElementById("gallery_image").click()}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={16}
-        height={16}
-        fill="currentColor"
-        className="bi bi-plus"
-        viewBox="0 0 16 16"
-      >
-        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-      </svg>
-      <span>Add</span>
-    </button>
-  </div>
+              {/* Gallery Table */}
+              <div className="col-md-12 mt-2">
+                <div
+                  className="mt-4 tbl-container"
+                  style={{ maxHeight: "300px", overflowY: "auto" }}
+                >
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Image Category</th>
+                        <th>Image Name</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.gallery_image.map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.gallery_image_file_type}</td>
+                          <td>
+                            <input
+                              className="form-control"
+                              type="text"
+                              name="gallery_image_file_name"
+                              placeholder="Enter Image Name"
+                              value={file.gallery_image_file_name}
+                              onChange={(e) => handleImageNameChange(e, index)}
+                            />
 
-  <input
-    id="gallery_image"
-    type="file"
-    accept="image/*"
-    name="gallery_image"
-    onChange={handleImageUpload}
-    multiple
-    style={{ display: "none" }}
-  />
-</div>
-
-      {/* Gallery Table */}
-      <div className="col-md-12 mt-2">
-        <div
-          className="mt-4 tbl-container"
-          style={{ maxHeight: "300px", overflowY: "auto" }}
-        >
-          <table className="w-100">
-            <thead>
-              <tr>
-                <th>Image Category</th>
-                <th>Image Name</th>
-                <th>Image</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {formData.gallery_image.map((file, index) => (
-                <tr key={index}>
-                  <td>{file.gallery_image_file_type}</td>
-                  <td>
-                  <input
-  className="form-control"
-  type="text"
-  name="gallery_image_file_name"
-  placeholder="Enter Image Name"
-  value={file.gallery_image_file_name}
-  onChange={(e) => handleImageNameChange(e, index)} 
-/>
-
-                  {/* <input
+                            {/* <input
                   
                   name="file.gallery_image_file_name"
                   value={file.gallery_image_file_name}
 
                   onChange={handleChange}
                   /> */}
-
-                    </td>
-                  <td>
-                    <img
-                      style={{ maxWidth: 100, maxHeight: 100 }}
-                      className="img-fluid rounded"
-                      src={URL.createObjectURL(file.gallery_image)}
-                      alt={file.gallery_image_file_name}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      className="purple-btn2"
-                      onClick={() => handleDiscardGallery(index)}
-                    >
-                      x
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                          </td>
+                          <td>
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={URL.createObjectURL(file.gallery_image)}
+                              alt={file.gallery_image_file_name}
+                            />
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => handleDiscardGallery(index)}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
               {/* Brochure Upload */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -2159,11 +2159,6 @@ const handleDiscardPpt = (key, index) => {
                 </div>
               </div>
 
-            
-              
-
-     
-
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Videos{" "}
@@ -2237,7 +2232,7 @@ const handleDiscardPpt = (key, index) => {
                   </table>
                 </div>
               </div>
-               <div className="d-flex justify-content-between align-items-end mx-1">
+              <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project PPT{" "}
                   <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
@@ -2303,9 +2298,9 @@ const handleDiscardPpt = (key, index) => {
                     </tbody>
                   </table>
                 </div>
-              </div> 
+              </div>
 
-{/* <div className="d-flex justify-content-between align-items-end mx-1">
+              {/* <div className="d-flex justify-content-between align-items-end mx-1">
   <h5 className="mt-3">
     Creative Images{" "}
     <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
@@ -2531,13 +2526,9 @@ const handleDiscardPpt = (key, index) => {
         </table>
     </div>
 </div> */}
-
-
-
             </div>
           </div>
         </div>
-       
 
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3 d-flex justify-content-between align-items-center">
