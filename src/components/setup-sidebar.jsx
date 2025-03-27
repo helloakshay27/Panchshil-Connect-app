@@ -104,7 +104,7 @@ const SetupSidebar = () => {
               <a
                 className="menu-link d-flex"
                 style={{ flexDirection: "column" }}
-                href="/amenities-list"
+                href="/setup-member/amenities-list"
                 data-section="Homee"
               >
                 <svg
@@ -128,7 +128,7 @@ const SetupSidebar = () => {
               <a
                 className="menu-link d-flex"
                 style={{ flexDirection: "column" }}
-                href="/siteslot-list"
+                href="/setup-member/siteslot-list"
                 data-section="security"
               >
                 <svg
