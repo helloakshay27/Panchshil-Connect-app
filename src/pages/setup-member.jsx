@@ -93,6 +93,9 @@ const SetupMember = () => {
                           Site Visit Slot Config List
                         </Link>
                       </li>
+                      <li>
+                        <Link to="tag-add">Tag</Link>
+                      </li>
                       
                       
                       

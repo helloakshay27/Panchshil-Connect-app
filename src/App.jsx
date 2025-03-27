@@ -72,6 +72,7 @@ import SetupMember from "./pages/setup-member";
 import CategoryTypes from "./pages/category-types";
 import CategoryTypesList from "./pages/category-types-list";
 import CategoryTypesEdit from "./pages/category-types-edit";
+import TagAdd from "./pages/tag-add";
 
 // import EditGallery from './EditGallery';
 
@@ -168,6 +169,7 @@ function App() {
           <Route path="/setup-member/category-types" element={<CategoryTypes />} />
           <Route path="/setup-member/category-types-list" element={<CategoryTypesList />} />
           <Route path="/setup-member/category-types-edit/:id" element={<CategoryTypesEdit />} />
+          <Route path="/setup-member/tag-add" element={<TagAdd />} />
 
           <Route
             path="/pressreleases-create"

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
+
 import axios from "axios";
 
 const CategoryTypesEdit = () => {
@@ -32,10 +34,12 @@ const CategoryTypesEdit = () => {
       })
       .then(() => {
         setLoading(false);
+        toast.success("Category Type updated successfully!");
+
         navigate("/setup-member/category-types-list"); // Redirect after update
       })
       .catch((error) => {
-        console.error("Error updating category type:", error);
+        toast.error(errorMessage);
         setLoading(false);
       });
   };
@@ -56,7 +60,9 @@ const CategoryTypesEdit = () => {
                     <div className="form-group">
                       <label>
                         Name{" "}
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          *
+                        </span>
                       </label>
                       <input
                         className="form-control"
@@ -71,26 +77,31 @@ const CategoryTypesEdit = () => {
                 </div>
 
                 {/* Submit & Cancel Buttons */}
-                <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                      {loading ? "Updating..." : "Submit"}
-                    </button>
-                  </div>
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={() => navigate("/setup-member/category-type-list")}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </form>  
+              </form>
             </div>
           </div>
+          
         </div>
+        <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button
+                type="submit"
+                className="purple-btn2 w-100"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Submit"}
+              </button>
+            </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 w-100"
+                onClick={() => navigate(-1)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
       </div>
     </div>
   );
