@@ -139,9 +139,17 @@ const ProjectBuildingTypeList = () => {
             </div>
             <div className="card-body mt-4 pb-4 pt-0">
               <div className="tbl-container mt-3">
-                {loading ? (
-                  <p>Loading...</p>
-                ) : (
+              {loading ? (
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : (
                   <table className="w-100">
                     <thead>
                       <tr>

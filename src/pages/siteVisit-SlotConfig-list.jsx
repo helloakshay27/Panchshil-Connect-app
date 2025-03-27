@@ -205,9 +205,13 @@ const [formData, setFormData] = useState({
               <h3 className="card-title">Site Slot List</h3>
             </div>
             <div className="card-body mt-3 pb-4 pt-0">
-              {loading ? (
+            {loading ? (
                 <div className="text-center">
-                  <div className="spinner-border text-danger" role="status">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
                     <span className="visually-hidden">Loading...</span>
                   </div>
                 </div>

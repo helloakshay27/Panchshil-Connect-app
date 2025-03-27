@@ -106,8 +106,8 @@ const BannerList = () => {
     fetchBanners();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  
+  
 
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({
@@ -211,17 +211,17 @@ const BannerList = () => {
                 <h3 className="card-title">Banner List</h3>
               </div>
               <div className=" card-body mt-4 pb-4 pt-0">
-                {loading ? (
-                  <div className="text-center">
-                    <div
-                      className="spinner-border"
-                      role="status"
-                      style={{ color: "var(--red)" }}
-                    >
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
+              {loading ? (
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
                   </div>
-                ) : (
+                </div>
+              ) : (
                   <div className="tbl-container mt-3">
                     <table className="w-100">
                       <thead>

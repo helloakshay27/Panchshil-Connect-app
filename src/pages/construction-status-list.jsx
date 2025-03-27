@@ -150,9 +150,17 @@ const ConstructionStatusList = () => {
             </div>
             <div className="card-body mt-4 pb-4 pt-0">
               <div className="tbl-container mt-3">
-                {loading ? (
-                  <p>Loading...</p>
-                ) : (
+              {loading ? (
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : (
                   <table className="w-100">
                     <thead>
                       <tr>
@@ -251,8 +259,8 @@ const ConstructionStatusList = () => {
                   </table>
                 )}
               </div>
-              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                <ul className="pagination justify-content-center d-flex">
+          <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+            <ul className="pagination justify-content-center d-flex">
                   <li
                     className={`page-item ${
                       pagination.current_page === 1 ? "disabled" : ""

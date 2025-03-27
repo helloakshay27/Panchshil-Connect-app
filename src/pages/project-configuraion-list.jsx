@@ -151,10 +151,16 @@ const ProjectConfigurationList = () => {
               <h3 className="card-title">Project Configuration</h3>
             </div>
             <div className="card-body mt-4 pb-4 pt-0">
-              {loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-danger">{error}</p>
+            {loading ? (
+                <div className="text-center">
+                  <div
+                    className="spinner-border"
+                    role="status"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
               ) : (
                 <div className="tbl-container mt-4">
                   <table className="w-100 ">

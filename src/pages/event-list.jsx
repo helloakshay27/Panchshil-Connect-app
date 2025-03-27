@@ -53,9 +53,7 @@ const Eventlist = () => {
     fetchEvents();
   }, []); // Empty dependency array to run only once on mount
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
