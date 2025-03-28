@@ -433,11 +433,16 @@ const ProjectDetailsCreate = () => {
       setFormData({ ...formData, gallery_image: updatedGallery });
     }
   };
+
   const validateForm = (formData) => {
     // Clear previous toasts
     toast.dismiss();
 
-    if (!formData.Property_Type) {
+    if (formData.image.length === 0) {
+      toast.error("Project Logo is required.");
+      return false;
+    }
+    if (!formData.Property_Type.length === 0) {
       toast.error("Property Type is required.");
       return false;
     }
@@ -459,6 +464,10 @@ const ProjectDetailsCreate = () => {
     }
     if (!formData.project_address) {
       toast.error("Location is required.");
+      return false;
+    }
+    if (!formData.project_tag) {
+      toast.error("Project Tag is required.");
       return false;
     }
     if (!formData.Project_Description) {
@@ -505,20 +514,21 @@ const ProjectDetailsCreate = () => {
       toast.error("Number of Units is required.");
       return false;
     }
-    if (!formData.Rera_Number_multiple) {
-      toast.error("RERA Number is required.");
-      return false;
-    }
-    if (!formData.Amenities.length) {
-      toast.error("Amenities are required.");
-      return false;
-    }
     if (!formData.Land_Area) {
       toast.error("Land Area is required.");
       return false;
     }
     if (!formData.land_uom) {
       toast.error("Land UOM is required.");
+      return false;
+    }
+    if (!formData.Rera_Number_multiple) {
+      toast.error("RERA Number is required.");
+      return false;
+    }
+   
+    if (!formData.Amenities.length) {
+      toast.error("Amenities are required.");
       return false;
     }
     if (!formData.Address || !formData.Address.address_line_1) {
@@ -541,7 +551,11 @@ const ProjectDetailsCreate = () => {
       toast.error("Country is required.");
       return false;
     }
-    if (!formData.brochures) {
+    if (!formData.map_url) {
+      toast.error("Map URL is required.");
+      return false;
+    }
+    if (!formData.brochures.length === 0) {
       toast.error("Brochure is required.");
       return false;
     }
@@ -566,20 +580,12 @@ const ProjectDetailsCreate = () => {
     setLoading(true);
 
     const validationErrors = validateForm(formData);
-    if (validationErrors.length > 0) {
-      if (!errorToastRef.current) {
-        errorToastRef.current = toast.error(validationErrors[0], {
-          toastId: "errorToast",
-        });
-      }
-      setTimeout(() => {
-        errorToastRef.current = null;
-      }, 3000);
-
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+   // ✅ Fix: Ensure form validation correctly stops submission
+  if (!validateForm(formData)) {
+    setLoading(false);
+    setIsSubmitting(false);
+    return;
+  }
 
     const data = new FormData();
 
@@ -900,16 +906,34 @@ const ProjectDetailsCreate = () => {
   };
 
   const handleReraNumberChange = (e) => {
-    setReraNumber(e.target.value);
+    const { value } = e.target;
+
+    // Allow only alphanumeric characters (letters & numbers) & limit to 12 chars
+    if (/^[a-zA-Z0-9]{0,12}$/.test(value)) {
+      setReraNumber(value);
+    }
   };
 
-  // Handle Adding a RERA Entry
+  const handleReraNumberBlur = () => {
+    if (reraNumber.length !== 12) {
+      toast.error("RERA Number must be exactly 12 alphanumeric characters!", {
+        position: "top-right",
+        autoClose: 3000, // Closes after 3 seconds
+      });
+
+      setReraNumber(""); // Reset field if invalid
+    }
+  };
+
   const handleAddRera = () => {
+    // Dismiss any existing toast notifications before showing a new one
+    toast.dismiss();
+  
     if (!towerName.trim() || !reraNumber.trim()) {
       toast.error("Both Tower and RERA Number are required.");
       return;
     }
-
+  
     setFormData((prev) => ({
       ...prev,
       Rera_Number_multiple: [
@@ -920,11 +944,12 @@ const ProjectDetailsCreate = () => {
         },
       ],
     }));
-
+  
     // Clear input fields after adding
     setTowerName("");
     setReraNumber("");
   };
+  
 
   // Handle Deleting a RERA Entry
   const handleDeleteRera = (index) => {
@@ -945,11 +970,14 @@ const ProjectDetailsCreate = () => {
   };
 
   const handleAddVirtualTour = () => {
+    // Dismiss any existing toast messages before showing a new one
+    toast.dismiss();
+  
     if (!virtualTourUrl.trim() || !virtualTourName.trim()) {
       toast.error("Both URL and Name are required.");
       return;
     }
-
+  
     setFormData((prev) => ({
       ...prev,
       virtual_tour_url_multiple: [
@@ -960,11 +988,12 @@ const ProjectDetailsCreate = () => {
         },
       ],
     }));
-
+  
     // Clear input fields after adding
     setVirtualTourUrl("");
     setVirtualTourName("");
   };
+  
 
   const handleDeleteVirtualTour = (index) => {
     setFormData((prev) => ({
@@ -1588,6 +1617,8 @@ const ProjectDetailsCreate = () => {
                     placeholder="Enter RERA Number"
                     value={reraNumber}
                     onChange={handleReraNumberChange}
+                    onBlur={handleReraNumberBlur} // Validate on blur
+                    maxLength={12} // Restrict input to 12 characters
                   />
                 </div>
               </div>
@@ -1738,9 +1769,9 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Address Line 2
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       *
-                    </span>{" "}
+                    </span>{" "} */}
                   </label>
                   <input
                     className="form-control"
