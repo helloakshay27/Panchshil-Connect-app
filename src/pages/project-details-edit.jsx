@@ -1237,7 +1237,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Logo
+                    Project Banner Image
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
