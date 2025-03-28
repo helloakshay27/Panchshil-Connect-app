@@ -2639,7 +2639,7 @@ const ProjectDetailsCreate = () => {
             <button
               onClick={handleSubmit}
               className="purple-btn2 w-100"
-              //disabled={loading}
+              disabled={loading}
             >
               Submit
             </button>

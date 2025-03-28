@@ -184,7 +184,7 @@ const ProjectDetailsList = () => {
               </div>
             </div>
             <div className="module-data-section container-fluid">
-            <div className="card mt-4 pb-4 mx-3">
+              <div className="card mt-4 pb-4 mx-3">
                 <div className="card-header">
                   <h3 className="card-title">Project List</h3>
                 </div>
@@ -267,7 +267,19 @@ const ProjectDetailsList = () => {
                               <td>{project?.rera_carpet_area_sqft || "N/A"}</td>
                               <td>{project?.no_of_towers || "N/A"}</td>
                               <td>{project?.no_of_apartments || "N/A"}</td>
-                              <td>{project?.rera_number || "N/A"}</td>
+                              <td>
+                                {project?.rera_number_multiple?.length > 0
+                                  ? project.rera_number_multiple.map(
+                                      (rera, idx) => (
+                                        <div key={idx}>
+                                          <strong>{rera.tower_name}:</strong>{" "}
+                                          {rera.rera_number}
+                                        </div>
+                                      )
+                                    )
+                                  : "N/A"}
+                              </td>
+
                               <td style={{ width: "200px" }}>
                                 {project?.amenities?.length > 0
                                   ? project?.amenities.map((amenity, idx) => (
@@ -314,7 +326,9 @@ const ProjectDetailsList = () => {
                                   </svg>
                                 </a>
                                 <a
-                                  href={`/project-details/${project?.id || "N/A"}`}
+                                  href={`/project-details/${
+                                    project?.id || "N/A"
+                                  }`}
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -338,8 +352,11 @@ const ProjectDetailsList = () => {
 
                   {/* Pagination */}
                   <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
-                  
-                    <ul className="pagination" role="navigation" aria-label="pager">
+                    <ul
+                      className="pagination"
+                      role="navigation"
+                      aria-label="pager"
+                    >
                       {/* First Page Button */}
                       <li
                         className={`page-item ${
