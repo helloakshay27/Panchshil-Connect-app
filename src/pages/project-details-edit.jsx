@@ -57,7 +57,7 @@ const ProjectDetailsEdit = () => {
     gallery_image: [],
     fetched_gallery_image: [],
     Project_PPT: [],
-    creative_images: [],
+    fetched_Project_PPT: [],
   });
 
   console.log("formData", formData);
@@ -203,8 +203,10 @@ const ProjectDetailsEdit = () => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
           fetched_gallery_image: projectData.gallery_image || [],
-          // gallery_image: projectData.gallery_image || [],
-          Project_PPT: projectData.Project_PPT || [],
+          Project_PPT: [],
+          fetched_Project_PPT: projectData.project_ppt
+            ? [projectData.project_ppt]
+            : [],
         });
 
         setProject(response.data);
@@ -507,11 +509,9 @@ const ProjectDetailsEdit = () => {
     );
     if (!confirmDelete) return;
 
-    console.log(`Attempting to delete image with ID: ${imageId}`);
-
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/${id}/remove_gallery_image/${imageId}.json`,
+        `https://panchshil-super.lockated.com/projects/${id}/remove_gallery_image/${imageId}.json`,
         {
           method: "DELETE",
           headers: {
@@ -523,25 +523,20 @@ const ProjectDetailsEdit = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(
-          `Failed to delete image. Server response: ${errorText}`
-        );
+        throw new Error(`Failed to delete image. Server response:`);
       }
 
       // Update state to remove the deleted image
       setFormData((prev) => ({
         ...prev,
-        [key]: {
-          ...prev[key],
-          attachfiles: prev[key].attachfiles.filter((_, i) => i !== index),
-        },
+        [key]: prev[key].filter((_, i) => i !== index),
       }));
 
       toast.success("Image deleted successfully!");
       console.log(`Image with ID ${imageId} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error.message);
-      toast.error(`Failed to delete image: ${error.message}`);
+      toast.error("Failed to delete image. Please try again.");
     }
   };
 
@@ -751,7 +746,10 @@ const ProjectDetailsEdit = () => {
           if (fileObj.gallery_image instanceof File) {
             // ✅ Check for actual File
             data.append("project[gallery_image][]", fileObj.gallery_image); // ✅ Send actual File
-            data.append(`project[gallery_image_file_name][]`, fileObj.gallery_image_file_name);;
+            data.append(
+              `project[gallery_image_file_name]`,
+              fileObj.gallery_image_file_name
+            );
             data.append(
               `project[gallery_type]`,
               fileObj.gallery_image_file_type
@@ -1214,6 +1212,15 @@ const ProjectDetailsEdit = () => {
 
       setFormData((prev) => ({ ...prev, image: file }));
     }
+  };
+
+  const handleFetchedDiscardPPT = (index, id) => {
+    setFormData((prev) => {
+      const updatedPPT = prev.fetched_Project_PPT.filter(
+        (file) => file.id !== id
+      );
+      return { ...prev, fetched_Project_PPT: updatedPPT };
+    });
   };
 
   return (
@@ -2204,7 +2211,6 @@ const ProjectDetailsEdit = () => {
           <div className="card-body">
             <div className="row">
               {/* Gallery Section */}
-
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Gallery Images{" "}
@@ -2216,7 +2222,7 @@ const ProjectDetailsEdit = () => {
                   {/* Dropdown for Category Selection */}
                   <div className="me-2">
                     <SelectBox
-                      options={categoryTypes} // Already formatted in the correct format
+                      options={categoryTypes}
                       defaultValue={selectedCategory}
                       onChange={(value) => setSelectedCategory(value)}
                     />
@@ -2255,7 +2261,6 @@ const ProjectDetailsEdit = () => {
               </div>
 
               {/* Main Section */}
-
               <div className="col-md-12 mt-2">
                 <div
                   className="mt-4 tbl-container"
@@ -2271,8 +2276,43 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
+                      {/* First render API fetched images */}
+                      {formData.fetched_gallery_image?.map((file, index) =>
+                        file.attachfiles?.map((attachment, idx) => (
+                          <tr key={`fetched-${index}-${idx}`}>
+                            <td>{file.gallery_type || "N/A"}</td>
+                            <td>{attachment.file_name || "N/A"}</td>
+                            <td>
+                              {attachment.document_url && (
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={attachment.document_url}
+                                  alt={attachment.file_name || "Fetched Image"}
+                                />
+                              )}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleFetchedDiscardGallery(
+                                    "gallery_image",
+                                    index,
+                                    attachment.id
+                                  )
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                      {/* Then render newly added images */}
                       {(formData.gallery_image ?? []).map((file, index) => (
-                        <tr key={index}>
+                        <tr key={`new-${index}`}>
                           <td>{file.gallery_image_file_type || "N/A"}</td>
                           <td>
                             <input
@@ -2313,17 +2353,15 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-12 mt-2">
-              <h6 className="mt-3">
-                Previous Gallery Images
-              </h6>
-              {/* Fetched Section */}
-             
+              {/* <div className="col-md-12 mt-2">
+                <h6 className="mt-3">Previous Gallery Images</h6>
+               
+
                 <div
                   className="tbl-container"
                   style={{ maxHeight: "300px", overflowY: "auto" }}
                 >
-                <table className="w-100">
+                  <table className="w-100">
                     <thead className="thead-dark">
                       <tr>
                         <th style={{ width: "25%" }}>Image Category</th>
@@ -2359,7 +2397,7 @@ const ProjectDetailsEdit = () => {
                               <td className="text-center">
                                 <button
                                   type="button"
-                                   className="purple-btn2"
+                                  className="purple-btn2"
                                   onClick={() => handleDiscardGallery(index)}
                                 >
                                   x
@@ -2379,7 +2417,7 @@ const ProjectDetailsEdit = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </div> */}
               {/* Brochure Upload */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -2710,7 +2748,7 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
-              {/* <div className="d-flex justify-content-between align-items-end mx-1">
+              <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project PPT{" "}
                   <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
@@ -2753,13 +2791,58 @@ const ProjectDetailsEdit = () => {
                     <thead>
                       <tr>
                         <th>File Name</th>
+                        {/* <th>Preview</th> */}
                         <th>Action</th>
                       </tr>
                     </thead>
-                    {/* <tbody>
-                      {formData.Project_PPT.map((file, index) => (
-                        <tr key={index}>
+                    <tbody>
+                      {/* First render API fetched PPT files */}
+                      {formData.fetched_Project_PPT?.map((file, index) => (
+                        <tr key={`fetched-ppt-${index}`}>
+                          <td>
+                            {file.project_ppt_url
+                              ? file.project_ppt_url.split("/").pop()
+                              : "N/A"}
+                          </td>
+                          {/* <td>
+                            {file.project_ppt_url && (
+                              <a
+                                href={file.project_ppt_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-sm btn-primary"
+                              >
+                                View PPT
+                              </a>
+                            )}
+                          </td> */}
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleFetchedDiscardPPT(index, file.id)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {/* Then render newly added PPT files */}
+                      {(formData.Project_PPT ?? []).map((file, index) => (
+                        <tr key={`new-ppt-${index}`}>
                           <td>{file.name}</td>
+                          {/* <td>
+                            <a
+                              href={URL.createObjectURL(file)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-sm btn-primary"
+                            >
+                              View PPT
+                            </a>
+                          </td> */}
                           <td>
                             <button
                               type="button"
@@ -2773,10 +2856,10 @@ const ProjectDetailsEdit = () => {
                           </td>
                         </tr>
                       ))}
-                    </tbody> 
+                    </tbody>
                   </table>
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>
