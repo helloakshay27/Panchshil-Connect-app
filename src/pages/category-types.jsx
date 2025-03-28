@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 
 const CategoryTypes = () => {
@@ -7,6 +9,7 @@ const CategoryTypes = () => {
   const [loading, setLoading] = useState(false);
   const [tags, setTags] = useState([]);
   const [formData, setFormData] = useState({ tag_id: "" });
+  const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
@@ -44,12 +47,13 @@ const CategoryTypes = () => {
           },
         }
       );
-      alert("Category Type added successfully!");
+      toast.success("Category Type added successfully!");
       setName(""); // Reset input field after success
       setFormData({ projectId: "" }); // Reset select box
+      navigate("/setup-member/category-types-list");
     } catch (error) {
       console.error("Error adding category type:", error);
-      alert("Failed to add category type.");
+      toast.error(errorMessage);
     }
     setLoading(false);
   };
