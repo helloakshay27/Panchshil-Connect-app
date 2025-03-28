@@ -1848,7 +1848,7 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body mt-0 pb-0">
             {/* Input Fields for New Entry */}
-            <div className="row align-items-end">
+            <div className="row align-items-center">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -1890,9 +1890,10 @@ const ProjectDetailsEdit = () => {
               </div>
 
               {/* Add Button */}
-              <div className="col-md-2 mt-4">
+              <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
+                  style={{marginTop:"28px"}}
                   onClick={handleAddRera}
                 >
                   <svg
@@ -2864,13 +2865,14 @@ const ProjectDetailsEdit = () => {
             </div>
           </div>
         </div>
-        <div className="card mt-3 pb-4 mx-4">
+       <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3 d-flex justify-content-between align-items-center">
             <h3 className="card-title">Virtual Tour</h3>
           </div>
-          <div className="card-body">
-            <div className="row align-items-end">
-              <div className="col-md-4 mt-2">
+          <div className="card-body mt-0 pb-0">
+            {/* Input Fields */}
+            <div className="row align-items-center">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Virtual Tour Name{" "}
@@ -2890,7 +2892,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-4 mt-2">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Virtual Tour URL{" "}
@@ -2910,9 +2912,10 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-4 mt-2">
+              <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
+                  style={{marginTop:"28px"}}
                   onClick={handleAddVirtualTour}
                 >
                   <svg

@@ -1580,7 +1580,7 @@ const ProjectDetailsCreate = () => {
           </div>
           <div className="card-body mt-0 pb-0">
             {/* Input Fields */}
-            <div className="row align-items-end">
+            <div className="row align-items-center">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -1627,6 +1627,7 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
+                  style={{marginTop:"28px"}}
                   onClick={handleAddRera}
                 >
                   <svg
@@ -2562,10 +2563,11 @@ const ProjectDetailsCreate = () => {
           <div className="card-header3 d-flex justify-content-between align-items-center">
             <h3 className="card-title">Virtual Tour</h3>
           </div>
-          <div className="card-body">
-            <div className="row align-items-end">
+          <div className="card-body mt-0 pb-0">
+            {/* Input Fields */}
+            <div className="row align-items-center">
               {/* Virtual Tour Name */}
-              <div className="col-md-4 mt-2">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Virtual Tour Name{" "}
@@ -2586,7 +2588,7 @@ const ProjectDetailsCreate = () => {
               </div>
 
               {/* Virtual Tour URL */}
-              <div className="col-md-4 mt-2">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Virtual Tour URL{" "}
@@ -2607,9 +2609,10 @@ const ProjectDetailsCreate = () => {
               </div>
 
               {/* Add Button */}
-              <div className="col-md-2 mt-4">
+              <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
+                  style={{marginTop:"28px"}}
                   onClick={handleAddVirtualTour}
                 >
                   <svg
