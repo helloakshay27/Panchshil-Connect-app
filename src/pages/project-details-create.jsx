@@ -1135,7 +1135,7 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              <div className="col-md-3 mt-2">
+              <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     Configuration Type
@@ -1146,17 +1146,13 @@ const ProjectDetailsCreate = () => {
                   </label>
                   <MultiSelectBox
                     options={configurations.map((config) => ({
-                      value: config.id,
+                      value: config.name,
                       label: config.name,
                     }))}
-                    value={formData.Configuration_Type.map((id) => {
-                      const config = configurations.find(
-                        (config) => config.id === id
-                      );
-                      return config
-                        ? { value: config.id, label: config.name }
-                        : null;
-                    }).filter(Boolean)}
+                    value={formData.Configuration_Type.map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
                     onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -1165,7 +1161,7 @@ const ProjectDetailsCreate = () => {
                         ),
                       }))
                     }
-                    placeholder="Select amenities"
+                    placeholder="Select Type"
                   />
                 </div>
               </div>
