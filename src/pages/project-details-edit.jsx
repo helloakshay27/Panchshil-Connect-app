@@ -2750,7 +2750,7 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
-              <div className="d-flex justify-content-between align-items-end mx-1">
+              {/* <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project PPT{" "}
                   <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
@@ -2793,12 +2793,12 @@ const ProjectDetailsEdit = () => {
                     <thead>
                       <tr>
                         <th>File Name</th>
-                        {/* <th>Preview</th> */}
+                        <th>Preview</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* First render API fetched PPT files */}
+                      
                       {formData.fetched_Project_PPT?.map((file, index) => (
                         <tr key={`fetched-ppt-${index}`}>
                           <td>
@@ -2806,7 +2806,7 @@ const ProjectDetailsEdit = () => {
                               ? file.project_ppt_url.split("/").pop()
                               : "N/A"}
                           </td>
-                          {/* <td>
+                          <td>
                             {file.project_ppt_url && (
                               <a
                                 href={file.project_ppt_url}
@@ -2817,7 +2817,7 @@ const ProjectDetailsEdit = () => {
                                 View PPT
                               </a>
                             )}
-                          </td> */}
+                          </td>
                           <td>
                             <button
                               type="button"
@@ -2831,11 +2831,11 @@ const ProjectDetailsEdit = () => {
                           </td>
                         </tr>
                       ))}
-                      {/* Then render newly added PPT files */}
+                     
                       {(formData.Project_PPT ?? []).map((file, index) => (
                         <tr key={`new-ppt-${index}`}>
                           <td>{file.name}</td>
-                          {/* <td>
+                          <td>
                             <a
                               href={URL.createObjectURL(file)}
                               target="_blank"
@@ -2844,7 +2844,7 @@ const ProjectDetailsEdit = () => {
                             >
                               View PPT
                             </a>
-                          </td> */}
+                          </td>
                           <td>
                             <button
                               type="button"
@@ -2861,7 +2861,7 @@ const ProjectDetailsEdit = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

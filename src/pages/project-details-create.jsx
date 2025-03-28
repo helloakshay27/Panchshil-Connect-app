@@ -2261,7 +2261,7 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
               </div>
-              <div className="d-flex justify-content-between align-items-end mx-1">
+              {/* <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project PPT{" "}
                   <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
@@ -2327,7 +2327,7 @@ const ProjectDetailsCreate = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </div> */}
 
               {/* <div className="d-flex justify-content-between align-items-end mx-1">
   <h5 className="mt-3">
