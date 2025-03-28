@@ -1053,7 +1053,7 @@ const ProjectDetailsCreate = () => {
     <>
       {/* <Header /> */}
       <div className="module-data-section p-3">
-        <div className="card mt-4 pb-4 mx-4">
+        <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
             <h3 className="card-title">Create Project</h3>
           </div>
@@ -1164,7 +1164,7 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              <div className="col-md-3">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Configuration Type
@@ -1624,7 +1624,7 @@ const ProjectDetailsCreate = () => {
               </div>
 
               {/* Add Button */}
-              <div className="col-md-2 mt-4">
+              <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
                   onClick={handleAddRera}
@@ -1636,6 +1636,7 @@ const ProjectDetailsCreate = () => {
                     fill="currentColor"
                     className="bi bi-plus"
                     viewBox="0 0 16 16"
+                  
                   >
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
                   </svg>

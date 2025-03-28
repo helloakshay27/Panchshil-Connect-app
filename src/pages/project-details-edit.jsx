@@ -659,10 +659,10 @@ const ProjectDetailsEdit = () => {
       errors.push("Address Line 1 is required.");
       return errors;
     }
-    if (!formData.Address || !formData.Address.address_line_2) {
-      errors.push("Address Line 2 is required.");
-      return errors;
-    }
+    // if (!formData.Address || !formData.Address.address_line_2) {
+    //   errors.push("Address Line 2 is required.");
+    //   return errors;
+    // }
     if (!formData.Address || !formData.Address.city) {
       errors.push("City is required.");
       return errors;
@@ -1263,13 +1263,14 @@ const ProjectDetailsEdit = () => {
                       maxWidth: "100px",
                       maxHeight: "100px",
                       objectFit: "cover",
+                      marginBottom: "15px",
                     }}
                   />
                 ) : (
                   <span>No image selected</span>
                 )}
               </div>
-              <div className="col-md-3">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Project Types
@@ -1296,7 +1297,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-3">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Project Bulding Type
@@ -1334,7 +1335,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-3">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Project Construction Status
@@ -1356,7 +1357,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-3">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Configuration Type
