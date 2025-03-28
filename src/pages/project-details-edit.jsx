@@ -2313,16 +2313,17 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <h5 className="mt-3">
+              <div className="col-md-12 mt-2">
+              <h6 className="mt-3">
                 Previous Gallery Images
-              </h5>
+              </h6>
               {/* Fetched Section */}
-              <div className="col-md-12">
+             
                 <div
                   className="tbl-container"
                   style={{ maxHeight: "300px", overflowY: "auto" }}
                 >
-                  <table className="table table-bordered table-striped">
+                <table className="w-100">
                     <thead className="thead-dark">
                       <tr>
                         <th style={{ width: "25%" }}>Image Category</th>
@@ -2358,7 +2359,7 @@ const ProjectDetailsEdit = () => {
                               <td className="text-center">
                                 <button
                                   type="button"
-                                  className="btn btn-danger"
+                                   className="purple-btn2"
                                   onClick={() => handleDiscardGallery(index)}
                                 >
                                   x
