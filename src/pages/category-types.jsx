@@ -8,7 +8,7 @@ const CategoryTypes = () => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [tags, setTags] = useState([]);
-  const [formData, setFormData] = useState({ tag_id: "" });
+  const [formData, setFormData] = useState({ tag_id: "", tag_name: "" });
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
 
@@ -21,14 +21,12 @@ const CategoryTypes = () => {
       const response = await axios.get(
         "https://panchshil-super.lockated.com/tags.json",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       setTags(response.data);
     } catch (error) {
-      console.error("Error fetching projects:", error);
+      console.error("Error fetching tags:", error);
     }
   };
 
@@ -39,21 +37,23 @@ const CategoryTypes = () => {
       await axios.post(
         "https://panchshil-super.lockated.com/category_types.json",
         {
-          category_type: { category_type: name, tag_id: formData.tag_id },
+          category_type: {
+            category_type: name,
+            tag_id: formData.tag_id,
+            tag_name: formData.tag_name, // ✅ Send tag_name
+          },
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       toast.success("Category Type added successfully!");
-      setName(""); // Reset input field after success
-      setFormData({ projectId: "" }); // Reset select box
+      setName(""); // Reset input field
+      setFormData({ tag_id: "", tag_name: "" }); // Reset select box
       navigate("/setup-member/category-types-list");
     } catch (error) {
       console.error("Error adding category type:", error);
-      toast.error(errorMessage);
+      toast.error("Error adding category type.");
     }
     setLoading(false);
   };
@@ -69,24 +69,30 @@ const CategoryTypes = () => {
             <div className="card-body">
               <form onSubmit={handleSubmit}>
                 <div className="row">
+                  {/* Tag Selection */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Tags</label>
                       <SelectBox
-                        options={tags.map((proj) => ({
-                          value: proj.id,
-                          label: proj.tag_type,
+                        options={tags.map((tag) => ({
+                          value: tag.id,
+                          label: tag.tag_type,
                         }))}
                         value={formData.tag_id}
-                        onChange={(value) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            projectId: value,
-                          }))
-                        }
+                        onChange={(value) => {
+                          const selectedTag = tags.find(
+                            (tag) => tag.id === value
+                          );
+                          setFormData({
+                            tag_id: selectedTag?.id || "",
+                            tag_name: selectedTag?.tag_type || "",
+                          });
+                        }}
                       />
                     </div>
                   </div>
+
+                  {/* Name Field */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
@@ -105,7 +111,6 @@ const CategoryTypes = () => {
                       />
                     </div>
                   </div>
-                  {/* Project Select Box */}
                 </div>
 
                 {/* Submit & Cancel Buttons */}
