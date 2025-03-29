@@ -1,47 +1,82 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
-
 import axios from "axios";
+import SelectBox from "../components/base/SelectBox";
 
 const CategoryTypesEdit = () => {
   const { id } = useParams(); // Get category ID from URL
   const navigate = useNavigate();
   const [categoryType, setCategoryType] = useState("");
+  const [tags, setTags] = useState([]);
+  const [formData, setFormData] = useState({ tag_id: "" });
   const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-    // Fetch category type details by ID
-    axios
-      .get(`https://panchshil-super.lockated.com/category_types/${id}.json`)
-      .then((response) => {
-        if (response.data) {
-          setCategoryType(response.data.category_type);
-        }
-      })
-      .catch((error) => console.error("Error fetching category type:", error));
+    fetchTags();
+    fetchCategoryType();
   }, [id]);
 
-  const handleSubmit = (e) => {
+  const fetchTags = async () => {
+    try {
+      const response = await axios.get(
+        "https://panchshil-super.lockated.com/tags.json",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setTags(response.data);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+      toast.error("Failed to load tags.");
+    }
+  };
+
+  const fetchCategoryType = async () => {
+    try {
+      const response = await axios.get(
+        `https://panchshil-super.lockated.com/category_types/${id}.json`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.data) {
+        setCategoryType(response.data.category_type);
+        setFormData({ tag_id: response.data.tag_id }); // ✅ Set tag_id
+      }
+    } catch (error) {
+      console.error("Error fetching category type:", error);
+      toast.error("Failed to load category type.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    axios
-      .put(`https://panchshil-super.lockated.com/category_types/${id}.json`, {
-        category_type: {
-          category_type: categoryType,
+    try {
+      await axios.put(
+        `https://panchshil-super.lockated.com/category_types/${id}.json`,
+        {
+          category_type: {
+            category_type: categoryType,
+            tag_id: formData.tag_id, // ✅ Include tag_id in update
+          },
         },
-      })
-      .then(() => {
-        setLoading(false);
-        toast.success("Category Type updated successfully!");
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-        navigate("/setup-member/category-types-list"); // Redirect after update
-      })
-      .catch((error) => {
-        toast.error(errorMessage);
-        setLoading(false);
-      });
+      toast.success("Category Type updated successfully!");
+      setLoading(false);
+      navigate("/setup-member/category-types-list"); // ✅ Redirect after success
+    } catch (error) {
+      console.error("Error updating category type:", error);
+      toast.error("Error updating category type.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,6 +90,27 @@ const CategoryTypesEdit = () => {
             <div className="card-body">
               <form onSubmit={handleSubmit}>
                 <div className="row">
+                  {/* Tag Selection */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Tags</label>
+                      <SelectBox
+                        options={tags.map((tag) => ({
+                          value: tag.id,
+                          label: tag.tag_type,
+                        }))}
+                        value={formData.tag_id} // ✅ Controlled Component
+                        onChange={(value) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            tag_id: value,
+                          }))
+                        }
+                        disabled={loading || tags.length === 0} // ✅ Disable until tags are loaded
+                      />
+                    </div>
+                  </div>
+
                   {/* Name Field */}
                   <div className="col-md-3">
                     <div className="form-group">
@@ -71,37 +127,38 @@ const CategoryTypesEdit = () => {
                         value={categoryType}
                         onChange={(e) => setCategoryType(e.target.value)}
                         required
+                        disabled={loading}
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Submit & Cancel Buttons */}
+                <div className="row mt-2 justify-content-center">
+                  <div className="col-md-2">
+                    <button
+                      type="submit"
+                      className="purple-btn2 w-100"
+                      disabled={loading}
+                    >
+                      {loading ? "Updating..." : "Submit"}
+                    </button>
+                  </div>
+                  <div className="col-md-2">
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={() => navigate(-1)}
+                      disabled={loading}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
               </form>
             </div>
           </div>
-          
         </div>
-        <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                className="purple-btn2 w-100"
-                disabled={loading}
-              >
-                {loading ? "Updating..." : "Submit"}
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={() => navigate(-1)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
       </div>
     </div>
   );

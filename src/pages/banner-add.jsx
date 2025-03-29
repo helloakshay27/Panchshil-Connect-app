@@ -198,7 +198,9 @@ const BannerAdd = () => {
                   {/* Title */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Title <span style={{ color: "#de7008" }}> *</span></label>
+                      <label>
+                        Title <span style={{ color: "#de7008" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -219,7 +221,9 @@ const BannerAdd = () => {
                   {/* Project */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Project <span style={{ color: "#de7008" }}> *</span></label>
+                      <label>
+                        Project <span style={{ color: "#de7008" }}> *</span>
+                      </label>
                       <SelectBox
                         options={projects.map((project) => ({
                           label: project.project_name,
@@ -239,15 +243,12 @@ const BannerAdd = () => {
                   </div>
 
                   {/* Company */}
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
-                      <label>Company <span style={{ color: "#de7008" }}> *</span></label>
-                      {/* <select className="form-control" name="company_id" value={formData.company_id} onChange={handleChange}>
-                        <option value="">Select a Company</option>
-                        {companies.map((company) => (
-                          <option key={company.id} value={company.id}>{company.name}</option>
-                        ))}
-                      </select> */}
+                      <label>
+                        Company <span style={{ color: "#de7008" }}> *</span>
+                      </label>
+
                       <SelectBox
                         options={companies.map((company) => ({
                           label: company.name,
@@ -264,12 +265,15 @@ const BannerAdd = () => {
                         </span>
                       )}
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Banner File Upload */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Banner Image <span style={{ color: "#de7008" }}> *</span></label>
+                      <label>
+                        Banner Image{" "}
+                        <span style={{ color: "#de7008" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="file"
@@ -286,30 +290,30 @@ const BannerAdd = () => {
                     </div>
                   </div>
                 </div>
-              </div>          
+              </div>
             </div>
           </div>
-             {/* Submit and Cancel Buttons */}
-             <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    onClick={handleSubmit}
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    Submit
-                  </button>
-                </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
+          {/* Submit and Cancel Buttons */}
+          <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button
+                onClick={handleSubmit}
+                className="purple-btn2 w-100"
+                disabled={loading}
+              >
+                Submit
+              </button>
+            </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 w-100"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </>

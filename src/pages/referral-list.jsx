@@ -122,7 +122,7 @@ const Referrallist = () => {
                 </div>
               </div>
             </div>
-            <div className="card-tools mt-1">
+            {/* <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
                 onClick={() => navigate("/referral-create")}
@@ -139,7 +139,7 @@ const Referrallist = () => {
                 </svg>
                 <span>Add</span>
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="card mt-3 pb-4 mx-4">

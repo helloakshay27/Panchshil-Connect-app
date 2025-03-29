@@ -227,8 +227,8 @@ const BannerList = () => {
                       <thead>
                         <tr>
                           <th>Sr No</th>
-                          <th>Site</th>
-                          <th> Company Name</th>
+                          {/* <th>Site</th>
+                          <th> Company Name</th> */}
                           <th>Title</th>
                           <th>Banner</th>
                           <th>Status</th>
@@ -244,8 +244,8 @@ const BannerList = () => {
                                   index +
                                   1}
                               </td>
-                              <td>Lockated, Pune</td>
-                              <td>{banner.company_name || "No Name"}</td>
+                              {/* <td>Lockated, Pune</td>
+                              <td>{banner.company_name || "No Name"}</td> */}
                               <td>{banner.title || "No Title"}</td>
                               <td
                                 className="text-center"
