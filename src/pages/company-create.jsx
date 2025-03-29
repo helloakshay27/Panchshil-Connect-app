@@ -8,6 +8,9 @@ const CompanyCreate = () => {
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(false);
+  
+
   const [formData, setFormData] = useState({
     companyName: "",
     companyLogo: null,
@@ -69,50 +72,53 @@ const CompanyCreate = () => {
   };
 
   // Handle Form Submission
-// Handle Form Submission
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  // Handle Form Submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Dismiss existing toasts before showing a new one
-  toast.dismiss();
+    // Dismiss existing toasts before showing a new one
+    toast.dismiss();
 
-  if (!validateForm()) return;
+    if (!validateForm()) return;
 
-  setSubmitting(true);
+    setSubmitting(true);
 
-  const formDataToSend = new FormData();
-  formDataToSend.append("company_setup[name]", formData.companyName);
-  formDataToSend.append("company_setup[organization_id]", formData.organizationId);
-  formDataToSend.append("company_logo", formData.companyLogo);
-
-  try {
-    const response = await fetch(
-      "https://panchshil-super.lockated.com/company_setups.json",
-      {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
-        },
-        body: formDataToSend,
-      }
+    const formDataToSend = new FormData();
+    formDataToSend.append("company_setup[name]", formData.companyName);
+    formDataToSend.append(
+      "company_setup[organization_id]",
+      formData.organizationId
     );
+    formDataToSend.append("company_logo", formData.companyLogo);
 
-    if (response.ok) {
-      toast.success("Company created successfully!");
-      setFormData({ companyName: "", companyLogo: null, organizationId: "" });
-      navigate("/company-list");
-    } else {
-      const errorData = await response.json();
-      console.error("API Error:", errorData);
-      toast.error(errorData.message || "Failed to create company.");
+    try {
+      const response = await fetch(
+        "https://panchshil-super.lockated.com/company_setups.json",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
+          },
+          body: formDataToSend,
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Company created successfully!");
+        setFormData({ companyName: "", companyLogo: null, organizationId: "" });
+        navigate("/company-list");
+      } else {
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        toast.error(errorData.message || "Failed to create company.");
+      }
+    } catch (error) {
+      console.error("Error submitting company:", error);
+      toast.error("Something went wrong.");
+    } finally {
+      setSubmitting(false);
     }
-  } catch (error) {
-    console.error("Error submitting company:", error);
-    toast.error("Something went wrong.");
-  } finally {
-    setSubmitting(false);
-  }
-};
+  };
 
   return (
     <div className="main-content">
@@ -146,7 +152,20 @@ const handleSubmit = async (e) => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company Logo <span style={{ color: "red" }}>*</span>
+                        Company Logo
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 10 MB
+                            </span>
+                          )}
+                        </span>
+                        <span style={{ color: "red" }}>*</span>
                       </label>
                       <input
                         className="form-control"

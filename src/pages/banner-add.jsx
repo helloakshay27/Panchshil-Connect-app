@@ -15,6 +15,8 @@ const BannerAdd = () => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+  const [showTooltip, setShowTooltip] = useState(false);
+  
   const [formData, setFormData] = useState({
     banner_type: "",
     banner_redirect: "",
@@ -272,7 +274,22 @@ const BannerAdd = () => {
                     <div className="form-group">
                       <label>
                         Banner Image{" "}
-                        <span style={{ color: "#de7008" }}> *</span>
+                        <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 10 MB
+                        </span>
+                      )}
+                    </span>
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
                       </label>
                       <input
                         className="form-control"

@@ -8,6 +8,8 @@ const ProjectConfiguration = () => {
   const [iconPreview, setIconPreview] = useState(null); // ✅ Holds icon preview
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showTooltip, setShowTooltip] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     active: "1", // ✅ Default: Active
@@ -22,10 +24,10 @@ const ProjectConfiguration = () => {
         ...prevData,
         icon: file, // ✅ Save the selected file
       }));
-      setIconPreview(URL.createObjectURL(file)); 
+      setIconPreview(URL.createObjectURL(file));
     }
   };
- 
+
   // Remove Icon
   const handleRemoveIcon = () => {
     setFormData((prevData) => ({
@@ -133,7 +135,20 @@ const ProjectConfiguration = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Icon <span style={{ color: "#de7008" }}> *</span>
+                          Icon
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            [i]
+                            {showTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 10 MB
+                              </span>
+                            )}
+                          </span>{" "}
+                          <span style={{ color: "#de7008" }}> *</span>
                         </label>
                         <input
                           className="form-control"
@@ -184,12 +199,20 @@ const ProjectConfiguration = () => {
               {/* Submit & Cancel Buttons */}
               <div className="row mt-2 justify-content-center">
                 <div className="col-md-2">
-                  <button type="submit" className="purple-btn2 w-100" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="purple-btn2 w-100"
+                    disabled={loading}
+                  >
                     {loading ? "Submitting..." : "Submit"}
                   </button>
                 </div>
                 <div className="col-md-2">
-                  <button type="button" className="purple-btn2 w-100" onClick={() => navigate(-1)}>
+                  <button
+                    type="button"
+                    className="purple-btn2 w-100"
+                    onClick={() => navigate(-1)}
+                  >
                     Cancel
                   </button>
                 </div>

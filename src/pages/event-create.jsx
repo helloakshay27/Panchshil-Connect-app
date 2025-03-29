@@ -32,6 +32,7 @@ const EventCreate = () => {
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [showTooltip, setShowTooltip] = useState(false);
 
   console.log("AA", eventType);
   console.log("bb", eventUserID);
@@ -355,7 +356,7 @@ const EventCreate = () => {
                 <div className="card-body">
                   {error && <p className="text-danger">{error}</p>}
                   <div className="row">
-                    <div className="col-md-3 mt-1">
+                    {/* <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>
                           Project
@@ -370,7 +371,7 @@ const EventCreate = () => {
                           onChange={(value) => setSelectedProjectId(value)}
                         />
                       </div>
-                    </div>
+                    </div> */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -699,6 +700,19 @@ const EventCreate = () => {
                             {" "}
                             *
                           </span>
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            [i]
+                            {showTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 10 MB
+                              </span>
+                            )}
+                          </span>
+                          
                           <span />
                         </label>
                         <input

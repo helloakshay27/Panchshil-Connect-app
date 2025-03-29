@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 const OrganizationCreate = () => {
   const navigate = useNavigate();
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [showTooltip, setShowTooltip] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     domain: "",
@@ -234,7 +236,20 @@ const OrganizationCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Attachment <span style={{ color: "#de7008" }}> *</span>
+                        Attachment
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 10 MB
+                            </span>
+                          )}
+                        </span>{" "}
+                        <span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"

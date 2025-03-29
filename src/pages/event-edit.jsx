@@ -212,7 +212,7 @@ const EventEdit = () => {
 
                 <div className="card-body">
                   <div className="row">
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Project
@@ -235,7 +235,7 @@ const EventEdit = () => {
                           }
                         />
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="col-md-3">
                       <div className="form-group">

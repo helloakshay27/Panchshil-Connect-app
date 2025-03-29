@@ -11,6 +11,7 @@ const Amenities = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [amenityType, setAmenityType] = useState(""); // ✅ Correct State Name
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const navigate = useNavigate();
 
@@ -40,7 +41,7 @@ const Amenities = () => {
 
     const formData = new FormData();
     formData.append("amenity_setup[name]", name);
-    formData.append("amenity_setup[amenity_type]", amenityType); 
+    formData.append("amenity_setup[amenity_type]", amenityType);
     if (icon) {
       formData.append("icon", icon);
     }
@@ -116,6 +117,18 @@ const Amenities = () => {
                       <div className="form-group">
                         <label>
                           Icon{" "}
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            [i]
+                            {showTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 10 MB
+                              </span>
+                            )}
+                          </span>
                           <span style={{ color: "#de7008", fontSize: "16px" }}>
                             *
                           </span>

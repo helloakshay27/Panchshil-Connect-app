@@ -10,6 +10,7 @@ const Specification = () => {
   const [icon, setIcon] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -114,6 +115,18 @@ const Specification = () => {
                     <div className="form-group">
                       <label>
                         Icon
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 10 MB
+                            </span>
+                          )}
+                        </span>
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
                           {" "}
                           *
