@@ -27,6 +27,7 @@ const ProjectDetailsCreate = () => {
     development_area_sqmt: "",
     Rera_Carpet_Area_Sq_M: "",
     Rera_Carpet_Area_sqft: "",
+    Rera_Sellable_Area:"",
     Number_Of_Towers: "",
     Number_Of_Units: "",
     no_of_floors: "",
@@ -78,6 +79,7 @@ const ProjectDetailsCreate = () => {
   const [projectCreatives, setProjectCreatives] = useState([]);
   const [categoryTypes, setCategoryTypes] = useState([]);
   const [selectedCreativeType, setSelectedCreativeType] = useState("");
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -526,7 +528,7 @@ const ProjectDetailsCreate = () => {
       toast.error("RERA Number is required.");
       return false;
     }
-   
+
     if (!formData.Amenities.length) {
       toast.error("Amenities are required.");
       return false;
@@ -580,12 +582,12 @@ const ProjectDetailsCreate = () => {
     setLoading(true);
 
     const validationErrors = validateForm(formData);
-   // ✅ Fix: Ensure form validation correctly stops submission
-  if (!validateForm(formData)) {
-    setLoading(false);
-    setIsSubmitting(false);
-    return;
-  }
+    // ✅ Fix: Ensure form validation correctly stops submission
+    if (!validateForm(formData)) {
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
 
     const data = new FormData();
 
@@ -928,12 +930,12 @@ const ProjectDetailsCreate = () => {
   const handleAddRera = () => {
     // Dismiss any existing toast notifications before showing a new one
     toast.dismiss();
-  
+
     if (!towerName.trim() || !reraNumber.trim()) {
       toast.error("Both Tower and RERA Number are required.");
       return;
     }
-  
+
     setFormData((prev) => ({
       ...prev,
       Rera_Number_multiple: [
@@ -944,12 +946,11 @@ const ProjectDetailsCreate = () => {
         },
       ],
     }));
-  
+
     // Clear input fields after adding
     setTowerName("");
     setReraNumber("");
   };
-  
 
   // Handle Deleting a RERA Entry
   const handleDeleteRera = (index) => {
@@ -972,12 +973,12 @@ const ProjectDetailsCreate = () => {
   const handleAddVirtualTour = () => {
     // Dismiss any existing toast messages before showing a new one
     toast.dismiss();
-  
+
     if (!virtualTourUrl.trim() || !virtualTourName.trim()) {
       toast.error("Both URL and Name are required.");
       return;
     }
-  
+
     setFormData((prev) => ({
       ...prev,
       virtual_tour_url_multiple: [
@@ -988,12 +989,11 @@ const ProjectDetailsCreate = () => {
         },
       ],
     }));
-  
+
     // Clear input fields after adding
     setVirtualTourUrl("");
     setVirtualTourName("");
   };
-  
 
   const handleDeleteVirtualTour = (index) => {
     setFormData((prev) => ({
@@ -1062,13 +1062,25 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                  Project Banner Image
+                    Project Banner Image
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 50 MB
+                        </span>
+                      )}
+                    </span>
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
                     </span>
-                    <span />
                   </label>
+
                   <input
                     className="form-control"
                     type="file"
@@ -1419,6 +1431,26 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
+                    RERA Sellable Area
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text-number"
+                    name="Rera_Sellable_Area"
+                    placeholder="Enter Rera Sellable Area"
+                    value={formData.Rera_Sellable_Area}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
                     Number of Towers
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
@@ -1627,7 +1659,7 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
-                  style={{marginTop:"28px"}}
+                  style={{ marginTop: "28px" }}
                   onClick={handleAddRera}
                 >
                   <svg
@@ -1637,7 +1669,6 @@ const ProjectDetailsCreate = () => {
                     fill="currentColor"
                     className="bi bi-plus"
                     viewBox="0 0 16 16"
-                  
                   >
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
                   </svg>
@@ -1918,7 +1949,19 @@ const ProjectDetailsCreate = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Gallery Images{" "}
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 10 MB
+                      </span>
+                    )}
+                  </span>
+                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
                 {/* Category Dropdown and Add Button in one row */}
@@ -2028,6 +2071,18 @@ const ProjectDetailsCreate = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 50 MB
+                      </span>
+                    )}
+                  </span>
                   <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
@@ -2102,8 +2157,20 @@ const ProjectDetailsCreate = () => {
               {/* 2D Images */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
-                  2D Images{" "}
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  Floor Plan{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 10 MB
+                      </span>
+                    )}
+                  </span>
+                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
                 <button
@@ -2191,7 +2258,19 @@ const ProjectDetailsCreate = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Videos{" "}
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 100 MB
+                      </span>
+                    )}
+                  </span>
+                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
                 <button
@@ -2612,7 +2691,7 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
-                  style={{marginTop:"28px"}}
+                  style={{ marginTop: "28px" }}
                   onClick={handleAddVirtualTour}
                 >
                   <svg

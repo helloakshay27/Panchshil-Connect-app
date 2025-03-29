@@ -31,6 +31,7 @@ const ProjectDetailsEdit = () => {
     development_area_sqmt: "",
     Rera_Carpet_Area_Sq_M: "",
     Rera_Carpet_Area_sqft: "",
+    Rera_Sellable_Area:"",
     Number_Of_Towers: "",
     Number_Of_Units: "",
     no_of_floors: "",
@@ -78,6 +79,7 @@ const ProjectDetailsEdit = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [projectCreatives, setProjectCreatives] = useState([]);
   const [categoryTypes, setCategoryTypes] = useState([]);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
   // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
@@ -174,6 +176,7 @@ const ProjectDetailsEdit = () => {
           development_area_sqft: projectData.development_area_sqft || "",
           Rera_Carpet_Area_Sq_M: projectData.rera_carpet_area_sq_mtr || "",
           Rera_Carpet_Area_sqft: projectData.rera_carpet_area_sqft || "",
+          Rera_Sellable_Area: projectData.Rera_Sellable_Area || "",
           Number_Of_Towers: projectData.no_of_towers || "",
           no_of_floors: projectData.no_of_floors || "",
           Number_Of_Units: projectData.no_of_apartments || "",
@@ -1238,6 +1241,18 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Banner Image
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 50 MB
+                        </span>
+                      )}
+                    </span>
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -1601,6 +1616,25 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
+                    Rare Sellable Area
+                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text-number"
+                    placeholder="Default input"
+                    name="Rera_Sellable_Area"
+                    value={formData.Rera_Sellable_Area}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
                     Number of Towers
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
@@ -1893,7 +1927,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
-                  style={{marginTop:"28px"}}
+                  style={{ marginTop: "28px" }}
                   onClick={handleAddRera}
                 >
                   <svg
@@ -2216,7 +2250,19 @@ const ProjectDetailsEdit = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Gallery Images{" "}
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 10 MB
+                      </span>
+                    )}
+                  </span>
+                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
                 {/* Category Dropdown and Add Button in one row */}
@@ -2424,6 +2470,18 @@ const ProjectDetailsEdit = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 50 MB
+                      </span>
+                    )}
+                  </span>
                   <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
@@ -2496,7 +2554,19 @@ const ProjectDetailsEdit = () => {
               {/* 2D Images */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
-                  2D Images{" "}
+                  Floor Plan{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 10 MB
+                      </span>
+                    )}
+                  </span>
                   <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
@@ -2671,7 +2741,19 @@ const ProjectDetailsEdit = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Videos{" "}
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 100 MB
+                      </span>
+                    )}
+                  </span>
+                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
                 <button
@@ -2865,7 +2947,7 @@ const ProjectDetailsEdit = () => {
             </div>
           </div>
         </div>
-       <div className="card mt-3 pb-4 mx-4">
+        <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3 d-flex justify-content-between align-items-center">
             <h3 className="card-title">Virtual Tour</h3>
           </div>
@@ -2915,7 +2997,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
-                  style={{marginTop:"28px"}}
+                  style={{ marginTop: "28px" }}
                   onClick={handleAddVirtualTour}
                 >
                   <svg
