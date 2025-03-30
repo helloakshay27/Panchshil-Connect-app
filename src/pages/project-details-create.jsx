@@ -27,7 +27,7 @@ const ProjectDetailsCreate = () => {
     development_area_sqmt: "",
     Rera_Carpet_Area_Sq_M: "",
     Rera_Carpet_Area_sqft: "",
-    Rera_Sellable_Area:"",
+    Rera_Sellable_Area: "",
     Number_Of_Towers: "",
     Number_Of_Units: "",
     no_of_floors: "",
@@ -1049,6 +1049,26 @@ const ProjectDetailsCreate = () => {
     });
   };
 
+  const propertyTypeOptions = [
+    { value: "Office Parks", label: "Office Parks" },
+    { value: "Residential", label: "Residential" },
+  ];
+
+  const buildingTypeOptions = {
+    "Office Parks": [
+      { value: "Mixed-Use-Development", label: "Mixed Use Development" },
+      { value: "Special-Economic-Zone", label: "Special Economic Zone" },
+      { value: "Tech-Parks", label: "Tech Parks" },
+      { value: "Built-to-Suit", label: "Built to Suit" },
+      { value: "Upcoming-Developments", label: "Upcoming Developments" },
+    ],
+    Residential: [
+      { value: "Completed", label: "Completed" },
+      { value: "Ready-To-Move-In", label: "Ready To Move In" },
+      { value: "Upcoming-Developments", label: "Upcoming Developments" },
+    ],
+  };
+
   return (
     <>
       {/* <Header /> */}
@@ -1102,54 +1122,39 @@ const ProjectDetailsCreate = () => {
                     </span>
                   </label>
                   <SelectBox
-                    options={[
-                      { value: "Office Parks", label: "Office Parks" },
-                      { value: "Residential", label: "Residential" },
-                    ]}
-                    value={formData?.Property_Type || ""}
+                    options={propertyTypeOptions}
+                    value={formData.Property_Type}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
                         Property_Type: value,
+                        building_type: "", // ✅ Reset building_type when Property_Type changes
                       }))
                     }
                   />
                 </div>
               </div>
+
+              {/* Project Building Type Dropdown */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Bulding Type
+                    Project Building Type
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
                     </span>
                   </label>
                   <SelectBox
-                    options={[
-                      { value: "All Properties", label: "All Properties" },
-                      {
-                        value: "Mixed-Use-Development",
-                        label: "Mixed Use Development",
-                      },
-                      {
-                        value: "Special-Economic-Zone",
-                        label: "Special Economic Zone",
-                      },
-                      { value: "Tech-Parks", label: "Tech Parks" },
-                      { value: "Built-to-Suit", label: "Built to Suit" },
-                      {
-                        value: "Upcoming-Developments",
-                        label: "Upcoming Developments",
-                      },
-                    ]}
-                    value={formData?.building_type || ""}
+                    options={buildingTypeOptions[formData.Property_Type] || []} // ✅ Show correct options
+                    value={formData.building_type}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
                         building_type: value,
                       }))
                     }
+                    isDisabled={!formData.Property_Type} // ✅ Disable if no Property_Type selected
                   />
                 </div>
               </div>

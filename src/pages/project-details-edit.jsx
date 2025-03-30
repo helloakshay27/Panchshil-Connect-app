@@ -31,7 +31,7 @@ const ProjectDetailsEdit = () => {
     development_area_sqmt: "",
     Rera_Carpet_Area_Sq_M: "",
     Rera_Carpet_Area_sqft: "",
-    Rera_Sellable_Area:"",
+    Rera_Sellable_Area: "",
     Number_Of_Towers: "",
     Number_Of_Units: "",
     no_of_floors: "",
@@ -1226,6 +1226,26 @@ const ProjectDetailsEdit = () => {
     });
   };
 
+  const propertyTypeOptions = [
+    { value: "Office Parks", label: "Office Parks" },
+    { value: "Residential", label: "Residential" },
+  ];
+
+  const buildingTypeOptions = {
+    "Office Parks": [
+      { value: "Mixed-Use-Development", label: "Mixed Use Development" },
+      { value: "Special-Economic-Zone", label: "Special Economic Zone" },
+      { value: "Tech-Parks", label: "Tech Parks" },
+      { value: "Built-to-Suit", label: "Built to Suit" },
+      { value: "Upcoming-Developments", label: "Upcoming Developments" },
+    ],
+    Residential: [
+      { value: "Completed", label: "Completed" },
+      { value: "Ready-To-Move-In", label: "Ready To Move In" },
+      { value: "Upcoming-Developments", label: "Upcoming Developments" },
+    ],
+  };
+
   return (
     <>
       {/* <Header /> */}
@@ -1315,30 +1335,14 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Bulding Type
+                    Project Building Type
                     <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
                     </span>
                   </label>
                   <SelectBox
-                    options={[
-                      { value: "All Properties", label: "All Properties" },
-                      {
-                        value: "Mixed-Use-Development",
-                        label: "Mixed Use Development",
-                      },
-                      {
-                        value: "Special-Economic-Zone",
-                        label: "Special Economic Zone",
-                      },
-                      { value: "Tech-Park", label: "Tech Park" },
-                      { value: "Built-to-Suit", label: "Built to Suit" },
-                      {
-                        value: "Upcoming-Developments",
-                        label: "Upcoming Developments",
-                      },
-                    ]}
+                    options={buildingTypeOptions[formData.Property_Type] || []} // ✅ Show correct options
                     defaultValue={formData.building_type}
                     onChange={(selectedValue) =>
                       setFormData((prev) => ({
@@ -1346,10 +1350,10 @@ const ProjectDetailsEdit = () => {
                         building_type: selectedValue,
                       }))
                     }
+                    isDisabled={!formData.Property_Type} // ✅ Disable if no Property_Type selected
                   />
                 </div>
               </div>
-
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
