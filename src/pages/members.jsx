@@ -67,9 +67,9 @@ const Members = () => {
               <li>
                 <Link to="/edit-gallery">Edit Gallery</Link>
               </li> */}
-              <li>
+              {/* <li>
                 <Link to="/referral-create">Referral Create</Link>
-              </li>
+              </li> */}
               <li>
                 <Link to="/referral-list">Referral List</Link>
               </li>
