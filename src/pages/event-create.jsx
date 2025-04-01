@@ -123,6 +123,18 @@ const EventCreate = () => {
       errors.push("RSVP action is required.");
       return errors; // Return the first error immediately
     }
+    if (formData.rsvp_action === "yes") {
+      if (!formData.rsvp_name) {
+        errors.push("RSVP Name is required.");
+      }
+      if (!formData.rsvp_number) {
+        errors.push("RSVP Number is required.");
+      }
+    }
+
+    // Continue with other form validation checks...
+
+    return errors;
     if (!formData.description) {
       errors.push("Event description is required.");
       return errors; // Return the first error immediately
@@ -168,14 +180,14 @@ const EventCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    toast.dismiss(); // Clears previous toasts to prevent duplicates
+    toast.dismiss();
 
     // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
-      validationErrors.forEach((error) => toast.error(error)); // Show each error separately
+      validationErrors.forEach((error) => toast.error(error));
       setLoading(false);
-      return; // Stop form submission
+      return;
     }
 
     // Create FormData to send with the request
@@ -196,7 +208,13 @@ const EventCreate = () => {
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
     data.append("event[project_id]", selectedProjectId);
 
-    // Handling Attachments (Only Append Valid Files)
+    // Append RSVP details if RSVP action is "yes"
+    if (formData.rsvp_action === "yes") {
+      data.append("event[rsvp_name]", formData.rsvp_name);
+      data.append("event[rsvp_number]", formData.rsvp_number);
+    }
+
+    // Handling Attachments
     if (formData.attachfile && formData.attachfile.length > 0) {
       formData.attachfile.forEach((file) => {
         if (file instanceof File) {
@@ -224,10 +242,7 @@ const EventCreate = () => {
         }
       );
 
-      // ✅ Success Toast (Styled like Testimonial & Specification)
       toast.success("Event created successfully!");
-
-      // Reset Form After Successful Submission
       setFormData({
         event_type: "",
         event_name: "",
@@ -249,7 +264,6 @@ const EventCreate = () => {
       navigate("/event-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
-
       if (error.response && error.response.data) {
         toast.error(
           `Error: ${error.response.data.message || "Submission failed"}`
@@ -356,12 +370,9 @@ const EventCreate = () => {
                 <div className="card-body">
                   {error && <p className="text-danger">{error}</p>}
                   <div className="row">
-                    {/* <div className="col-md-3 mt-1">
+                    <div className="col-md-3 mt-1">
                       <div className="form-group">
-                        <label>
-                          Project
-                          <span style={{ color: "#de7008" }}> *</span>
-                        </label>
+                        <label>Project</label>
                         <SelectBox
                           options={projects.map((proj) => ({
                             value: proj.id,
@@ -371,7 +382,7 @@ const EventCreate = () => {
                           onChange={(value) => setSelectedProjectId(value)}
                         />
                       </div>
-                    </div> */}
+                    </div>
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -489,6 +500,43 @@ const EventCreate = () => {
                         />
                       </div>
                     </div> */}
+                    {/* <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          RSVP Action
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="yes"
+                              checked={formData.rsvp_action === "yes"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="no"
+                              checked={formData.rsvp_action === "no"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div> */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -526,6 +574,41 @@ const EventCreate = () => {
                         </div>
                       </div>
                     </div>
+
+                    {/* Conditionally render fields when 'Yes' is selected */}
+                    {formData.rsvp_action === "yes" && (
+                      <>
+                        <div className="col-md-3">
+                          <div className="form-group">
+                            <label>RSVP Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter RSVP Name"
+                              name="rsvp_name"
+                              value={formData.rsvp_name || ""}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-3">
+                          <div className="form-group">
+                            <label>RSVP Number</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter RSVP Number"
+                              name="rsvp_number"
+                              value={formData.rsvp_number || ""}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+
                     {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Delete</label>
@@ -712,7 +795,6 @@ const EventCreate = () => {
                               </span>
                             )}
                           </span>
-                          
                           <span />
                         </label>
                         <input

@@ -18,6 +18,8 @@ const EventEdit = () => {
     from_time: "",
     to_time: "",
     rsvp_action: "",
+    rsvp_name: "", 
+    rsvp_number: "", 
     description: "",
     publish: "",
     user_id: "",
@@ -132,8 +134,12 @@ const EventEdit = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
+  
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -153,13 +159,14 @@ const EventEdit = () => {
       [name]: value === "true", // Convert string to boolean
     }));
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     const data = new FormData();
+    
+    // Append all form data fields
     Object.keys(formData).forEach((key) => {
       if (key === "attachfile" && formData.attachfile) {
         data.append("event[event_image]", formData.attachfile); // Ensure file is appended
@@ -167,7 +174,13 @@ const EventEdit = () => {
         data.append(`event[${key}]`, formData[key]);
       }
     });
-
+  
+    // Append RSVP fields if RSVP action is "yes"
+    if (formData.rsvp_action === "yes") {
+      data.append("event[rsvp_name]", formData.rsvp_name || "");
+      data.append("event[rsvp_number]", formData.rsvp_number || "");
+    }
+  
     try {
       await axios.put(
         `https://panchshil-super.lockated.com/events/${id}.json`,
@@ -188,6 +201,7 @@ const EventEdit = () => {
       setLoading(false);
     }
   };
+  
 
   const formatDateForInput = (isoString) => {
     if (!isoString) return ""; // Handle empty values
@@ -212,14 +226,14 @@ const EventEdit = () => {
 
                 <div className="card-body">
                   <div className="row">
-                    {/* <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Project
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <SelectBox
                           options={projects.map((project) => ({
@@ -235,7 +249,7 @@ const EventEdit = () => {
                           }
                         />
                       </div>
-                    </div> */}
+                    </div>
 
                     <div className="col-md-3">
                       <div className="form-group">
@@ -370,6 +384,38 @@ const EventEdit = () => {
                         </div>
                       </div>
                     </div>
+
+                    {/* Show RSVP Name and RSVP Number only if RSVP Action is "yes" */}
+                    {formData.rsvp_action === "yes" && (
+                      <>
+                        <div className="col-md-3">
+                          <div className="form-group">
+                            <label>RSVP Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter RSVP Name"
+                              name="rsvp_name"
+                              value={formData.rsvp_name || ""}
+                              onChange={handleChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-3">
+                          <div className="form-group">
+                            <label>RSVP Number</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter RSVP Number"
+                              name="rsvp_number"
+                              value={formData.rsvp_number || ""}
+                              onChange={handleChange}
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
 
                     <div className="col-md-3">
                       <div className="form-group">
@@ -631,30 +677,29 @@ const EventEdit = () => {
                     </div>
                   </div>
                 </div>
-                
               </div>
               <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      onClick={handleSubmit}
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={loading}
-                    >
-                      Submit
-                    </button>
-                  </div>
-
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={handleCancel}
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                <div className="col-md-2">
+                  <button
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="purple-btn2 w-100"
+                    disabled={loading}
+                  >
+                    Submit
+                  </button>
                 </div>
+
+                <div className="col-md-2">
+                  <button
+                    type="button"
+                    className="purple-btn2 w-100"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
