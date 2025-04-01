@@ -218,8 +218,8 @@ const PressReleasesList = () => {
                         <tr>
                           <th>Sr No</th>
                           <th>Title</th>
-                          <th>Company Name</th>
-                          <th>Project Name</th>
+                          {/* <th>Company Name</th>
+                          <th>Project Name</th> */}
                           <th>Description</th>
                           <th>Release Date</th>
                           <th>Attachment</th>
@@ -241,8 +241,8 @@ const PressReleasesList = () => {
                                     1}
                                 </td>
                                 <td>{release.title || "N/A"}</td>
-                                <td>{release.company_name || "N/A"}</td>
-                                <td>{release.project_name || "N/A"}</td>
+                                {/* <td>{release.company_name || "N/A"}</td>
+                                <td>{release.project_name || "N/A"}</td> */}
                                 <td
                                   title={release.description} // This automatically shows full text on hover
                                   style={{
