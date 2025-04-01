@@ -53,10 +53,10 @@ const Header = () => {
               alt="Logo"
             />
             <div className="nav-links ms-4">
-              <NavLink className="nav-link px-4 d-flex align-items-center" to="/members">
+              <NavLink className="nav-link px-4 d-flex align-items-center" to="/project-list">
                 Home
               </NavLink>
-              <NavLink className="nav-link px-4 d-flex align-items-center" to="/setup-member">
+              <NavLink className="nav-link px-4 d-flex align-items-center" to="/setup-member/property-type-list">
                 Setup
               </NavLink>
             </div>
