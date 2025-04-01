@@ -10,9 +10,12 @@ const Testimonials = () => {
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
   const [companySetupId, setCompanySetupId] = useState("");
   const [userName, setUserName] = useState("");
+  const [userProfile, setUserProfile] = useState("");  // State for user profile
   const [userType, setUserType] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
+  const [buildingTypeId, setBuildingTypeId] = useState("");
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -47,6 +50,30 @@ const Testimonials = () => {
 
     fetchCompanySetups();
   }, []);
+  
+  useEffect(() => {
+    const fetchBuildingTypes = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/building_types.json",
+          {
+            headers: {
+              Authorization:
+                "Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE",
+            },
+          }
+        );
+        
+        if (response.data && Array.isArray(response.data)) {
+          setBuildingTypeOptions(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching building type data:", error);
+      }
+    };
+
+    fetchBuildingTypes();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,7 +82,7 @@ const Testimonials = () => {
     // Dismiss previous toast notifications before showing new ones
     toast.dismiss();
 
-    if (!companySetupId || !userName.trim() || !userType || !content.trim()) {
+    if (!userName.trim() || !userProfile.trim() || !content.trim()) {
       toast.error("All fields are required.");
       setLoading(false);
       return;
@@ -63,9 +90,11 @@ const Testimonials = () => {
 
     const data = {
       testimonial: {
-        company_setup_id: companySetupId,
+        // company_setup_id: companySetupId,
+        building_id: buildingTypeId, // Include Building Type
         user_name: userName.trim(),
-        user_type: userType,
+        user_profile: userProfile.trim(), // Include User Profile
+        // user_type: userType,
         content: content.trim(),
       },
     };
@@ -88,8 +117,9 @@ const Testimonials = () => {
       toast.success("Data saved successfully!");
 
       // Reset form fields
-      setCompanySetupId("");
+      
       setUserName("");
+      setUserProfile(""); // Reset User Profile
       setUserType("");
       setContent("");
 
@@ -123,52 +153,7 @@ const Testimonials = () => {
                 </div>
                 <div className="card-body">
                   <div className="row">
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Company Name
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        {/* <select
-                          className="form-control form-select"
-                          name="companysetupid"
-                          value={companySetupId}
-                          onChange={(e) => setCompanySetupId(e.target.value)}
-                        >
-                          <option value="" disabled>
-                            Select ID
-                          </option>
-                          {companySetupOptions.length > 0 ? (
-                            companySetupOptions.map((option) => (
-                              <option key={option.id} value={option.id}>
-                                {option.name ||
-                                  option.company_name ||
-                                  `ID: ${option.id}`}
-                              </option>
-                            ))
-                          ) : (
-                            <option disabled>No options available</option>
-                          )}
-                        </select> */}
-                        <SelectBox
-                          options={
-                            companySetupOptions.length > 0 ? (
-                              companySetupOptions.map((option) => ({
-                                label: option.name,
-                                value: option.id,
-                              }))
-                            ) : (
-                              <option disabled>No options available</option>
-                            )
-                          }
-                          defaultValue={companySetupId}
-                          onChange={(value) => setCompanySetupId(value)}
-                        />
-                      </div>
-                    </div>
+                    {/* User Name */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -181,14 +166,37 @@ const Testimonials = () => {
                         <input
                           className="form-control"
                           type="text"
-                          name="username"
+                          name="userName"
                           placeholder="Enter user name"
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
                         />
                       </div>
                     </div>
+
+                    {/* User Profile */}
                     <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          User Profile
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="userProfile"
+                          placeholder="Enter user profile"
+                          value={userProfile}
+                          onChange={(e) => setUserProfile(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    {/* User Type */}
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           User Type
@@ -207,8 +215,30 @@ const Testimonials = () => {
                           onChange={(value) => setUserType(value)}
                         />
                       </div>
+                    </div> */}
+
+                    {/* Building Type */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Building Type
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <SelectBox
+                          options={buildingTypeOptions.map((option) => ({
+                            label: option.building_type, // Display Name
+                            value: option.building_id, // ID
+                          }))}
+                          value={buildingTypeId}
+                          onChange={(value) => setBuildingTypeId(value)}
+                        />
+                      </div>
                     </div>
 
+                    {/* Content (Description) */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -231,6 +261,8 @@ const Testimonials = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Submit and Cancel Buttons */}
               <div className="row mt-2 justify-content-center">
                 <div className="col-md-2">
                   <button

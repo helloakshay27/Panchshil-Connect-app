@@ -166,10 +166,10 @@ const TestimonialList = () => {
                       <tr>
                         <th>Sr No</th>
                         <th>User Name</th>
-                        <th>User Type</th>
+                        {/* <th>User Type</th> */}
                         <th>Content</th>
-                        <th>Company SetupId</th>
-                        <th>Company Name</th>
+                        {/* <th>Company SetupId</th> */}
+                        {/* <th>Company Name</th> */}
                         <th>Created At</th>
                         <th>Updated At</th>
                         <th>Action</th>
@@ -185,10 +185,10 @@ const TestimonialList = () => {
                                 1}
                             </td>
                             <td>{testimonial.user_name}</td>
-                            <td>{testimonial.user_type}</td>
+                            {/* <td>{testimonial.user_type}</td> */}
                             <td>{testimonial.content}</td>
-                            <td>{testimonial.company_setup_id}</td>
-                            <td>{testimonial.company_name}</td>
+                            {/* <td>{testimonial.company_setup_id}</td> */}
+                            {/* <td>{testimonial.company_name}</td> */}
                             <td>
                               {new Date(
                                 testimonial.created_at

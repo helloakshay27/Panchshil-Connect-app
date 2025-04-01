@@ -12,11 +12,13 @@ const TestimonialEdit = () => {
   const [formData, setFormData] = useState({
     company_setup_id: testimonial?.company_setup_id || "",
     user_name: testimonial?.user_name || "",
-    user_type: testimonial?.user_type || "",
+    user_profile: testimonial?.user_profile || "",
+    building_type_id: testimonial?.building_type_id || "",
     content: testimonial?.content || "",
   });
 
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
+  const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -30,11 +32,8 @@ const TestimonialEdit = () => {
             },
           }
         );
-        console.log(response.data);
-
         if (Array.isArray(response.data.company_setups)) {
           setCompanySetupOptions(response.data.company_setups);
-          console.log(response.company_setups);
         } else {
           setCompanySetupOptions([]);
         }
@@ -44,14 +43,35 @@ const TestimonialEdit = () => {
       }
     };
 
+    const fetchBuildingTypes = async () => {
+      try {
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/building_types.json",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+        if (Array.isArray(response.data)) {
+          setBuildingTypeOptions(response.data);
+        } else {
+          setBuildingTypeOptions([]);
+        }
+      } catch (error) {
+        console.error("Error fetching building type data:", error);
+        setBuildingTypeOptions([]);
+      }
+    };
+
     fetchCompanySetups();
+    fetchBuildingTypes();
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  // console.log(companySetupOptions);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,34 +107,7 @@ const TestimonialEdit = () => {
               </div>
               <div className="card-body">
                 <div className="row">
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Company Name
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
-                      </label>
-
-                      <SelectBox
-                        options={
-                          companySetupOptions.length > 0
-                            ? companySetupOptions.map((option) => ({
-                                value: option.id,
-                                label: option.name.toString(),
-                              }))
-                            : []
-                        }
-                        defaultValue={formData.company_setup_id || ""}
-                        onChange={(selectedValue) =>
-                          setFormData({
-                            ...formData,
-                            company_setup_id: selectedValue,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
+                  {/* User Name */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
@@ -131,36 +124,55 @@ const TestimonialEdit = () => {
                       />
                     </div>
                   </div>
+
+                  {/* User Profile */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        User Type
+                        User Profile
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          {" "}
+                          *
+                        </span>
+                      </label>
+                      <input
+                        className="form-control"
+                        name="user_profile"
+                        value={formData.user_profile}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Building Type */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Building Type
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
                       </label>
                       <SelectBox
-                        options={[
-                          { label: "User", value: "User" },
-                          { label: "Admin", value: "Admin" },
-                          { label: "Resident", value: "Resident" },
-                        ]}
-                        defaultValue={formData.user_type || ""} // Ensure correct pre-selected value
+                        options={buildingTypeOptions.map((option) => ({
+                          label: option.building_type, // Display Name
+                          value: option.building_id, // ID
+                        }))}
+                        value={formData.building_type_id}
                         onChange={(value) =>
                           setFormData((prev) => ({
                             ...prev,
-                            user_type: value, // Store selected value in formData
+                            building_type_id: value, // Store selected value
                           }))
                         }
                       />
                     </div>
                   </div>
 
+                  {/* Content (Description) */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Content
+                        Description
                         <span style={{ color: "#de7008", fontSize: "16px" }}>
                           *
                         </span>
@@ -176,6 +188,8 @@ const TestimonialEdit = () => {
                 </div>
               </div>
             </div>
+
+            {/* Submit and Cancel Buttons */}
             <div className="row mt-2 justify-content-center">
               <div className="col-md-2 mt-3">
                 <button
