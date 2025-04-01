@@ -137,6 +137,40 @@ const EventDetails = () => {
                         </div>
                       </div>
 
+                      {/* Conditionally render RSVP Name and RSVP Number if RSVP Action is "yes" */}
+                      {eventData.rsvp_action === "yes" && (
+                        <>
+                          <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                            <div className="col-6">
+                              <label>RSVP Name</label>
+                            </div>
+                            <div className="col-6">
+                              <label className="text">
+                                <span className="me-3">
+                                  <span className="text-dark">
+                                    : {eventData.rsvp_name || "N/A"}
+                                  </span>
+                                </span>
+                              </label>
+                            </div>
+                          </div>
+                          <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                            <div className="col-6">
+                              <label>RSVP Number</label>
+                            </div>
+                            <div className="col-6">
+                              <label className="text">
+                                <span className="me-3">
+                                  <span className="text-dark">
+                                    : {eventData.rsvp_number || "N/A"}
+                                  </span>
+                                </span>
+                              </label>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
                       {/* Add more fields as required */}
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6 ">
