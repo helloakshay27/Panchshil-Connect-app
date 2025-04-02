@@ -59,12 +59,12 @@ const ProjectDetailsEdit = () => {
     fetched_gallery_image: [],
     project_ppt: [],
     fetched_Project_PPT: [],
-    project_creatives:[],
-    project_creative_generics:[],
-    project_creative_offers:[],
-    project_interiors:[],
-    project_exteriors:[],
-    project_emailer_templetes:[],
+    project_creatives: [],
+    project_creative_generics: [],
+    project_creative_offers: [],
+    project_interiors: [],
+    project_exteriors: [],
+    project_emailer_templetes: [],
     project_layout: [],
   });
 
@@ -90,7 +90,6 @@ const ProjectDetailsEdit = () => {
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
   // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
-
 
   const fetchData = async (endpoint, setter) => {
     try {
@@ -220,13 +219,14 @@ const ProjectDetailsEdit = () => {
           //   : [],
           project_layout: projectData.project_layout || [],
           project_creatives: projectData.project_creatives || [],
-          project_creative_generics: projectData.project_creative_generics || [],
+          project_creative_generics:
+            projectData.project_creative_generics || [],
           project_creative_offers: projectData.project_creative_offers || [],
           project_interiors: projectData.project_interiors || [],
           project_exteriors: projectData.project_exteriors || [],
-          project_emailer_templetes: projectData.project_emailer_templetes || [],
+          project_emailer_templetes:
+            projectData.project_emailer_templetes || [],
           project_ppt: projectData.project_ppt || [],
-
         });
 
         setProject(response.data);
@@ -547,12 +547,11 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = [...formData.project_emailer_templetes];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, project_emailer_templetes: updatedFiles });
-    }  else if (fileType === "project_layout") {
+    } else if (fileType === "project_layout") {
       const updatedFiles = [...formData.project_layout];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, project_layout: updatedFiles });
-    }    
-    else if (fileType === "videos") {
+    } else if (fileType === "videos") {
       const updatedVideos = [...formData.videos];
       updatedVideos.splice(index, 1);
       setFormData({ ...formData, videos: updatedVideos });
@@ -650,7 +649,7 @@ const ProjectDetailsEdit = () => {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
     }
-  };  
+  };
 
   const handleFileDiscardCreative = async (key, index) => {
     const Image = formData[key][index]; // Get the selected image
@@ -686,7 +685,7 @@ const ProjectDetailsEdit = () => {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
     }
-  }; 
+  };
 
   const handleFileDiscardCreativeGenerics = async (key, index) => {
     const Image = formData[key][index]; // Get the selected image
@@ -759,7 +758,6 @@ const ProjectDetailsEdit = () => {
       alert("Failed to delete image. Please try again.");
     }
   };
-
 
   const handleFileDiscardInteriors = async (key, index) => {
     const Image = formData[key][index]; // Get the selected image
@@ -868,7 +866,6 @@ const ProjectDetailsEdit = () => {
       alert("Failed to delete image. Please try again.");
     }
   };
-
 
   const validateForm = (formData) => {
     const errors = [];
@@ -1028,7 +1025,7 @@ const ProjectDetailsEdit = () => {
             data.append("project[project_emailer_templetes][]", file);
           }
         });
-      }else if (
+      } else if (
         key === "project_ppt" &&
         Array.isArray(value) &&
         value.length
@@ -1039,8 +1036,7 @@ const ProjectDetailsEdit = () => {
             data.append("project[project_ppt][]", file);
           }
         });
-      }
-      else if (
+      } else if (
         key === "two_d_images" &&
         Array.isArray(value) &&
         value.length
@@ -1117,8 +1113,7 @@ const ProjectDetailsEdit = () => {
             data.append("project[project_layout][]", file);
           }
         });
-      }
-      else if (key === "videos" && Array.isArray(value) && value.length) {
+      } else if (key === "videos" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -1464,8 +1459,8 @@ const ProjectDetailsEdit = () => {
       project_creatives: MAX_IMAGE_SIZE, // Add creatives support
       project_creative_generics: MAX_IMAGE_SIZE,
       project_creative_offers: MAX_IMAGE_SIZE,
-      project_interiors: MAX_IMAGE_SIZE,  
-      project_exteriors: MAX_IMAGE_SIZE,  
+      project_interiors: MAX_IMAGE_SIZE,
+      project_exteriors: MAX_IMAGE_SIZE,
       project_emailer_templetes: MAX_BROCHURE_SIZE,
       project_layout: MAX_IMAGE_SIZE,
     };
@@ -1488,8 +1483,18 @@ const ProjectDetailsEdit = () => {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ],
       project_creatives: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      project_creative_generics: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      project_creative_offers: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      project_creative_generics: [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ],
+      project_creative_offers: [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ],
       project_interiors: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       project_exteriors: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       project_layout: [
@@ -1505,246 +1510,251 @@ const ProjectDetailsEdit = () => {
 
     if (!files || !files.length) return;
 
-     if (name === "project_layout") {
-          const MAX_SIZE = 10 * 1024 * 1024; // 10MB limit
-      
-          const newFiles = Array.from(files);
-          const validFiles = [];
-      
-          newFiles.forEach((file) => {
-            if (file.size > MAX_SIZE) {
-              toast.error(`❌ File too large: ${file.name}. Max size is 10MB.`);
-              return;
-            }
-      
-            validFiles.push(file);
-          });
-      
-          if (validFiles.length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              project_layout: [...(prev.project_layout || []), ...validFiles],
-            }));
-          }
-        } else {
-          // toast.error("⚠️ Invalid upload category.");
-        }
-    
-        if (name === "project_emailer_templetes") {
-          const newFiles = Array.from(files);
-          const validFiles = [];
-        
-          newFiles.forEach((file) => {
-            if (!allowedTypes.project_emailer_templetes.includes(file.type)) {
-              toast.error("Only PPT and PPTX files are allowed for Project PPT.");
-              return;
-            }
-        
-            if (file.size > MAX_SIZES.project_emailer_templetes) {
-              toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-              return;
-            }
-        
-            validFiles.push(file);
-          });
-        
-          if (validFiles.length > 0) {
-            setFormData((prev) => {
-              // Make sure we're properly handling all possible states of prev.project_ppt
-              let currentPPTs = [];
-              
-              // If project_ppt exists and is an array, use it
-              if (prev.project_emailer_templetes && Array.isArray(prev.project_emailer_templetes)) {
-                currentPPTs = [...prev.project_emailer_templetes];
-              }
-              // If project_ppt exists but is not an array (single file object), convert to array
-              else if (prev.project_emailer_templetes) {
-                currentPPTs = [prev.project_emailer_templetes];
-              }
-              
-              // Return updated state with combined files
-              return {
-                ...prev,
-                project_emailer_templetes: [...currentPPTs, ...validFiles]
-              };
-            });
-          }
-        }
-    
-        if (name === "project_exteriors") {
-          const newFiles = Array.from(files);
-          const validFiles = [];
-      
-          newFiles.forEach((file) => {
-            if (!allowedTypes.project_exteriors.includes(file.type)) {
-              toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-              return;
-            }
-      
-            if (file.size > MAX_SIZES.project_exteriors) {
-              toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-              return;
-            }
-      
-            validFiles.push(file);
-          });
-      
-          if (validFiles.length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              project_exteriors: [...(prev.project_exteriors || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
-            }));
-          }
-        }
-    
-    
-        if (name === "project_interiors") {
-          const newFiles = Array.from(files);
-          const validFiles = [];
-      
-          newFiles.forEach((file) => {
-            if (!allowedTypes.project_interiors.includes(file.type)) {
-              toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-              return;
-            }
-      
-            if (file.size > MAX_SIZES.project_interiors) {
-              toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-              return;
-            }
-      
-            validFiles.push(file);
-          });
-      
-          if (validFiles.length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              project_interiors: [...(prev.project_interiors || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
-            }));
-          }
-        }
-    
-    
-        if (name === "project_creative_offers") {
-          const newFiles = Array.from(files);
-          const validFiles = [];
-      
-          newFiles.forEach((file) => {
-            if (!allowedTypes.project_creative_offers.includes(file.type)) {
-              toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-              return;
-            }
-      
-            if (file.size > MAX_SIZES.project_creative_offers) {
-              toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-              return;
-            }
-      
-            validFiles.push(file);
-          });
-      
-          if (validFiles.length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              project_creative_offers: [...(prev.project_creative_offers || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
-            }));
-          }
-        }
-    
-        if (name === "project_creative_generics") {
-          const newFiles = Array.from(files);
-          const validFiles = [];
-      
-          newFiles.forEach((file) => {
-            if (!allowedTypes.project_creative_generics.includes(file.type)) {
-              toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-              return;
-            }
-      
-            if (file.size > MAX_SIZES.project_creative_generics) {
-              toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-              return;
-            }
-      
-            validFiles.push(file);
-          });
-      
-          if (validFiles.length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              project_creative_generics: [...(prev.project_creative_generics || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
-            }));
-          }
-        }
-    
-        if (name === "project_creatives") {
-          const newFiles = Array.from(files);
-          const validFiles = [];
-      
-          newFiles.forEach((file) => {
-            if (!allowedTypes.project_creatives.includes(file.type)) {
-              toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-              return;
-            }
-      
-            if (file.size > MAX_SIZES.project_creatives) {
-              toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-              return;
-            }
-      
-            validFiles.push(file);
-          });
-      
-          if (validFiles.length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              project_creatives: [...(prev.project_creatives || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
-            }));
-          }
-        }
-    
+    if (name === "project_layout") {
+      const MAX_SIZE = 10 * 1024 * 1024; // 10MB limit
 
-        if (name === "project_ppt") {
-          const newFiles = Array.from(files);
-          const validFiles = [];
-        
-          newFiles.forEach((file) => {
-            if (!allowedTypes.project_ppt.includes(file.type)) {
-              toast.error("Only PPT and PPTX files are allowed for Project PPT.");
-              return;
-            }
-        
-            if (file.size > MAX_SIZES.project_ppt) {
-              toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-              return;
-            }
-        
-            validFiles.push(file);
-          });
-        
-          if (validFiles.length > 0) {
-            setFormData((prev) => {
-              // Make sure we're properly handling all possible states of prev.project_ppt
-              let currentPPTs = [];
-              
-              // If project_ppt exists and is an array, use it
-              if (prev.project_ppt && Array.isArray(prev.project_ppt)) {
-                currentPPTs = [...prev.project_ppt];
-              }
-              // If project_ppt exists but is not an array (single file object), convert to array
-              else if (prev.project_ppt) {
-                currentPPTs = [prev.project_ppt];
-              }
-              
-              // Return updated state with combined files
-              return {
-                ...prev,
-                project_ppt: [...currentPPTs, ...validFiles]
-              };
-            });
-          }
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (file.size > MAX_SIZE) {
+          toast.error(`❌ File too large: ${file.name}. Max size is 10MB.`);
+          return;
         }
-        
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          project_layout: [...(prev.project_layout || []), ...validFiles],
+        }));
+      }
+    } else {
+      // toast.error("⚠️ Invalid upload category.");
+    }
+
+    if (name === "project_emailer_templetes") {
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.project_emailer_templetes.includes(file.type)) {
+          toast.error("Only PPT and PPTX files are allowed for Project PPT.");
+          return;
+        }
+
+        if (file.size > MAX_SIZES.project_emailer_templetes) {
+          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => {
+          // Make sure we're properly handling all possible states of prev.project_ppt
+          let currentPPTs = [];
+
+          // If project_ppt exists and is an array, use it
+          if (
+            prev.project_emailer_templetes &&
+            Array.isArray(prev.project_emailer_templetes)
+          ) {
+            currentPPTs = [...prev.project_emailer_templetes];
+          }
+          // If project_ppt exists but is not an array (single file object), convert to array
+          else if (prev.project_emailer_templetes) {
+            currentPPTs = [prev.project_emailer_templetes];
+          }
+
+          // Return updated state with combined files
+          return {
+            ...prev,
+            project_emailer_templetes: [...currentPPTs, ...validFiles],
+          };
+        });
+      }
+    }
+
+    if (name === "project_exteriors") {
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.project_exteriors.includes(file.type)) {
+          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+          return;
+        }
+
+        if (file.size > MAX_SIZES.project_exteriors) {
+          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          project_exteriors: [...(prev.project_exteriors || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+        }));
+      }
+    }
+
+    if (name === "project_interiors") {
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.project_interiors.includes(file.type)) {
+          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+          return;
+        }
+
+        if (file.size > MAX_SIZES.project_interiors) {
+          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          project_interiors: [...(prev.project_interiors || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+        }));
+      }
+    }
+
+    if (name === "project_creative_offers") {
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.project_creative_offers.includes(file.type)) {
+          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+          return;
+        }
+
+        if (file.size > MAX_SIZES.project_creative_offers) {
+          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          project_creative_offers: [
+            ...(prev.project_creative_offers || []),
+            ...validFiles,
+          ], // ✅ Fix: Ensure existing files are kept
+        }));
+      }
+    }
+
+    if (name === "project_creative_generics") {
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.project_creative_generics.includes(file.type)) {
+          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+          return;
+        }
+
+        if (file.size > MAX_SIZES.project_creative_generics) {
+          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          project_creative_generics: [
+            ...(prev.project_creative_generics || []),
+            ...validFiles,
+          ], // ✅ Fix: Ensure existing files are kept
+        }));
+      }
+    }
+
+    if (name === "project_creatives") {
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.project_creatives.includes(file.type)) {
+          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+          return;
+        }
+
+        if (file.size > MAX_SIZES.project_creatives) {
+          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          project_creatives: [...(prev.project_creatives || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+        }));
+      }
+    }
+
+    if (name === "project_ppt") {
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.project_ppt.includes(file.type)) {
+          toast.error("Only PPT and PPTX files are allowed for Project PPT.");
+          return;
+        }
+
+        if (file.size > MAX_SIZES.project_ppt) {
+          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => {
+          // Make sure we're properly handling all possible states of prev.project_ppt
+          let currentPPTs = [];
+
+          // If project_ppt exists and is an array, use it
+          if (prev.project_ppt && Array.isArray(prev.project_ppt)) {
+            currentPPTs = [...prev.project_ppt];
+          }
+          // If project_ppt exists but is not an array (single file object), convert to array
+          else if (prev.project_ppt) {
+            currentPPTs = [prev.project_ppt];
+          }
+
+          // Return updated state with combined files
+          return {
+            ...prev,
+            project_ppt: [...currentPPTs, ...validFiles],
+          };
+        });
+      }
+    }
 
     if (name === "brochure") {
       // Handle multiple brochure files
@@ -2509,10 +2519,7 @@ const ProjectDetailsEdit = () => {
             <div className="row align-items-center">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Tower{" "}
-                    
-                  </label>
+                  <label>Tower </label>
                   <input
                     className="form-control"
                     type="text"
@@ -2526,10 +2533,7 @@ const ProjectDetailsEdit = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    RERA Number{" "}
-                  
-                  </label>
+                  <label>RERA Number </label>
                   <input
                     className="form-control"
                     type="text"
@@ -2885,7 +2889,6 @@ const ProjectDetailsEdit = () => {
 
                 {/* Category Dropdown and Add Button in one row */}
                 <div className="d-flex align-items-center">
-                 
                   {/* <div className="me-2">
                     <SelectBox
                       options={categoryTypes}
@@ -3216,47 +3219,52 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-  {/* Project PPT Files */}
-  {formData.project_ppt && (
-    Array.isArray(formData.project_ppt) ? (
-      // If it's an array of files
-      formData.project_ppt.map((file, index) => (
-        <tr key={`ppt-${index}`}>
-          <td>
-            {file?.name || file?.document_file_name || "No File"}
-          </td>
-          <td>
-            <button
-              type="button"
-              className="purple-btn2"
-              onClick={() => handleDiscardFile("project_ppt", index)}
-            >
-              x
-            </button>
-          </td>
-        </tr>
-      ))
-    ) : (
-      // If it's a single file (as an object)
-      <tr>
-        <td>
-          {formData.project_ppt?.name || 
-           formData.project_ppt?.document_file_name || 
-           "No File"}
-        </td>
-        <td>
-          <button
-            type="button"
-            className="purple-btn2"
-            onClick={() => handleDiscardFile("project_ppt", 0)}
-          >
-            x
-          </button>
-        </td>
-      </tr>
-    )
-  )}
-</tbody>
+                      {/* Project PPT Files */}
+                      {formData.project_ppt &&
+                        (Array.isArray(formData.project_ppt) ? (
+                          // If it's an array of files
+                          formData.project_ppt.map((file, index) => (
+                            <tr key={`ppt-${index}`}>
+                              <td>
+                                {file?.name ||
+                                  file?.document_file_name ||
+                                  "No File"}
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleDiscardFile("project_ppt", index)
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          // If it's a single file (as an object)
+                          <tr>
+                            <td>
+                              {formData.project_ppt?.name ||
+                                formData.project_ppt?.document_file_name ||
+                                "No File"}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleDiscardFile("project_ppt", 0)
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -3364,7 +3372,6 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-             
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project Layout{" "}
@@ -3402,8 +3409,8 @@ const ProjectDetailsEdit = () => {
                   </svg>
                   <span>Add</span>
                 </button>
-               
-               <input
+
+                <input
                   id="project_layout"
                   className="form-control"
                   type="file"
@@ -3414,9 +3421,9 @@ const ProjectDetailsEdit = () => {
                   }
                   style={{ display: "none" }}
                 />
-              </div> 
+              </div>
 
-               <div className="col-md-12 mt-2">
+              <div className="col-md-12 mt-2">
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
@@ -3464,9 +3471,8 @@ const ProjectDetailsEdit = () => {
                     </tbody>
                   </table>
                 </div>
-              </div> 
+              </div>
 
-              
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project Creatives{" "}
@@ -3555,7 +3561,10 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleFileDiscardCreative("project_creatives", index)
+                                handleFileDiscardCreative(
+                                  "project_creatives",
+                                  index
+                                )
                               }
                             >
                               x
@@ -3612,7 +3621,10 @@ const ProjectDetailsEdit = () => {
                   name="project_creative_generics"
                   accept="image/*"
                   onChange={(e) =>
-                    handleFileUpload("project_creative_generics", e.target.files)
+                    handleFileUpload(
+                      "project_creative_generics",
+                      e.target.files
+                    )
                   }
                   multiple
                   style={{ display: "none" }}
@@ -3656,7 +3668,10 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleFileDiscardCreativeGenerics("project_creative_generics", index)
+                                handleFileDiscardCreativeGenerics(
+                                  "project_creative_generics",
+                                  index
+                                )
                               }
                             >
                               x
@@ -3668,7 +3683,7 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
-              
+
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project Creative Offers{" "}
@@ -3757,7 +3772,10 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleFileDiscardCreativeOffers("project_creative_offers", index)
+                                handleFileDiscardCreativeOffers(
+                                  "project_creative_offers",
+                                  index
+                                )
                               }
                             >
                               x
@@ -3858,7 +3876,10 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleFileDiscardInteriors("project_interiors", index)
+                                handleFileDiscardInteriors(
+                                  "project_interiors",
+                                  index
+                                )
                               }
                             >
                               x
@@ -3870,7 +3891,6 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
-
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -3960,7 +3980,10 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleFileDiscardExteriors("project_exteriors", index)
+                                handleFileDiscardExteriors(
+                                  "project_exteriors",
+                                  index
+                                )
                               }
                             >
                               x
@@ -3973,110 +3996,127 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-
               <div className="d-flex justify-content-between align-items-end mx-1">
-  <h5 className="mt-3">
-    Project Emailer Template{" "}
-    <span
-      className="tooltip-container"
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-    >
-      [i]
-      {showTooltip && (
-        <span className="tooltip-text">Max Upload Size 50 MB</span>
-      )}
-    </span>
-    <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
-  </h5>
+                <h5 className="mt-3">
+                  Project Emailer Template{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 50 MB
+                      </span>
+                    )}
+                  </span>
+                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                </h5>
 
-  <button
-    className="purple-btn2 rounded-3"
-    onClick={() =>
-      document.getElementById("project_emailer_templetes").click()
-    }
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={16}
-      height={16}
-      fill="currentColor"
-      className="bi bi-plus"
-      viewBox="0 0 16 16"
-    >
-      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-    </svg>
-    <span>Add</span>
-  </button>
-  <input
-    id="project_emailer_templetes"
-    className="form-control"
-    type="file"
-    name="project_emailer_templetes"
-    accept=".pdf,.docx"
-    onChange={(e) =>
-      handleFileUpload("project_emailer_templetes", e.target.files)
-    }
-    multiple
-    style={{ display: "none" }}
-  />
-</div>
+                <button
+                  className="purple-btn2 rounded-3"
+                  onClick={() =>
+                    document.getElementById("project_emailer_templetes").click()
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+                <input
+                  id="project_emailer_templetes"
+                  className="form-control"
+                  type="file"
+                  name="project_emailer_templetes"
+                  accept=".pdf,.docx"
+                  onChange={(e) =>
+                    handleFileUpload(
+                      "project_emailer_templetes",
+                      e.target.files
+                    )
+                  }
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
 
-<div className="col-md-12 mt-2">
-  <div className="mt-4 tbl-container">
-    <table className="w-100">
-      <thead>
-        <tr>
-          <th>File Name</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-  {/* Project PPT Files */}
-  {formData.project_emailer_templetes && (
-    Array.isArray(formData.project_emailer_templetes) ? (
-      // If it's an array of files
-      formData.project_emailer_templetes.map((file, index) => (
-        <tr key={`emailer-${index}`}>
-          <td>
-            {file?.name || file?.document_file_name || "No File"}
-          </td>
-          <td>
-            <button
-              type="button"
-              className="purple-btn2"
-              onClick={() => handleDiscardFile("project_emailer_templetes", index)}
-            >
-              x
-            </button>
-          </td>
-        </tr>
-      ))
-    ) : (
-      // If it's a single file (as an object)
-      <tr>
-        <td>
-          {formData.project_emailer_templetes?.name || 
-           formData.project_emailer_templetes?.document_file_name || 
-           "No File"}
-        </td>
-        <td>
-          <button
-            type="button"
-            className="purple-btn2"
-            onClick={() => handleDiscardFile("project_emailer_templetes", 0)}
-          >
-            x
-          </button>
-        </td>
-      </tr>
-    )
-  )}
-</tbody>
-    </table>
-  </div>
-</div>
-
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Project PPT Files */}
+                      {formData.project_emailer_templetes &&
+                        (Array.isArray(formData.project_emailer_templetes) ? (
+                          // If it's an array of files
+                          formData.project_emailer_templetes.map(
+                            (file, index) => (
+                              <tr key={`emailer-${index}`}>
+                                <td>
+                                  {file?.name ||
+                                    file?.document_file_name ||
+                                    "No File"}
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDiscardFile(
+                                        "project_emailer_templetes",
+                                        index
+                                      )
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            )
+                          )
+                        ) : (
+                          // If it's a single file (as an object)
+                          <tr>
+                            <td>
+                              {formData.project_emailer_templetes?.name ||
+                                formData.project_emailer_templetes
+                                  ?.document_file_name ||
+                                "No File"}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleDiscardFile(
+                                    "project_emailer_templetes",
+                                    0
+                                  )
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -4286,7 +4326,7 @@ const ProjectDetailsEdit = () => {
               </div>*/}
             </div>
           </div>
-        </div> 
+        </div>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3 d-flex justify-content-between align-items-center">
             <h3 className="card-title">Virtual Tour</h3>

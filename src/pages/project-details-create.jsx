@@ -54,12 +54,12 @@ const ProjectDetailsCreate = () => {
     gallery_image: [],
     project_ppt: [],
     //project_creatives: [],
-    project_creatives:[],
-    project_creative_generics:[],
-    project_creative_offers:[],
-    project_interiors:[],
-    project_exteriors:[],
-    project_emailer_templetes:[],
+    project_creatives: [],
+    project_creative_generics: [],
+    project_creative_offers: [],
+    project_interiors: [],
+    project_exteriors: [],
+    project_emailer_templetes: [],
     project_layout: [],
   });
 
@@ -115,7 +115,7 @@ const ProjectDetailsCreate = () => {
       };
     }
     return { valid: true };
-  }
+  };
 
   const handleFileChange = (e, fieldName) => {
     if (fieldName === "image") {
@@ -161,17 +161,17 @@ const ProjectDetailsCreate = () => {
   // const handleLayoutFileChange = (e, fieldName) => {
   //   if (fieldName === "Layoutimage") {
   //     const file = e.target.files[0]; // Only take the first file
-  
+
   //     if (!file) return; // Exit if no file is selected
-  
+
   //     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-  
+
   //     if (!allowedTypes.includes(file.type)) {
   //       toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
   //       e.target.value = ""; // Reset file input
   //       return;
   //     }
-  
+
   //     // Check file size
   //     const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
   //     if (file.size > MAX_IMAGE_SIZE) {
@@ -179,7 +179,7 @@ const ProjectDetailsCreate = () => {
   //       e.target.value = ""; // Reset file input
   //       return;
   //     }
-  
+
   //     // Set the single file in formData
   //     setFormData((prevFormData) => ({
   //       ...prevFormData,
@@ -187,7 +187,7 @@ const ProjectDetailsCreate = () => {
   //     }));
   //   }
   // };
-  
+
   const amenityTypes = [
     ...new Set(amenities.map((ammit) => ammit.amenity_type)),
   ].map((type) => ({ value: type, label: type }));
@@ -293,12 +293,10 @@ const ProjectDetailsCreate = () => {
       project_creatives: MAX_IMAGE_SIZE, // Add creatives support
       project_creative_generics: MAX_IMAGE_SIZE,
       project_creative_offers: MAX_IMAGE_SIZE,
-      project_interiors: MAX_IMAGE_SIZE,  
-      project_exteriors: MAX_IMAGE_SIZE,  
+      project_interiors: MAX_IMAGE_SIZE,
+      project_exteriors: MAX_IMAGE_SIZE,
       project_emailer_templetes: MAX_BROCHURE_SIZE,
       project_layout: MAX_IMAGE_SIZE,
-
-
     };
 
     const allowedTypes = {
@@ -319,8 +317,18 @@ const ProjectDetailsCreate = () => {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ],
       project_creatives: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      project_creative_generics: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      project_creative_offers: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      project_creative_generics: [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ],
+      project_creative_offers: [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ],
       project_interiors: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       project_exteriors: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       project_layout: [
@@ -332,26 +340,25 @@ const ProjectDetailsCreate = () => {
         "application/vnd.ms-excel",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       ],
-      
     };
 
     if (!files || !files.length) return;
 
     if (name === "project_layout") {
       const MAX_SIZE = 10 * 1024 * 1024; // 10MB limit
-  
+
       const newFiles = Array.from(files);
       const validFiles = [];
-  
+
       newFiles.forEach((file) => {
         if (file.size > MAX_SIZE) {
           toast.error(`❌ File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-  
+
         validFiles.push(file);
       });
-  
+
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
@@ -369,7 +376,9 @@ const ProjectDetailsCreate = () => {
 
       newFiles.forEach((file) => {
         if (!allowedTypes.project_emailer_templetes.includes(file.type)) {
-          toast.error("Only PDF and DOCX files are allowed for project emailer templetes.");
+          toast.error(
+            "Only PDF and DOCX files are allowed for project emailer templetes."
+          );
           return;
         }
 
@@ -380,29 +389,32 @@ const ProjectDetailsCreate = () => {
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
-          project_emailer_templetes: [...prev.project_emailer_templetes, ...validFiles],
+          project_emailer_templetes: [
+            ...prev.project_emailer_templetes,
+            ...validFiles,
+          ],
         }));
       }
-    } 
+    }
 
     if (name === "project_exteriors") {
       const newFiles = Array.from(files);
       const validFiles = [];
-  
+
       newFiles.forEach((file) => {
         if (!allowedTypes.project_exteriors.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
           return;
         }
-  
+
         if (file.size > MAX_SIZES.project_exteriors) {
           toast.error(`File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-  
+
         validFiles.push(file);
       });
-  
+
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
@@ -411,25 +423,24 @@ const ProjectDetailsCreate = () => {
       }
     }
 
-
     if (name === "project_interiors") {
       const newFiles = Array.from(files);
       const validFiles = [];
-  
+
       newFiles.forEach((file) => {
         if (!allowedTypes.project_interiors.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
           return;
         }
-  
+
         if (file.size > MAX_SIZES.project_interiors) {
           toast.error(`File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-  
+
         validFiles.push(file);
       });
-  
+
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
@@ -438,29 +449,31 @@ const ProjectDetailsCreate = () => {
       }
     }
 
-
     if (name === "project_creative_offers") {
       const newFiles = Array.from(files);
       const validFiles = [];
-  
+
       newFiles.forEach((file) => {
         if (!allowedTypes.project_creative_offers.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
           return;
         }
-  
+
         if (file.size > MAX_SIZES.project_creative_offers) {
           toast.error(`File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-  
+
         validFiles.push(file);
       });
-  
+
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
-          project_creative_offers: [...(prev.project_creative_offers || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+          project_creative_offers: [
+            ...(prev.project_creative_offers || []),
+            ...validFiles,
+          ], // ✅ Fix: Ensure existing files are kept
         }));
       }
     }
@@ -468,25 +481,28 @@ const ProjectDetailsCreate = () => {
     if (name === "project_creative_generics") {
       const newFiles = Array.from(files);
       const validFiles = [];
-  
+
       newFiles.forEach((file) => {
         if (!allowedTypes.project_creative_generics.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
           return;
         }
-  
+
         if (file.size > MAX_SIZES.project_creative_generics) {
           toast.error(`File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-  
+
         validFiles.push(file);
       });
-  
+
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
-          project_creative_generics: [...(prev.project_creative_generics || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+          project_creative_generics: [
+            ...(prev.project_creative_generics || []),
+            ...validFiles,
+          ], // ✅ Fix: Ensure existing files are kept
         }));
       }
     }
@@ -494,21 +510,21 @@ const ProjectDetailsCreate = () => {
     if (name === "project_creatives") {
       const newFiles = Array.from(files);
       const validFiles = [];
-  
+
       newFiles.forEach((file) => {
         if (!allowedTypes.project_creatives.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
           return;
         }
-  
+
         if (file.size > MAX_SIZES.project_creatives) {
           toast.error(`File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-  
+
         validFiles.push(file);
       });
-  
+
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
@@ -565,9 +581,7 @@ const ProjectDetailsCreate = () => {
           brochure: [...prev.brochure, ...validFiles],
         }));
       }
-    } 
-    
-    else if (
+    } else if (
       name === "two_d_images" ||
       name === "videos" ||
       name === "gallery_image"
@@ -695,12 +709,11 @@ const ProjectDetailsCreate = () => {
       const updatedFiles = [...formData.project_emailer_templetes];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, project_emailer_templetes: updatedFiles });
-    }  else if (fileType === "project_layout") {
+    } else if (fileType === "project_layout") {
       const updatedFiles = [...formData.project_layout];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, project_layout: updatedFiles });
-    }    
-    else if (fileType === "videos") {
+    } else if (fileType === "videos") {
       const updatedVideos = [...formData.videos];
       updatedVideos.splice(index, 1);
       setFormData({ ...formData, videos: updatedVideos });
@@ -883,23 +896,31 @@ const ProjectDetailsCreate = () => {
             data.append("project[project_emailer_templetes][]", file);
           }
         });
-      }
-      else if (key === "two_d_images" && Array.isArray(value)) {
+      } else if (key === "two_d_images" && Array.isArray(value)) {
         value.forEach((file) => data.append("project[two_d_images][]", file));
       } else if (key === "project_creatives" && Array.isArray(value)) {
-        value.forEach((file) => data.append("project[project_creatives][]", file));  
+        value.forEach((file) =>
+          data.append("project[project_creatives][]", file)
+        );
       } else if (key === "project_creative_generics" && Array.isArray(value)) {
-        value.forEach((file) => data.append("project[project_creative_generics][]", file));  
+        value.forEach((file) =>
+          data.append("project[project_creative_generics][]", file)
+        );
       } else if (key === "project_creative_offers" && Array.isArray(value)) {
-        value.forEach((file) => data.append("project[project_creative_offers][]", file));  
+        value.forEach((file) =>
+          data.append("project[project_creative_offers][]", file)
+        );
       } else if (key === "project_interiors" && Array.isArray(value)) {
-        value.forEach((file) => data.append("project[project_interiors][]", file));  
+        value.forEach((file) =>
+          data.append("project[project_interiors][]", file)
+        );
       } else if (key === "project_exteriors" && Array.isArray(value)) {
-        value.forEach((file) => data.append("project[project_exteriors][]", file));  
-      }else if (key === "project_layout" && Array.isArray(value)) {
-        value.forEach((file) => data.append("project[project_layout][]", file));  
-      }
-      else if (key === "videos" && Array.isArray(value)) {
+        value.forEach((file) =>
+          data.append("project[project_exteriors][]", file)
+        );
+      } else if (key === "project_layout" && Array.isArray(value)) {
+        value.forEach((file) => data.append("project[project_layout][]", file));
+      } else if (key === "videos" && Array.isArray(value)) {
         value.forEach((file) => data.append("project[videos][]", file));
       } else if (key === "gallery_image" && Array.isArray(value)) {
         value.forEach((fileObj, index) => {
@@ -1915,10 +1936,7 @@ const ProjectDetailsCreate = () => {
             <div className="row align-items-center">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Tower{" "}
-                  
-                  </label>
+                  <label>Tower </label>
                   <input
                     className="form-control"
                     type="text"
@@ -1932,10 +1950,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    RERA Number{" "}
-                  
-                  </label>
+                  <label>RERA Number </label>
                   <input
                     className="form-control"
                     type="text"
@@ -2400,9 +2415,7 @@ const ProjectDetailsCreate = () => {
                   type="file"
                   name="brochure"
                   accept=".pdf,.docx"
-                  onChange={(e) =>
-                    handleFileUpload("brochure", e.target.files)
-                  }
+                  onChange={(e) => handleFileUpload("brochure", e.target.files)}
                   multiple // Add this to allow multiple file selection
                   style={{ display: "none" }}
                 />
@@ -2648,8 +2661,8 @@ const ProjectDetailsCreate = () => {
                   </svg>
                   <span>Add</span>
                 </button>
-               
-               <input
+
+                <input
                   id="project_layout"
                   className="form-control"
                   type="file"
@@ -2660,9 +2673,9 @@ const ProjectDetailsCreate = () => {
                   }
                   style={{ display: "none" }}
                 />
-              </div> 
+              </div>
 
-               <div className="col-md-12 mt-2">
+              <div className="col-md-12 mt-2">
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
@@ -2706,9 +2719,8 @@ const ProjectDetailsCreate = () => {
                     </tbody>
                   </table>
                 </div>
-              </div> 
+              </div>
 
-              
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project Creatives{" "}
@@ -2850,7 +2862,10 @@ const ProjectDetailsCreate = () => {
                   name="project_creative_generics"
                   accept="image/*"
                   onChange={(e) =>
-                    handleFileUpload("project_creative_generics", e.target.files)
+                    handleFileUpload(
+                      "project_creative_generics",
+                      e.target.files
+                    )
                   }
                   multiple
                   style={{ display: "none" }}
@@ -2890,7 +2905,10 @@ const ProjectDetailsCreate = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleDiscardFile("project_creative_generics", index)
+                                handleDiscardFile(
+                                  "project_creative_generics",
+                                  index
+                                )
                               }
                             >
                               x
@@ -2902,7 +2920,7 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
               </div>
-              
+
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project Creative Offers{" "}
@@ -2987,7 +3005,10 @@ const ProjectDetailsCreate = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleDiscardFile("project_creative_offers", index)
+                                handleDiscardFile(
+                                  "project_creative_offers",
+                                  index
+                                )
                               }
                             >
                               x
@@ -3097,7 +3118,6 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project Exteriors{" "}
@@ -3195,7 +3215,6 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project Emailer Template{" "}
@@ -3217,7 +3236,9 @@ const ProjectDetailsCreate = () => {
                 <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
-                  onClick={() => document.getElementById("project_emailer_templetes").click()}
+                  onClick={() =>
+                    document.getElementById("project_emailer_templetes").click()
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -3238,7 +3259,10 @@ const ProjectDetailsCreate = () => {
                   name="project_emailer_templetes"
                   accept=".pdf,.docx"
                   onChange={(e) =>
-                    handleFileUpload("project_emailer_templetes", e.target.files)
+                    handleFileUpload(
+                      "project_emailer_templetes",
+                      e.target.files
+                    )
                   }
                   multiple // Add this to allow multiple file selection
                   style={{ display: "none" }}
@@ -3256,22 +3280,27 @@ const ProjectDetailsCreate = () => {
                     </thead>
                     <tbody>
                       {formData.project_emailer_templetes.length > 0 ? (
-                        formData.project_emailer_templetes.map((brochure, index) => (
-                          <tr key={`brochure-${index}`}>
-                            <td>{brochure.name}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() =>
-                                  handleDiscardFile("project_emailer_templetes", index)
-                                }
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ))
+                        formData.project_emailer_templetes.map(
+                          (brochure, index) => (
+                            <tr key={`brochure-${index}`}>
+                              <td>{brochure.name}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleDiscardFile(
+                                      "project_emailer_templetes",
+                                      index
+                                    )
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          )
+                        )
                       ) : (
                         <tr>
                           {/* <td colSpan="2" className="text-center">No brochures uploaded</td> */}
@@ -3368,10 +3397,6 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-
-              
-              
-              
               {/* <div className="d-flex justify-content-between align-items-end mx-1">
     <h5 className="mt-3">Project Creatives</h5>
 
