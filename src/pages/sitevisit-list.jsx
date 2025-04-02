@@ -27,7 +27,7 @@ const SitevisitList = () => {
       setLoading(true); // Start loading
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/site_schedule_requests.json",
+          "https://panchshil-super.lockated.com/site_schedule_requests/all_site.json",
           {
             headers: {
               "Content-Type": "application/json",
@@ -75,9 +75,11 @@ const SitevisitList = () => {
     setSearchQuery(e.target.value);
     setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
-
-  const filteredData = siteVisits.filter((visit) =>
-    visit.project_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = siteVisits.filter(
+    (visit) =>
+      !searchQuery ||
+      (visit.project_name &&
+        visit.project_name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const totalFiltered = filteredData.length;
@@ -153,7 +155,7 @@ const SitevisitList = () => {
                 </div>
               </form>{" "}
             </div>
-            <div className="card-tools mt-1">
+            {/* <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
                 fdprocessedid="xn3e6n"
@@ -171,7 +173,7 @@ const SitevisitList = () => {
                 </svg>
                 <span>Add</span>
               </button>
-            </div>
+            </div> */}
           </div>
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
@@ -197,6 +199,9 @@ const SitevisitList = () => {
                         <th>Status</th>
                         <th>Scheduled Time</th>
                         <th>Project Name</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile No</th>
 
                         <th>Action</th>
                       </tr>
@@ -208,10 +213,11 @@ const SitevisitList = () => {
                             <td>{startIndex + index + 1}</td>
                             <td>{visit.status}</td>
                             <td>{visit.scheduled_time}</td>
-                            <td>{visit.project_name}</td>
-
+                            <td>{visit.project_name || "No Project Name"}</td>
+                            <td>{visit.name || "N/A"}</td>
+                            <td>{visit.email || "N/A"}</td>
+                            <td>{visit.mobile_no || "N/A"}</td>
                             <td>
-                              {/* Edit Icon */}
                               <a
                                 href={`/sitevisit-edit/${visit.id}`}
                                 className="me-2"
@@ -238,7 +244,7 @@ const SitevisitList = () => {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="5" className="text-center">
+                          <td colSpan="8" className="text-center">
                             No site visits found.
                           </td>
                         </tr>

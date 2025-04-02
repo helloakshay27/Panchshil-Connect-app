@@ -16,7 +16,7 @@ const BannerEdit = () => {
     title: "",
     project_id: "",
     attachfile: null,
-    existingImages: [],
+    // existingImages: [],
   });
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const BannerEdit = () => {
         setFormData({
           title: response.data.title,
           project_id: response.data.project_id,
-          existingImages: response.data.banner_images || [],
+          // existingImages: response.data.banner_images || [],
           attachfile: response.data?.attachfile?.document_url || null,
         });
       }
@@ -74,6 +74,8 @@ const BannerEdit = () => {
       return;
     }
 
+    console.log(validFiles[0])
+
     setPreviewImg(URL.createObjectURL(validFiles[0]));
     setFormData({ ...formData, attachfile: validFiles[0] });
   };
@@ -88,7 +90,7 @@ const BannerEdit = () => {
     if (!formData.project_id) {
       newErrors.project_id = "Project is mandatory";
     }
-    if (!formData.attachfile.length && !formData.existingImages.length) {
+    if (formData.attachfile===null) {
       newErrors.attachfile = "At least one banner image is required";
     }
     setErrors(newErrors);
@@ -104,11 +106,9 @@ const BannerEdit = () => {
       const sendData = new FormData();
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
-      formData.attachfile.forEach((file) =>
-        sendData.append("banner[banner_image]", file)
-      );
+      sendData.append("banner[banner_image]", formData.attachfile)
 
-      await axios.put(
+     const res= await axios.put(
         `https://panchshil-super.lockated.com/banners/${id}.json`,
         sendData,
         {
@@ -118,10 +118,12 @@ const BannerEdit = () => {
           },
         }
       );
+      console.log(res)
 
       toast.success("Banner updated successfully");
       navigate("/banner-list");
     } catch (error) {
+      console.log(error)
       toast.error("Error updating banner");
     } finally {
       setLoading(false);

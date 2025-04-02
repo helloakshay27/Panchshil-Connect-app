@@ -10,39 +10,46 @@ const TestimonialEdit = () => {
   const { testimonial } = state || {};
 
   const [formData, setFormData] = useState({
-    company_setup_id: testimonial?.company_setup_id || "",
     user_name: testimonial?.user_name || "",
-    user_profile: testimonial?.user_profile || "",
-    building_type_id: testimonial?.building_type_id || "",
+    user_profile: testimonial?.profile_of_user || "",
+    building_id: testimonial?.building_id ?? null, // Ensure correct default value
     content: testimonial?.content || "",
   });
 
-  const [companySetupOptions, setCompanySetupOptions] = useState([]);
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchCompanySetups = async () => {
+    const fetchTestimonialData = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/company_setups.json",
+          `https://panchshil-super.lockated.com/testimonials/${testimonial.id}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
           }
         );
-        if (Array.isArray(response.data.company_setups)) {
-          setCompanySetupOptions(response.data.company_setups);
-        } else {
-          setCompanySetupOptions([]);
-        }
+  
+        setFormData({
+          user_name: response.data.user_name || "",
+          user_profile: response.data.profile_of_user || "",
+          building_id: response.data.building_id ?? null, // Ensure correct ID is set
+          content: response.data.content || "",
+        });
       } catch (error) {
-        console.error("Error fetching company setup data:", error);
-        setCompanySetupOptions([]);
+        console.error("Error fetching testimonial data:", error);
+        toast.error("Error loading testimonial details.");
       }
     };
+  
+    if (testimonial?.id) {
+      fetchTestimonialData();
+    }
+  }, [testimonial?.id]);
+  console.log(formData);
 
+  useEffect(() => {
     const fetchBuildingTypes = async () => {
       try {
         const response = await axios.get(
@@ -53,37 +60,57 @@ const TestimonialEdit = () => {
             },
           }
         );
-        if (Array.isArray(response.data)) {
+  
+        if (response.data && Array.isArray(response.data)) {
           setBuildingTypeOptions(response.data);
         } else {
+          console.warn("Unexpected API response format:", response.data);
           setBuildingTypeOptions([]);
         }
       } catch (error) {
         console.error("Error fetching building type data:", error);
-        setBuildingTypeOptions([]);
+        toast.error("Error loading building types.");
       }
     };
-
-    fetchCompanySetups();
+  
     fetchBuildingTypes();
   }, []);
-
+  
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value || "",
+    }));
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log("Submitting data:", formData);
+  
       await axios.put(
         `https://panchshil-super.lockated.com/testimonials/${testimonial.id}.json`,
-        formData
+        {
+          testimonial: {
+            ...formData,
+            building_id: formData.building_id?.toString() || null,
+            profile_of_user: formData.user_profile, 
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
-
+  
       toast.success("Testimonial updated successfully!");
-      navigate("/testimonial-list"); // Redirect after update
+      navigate("/testimonial-list");
     } catch (error) {
       console.error("Error updating testimonial:", error);
       toast.error("Error updating testimonial. Please try again.");
@@ -91,6 +118,7 @@ const TestimonialEdit = () => {
       setLoading(false);
     }
   };
+  
 
   const handleCancel = () => {
     navigate(-1);
@@ -154,14 +182,14 @@ const TestimonialEdit = () => {
                       </label>
                       <SelectBox
                         options={buildingTypeOptions.map((option) => ({
-                          label: option.building_type, // Display Name
-                          value: option.building_id, // ID
+                          label: option.building_type,
+                          value: option.id,
                         }))}
-                        value={formData.building_type_id}
+                        defaultValue={formData.building_id} // Ensure correct default value
                         onChange={(value) =>
                           setFormData((prev) => ({
                             ...prev,
-                            building_type_id: value, // Store selected value
+                            building_id: value, // Ensure it updates correctly
                           }))
                         }
                       />

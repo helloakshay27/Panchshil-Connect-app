@@ -16,6 +16,7 @@ const Testimonials = () => {
   const [loading, setLoading] = useState(false);
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
   const [buildingTypeId, setBuildingTypeId] = useState("");
+  const [buildingType, setBuildingType] = useState({ id: "", name: "" });
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -91,9 +92,11 @@ const Testimonials = () => {
     const data = {
       testimonial: {
         // company_setup_id: companySetupId,
-        building_id: buildingTypeId, // Include Building Type
+        building_id: buildingTypeId ? buildingTypeId.toString() : null,
+// Include Building Type
         user_name: userName.trim(),
-        user_profile: userProfile.trim(), // Include User Profile
+        profile_of_user: userProfile.trim(), // Match API expected field name
+        // Include User Profile
         // user_type: userType,
         content: content.trim(),
       },
@@ -230,7 +233,7 @@ const Testimonials = () => {
                         <SelectBox
                           options={buildingTypeOptions.map((option) => ({
                             label: option.building_type, // Display Name
-                            value: option.building_id, // ID
+                            value: option.id, // ID
                           }))}
                           value={buildingTypeId}
                           onChange={(value) => setBuildingTypeId(value)}
