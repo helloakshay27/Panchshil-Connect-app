@@ -4,7 +4,7 @@ import axios from "axios";
 
 import "./login.css";
 import toast from "react-hot-toast";
-import { baseURL } from "../baseurl/apiDomain";
+import { baseURL, LOGO_URL } from "../baseurl/apiDomain";
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
