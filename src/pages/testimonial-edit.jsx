@@ -36,6 +36,8 @@ const TestimonialEdit = () => {
           user_profile: response.data.profile_of_user || "",
           building_id: response.data.building_id ?? null, // Ensure correct ID is set
           content: response.data.content || "",
+          content: response.data.content || "",
+
         });
       } catch (error) {
         console.error("Error fetching testimonial data:", error);
@@ -98,6 +100,7 @@ const TestimonialEdit = () => {
           testimonial: {
             ...formData,
             building_id: formData.building_id?.toString() || null,
+            building_type: buildingTypeOptions.find((option) => option.id === formData.building_id)?.building_type || null,
             profile_of_user: formData.user_profile, 
           },
         },
