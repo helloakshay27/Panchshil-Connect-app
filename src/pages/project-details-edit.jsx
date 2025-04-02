@@ -2638,7 +2638,7 @@ const ProjectDetailsEdit = () => {
           <div className="card-body mt-0 pb-0">
             <div className="row">
               {/* Amenity Type Dropdown */}
-              <div className="col-md-3 mt-2">
+              {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>Amenity Type</label>
                   <Select
@@ -2648,7 +2648,7 @@ const ProjectDetailsEdit = () => {
                     placeholder="Select Amenity Type"
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
@@ -3175,6 +3175,18 @@ const ProjectDetailsEdit = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project PPT{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 50 MB
+                      </span>
+                    )}
+                  </span>
                   <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
                 </h5>
 

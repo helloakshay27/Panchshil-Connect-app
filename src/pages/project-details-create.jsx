@@ -2025,62 +2025,40 @@ const ProjectDetailsCreate = () => {
         </div>
 
         <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Amenities</h3>
-          </div>
-          <div className="card-body mt-0 pb-0">
-            <div className="row">
-              {/* Amenity Type Dropdown */}
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>Amenity Type</label>
-                  <Select
-                    options={amenityTypes}
-                    value={selectedType}
-                    onChange={setSelectedType}
-                    placeholder="Select Amenity Type"
-                  />
-                </div>
-              </div>
-
-              {/* Multi-Select Amenities Dropdown */}
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Amenities
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <MultiSelectBox
-                    options={filteredAmenities.map((ammit) => ({
-                      value: ammit.id,
-                      label: ammit.name,
-                    }))}
-                    value={formData.Amenities.map((id) => {
-                      const ammit = filteredAmenities.find(
-                        (ammit) => ammit.id === id
-                      );
-                      return ammit
-                        ? { value: ammit.id, label: ammit.name }
-                        : null;
-                    }).filter(Boolean)}
-                    onChange={(selectedOptions) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        Amenities: selectedOptions.map(
-                          (option) => option.value
-                        ),
-                      }))
-                    }
-                    placeholder="Select amenities"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+  <div className="card-header3">
+    <h3 className="card-title">Amenities</h3>
+  </div>
+  <div className="card-body mt-0 pb-0">
+    <div className="row">
+      {/* Multi-Select Amenities Dropdown */}
+      <div className="col-md-3 mt-2">
+        <div className="form-group">
+          <label>
+            Amenities
+            <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+          </label>
+          <MultiSelectBox
+            options={amenities.map((ammit) => ({
+              value: ammit.id,
+              label: ammit.name,
+            }))}
+            value={formData.Amenities.map((id) => {
+              const ammit = amenities.find((ammit) => ammit.id === id);
+              return ammit ? { value: ammit.id, label: ammit.name } : null;
+            }).filter(Boolean)}
+            onChange={(selectedOptions) =>
+              setFormData((prev) => ({
+                ...prev,
+                Amenities: selectedOptions.map((option) => option.value),
+              }))
+            }
+            placeholder="Select amenities"
+          />
         </div>
+      </div>
+    </div>
+  </div>
+</div>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
             <h3 className="card-title">Address</h3>
@@ -2461,6 +2439,18 @@ const ProjectDetailsCreate = () => {
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project PPT{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 50 MB
+                      </span>
+                    )}
+                  </span>
                   <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
                 </h5>
 
