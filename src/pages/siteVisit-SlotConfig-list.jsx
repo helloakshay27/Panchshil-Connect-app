@@ -33,7 +33,7 @@ const SiteVisitSlotConfigList = () => {
         "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json",
         {
           headers: {
-            Authorization: `Bearer 4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
           },
         }
@@ -85,7 +85,7 @@ const SiteVisitSlotConfigList = () => {
         postData,
         {
           headers: {
-            Authorization: `Bearer 4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
           },
         }
