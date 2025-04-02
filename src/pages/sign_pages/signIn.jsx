@@ -52,7 +52,7 @@ const SignIn = () => {
                 sessionStorage.setItem("firstname", response.data.firstname);
 
                 // Redirect to the home page
-                navigate("/");
+                navigate("/project-list");
             } else {
                 setError("Login failed. Please check your credentials.");
             }
