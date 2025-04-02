@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import "../mor.css";
+import { baseURL } from "./baseurl/apiDomain";
 
 const Testimonials = () => {
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
@@ -22,7 +23,7 @@ const Testimonials = () => {
     const fetchCompanySetups = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/company_setups.json",
+          `${baseURL}company_setups.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -56,7 +57,7 @@ const Testimonials = () => {
     const fetchBuildingTypes = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/building_types.json",
+          `${baseURL}building_types.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -103,7 +104,7 @@ const Testimonials = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/testimonials.json",
+        `${baseURL}testimonials.json`,
         data,
         {
           headers: {

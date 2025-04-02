@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const BannerEdit = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const BannerEdit = () => {
   const fetchBanner = async () => {
     try {
       const response = await axios.get(
-        `https://panchshil-super.lockated.com/banners/${id}.json`
+        `${baseURL}banners/${id}.json`
       );
       if (response.data) {
         setFormData({
@@ -47,7 +48,7 @@ const BannerEdit = () => {
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/projects.json",
+        `${baseURL}projects.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -109,7 +110,7 @@ const BannerEdit = () => {
       sendData.append("banner[banner_image]", formData.attachfile)
 
      const res= await axios.put(
-        `https://panchshil-super.lockated.com/banners/${id}.json`,
+        `${baseURL}banners/${id}.json`,
         sendData,
         {
           headers: {

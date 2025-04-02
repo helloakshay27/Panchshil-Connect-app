@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const SpecificationUpdate = () => {
   const { id } = useParams();
@@ -16,7 +17,7 @@ const SpecificationUpdate = () => {
       try {
         // Fetching data from LIST API to get the icon_url
         const listResponse = await axios.get(
-          `https://panchshil-super.lockated.com/specification_setups.json`
+          `${baseURL}specification_setups.json`
         );
 
         // Find the specific item by ID
@@ -72,7 +73,7 @@ const SpecificationUpdate = () => {
 
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/specification_setups/${id}.json`,
+        `${baseURL}specification_setups/${id}.json`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

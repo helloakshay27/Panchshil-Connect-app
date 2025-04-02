@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ConstructionStatusEdit = () => {
   const { id } = useParams(); // ✅ Get ID from URL
@@ -18,7 +19,7 @@ const ConstructionStatusEdit = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/construction_statuses/${id}.json`
+          `${baseURL}construction_statuses/${id}.json`
         );
         setFormData({
           construction_status: response.data.construction_status,
@@ -46,7 +47,7 @@ const ConstructionStatusEdit = () => {
     setLoading(true);
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/construction_statuses/${id}.json`,
+        `${baseURL}construction_statuses/${id}.json`,
         { construction_status: formData }
       );
       toast.success("Construction status updated successfully!");

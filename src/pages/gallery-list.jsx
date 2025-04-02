@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const GalleryList = () => {
   const [galleries, setGalleries] = useState([]);
@@ -22,7 +23,7 @@ const GalleryList = () => {
     setLoading(true); // Start loading
     try {
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/galleries/get_galleries.json"
+        `${baseURL}galleries/get_galleries.json`
       );
       setGalleries(response.data.galleries);
       setPagination((prev) => ({

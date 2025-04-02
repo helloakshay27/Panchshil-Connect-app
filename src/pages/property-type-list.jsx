@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const PropertyTypeList = () => {
   const [propertyTypes, setPropertyTypes] = useState([]);
@@ -27,7 +28,7 @@ const PropertyTypeList = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/property_types.json"
+          `${baseURL}property_types.json`
         );
         setPropertyTypes(response.data);
         setPagination({
@@ -70,7 +71,7 @@ const PropertyTypeList = () => {
     const updatedStatus = !currentStatus;
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/property_types/${id}.json`,
+        `${baseURL}property_types/${id}.json`,
         { property_type: { active: updatedStatus } }, // ✅ Ensures correct format
         { headers: { "Content-Type": "application/json" } }
       );

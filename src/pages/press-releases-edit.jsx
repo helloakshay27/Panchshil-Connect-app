@@ -4,6 +4,7 @@ import "../mor.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const PressReleasesEdit = () => {
   const [company, setCompany] = useState([]);
@@ -27,7 +28,7 @@ const PressReleasesEdit = () => {
     const fetchCompany = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/company_setups.json",
+          `${baseURL}company_setups.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -47,7 +48,7 @@ const PressReleasesEdit = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/projects.json",
+          `${baseURL}projects.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -68,7 +69,7 @@ const PressReleasesEdit = () => {
       const fetchPressRelease = async () => {
         try {
           const response = await axios.get(
-            `https://panchshil-super.lockated.com/press_releases/${id}.json`,
+            `${baseURL}press_releases/${id}.json`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -207,7 +208,7 @@ const PressReleasesEdit = () => {
       }
 
       await axios.put(
-        `https://panchshil-super.lockated.com/press_releases/${id}.json`,
+        `${baseURL}press_releases/${id}.json`,
         sendData,
         {
           headers: {

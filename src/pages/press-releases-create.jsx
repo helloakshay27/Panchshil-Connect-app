@@ -3,6 +3,7 @@ import axios from "axios";
 import "../mor.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const PressReleasesCreate = () => {
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ const PressReleasesCreate = () => {
   const fetchCompany = async () => {
     try {
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/company_setups.json",
+        `${baseURL}company_setups.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -164,7 +165,7 @@ const PressReleasesCreate = () => {
       }
 
       await axios.post(
-        "https://panchshil-super.lockated.com/press_releases.json",
+        `${baseURL}press_releases.json`,
         sendData,
         {
           headers: {

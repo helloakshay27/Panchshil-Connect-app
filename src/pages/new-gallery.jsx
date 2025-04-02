@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SelectBox from "../components/base/SelectBox";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const NewGallery = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const NewGallery = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/projects.json",
+          `${baseURL}projects.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -118,7 +119,7 @@ const NewGallery = () => {
 
     try {
       await axios.post(
-        "https://panchshil-super.lockated.com/galleries.json",
+        `${baseURL}galleries.json`,
         data,
         {
           headers: {

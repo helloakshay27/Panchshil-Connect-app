@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const EventCreate = () => {
   const navigate = useNavigate();
@@ -232,7 +233,7 @@ const EventCreate = () => {
     try {
       // Make the POST request
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/events.json",
+        `${baseURL}events.json`,
         data,
         {
           headers: {
@@ -279,11 +280,11 @@ const EventCreate = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url = "https://panchshil-super.lockated.com/events.json";
+      const url = `${baseURL}events.json`;
 
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/events.json",
+          `${baseURL}events.json`,
 
           {
             headers: {
@@ -307,7 +308,7 @@ const EventCreate = () => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/users/get_users.json",
+          `${baseURL}users/get_users.json`,
 
           {
             headers: {
@@ -331,7 +332,7 @@ const EventCreate = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/projects.json",
+          `${baseURL}projects.json`,
 
           {
             headers: {

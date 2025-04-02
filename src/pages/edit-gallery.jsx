@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 // import SelectBox from "../components/base/SingleSelect";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const EditGallery = () => {
   const { id } = useParams();
@@ -27,7 +28,7 @@ const EditGallery = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/galleries/${id}.json`
+          `${baseURL}galleries/${id}.json`
         );
         const data = response.data;
 
@@ -80,7 +81,7 @@ const EditGallery = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/projects.json",
+          `${baseURL}projects.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -140,7 +141,7 @@ const EditGallery = () => {
 
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/galleries/${id}.json`,
+        `${baseURL}galleries/${id}.json`,
         data,
         {
           headers: {

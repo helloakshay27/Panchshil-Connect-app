@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const SiteVisitSlotConfig = () => {
   const [startHour, setStartHour] = useState("");
@@ -49,7 +50,7 @@ const SiteVisitSlotConfig = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/site_schedules",
+        `${baseURL}site_schedules`,
         postData,
         {
           headers: {

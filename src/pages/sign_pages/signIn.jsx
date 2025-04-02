@@ -4,6 +4,7 @@ import axios from "axios";
 
 import "./login.css";
 import toast from "react-hot-toast";
+import { baseURL } from "../baseurl/apiDomain";
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
@@ -37,7 +38,7 @@ const SignIn = () => {
         }
 
         try {
-            const response = await axios.post("https://panchshil-super.lockated.com/users/signin.json", {
+            const response = await axios.post(`${baseURL}users/signin.json`, {
                 user: {
                     email,
                     password,
@@ -74,7 +75,7 @@ const SignIn = () => {
 
         try {
             const response = await axios.post(
-                `https://panchshil-super.lockated.com/generate_code`,
+                `${baseURL}generate_code`,
                 {
                     mobile
                 }
@@ -107,7 +108,7 @@ const SignIn = () => {
 
         try {
             const response = await axios.post(
-                `https://panchshil-super.lockated.com/verify_code.json`,
+                `${baseURL}verify_code.json`,
                 {
                     // email,
                     mobile,
@@ -154,7 +155,7 @@ const SignIn = () => {
                                     <img
                                         className="logo_img"
                                         style={{ width: 100, height: 100, margin: "auto" }}
-                                        src="https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png"
+                                        src={LOGO_URL}
                                         alt="Logo"
                                     />
                                     <div className="d-flex mt-2 gap-3 align-items-center">

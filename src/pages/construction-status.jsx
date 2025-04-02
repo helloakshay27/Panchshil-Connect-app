@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ConstructionStatus = () => {
   const [name, setName] = useState("");
@@ -22,7 +23,7 @@ const ConstructionStatus = () => {
 
     try {
       await axios.post(
-        "https://panchshil-super.lockated.com/construction_statuses.json",
+        `${baseURL}construction_statuses.json`,
         formData
       );
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";  // Import Axios
 import "../mor.css";
+import { baseURL } from "./baseurl/apiDomain";
 
 const GalleryDetails = () => {
     const [galleryDetails, setGalleryDetails] = useState(null);
@@ -8,7 +9,7 @@ const GalleryDetails = () => {
     useEffect(() => {
         const fetchGalleryDetails = async () => {
             try {
-                const response = await axios.get("https://panchshil-super.lockated.com/galleries.json?project_id=1");
+                const response = await axios.get(`${baseURL}galleries.json?project_id=1`);
                 setGalleryDetails(response.data);  //API returns data in the expected structure
             } catch (error) {
                 console.error("Error fetching gallery details:", error);

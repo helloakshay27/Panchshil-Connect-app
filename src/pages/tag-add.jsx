@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
+import { baseURL } from "./baseurl/apiDomain";
 
 const TagAdd = () => {
   const [name, setName] = useState("");
@@ -18,7 +19,7 @@ const TagAdd = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get("https://panchshil-super.lockated.com/tags.json", {
+      const response = await axios.get(`${baseURL}tags.json`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -34,7 +35,7 @@ const TagAdd = () => {
     if (!name.trim()) return;
     setLoading(true);
     try {
-      await axios.post("https://panchshil-super.lockated.com/tags.json", { tag: { tag_type: name } }, {
+      await axios.post(`${baseURL}tags.json`, { tag: { tag_type: name } }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -48,7 +49,7 @@ const TagAdd = () => {
   };
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://panchshil-super.lockated.com/tags/${id}.json`, {
+      await axios.delete(`${baseURL}tags/${id}.json`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const getPageFromStorage = () => {
   return parseInt(localStorage.getItem("project_config_currentPage")) || 1;
@@ -24,7 +25,7 @@ const ProjectConfigurationList = () => {
     const fetchConfigurations = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/configuration_setups.json"
+          `${baseURL}configuration_setups.json`
         );
         setConfigurations(response.data);
         setPagination((prev) => ({
@@ -49,7 +50,7 @@ const ProjectConfigurationList = () => {
   const handleToggleStatus = async (id, currentStatus) => {
     try {
       await axios.patch(
-        `https://panchshil-super.lockated.com/configuration_setups/${id}.json`,
+        `${baseURL}configuration_setups/${id}.json`,
         {
           active: !currentStatus,
         }

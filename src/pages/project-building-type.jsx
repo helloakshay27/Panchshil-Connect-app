@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectBuildingType = () => {
   const [buildingType, setBuildingType] = useState("");
@@ -17,7 +18,7 @@ const ProjectBuildingType = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/building_types.json",
+        `${baseURL}building_types.json`,
         { building_type: { building_type: buildingType } },
         {
           headers: {

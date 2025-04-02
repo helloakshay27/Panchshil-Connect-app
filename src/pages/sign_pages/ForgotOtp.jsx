@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
+import { baseURL } from "../baseurl/apiDomain";
 
 const ForgotOtp = () => {
     const [otp, setOtp] = useState("");
@@ -33,7 +34,7 @@ const ForgotOtp = () => {
         }
 
         try {
-            const response = await axios.post("https://panchshil-super.lockated.com/verify-otp", {
+            const response = await axios.post(`${baseURL}verify-otp`, {
                 email,
                 otp,
             });

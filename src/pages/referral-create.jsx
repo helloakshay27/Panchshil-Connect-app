@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ReferralCreate = () => {
   const [projects, setProjects] = useState([]);
@@ -20,7 +21,7 @@ const ReferralCreate = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/projects.json",
+          `${baseURL}projects.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -83,7 +84,7 @@ const ReferralCreate = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/referrals.json",
+        `${baseURL}referrals.json`,
         payload,
         {
           headers: {

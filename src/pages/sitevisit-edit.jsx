@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const SitevisitEdit = () => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const SitevisitEdit = () => {
       }
 
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/projects.json",
+        `${baseURL}projects.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -70,7 +71,7 @@ const SitevisitEdit = () => {
     try {
       const formattedDate = formatDateForApi(selectedDate);
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json",
+        `${baseURL}site_schedule/all_site_schedule_slots.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -104,7 +105,7 @@ const SitevisitEdit = () => {
   const fetchSiteVisits = async () => {
     try {
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/site_schedule_requests.json",
+        `${baseURL}site_schedule_requests.json`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -198,7 +199,7 @@ const SitevisitEdit = () => {
 
     try {
       const response = await axios.put(
-        `https://panchshil-super.lockated.com/site_schedule_requests/${id}.json`,
+        `${baseURL}site_schedule_requests/${id}.json`,
         requestData,
         {
           headers: {

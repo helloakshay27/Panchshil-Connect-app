@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const EnquiryList = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -23,7 +24,7 @@ const EnquiryList = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/enquiry_forms.json",
+          `${baseURL}enquiry_forms.json`,
           {
             headers: {
               "Content-Type": "application/json",

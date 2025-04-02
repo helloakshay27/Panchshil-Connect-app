@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const getPageFromStorage = () => {
   return parseInt(localStorage.getItem("organization_currentPage")) || 1;
@@ -19,7 +20,7 @@ const OrganizationList = () => {
 
   useEffect(() => {
     setLoading(true); // Start loading
-    fetch("https://panchshil-super.lockated.com/organizations.json", {
+    fetch(`${baseURL}organizations.json`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,

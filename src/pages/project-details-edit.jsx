@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectDetailsEdit = () => {
   const { id } = useParams();
@@ -94,7 +95,7 @@ const ProjectDetailsEdit = () => {
   const fetchData = async (endpoint, setter) => {
     try {
       const response = await axios.get(
-        `https://panchshil-super.lockated.com/${endpoint}`,
+        `${baseURL}${endpoint}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -128,7 +129,7 @@ const ProjectDetailsEdit = () => {
     const fetchCategoryTypes = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/category_types.json"
+          `${baseURL}category_types.json`
         );
 
         if (response.data) {
@@ -154,7 +155,7 @@ const ProjectDetailsEdit = () => {
     const fetchProjectDetails = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/projects/${id}.json`,
+          `${baseURL}projects/${id}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -484,7 +485,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_twoD_image/${image.id}.json`,
+        `${baseURL}projects/${id}/remove_twoD_image/${image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -586,7 +587,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_gallery_image/${imageId}.json`,
+        `${baseURL}projects/${id}/remove_gallery_image/${imageId}.json`,
         {
           method: "DELETE",
           headers: {
@@ -627,7 +628,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_videos/${videos.id}.json`,
+        `${baseURL}projects/${id}/remove_videos/${videos.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -663,7 +664,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_creative_image/${Image.id}.json`,
+        `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -699,7 +700,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_creative_generics_image/${Image.id}.json`,
+        `${baseURL}projects/${id}/remove_creative_generics_image/${Image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -735,7 +736,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_creative_offers_image/${Image.id}.json`,
+        `${baseURL}projects/${id}/remove_creative_offers_image/${Image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -771,7 +772,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_ineteriors_image/${Image.id}.json`,
+        `${baseURL}projects/${id}/remove_ineteriors_image/${Image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -807,7 +808,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_exterios_image/${Image.id}.json`,
+        `${baseURL}projects/${id}/remove_exterios_image/${Image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -843,7 +844,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/projects/${id}/remove_layout_image/${Image.id}.json`,
+        `${baseURL}projects/${id}/remove_layout_image/${Image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -1172,7 +1173,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await axios.put(
-        `https://panchshil-super.lockated.com/projects/${id}.json`,
+        `${baseURL}projects/${id}.json`,
         data,
         {
           headers: {

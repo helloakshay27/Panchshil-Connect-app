@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const SitevisitList = () => {
   const [siteVisits, setSiteVisits] = useState([]);
@@ -27,7 +28,7 @@ const SitevisitList = () => {
       setLoading(true); // Start loading
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/site_schedule_requests/all_site.json",
+          `${baseURL}site_schedule_requests/all_site.json`,
           {
             headers: {
               "Content-Type": "application/json",

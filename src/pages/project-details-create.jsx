@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
@@ -985,7 +986,7 @@ const ProjectDetailsCreate = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/projects.json",
+        `${baseURL}projects.json`,
         data,
         {
           headers: {
@@ -1010,7 +1011,7 @@ const ProjectDetailsCreate = () => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
       const url =
-        "https://panchshil-super.lockated.com/get_property_types.json";
+        `${baseURL}get_property_types.json`;
 
       try {
         const response = await axios.get(url, {
@@ -1033,7 +1034,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchConfigurations = async () => {
       const url =
-        "https://panchshil-super.lockated.com/configuration_setups.json";
+        `${baseURL}configuration_setups.json`;
 
       try {
         const response = await axios.get(url);
@@ -1099,7 +1100,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchSpecifications = async () => {
       const url =
-        "https://panchshil-super.lockated.com/specification_setups.json";
+        `${baseURL}specification_setups.json`;
 
       try {
         const response = await axios.get(url);
@@ -1117,7 +1118,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url = "https://panchshil-super.lockated.com/amenity_setups.json";
+      const url = `${baseURL}amenity_setups.json`;
 
       try {
         const response = await axios.get(url, {
@@ -1141,7 +1142,7 @@ const ProjectDetailsCreate = () => {
     const fetchCategoryTypes = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/category_types.json"
+          `${baseURL}category_types.json`
         );
 
         if (response.data) {

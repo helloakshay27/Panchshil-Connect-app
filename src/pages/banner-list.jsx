@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import SearchIcon from "../components/Icons/SearchIcon";
 import axios from "axios";
+import { baseURL } from "./baseurl/apiDomain";
 
 const BannerList = () => {
   const [error, setError] = useState(null);
@@ -31,7 +32,7 @@ const BannerList = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `https://panchshil-super.lockated.com/banners/${bannerId}.json`,
+        `${baseURL}banners/${bannerId}.json`,
         { banner: { active: !currentStatus } },
         {
           headers: {
@@ -87,7 +88,7 @@ const BannerList = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/banners.json",
+          `${baseURL}banners.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,

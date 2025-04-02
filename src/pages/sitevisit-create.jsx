@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const SitevisitCreate = () => {
   const navigate = useNavigate();
@@ -19,11 +20,11 @@ const SitevisitCreate = () => {
   const [projectsType, setProjectsType] = useState([]);
   const [slots, setSlots] = useState([]);
 
-  // const apiUrl = "https://panchshil-super.lockated.com/site_schedule_requests";
+  // const apiUrl = "${baseURL}site_schedule_requests";
   // const projectsApiUrl =
-  //   "https://panchshil-super.lockated.com/get_all_projects.json";
+  //   "${baseURL}get_all_projects.json";
   // const slotsApiUrl =
-  //   "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json";
+  //   "${baseURL}site_schedule/all_site_schedule_slots.json";
   // const authToken = "4DbNsI3Y_weQFh2uOM_6tBwX0F9igOLonpseIR0peqs";
   // const projectsAuthToken = "UNE7QFnkjxZJgtKm-Od6EaNeBsWOAiGGp8RpXpWrYQY";
 
@@ -35,7 +36,7 @@ const SitevisitCreate = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/projects.json",
+          `${baseURL}projects.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -61,7 +62,7 @@ const SitevisitCreate = () => {
     try {
       const formattedDate = formatDateForApi(selectedDate);
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json",
+        `${baseURL}site_schedule/all_site_schedule_slots.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -179,7 +180,7 @@ const handleSubmit = async (e) => {
 
   try {
     const response = await axios.post(
-      "https://panchshil-super.lockated.com/site_schedule_requests.json",
+      `${baseURL}site_schedule_requests.json`,
       requestData,
       {
         headers: {

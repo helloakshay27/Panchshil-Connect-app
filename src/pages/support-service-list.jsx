@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { baseURL } from "./baseurl/apiDomain";
 
 const SupportServiceList = () => {
   const [services, setServices] = useState([]);
@@ -21,7 +22,7 @@ const SupportServiceList = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/osr_services.json",
+          `${baseURL}osr_services.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,

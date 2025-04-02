@@ -8,6 +8,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const BannerAdd = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const BannerAdd = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/projects.json",
+          `${baseURL}projects.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -143,7 +144,7 @@ const BannerAdd = () => {
       alert();
 
       await axios.post(
-        "https://panchshil-super.lockated.com/banners.json",
+        `${baseURL}banners.json`,
         sendData,
         {
           headers: {

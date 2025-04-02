@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import "./login.css";
+import { baseURL } from "../baseurl/apiDomain";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -42,7 +43,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/users",
+        `${baseURL}users`,
         {
           email,
           firstname,

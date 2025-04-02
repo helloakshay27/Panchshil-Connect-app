@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { baseURL } from "./baseurl/apiDomain";
 
 const CategoryTypeList = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const CategoryTypeList = () => {
   const fetchCategories = () => {
     setLoading(true);
     axios
-      .get("https://panchshil-super.lockated.com/category_types.json")
+      .get(`${baseURL}category_types.json`)
       .then((response) => {
         setLoading(false);
         if (response.data && Array.isArray(response.data)) {
@@ -70,7 +71,7 @@ const CategoryTypeList = () => {
   const handleToggle = (id, currentStatus) => {
     const newStatus = !currentStatus;
     axios
-      .put(`https://panchshil-super.lockated.com/category_types/${id}.json`, {
+      .put(`${baseURL}category_types/${id}.json`, {
         category_type: { active: newStatus },
       })
       .then(() => fetchCategories())

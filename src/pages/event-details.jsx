@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -14,7 +15,7 @@ const EventDetails = () => {
     const fetchEventData = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/events/${eventId}}.json`,
+          `${baseURL}events/${eventId}}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,

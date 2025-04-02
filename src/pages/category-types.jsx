@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const CategoryTypes = () => {
   const [name, setName] = useState("");
@@ -19,7 +20,7 @@ const CategoryTypes = () => {
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/tags.json",
+        `${baseURL}tags.json`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -35,7 +36,7 @@ const CategoryTypes = () => {
     setLoading(true);
     try {
       await axios.post(
-        "https://panchshil-super.lockated.com/category_types.json",
+        `${baseURL}category_types.json`,
         {
           category_type: {
             category_type: name,

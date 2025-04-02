@@ -4,6 +4,7 @@ import "../mor.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const Amenities = () => {
   const [name, setName] = useState("");
@@ -48,7 +49,7 @@ const Amenities = () => {
 
     try {
       await axios.post(
-        "https://panchshil-super.lockated.com/amenity_setups.json",
+        `${baseURL}amenity_setups.json`,
         formData,
         {
           headers: {

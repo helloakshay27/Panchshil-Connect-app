@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../mor.css";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const EditAmenities = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const EditAmenities = () => {
     const fetchAmenity = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/amenity_setups/${id}.json`
+          `${baseURL}amenity_setups/${id}.json`
         );
         console.log(response.data);
 
@@ -72,7 +73,7 @@ const EditAmenities = () => {
 
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/amenity_setups/${id}.json`,
+        `${baseURL}amenity_setups/${id}.json`,
         formData,
         {
           headers: {

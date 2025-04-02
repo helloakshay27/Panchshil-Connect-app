@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./login.css";
+import { baseURL } from "../baseurl/apiDomain";
 
 const CreatePassword = () => {
     const location = useLocation();
@@ -54,7 +55,7 @@ const CreatePassword = () => {
         }
 
         try {
-            const response = await axios.post(`https://panchshil-super.lockated.com/users/forgot_password.json`, {
+            const response = await axios.post(`${baseURL}users/forgot_password.json`, {
                 user: {
                     email_or_mobile: email,
                     password: newPassword,

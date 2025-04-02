@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const CompanyList = () => {
   const [companyList, setCompanyList] = useState([]);
@@ -21,7 +22,7 @@ const CompanyList = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/company_setups.json",
+          `${baseURL}company_setups.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,

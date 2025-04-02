@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
+import { baseURL } from "../baseurl/apiDomain";
 
 const Forgot = () => {
     const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ const Forgot = () => {
 
         navigate(`/forgot-otp?email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}`);
         try {
-            const response = await axios.post("https://panchshil-super.lockated.com/generate_code", {
+            const response = await axios.post(`${baseURL}generate_code`, {
                 email,
                 mobile,
             });

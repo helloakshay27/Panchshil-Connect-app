@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../mor.css";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const SpecificationList = () => {
   const [specifications, setSpecifications] = useState([]);
@@ -20,7 +21,7 @@ const SpecificationList = () => {
     const fetchSpecifications = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/specification_setups.json`,
+          `${baseURL}specification_setups.json`,
           {
             params: {
               page: pagination.current_page,
@@ -60,7 +61,7 @@ const SpecificationList = () => {
 
     try {
       await axios.delete(
-        `https://panchshil-super.lockated.com/specification_setups/${id}.json`
+        `${baseURL}specification_setups/${id}.json`
       );
       alert("Specification deleted successfully!");
 

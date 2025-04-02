@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectBuildingTypeEdit = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const ProjectBuildingTypeEdit = () => {
 
   const fetchBuildingType = async () => {
     try {
-      const response = await axios.get(`https://panchshil-super.lockated.com/building_types/${id}.json`);
+      const response = await axios.get(`${baseURL}building_types/${id}.json`);
       setBuildingType(response.data.building_type);
     } catch (error) {
       console.error("Error fetching building type:", error);
@@ -31,7 +32,7 @@ const ProjectBuildingTypeEdit = () => {
     }
     setLoading(true);
     try {
-      await axios.put(`https://panchshil-super.lockated.com/building_types/${id}.json`, {
+      await axios.put(`${baseURL}building_types/${id}.json`, {
         building_type: { building_type: buildingType },
       });
       toast.success("Building type updated successfully");

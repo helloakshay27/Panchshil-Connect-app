@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const CategoryTypesEdit = () => {
   const { id } = useParams(); // Get category ID from URL
@@ -21,7 +22,7 @@ const CategoryTypesEdit = () => {
   const fetchTags = async () => {
     try {
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/tags.json",
+        `${baseURL}tags.json`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -36,7 +37,7 @@ const CategoryTypesEdit = () => {
   const fetchCategoryType = async () => {
     try {
       const response = await axios.get(
-        `https://panchshil-super.lockated.com/category_types/${id}.json`,
+        `${baseURL}category_types/${id}.json`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -57,7 +58,7 @@ const CategoryTypesEdit = () => {
 
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/category_types/${id}.json`,
+        `${baseURL}category_types/${id}.json`,
         {
           category_type: {
             category_type: categoryType,

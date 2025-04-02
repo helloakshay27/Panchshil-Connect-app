@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import "../mor.css";
 import toast from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const Specification = () => {
   const [name, setName] = useState("");
@@ -50,7 +51,7 @@ const Specification = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/specification_setups.json",
+        `${baseURL}specification_setups.json`,
         formData,
         {
           headers: {

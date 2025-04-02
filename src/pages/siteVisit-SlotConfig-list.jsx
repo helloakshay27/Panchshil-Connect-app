@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const getPageFromStorage = () => {
   return parseInt(localStorage.getItem("siteSlotVisitCurrentPage")) || 1;
@@ -30,7 +31,7 @@ const SiteVisitSlotConfigList = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/site_schedule/all_site_schedule_slots.json",
+        `${baseURL}site_schedule/all_site_schedule_slots.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -81,7 +82,7 @@ const SiteVisitSlotConfigList = () => {
 
     try {
       const response = await axios.put(
-        `https://panchshil-super.lockated.com/site_schedules/${selectedId}.json`,
+        `${baseURL}site_schedules/${selectedId}.json`,
         postData,
         {
           headers: {
@@ -115,7 +116,7 @@ const SiteVisitSlotConfigList = () => {
       console.log("Sending payload:", JSON.stringify(postData));
 
       await axios.put(
-        `https://panchshil-super.lockated.com/site_schedules/${slotId}.json`,
+        `${baseURL}site_schedules/${slotId}.json`,
         postData,
         {
           headers: {

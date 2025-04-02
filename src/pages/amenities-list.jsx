@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const AmenitiesList = () => {
   const [amenities, setAmenities] = useState([]);
@@ -23,7 +24,7 @@ const AmenitiesList = () => {
     const fetchAmenities = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("https://panchshil-super.lockated.com/amenity_setups.json");
+        const response = await axios.get(`${baseURL}amenity_setups.json`);
         const data = response.data.amenities_setups || [];
 
         setAmenities(data);
@@ -52,7 +53,7 @@ const AmenitiesList = () => {
     const updatedStatus = !currentStatus;
     try {
       const response = await axios.put(
-        `https://panchshil-super.lockated.com/amenity_setups/${id}.json`,
+        `${baseURL}amenity_setups/${id}.json`,
         { amenity_setup: { active: updatedStatus } } 
       );
 
@@ -77,7 +78,7 @@ const AmenitiesList = () => {
     if (!confirmDelete) return;
   
     try {
-      await axios.delete(`https://panchshil-super.lockated.com/amenity_setups/${id}.json`);
+      await axios.delete(`${baseURL}amenity_setups/${id}.json`);
       toast.success("Amenity deleted successfully!");
   
       setAmenities((prevAmenities) => prevAmenities.filter((amenity) => amenity.id !== id));

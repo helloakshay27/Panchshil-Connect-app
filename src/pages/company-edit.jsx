@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const CompanyEdit = () => {
   const { id } = useParams();
@@ -20,7 +21,7 @@ const CompanyEdit = () => {
   const fetchCompany = async () => {
     try {
       const response = await axios.get(
-        `https://panchshil-super.lockated.com/company_setups/${id}.json`,
+        `${baseURL}company_setups/${id}.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -42,7 +43,7 @@ const CompanyEdit = () => {
   const fetchOrganizations = async () => {
     try {
       const response = await axios.get(
-        `https://panchshil-super.lockated.com/organizations.json`,
+        `${baseURL}organizations.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -90,7 +91,7 @@ const CompanyEdit = () => {
 
     try {
       const response = await axios.put(
-        `https://panchshil-super.lockated.com/company_setups/${id}.json`,
+        `${baseURL}company_setups/${id}.json`,
         formDataToSend,
         {
           headers: {

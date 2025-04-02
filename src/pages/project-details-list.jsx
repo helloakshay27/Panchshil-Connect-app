@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectDetailsList = () => {
   const [projects, setProjects] = useState([]);
@@ -41,7 +42,7 @@ const ProjectDetailsList = () => {
 
   const fetchProjects = async () => {
     setLoading(true);
-    const url = "https://panchshil-super.lockated.com/get_projects_all.json";
+    const url = `${baseURL}get_projects_all.json`;
 
     try {
       const response = await axios.get(url, {

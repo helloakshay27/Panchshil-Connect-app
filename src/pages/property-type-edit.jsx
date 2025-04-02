@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const PropertyTypeEdit = () => {
   const { id } = useParams(); // ✅ Get ID from URL
@@ -14,7 +15,7 @@ const PropertyTypeEdit = () => {
     const fetchPropertyType = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/property_types/${id}.json`
+          `${baseURL}property_types/${id}.json`
         );
         setName(response.data.property_type || ""); // ✅ Ensure correct field
       } catch (error) {
@@ -38,7 +39,7 @@ const PropertyTypeEdit = () => {
 
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/property_types/${id}.json`,
+        `${baseURL}property_types/${id}.json`,
         { property_type: { property_type: name } }, // ✅ Correct backend format
         {
           headers: {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const Referrallist = () => {
   const [referrals, setReferrals] = useState([]);
@@ -22,7 +23,7 @@ const Referrallist = () => {
       setLoading(true); // Start loading
       try {
         const response = await fetch(
-          "https://panchshil-super.lockated.com/referrals/get_all_referrals",
+          `${baseURL}referrals/get_all_referrals`,
           {
             method: "GET",
             headers: {

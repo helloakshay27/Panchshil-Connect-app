@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const Eventlist = () => {
   const [events, setEvents] = useState([]);
@@ -22,7 +23,7 @@ const Eventlist = () => {
       setLoading(true); // Start loading
       try {
         const response = await fetch(
-          "https://panchshil-super.lockated.com/events.json",
+          `${baseURL}events.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -91,7 +92,7 @@ const Eventlist = () => {
   const handleToggleEvent = async (eventId, currentStatus) => {
     try {
       const response = await fetch(
-        `https://panchshil-super.lockated.com/events/${eventId}.json`,
+        `${baseURL}events/${eventId}.json`,
         {
           method: "PUT",
           headers: {

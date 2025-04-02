@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const PropertyType = () => {
   const [name, setName] = useState("");
@@ -24,7 +25,7 @@ const PropertyType = () => {
       payload.append("property_type[property_type]", name); // ✅ Correct format
 
       await axios.post(
-        "https://panchshil-super.lockated.com/property_types.json",
+        `${baseURL}property_types.json`,
         payload,
         {
           headers: {

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SingleSelect";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectConfiguration = () => {
   const [iconPreview, setIconPreview] = useState(null); // ✅ Holds icon preview
@@ -64,7 +65,7 @@ const ProjectConfiguration = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/configuration_setups.json",
+        `${baseURL}configuration_setups.json`,
         formDataToSend,
         {
           headers: {

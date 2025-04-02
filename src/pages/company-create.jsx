@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const CompanyCreate = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const CompanyCreate = () => {
   // Fetch Organizations
   useEffect(() => {
     setLoading(true);
-    fetch("https://panchshil-super.lockated.com/organizations.json", {
+    fetch(`${baseURL}organizations.json`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -93,7 +94,7 @@ const CompanyCreate = () => {
 
     try {
       const response = await fetch(
-        "https://panchshil-super.lockated.com/company_setups.json",
+        `${baseURL}company_setups.json`,
         {
           method: "POST",
           headers: {

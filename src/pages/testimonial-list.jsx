@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import "../mor.css";
+import { baseURL } from "./baseurl/apiDomain";
 
 const TestimonialList = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -25,7 +26,7 @@ const TestimonialList = () => {
     const fetchTestimonials = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/testimonials.json?company_id=1"
+          `${baseURL}testimonials.json?company_id=1`
         );
         setTestimonials(response.data.testimonials || []);
         setPagination((prevState) => ({

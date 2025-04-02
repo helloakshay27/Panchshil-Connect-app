@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
 import { useParams } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -75,7 +76,7 @@ const ProjectDetails = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/get_all_projects.json`,
+          `${baseURL}get_all_projects.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,

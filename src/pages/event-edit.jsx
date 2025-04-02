@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const EventEdit = () => {
   const { id } = useParams();
@@ -42,7 +43,7 @@ const EventEdit = () => {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/events/${id}.json`,
+          `${baseURL}events/${id}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -72,7 +73,7 @@ const EventEdit = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/get_all_projects.json",
+          `${baseURL}get_all_projects.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -96,7 +97,7 @@ const EventEdit = () => {
   //   const fetchEventTypes = async () => {
   //     try {
   //       const response = await axios.get(
-  //         "https://panchshil-super.lockated.com/events.json",
+  //         "${baseURL}events.json",
   //         {
   //           headers: {
   //             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -116,7 +117,7 @@ const EventEdit = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/users/get_users",
+          `${baseURL}users/get_users`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -183,7 +184,7 @@ const EventEdit = () => {
   
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/events/${id}.json`,
+        `${baseURL}events/${id}.json`,
         data,
         {
           headers: {

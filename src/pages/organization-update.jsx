@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const OrganizationUpdate = () => {
   const { id } = useParams(); // Get organization ID from URL
@@ -23,7 +24,7 @@ const OrganizationUpdate = () => {
     const fetchOrganization = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/organizations/${id}.json`,
+          `${baseURL}organizations/${id}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -83,7 +84,7 @@ const OrganizationUpdate = () => {
 
     try {
       const response = await axios.put(
-        `https://panchshil-super.lockated.com/organizations/${id}.json`,
+        `${baseURL}organizations/${id}.json`,
         payload,
         {
           headers: {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ConstructionStatusList = () => {
   const [statuses, setStatuses] = useState([]);
@@ -28,7 +29,7 @@ const ConstructionStatusList = () => {
       setLoading(true); // Ensure loading starts before API call
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/construction_statuses.json"
+          `${baseURL}construction_statuses.json`
         );
         setStatuses(response.data);
         setPagination((prevState) => ({
@@ -72,7 +73,7 @@ const ConstructionStatusList = () => {
     const updatedStatus = !currentStatus;
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/construction_statuses/${id}.json`,
+        `${baseURL}construction_statuses/${id}.json`,
         { construction_status: { active: updatedStatus } }
       );
       setStatuses((prev) =>

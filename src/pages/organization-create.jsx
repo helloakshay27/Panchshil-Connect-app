@@ -3,6 +3,7 @@ import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
 
 const OrganizationCreate = () => {
   const navigate = useNavigate();
@@ -93,7 +94,7 @@ const OrganizationCreate = () => {
 
     try {
       const response = await axios.post(
-        "https://panchshil-super.lockated.com/organizations.json",
+        `${baseURL}organizations.json`,
         payload,
         {
           headers: {

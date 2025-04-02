@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const TestimonialEdit = () => {
   const { state } = useLocation();
@@ -23,7 +24,7 @@ const TestimonialEdit = () => {
     const fetchTestimonialData = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/testimonials/${testimonial.id}.json`,
+          `${baseURL}testimonials/${testimonial.id}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -55,7 +56,7 @@ const TestimonialEdit = () => {
     const fetchBuildingTypes = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/building_types.json",
+          `${baseURL}building_types.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -95,7 +96,7 @@ const TestimonialEdit = () => {
       console.log("Submitting data:", formData);
 
       await axios.put(
-        `https://panchshil-super.lockated.com/testimonials/${testimonial.id}.json`,
+        `${baseURL}testimonials/${testimonial.id}.json`,
         {
           testimonial: {
             ...formData,

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectConfigEdit = () => {
   const { id } = useParams(); // ✅ Get ID from URL
@@ -18,7 +19,7 @@ const ProjectConfigEdit = () => {
     const fetchConfiguration = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/configuration_setups/${id}.json`
+          `${baseURL}configuration_setups/${id}.json`
         );
         setFormData({
           name: response.data.name,
@@ -81,7 +82,7 @@ const ProjectConfigEdit = () => {
   
     try {
       await axios.put( // 🔄 Use PUT instead of PATCH if full update is required
-        `https://panchshil-super.lockated.com/configuration_setups/${id}.json`,
+        `${baseURL}configuration_setups/${id}.json`,
         formDataToSend,
         {
           headers: {
