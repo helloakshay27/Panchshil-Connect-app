@@ -93,15 +93,12 @@ const Testimonials = () => {
       testimonial: {
         // company_setup_id: companySetupId,
         building_id: buildingTypeId ? buildingTypeId.toString() : null,
-// Include Building Type
+        building_type: buildingTypeOptions.find((option) => option.id === buildingTypeId)?.building_type || null,
         user_name: userName.trim(),
-        profile_of_user: userProfile.trim(), // Match API expected field name
-        // Include User Profile
-        // user_type: userType,
+        profile_of_user: userProfile.trim(),
         content: content.trim(),
       },
     };
-
     console.log("Submitting data:", data);
 
     try {
