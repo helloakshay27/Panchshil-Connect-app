@@ -221,8 +221,8 @@ const [formData, setFormData] = useState({
                     <thead>
                       <tr>
                         <th>Sr No</th>
-                        <th>Project Name</th>
-                        <th>Scheduled Date</th>
+                        {/* <th>Project Name</th> */}
+                        {/* <th>Scheduled Date</th> */}
                         <th>Active</th>
                         <th>Start Time & End Time</th>
                       </tr>
@@ -236,8 +236,8 @@ const [formData, setFormData] = useState({
                                 index +
                                 1}
                             </td>
-                            <td>{slot.project_name || "N/A"}</td>
-                            <td>{slot.scheduled_date || "N/A"}</td>
+                            {/* <td>{slot.project_name || "N/A"}</td>
+                            <td>{slot.scheduled_date || "N/A"}</td> */}
                             <td>
                                 <button
                                   onClick={() =>

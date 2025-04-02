@@ -1,73 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
+
 const SiteVisitSlotConfig = () => {
   const [startHour, setStartHour] = useState("");
   const [startMinute, setStartMinute] = useState("");
   const [endHour, setEndHour] = useState("");
   const [endMinute, setEndMinute] = useState("");
-  const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const hours = Array.from({ length: 24 }, (_, i) => i); // 0-23 hours
-  const minutes = Array.from({ length: 60 }, (_, i) => i); // 0-59 minutes
-
-  // Fetch projects from the API with Authorization header
-  const fetchProjects = async () => {
-    try {
-      const response = await axios.get(
-        "https://panchshil-super.lockated.com/projects.json",
-        {
-          headers: {
-            Authorization: `Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setProjects(response.data.projects || []);
-    } catch (error) {
-      console.error(
-        "Error fetching projects:",
-        error.response?.data || error.message
-      );
-    }
-  };
-
-  // Fetch projects when the component mounts
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const handleProjectChange = (e) => {
-    setSelectedProject(e.target.value);
-  };
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+  const minutes = Array.from({ length: 60 }, (_, i) => i);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    toast.dismiss(); // Clears previous toasts to prevent duplicates
+    toast.dismiss();
 
-    // Validation - Ensures only one error toast appears
-    if (!selectedProject) {
-      toast.error("Project selection is required.");
-      setLoading(false);
-      return;
-    }
-    if (!startDate) {
-      toast.error("Start date is required.");
-      setLoading(false);
-      return;
-    }
-    if (!endDate) {
-      toast.error("End date is required.");
-      setLoading(false);
-      return;
-    }
     if (!startHour && startHour !== 0) {
       toast.error("Start hour is required.");
       setLoading(false);
@@ -90,13 +41,10 @@ const SiteVisitSlotConfig = () => {
     }
 
     const postData = {
-      project_id: selectedProject,
       start_hour: startHour,
       start_minute: startMinute,
       end_hour: endHour,
       end_minute: endMinute,
-      start_date: startDate,
-      end_date: endDate,
     };
 
     try {
@@ -113,7 +61,7 @@ const SiteVisitSlotConfig = () => {
 
       toast.success("Slot created successfully!");
       console.log("Data successfully submitted:", response.data);
-      navigate("/setup-member/siteVisit-SlotConfig-list");
+      navigate("/setup-member/siteslot-list");
     } catch (error) {
       console.error(
         "Error submitting data:",
@@ -127,7 +75,7 @@ const SiteVisitSlotConfig = () => {
 
   const navigate = useNavigate();
   const handleCancel = () => {
-    navigate(-1); // This navigates back one step in history
+    navigate(-1);
   };
 
   return (
@@ -144,71 +92,7 @@ const SiteVisitSlotConfig = () => {
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Start Date
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="date"
-                          name="start_date"
-                          value={startDate}
-                          min={new Date().toISOString().split("T")[0]}
-                          onChange={(e) => setStartDate(e.target.value)}
-                          placeholder="Enter Event Start Date"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          End Date
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="date"
-                          name="end_date"
-                          value={endDate}
-                          min={
-                            startDate || new Date().toISOString().split("T")[0]
-                          }
-                          onChange={(e) => setEndDate(e.target.value)}
-                          placeholder="Enter Event End Date"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group ">
-                        <label>
-                          Start Hours
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        {/* <select
-                          className="form-control"
-                          value={startHour}
-                          required
-                          onChange={(e) => setStartHour(Number(e.target.value))}
-                        >
-                          <option value="" disabled>
-                            Select Start Hour
-                          </option>
-                          {hours.map((hour) => (
-                            <option key={hour} value={hour}>
-                              {hour.toString().padStart(2, "0")}
-                            </option>
-                          ))}
-                        </select> */}
-
+                        <label>Start Hours *</label>
                         <SelectBox
                           options={hours.map((hour) => ({
                             label: hour.toString().padStart(2, "0"),
@@ -221,31 +105,7 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Start Minutes
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        {/* <select
-                          className="form-control"
-                          value={startMinute}
-                          required
-                          onChange={(e) =>
-                            setStartMinute(Number(e.target.value))
-                          }
-                        >
-                          <option value="" disabled>
-                            Select Start Minute
-                          </option>
-                          {minutes.map((minute) => (
-                            <option key={minute} value={minute}>
-                              {minute.toString().padStart(2, "0")}
-                            </option>
-                          ))}
-                        </select> */}
-
+                        <label>Start Minutes *</label>
                         <SelectBox
                           options={minutes.map((minute) => ({
                             label: minute.toString().padStart(2, "0"),
@@ -258,30 +118,7 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          End Hours
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        {/* <select
-                          className="form-control"
-                          value={endHour}
-                          required
-                          onChange={(e) => setEndHour(Number(e.target.value))}
-                        >
-                          {" "}
-                          <option value="" disabled>
-                            Select End Hour
-                          </option>
-                          {hours.map((hour) => (
-                            <option key={hour} value={hour}>
-                              {hour.toString().padStart(2, "0")}
-                            </option>
-                          ))}
-                        </select> */}
-
+                        <label>End Hours *</label>
                         <SelectBox
                           options={hours.map((hour) => ({
                             label: hour.toString().padStart(2, "0"),
@@ -294,30 +131,7 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          End Minutes
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        {/* <select
-                          className="form-control"
-                          value={endMinute}
-                          required
-                          onChange={(e) => setEndMinute(Number(e.target.value))}
-                        >
-                          {" "}
-                          <option value="" disabled>
-                            Select End Minute
-                          </option>
-                          {minutes.map((minute) => (
-                            <option key={minute} value={minute}>
-                              {minute.toString().padStart(2, "0")}
-                            </option>
-                          ))}
-                        </select> */}
-
+                        <label>End Minutes *</label>
                         <SelectBox
                           options={minutes.map((minute) => ({
                             label: minute.toString().padStart(2, "0"),
@@ -328,42 +142,6 @@ const SiteVisitSlotConfig = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Project
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        {/* <select
-                          className="form-control form-select"
-                          value={selectedProject}
-                          onChange={handleProjectChange}
-                          required
-                        >
-                          <option value="" disabled>
-                            Select Project
-                          </option>
-                          {projects.map((project) => (
-                            <option key={project.id} value={project.id}>
-                              {project.project_name}
-                            </option>
-                          ))}
-                        </select> */}
-                        <SelectBox
-                          options={projects.map((project) => ({
-                            label: project.project_name,
-                            value: project.id,
-                          }))}
-                          defaultValue={selectedProject}
-                          onChange={(value) => setSelectedProject(value)}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Submit Button Section */}
                   </div>
                 </div>
               </div>
@@ -380,7 +158,7 @@ const SiteVisitSlotConfig = () => {
                 <div className="col-md-2">
                   <button
                     type="button"
-                    className="purple-btn2 w-100 "
+                    className="purple-btn2 w-100"
                     onClick={handleCancel}
                   >
                     Cancel
