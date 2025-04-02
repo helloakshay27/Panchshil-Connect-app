@@ -2135,7 +2135,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Size (Sq. Mtr.)
+                    Project Size (Sq. Mtr.) (For Residential)
                     {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -2154,7 +2154,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Project Size (Sq. Ft.)
+                    Project Size (Sq. Ft.) (For Residential)
                     {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -2173,7 +2173,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Development Area (Sq. Mtr.)
+                    Development Area (Sq. Mtr.) (For Office Park)
                     {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -2193,7 +2193,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                    Development Area (Sq. Ft.)
+                    Development Area (Sq. Ft.) (For Office Park)
                     {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
