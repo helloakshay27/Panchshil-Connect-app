@@ -48,7 +48,7 @@ const ProjectDetailsCreate = () => {
       pin_code: "",
       country: "",
     },
-    brochures: [],
+    brochure: [],
     two_d_images: [],
     videos: [],
     gallery_image: [],
@@ -284,7 +284,7 @@ const ProjectDetailsCreate = () => {
   // Modify the handleFileUpload function to handle gallery_images
   const handleFileUpload = (name, files) => {
     const MAX_SIZES = {
-      brochures: MAX_BROCHURE_SIZE,
+      brochure: MAX_BROCHURE_SIZE,
       two_d_images: MAX_IMAGE_SIZE,
       videos: MAX_VIDEO_SIZE,
       image: MAX_IMAGE_SIZE,
@@ -306,7 +306,7 @@ const ProjectDetailsCreate = () => {
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
-      brochures: [
+      brochure: [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ],
@@ -544,14 +544,14 @@ const ProjectDetailsCreate = () => {
       }
     }
 
-    if (name === "brochures") {
+    if (name === "brochure") {
       // Handle multiple brochure files
       const newFiles = Array.from(files);
       const validFiles = [];
 
       newFiles.forEach((file) => {
-        if (!allowedTypes.brochures.includes(file.type)) {
-          toast.error("Only PDF and DOCX files are allowed for brochures.");
+        if (!allowedTypes.brochure.includes(file.type)) {
+          toast.error("Only PDF and DOCX files are allowed for brochure.");
           return;
         }
 
@@ -562,7 +562,7 @@ const ProjectDetailsCreate = () => {
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
-          brochures: [...prev.brochures, ...validFiles],
+          brochure: [...prev.brochure, ...validFiles],
         }));
       }
     } 
@@ -657,15 +657,15 @@ const ProjectDetailsCreate = () => {
 
   // 3. Update handleDiscardFile to handle gallery_images
   const handleDiscardFile = (fileType, index) => {
-    if (fileType === "brochures") {
+    if (fileType === "brochure") {
       if (index !== undefined) {
         // Remove specific brochure by index
-        const updatedBrochures = [...formData.brochures];
+        const updatedBrochures = [...formData.brochure];
         updatedBrochures.splice(index, 1);
-        setFormData({ ...formData, brochures: updatedBrochures });
+        setFormData({ ...formData, brochure: updatedBrochures });
       } else {
         // Clear all brochures if no index specified
-        setFormData({ ...formData, brochures: [] });
+        setFormData({ ...formData, brochure: [] });
       }
     } else if (fileType === "two_d_images") {
       const updatedFiles = [...formData.two_d_images];
@@ -755,22 +755,22 @@ const ProjectDetailsCreate = () => {
       toast.error("Price Onward is required.");
       return false;
     }
-    if (!formData.Project_Size_Sq_Mtr) {
-      toast.error("Project Size (Sq. Mtr.) is required.");
-      return false;
-    }
-    if (!formData.Project_Size_Sq_Ft) {
-      toast.error("Project Size (Sq. Ft.) is required.");
-      return false;
-    }
-    if (!formData.development_area_sqmt) {
-      toast.error("Development Area (Sq. Mtr.) is required.");
-      return false;
-    }
-    if (!formData.development_area_sqft) {
-      toast.error("Development Area (Sq. Ft.) is required.");
-      return false;
-    }
+    // if (!formData.Project_Size_Sq_Mtr) {
+    //   toast.error("Project Size (Sq. Mtr.) is required.");
+    //   return false;
+    // }
+    // if (!formData.Project_Size_Sq_Ft) {
+    //   toast.error("Project Size (Sq. Ft.) is required.");
+    //   return false;
+    // }
+    // if (!formData.development_area_sqmt) {
+    //   toast.error("Development Area (Sq. Mtr.) is required.");
+    //   return false;
+    // }
+    // if (!formData.development_area_sqft) {
+    //   toast.error("Development Area (Sq. Ft.) is required.");
+    //   return false;
+    // }
     if (!formData.Rera_Carpet_Area_Sq_M) {
       toast.error("RERA Carpet Area (Sq. M) is required.");
       return false;
@@ -799,10 +799,10 @@ const ProjectDetailsCreate = () => {
       toast.error("Land UOM is required.");
       return false;
     }
-    if (!formData.Rera_Number_multiple) {
-      toast.error("RERA Number is required.");
-      return false;
-    }
+    // if (!formData.Rera_Number_multiple) {
+    //   toast.error("RERA Number is required.");
+    //   return false;
+    // }
 
     if (!formData.Amenities.length) {
       toast.error("Amenities are required.");
@@ -832,7 +832,7 @@ const ProjectDetailsCreate = () => {
       toast.error("Map URL is required.");
       return false;
     }
-    if (!formData.brochures.length === 0) {
+    if (!formData.brochure.length === 0) {
       toast.error("Brochure is required.");
       return false;
     }
@@ -871,10 +871,10 @@ const ProjectDetailsCreate = () => {
         for (const addressKey in value) {
           data.append(`project[Address][${addressKey}]`, value[addressKey]);
         }
-      } else if (key === "brochures" && Array.isArray(value)) {
+      } else if (key === "brochure" && Array.isArray(value)) {
         value.forEach((file) => {
           if (file instanceof File) {
-            data.append("project[brochures][]", file);
+            data.append("project[brochure][]", file);
           }
         });
       } else if (key === "project_emailer_templetes" && Array.isArray(value)) {
@@ -1176,7 +1176,7 @@ const ProjectDetailsCreate = () => {
         pin_code: "",
         country: "",
       },
-      brochures: [],
+      brochure: [],
       two_d_images: [],
       videos: [],
       gallery_image: [],
@@ -1612,10 +1612,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Mtr.) (For Residential)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1632,10 +1632,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Ft.) (For Residential)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1652,10 +1652,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Development Area (Sq. Mtr.) (For Office Park)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1672,10 +1672,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Development Area (Sq. Ft.) (For Office Park)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1917,10 +1917,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Tower{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                  
                   </label>
                   <input
                     className="form-control"
@@ -1937,10 +1934,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Number{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                  
                   </label>
                   <input
                     className="form-control"
@@ -2386,7 +2380,7 @@ const ProjectDetailsCreate = () => {
                 <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
-                  onClick={() => document.getElementById("brochures").click()}
+                  onClick={() => document.getElementById("brochure").click()}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -2401,13 +2395,13 @@ const ProjectDetailsCreate = () => {
                   <span>Add</span>
                 </button>
                 <input
-                  id="brochures"
+                  id="brochure"
                   className="form-control"
                   type="file"
-                  name="brochures"
+                  name="brochure"
                   accept=".pdf,.docx"
                   onChange={(e) =>
-                    handleFileUpload("brochures", e.target.files)
+                    handleFileUpload("brochure", e.target.files)
                   }
                   multiple // Add this to allow multiple file selection
                   style={{ display: "none" }}
@@ -2424,16 +2418,16 @@ const ProjectDetailsCreate = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.brochures.length > 0 ? (
-                        formData.brochures.map((brochure, index) => (
-                          <tr key={`brochure-${index}`}>
+                      {formData.brochure.length > 0 ? (
+                        formData.brochure.map((brochure, index) => (
+                          <tr key={`brochures-${index}`}>
                             <td>{brochure.name}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
                                 onClick={() =>
-                                  handleDiscardFile("brochures", index)
+                                  handleDiscardFile("brochure", index)
                                 }
                               >
                                 x

@@ -509,15 +509,15 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleDiscardFile = (fileType, index) => {
-    if (fileType === "brochures") {
+    if (fileType === "brochure") {
       if (index !== undefined) {
         // Remove specific brochure by index
-        const updatedBrochures = [...formData.brochures];
+        const updatedBrochures = [...formData.brochure];
         updatedBrochures.splice(index, 1);
-        setFormData({ ...formData, brochures: updatedBrochures });
+        setFormData({ ...formData, brochure: updatedBrochures });
       } else {
         // Clear all brochures if no index specified
-        setFormData({ ...formData, brochures: [] });
+        setFormData({ ...formData, brochure: [] });
       }
     } else if (fileType === "two_d_images") {
       const updatedFiles = [...formData.two_d_images];
@@ -650,7 +650,225 @@ const ProjectDetailsEdit = () => {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
     }
+  };  
+
+  const handleFileDiscardCreative = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_creative_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      console.log(`Image with ID ${Image.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
+  }; 
+
+  const handleFileDiscardCreativeGenerics = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_creative_generics_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      console.log(`Image with ID ${Image.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
   };
+
+  const handleFileDiscardCreativeOffers = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_creative_offers_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      console.log(`Image with ID ${Image.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
+  };
+
+
+  const handleFileDiscardInteriors = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_ineteriors_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      console.log(`Image with ID ${Image.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
+  };
+
+  const handleFileDiscardExteriors = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_exterios_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      console.log(`Image with ID ${Image.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
+  };
+
+  const handleFileDiscardLayout = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://panchshil-super.lockated.com/projects/${id}/remove_layout_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      console.log(`Image with ID ${Image.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
+  };
+
 
   const validateForm = (formData) => {
     const errors = [];
@@ -687,22 +905,22 @@ const ProjectDetailsEdit = () => {
       errors.push("Price Onward is required.");
       return errors;
     }
-    if (!formData.Project_Size_Sq_Mtr) {
-      errors.push("Project Size (Sq. Mtr.) is required.");
-      return errors;
-    }
-    if (!formData.Project_Size_Sq_Ft) {
-      errors.push("Project Size (Sq. Ft.) is required.");
-      return errors;
-    }
-    if (!formData.development_area_sqmt) {
-      errors.push("Development_area_sqmt is required.");
-      return errors;
-    }
-    if (!formData.development_area_sqft) {
-      errors.push("Development_area_sqft is required.");
-      return errors;
-    }
+    // if (!formData.Project_Size_Sq_Mtr) {
+    //   errors.push("Project Size (Sq. Mtr.) is required.");
+    //   return errors;
+    // }
+    // if (!formData.Project_Size_Sq_Ft) {
+    //   errors.push("Project Size (Sq. Ft.) is required.");
+    //   return errors;
+    // }
+    // if (!formData.development_area_sqmt) {
+    //   errors.push("Development_area_sqmt is required.");
+    //   return errors;
+    // }
+    // if (!formData.development_area_sqft) {
+    //   errors.push("Development_area_sqft is required.");
+    //   return errors;
+    // }
     if (!formData.Rera_Carpet_Area_Sq_M) {
       errors.push("RERA Carpet Area (Sq. M) is required.");
       return errors;
@@ -719,10 +937,10 @@ const ProjectDetailsEdit = () => {
       errors.push("Number of Units is required.");
       return errors;
     }
-    if (!formData.Rera_Number_multiple) {
-      errors.push("RERA Number is required.");
-      return errors;
-    }
+    // if (!formData.Rera_Number_multiple) {
+    //   errors.push("RERA Number is required.");
+    //   return errors;
+    // }
     // if (!formData.Specifications.length) {
     //   errors.push("Specifications are required.");
     //   return errors;
@@ -1225,7 +1443,7 @@ const ProjectDetailsEdit = () => {
   // Modify the handleFileUpload function to handle gallery_images
   const handleFileUpload = (name, files) => {
     const MAX_SIZES = {
-      brochures: MAX_BROCHURE_SIZE,
+      brochure: MAX_BROCHURE_SIZE,
       two_d_images: MAX_IMAGE_SIZE,
       videos: MAX_VIDEO_SIZE,
       image: MAX_IMAGE_SIZE,
@@ -1245,7 +1463,7 @@ const ProjectDetailsEdit = () => {
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
-      brochures: [
+      brochure: [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ],
@@ -1483,14 +1701,14 @@ const ProjectDetailsEdit = () => {
         }
         
 
-    if (name === "brochures") {
+    if (name === "brochure") {
       // Handle multiple brochure files
       const newFiles = Array.from(files);
       const validFiles = [];
 
       newFiles.forEach((file) => {
-        if (!allowedTypes.brochures.includes(file.type)) {
-          toast.error("Only PDF and DOCX files are allowed for brochures.");
+        if (!allowedTypes.brochure.includes(file.type)) {
+          toast.error("Only PDF and DOCX files are allowed for brochure.");
           return;
         }
 
@@ -1501,7 +1719,7 @@ const ProjectDetailsEdit = () => {
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
-          brochures: [...prev.brochures, ...validFiles],
+          brochure: [...prev.brochure, ...validFiles],
         }));
       }
     } else if (
@@ -1863,10 +2081,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Mtr.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1882,10 +2100,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Size (Sq. Ft.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1901,10 +2119,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Development Area (Sq. Mtr.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1921,10 +2139,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Development Area (Sq. Ft.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2248,10 +2466,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Tower{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                    
                   </label>
                   <input
                     className="form-control"
@@ -2268,10 +2483,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     RERA Number{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                  
                   </label>
                   <input
                     className="form-control"
@@ -2959,31 +3171,29 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-        {formData.project_ppt?.length > 0 ? (
-          formData.project_ppt.map((file, index) => (
-            <tr key={index}>
-              <td>
-                {file.name || file.document_file_name || "No File"}
-              </td>
-              <td>
-                <button
-                  type="button"
-                  className="purple-btn2"
-                  onClick={() =>
-                    handleDiscardFile("project_ppt", index)
-                  }
-                >
-                  x
-                </button>
-              </td>
-            </tr>
-          ))
-        ) : (
-          <tr>
-           
-          </tr>
-        )}
-      </tbody>
+                      {/* Brochure */}
+                      {formData.project_ppt && (
+                        <tr>
+                          <td>
+                            {formData.project_ppt?.name ||
+                              formData.project_ppt?.document_file_name ||
+                              "No File"}
+                          </td>
+
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardFile("project_ppt", index)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -3180,7 +3390,7 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleDiscardFile("project_layout", index)
+                                handleFileDiscardLayout("project_layout", index)
                               }
                             >
                               x
@@ -3282,7 +3492,7 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleDiscardFile("project_creatives", index)
+                                handleFileDiscardCreative("project_creatives", index)
                               }
                             >
                               x
@@ -3383,7 +3593,7 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleDiscardFile("project_creative_generics", index)
+                                handleFileDiscardCreativeGenerics("project_creative_generics", index)
                               }
                             >
                               x
@@ -3484,7 +3694,7 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleDiscardFile("project_creative_offers", index)
+                                handleFileDiscardCreativeOffers("project_creative_offers", index)
                               }
                             >
                               x
@@ -3585,7 +3795,7 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleDiscardFile("project_interiors", index)
+                                handleFileDiscardInteriors("project_interiors", index)
                               }
                             >
                               x
@@ -3687,7 +3897,7 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleDiscardFile("project_exteriors", index)
+                                handleFileDiscardExteriors("project_exteriors", index)
                               }
                             >
                               x
