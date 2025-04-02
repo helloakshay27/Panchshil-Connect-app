@@ -12,15 +12,15 @@ import SelectBox from "../components/base/SelectBox";
 const BannerAdd = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
-  const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+  const [previewImg, setPreviewImg] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
 
   const [formData, setFormData] = useState({
     banner_type: "",
     banner_redirect: "",
-    company_id: "",
+
     project_id: "",
     title: "",
     attachfile: [],
@@ -28,23 +28,6 @@ const BannerAdd = () => {
 
   // Fetch Companies
   useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const response = await axios.get(
-          "https://panchshil-super.lockated.com/company_setups.json",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        setCompanies(response.data.company_setups || []);
-      } catch (error) {
-        console.error("Error fetching companies:", error);
-      }
-    };
-
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
@@ -62,7 +45,6 @@ const BannerAdd = () => {
       }
     };
 
-    fetchCompanies();
     fetchProjects();
     setLoading(false);
   }, []);
@@ -83,6 +65,9 @@ const BannerAdd = () => {
       e.target.value = "";
       return;
     }
+    if (validFiles.length > 0) {
+      setPreviewImg(URL.createObjectURL(validFiles[0]));
+    }
 
     setFormData({ ...formData, attachfile: validFiles });
   };
@@ -93,15 +78,15 @@ const BannerAdd = () => {
     let newErrors = {};
 
     // If all fields are empty, show only one message and return early
-    if (
-      !formData.title.trim() &&
-      (!formData.company_id || String(formData.company_id).trim() === "") &&
-      !formData.attachfile.length
-    ) {
-      toast.dismiss(); // Clear any previous toasts
-      toast.error("Please fill in all the required fields.");
-      return false;
-    }
+    // if (
+    //   !formData.title.trim() &&
+    //   (!formData.company_id || String(formData.company_id).trim() === "") &&
+    //   !formData.attachfile.length
+    // ) {
+    //   toast.dismiss();
+    //   toast.error("Please fill in all the required fields.");
+    //   return false;
+    // }
 
     // Sequential validation - check one field at a time and return as soon as we find an error
     if (!formData.title.trim()) {
@@ -117,14 +102,6 @@ const BannerAdd = () => {
       setErrors(newErrors);
       toast.dismiss(); // Clear previous toasts
       toast.error("Project is mandatory");
-      return false;
-    }
-
-    if (!formData.company_id || String(formData.company_id).trim() === "") {
-      newErrors.company_id = "";
-      setErrors(newErrors);
-      toast.dismiss(); // Clear previous toasts
-      toast.error("Company is mandatory");
       return false;
     }
 
@@ -155,12 +132,15 @@ const BannerAdd = () => {
     try {
       const sendData = new FormData();
       sendData.append("banner[title]", formData.title);
-      sendData.append("banner[company_id]", formData.company_id);
+      // sendData.append("banner[company_id]", formData.company_id);
       sendData.append("banner[project_id]", formData.project_id);
 
       formData.attachfile.forEach((file) => {
         sendData.append("banner[banner_image]", file);
       });
+
+      console.log(sendData);
+      alert();
 
       await axios.post(
         "https://panchshil-super.lockated.com/banners.json",
@@ -185,7 +165,7 @@ const BannerAdd = () => {
   const handleCancel = () => {
     navigate(-1);
   };
-
+  console.log(formData);
   return (
     <>
       <div className="main-content">
@@ -303,6 +283,21 @@ const BannerAdd = () => {
                         <span className="error text-danger">
                           {errors.attachfile}
                         </span>
+                      )}
+                      {/* Preview Image */}
+                      {previewImg && (
+                        <div className="mt-2">
+                          <img
+                            src={previewImg}
+                            className="img-fluid rounded"
+                            alt="Preview"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
