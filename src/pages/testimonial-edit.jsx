@@ -30,7 +30,7 @@ const TestimonialEdit = () => {
             },
           }
         );
-  
+
         setFormData({
           user_name: response.data.user_name || "",
           user_profile: response.data.profile_of_user || "",
@@ -44,7 +44,7 @@ const TestimonialEdit = () => {
         toast.error("Error loading testimonial details.");
       }
     };
-  
+
     if (testimonial?.id) {
       fetchTestimonialData();
     }
@@ -62,7 +62,7 @@ const TestimonialEdit = () => {
             },
           }
         );
-  
+
         if (response.data && Array.isArray(response.data)) {
           setBuildingTypeOptions(response.data);
         } else {
@@ -74,11 +74,11 @@ const TestimonialEdit = () => {
         toast.error("Error loading building types.");
       }
     };
-  
+
     fetchBuildingTypes();
   }, []);
-  
-  
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -93,7 +93,7 @@ const TestimonialEdit = () => {
     setLoading(true);
     try {
       console.log("Submitting data:", formData);
-  
+
       await axios.put(
         `https://panchshil-super.lockated.com/testimonials/${testimonial.id}.json`,
         {
@@ -101,7 +101,7 @@ const TestimonialEdit = () => {
             ...formData,
             building_id: formData.building_id?.toString() || null,
             building_type: buildingTypeOptions.find((option) => option.id === formData.building_id)?.building_type || null,
-            profile_of_user: formData.user_profile, 
+            profile_of_user: formData.user_profile,
           },
         },
         {
@@ -111,7 +111,7 @@ const TestimonialEdit = () => {
           },
         }
       );
-  
+
       toast.success("Testimonial updated successfully!");
       navigate("/testimonial-list");
     } catch (error) {
@@ -121,7 +121,7 @@ const TestimonialEdit = () => {
       setLoading(false);
     }
   };
-  
+
 
   const handleCancel = () => {
     navigate(-1);

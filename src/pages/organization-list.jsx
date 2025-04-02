@@ -22,7 +22,8 @@ const OrganizationList = () => {
     fetch("https://panchshil-super.lockated.com/organizations.json", {
       method: "GET",
       headers: {
-        Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        "Content-Type": "application/json",
       },
     })
       .then((response) => response.json())
@@ -72,14 +73,14 @@ const OrganizationList = () => {
 
   const filteredOrganizations = Array.isArray(organizations)
     ? organizations.filter(
-        (org) =>
-          org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (org.domain &&
-            org.domain.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (org.sub_domain &&
-            org.sub_domain.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (org.mobile && org.mobile.includes(searchQuery))
-      )
+      (org) =>
+        org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (org.domain &&
+          org.domain.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (org.sub_domain &&
+          org.sub_domain.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (org.mobile && org.mobile.includes(searchQuery))
+    )
     : [];
 
   // ✅ Move pagination calculation inside render to avoid infinite loop
@@ -255,9 +256,8 @@ const OrganizationList = () => {
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -267,9 +267,8 @@ const OrganizationList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -287,9 +286,8 @@ const OrganizationList = () => {
                   ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`page-item ${
-                        pagination.current_page === pageNumber ? "active" : ""
-                      }`}
+                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                        }`}
                     >
                       <button
                         className="page-link"
@@ -300,9 +298,8 @@ const OrganizationList = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${
-                      pagination.current_page === totalPages ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -315,9 +312,8 @@ const OrganizationList = () => {
                     </button>
                   </li>
                   <li
-                    className={`page-item ${
-                      pagination.current_page === totalPages ? "disabled" : ""
-                    }`}
+                    className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"

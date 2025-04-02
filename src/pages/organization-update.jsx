@@ -26,8 +26,8 @@ const OrganizationUpdate = () => {
           `https://panchshil-super.lockated.com/organizations/${id}.json`,
           {
             headers: {
-              Authorization:
-                "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
           }
         );

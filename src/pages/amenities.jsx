@@ -54,7 +54,7 @@ const Amenities = () => {
           headers: {
             "Content-Type": "multipart/form-data",
             Accept: "application/json",
-            Authorization: `Bearer YOUR_ACCESS_TOKEN`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       );

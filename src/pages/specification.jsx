@@ -54,9 +54,8 @@ const Specification = () => {
         formData,
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "multipart/form-data",
-            Accept: "application/json",
-            Authorization: `Bearer YOUR_ACCESS_TOKEN`,
           },
         }
       );

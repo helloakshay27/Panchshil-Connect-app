@@ -8,8 +8,8 @@ const CompanyCreate = () => {
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-    const [showTooltip, setShowTooltip] = useState(false);
-  
+  const [showTooltip, setShowTooltip] = useState(false);
+
 
   const [formData, setFormData] = useState({
     companyName: "",
@@ -23,7 +23,7 @@ const CompanyCreate = () => {
     fetch("https://panchshil-super.lockated.com/organizations.json", {
       method: "GET",
       headers: {
-        Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
     })
       .then((response) => response.json())
@@ -97,7 +97,7 @@ const CompanyCreate = () => {
         {
           method: "POST",
           headers: {
-            Authorization: "Bearer eH5eu3-z4o42iaB-npRdy1y3MAUO4zptxTIf2YyT7BA",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
           body: formDataToSend,
         }
@@ -188,11 +188,11 @@ const CompanyCreate = () => {
                           loading
                             ? [{ value: "", label: "Loading..." }]
                             : organizations.length > 0
-                            ? organizations.map((org) => ({
+                              ? organizations.map((org) => ({
                                 value: org.id,
                                 label: org.name,
                               }))
-                            : [{ value: "", label: "No organizations found" }]
+                              : [{ value: "", label: "No organizations found" }]
                         }
                         value={formData.organizationId}
                         onChange={(value) =>

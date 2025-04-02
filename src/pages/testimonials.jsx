@@ -25,8 +25,8 @@ const Testimonials = () => {
           "https://panchshil-super.lockated.com/company_setups.json",
           {
             headers: {
-              Authorization:
-                "Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
           }
         );
@@ -51,7 +51,7 @@ const Testimonials = () => {
 
     fetchCompanySetups();
   }, []);
-  
+
   useEffect(() => {
     const fetchBuildingTypes = async () => {
       try {
@@ -59,12 +59,12 @@ const Testimonials = () => {
           "https://panchshil-super.lockated.com/building_types.json",
           {
             headers: {
-              Authorization:
-                "Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
           }
         );
-        
+
         if (response.data && Array.isArray(response.data)) {
           setBuildingTypeOptions(response.data);
         }
@@ -107,8 +107,8 @@ const Testimonials = () => {
         data,
         {
           headers: {
-            Authorization: "Bearer kD8B8ZeWZQAd2nQ-70dcfLXgYHLQh-zjggvuuE_93BY",
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -117,7 +117,7 @@ const Testimonials = () => {
       toast.success("Data saved successfully!");
 
       // Reset form fields
-      
+
       setUserName("");
       setUserProfile(""); // Reset User Profile
       setUserType("");
