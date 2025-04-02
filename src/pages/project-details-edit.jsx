@@ -1017,16 +1017,28 @@ const ProjectDetailsEdit = () => {
         if (file) {
           data.append("project[brochure][]", file);
         }
-      } else if (key === "project_emailer_templetes" && value) {
-        const file = value instanceof File ? value : value.file;
-        if (file) {
-          data.append("project[project_emailer_templetes][]", file);
-        }
-      } else if (key === "project_ppt" && value) {
-        const file = value instanceof File ? value : value.file;
-        if (file) {
-          data.append("project[project_ppt][]", file);
-        }
+      } else if (
+        key === "project_emailer_templetes" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
+        value.forEach((fileObj) => {
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
+            data.append("project[project_emailer_templetes][]", file);
+          }
+        });
+      }else if (
+        key === "project_ppt" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
+        value.forEach((fileObj) => {
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
+            data.append("project[project_ppt][]", file);
+          }
+        });
       }
       else if (
         key === "two_d_images" &&
@@ -1519,27 +1531,45 @@ const ProjectDetailsEdit = () => {
         }
     
         if (name === "project_emailer_templetes") {
-          // Handle multiple brochure files
           const newFiles = Array.from(files);
           const validFiles = [];
-    
+        
           newFiles.forEach((file) => {
             if (!allowedTypes.project_emailer_templetes.includes(file.type)) {
-              toast.error("Only PDF and DOCX files are allowed for project emailer templetes.");
+              toast.error("Only PPT and PPTX files are allowed for Project PPT.");
               return;
             }
-    
-            if (!validateFile(file, MAX_SIZES[name])) return;
+        
+            if (file.size > MAX_SIZES.project_emailer_templetes) {
+              toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+              return;
+            }
+        
             validFiles.push(file);
           });
-    
+        
           if (validFiles.length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              project_emailer_templetes: [...prev.project_emailer_templetes, ...validFiles],
-            }));
+            setFormData((prev) => {
+              // Make sure we're properly handling all possible states of prev.project_ppt
+              let currentPPTs = [];
+              
+              // If project_ppt exists and is an array, use it
+              if (prev.project_emailer_templetes && Array.isArray(prev.project_emailer_templetes)) {
+                currentPPTs = [...prev.project_emailer_templetes];
+              }
+              // If project_ppt exists but is not an array (single file object), convert to array
+              else if (prev.project_emailer_templetes) {
+                currentPPTs = [prev.project_emailer_templetes];
+              }
+              
+              // Return updated state with combined files
+              return {
+                ...prev,
+                project_emailer_templetes: [...currentPPTs, ...validFiles]
+              };
+            });
           }
-        } 
+        }
     
         if (name === "project_exteriors") {
           const newFiles = Array.from(files);
@@ -1693,10 +1723,25 @@ const ProjectDetailsEdit = () => {
           });
         
           if (validFiles.length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              project_ppt: [...(Array.isArray(prev.project_ppt) ? prev.project_ppt : []), ...validFiles], // ✅ Ensure it's always an array
-            }));
+            setFormData((prev) => {
+              // Make sure we're properly handling all possible states of prev.project_ppt
+              let currentPPTs = [];
+              
+              // If project_ppt exists and is an array, use it
+              if (prev.project_ppt && Array.isArray(prev.project_ppt)) {
+                currentPPTs = [...prev.project_ppt];
+              }
+              // If project_ppt exists but is not an array (single file object), convert to array
+              else if (prev.project_ppt) {
+                currentPPTs = [prev.project_ppt];
+              }
+              
+              // Return updated state with combined files
+              return {
+                ...prev,
+                project_ppt: [...currentPPTs, ...validFiles]
+              };
+            });
           }
         }
         
@@ -3171,29 +3216,47 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* Brochure */}
-                      {formData.project_ppt && (
-                        <tr>
-                          <td>
-                            {formData.project_ppt?.name ||
-                              formData.project_ppt?.document_file_name ||
-                              "No File"}
-                          </td>
-
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardFile("project_ppt", index)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
+  {/* Project PPT Files */}
+  {formData.project_ppt && (
+    Array.isArray(formData.project_ppt) ? (
+      // If it's an array of files
+      formData.project_ppt.map((file, index) => (
+        <tr key={`ppt-${index}`}>
+          <td>
+            {file?.name || file?.document_file_name || "No File"}
+          </td>
+          <td>
+            <button
+              type="button"
+              className="purple-btn2"
+              onClick={() => handleDiscardFile("project_ppt", index)}
+            >
+              x
+            </button>
+          </td>
+        </tr>
+      ))
+    ) : (
+      // If it's a single file (as an object)
+      <tr>
+        <td>
+          {formData.project_ppt?.name || 
+           formData.project_ppt?.document_file_name || 
+           "No File"}
+        </td>
+        <td>
+          <button
+            type="button"
+            className="purple-btn2"
+            onClick={() => handleDiscardFile("project_ppt", 0)}
+          >
+            x
+          </button>
+        </td>
+      </tr>
+    )
+  )}
+</tbody>
                   </table>
                 </div>
               </div>
@@ -3969,31 +4032,47 @@ const ProjectDetailsEdit = () => {
         </tr>
       </thead>
       <tbody>
-        {formData.project_emailer_templetes?.length > 0 ? (
-          formData.project_emailer_templetes.map((file, index) => (
-            <tr key={index}>
-              <td>
-                {file.name || file.document_file_name || "No File"}
-              </td>
-              <td>
-                <button
-                  type="button"
-                  className="purple-btn2"
-                  onClick={() =>
-                    handleDiscardFile("project_emailer_templetes", index)
-                  }
-                >
-                  x
-                </button>
-              </td>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="2">No Files Uploaded</td>
-          </tr>
-        )}
-      </tbody>
+  {/* Project PPT Files */}
+  {formData.project_emailer_templetes && (
+    Array.isArray(formData.project_emailer_templetes) ? (
+      // If it's an array of files
+      formData.project_emailer_templetes.map((file, index) => (
+        <tr key={`emailer-${index}`}>
+          <td>
+            {file?.name || file?.document_file_name || "No File"}
+          </td>
+          <td>
+            <button
+              type="button"
+              className="purple-btn2"
+              onClick={() => handleDiscardFile("project_emailer_templetes", index)}
+            >
+              x
+            </button>
+          </td>
+        </tr>
+      ))
+    ) : (
+      // If it's a single file (as an object)
+      <tr>
+        <td>
+          {formData.project_emailer_templetes?.name || 
+           formData.project_emailer_templetes?.document_file_name || 
+           "No File"}
+        </td>
+        <td>
+          <button
+            type="button"
+            className="purple-btn2"
+            onClick={() => handleDiscardFile("project_emailer_templetes", 0)}
+          >
+            x
+          </button>
+        </td>
+      </tr>
+    )
+  )}
+</tbody>
     </table>
   </div>
 </div>
