@@ -745,10 +745,10 @@ const ProjectDetailsCreate = () => {
       toast.error("Construction Status is required.");
       return false;
     }
-    if (!formData.Configuration_Type.length) {
-      toast.error("Configuration Type is required.");
-      return false;
-    }
+    // if (!formData.Configuration_Type.length) {
+    //   toast.error("Configuration Type is required.");
+    //   return false;
+    // }
     if (!formData.Project_Name) {
       toast.error("Project Name is required.");
       return false;
@@ -765,10 +765,10 @@ const ProjectDetailsCreate = () => {
       toast.error("Project Description is required.");
       return false;
     }
-    if (!formData.Price_Onward) {
-      toast.error("Price Onward is required.");
-      return false;
-    }
+    // if (!formData.Price_Onward) {
+    //   toast.error("Price Onward is required.");
+    //   return false;
+    // }
     // if (!formData.Project_Size_Sq_Mtr) {
     //   toast.error("Project Size (Sq. Mtr.) is required.");
     //   return false;
@@ -785,14 +785,14 @@ const ProjectDetailsCreate = () => {
     //   toast.error("Development Area (Sq. Ft.) is required.");
     //   return false;
     // }
-    if (!formData.Rera_Carpet_Area_Sq_M) {
-      toast.error("RERA Carpet Area (Sq. M) is required.");
-      return false;
-    }
-    if (!formData.Rera_Carpet_Area_sqft) {
-      toast.error("RERA Carpet Area (Sq. Ft.) is required.");
-      return false;
-    }
+    // if (!formData.Rera_Carpet_Area_Sq_M) {
+    //   toast.error("RERA Carpet Area (Sq. M) is required.");
+    //   return false;
+    // }
+    // if (!formData.Rera_Carpet_Area_sqft) {
+    //   toast.error("RERA Carpet Area (Sq. Ft.) is required.");
+    //   return false;
+    // }
     if (!formData.Number_Of_Towers) {
       toast.error("Number of Towers is required.");
       return false;
@@ -801,18 +801,18 @@ const ProjectDetailsCreate = () => {
       toast.error("Number of Floors is required.");
       return false;
     }
-    if (!formData.Number_Of_Units) {
-      toast.error("Number of Units is required.");
-      return false;
-    }
-    if (!formData.Land_Area) {
-      toast.error("Land Area is required.");
-      return false;
-    }
-    if (!formData.land_uom) {
-      toast.error("Land UOM is required.");
-      return false;
-    }
+    // if (!formData.Number_Of_Units) {
+    //   toast.error("Number of Units is required.");
+    //   return false;
+    // }
+    // if (!formData.Land_Area) {
+    //   toast.error("Land Area is required.");
+    //   return false;
+    // }
+    // if (!formData.land_uom) {
+    //   toast.error("Land UOM is required.");
+    //   return false;
+    // }
     // if (!formData.Rera_Number_multiple) {
     //   toast.error("RERA Number is required.");
     //   return false;
@@ -850,10 +850,10 @@ const ProjectDetailsCreate = () => {
       toast.error("Brochure is required.");
       return false;
     }
-    if (formData.two_d_images.length === 0) {
-      toast.error("At least one 2D image is required.");
-      return false;
-    }
+    // if (formData.two_d_images.length === 0) {
+    //   toast.error("At least one 2D image is required.");
+    //   return false;
+    // }
     if (formData.videos.length === 0) {
       toast.error("At least one video is required.");
       return false;
@@ -1502,10 +1502,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Configuration Type
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                    
                   </label>
                   <MultiSelectBox
                     options={configurations.map((config) => ({
@@ -1614,10 +1611,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Price Onward
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                   
                   </label>
                   <input
                     className="form-control"
@@ -1714,10 +1708,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Carpet Area (Sq. M)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                   
                   </label>
                   <input
                     className="form-control"
@@ -1734,10 +1725,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Carpet Area (Sq. Ft.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                    
                   </label>
                   <input
                     className="form-control"
@@ -1754,10 +1742,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     RERA Sellable Area
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                   
                   </label>
                   <input
                     className="form-control"
@@ -1814,10 +1799,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Number of Units
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                    
                   </label>
                   <input
                     className="form-control"
@@ -1865,10 +1847,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Land Area
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                   
                   </label>
                   <input
                     className="form-control"
@@ -1885,10 +1864,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Land UOM
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                   
                   </label>
                   <SelectBox
                     options={[
@@ -2533,7 +2509,6 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
                 </h5>
 
                 <button
@@ -3522,10 +3497,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Virtual Tour Name{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                   
                   </label>
                   <input
                     className="form-control"
@@ -3543,10 +3515,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Virtual Tour URL{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
+                    
                   </label>
                   <input
                     className="form-control"
