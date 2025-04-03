@@ -21,7 +21,6 @@ const SitevisitList = () => {
   });
   const pageSize = 10;
 
-  console.log(siteVisits);
 
   useEffect(() => {
     const fetchSiteVisits = async () => {
@@ -36,7 +35,7 @@ const SitevisitList = () => {
             },
           }
         );
-        const data = response.data.site_visits;
+        const data = response.data;
         setSiteVisits(data);
         // setFilteredSiteVisits;
         setPagination({
@@ -76,14 +75,14 @@ const SitevisitList = () => {
     setSearchQuery(e.target.value);
     setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
-  const filteredData = siteVisits.filter(
+  const filteredData = siteVisits?.filter(
     (visit) =>
       !searchQuery ||
       (visit.project_name &&
         visit.project_name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const totalFiltered = filteredData.length;
+  const totalFiltered = filteredData?.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
 
   const handleSearchSubmit = (event) => {
@@ -101,7 +100,7 @@ const SitevisitList = () => {
   //   startIndex + pageSize
   // );
 
-  const displayedVisits = filteredData.slice(
+  const displayedVisits = filteredData?.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
@@ -208,7 +207,7 @@ const SitevisitList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {displayedVisits.length > 0 ? (
+                      {displayedVisits?.length > 0 ? (
                         displayedVisits.map((visit, index) => (
                           <tr key={visit.id}>
                             <td>{startIndex + index + 1}</td>

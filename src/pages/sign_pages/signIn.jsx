@@ -58,6 +58,8 @@ const SignIn = () => {
                 setError("Login failed. Please check your credentials.");
             }
         } catch (err) {
+            toast.error("Login failed. Please check your credentials.");
+
             setError("An error occurred during login. Please try again.");
         } finally {
             setLoading(false);

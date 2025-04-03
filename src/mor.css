@@ -437,7 +437,7 @@ fieldset select {
 }
 
 .navbar {
-  height: 10vh;
+  height: 90px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   position: sticky !important;
@@ -5570,7 +5570,7 @@ ul.pagination.justify-content-center {
 
 /* Logo */
 .logo {
-  height: 80px; /* Adjust logo size */
+  height: 70px; /* Adjust logo size */
   max-width: 150px;
 }
 
