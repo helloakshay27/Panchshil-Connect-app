@@ -19,8 +19,8 @@ const EventEdit = () => {
     from_time: "",
     to_time: "",
     rsvp_action: "",
-    rsvp_name: "", 
-    rsvp_number: "", 
+    rsvp_name: "",
+    rsvp_number: "",
     description: "",
     publish: "",
     user_id: "",
@@ -140,7 +140,7 @@ const EventEdit = () => {
       [name]: value,
     });
   };
-  
+
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -164,9 +164,9 @@ const EventEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     const data = new FormData();
-    
+
     // Append all form data fields
     Object.keys(formData).forEach((key) => {
       if (key === "attachfile" && formData.attachfile) {
@@ -175,13 +175,13 @@ const EventEdit = () => {
         data.append(`event[${key}]`, formData[key]);
       }
     });
-  
+
     // Append RSVP fields if RSVP action is "yes"
     if (formData.rsvp_action === "yes") {
       data.append("event[rsvp_name]", formData.rsvp_name || "");
       data.append("event[rsvp_number]", formData.rsvp_number || "");
     }
-  
+
     try {
       await axios.put(
         `${baseURL}events/${id}.json`,
@@ -202,7 +202,7 @@ const EventEdit = () => {
       setLoading(false);
     }
   };
-  
+
 
   const formatDateForInput = (isoString) => {
     if (!isoString) return ""; // Handle empty values
@@ -285,7 +285,7 @@ const EventEdit = () => {
                           type="text"
                           name="event_name"
                           placeholder="Enter Event Name"
-                          value={formData.event_name || "NA"}
+                          value={formData.event_name}
                           onChange={handleChange}
                         />
                       </div>
@@ -304,7 +304,7 @@ const EventEdit = () => {
                           type="text"
                           name="event_at"
                           placeholder="Enter Evnet At"
-                          value={formData.event_at || "NA"}
+                          value={formData.event_at}
                           onChange={handleChange}
                         />
                       </div>
@@ -342,7 +342,7 @@ const EventEdit = () => {
                           type="datetime-local"
                           name="to_time"
                           placeholder="Enter Event To"
-                          value={formatDateForInput(formData.to_time) || "NA"}
+                          value={formatDateForInput(formData.to_time)}
                           onChange={handleChange}
                         />
                       </div>
@@ -432,7 +432,7 @@ const EventEdit = () => {
                           rows={1}
                           name="description"
                           placeholder="Enter Project Description"
-                          value={formData.description || "NA"}
+                          value={formData.description}
                           onChange={handleChange}
                         />
                       </div>
@@ -524,7 +524,7 @@ const EventEdit = () => {
                           rows={1}
                           name="comment"
                           placeholder="Enter Project Description"
-                          value={formData.comment || "NA"}
+                          value={formData.comment}
                           onChange={handleChange}
                         />
                       </div>
@@ -543,7 +543,7 @@ const EventEdit = () => {
                           type="text"
                           name="shared"
                           placeholder="Enter Event Shared"
-                          value={formData.shared || "NA"}
+                          value={formData.shared}
                           onChange={handleChange}
                         />
                       </div>
@@ -562,7 +562,7 @@ const EventEdit = () => {
                           type="text"
                           name="share_groups"
                           placeholder="Enter Shared Groups"
-                          value={formData.share_groups || "NA"}
+                          value={formData.share_groups}
                           onChange={handleChange}
                         />
                       </div>
