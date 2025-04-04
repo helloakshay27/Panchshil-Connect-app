@@ -168,7 +168,7 @@ const BannerEdit = () => {
                       <label>Project *</label>
                       <SelectBox
                         options={projects.map((p) => ({
-                          label: p.project_name,
+                          label: p.Project_Name,
                           value: p.id,
                         }))}
                         defaultValue={formData.project_id}

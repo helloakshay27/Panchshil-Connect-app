@@ -17,6 +17,7 @@ const BannerAdd = () => {
   const [errors, setErrors] = useState({});
   const [previewImg, setPreviewImg] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [previewFiles, setPreviewFiles] = useState([]);
 
   const [formData, setFormData] = useState({
     banner_type: "",
@@ -31,15 +32,12 @@ const BannerAdd = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}projects.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}projects.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
         setProjects(response.data.projects || []);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -57,7 +55,9 @@ const BannerAdd = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const allowedTypes = ["image/jpeg","", "image/png", "image/gif", "image/webp,"];
+    setFormData({ ...formData, attachfile: files });
+    setPreviewFiles(files);
 
     const validFiles = files.filter((file) => allowedTypes.includes(file.type));
 
@@ -143,16 +143,12 @@ const BannerAdd = () => {
       console.log(sendData);
       alert();
 
-      await axios.post(
-        `${baseURL}banners.json`,
-        sendData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post(`${baseURL}banners.json`, sendData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Banner created successfully");
       navigate("/banner-list");
@@ -209,7 +205,7 @@ const BannerAdd = () => {
                       </label>
                       <SelectBox
                         options={projects.map((project) => ({
-                          label: project.project_name,
+                          label: project.Project_Name,
                           value: project.id,
                         }))}
                         defaultValue={formData.project_id}
@@ -302,6 +298,8 @@ const BannerAdd = () => {
                       )}
                     </div>
                   </div>
+                  {/* Banner File Upload */}
+                
                 </div>
               </div>
             </div>
