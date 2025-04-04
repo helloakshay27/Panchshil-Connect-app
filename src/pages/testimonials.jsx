@@ -12,6 +12,7 @@ const Testimonials = () => {
   const [companySetupId, setCompanySetupId] = useState("");
   const [userName, setUserName] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
   const [userProfile, setUserProfile] = useState(""); // State for user profile
   const [userType, setUserType] = useState("");
   const [content, setContent] = useState("");
@@ -98,6 +99,7 @@ const Testimonials = () => {
             ?.building_type || null,
         user_name: userName.trim(),
         video_url: videoUrl.trim(),
+        video_preview_image_url: imagePreview.trim(),
         profile_of_user: userProfile.trim(),
         content: content.trim(),
       },
@@ -119,6 +121,7 @@ const Testimonials = () => {
 
       setUserName("");
       setVideoUrl("");
+      setImagePreview("");
       setUserProfile(""); // Reset User Profile
       setUserType("");
       setContent("");
@@ -277,6 +280,26 @@ const Testimonials = () => {
                           placeholder="Enter video URL"
                           value={videoUrl}
                           onChange={(e) => setVideoUrl(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Video Preview Image
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="imagePreview"
+                          placeholder="Enter video URL"
+                          value={imagePreview}
+                          onChange={(e) => setImagePreview(e.target.value)}
                         />
                       </div>
                     </div>
