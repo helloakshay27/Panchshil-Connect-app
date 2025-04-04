@@ -11,26 +11,29 @@ const Testimonials = () => {
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
   const [companySetupId, setCompanySetupId] = useState("");
   const [userName, setUserName] = useState("");
-  const [userProfile, setUserProfile] = useState("");  // State for user profile
+  const [userProfile, setUserProfile] = useState(""); // State for user profile
   const [userType, setUserType] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
   const [buildingTypeId, setBuildingTypeId] = useState("");
   const [buildingType, setBuildingType] = useState({ id: "", name: "" });
-
+  const [videoFile, setVideoFile] = useState(null);
+  const [previewVideo, setPreviewVideo] = useState(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    video_url: "", // initialize with your fields
+  });
   useEffect(() => {
     const fetchCompanySetups = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}company_setups.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}company_setups.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         console.log("Raw API Response:", response.data);
 
@@ -56,15 +59,12 @@ const Testimonials = () => {
   useEffect(() => {
     const fetchBuildingTypes = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}building_types.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}building_types.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         if (response.data && Array.isArray(response.data)) {
           setBuildingTypeOptions(response.data);
@@ -94,7 +94,9 @@ const Testimonials = () => {
       testimonial: {
         // company_setup_id: companySetupId,
         building_id: buildingTypeId ? buildingTypeId.toString() : null,
-        building_type: buildingTypeOptions.find((option) => option.id === buildingTypeId)?.building_type || null,
+        building_type:
+          buildingTypeOptions.find((option) => option.id === buildingTypeId)
+            ?.building_type || null,
         user_name: userName.trim(),
         profile_of_user: userProfile.trim(),
         content: content.trim(),
@@ -103,16 +105,12 @@ const Testimonials = () => {
     console.log("Submitting data:", data);
 
     try {
-      const response = await axios.post(
-        `${baseURL}testimonials.json`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${baseURL}testimonials.json`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log("Response from POST:", response.data);
 
       toast.success("Data saved successfully!");
@@ -134,6 +132,29 @@ const Testimonials = () => {
       toast.error("Failed to submit. Please check your input.");
     } finally {
       setLoading(false);
+    }
+  };
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      // Validate file size (e.g., max 50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          testimonialVideo: "File size must be under 50MB",
+        }));
+        return;
+      }
+
+      // Clear errors if valid
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        testimonialVideo: "",
+      }));
+
+      setVideoFile(file);
+      setPreviewVideo(URL.createObjectURL(file)); // Create a preview URL
     }
   };
 
@@ -235,6 +256,31 @@ const Testimonials = () => {
                           }))}
                           value={buildingTypeId}
                           onChange={(value) => setBuildingTypeId(value)}
+                        />
+                      </div>
+                    </div>
+                    {/* User Testimonial Video Upload */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Testimonial Video URL
+                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="video_url" // 👈 backend parameter name
+                          placeholder="Enter video URL"
+                          value={formData.video_url || ""}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              video_url: e.target.value,
+                            })
+                          }
                         />
                       </div>
                     </div>

@@ -15,6 +15,7 @@ const TestimonialEdit = () => {
     user_profile: testimonial?.profile_of_user || "",
     building_id: testimonial?.building_id ?? null, // Ensure correct default value
     content: testimonial?.content || "",
+    video_url: testimonial?.video_url || "", // 👈 Add this
   });
 
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
@@ -38,7 +39,7 @@ const TestimonialEdit = () => {
           building_id: response.data.building_id ?? null, // Ensure correct ID is set
           content: response.data.content || "",
           content: response.data.content || "",
-
+          video_url: response.data.video_url || "", // 👈 Add this
         });
       } catch (error) {
         console.error("Error fetching testimonial data:", error);
@@ -55,14 +56,11 @@ const TestimonialEdit = () => {
   useEffect(() => {
     const fetchBuildingTypes = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}building_types.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}building_types.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        });
 
         if (response.data && Array.isArray(response.data)) {
           setBuildingTypeOptions(response.data);
@@ -79,7 +77,6 @@ const TestimonialEdit = () => {
     fetchBuildingTypes();
   }, []);
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -87,7 +84,6 @@ const TestimonialEdit = () => {
       [name]: value || "",
     }));
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,7 +97,10 @@ const TestimonialEdit = () => {
           testimonial: {
             ...formData,
             building_id: formData.building_id?.toString() || null,
-            building_type: buildingTypeOptions.find((option) => option.id === formData.building_id)?.building_type || null,
+            building_type:
+              buildingTypeOptions.find(
+                (option) => option.id === formData.building_id
+              )?.building_type || null,
             profile_of_user: formData.user_profile,
           },
         },
@@ -122,7 +121,6 @@ const TestimonialEdit = () => {
       setLoading(false);
     }
   };
-
 
   const handleCancel = () => {
     navigate(-1);
@@ -196,6 +194,25 @@ const TestimonialEdit = () => {
                             building_id: value, // Ensure it updates correctly
                           }))
                         }
+                      />
+                    </div>
+                  </div>
+                  {/* Video URL */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Testimonial Video URL
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {" "}
+                          *
+                        </span>
+                      </label>
+                      <input
+                        className="form-control"
+                        name="video_url"
+                        placeholder="Enter video URL"
+                        value={formData.video_url || ""}
+                        onChange={handleChange}
                       />
                     </div>
                   </div>
