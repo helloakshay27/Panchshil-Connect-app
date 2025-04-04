@@ -195,6 +195,8 @@ const SitevisitList = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
+                      <th>Action</th>
+
                         <th>Sr No</th>
                         <th>Status</th>
                         <th>Scheduled Time</th>
@@ -203,20 +205,12 @@ const SitevisitList = () => {
                         <th>Email</th>
                         <th>Mobile No</th>
 
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {displayedVisits?.length > 0 ? (
                         displayedVisits.map((visit, index) => (
                           <tr key={visit.id}>
-                            <td>{startIndex + index + 1}</td>
-                            <td>{visit.status}</td>
-                            <td>{visit.scheduled_time}</td>
-                            <td>{visit.project_name || "No Project Name"}</td>
-                            <td>{visit.name || "N/A"}</td>
-                            <td>{visit.email || "N/A"}</td>
-                            <td>{visit.mobile_no || "N/A"}</td>
                             <td>
                               <a
                                 href={`/sitevisit-edit/${visit.id}`}
@@ -240,6 +234,14 @@ const SitevisitList = () => {
                                 </svg>
                               </a>
                             </td>
+                            <td>{startIndex + index + 1}</td>
+                            <td>{visit.status}</td>
+                            <td>{visit.scheduled_time}</td>
+                            <td>{visit.project_name || "No Project Name"}</td>
+                            <td>{visit.name || "N/A"}</td>
+                            <td>{visit.email || "N/A"}</td>
+                            <td>{visit.mobile_no || "N/A"}</td>
+                            
                           </tr>
                         ))
                       ) : (

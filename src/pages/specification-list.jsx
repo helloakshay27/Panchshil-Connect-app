@@ -60,9 +60,7 @@ const SpecificationList = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(
-        `${baseURL}specification_setups/${id}.json`
-      );
+      await axios.delete(`${baseURL}specification_setups/${id}.json`);
       alert("Specification deleted successfully!");
 
       setSpecifications((prevSpecs) =>
@@ -176,37 +174,17 @@ const SpecificationList = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
+                        <th>Actions</th>
+
                         <th>Sr No</th>
                         <th>Name</th>
                         <th>Icon</th>
-                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {displayedSpecifications.length > 0 ? (
                         displayedSpecifications.map((spec, index) => (
                           <tr key={spec.id}>
-                            <td>
-                              {(pagination.current_page - 1) * pageSize +
-                                index +
-                                1}
-                            </td>
-                            <td>{spec.name || "N/A"}</td>
-                            <td>
-                              {spec.icon_url ? (
-                                <img
-                                  src={spec.icon_url}
-                                  alt="icon"
-                                  className="img-fluid rounded"
-                                  style={{
-                                    maxWidth: "100px",
-                                    maxHeight: "100px",
-                                  }}
-                                />
-                              ) : (
-                                <span>No Icon</span>
-                              )}
-                            </td>
                             <td>
                               <button
                                 className=" btn-link"
@@ -258,6 +236,27 @@ const SpecificationList = () => {
                                 </svg>
                               </button>
                             </td>
+                            <td>
+                              {(pagination.current_page - 1) * pageSize +
+                                index +
+                                1}
+                            </td>
+                            <td>{spec.name || "N/A"}</td>
+                            <td>
+                              {spec.icon_url ? (
+                                <img
+                                  src={spec.icon_url}
+                                  alt="icon"
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                  }}
+                                />
+                              ) : (
+                                <span>No Icon</span>
+                              )}
+                            </td>
                           </tr>
                         ))
                       ) : (
@@ -269,48 +268,98 @@ const SpecificationList = () => {
                   </table>
                 </div>
               )}
-              
-            <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-              <ul className="pagination justify-content-center d-flex">
-                <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={() => handlePageChange(1)}>
-                    First
-                  </button>
-                </li>
-                <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={() => handlePageChange(pagination.current_page - 1)}>
-                    Prev
-                  </button>
-                </li>
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                  <li key={pageNumber} className={`page-item ${pagination.current_page === pageNumber ? "active" : ""}`}>
-                    <button className="page-link" onClick={() => handlePageChange(pageNumber)}>
-                      {pageNumber}
+
+              <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                <ul className="pagination justify-content-center d-flex">
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(1)}
+                    >
+                      First
                     </button>
                   </li>
-                ))}
-                <li className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={() => handlePageChange(pagination.current_page + 1)}>
-                    Next
-                  </button>
-                </li>
-                <li className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={() => handlePageChange(totalPages)}>
-                    Last
-                  </button>
-                </li>
-              </ul>
-              <div>
-                <p>
-                  Showing {Math.min((pagination.current_page - 1) * pageSize + 1 || 1, pagination.total_count)} to {Math.min(pagination.current_page * pageSize, pagination.total_count)} of {pagination.total_count} entries
-                </p>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                    >
+                      Prev
+                    </button>
+                  </li>
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
+                    <li
+                      key={pageNumber}
+                      className={`page-item ${
+                        pagination.current_page === pageNumber ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === totalPages ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                    >
+                      Next
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${
+                      pagination.current_page === totalPages ? "disabled" : ""
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(totalPages)}
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
+                <div>
+                  <p>
+                    Showing{" "}
+                    {Math.min(
+                      (pagination.current_page - 1) * pageSize + 1 || 1,
+                      pagination.total_count
+                    )}{" "}
+                    to{" "}
+                    {Math.min(
+                      pagination.current_page * pageSize,
+                      pagination.total_count
+                    )}{" "}
+                    of {pagination.total_count} entries
+                  </p>
+                </div>
               </div>
             </div>
-          
-            </div>
-            
           </div>
-          
         </div>
       </div>
     </div>

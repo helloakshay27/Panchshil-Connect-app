@@ -216,7 +216,7 @@ const Eventlist = () => {
                       <table className="w-100">
                         <thead>
                           <tr>
-                          <th>View</th>
+                          <th>Action</th>
                             <th>Sr No</th>
                             {/* <th>Project Name</th> */}
                             <th>Event Name</th>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectBuildingTypeList = () => {
   const [buildingTypes, setBuildingTypes] = useState([]);
@@ -21,15 +20,39 @@ const ProjectBuildingTypeList = () => {
 
   const pageSize = 10;
 
-  useEffect(() => {
-    fetchBuildingTypes();
-  }, []);
+ useEffect(() => {
+  const fetchBuildingTypes = async () => {
+    try {
+      const response = await axios.get(
+        "https://panchshil-super.lockated.com/building_types.json",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (response.data && Array.isArray(response.data)) {
+        setBuildingTypeOptions(response.data);
+      } else {
+        console.warn("Unexpected API response format:", response.data);
+        setBuildingTypeOptions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching building type data:", error);
+      toast.error("Error loading building types.");
+    }
+  };
+
+  fetchBuildingTypes();
+}, []);
+
 
   const fetchBuildingTypes = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${baseURL}building_types.json`
+        "https://panchshil-super.lockated.com/building_types.json"
       );
       setBuildingTypes(response.data);
       setPagination({
@@ -44,6 +67,28 @@ const ProjectBuildingTypeList = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+  const fetchBuildingTypes = async () => {
+    try {
+      const response = await axios.get(
+        "https://panchshil-super.lockated.com/building_types.json",
+        {
+          headers: {
+            Authorization: "Bearer Rahl2NPBGjgY6SkP2wuXvWiStHFyEcVpOGdRG4fzhSE",
+          },
+        }
+      );
+      if (response.data && Array.isArray(response.data.building_types)) {
+        setBuildingTypes(response.data.building_types);
+      }
+    } catch (error) {
+      console.error("Error fetching building type data:", error);
+    }
+  };
+
+  fetchBuildingTypes();
+}, []);
+
   const handlePageChange = (pageNumber) => {
     setPagination((prev) => ({ ...prev, current_page: pageNumber }));
     localStorage.setItem("building_type_currentPage", pageNumber);
@@ -63,7 +108,7 @@ const ProjectBuildingTypeList = () => {
   const handleToggle = async (id, currentStatus) => {
     try {
       await axios.put(
-        `${baseURL}building_types/${id}.json`,
+        `https://panchshil-super.lockated.com/building_types/${id}.json`,
         {
           building_type: { active: !currentStatus },
         }
