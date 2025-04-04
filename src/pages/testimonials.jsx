@@ -11,6 +11,7 @@ const Testimonials = () => {
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
   const [companySetupId, setCompanySetupId] = useState("");
   const [userName, setUserName] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [userProfile, setUserProfile] = useState(""); // State for user profile
   const [userType, setUserType] = useState("");
   const [content, setContent] = useState("");
@@ -22,9 +23,7 @@ const Testimonials = () => {
   const [previewVideo, setPreviewVideo] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
-    video_url: "", // initialize with your fields
-  });
+
   useEffect(() => {
     const fetchCompanySetups = async () => {
       try {
@@ -98,6 +97,7 @@ const Testimonials = () => {
           buildingTypeOptions.find((option) => option.id === buildingTypeId)
             ?.building_type || null,
         user_name: userName.trim(),
+        video_url: videoUrl.trim(),
         profile_of_user: userProfile.trim(),
         content: content.trim(),
       },
@@ -118,6 +118,7 @@ const Testimonials = () => {
       // Reset form fields
 
       setUserName("");
+      setVideoUrl("");
       setUserProfile(""); // Reset User Profile
       setUserType("");
       setContent("");
@@ -274,13 +275,8 @@ const Testimonials = () => {
                           type="text"
                           name="video_url" // 👈 backend parameter name
                           placeholder="Enter video URL"
-                          value={formData.video_url || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              video_url: e.target.value,
-                            })
-                          }
+                          value={videoUrl}
+                          onChange={(e) => setVideoUrl(e.target.value)}
                         />
                       </div>
                     </div>
