@@ -264,7 +264,7 @@ const Testimonials = () => {
                       </div>
                     </div>
                     {/* User Testimonial Video Upload */}
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Testimonial Video URL
@@ -282,27 +282,9 @@ const Testimonials = () => {
                           onChange={(e) => setVideoUrl(e.target.value)}
                         />
                       </div>
-                    </div>
+                    </div> */}
 
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Video Preview Image
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="imagePreview"
-                          placeholder="Enter video URL"
-                          value={imagePreview}
-                          onChange={(e) => setImagePreview(e.target.value)}
-                        />
-                      </div>
-                    </div>
+                   
 
                     {/* Content (Description) */}
                     <div className="col-md-3">

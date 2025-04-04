@@ -198,7 +198,7 @@ const TestimonialEdit = () => {
                     </div>
                   </div>
                   {/* Video URL */}
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Testimonial Video URL
@@ -215,7 +215,7 @@ const TestimonialEdit = () => {
                         onChange={handleChange}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Content (Description) */}
                   <div className="col-md-3">

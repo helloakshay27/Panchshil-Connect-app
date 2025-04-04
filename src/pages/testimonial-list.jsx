@@ -165,6 +165,8 @@ const TestimonialList = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
+                      <th>Action</th>
+
                         <th>Sr No</th>
                         <th>User Name</th>
                         {/* <th>User Type</th> */}
@@ -173,33 +175,12 @@ const TestimonialList = () => {
                         {/* <th>Company Name</th> */}
                         <th>Created At</th>
                         <th>Updated At</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {displayedTestimonials.length > 0 ? (
                         displayedTestimonials.map((testimonial, index) => (
                           <tr key={testimonial.id}>
-                            <td>
-                              {(pagination.current_page - 1) * pageSize +
-                                index +
-                                1}
-                            </td>
-                            <td>{testimonial.user_name}</td>
-                            {/* <td>{testimonial.user_type}</td> */}
-                            <td>{testimonial.content}</td>
-                            {/* <td>{testimonial.company_setup_id}</td> */}
-                            {/* <td>{testimonial.company_name}</td> */}
-                            <td>
-                              {new Date(
-                                testimonial.created_at
-                              ).toLocaleString()}
-                            </td>
-                            <td>
-                              {new Date(
-                                testimonial.updated_at
-                              ).toLocaleString()}
-                            </td>
                             <td>
                               <button
                                 className="btn btn-link"
@@ -235,6 +216,27 @@ const TestimonialList = () => {
                                 </svg>
                               </button>
                             </td>
+                            <td>
+                              {(pagination.current_page - 1) * pageSize +
+                                index +
+                                1}
+                            </td>
+                            <td>{testimonial.user_name}</td>
+                            {/* <td>{testimonial.user_type}</td> */}
+                            <td>{testimonial.content}</td>
+                            {/* <td>{testimonial.company_setup_id}</td> */}
+                            {/* <td>{testimonial.company_name}</td> */}
+                            <td>
+                              {new Date(
+                                testimonial.created_at
+                              ).toLocaleString()}
+                            </td>
+                            <td>
+                              {new Date(
+                                testimonial.updated_at
+                              ).toLocaleString()}
+                            </td>
+                            
                           </tr>
                         ))
                       ) : (
