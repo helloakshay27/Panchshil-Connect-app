@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseURL } from "./baseurl/apiDomain";
+import toast from "react-hot-toast";
 
 const ProjectDetailsList = () => {
   const [projects, setProjects] = useState([]);
@@ -43,7 +44,6 @@ const ProjectDetailsList = () => {
   const fetchProjects = async () => {
     setLoading(true);
     const url = `${baseURL}get_projects_all.json`;
-
     try {
       const response = await axios.get(url, {
         headers: {
@@ -95,6 +95,32 @@ const ProjectDetailsList = () => {
     }
   };
 
+
+  const handleToggle = async (id, currentStatus) => {
+    const updatedStatus = !currentStatus;
+    try {
+      await axios.put(
+        `${baseURL}projects/${id}.json`,
+        { project: { published: updatedStatus } },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+          }
+        }
+      );
+      setProjects((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, published: updatedStatus } : item
+        )
+      );
+      toast.success("Status updated successfully!");
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status.");
+    }
+  };
+
   // Filter projects based on search query (client-side filtering like BannerList)
   const filteredProjects = searchQuery
     ? projects.filter((project) =>
@@ -112,6 +138,9 @@ const ProjectDetailsList = () => {
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
+
+
+  console.log("Projects", projects);
 
   return (
     <>
@@ -228,7 +257,46 @@ const ProjectDetailsList = () => {
                         <tbody>
                           {displayedProjects?.map((project, index) => (
                             <tr key={index}>
-                              <td>
+                              <td key={project.id}>
+                              <button
+                                  onClick={() =>
+                                    handleToggle(project.id, project.published)
+                                  }
+                                  className="toggle-button"
+                                  style={{
+                                    border: "none",
+                                    background: "none",
+                                    cursor: "pointer",
+                                    padding: 0,
+                                    width: "35px",
+                                    // gap: "1px",
+                                  }}
+                                >
+                                  {console.log("gsdfg", project.published)}
+                                  {project.published ? (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="40"
+                                      height="25"
+                                      fill="#de7008"
+                                      className="bi bi-toggle-on"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="40"
+                                      height="25"
+                                      fill="#667085"
+                                      className="bi bi-toggle-off"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                                    </svg>
+                                  )}
+                                </button>
                                 <a
                                   href={`/project-edit/${project?.id || "N/A"}`}
                                 >
@@ -249,6 +317,7 @@ const ProjectDetailsList = () => {
                                     />
                                   </svg>
                                 </a>
+
                                 <a
                                   href={`/project-details/${
                                     project?.id || "N/A"
