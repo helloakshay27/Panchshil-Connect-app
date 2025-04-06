@@ -6,6 +6,7 @@ import "./login.css";
 import toast from "react-hot-toast";
 import { baseURL, LOGO_URL } from "../baseurl/apiDomain";
 
+
 const SignIn = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -126,7 +127,7 @@ const SignIn = () => {
                 sessionStorage.setItem("email", email);
                 sessionStorage.setItem("firstname", firstname);
 
-                navigate("/");
+                navigate("/project-list");
                 toast.success("Login successfully")
 
             } else {
