@@ -2294,10 +2294,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Number of Towers
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2313,10 +2313,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Number of Floors
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
