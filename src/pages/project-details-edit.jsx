@@ -67,6 +67,8 @@ const ProjectDetailsEdit = () => {
     project_exteriors: [],
     project_emailer_templetes: [],
     project_layout: [],
+    project_sales_type: "",
+
   });
 
   console.log("formData", formData);
@@ -228,6 +230,7 @@ const ProjectDetailsEdit = () => {
           project_emailer_templetes:
             projectData.project_emailer_templetes || [],
           project_ppt: projectData.project_ppt || [],
+          project_sales_type: projectData.project_sales_type || [],
         });
 
         setProject(response.data);
@@ -869,14 +872,140 @@ const ProjectDetailsEdit = () => {
   };
 
   const validateForm = (formData) => {
-    const errors = [];
+    // Clear previous toasts
+    toast.dismiss();
 
-    if (!formData.Property_Type) {
-      errors.push("Project Type is required.");
-      return errors;
+    if (formData.image.length === 0) {
+      toast.error("Project Logo is required.");
+      return false;
     }
+    if (!formData.Property_Type.length === 0) {
+      toast.error("Property Type is required.");
+      return false;
+    }
+    if (!formData.building_type) {
+      toast.error("Building Type is required.");
+      return false;
+    }
+    if (!formData.Project_Construction_Status) {
+      toast.error("Construction Status is required.");
+      return false;
+    }
+    // if (!formData.Configuration_Type.length) {
+    //   toast.error("Configuration Type is required.");
+    //   return false;
+    // }
+    if (!formData.Project_Name) {
+      toast.error("Project Name is required.");
+      return false;
+    }
+    if (!formData.project_address) {
+      toast.error("Location is required.");
+      return false;
+    }
+    // if (!formData.project_tag) {
+    //   toast.error("Project Tag is required.");
+    //   return false;
+    // }
+    // if (!formData.Project_Description) {
+    //   toast.error("Project Description is required.");
+    //   return false;
+    // }
+    // if (!formData.Price_Onward) {
+    //   toast.error("Price Onward is required.");
+    //   return false;
+    // }
+    // if (!formData.Project_Size_Sq_Mtr) {
+    //   toast.error("Project Size (Sq. Mtr.) is required.");
+    //   return false;
+    // }
+    // if (!formData.Project_Size_Sq_Ft) {
+    //   toast.error("Project Size (Sq. Ft.) is required.");
+    //   return false;
+    // }
+    // if (!formData.development_area_sqmt) {
+    //   toast.error("Development Area (Sq. Mtr.) is required.");
+    //   return false;
+    // }
+    // if (!formData.development_area_sqft) {
+    //   toast.error("Development Area (Sq. Ft.) is required.");
+    //   return false;
+    // }
+    // if (!formData.Rera_Carpet_Area_Sq_M) {
+    //   toast.error("RERA Carpet Area (Sq. M) is required.");
+    //   return false;
+    // }
+    // if (!formData.Rera_Carpet_Area_sqft) {
+    //   toast.error("RERA Carpet Area (Sq. Ft.) is required.");
+    //   return false;
+    // }
+    // if (!formData.Number_Of_Towers) {
+    //   toast.error("Number of Towers is required.");
+    //   return false;
+    // }
+    // if (!formData.no_of_floors) {
+    //   toast.error("Number of Floors is required.");
+    //   return false;
+    // }
+    // if (!formData.Number_Of_Units) {
+    //   toast.error("Number of Units is required.");
+    //   return false;
+    // }
+    // if (!formData.Land_Area) {
+    //   toast.error("Land Area is required.");
+    //   return false;
+    // }
+    // if (!formData.land_uom) {
+    //   toast.error("Land UOM is required.");
+    //   return false;
+    // }
+    // if (!formData.Rera_Number_multiple) {
+    //   toast.error("RERA Number is required.");
+    //   return false;
+    // }
 
-    return errors;
+    // if (!formData.Amenities.length) {
+    //   toast.error("Amenities are required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.address_line_1) {
+    //   toast.error("Address Line 1 is required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.city) {
+    //   toast.error("City is required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.state) {
+    //   toast.error("State is required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.pin_code) {
+    //   toast.error("Pin Code is required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.country) {
+    //   toast.error("Country is required.");
+    //   return false;
+    // }
+    // if (!formData.map_url) {
+    //   toast.error("Map URL is required.");
+    //   return false;
+    // }
+    // if (!formData.brochure.length === 0) {
+    //   toast.error("Brochure is required.");
+    //   return false;
+    // }
+    // if (formData.two_d_images.length === 0) {
+    //   toast.error("At least one 2D image is required.");
+    //   return false;
+    // }
+    // if (formData.videos.length === 0) {
+    //   toast.error("At least one video is required.");
+    //   return false;
+    // }
+
+    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -1101,11 +1230,14 @@ const ProjectDetailsEdit = () => {
   const statusOptions = {
     "Office Parks": [
       { value: "Completed", label: "Completed" },
-      { value: "Under-Construction", label: "Under Construction" },
+      // { value: "Under-Construction", label: "Under Construction" },
+      { value: "Ready-To-Move-in", label: "Ready To Move in" },
+      { value: "Upcoming", label: "Upcoming"}
     ],
     Residential: [
       { value: "Completed", label: "Completed" },
       { value: "Ready-To-Move-in", label: "Ready To Move in" },
+      { value: "Upcoming", label: "Upcoming"}
     ],
   };
 
@@ -1205,10 +1337,10 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleAddVirtualTour = () => {
-    if (!virtualTourName || !virtualTourUrl) {
-      alert("Please enter both Tour Name and URL.");
-      return;
-    }
+    // if (!virtualTourName || !virtualTourUrl) {
+    //   alert("Please enter both Tour Name and URL.");
+    //   return;
+    // }
 
     setFormData((prev) => {
       console.log("Previous state:", prev); // Debugging
@@ -1761,11 +1893,11 @@ const ProjectDetailsEdit = () => {
       { value: "Built-to-Suit", label: "Built to Suit" },
       { value: "Upcoming-Developments", label: "Upcoming Developments" },
     ],
-    Residential: [
-      { value: "Completed", label: "Completed" },
-      { value: "Ready-To-Move-In", label: "Ready To Move In" },
-      { value: "Upcoming-Developments", label: "Upcoming Developments" },
-    ],
+    // Residential: [
+    //   { value: "Completed", label: "Completed" },
+    //   { value: "Ready-To-Move-In", label: "Ready To Move In" },
+    //   { value: "Upcoming-Developments", label: "Upcoming Developments" },
+    // ],
   };
 
   return (
@@ -1858,10 +1990,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Building Type
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <SelectBox
                     options={buildingTypeOptions[formData.Property_Type] || []} // ✅ Show correct options
@@ -1902,10 +2034,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Configuration Type
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <MultiSelectBox
                     options={configurations.map((config) => ({
@@ -2008,10 +2140,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Price Onward
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
 
                   <input
@@ -2105,10 +2237,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Rera Carpet Area (Sq. M)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2124,10 +2256,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Rare Carpet Area (Sq. Ft.)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2139,7 +2271,7 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-              <div className="col-md-3 mt-2">
+              {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Rare Sellable Area
@@ -2157,7 +2289,7 @@ const ProjectDetailsEdit = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
+              </div> */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -2200,10 +2332,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Number of Units
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2321,10 +2453,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Land Area (Acres)
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2341,10 +2473,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Land UOM
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <SelectBox
                     options={[
@@ -2379,6 +2511,30 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
+               <div className="col-md-3 mt-2">
+                              <div className="form-group">
+                                <label>
+                                  Project Sales Type
+                                 
+                                </label>
+                                <SelectBox
+                                  options={[
+                                    { value: "Sales", label: "Sales" },
+                                    {
+                                      value: "Lease",
+                                      label: "Lease",
+                                    },
+                                  ]}
+                                  defaultValue={formData.project_sales_type}
+                                  onChange={(selectedOption) =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      project_sales_type: selectedOption,
+                                    }))
+                                  }
+                                />
+                              </div>
+                            </div>
               {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -2546,10 +2702,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Amenities
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <MultiSelectBox
                     options={amenities.map((ammit) => ({
@@ -2599,10 +2755,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Address Line 1{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>{" "}
+                    </span>{" "} */}
                   </label>
                   <input
                     className="form-control"
@@ -2636,10 +2792,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     City
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2655,10 +2811,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     State
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2674,10 +2830,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Pin Code
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2714,10 +2870,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Country
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2733,10 +2889,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Map URL
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2755,7 +2911,7 @@ const ProjectDetailsEdit = () => {
           <div className="card-header3">
             <h3 className="card-title">
               File Upload
-              <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+              {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
             </h3>
           </div>
           <div className="card-body">
@@ -2776,7 +2932,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 {/* Category Dropdown and Add Button in one row */}
@@ -2995,7 +3151,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3079,7 +3235,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
                 </h5>
 
                 <button
@@ -3189,7 +3345,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3291,7 +3447,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3392,7 +3548,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3496,7 +3652,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3603,7 +3759,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3707,7 +3863,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3811,7 +3967,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3915,7 +4071,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -4037,7 +4193,7 @@ const ProjectDetailsEdit = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -4242,10 +4398,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Virtual Tour Name{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -4262,10 +4418,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Virtual Tour URL{" "}
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"

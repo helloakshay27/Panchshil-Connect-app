@@ -62,6 +62,7 @@ const ProjectDetailsCreate = () => {
     project_exteriors: [],
     project_emailer_templetes: [],
     project_layout: [],
+    project_sales_type: "",
   });
 
   useEffect(() => {
@@ -159,6 +160,8 @@ const ProjectDetailsCreate = () => {
     }
   };
 
+  
+
   // const handleLayoutFileChange = (e, fieldName) => {
   //   if (fieldName === "Layoutimage") {
   //     const file = e.target.files[0]; // Only take the first file
@@ -195,7 +198,7 @@ const ProjectDetailsCreate = () => {
 
   // Filter amenities based on selected type
   useEffect(() => {
-    if (selectedType) {
+    if (selectedType) {Area
       setFilteredAmenities(
         amenities.filter((ammit) => ammit.amenity_type === selectedType.value)
       );
@@ -401,7 +404,7 @@ const ProjectDetailsCreate = () => {
     if (name === "project_exteriors") {
       const newFiles = Array.from(files);
       const validFiles = [];
-
+      Area
       newFiles.forEach((file) => {
         if (!allowedTypes.project_exteriors.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
@@ -733,6 +736,131 @@ const ProjectDetailsCreate = () => {
       toast.error("Project Logo is required.");
       return false;
     }
+    if (!formData.Property_Type.length === 0) {
+      toast.error("Property Type is required.");
+      return false;
+    }
+    // if (!formData.building_type) {
+    //   toast.error("Building Type is required.");
+    //   return false;
+    // }
+    if (!formData.Project_Construction_Status) {
+      toast.error("Construction Status is required.");
+      return false;
+    }
+    // if (!formData.Configuration_Type.length) {
+    //   toast.error("Configuration Type is required.");
+    //   return false;
+    // }
+    if (!formData.Project_Name) {
+      toast.error("Project Name is required.");
+      return false;
+    }
+    // if (!formData.project_address) {
+    //   toast.error("Location is required.");
+    //   return false;
+    // }
+    // if (!formData.project_tag) {
+    //   toast.error("Project Tag is required.");
+    //   return false;
+    // }
+    // if (!formData.Project_Description) {
+    //   toast.error("Project Description is required.");
+    //   return false;
+    // }
+    // if (!formData.Price_Onward) {
+    //   toast.error("Price Onward is required.");
+    //   return false;
+    // }
+    // if (!formData.Project_Size_Sq_Mtr) {
+    //   toast.error("Project Size (Sq. Mtr.) is required.");
+    //   return false;
+    // }
+    // if (!formData.Project_Size_Sq_Ft) {
+    //   toast.error("Project Size (Sq. Ft.) is required.");
+    //   return false;
+    // }
+    // if (!formData.development_area_sqmt) {
+    //   toast.error("Development Area (Sq. Mtr.) is required.");
+    //   return false;
+    // }
+    // if (!formData.development_area_sqft) {
+    //   toast.error("Development Area (Sq. Ft.) is required.");
+    //   return false;
+    // }
+    // if (!formData.Rera_Carpet_Area_Sq_M) {
+    //   toast.error("RERA Carpet Area (Sq. M) is required.");
+    //   return false;
+    // }
+    // if (!formData.Rera_Carpet_Area_sqft) {
+    //   toast.error("RERA Carpet Area (Sq. Ft.) is required.");
+    //   return false;
+    // }
+    // if (!formData.Number_Of_Towers) {
+    //   toast.error("Number of Towers is required.");
+    //   return false;
+    // }
+    // if (!formData.no_of_floors) {
+    //   toast.error("Number of Floors is required.");
+    //   return false;
+    // }
+    // if (!formData.Number_Of_Units) {
+    //   toast.error("Number of Units is required.");
+    //   return false;
+    // }
+    // if (!formData.Land_Area) {
+    //   toast.error("Land Area is required.");
+    //   return false;
+    // }
+    // if (!formData.land_uom) {
+    //   toast.error("Land UOM is required.");
+    //   return false;
+    // }
+    // if (!formData.Rera_Number_multiple) {
+    //   toast.error("RERA Number is required.");
+    //   return false;
+    // }
+
+    // if (!formData.Amenities.length) {
+    //   toast.error("Amenities are required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.address_line_1) {
+    //   toast.error("Address Line 1 is required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.city) {
+    //   toast.error("City is required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.state) {
+    //   toast.error("State is required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.pin_code) {
+    //   toast.error("Pin Code is required.");
+    //   return false;
+    // }
+    // if (!formData.Address || !formData.Address.country) {
+    //   toast.error("Country is required.");
+    //   return false;
+    // }
+    // if (!formData.map_url) {
+    //   toast.error("Map URL is required.");
+    //   return false;
+    // }
+    // if (!formData.brochure.length === 0) {
+    //   toast.error("Brochure is required.");
+    //   return false;
+    // }
+    // if (formData.two_d_images.length === 0) {
+    //   toast.error("At least one 2D image is required.");
+    //   return false;
+    // }
+    // if (formData.videos.length === 0) {
+    //   toast.error("At least one video is required.");
+    //   return false;
+    // }
 
     return true;
   };
@@ -1084,11 +1212,14 @@ const ProjectDetailsCreate = () => {
   const statusOptions = {
     "Office Parks": [
       { value: "Completed", label: "Completed" },
-      { value: "Under-Construction", label: "Under Construction" },
+      // { value: "Under-Construction", label: "Under Construction" },
+      { value: "Ready-To-Move-in", label: "Ready To Move in" },
+      { value: "Upcoming", label: "Upcoming"}
     ],
     Residential: [
       { value: "Completed", label: "Completed" },
       { value: "Ready-To-Move-in", label: "Ready To Move in" },
+      { value: "Upcoming", label: "Upcoming"}
     ],
   };
 
@@ -1166,10 +1297,10 @@ const ProjectDetailsCreate = () => {
     // Dismiss any existing toast messages before showing a new one
     toast.dismiss();
 
-    if (!virtualTourUrl.trim() || !virtualTourName.trim()) {
-      toast.error("Both URL and Name are required.");
-      return;
-    }
+    // if (!virtualTourUrl.trim() || !virtualTourName.trim()) {
+    //   toast.error("Both URL and Name are required.");
+    //   return;
+    // }
 
     setFormData((prev) => ({
       ...prev,
@@ -1254,11 +1385,11 @@ const ProjectDetailsCreate = () => {
       { value: "Built-to-Suit", label: "Built to Suit" },
       { value: "Upcoming-Developments", label: "Upcoming Developments" },
     ],
-    Residential: [
-      { value: "Completed", label: "Completed" },
-      { value: "Ready-To-Move-In", label: "Ready To Move In" },
-      { value: "Upcoming-Developments", label: "Upcoming Developments" },
-    ],
+    // Residential: [
+    //   { value: "Completed", label: "Completed" },
+    //   { value: "Ready-To-Move-In", label: "Ready To Move In" },
+    //   { value: "Upcoming-Developments", label: "Upcoming Developments" },
+    // ],
   };
 
   return (
@@ -1332,10 +1463,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Building Type
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <SelectBox
                     options={buildingTypeOptions[formData.Property_Type] || []} // ✅ Show correct options
@@ -1466,10 +1597,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Project Description
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <textarea
                     className="form-control"
@@ -1613,7 +1744,7 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              <div className="col-md-3 mt-2">
+              {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     RERA Sellable Area
@@ -1628,16 +1759,16 @@ const ProjectDetailsCreate = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Number of Towers
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1654,10 +1785,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Number of Floors
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1774,6 +1905,31 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Project Sales Type
+                   
+                  </label>
+                  <SelectBox
+                    options={[
+                      { value: "Sales", label: "Sales" },
+                      {
+                        value: "Lease",
+                        label: "Lease",
+                      },
+                    ]}
+                    value={formData?.project_sales_type || ""}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        project_sales_type: value,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -1887,7 +2043,7 @@ const ProjectDetailsCreate = () => {
         <div className="form-group">
           <label>
             Amenities
-            <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+            {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
           </label>
           <MultiSelectBox
             options={amenities.map((ammit) => ({
@@ -1922,9 +2078,9 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Address Line 1
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       *
-                    </span>{" "}
+                    </span>{" "} */}
                   </label>
                   <input
                     className="form-control"
@@ -1960,10 +2116,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     City
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1980,10 +2136,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     State
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -1999,10 +2155,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Pin Code
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2039,10 +2195,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Country
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2058,10 +2214,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>
                     Map URL
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <input
                     className="form-control"
@@ -2100,7 +2256,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 {/* Category Dropdown and Add Button in one row */}
@@ -2219,7 +2375,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -2303,7 +2459,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
                 </h5>
 
                 <button
@@ -2480,7 +2636,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -2577,7 +2733,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -2674,7 +2830,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -2777,7 +2933,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -2877,7 +3033,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -2974,7 +3130,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3071,7 +3227,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
@@ -3167,7 +3323,7 @@ const ProjectDetailsCreate = () => {
                       </span>
                     )}
                   </span>
-                  <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
                 <button
