@@ -576,6 +576,7 @@ const ProjectDetailsEdit = () => {
       return { ...prev, gallery_image: updatedGallery };
     });
   };
+
   const handleFetchedDiscardGallery = async (key, index, imageId) => {
     if (!imageId) {
       console.error("Error: No image ID found for deletion.");
@@ -583,10 +584,10 @@ const ProjectDetailsEdit = () => {
       return;
     }
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this image?"
-    );
-    if (!confirmDelete) return;
+    // const confirmDelete = window.confirm(
+    //   "Are you sure you want to delete this image?"
+    // );
+    // if (!confirmDelete) return;
 
     try {
       const response = await fetch(
@@ -606,14 +607,33 @@ const ProjectDetailsEdit = () => {
       }
 
       // Update state to remove the deleted image
-      setFormData((prev) => ({
-        ...prev,
-        [key]: prev[key].filter((_, i) => i !== index),
-      }));
+      setFormData((prev) => {
+        const updatedFetchedGallery = prev[key].map((fileGroup, i) => {
+          if (i !== index) return fileGroup;
+      
+          const updatedAttachments = (fileGroup.attachfiles || []).filter(
+            (a) => a.id !== imageId
+          );
+      
+          return {
+            ...fileGroup,
+            attachfiles: updatedAttachments,
+          };
+        }).filter(group => (group.attachfiles && group.attachfiles.length > 0));
+      
+        return {
+          ...prev,
+          [key]: updatedFetchedGallery,
+        };
+      });
+      
+      
+      
 
       toast.success("Image deleted successfully!");
       console.log(`Image with ID ${imageId} deleted successfully`);
     } catch (error) {
+    
       console.error("Error deleting image:", error.message);
       toast.error("Failed to delete image. Please try again.");
     }
@@ -3015,7 +3035,8 @@ const ProjectDetailsEdit = () => {
                                 className="purple-btn2"
                                 onClick={() =>
                                   handleFetchedDiscardGallery(
-                                    "gallery_image",
+                                        "fetched_gallery_image", // 🔥 correct key
+
                                     index,
                                     attachment.id
                                   )
