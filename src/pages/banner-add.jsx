@@ -205,7 +205,7 @@ const BannerAdd = () => {
                       </label>
                       <SelectBox
                         options={projects.map((project) => ({
-                          label: project.Project_Name,
+                          label: project.project_name,
                           value: project.id,
                         }))}
                         defaultValue={formData.project_id}
