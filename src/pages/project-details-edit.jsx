@@ -883,10 +883,10 @@ const ProjectDetailsEdit = () => {
       toast.error("Property Type is required.");
       return false;
     }
-    if (!formData.building_type) {
-      toast.error("Building Type is required.");
-      return false;
-    }
+    // if (!formData.building_type) {
+    //   toast.error("Building Type is required.");
+    //   return false;
+    // }
     if (!formData.Project_Construction_Status) {
       toast.error("Construction Status is required.");
       return false;
@@ -1905,14 +1905,14 @@ const ProjectDetailsEdit = () => {
       {/* <Header /> */}
 
       <div className="module-data-section p-3">
-        <div className="card mt-4 pb-4 mx-4">
+        <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
             <h3 className="card-title">Edit Project</h3>
           </div>
           <div className="card-body">
             <div className="row">
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
+            <div className="col-md-3 mt-2">
+            <div className="form-group">
                   <label>
                     Project Banner Image
                     <span
@@ -2121,10 +2121,10 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Description
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
-                    </span>
+                    </span> */}
                   </label>
                   <textarea
                     className="form-control"
@@ -3192,30 +3192,27 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
 
-                    <tbody>
-                      {/* Brochure */}
-                      {formData.brochure && (
-                        <tr>
-                          <td>
-                            {formData.brochure?.name ||
-                              formData.brochure?.document_file_name ||
-                              "No File"}
-                          </td>
+                   <tbody>
+  {/* Show brochure only if it's a valid object with a name or file */}
+  {formData.brochure &&
+    (formData.brochure.name || formData.brochure.document_file_name) && (
+      <tr>
+        <td>
+          {formData.brochure.name || formData.brochure.document_file_name}
+        </td>
+        <td>
+          <button
+            type="button"
+            className="purple-btn2"
+            onClick={() => handleDiscardFile("brochure")}
+          >
+            x
+          </button>
+        </td>
+      </tr>
+  )}
+</tbody>
 
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardFile("brochure", index)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
                   </table>
                 </div>
               </div>

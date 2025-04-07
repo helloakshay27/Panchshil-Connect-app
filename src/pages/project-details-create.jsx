@@ -756,10 +756,10 @@ const ProjectDetailsCreate = () => {
       toast.error("Project Name is required.");
       return false;
     }
-    // if (!formData.project_address) {
-    //   toast.error("Location is required.");
-    //   return false;
-    // }
+    if (!formData.project_address) {
+      toast.error("Location is required.");
+      return false;
+    }
     // if (!formData.project_tag) {
     //   toast.error("Project Tag is required.");
     //   return false;
