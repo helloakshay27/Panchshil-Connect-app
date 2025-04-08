@@ -50,17 +50,21 @@ div {
 
 @font-face {
   font-family: "vi-regular";
-  src: url(/assets/fonts/Vi-Regular.otf);
+  /* src: url(/assets/fonts/Vi-Regular.otf); */
+  src: url("");
 }
 
 @font-face {
   font-family: "vi-bold";
-  src: url(/assets/fonts/Vi-Bold.otf);
+  /* src: url(/assets/fonts/Vi-Bold.otf); */
+  src: url("");
 }
 
 @font-face {
   font-family: "vi-SemiBold";
-  src: url(/assets/fonts/Vi-SemiBold.otf);
+  /* src: url(/assets/fonts/Vi-SemiBold.otf); */
+  src: url("");
+
 }
 
 .notice {
