@@ -108,13 +108,13 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
       return false;
     }
 
-    if (!formData.attachfile.length) {
-      newErrors.attachfile = "";
-      setErrors(newErrors);
-      toast.dismiss(); // Clear previous toasts
-      toast.error("Banner image is mandatory");
-      return false;
-    }
+    // if (!formData.attachfile.length) {
+    //   newErrors.attachfile = "";
+    //   setErrors(newErrors);
+    //   toast.dismiss(); // Clear previous toasts
+    //   toast.error("Banner image is mandatory");
+    //   return false;
+    // }
 
     // If we reach here, all validations passed
     setErrors({});
@@ -203,7 +203,8 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Title <span style={{ color: "#de7008" }}> *</span>
+                        Title 
+                        <span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -226,7 +227,8 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Project <span style={{ color: "#de7008" }}> *</span>
+                        Project 
+                        <span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <SelectBox
                         options={projects.map((project) => ({
@@ -288,10 +290,10 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
                             </span>
                           )}
                         </span>
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
+                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                           {" "}
                           *
-                        </span>
+                        </span> */}
                       </label>
                       <input
                         className="form-control"
@@ -339,7 +341,7 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
           </span>
         )}
       </span>
-      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
     </label>
     <input
       className="form-control"

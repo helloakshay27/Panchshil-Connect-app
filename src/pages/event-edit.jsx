@@ -256,10 +256,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event Type
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
@@ -294,10 +294,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event At
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
@@ -313,10 +313,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event From
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
@@ -332,10 +332,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event To
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
@@ -352,10 +352,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           RSVP Action
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <div className="d-flex">
                           <div className="form-check me-3">
@@ -422,10 +422,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event Description
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <textarea
                           className="form-control"
@@ -441,10 +441,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event Publish
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <div className="d-flex">
                           <div className="form-check me-3">
@@ -489,10 +489,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event User ID
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <SelectBox
                           options={eventUserID?.map((user) => ({
@@ -514,10 +514,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event Comment
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <textarea
                           className="form-control"
@@ -533,10 +533,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event Shared
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
@@ -552,10 +552,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Event Share Groups
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
@@ -571,10 +571,10 @@ const EventEdit = () => {
                       <div className="form-group">
                         <label>
                           Attachment
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
