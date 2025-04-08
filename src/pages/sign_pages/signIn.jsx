@@ -56,6 +56,104 @@ const SignIn = () => {
       setCurrentProject('panchshil');
     }
   }, []);
+
+
+  const handlePasswordLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${config.baseURL}/users/signin.json`, {
+        user: {
+          email,
+          password,
+        },
+      });
+
+      if (response.data.access_token) {
+        localStorage.setItem("access_token", response.data.access_token);
+        sessionStorage.setItem("email", response.data.email);
+        sessionStorage.setItem("firstname", response.data.firstname);
+        navigate("/project-list");
+        toast.success("Login successful");
+      } else {
+        setError("Login failed. Please check your credentials.");
+      }
+    } catch (err) {
+      toast.error("Login failed. Please check your credentials.");
+      setError("An error occurred during login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
+    if (!mobile || !/^\d{10}$/.test(mobile)) {
+      setError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/generate_code`,
+        { mobile }
+      );
+      setOtpSection(false);
+      toast.success("OTP Sent successfully");
+      setShowOtpSection(true);
+    } catch (err) {
+      toast.error("Failed to send OTP. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    if (!otp) {
+      setError("Please enter a valid OTP.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/verify_code.json`,
+        { mobile, otp }
+      );
+
+      const { access_token, email, firstname } = response.data;
+      if (access_token) {
+        localStorage.setItem("access_token", access_token);
+        sessionStorage.setItem("email", email);
+        sessionStorage.setItem("firstname", firstname);
+        navigate("/project-list");
+        toast.success("Login successfully");
+      } else {
+        setError("Login failed. Please check your credentials.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "An error occurred during login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   
   // Get the current project's configuration
   const config = projectConfigs[currentProject];
