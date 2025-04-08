@@ -23,7 +23,7 @@ const projectConfigs = {
     logoUrl: Rustomji_URL, // Replace with actual Rustomjee logo
     loginBgClass: "login_bg_rustomji",
     loginSecClass: "login-sec-rustom pt-5",
-    logoStyle: { width: 300, height: 125, margin: "20px 40px" },
+    logoStyle: { width: 335, height: 108, margin: "20px " },
     showRegisterButton: false,
     formTextColor: "text-light",
     alignContent: "justify-content-end",
