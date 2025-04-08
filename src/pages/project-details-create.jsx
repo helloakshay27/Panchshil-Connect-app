@@ -1374,6 +1374,7 @@ const ProjectDetailsCreate = () => {
 
   const propertyTypeOptions = [
     { value: "Office Parks", label: "Office Parks" },
+    { value: "Plots", label: "Plots" },
     { value: "Residential", label: "Residential" },
   ];
 
@@ -1593,14 +1594,11 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              <div className="col-md-6 mt-2">
+              {/* <div className="col-md-6 mt-2">
                 <div className="form-group">
                   <label>
                     Project Description
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
+                  
                   </label>
                   <textarea
                     className="form-control"
@@ -1611,7 +1609,7 @@ const ProjectDetailsCreate = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
