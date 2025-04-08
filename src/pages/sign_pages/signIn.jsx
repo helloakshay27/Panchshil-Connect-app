@@ -57,6 +57,10 @@ const SignIn = () => {
     }
   }, []);
 
+  const regiterPage = () => {
+    navigate("/register");
+  };
+
 
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
