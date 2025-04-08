@@ -157,7 +157,7 @@ const TestimonialEdit = () => {
                     <div className="form-group">
                       <label>
                         User Name
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
                       </label>
                       <input
                         className="form-control"
@@ -172,7 +172,7 @@ const TestimonialEdit = () => {
                     <div className="form-group">
                       <label>
                         Building Type
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
                       </label>
                       <SelectBox
                         options={buildingTypeOptions.map((option) => ({
@@ -191,7 +191,7 @@ const TestimonialEdit = () => {
                     <div className="form-group">
                       <label>
                         Description
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
+                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
                       </label>
                       <input
                         className="form-control"
@@ -216,7 +216,7 @@ const TestimonialEdit = () => {
                             <span className="tooltip-text">Max Upload Size 50 MB</span>
                           )}
                         </span>
-                        <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                       </label>
 
                       <input

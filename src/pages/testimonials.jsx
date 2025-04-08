@@ -27,11 +27,9 @@ const Testimonials = () => {
   const [showVideoTooltip, setShowVideoTooltip] = useState(false);
   const [existingVideoUrl, setExistingVideoUrl] = useState(null);
 
-
   const [formData, setFormData] = useState({
     testimonial_video: [],
   });
-  
 
   console.log("fromrData", formData);
 
@@ -45,10 +43,10 @@ const Testimonials = () => {
         }));
         return;
       }
-  
+
       setErrors((prev) => ({ ...prev, testimonial_video: "" }));
       setPreviewVideo(URL.createObjectURL(file));
-  
+
       // ✅ Store file in state
       setFormData((prev) => ({
         ...prev,
@@ -56,8 +54,6 @@ const Testimonials = () => {
       }));
     }
   };
-  
-  
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -115,13 +111,13 @@ const Testimonials = () => {
     e.preventDefault();
     setLoading(true);
     toast.dismiss();
-  
+
     // if (!userName.trim() || !userProfile.trim() || !content.trim()) {
     //   toast.error("All fields are required.");
     //   setLoading(false);
     //   return;
     // }
-  
+
     const form = new FormData();
     form.append("testimonial[user_name]", userName.trim());
     form.append("testimonial[profile_of_user]", userProfile.trim());
@@ -129,12 +125,15 @@ const Testimonials = () => {
     form.append("testimonial[video_url]", videoUrl.trim());
     form.append("testimonial[video_preview_image_url]", imagePreview.trim());
     form.append("testimonial[building_id]", buildingTypeId?.toString() || "");
-    form.append("testimonial[building_type]", buildingTypeOptions.find((option) => option.id === buildingTypeId)?.building_type || "");
+    form.append(
+      "testimonial[building_type]",
+      buildingTypeOptions.find((option) => option.id === buildingTypeId)
+        ?.building_type || ""
+    );
     if (formData.testimonial_video) {
       form.append("testimonial[testimonial_video]", formData.testimonial_video);
     }
-    
-  
+
     try {
       const response = await axios.post(`${baseURL}testimonials.json`, form, {
         headers: {
@@ -142,7 +141,7 @@ const Testimonials = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
       toast.success("Data saved successfully!");
       // Reset form
       setUserName("");
@@ -153,7 +152,7 @@ const Testimonials = () => {
       setContent("");
       setPreviewVideo(null);
       setFormData({ testimonial_video: null });
-  
+
       navigate("/testimonial-list");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
@@ -162,7 +161,7 @@ const Testimonials = () => {
       setLoading(false);
     }
   };
-  
+
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
 
@@ -201,8 +200,6 @@ const Testimonials = () => {
     }
   };
 
-  
-
   return (
     <>
       <div className="main-content">
@@ -220,10 +217,10 @@ const Testimonials = () => {
                       <div className="form-group">
                         <label>
                           User Name
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
@@ -284,10 +281,10 @@ const Testimonials = () => {
                       <div className="form-group">
                         <label>
                           Building Type
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <SelectBox
                           options={buildingTypeOptions.map((option) => ({
@@ -320,17 +317,15 @@ const Testimonials = () => {
                       </div>
                     </div> */}
 
-                   
-
                     {/* Content (Description) */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Description
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                             {" "}
                             *
-                          </span>
+                          </span> */}
                         </label>
                         <input
                           className="form-control"
@@ -343,47 +338,54 @@ const Testimonials = () => {
                       </div>
                     </div>
                     <div className="col-md-3">
-  <div className="form-group">
-    <label>
-    Testimonial Video{" "}
-      <span
-        className="tooltip-container"
-        onMouseEnter={() => setShowVideoTooltip(true)}
-        onMouseLeave={() => setShowVideoTooltip(false)}
-      >
-        [i]
-        {showVideoTooltip && (
-          <span className="tooltip-text">
-            Max Upload Size 50 MB
-          </span>
-        )}
-      </span>
-      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
-    </label>
-    <input
-      className="form-control"
-      type="file"
-      name="testimonial_video"
-      accept="video/*"
-      onChange={handleBannerVideoChange}
-    />
-    {errors.testimonial_video && (
-      <span className="error text-danger">{errors.testimonial_video}</span>
-    )}
-    
-    {/* Video Preview */}
-    {!previewVideo && existingVideoUrl && (
-  <video
-    src={existingVideoUrl}
-    controls
-    className="img-fluid rounded mt-2"
-    style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
-  />
-)}
+                      <div className="form-group">
+                        <label>
+                          Testimonial Video{" "}
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowVideoTooltip(true)}
+                            onMouseLeave={() => setShowVideoTooltip(false)}
+                          >
+                            [i]
+                            {showVideoTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 50 MB
+                              </span>
+                            )}
+                          </span>
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span> */}
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="testimonial_video"
+                          accept="video/*"
+                          onChange={handleBannerVideoChange}
+                        />
+                        {errors.testimonial_video && (
+                          <span className="error text-danger">
+                            {errors.testimonial_video}
+                          </span>
+                        )}
 
-  </div>
-</div>
-
+                        {/* Video Preview */}
+                        {!previewVideo && existingVideoUrl && (
+                          <video
+                            src={existingVideoUrl}
+                            controls
+                            className="img-fluid rounded mt-2"
+                            style={{
+                              maxWidth: "200px",
+                              maxHeight: "150px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

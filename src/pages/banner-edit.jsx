@@ -13,8 +13,7 @@ const BannerEdit = () => {
   const [errors, setErrors] = useState({});
   const [previewImg, setPreviewImg] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null); // ← NEW
-  
-  
+
   const [formData, setFormData] = useState({
     title: "",
     project_id: "",
@@ -30,9 +29,7 @@ const BannerEdit = () => {
 
   const fetchBanner = async () => {
     try {
-      const response = await axios.get(
-        `${baseURL}banners/${id}.json`
-      );
+      const response = await axios.get(`${baseURL}banners/${id}.json`);
       if (response.data) {
         setFormData({
           title: response.data.title,
@@ -51,14 +48,11 @@ const BannerEdit = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get(
-        `${baseURL}projects.json`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+      const response = await axios.get(`${baseURL}projects.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
       setProjects(response.data.projects || []);
     } catch (error) {
       toast.error("Failed to fetch projects");
@@ -79,7 +73,7 @@ const BannerEdit = () => {
       return;
     }
 
-    console.log(validFiles[0])
+    console.log(validFiles[0]);
 
     setPreviewImg(URL.createObjectURL(validFiles[0]));
     setFormData({ ...formData, attachfile: validFiles[0] });
@@ -89,24 +83,23 @@ const BannerEdit = () => {
 
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
-  
+
     if (!file) return;
-  
+
     const allowedTypes = ["video/mp4", "video/webm", "video/ogg"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Only video files (MP4, WebM, OGG) are allowed.");
       return;
     }
-  
+
     if (file.size > 100 * 1024 * 1024) {
       toast.error("Max video size is 100MB.");
       return;
     }
-  
+
     setPreviewVideo(URL.createObjectURL(file));
     setFormData((prev) => ({ ...prev, banner_video: file }));
   };
-  
 
   const validateForm = () => {
     let newErrors = {};
@@ -116,9 +109,9 @@ const BannerEdit = () => {
     if (!formData.project_id) {
       newErrors.project_id = "Project is mandatory";
     }
-    if (formData.attachfile===null) {
-      newErrors.attachfile = "At least one banner image is required";
-    }
+    // if (formData.attachfile === null) {
+    //   newErrors.attachfile = "At least one banner image is required";
+    // }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -132,25 +125,21 @@ const BannerEdit = () => {
       const sendData = new FormData();
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
-      sendData.append("banner[banner_image]", formData.attachfile)
-      sendData.append("banner[banner_video]", formData.banner_video)
+      sendData.append("banner[banner_image]", formData.attachfile);
+      sendData.append("banner[banner_video]", formData.banner_video);
 
-     const res= await axios.put(
-        `${baseURL}banners/${id}.json`,
-        sendData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(res)
+      const res = await axios.put(`${baseURL}banners/${id}.json`, sendData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res);
 
       toast.success("Banner updated successfully");
       navigate("/banner-list");
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.error("Error updating banner");
     } finally {
       setLoading(false);
@@ -176,7 +165,9 @@ const BannerEdit = () => {
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Title *</label>
+                      <label>Title 
+                      <span style={{ color: "#de7008" }}> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -191,7 +182,9 @@ const BannerEdit = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Project *</label>
+                      <label>Project 
+                      <span style={{ color: "#de7008" }}> *</span>
+                      </label>
                       <SelectBox
                         options={projects.map((p) => ({
                           label: p.project_name,
@@ -209,7 +202,7 @@ const BannerEdit = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Banner Image *</label>
+                      <label>Banner Image </label>
                       <input
                         className="form-control"
                         type="file"
@@ -251,35 +244,39 @@ const BannerEdit = () => {
                     </div>
                   </div>
                   <div className="col-md-3">
-  <div className="form-group">
-    <label>Banner Video</label>
-    <input
-      className="form-control"
-      type="file"
-      name="banner_video"
-      accept="video/*"
-      onChange={handleVideoChange}
-    />
-    {errors.banner_video && (
-      <span className="text-danger">{errors.banner_video}</span>
-    )}
+                    <div className="form-group">
+                      <label>Banner Video</label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="banner_video"
+                        accept="video/*"
+                        onChange={handleVideoChange}
+                      />
+                      {errors.banner_video && (
+                        <span className="text-danger">
+                          {errors.banner_video}
+                        </span>
+                      )}
 
-    <div className="mt-2">
-      {previewVideo ? (
-        <video
-          src={previewVideo}
-          controls
-          className="img-fluid rounded mt-2"
-          style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
-        />
-      ) : (
-        <span>No video selected</span>
-      )}
-    </div>
-  </div>
-</div>
-
-                  
+                      <div className="mt-2">
+                        {previewVideo ? (
+                          <video
+                            src={previewVideo}
+                            controls
+                            className="img-fluid rounded mt-2"
+                            style={{
+                              maxWidth: "200px",
+                              maxHeight: "150px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <span>No video selected</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
