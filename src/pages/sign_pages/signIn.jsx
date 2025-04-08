@@ -8,7 +8,7 @@ import { LOGO_URL, Rustomji_URL } from "../baseurl/apiDomain";
 // Configuration for both projects
 const projectConfigs = {
   panchshil: {
-    baseURL: "https://panchshil-super.lockated.com/", // Backend url
+    baseURL: "https://panchshil-super.lockated.com/", 
     logoUrl: LOGO_URL, // Replace with actual Panchshil logo
     loginBgClass: "login_bg",
     loginSecClass: "login-sec",
@@ -19,7 +19,7 @@ const projectConfigs = {
     columnClass: "col-lg-7 col-md-7"
   },
   rustomjee: {
-    baseURL: "https://dev-panchshil-super-app.lockated.com/", // Backend URL
+    baseURL: "https://dev-panchshil-super-app.lockated.com/", 
     logoUrl: Rustomji_URL, // Replace with actual Rustomjee logo
     loginBgClass: "login_bg_rustomji",
     loginSecClass: "login-sec-rustom pt-5",
@@ -50,7 +50,8 @@ const SignIn = () => {
   
   useEffect(() => {
     // Detect which project is active based on the URL
-    if (window.location.href.includes('ui-loyalty-super')) {
+    if (window.location.href.includes('localhost:5173')) {
+      // if (window.location.href.includes('ui-loyalty-super')) {
       setCurrentProject('rustomjee');
     } else {
       setCurrentProject('panchshil');
@@ -165,52 +166,71 @@ const SignIn = () => {
   // Keep all your existing functions (handlePasswordLogin, handleSendOtp, etc.)
 
   // Common form components to avoid duplication
-  const renderPasswordLogin = () => (
-    <div className="mt-2 login-content">
-      <div className="form-group position-relative">
-        <label className={`mb-1 ${config.formTextColor}`} htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          className="form-control mb-2"
-          placeholder="Enter email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-      <div className="form-group position-relative">
-        <label className={`mb-1 ${config.formTextColor}`} htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          className="form-control"
-          placeholder="Enter password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      <div className="d-flex justify-content-start mt-2 mb-3 gap-2">
-        <a className="forget-btn" href="/forgot-password">
-          Forgot password?
-        </a>
-      </div>
-      
-      {error && <p className="text-danger">{error}</p>}
+  const renderPasswordLogin = () => {
+    // Common form elements
+    const commonForm = (
+      <>
+        <div className="form-group position-relative">
+          <label className={`mb-1 ${config.formTextColor}`} htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            className="form-control mb-2"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group position-relative">
+          <label className={`mb-1 ${config.formTextColor}`} htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            className="form-control"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="d-flex justify-content-start mt-2 mb-3 gap-2">
+          <a className="forget-btn" href="/forgot-password">
+            Forgot password?
+          </a>
+        </div>
+        
+        {error && <p className="text-danger">{error}</p>}
+      </>
+    );
+  
+    // Project-specific buttons
+    const rustomjeeButton = (
+      <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger-rustomjee mt-10">
+        {loading ? "Logging in..." : "Login"}
+      </button>
+    );
+  
+    const panchshilButton = (
       <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger mt-2">
         {loading ? "Logging in..." : "Login"}
       </button>
-      
-      {config.showRegisterButton && (
-        <button className="btn purple-btn2 mt-3" onClick={regiterPage} 
-          style={{ width: "100%", background: "white", color: "black" }}>
-          {loading ? "Register in..." : "Register"}
-        </button>
-      )}
-    </div>
-  );
-
+    );
+  
+    return (
+      <div className="mt-2 login-content">
+        {commonForm}
+        {currentProject === 'rustomjee' ? rustomjeeButton : panchshilButton}
+        
+        {config.showRegisterButton && (
+          <button className="btn purple-btn2 mt-3" onClick={regiterPage} 
+            style={{ width: "100%", background: "white", color: "black" }}>
+            {loading ? "Register in..." : "Register"}
+          </button>
+        )}
+      </div>
+    );
+  };
   const renderOtpLogin = () => (
     <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
       {OtpSection && (
