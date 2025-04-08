@@ -8,7 +8,7 @@ import { LOGO_URL, Rustomji_URL } from "../baseurl/apiDomain";
 // Configuration for both projects
 const projectConfigs = {
   panchshil: {
-    baseURL: "https://ui-panchshil-super.lockated.com",
+    baseURL: "https://panchshil-super.lockated.com/", // Backend url
     logoUrl: LOGO_URL, // Replace with actual Panchshil logo
     loginBgClass: "login_bg",
     loginSecClass: "login-sec",
@@ -19,7 +19,7 @@ const projectConfigs = {
     columnClass: "col-lg-7 col-md-7"
   },
   rustomjee: {
-    baseURL: "https://ui-loyalty-super.lockated.com/banner-list",
+    baseURL: "https://dev-panchshil-super-app.lockated.com/", // Backend URL
     logoUrl: Rustomji_URL, // Replace with actual Rustomjee logo
     loginBgClass: "login_bg_rustomji",
     loginSecClass: "login-sec-rustom pt-5",
