@@ -1,4 +1,4 @@
-// const baseURL = "https://panchshil-super.lockated.com/";
+const baseURL = "https://panchshil-super.lockated.com/";
 // const baseURL = "http://localhost:3000/";
 
 
