@@ -25,6 +25,8 @@ const Testimonials = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [errors, setErrors] = useState({});
   const [showVideoTooltip, setShowVideoTooltip] = useState(false);
+  const [existingVideoUrl, setExistingVideoUrl] = useState(null);
+
 
   const [formData, setFormData] = useState({
     testimonial_video: [],
@@ -46,12 +48,15 @@ const Testimonials = () => {
   
       setErrors((prev) => ({ ...prev, testimonial_video: "" }));
       setPreviewVideo(URL.createObjectURL(file));
+  
+      // ✅ Store file in state
       setFormData((prev) => ({
         ...prev,
         testimonial_video: file,
       }));
     }
   };
+  
   
 
   useEffect(() => {
@@ -128,6 +133,7 @@ const Testimonials = () => {
     if (formData.testimonial_video) {
       form.append("testimonial[testimonial_video]", formData.testimonial_video);
     }
+    
   
     try {
       const response = await axios.post(`${baseURL}testimonials.json`, form, {
@@ -366,22 +372,15 @@ const Testimonials = () => {
     )}
     
     {/* Video Preview */}
-    {previewVideo && (
-      <div className="mt-2">
-        <video
-          //controls
-          autoPlay
-          muted
-          src={previewVideo}
-          style={{
-            maxWidth: "100px",
-            maxHeight: "100px",
-            objectFit: "cover",
-            borderRadius: "5px",
-          }}
-        />
-      </div>
-    )}
+    {!previewVideo && existingVideoUrl && (
+  <video
+    src={existingVideoUrl}
+    controls
+    className="img-fluid rounded mt-2"
+    style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
+  />
+)}
+
   </div>
 </div>
 

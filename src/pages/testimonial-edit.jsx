@@ -13,13 +13,17 @@ const TestimonialEdit = () => {
   const [formData, setFormData] = useState({
     user_name: testimonial?.user_name || "",
     user_profile: testimonial?.profile_of_user || "",
-    building_id: testimonial?.building_id ?? null, // Ensure correct default value
+    building_id: testimonial?.building_id ?? null,
     content: testimonial?.content || "",
-    video_url: testimonial?.video_url || "", // 👈 Add this
+    video_url: testimonial?.video_url || "",
   });
 
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [existingVideoUrl, setExistingVideoUrl] = useState(null);
+  const [previewVideo, setPreviewVideo] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [showVideoTooltip, setShowVideoTooltip] = useState(false);
 
   useEffect(() => {
     const fetchTestimonialData = async () => {
@@ -36,11 +40,15 @@ const TestimonialEdit = () => {
         setFormData({
           user_name: response.data.user_name || "",
           user_profile: response.data.profile_of_user || "",
-          building_id: response.data.building_id ?? null, // Ensure correct ID is set
+          building_id: response.data.building_id ?? null,
           content: response.data.content || "",
-          content: response.data.content || "",
-          video_url: response.data.video_url || "", // 👈 Add this
+          video_url: response.data.video_url || "",
         });
+
+        const videoUrl = response.data?.testimonial_video?.document_url;
+        if (videoUrl) {
+          setExistingVideoUrl(videoUrl);
+        }
       } catch (error) {
         console.error("Error fetching testimonial data:", error);
         toast.error("Error loading testimonial details.");
@@ -51,7 +59,6 @@ const TestimonialEdit = () => {
       fetchTestimonialData();
     }
   }, [testimonial?.id]);
-  console.log(formData);
 
   useEffect(() => {
     const fetchBuildingTypes = async () => {
@@ -85,32 +92,41 @@ const TestimonialEdit = () => {
     }));
   };
 
+  const handleBannerVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const videoUrl = URL.createObjectURL(file);
+      setPreviewVideo(videoUrl);
+      setFormData((prev) => ({
+        ...prev,
+        testimonial_video: file,
+      }));
+      setExistingVideoUrl(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      console.log("Submitting data:", formData);
 
-      await axios.put(
-        `${baseURL}testimonials/${testimonial.id}.json`,
-        {
-          testimonial: {
-            ...formData,
-            building_id: formData.building_id?.toString() || null,
-            building_type:
-              buildingTypeOptions.find(
-                (option) => option.id === formData.building_id
-              )?.building_type || null,
-            profile_of_user: formData.user_profile,
-          },
+    try {
+      const form = new FormData();
+      form.append("testimonial[user_name]", formData.user_name);
+      form.append("testimonial[profile_of_user]", formData.user_profile);
+      form.append("testimonial[building_id]", formData.building_id);
+      form.append("testimonial[content]", formData.content);
+      
+
+      if (formData.testimonial_video) {
+        form.append("testimonial[testimonial_video]", formData.testimonial_video);
+      }
+
+      await axios.put(`${baseURL}testimonials/${testimonial.id}.json`, form, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      });
 
       toast.success("Testimonial updated successfully!");
       navigate("/testimonial-list");
@@ -137,14 +153,11 @@ const TestimonialEdit = () => {
               </div>
               <div className="card-body">
                 <div className="row">
-                  {/* User Name */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         User Name
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
                       </label>
                       <input
                         className="form-control"
@@ -155,76 +168,30 @@ const TestimonialEdit = () => {
                     </div>
                   </div>
 
-                  {/* User Profile */}
-                  {/* <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        User Profile
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
-                      </label>
-                      <input
-                        className="form-control"
-                        name="user_profile"
-                        value={formData.user_profile}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div> */}
-
-                  {/* Building Type */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Building Type
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
                       </label>
                       <SelectBox
                         options={buildingTypeOptions.map((option) => ({
                           label: option.building_type,
                           value: option.id,
                         }))}
-                        defaultValue={formData.building_id} // Ensure correct default value
+                        defaultValue={formData.building_id}
                         onChange={(value) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            building_id: value, // Ensure it updates correctly
-                          }))
+                          setFormData((prev) => ({ ...prev, building_id: value }))
                         }
                       />
                     </div>
                   </div>
-                  {/* Video URL */}
-                  {/* <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Testimonial Video URL
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
-                      </label>
-                      <input
-                        className="form-control"
-                        name="video_url"
-                        placeholder="Enter video URL"
-                        value={formData.video_url || ""}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div> */}
 
-                  {/* Content (Description) */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Description
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
                       </label>
                       <input
                         className="form-control"
@@ -234,27 +201,71 @@ const TestimonialEdit = () => {
                       />
                     </div>
                   </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Testimonial Video {" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowVideoTooltip(true)}
+                          onMouseLeave={() => setShowVideoTooltip(false)}
+                        >
+                          [i]
+                          {showVideoTooltip && (
+                            <span className="tooltip-text">Max Upload Size 50 MB</span>
+                          )}
+                        </span>
+                        <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+                      </label>
+
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="testimonial_video"
+                        accept="video/*"
+                        onChange={handleBannerVideoChange}
+                      />
+
+                      {errors.testimonial_video && (
+                        <span className="error text-danger">{errors.testimonial_video}</span>
+                      )}
+
+                      {previewVideo && (
+                        <div className="mt-2">
+                          <video
+                            src={previewVideo}
+                            controls
+                            className="img-fluid rounded"
+                            style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
+                          />
+                        </div>
+                      )}
+
+                      {!previewVideo && existingVideoUrl && (
+                        <div className="mt-2">
+                          <video
+                            src={existingVideoUrl}
+                            controls
+                            className="img-fluid rounded"
+                            style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Submit and Cancel Buttons */}
             <div className="row mt-2 justify-content-center">
               <div className="col-md-2 mt-3">
-                <button
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={loading}
-                >
+                <button type="submit" className="purple-btn2 w-100" disabled={loading}>
                   Submit
                 </button>
               </div>
               <div className="col-md-2 mt-3">
-                <button
-                  type="button"
-                  className="purple-btn2 w-100"
-                  onClick={handleCancel}
-                >
+                <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
                   Cancel
                 </button>
               </div>
