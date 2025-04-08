@@ -2537,7 +2537,7 @@ const ProjectDetailsEdit = () => {
                                   Project Sales Type
                                  
                                 </label>
-                                <SelectBox
+                                <MultiSelectBox
                                   options={[
                                     { value: "Sales", label: "Sales" },
                                     {

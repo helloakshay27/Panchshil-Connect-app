@@ -1909,7 +1909,7 @@ const ProjectDetailsCreate = () => {
                     Project Sales Type
                    
                   </label>
-                  <SelectBox
+                  <MultiSelectBox
                     options={[
                       { value: "Sales", label: "Sales" },
                       {
