@@ -1492,7 +1492,7 @@ fieldset {
 }
 
 .divider-bg {
-  background-image: url(/imgs/count-devider.PNG);
+  background-image: url("");
   background-position: center center;
   background-size: 50%;
   background-repeat: no-repeat;
