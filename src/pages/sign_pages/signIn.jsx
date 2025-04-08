@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
+import { LOGO_URL, Rustomji_URL } from "../baseurl/apiDomain";
 
 // Configuration for both projects
 const projectConfigs = {
