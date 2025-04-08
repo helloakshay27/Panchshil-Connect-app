@@ -3350,7 +3350,7 @@ const ProjectDetailsEdit = () => {
               {/* 2D Images */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
-                  2D Images{" "}
+                Floor Plan{" "}
                   <span
                     className="tooltip-container"
                     onMouseEnter={() => setShowTooltip(true)}

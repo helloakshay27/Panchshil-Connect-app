@@ -18,6 +18,8 @@ const BannerAdd = () => {
   const [previewImg, setPreviewImg] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [previewFiles, setPreviewFiles] = useState([]);
+  const [previewVideo, setPreviewVideo] = useState(null);
+const [showVideoTooltip, setShowVideoTooltip] = useState(false);
 
   const [formData, setFormData] = useState({
     banner_type: "",
@@ -123,39 +125,60 @@ const BannerAdd = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     if (!validateForm()) {
-      //toast.error("Please fill in all the required fields.");
       setLoading(false);
       return;
     }
-
     try {
       const sendData = new FormData();
       sendData.append("banner[title]", formData.title);
-      // sendData.append("banner[company_id]", formData.company_id);
       sendData.append("banner[project_id]", formData.project_id);
-
-      formData.attachfile.forEach((file) => {
-        sendData.append("banner[banner_image]", file);
-      });
-
-      console.log(sendData);
-      alert();
-
+      if (formData.attachfile instanceof File) {
+        sendData.append("banner[banner_image]", formData.attachfile);
+      }
+      
+      if (formData.banner_video instanceof File) {
+        sendData.append("banner[banner_video]", formData.banner_video);
+      }
       await axios.post(`${baseURL}banners.json`, sendData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "multipart/form-data",
         },
       });
-
+  
       toast.success("Banner created successfully");
       navigate("/banner-list");
     } catch (error) {
+      console.log(error);
       toast.error(`Error creating banner: ${error.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+  
+
+  const handleBannerVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 50 * 1024 * 1024) {
+        // 50MB limit
+        setErrors((prev) => ({
+          ...prev,
+          banner_video: "Video size must be under 50MB",
+        }));
+        return;
+      }
+  
+      setErrors((prev) => ({ ...prev, banner_video: "" }));
+      setPreviewVideo(URL.createObjectURL(file));
+      
+      // You can also store file in formData if needed
+      setFormData((prev) => ({
+        ...prev,
+        banner_video: file,
+      }));
     }
   };
 
@@ -205,7 +228,7 @@ const BannerAdd = () => {
                       </label>
                       <SelectBox
                         options={projects.map((project) => ({
-                          label: project.project_name,
+                          label: project.Project_Name,
                           value: project.id,
                         }))}
                         defaultValue={formData.project_id}
@@ -298,7 +321,55 @@ const BannerAdd = () => {
                       )}
                     </div>
                   </div>
-                  {/* Banner File Upload */}
+                  <div className="col-md-3">
+  <div className="form-group">
+    <label>
+      Banner Video{" "}
+      <span
+        className="tooltip-container"
+        onMouseEnter={() => setShowVideoTooltip(true)}
+        onMouseLeave={() => setShowVideoTooltip(false)}
+      >
+        [i]
+        {showVideoTooltip && (
+          <span className="tooltip-text">
+            Max Upload Size 50 MB
+          </span>
+        )}
+      </span>
+      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+    </label>
+    <input
+      className="form-control"
+      type="file"
+      name="banner_video"
+      accept="video/*"
+      onChange={handleBannerVideoChange}
+    />
+    {errors.banner_video && (
+      <span className="error text-danger">{errors.banner_video}</span>
+    )}
+    
+    {/* Video Preview */}
+    {previewVideo && (
+      <div className="mt-2">
+        <video
+          //controls
+          autoPlay
+          muted
+          src={previewVideo}
+          style={{
+            maxWidth: "100px",
+            maxHeight: "100px",
+            objectFit: "cover",
+            borderRadius: "5px",
+          }}
+        />
+      </div>
+    )}
+  </div>
+</div>
+
                 
                 </div>
               </div>

@@ -156,7 +156,7 @@ const TestimonialEdit = () => {
                   </div>
 
                   {/* User Profile */}
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         User Profile
@@ -171,7 +171,7 @@ const TestimonialEdit = () => {
                         onChange={handleChange}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Building Type */}
                   <div className="col-md-3">

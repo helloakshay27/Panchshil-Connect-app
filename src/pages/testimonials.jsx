@@ -24,6 +24,35 @@ const Testimonials = () => {
   const [previewVideo, setPreviewVideo] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showVideoTooltip, setShowVideoTooltip] = useState(false);
+
+  const [formData, setFormData] = useState({
+    testimonial_video: [],
+  });
+  
+
+  console.log("fromrData", formData);
+
+  const handleBannerVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 50 * 1024 * 1024) {
+        setErrors((prev) => ({
+          ...prev,
+          testimonial_video: "Max file size is 50 MB",
+        }));
+        return;
+      }
+  
+      setErrors((prev) => ({ ...prev, testimonial_video: "" }));
+      setPreviewVideo(URL.createObjectURL(file));
+      setFormData((prev) => ({
+        ...prev,
+        testimonial_video: file,
+      }));
+    }
+  };
+  
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -80,64 +109,54 @@ const Testimonials = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    // Dismiss previous toast notifications before showing new ones
     toast.dismiss();
-
-    if (!userName.trim() || !userProfile.trim() || !content.trim()) {
-      toast.error("All fields are required.");
-      setLoading(false);
-      return;
+  
+    // if (!userName.trim() || !userProfile.trim() || !content.trim()) {
+    //   toast.error("All fields are required.");
+    //   setLoading(false);
+    //   return;
+    // }
+  
+    const form = new FormData();
+    form.append("testimonial[user_name]", userName.trim());
+    form.append("testimonial[profile_of_user]", userProfile.trim());
+    form.append("testimonial[content]", content.trim());
+    form.append("testimonial[video_url]", videoUrl.trim());
+    form.append("testimonial[video_preview_image_url]", imagePreview.trim());
+    form.append("testimonial[building_id]", buildingTypeId?.toString() || "");
+    form.append("testimonial[building_type]", buildingTypeOptions.find((option) => option.id === buildingTypeId)?.building_type || "");
+    if (formData.testimonial_video) {
+      form.append("testimonial[testimonial_video]", formData.testimonial_video);
     }
-
-    const data = {
-      testimonial: {
-        // company_setup_id: companySetupId,
-        building_id: buildingTypeId ? buildingTypeId.toString() : null,
-        building_type:
-          buildingTypeOptions.find((option) => option.id === buildingTypeId)
-            ?.building_type || null,
-        user_name: userName.trim(),
-        video_url: videoUrl.trim(),
-        video_preview_image_url: imagePreview.trim(),
-        profile_of_user: userProfile.trim(),
-        content: content.trim(),
-      },
-    };
-    console.log("Submitting data:", data);
-
+  
     try {
-      const response = await axios.post(`${baseURL}testimonials.json`, data, {
+      const response = await axios.post(`${baseURL}testimonials.json`, form, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Response from POST:", response.data);
-
+  
       toast.success("Data saved successfully!");
-
-      // Reset form fields
-
+      // Reset form
       setUserName("");
       setVideoUrl("");
       setImagePreview("");
-      setUserProfile(""); // Reset User Profile
+      setUserProfile("");
       setUserType("");
       setContent("");
-
+      setPreviewVideo(null);
+      setFormData({ testimonial_video: null });
+  
       navigate("/testimonial-list");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
-      if (error.response) {
-        console.error("Response data:", error.response.data);
-      }
-
       toast.error("Failed to submit. Please check your input.");
     } finally {
       setLoading(false);
     }
   };
+  
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
 
@@ -166,6 +185,17 @@ const Testimonials = () => {
   const handleCancel = () => {
     navigate(-1); // This navigates back one step in history
   };
+
+  const handleVideoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log("Video file selected:", file);
+      // You can now upload it to backend or update state:
+      // setFormData(prev => ({ ...prev, video: file }));
+    }
+  };
+
+  
 
   return (
     <>
@@ -201,7 +231,7 @@ const Testimonials = () => {
                     </div>
 
                     {/* User Profile */}
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           User Profile
@@ -219,7 +249,7 @@ const Testimonials = () => {
                           onChange={(e) => setUserProfile(e.target.value)}
                         />
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* User Type */}
                     {/* <div className="col-md-3">
@@ -306,6 +336,55 @@ const Testimonials = () => {
                         />
                       </div>
                     </div>
+                    <div className="col-md-3">
+  <div className="form-group">
+    <label>
+    Testimonial Video{" "}
+      <span
+        className="tooltip-container"
+        onMouseEnter={() => setShowVideoTooltip(true)}
+        onMouseLeave={() => setShowVideoTooltip(false)}
+      >
+        [i]
+        {showVideoTooltip && (
+          <span className="tooltip-text">
+            Max Upload Size 50 MB
+          </span>
+        )}
+      </span>
+      <span style={{ color: "#de7008", fontSize: "16px" }}> *</span>
+    </label>
+    <input
+      className="form-control"
+      type="file"
+      name="testimonial_video"
+      accept="video/*"
+      onChange={handleBannerVideoChange}
+    />
+    {errors.testimonial_video && (
+      <span className="error text-danger">{errors.testimonial_video}</span>
+    )}
+    
+    {/* Video Preview */}
+    {previewVideo && (
+      <div className="mt-2">
+        <video
+          //controls
+          autoPlay
+          muted
+          src={previewVideo}
+          style={{
+            maxWidth: "100px",
+            maxHeight: "100px",
+            objectFit: "cover",
+            borderRadius: "5px",
+          }}
+        />
+      </div>
+    )}
+  </div>
+</div>
+
                   </div>
                 </div>
               </div>

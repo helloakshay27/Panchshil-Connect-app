@@ -12,12 +12,15 @@ const BannerEdit = () => {
   const [projects, setProjects] = useState([]);
   const [errors, setErrors] = useState({});
   const [previewImg, setPreviewImg] = useState(null);
+  const [previewVideo, setPreviewVideo] = useState(null); // ← NEW
+  
   
   const [formData, setFormData] = useState({
     title: "",
     project_id: "",
     attachfile: null,
     // existingImages: [],
+    banner_video: [],
   });
 
   useEffect(() => {
@@ -36,6 +39,7 @@ const BannerEdit = () => {
           project_id: response.data.project_id,
           // existingImages: response.data.banner_images || [],
           attachfile: response.data?.attachfile?.document_url || null,
+          banner_video: response.data.banner_video,
         });
       }
     } catch (error) {
@@ -83,6 +87,27 @@ const BannerEdit = () => {
 
   console.log(formData);
 
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+  
+    if (!file) return;
+  
+    const allowedTypes = ["video/mp4", "video/webm", "video/ogg"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only video files (MP4, WebM, OGG) are allowed.");
+      return;
+    }
+  
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error("Max video size is 100MB.");
+      return;
+    }
+  
+    setPreviewVideo(URL.createObjectURL(file));
+    setFormData((prev) => ({ ...prev, banner_video: file }));
+  };
+  
+
   const validateForm = () => {
     let newErrors = {};
     if (!formData.title.trim()) {
@@ -108,6 +133,7 @@ const BannerEdit = () => {
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
       sendData.append("banner[banner_image]", formData.attachfile)
+      sendData.append("banner[banner_video]", formData.banner_video)
 
      const res= await axios.put(
         `${baseURL}banners/${id}.json`,
@@ -168,7 +194,7 @@ const BannerEdit = () => {
                       <label>Project *</label>
                       <SelectBox
                         options={projects.map((p) => ({
-                          label: p.Project_Name,
+                          label: p.project_name,
                           value: p.id,
                         }))}
                         defaultValue={formData.project_id}
@@ -224,6 +250,36 @@ const BannerEdit = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="col-md-3">
+  <div className="form-group">
+    <label>Banner Video</label>
+    <input
+      className="form-control"
+      type="file"
+      name="banner_video"
+      accept="video/*"
+      onChange={handleVideoChange}
+    />
+    {errors.banner_video && (
+      <span className="text-danger">{errors.banner_video}</span>
+    )}
+
+    <div className="mt-2">
+      {previewVideo ? (
+        <video
+          src={previewVideo}
+          controls
+          className="img-fluid rounded mt-2"
+          style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
+        />
+      ) : (
+        <span>No video selected</span>
+      )}
+    </div>
+  </div>
+</div>
+
+                  
                 </div>
               )}
             </div>
