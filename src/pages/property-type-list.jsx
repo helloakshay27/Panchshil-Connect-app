@@ -72,7 +72,7 @@ const PropertyTypeList = () => {
     try {
       await axios.put(
         `${baseURL}property_types/${id}.json`,
-        { property_type: { active: updatedStatus } }, // ✅ Ensures correct format
+        { property_type: { active: updatedStatus } },
         { headers: { "Content-Type": "application/json" } }
       );
       setPropertyTypes((prev) =>

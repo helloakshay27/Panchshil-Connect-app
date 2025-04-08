@@ -134,9 +134,11 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
       const sendData = new FormData();
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
-      if (formData.attachfile instanceof File) {
-        sendData.append("banner[banner_image]", formData.attachfile);
-      }
+      if (formData.attachfile.length > 0) {
+        formData.attachfile.forEach((file) => {
+          sendData.append("banner[banner_image][]", file);
+        });
+      }  
       
       if (formData.banner_video instanceof File) {
         sendData.append("banner[banner_video]", formData.banner_video);
@@ -228,7 +230,7 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
                       </label>
                       <SelectBox
                         options={projects.map((project) => ({
-                          label: project.Project_Name,
+                          label: project.project_name,
                           value: project.id,
                         }))}
                         defaultValue={formData.project_id}
