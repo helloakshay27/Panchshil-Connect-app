@@ -158,7 +158,9 @@ const SignIn = () => {
       setLoading(false);
     }
   };
-
+  const toggleContent = (content) => {
+    setSelectedContent(content);
+};
   
   // Get the current project's configuration
   const config = projectConfigs[currentProject];

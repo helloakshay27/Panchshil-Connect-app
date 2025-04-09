@@ -5518,7 +5518,7 @@ ul.pagination.justify-content-center {
 .styles_headerCtaLink__2kCN6 svg {
   width: 24px;
   height: 24px;
-  color: #de7008;
+  color: var(--red);
   /* Blue color for back button */
 }
 
@@ -5658,12 +5658,12 @@ ul.pagination.justify-content-center {
 
 .breadcrumb-item a:hover {
   text-decoration: underline;
-  color: #de7008; 
+  color: var(--red); 
 }
 
 
 .tooltip-container {
-  color: #de7008;
+  color: var(--red);
   cursor: pointer;
   margin-left: 5px;
   position: relative;
