@@ -50,8 +50,8 @@ const SignInRustomjee = () => {
   
   useEffect(() => {
     // Detect which project is active based on the URL
-    if (window.location.href.includes('localhost:5174')) {
-      // if (window.location.href.includes('ui-loyalty-super')) {
+    // if (window.location.href.includes('localhost:5174')) {
+      if (window.location.href.includes('ui-loyalty-super')) {
       setCurrentProject('rustomjee');
     } else {
       setCurrentProject('panchshil');
