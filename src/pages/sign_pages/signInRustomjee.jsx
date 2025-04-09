@@ -50,7 +50,7 @@ const SignInRustomjee = () => {
   
   useEffect(() => {
     // Detect which project is active based on the URL
-    if (window.location.href.includes('localhost:5173')) {
+    if (window.location.href.includes('localhost:5174')) {
       // if (window.location.href.includes('ui-loyalty-super')) {
       setCurrentProject('rustomjee');
     } else {
@@ -173,6 +173,7 @@ const SignInRustomjee = () => {
         <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="email">Email</label>
           <input
+          style={{height:"40px"}}
             type="email"
             id="email"
             className="form-control mb-2"
@@ -185,6 +186,7 @@ const SignInRustomjee = () => {
         <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="password">Password</label>
           <input
+          style={{height:"40px"}}
             type="password"
             id="password"
             className="form-control"
@@ -206,16 +208,16 @@ const SignInRustomjee = () => {
   
     // Project-specific buttons
     const rustomjeeButton = (
-      <div className="d-flex align-items-center justify-content-center">
+      <div className="d-flex align-items-center justify-content-center mt-5">
         <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger-rustomjee mt-10">
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Logging in..." : "LOGIN"}
         </button>
       </div>
     );
   
     const panchshilButton = (
       <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger mt-2">
-        {loading ? "Logging in..." : "Login"}
+        {loading ? "Logging in..." : "LOGIN"}
       </button>
     );
   
@@ -295,7 +297,7 @@ const SignInRustomjee = () => {
                   src={config.logoUrl}
                   alt="Logo"
                 />
-                <div style={{paddingTop: "40px"}}>
+                {/* <div style={{paddingTop: "40px"}}> */}
                 <div className={`d-flex gap-3 me-2 align-items-center ${currentProject==='rustomjee'?'justify-content-between me-4 mt-2':'mx-0 mt-4'}`}>
                   <div className="form-group me-3">
                     <div className="form-check p-0">
@@ -331,7 +333,7 @@ const SignInRustomjee = () => {
 
                 {selectedContent === "content1" && renderPasswordLogin()} 
                 {selectedContent === "content2" && renderOtpLogin()}
-                </div>
+                {/* </div> */}
               </div>
             </div>
           </div>
