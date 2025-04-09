@@ -52,9 +52,9 @@ const SignIn = () => {
     // Detect which project is active based on the URL
     if (window.location.href.includes('localhost:5173')) {
       // if (window.location.href.includes('ui-loyalty-super')) {
-      setCurrentProject('rustomjee');
-    } else {
       setCurrentProject('panchshil');
+    } else {
+      setCurrentProject('rustomjee');
     }
   }, []);
 
