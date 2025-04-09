@@ -73,6 +73,7 @@ import CategoryTypes from "./pages/category-types";
 import CategoryTypesList from "./pages/category-types-list";
 import CategoryTypesEdit from "./pages/category-types-edit";
 import TagAdd from "./pages/tag-add";
+import SignInRustomjee from "./pages/sign_pages/signInRustomjee";
 
 // import EditGallery from './EditGallery';
 
@@ -86,6 +87,8 @@ function App() {
         <Route path="/forgot-password" element={<Forgot />} />
         <Route path="/forgot-otp" element={<ForgotOtp />} />
         <Route path="/reset-password" element={<CreatePassword />} />
+        <Route path="/loginRustomjee" element={<SignInRustomjee />} />
+
 
         <Route
           path="/"
