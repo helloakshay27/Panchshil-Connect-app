@@ -76,6 +76,7 @@ import TagAdd from "./pages/tag-add";
 import SignInRustomjee from "./pages/sign_pages/signInRustomjee";
 import { baseURL } from "./pages/baseurl/apiDomain";
 
+
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
 //   <Route path="/login" element={<SignInRustomjee />} />
@@ -85,7 +86,7 @@ import { baseURL } from "./pages/baseurl/apiDomain";
 //   <Route path="/login" element={<SignIn />} />
 // }
 
-const baseURL = window.location.origin;
+// const baseurl = window.location.origin;
 
 let LoginComponent;
 if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
