@@ -74,16 +74,33 @@ import CategoryTypesList from "./pages/category-types-list";
 import CategoryTypesEdit from "./pages/category-types-edit";
 import TagAdd from "./pages/tag-add";
 import SignInRustomjee from "./pages/sign_pages/signInRustomjee";
+import { baseURL } from "./pages/baseurl/apiDomain";
 
-// import EditGallery from './EditGallery';
+// // import EditGallery from './EditGallery';
+// if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+//   <Route path="/login" element={<SignInRustomjee />} />
+// } else if (baseURL === "https://panchshil-super.lockated.com/") {
+//   <Route path="/login" element={<SignIn />} />
+// } else {
+//   <Route path="/login" element={<SignIn />} />
+// }
+
+const baseURL = window.location.origin;
+
+let LoginComponent;
+if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+  LoginComponent = <SignInRustomjee />;
+} else {
+  LoginComponent = <SignIn />;
+}
 
 function App() {
   return (
     <BrowserRouter>
       <Toaster />
       <Routes>
-      {/* <Route path="/loginRustomjee" element={<SignInRustomjee />} /> */}
-        <Route path="/login" element={<SignIn />} />
+      <Route path="/login" element={LoginComponent} />
+        {/* <Route path="/login" element={<SignIn />} /> */}
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<Forgot />} />
         <Route path="/forgot-otp" element={<ForgotOtp />} />
