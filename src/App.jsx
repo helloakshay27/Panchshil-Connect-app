@@ -82,12 +82,12 @@ function App() {
     <BrowserRouter>
       <Toaster />
       <Routes>
+      {/* <Route path="/loginRustomjee" element={<SignInRustomjee />} /> */}
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<Forgot />} />
         <Route path="/forgot-otp" element={<ForgotOtp />} />
         <Route path="/reset-password" element={<CreatePassword />} />
-        <Route path="/loginRustomjee" element={<SignInRustomjee />} />
 
 
         <Route
