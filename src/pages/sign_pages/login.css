@@ -101,7 +101,10 @@ div {
 }
 
 .forget-btn {
-  /* color: var(--red); */
+  color: var(--red);
+}
+
+.rustomjee-forget-btn {
   color: #FFFFFF;
 }
 
@@ -195,6 +198,14 @@ h2 {
   border: none;
   color: #fff;
 }
+.btn-danger-rustomjee{
+  width: 338px;
+  height: 48px;
+}
+
+.btn-danger-rustomjee:hover{
+  background-color: #A78847 !important;
+}
 
 .login-sec {
   border-radius: 42px;
@@ -219,6 +230,14 @@ h2 {
   display: flex;
   flex-direction: column;
 }
+
+.login-sec-rustom.pt-5{
+  padding-top: 9rem !important;
+}
+
+/* .login-sec-rustom.form-group{
+  margin-bottom: 10px;
+} */
 
 .password-toggle {
   cursor: pointer;

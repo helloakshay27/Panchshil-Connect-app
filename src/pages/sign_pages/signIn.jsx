@@ -23,7 +23,7 @@ const projectConfigs = {
     logoUrl: Rustomji_URL, // Replace with actual Rustomjee logo
     loginBgClass: "login_bg_rustomji",
     loginSecClass: "login-sec-rustom pt-5",
-    logoStyle: { width: 335, height: 108, margin: "20px " },
+    logoStyle: { width: 335, height: 108, margin: "20px 0px 50px ",  },
     showRegisterButton: false,
     formTextColor: "text-light",
     alignContent: "justify-content-end",
@@ -194,8 +194,8 @@ const SignIn = () => {
             required
           />
         </div>
-        <div className="d-flex justify-content-start mt-2 mb-3 gap-2">
-          <a className="forget-btn" href="/forgot-password">
+        <div className={`d-flex ${currentProject==='rustomjee'?'justify-content-end':'justify-content-start'} mt-2 mb-3 gap-2`}>
+          <a className={`${currentProject==='rustomjee'?'rustomjee-forget-btn':'forget-btn'}`} href="/forgot-password">
             Forgot password?
           </a>
         </div>
@@ -206,9 +206,11 @@ const SignIn = () => {
   
     // Project-specific buttons
     const rustomjeeButton = (
-      <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger-rustomjee mt-10">
-        {loading ? "Logging in..." : "Login"}
-      </button>
+      <div className="d-flex align-items-center justify-content-center">
+        <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger-rustomjee mt-10">
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </div>
     );
   
     const panchshilButton = (
@@ -234,7 +236,7 @@ const SignIn = () => {
   const renderOtpLogin = () => (
     <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
       {OtpSection && (
-        <div className="form-group position-relative">
+        <div className="form-group position-relative">mt-2
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="mobile">Mobile Number</label>
           <input
             type="tel"
@@ -294,7 +296,7 @@ const SignIn = () => {
                   alt="Logo"
                 />
                 
-                <div className="d-flex mt-2 gap-3 align-items-center">
+                <div className={`d-flex gap-3 align-items-center ${currentProject==='rustomjee'?'justify-content-between mx-4 mt-2':'mx-0 mt-4'}`}>
                   <div className="form-group">
                     <div className="form-check">
                       <input
