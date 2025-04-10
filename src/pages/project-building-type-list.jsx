@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "./baseurl/apiDomain";
+
 
 const ProjectBuildingTypeList = () => {
   const [buildingTypes, setBuildingTypes] = useState([]);
