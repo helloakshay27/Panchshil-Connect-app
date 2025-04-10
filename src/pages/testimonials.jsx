@@ -36,11 +36,14 @@ const Testimonials = () => {
   const handleBannerVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 50 * 1024 * 1024) {
+      const maxSize = 100 * 1024 * 1024; // 100MB
+  
+      if (file.size > maxSize) {
         setErrors((prev) => ({
           ...prev,
-          testimonial_video: "Max file size is 50 MB",
+          testimonial_video: "Max file size is 100 MB",
         }));
+        toast.error("Video exceeds 100MB limit. Please upload a smaller file.");
         return;
       }
 
@@ -166,11 +169,10 @@ const Testimonials = () => {
     const file = e.target.files[0];
 
     if (file) {
-      // Validate file size (e.g., max 50MB)
-      if (file.size > 50 * 1024 * 1024) {
+      if (file.size > 100 * 1024 * 1024) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          testimonialVideo: "File size must be under 50MB",
+          testimonialVideo: "File size must be under 100MB",
         }));
         return;
       }
@@ -349,7 +351,7 @@ const Testimonials = () => {
                             [i]
                             {showVideoTooltip && (
                               <span className="tooltip-text">
-                                Max Upload Size 50 MB
+                                Max Upload Size 100 MB
                               </span>
                             )}
                           </span>
