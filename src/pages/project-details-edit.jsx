@@ -1931,7 +1931,7 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body">
             <div className="row">
-            <div className="col-md-3 mt-2">
+            <div className="col-md-3">
             <div className="form-group">
                   <label>
                     Project Banner Image
@@ -1979,7 +1979,7 @@ const ProjectDetailsEdit = () => {
                   <span>No image selected</span>
                 )}
               </div>
-              <div className="col-md-3 mt-2">
+              <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     Project Types
@@ -2006,7 +2006,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-3 mt-2">
+              <div className="col-md-3 mt-1">
                 <div className="form-group">
                   <label>
                     Project Building Type
@@ -2028,7 +2028,7 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-              <div className="col-md-3 mt-2">
+              <div className="col-md-3 mt-0">
                 <div className="form-group">
                   <label>
                     Project Construction Status
@@ -2080,7 +2080,7 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-              <div className="col-md-3 mt-2">
+              <div className="col-md-3 mt-1">
                 <div className="form-group">
                   <label>
                     Project Name
@@ -2098,7 +2098,7 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-              <div className="col-md-3 mt-2">
+              <div className="col-md-3 mt-1">
                 <div className="form-group">
                   <label>
                     Location
@@ -2617,7 +2617,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
-                  style={{ marginTop: "28px" }}
+                  style={{ marginTop: "23px" }}
                   onClick={handleAddRera}
                 >
                   <svg
@@ -4455,7 +4455,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <button
                   className="purple-btn2 rounded-3"
-                  style={{ marginTop: "28px" }}
+                  style={{ marginTop: "23px" }}
                   onClick={handleAddVirtualTour}
                 >
                   <svg

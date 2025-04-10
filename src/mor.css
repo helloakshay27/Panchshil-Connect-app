@@ -4116,7 +4116,7 @@ ul#pills-tab {
 }
 
 .btn-default {
-  background-color: #f8f9fa;
+  /* background-color: #f8f9fa; */
   border-color: var(--red);
   color: #444;
   border-radius: 0 6px 6px 0px;
