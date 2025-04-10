@@ -165,8 +165,9 @@ const BannerEdit = () => {
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Title 
-                      <span style={{ color: "#de7008" }}> *</span>
+                      <label>
+                        Title
+                        <span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -182,8 +183,9 @@ const BannerEdit = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Project 
-                      <span style={{ color: "#de7008" }}> *</span>
+                      <label>
+                        Project
+                        <span style={{ color: "#de7008" }}> *</span>
                       </label>
                       <SelectBox
                         options={projects.map((p) => ({
@@ -263,6 +265,17 @@ const BannerEdit = () => {
                         {previewVideo ? (
                           <video
                             src={previewVideo}
+                            controls
+                            className="img-fluid rounded mt-2"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "150px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : formData.banner_video ? (
+                          <video
+                            src={formData.banner_video.document_url}
                             controls
                             className="img-fluid rounded mt-2"
                             style={{

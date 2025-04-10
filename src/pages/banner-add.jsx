@@ -235,7 +235,7 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
                           label: project.project_name,
                           value: project.id,
                         }))}
-                        defaultValue={formData.project_id}
+                        Value={formData.project_id}
                         onChange={(value) =>
                           setFormData({ ...formData, project_id: value })
                         }
