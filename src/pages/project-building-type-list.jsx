@@ -51,7 +51,7 @@ const ProjectBuildingTypeList = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/building_types.json"
+        `${baseURL}/building_types.json`
       );
       setBuildingTypes(response.data);
       setPagination({
@@ -111,7 +111,7 @@ const ProjectBuildingTypeList = () => {
   const handleToggle = async (id, currentStatus) => {
     try {
       await axios.put(
-        `https://panchshil-super.lockated.com/building_types/${id}.json`,
+        `${baseURL}building_types/${id}.json`,
         {
           building_type: { active: !currentStatus },
         }

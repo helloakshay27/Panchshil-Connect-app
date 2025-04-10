@@ -24,7 +24,7 @@ const ProjectConfigurationList = () => {
     const fetchConfigurations = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/configuration_setups.json"
+          `${baseURL}configuration_setups.json`
         );
         setConfigurations(response.data);
         setPagination((prev) => ({
@@ -49,7 +49,7 @@ const ProjectConfigurationList = () => {
   const handleToggleStatus = async (id, currentStatus) => {
     try {
       await axios.patch(
-        `https://panchshil-super.lockated.com/configuration_setups/${id}.json`,
+        `${baseURL}/configuration_setups/${id}.json`,
         {
           active: !currentStatus,
         }
