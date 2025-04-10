@@ -60,7 +60,7 @@ const Eventlist = () => {
   };
 
   const filteredEvents = events
-    .filter((event) => event.event_name) // Remove null values first
+    //.filter((event) => event.event_name) // Remove null values first
     .filter((event) =>
       event.event_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
