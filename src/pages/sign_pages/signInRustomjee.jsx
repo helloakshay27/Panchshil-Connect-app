@@ -1,38 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
-import { LOGO_URL, Rustomji_URL } from "../baseurl/apiDomain";
-
-// Configuration for both projects
-const projectConfigs = {
-  panchshil: {
-    baseURL: "https://panchshil-super.lockated.com/", 
-    logoUrl: LOGO_URL, // Replace with actual Panchshil logo
-    loginBgClass: "login_bg",
-    loginSecClass: "login-sec",
-    logoStyle: { width: 100, height: 100, margin: "auto" },
-    showRegisterButton: true,
-    formTextColor: "",
-    alignContent: "justify-content-center",
-    columnClass: "col-lg-7 col-md-7"
-  },
-  rustomjee: {
-    baseURL: "https://dev-panchshil-super-app.lockated.com/", 
-    logoUrl: Rustomji_URL, // Replace with actual Rustomjee logo
-    loginBgClass: "login_bg_rustomji",
-    loginSecClass: "login-sec-rustom pt-5",
-    logoStyle: { width: 335, height: 108, margin: "20px 0px 50px ",  },
-    showRegisterButton: false,
-    formTextColor: "text-light",
-    alignContent: "justify-content-end",
-    columnClass: "col-lg-4 p-0 m-0 col-md-4"
-  }
-};
+import { Rustomji_URL } from "../baseurl/apiDomain";
 
 const SignInRustomjee = () => {
-  // State management (keep all your existing state)
+  // State management
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
@@ -45,21 +19,22 @@ const SignInRustomjee = () => {
   
   const navigate = useNavigate();
   
-  // Determine which project we're using based on the current URL
-  const [currentProject, setCurrentProject] = useState('panchshil');
-  
-  useEffect(() => {
-    // Detect which project is active based on the URL
-    // if (window.location.href.includes('localhost:5173')) {
-    if (window.location.href.includes('ui-loyalty-super')) {
-      setCurrentProject('rustomjee');
-    } else {
-      setCurrentProject('panchshil');
-    }
-  }, []);
+  // Rustomjee configuration
+  const config = {
+    baseURL: "https://dev-panchshil-super-app.lockated.com/",
+    logoUrl: Rustomji_URL,
+    loginBgClass: "login_bg_rustomji",
+    loginSecClass: "login-sec-rustom pt-5",
+    logoStyle: { width: 335, height: 108, margin: "20px 0px 50px" },
+    showRegisterButton: false,
+    formTextColor: "text-light",
+    alignContent: "justify-content-end",
+    columnClass: "col-lg-4 p-0 m-0 col-md-6"
+  };
 
-  const regiterPage = () => {
-    navigate("/register");
+  const toggleContent = (content) => {
+    setSelectedContent(content);
+    setError("");
   };
 
   const handlePasswordLogin = async (e) => {
@@ -158,21 +133,13 @@ const SignInRustomjee = () => {
     }
   };
 
-  
-  // Get the current project's configuration
-  const config = projectConfigs[currentProject];
-  
-  // Keep all your existing functions (handlePasswordLogin, handleSendOtp, etc.)
-
-  // Common form components to avoid duplication
   const renderPasswordLogin = () => {
-    // Common form elements
-    const commonForm = (
-      <>
+    return (
+      <div className="mt-2 login-content">
         <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="email">Email</label>
           <input
-          style={{height:"40px"}}
+            style={{height:"40px"}}
             type="email"
             id="email"
             className="form-control mb-2"
@@ -185,7 +152,7 @@ const SignInRustomjee = () => {
         <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="password">Password</label>
           <input
-          style={{height:"40px"}}
+            style={{height:"40px"}}
             type="password"
             id="password"
             className="form-control"
@@ -195,49 +162,27 @@ const SignInRustomjee = () => {
             required
           />
         </div>
-        <div className={`d-flex ${currentProject==='rustomjee'?'justify-content-end':'justify-content-start'} mt-2 mb-3 gap-2`}>
-          <a className={`${currentProject==='rustomjee'?'rustomjee-forget-btn':'forget-btn'}`} href="/forgot-password">
+        <div className="d-flex justify-content-end mt-2 mb-3 gap-2">
+          <a className="rustomjee-forget-btn" href="/forgot-password">
             Forgot password?
           </a>
         </div>
         
         {error && <p className="text-danger">{error}</p>}
-      </>
-    );
-  
-    // Project-specific buttons
-    const rustomjeeButton = (
-      <div className="d-flex align-items-center justify-content-center mt-5">
-        <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger-rustomjee mt-10">
-          {loading ? "Logging in..." : "LOGIN"}
-        </button>
-      </div>
-    );
-  
-    const panchshilButton = (
-      <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger mt-2">
-        {loading ? "Logging in..." : "LOGIN"}
-      </button>
-    );
-  
-    return (
-      <div className="mt-2 login-content">
-        {commonForm}
-        {currentProject === 'rustomjee' ? rustomjeeButton : panchshilButton}
         
-        {config.showRegisterButton && (
-          <button className="btn purple-btn2 mt-3" onClick={regiterPage} 
-            style={{ width: "100%", background: "white", color: "black" }}>
-            {loading ? "Register in..." : "Register"}
+        <div className="d-flex align-items-center justify-content-center mt-5">
+          <button onClick={handlePasswordLogin} type="submit" className="btn-rust btn-danger-rustomjee mt-10">
+            {loading ? "Logging in..." : "LOGIN"}
           </button>
-        )}
+        </div>
       </div>
     );
   };
+
   const renderOtpLogin = () => (
     <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
       {OtpSection && (
-        <div className="form-group position-relative">mt-2
+        <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="mobile">Mobile Number</label>
           <input
             type="tel"
@@ -250,7 +195,7 @@ const SignInRustomjee = () => {
           />
           <button
             type="button"
-            className="btn btn-danger mt-2"
+            className="btn btn-danger-rustomjee mt-2"
             onClick={handleSendOtp}
           >
             Send OTP
@@ -276,7 +221,7 @@ const SignInRustomjee = () => {
       {error && <p className="text-danger">{error}</p>}
 
       {showOtpSection && (
-        <button type="submit" className="btn btn-danger mt-2">
+        <button type="submit" className="btn btn-danger-rustomjee mt-2">
           Verify OTP
         </button>
       )}
@@ -288,7 +233,7 @@ const SignInRustomjee = () => {
       <section className="login_module">
         <div className="container-fluid">
           <div className={`row align-items-center vh-100 ${config.loginBgClass} ${config.alignContent}`}>
-            <div className={`${config.columnClass} vh-50 d-flex align-items-${currentProject === 'rustomjee' ? 'end' : 'center'}`}>
+            <div className={`${config.columnClass} vh-50 d-flex align-items-end`}>
               <div className={config.loginSecClass}>
                 <img
                   className="logo_img"
@@ -296,8 +241,8 @@ const SignInRustomjee = () => {
                   src={config.logoUrl}
                   alt="Logo"
                 />
-                {/* <div style={{paddingTop: "40px"}}> */}
-                <div className={`d-flex gap-3 me-2 align-items-center ${currentProject==='rustomjee'?'justify-content-between me-4 mt-2':'mx-0 mt-4'}`}>
+                
+                <div className="d-flex gap-3 me-2 align-items-center justify-content-between me-4 mt-2">
                   <div className="form-group me-3">
                     <div className="form-check p-0">
                       <input
@@ -314,7 +259,7 @@ const SignInRustomjee = () => {
                     </div>
                   </div>
                   <div className="form-group p-0">
-                    <div className="form-check ">
+                    <div className="form-check">
                       <input
                         className="form-check-box me-2"
                         type="radio"
@@ -332,7 +277,6 @@ const SignInRustomjee = () => {
 
                 {selectedContent === "content1" && renderPasswordLogin()} 
                 {selectedContent === "content2" && renderOtpLogin()}
-                {/* </div> */}
               </div>
             </div>
           </div>

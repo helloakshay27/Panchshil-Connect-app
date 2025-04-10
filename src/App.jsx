@@ -89,10 +89,10 @@ import { baseURL } from "./pages/baseurl/apiDomain";
 // const baseurl = window.location.origin;
 
 let LoginComponent;
-if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
-  LoginComponent = <SignInRustomjee />;
-} else {
+if (baseURL === "https://panchshil-super.lockated.com/") {
   LoginComponent = <SignIn />;
+} else {
+  LoginComponent = <SignInRustomjee /> ;
 }
 
 function App() {

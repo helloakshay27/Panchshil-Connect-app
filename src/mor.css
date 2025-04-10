@@ -740,6 +740,7 @@ a.purple-btn1:hover {
   color: var(--body-bg-color);
   background-color: var(--red);
   margin: 4px 8px 8px 0px;
+  background-color: var(--red) !important;
 }
 
 .purple-btn2-shadow {
@@ -3399,9 +3400,9 @@ input[type="checkbox"].violet-check {
   .col-xl-10 {
     padding: 20px !important;
   }
-  .tbl-container .w-100 {
+  /* .tbl-container .w-100 {
     width: max-content !important;
-  }
+  } */
   .report-counts > div {
     width: 40%;
   }
@@ -3690,7 +3691,7 @@ section select {
 
 .form-check-input {
   background-color: var(--body-bg-color);
-  border: 1px solid var(--lightred) !important;
+  border: 1px solid var(--red) !important;
 }
 
 span#required {

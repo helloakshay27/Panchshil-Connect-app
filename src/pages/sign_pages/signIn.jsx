@@ -1,38 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
-import { LOGO_URL, Rustomji_URL } from "../baseurl/apiDomain";
-
-// Configuration for both projects
-const projectConfigs = {
-  panchshil: {
-    baseURL: "https://panchshil-super.lockated.com/", 
-    logoUrl: LOGO_URL, // Replace with actual Panchshil logo
-    loginBgClass: "login_bg",
-    loginSecClass: "login-sec",
-    logoStyle: { width: 100, height: 100, margin: "auto" },
-    showRegisterButton: true,
-    formTextColor: "",
-    alignContent: "justify-content-center",
-    columnClass: "col-lg-7 col-md-7"
-  },
-  rustomjee: {
-    baseURL: "https://dev-panchshil-super-app.lockated.com/", 
-    logoUrl: Rustomji_URL, // Replace with actual Rustomjee logo
-    loginBgClass: "login_bg_rustomji",
-    loginSecClass: "login-sec-rustom pt-5",
-    logoStyle: { width: 335, height: 108, margin: "20px 0px 50px ",  },
-    showRegisterButton: false,
-    formTextColor: "text-light",
-    alignContent: "justify-content-end",
-    columnClass: "col-lg-4 p-0 m-0 col-md-4"
-  }
-};
+import { LOGO_URL } from "../baseurl/apiDomain";
 
 const SignIn = () => {
-  // State management (keep all your existing state)
+  // State management
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
@@ -45,23 +19,27 @@ const SignIn = () => {
   
   const navigate = useNavigate();
   
-  // Determine which project we're using based on the current URL
-  const [currentProject, setCurrentProject] = useState('panchshil');
-  
-  useEffect(() => {
-    // Detect which project is active based on the URL
-    // if (window.location.href.includes('localhost:5173')) {
-    if (window.location.href.includes('ui-panchshil-super')) {
-      setCurrentProject('panchshil');
-    } else {
-      setCurrentProject('rustomjee');
-    }
-  }, []);
+  // Panchshil configuration
+  const config = {
+    baseURL: "https://panchshil-super.lockated.com/",
+    logoUrl: LOGO_URL,
+    loginBgClass: "login_bg",
+    loginSecClass: "login-sec",
+    logoStyle: { width: 100, height: 100, margin: "auto" },
+    showRegisterButton: true,
+    formTextColor: "",
+    alignContent: "justify-content-center",
+    columnClass: "col-lg-7 col-md-7"
+  };
+
+  const toggleContent = (content) => {
+    setSelectedContent(content);
+    setError("");
+  };
 
   const regiterPage = () => {
     navigate("/register");
   };
-
 
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
@@ -158,24 +136,14 @@ const SignIn = () => {
       setLoading(false);
     }
   };
-  const toggleContent = (content) => {
-    setSelectedContent(content);
-};
-  
-  // Get the current project's configuration
-  const config = projectConfigs[currentProject];
-  
-  // Keep all your existing functions (handlePasswordLogin, handleSendOtp, etc.)
 
-  // Common form components to avoid duplication
   const renderPasswordLogin = () => {
-    // Common form elements
-    const commonForm = (
-      <>
+    return (
+      <div className="mt-2 login-content">
         <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="email">Email</label>
           <input
-          style={{height:"40px"}}
+            style={{height:"40px"}}
             type="email"
             id="email"
             className="form-control mb-2"
@@ -188,7 +156,7 @@ const SignIn = () => {
         <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="password">Password</label>
           <input
-          style={{height:"40px"}}
+            style={{height:"40px"}}
             type="password"
             id="password"
             className="form-control"
@@ -198,35 +166,17 @@ const SignIn = () => {
             required
           />
         </div>
-        <div className={`d-flex ${currentProject==='rustomjee'?'justify-content-end':'justify-content-start'} mt-2 mb-3 gap-2`}>
-          <a className={`${currentProject==='rustomjee'?'rustomjee-forget-btn':'forget-btn'}`} href="/forgot-password">
+        <div className="d-flex justify-content-start mt-2 mb-3 gap-2">
+          <a className="forget-btn" href="/forgot-password">
             Forgot password?
           </a>
         </div>
         
         {error && <p className="text-danger">{error}</p>}
-      </>
-    );
-  
-    // Project-specific buttons
-    const rustomjeeButton = (
-      <div className="d-flex align-items-center justify-content-center mt-5">
-        <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger-rustomjee mt-10">
-          {loading ? "Logging in..." : "LOGIN"}
+        
+        <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger mt-2">
+          {loading ? "Logging in..." : "Login"}
         </button>
-      </div>
-    );
-  
-    const panchshilButton = (
-      <button onClick={handlePasswordLogin} type="submit" className="btn btn-danger mt-2">
-        {loading ? "Logging in..." : "LOGIN"}
-      </button>
-    );
-  
-    return (
-      <div className="mt-2 login-content">
-        {commonForm}
-        {currentProject === 'rustomjee' ? rustomjeeButton : panchshilButton}
         
         {config.showRegisterButton && (
           <button className="btn purple-btn2 mt-3" onClick={regiterPage} 
@@ -237,10 +187,11 @@ const SignIn = () => {
       </div>
     );
   };
+
   const renderOtpLogin = () => (
     <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
       {OtpSection && (
-        <div className="form-group position-relative">mt-2
+        <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="mobile">Mobile Number</label>
           <input
             type="tel"
@@ -291,7 +242,7 @@ const SignIn = () => {
       <section className="login_module">
         <div className="container-fluid">
           <div className={`row align-items-center vh-100 ${config.loginBgClass} ${config.alignContent}`}>
-            <div className={`${config.columnClass} vh-50 d-flex align-items-${currentProject === 'rustomjee' ? 'end' : 'center'}`}>
+            <div className={`${config.columnClass} vh-50 d-flex align-items-center`}>
               <div className={config.loginSecClass}>
                 <img
                   className="logo_img"
@@ -299,12 +250,12 @@ const SignIn = () => {
                   src={config.logoUrl}
                   alt="Logo"
                 />
-                {/* <div style={{paddingTop: "40px"}}> */}
-                <div className={`d-flex gap-3 me-2 align-items-center ${currentProject==='rustomjee'?'justify-content-between me-4 mt-2':'mx-0 mt-4'}`}>
-                  <div className="form-group me-3">
-                    <div className="form-check p-0">
+                
+                <div className="d-flex gap-3 me-2 align-items-center mx-0 mt-4">
+                  <div className="form-group">
+                    <div className="form-check">
                       <input
-                        className="form-check-box me-2"
+                        className="form-check-input"
                         type="radio"
                         name="contentSelector"
                         value="content1"
@@ -316,10 +267,10 @@ const SignIn = () => {
                       </label>
                     </div>
                   </div>
-                  <div className="form-group p-0">
-                    <div className="form-check ">
+                  <div className="form-group">
+                    <div className="form-check">
                       <input
-                        className="form-check-box me-2"
+                        className="form-check-input"
                         type="radio"
                         name="contentSelector"
                         value="content2"
@@ -335,7 +286,6 @@ const SignIn = () => {
 
                 {selectedContent === "content1" && renderPasswordLogin()} 
                 {selectedContent === "content2" && renderOtpLogin()}
-                {/* </div> */}
               </div>
             </div>
           </div>
