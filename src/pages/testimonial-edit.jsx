@@ -95,15 +95,31 @@ const TestimonialEdit = () => {
   const handleBannerVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const maxSize = 100 * 1024 * 1024; // 100MB
+  
+      if (file.size > maxSize) {
+        setErrors((prev) => ({
+          ...prev,
+          testimonial_video: "Max file size is 100 MB",
+        }));
+        toast.error("Video exceeds 100MB limit. Please upload a smaller file.");
+        return;
+      }
+  
       const videoUrl = URL.createObjectURL(file);
       setPreviewVideo(videoUrl);
       setFormData((prev) => ({
         ...prev,
         testimonial_video: file,
       }));
+      setErrors((prev) => ({
+        ...prev,
+        testimonial_video: null,
+      }));
       setExistingVideoUrl(null);
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
