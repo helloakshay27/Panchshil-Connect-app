@@ -19,7 +19,8 @@ const SiteVisitSlotConfig = () => {
     e.preventDefault();
     setLoading(true);
     toast.dismiss();
-
+  
+    // Validation
     if (!startHour && startHour !== 0) {
       toast.error("Start hour is required.");
       setLoading(false);
@@ -40,18 +41,22 @@ const SiteVisitSlotConfig = () => {
       setLoading(false);
       return;
     }
-
-    const postData = {
-      start_hour: startHour,
-      start_minute: startMinute,
-      end_hour: endHour,
-      end_minute: endMinute,
-    };
-
+  
+    // Format time as HH:MM
+    const startTime = `${String(startHour).padStart(2, "0")}:${String(startMinute).padStart(2, "0")}`;
+    const endTime = `${String(endHour).padStart(2, "0")}:${String(endMinute).padStart(2, "0")}`;
+  
+    // Create FormData with nested keys
+    const formData = new FormData();
+    formData.append("site_schedule[start_hour]", startHour);
+    formData.append("site_schedule[start_minute]", startMinute);
+    formData.append("site_schedule[end_hour]", endHour);
+    formData.append("site_schedule[end_minute]", endMinute);
+  
     try {
       const response = await axios.post(
         `${baseURL}site_schedules`,
-        postData,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -59,7 +64,7 @@ const SiteVisitSlotConfig = () => {
           },
         }
       );
-
+  
       toast.success("Slot created successfully!");
       console.log("Data successfully submitted:", response.data);
       navigate("/setup-member/siteslot-list");
@@ -73,7 +78,7 @@ const SiteVisitSlotConfig = () => {
       setLoading(false);
     }
   };
-
+  
   const navigate = useNavigate();
   const handleCancel = () => {
     navigate(-1);
