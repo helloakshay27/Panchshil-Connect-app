@@ -11,7 +11,7 @@ const SetupMember = () => {
     <div>
         
         <>
-              <div className="main-content  pt-5 ">
+              <div className="main-content  ">
                 <div className="website-content overflow-auto">
                   <div className="module-data-section container-fluid">
                   <h1>Panchshil Setup Member </h1>
