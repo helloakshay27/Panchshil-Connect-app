@@ -22,7 +22,7 @@ export default function RootLayout() {
           {location.pathname.startsWith("/setup-member") ? <SetupSidebar /> : <Sidebar />}
         </div>
 
-        <div className="website-content flex-grow-1">
+        <div className="website-content flex-grow-1 position-relative">
         <Breadcrumbs />
           
           <Outlet /> {/* Dynamic content rendering */}
