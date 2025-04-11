@@ -360,33 +360,34 @@ const Testimonials = () => {
                             *
                           </span> */}
                         </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="testimonial_video"
-                          accept="video/*"
-                          onChange={handleBannerVideoChange}
-                        />
-                        {errors.testimonial_video && (
-                          <span className="error text-danger">
-                            {errors.testimonial_video}
-                          </span>
-                        )}
-
-                        {/* Video Preview */}
-                        {!previewVideo && existingVideoUrl && (
-                          <video
-                            src={existingVideoUrl}
-                            controls
-                            className="img-fluid rounded mt-2"
-                            style={{
-                              maxWidth: "200px",
-                              maxHeight: "150px",
-                              objectFit: "cover",
-                            }}
+                          <input
+                            className="form-control"
+                            type="file"
+                            name="testimonial_video"
+                            accept="video/*"
+                            onChange={handleBannerVideoChange}
                           />
-                        )}
-                      </div>
+                          {errors.testimonial_video && (
+                            <span className="error text-danger">
+                              {errors.testimonial_video}
+                            </span>
+                          )}
+
+                          {/* Video Preview */}
+                          {previewVideo &&  (
+                            <video
+                              src={previewVideo}
+                              controls
+                              
+                              className="img-fluid rounded mt-2"
+                              style={{
+                                maxWidth: "200px",
+                                maxHeight: "150px",
+                                objectFit: "cover",
+                              }}
+                            />
+                          )}
+                        </div>
                     </div>
                   </div>
                 </div>
