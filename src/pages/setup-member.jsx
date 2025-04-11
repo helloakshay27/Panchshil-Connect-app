@@ -9,12 +9,12 @@ import { Link } from "react-router-dom";
 const SetupMember = () => {
   return (
     <div>
-        <h1>Panchshil Setup Member </h1>
+        
         <>
-              <div className="main-content ">
+              <div className="main-content  pt-5 ">
                 <div className="website-content overflow-auto">
                   <div className="module-data-section container-fluid">
-                   
+                  <h1>Panchshil Setup Member </h1>
                     <ul>
                     <li>
                         <Link to="category-types">Category Type</Link>
