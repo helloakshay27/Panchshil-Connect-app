@@ -3018,14 +3018,14 @@ const ProjectDetailsEdit = () => {
                         file.attachfiles?.map((attachment, idx) => (
                           <tr key={`fetched-${index}-${idx}`}>
                             {/* <td>{file.gallery_type || "N/A"}</td> */}
-                            <td>{attachment.file_name || "N/A"}</td>
+                            <td>{attachment.document_file_name || "N/A"}</td>
                             <td>
                               {attachment.document_url && (
                                 <img
                                   style={{ maxWidth: 100, maxHeight: 100 }}
                                   className="img-fluid rounded"
                                   src={attachment.document_url}
-                                  alt={attachment.file_name || "Fetched Image"}
+                                  alt={attachment.document_file_name || "Fetched Image"}
                                 />
                               )}
                             </td>
