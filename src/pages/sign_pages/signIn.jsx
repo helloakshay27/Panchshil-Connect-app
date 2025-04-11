@@ -49,7 +49,8 @@ const SignIn = () => {
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address.");
+      // setError("Please enter a valid email address.");
+      toast.error("Please enter a valid email address.");
       setLoading(false);
       return;
     }
@@ -69,11 +70,10 @@ const SignIn = () => {
         navigate("/project-list");
         toast.success("Login successful");
       } else {
-        setError("Login failed. Please check your credentials.");
+        toast.error("Login failed. Please check your credentials.");
       }
     } catch (err) {
       toast.error("Login failed. Please check your credentials.");
-      setError("An error occurred during login. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,8 @@ const SignIn = () => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!mobile || !/^\d{10}$/.test(mobile)) {
-      setError("Please enter a valid 10-digit mobile number.");
+      // setError("Please enter a valid 10-digit mobile number.");
+      toast.error("Please enter a valid 10-digit mobile number.");
       return;
     }
     setError("");
@@ -107,7 +108,8 @@ const SignIn = () => {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     if (!otp) {
-      setError("Please enter a valid OTP.");
+      // setError("Please enter a valid OTP.");
+      toast.error("Please enter a valid OTP.");
       return;
     }
     setError("");
@@ -127,7 +129,9 @@ const SignIn = () => {
         navigate("/project-list");
         toast.success("Login successfully");
       } else {
-        setError("Login failed. Please check your credentials.");
+        // setError("Login failed. Please check your credentials.");
+        toast.error("Login failed. Please check your credentials.");
+
       }
     } catch (err) {
       console.error(err);
