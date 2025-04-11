@@ -8,6 +8,7 @@ import { baseURL } from "./baseurl/apiDomain";
 const EventEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [formErrors, setFormErrors] = useState({});
 
   console.log("id", id);
 
@@ -160,9 +161,32 @@ const EventEdit = () => {
       [name]: value === "true", // Convert string to boolean
     }));
   };
+  const validateForm = () => {
+    // const errors = [];
+    // if (!formData.event_name) {
+    //   errors.push("Event Name is required.");
+    //   return errors; // Return the first error immediately
+    // }
+    // return errors; // Return the first error message if any
+    const errors = {}
+    if (!formData.event_name) {
+      errors.event_name = "Event Name is required.";
+    }
+    setFormErrors(errors); // Update state with errors
+
+    if(Object.keys(errors).length > 0) {
+     toast.error(Object.values(errors)[0]) 
+     return false
+
+    }
+    return true; // Return true if no errors
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if(!validateForm()) return;
+
     setLoading(true);
 
     const data = new FormData();
