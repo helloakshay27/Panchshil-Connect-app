@@ -36,6 +36,8 @@ const ProjectDetailsList = () => {
   };
 
   const [loading, setLoading] = useState(false);
+  // Track the active toast ID to dismiss it before showing a new one
+  const [activeToastId, setActiveToastId] = useState(null);
 
   const pageSize = 10; // Items per page
 
@@ -95,9 +97,14 @@ const ProjectDetailsList = () => {
     }
   };
 
-
   const handleToggle = async (id, currentStatus) => {
     const updatedStatus = !currentStatus;
+    
+    // Dismiss any existing toast first
+    if (activeToastId) {
+      toast.dismiss(activeToastId);
+    }
+    
     try {
       await axios.put(
         `${baseURL}projects/${id}.json`,
@@ -109,15 +116,32 @@ const ProjectDetailsList = () => {
           }
         }
       );
+      
       setProjects((prev) =>
         prev.map((item) =>
           item.id === id ? { ...item, published: updatedStatus } : item
         )
       );
-      toast.success("Status updated successfully!");
+      
+      // Show new toast and store its ID
+      const newToastId = toast.success("Status updated successfully!", {
+        duration: 3000, // Toast will auto-dismiss after 3 seconds
+        position: "top-center", // Position the toast at the top center
+        id: `toggle-${id}`, // Give each toast a unique ID based on project
+      });
+      
+      setActiveToastId(newToastId);
     } catch (error) {
       console.error("Error updating status:", error);
-      toast.error("Failed to update status.");
+      
+      // Show error toast and store its ID
+      const newToastId = toast.error("Failed to update status.", {
+        duration: 3000,
+        position: "top-center",
+        id: `toggle-error-${id}`,
+      });
+      
+      setActiveToastId(newToastId);
     }
   };
 
@@ -138,9 +162,6 @@ const ProjectDetailsList = () => {
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
-
-
-  console.log("Projects", projects);
 
   return (
     <>
@@ -235,7 +256,6 @@ const ProjectDetailsList = () => {
                         <thead>
                           <tr>
                           <th>Action</th>
-
                             <th>Sr No</th>
                             <th>Project Name</th>
                             <th>Property Type</th>
@@ -251,7 +271,6 @@ const ProjectDetailsList = () => {
                             <th>Number Of Units</th>
                             <th>Rera Number</th>
                             <th>Amenities</th>
-                            {/* <th>Specifications</th> */}
                           </tr>
                         </thead>
                         <tbody>
@@ -269,10 +288,8 @@ const ProjectDetailsList = () => {
                                     cursor: "pointer",
                                     padding: 0,
                                     width: "35px",
-                                    // gap: "1px",
                                   }}
                                 >
-                                  {console.log("gsdfg", project.published)}
                                   {project.published ? (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
@@ -407,14 +424,6 @@ const ProjectDetailsList = () => {
                                     ))
                                   : "No amenities"}
                               </td>
-                              {/* <td>
-                                {project?.specifications?.length > 0
-                                  ? project?.specifications.map((spec, idx) => (
-                                      <div key={idx}>{spec.name}</div>
-                                    ))
-                                  : "No specifications"}
-                              </td> */}
-                              
                             </tr>
                           ))}
                         </tbody>

@@ -75,6 +75,7 @@ import CategoryTypesEdit from "./pages/category-types-edit";
 import TagAdd from "./pages/tag-add";
 import SignInRustomjee from "./pages/sign_pages/signInRustomjee";
 import { baseURL } from "./pages/baseurl/apiDomain";
+import ForgotRustomjee from "./pages/sign_pages/ForgotRustomjee";
 
 
 // // import EditGallery from './EditGallery';
@@ -89,10 +90,22 @@ import { baseURL } from "./pages/baseurl/apiDomain";
 // const baseurl = window.location.origin;
 
 let LoginComponent;
+let ForgotPasswordComponent;
+
 if (baseURL === "https://panchshil-super.lockated.com/") {
   LoginComponent = <SignIn />;
+  ForgotPasswordComponent = <Forgot />;
+
+  // LoginComponent = <SignInRustomjee />;
+  // ForgotPasswordComponent = <ForgotRustomjee />;
+  
 } else {
-  LoginComponent = <SignInRustomjee /> ;
+  // LoginComponent = <SignIn />;
+  // ForgotPasswordComponent = <Forgot />;
+
+  LoginComponent = <SignInRustomjee />;
+  ForgotPasswordComponent = <ForgotRustomjee />;
+  
 }
 
 function App() {
@@ -103,7 +116,8 @@ function App() {
       <Route path="/login" element={LoginComponent} />
         {/* <Route path="/login" element={<SignIn />} /> */}
         <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<Forgot />} />
+        {/* <Route path="/forgot-password" element={<Forgot />} /> */}
+        <Route path="/forgot-password" element={ForgotPasswordComponent} />
         <Route path="/forgot-otp" element={<ForgotOtp />} />
         <Route path="/reset-password" element={<CreatePassword />} />
 
