@@ -171,7 +171,7 @@ const SignInRustomjee = () => {
         {error && <p className="text-danger">{error}</p>}
         
         <div className="d-flex align-items-center justify-content-center mt-5">
-          <button onClick={handlePasswordLogin} type="submit" className="btn-rust btn-danger-rustomjee mt-10">
+          <button onClick={handlePasswordLogin} type="submit" className="btn-rust btn-danger-rustomjee mt-10 border-0">
             {loading ? "Logging in..." : "LOGIN"}
           </button>
         </div>
@@ -205,7 +205,7 @@ const SignInRustomjee = () => {
       <div className="d-flex align-items-center justify-content-center mt-5">
         <button
           type="button"
-          className="btn-rust btn-danger-rustomjee d-flex align-items-center justify-content-center"
+          className="btn-rust btn-danger-rustomjee d-flex align-items-center justify-content-center border-0"
           onClick={handleSendOtp}
         >
           Send OTP

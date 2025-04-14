@@ -30,29 +30,32 @@ const ForgotRustomjee = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-  
+
     // Navigate immediately — seamless UX
-    navigate(`/forgot-otp?email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}`);
-  
+    navigate(
+      `/forgot-otp?email=${encodeURIComponent(
+        email
+      )}&mobile=${encodeURIComponent(mobile)}`
+    );
+
     // Let OTP call run in the background
     try {
       const response = await axios.post(`${baseURL}generate_code`, {
         email,
         mobile,
       });
-  
+
       if (response.data.success) {
         toast.success("OTP Sent successfully");
       } else {
         toast.error(response.data.message || "Something went wrong");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error sending OTP");
+      // toast.error(err.response?.data?.message || "Error sending OTP");
     } finally {
       setLoading(false);
     }
   };
-  
 
   const goToLoginPage = () => {
     navigate("/login");
@@ -82,7 +85,8 @@ const ForgotRustomjee = () => {
                 >
                   <h6 className={config.formTextColor}>Forgot Password</h6>
                   <p className={`mt-4 ${config.formTextColor}`}>
-                    Enter your registered emai ID below and we'll send you an OTP to reset your password.
+                    Enter your registered emai ID below and we'll send you an
+                    OTP to reset your password.
                   </p>
 
                   <div className="form-group position-relative">
@@ -93,20 +97,20 @@ const ForgotRustomjee = () => {
                       Email ID
                     </label>
                     <input
-  type="text"
-  className="form-control"
-  id="forgetEmail"
-  placeholder="Enter your Email / Mobile No. / Username"
-  value={email || mobile || username}
-  onChange={(e) => {
-    const value = e.target.value;
-    setEmail(value);
-    setMobile(value);
-    setUsername(value);
-  }}
-  // ❌ Remove the required attribute
-/>
-
+                      style={{ height: "40px" }}
+                      type="text"
+                      className="form-control"
+                      id="forgetEmail"
+                      placeholder="Enter your registerd email id..."
+                      value={email || mobile || username}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setEmail(value);
+                        setMobile(value);
+                        setUsername(value);
+                      }}
+                      // ❌ Remove the required attribute
+                    />
                   </div>
 
                   {error && <p className="text-danger">{error}</p>}

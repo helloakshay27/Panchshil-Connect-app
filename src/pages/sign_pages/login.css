@@ -39,7 +39,7 @@ div {
 
 /* :root {
   --body-bg-color: #ffffff;
-  --red: #A78847;
+  --red: #de7008;
   --lightred: #9e2c2d;
   --black: #000000;
   --light-green: #8ed7c6;
@@ -249,7 +249,7 @@ h2 {
 }
 
 .login-sec-rustom.pt-5{
-  padding-top: 5rem !important;
+  padding-top: 10rem !important;
 }
 
 /* .login-sec-rustom.form-group{
@@ -687,5 +687,9 @@ input#confirmPassword {
 
 .requirement-text{
   margin-bottom: 0px !important;
+}
+
+.rustomjee-forget-btn:hover {
+  color: #A78847; /* golden hover effect */
 }
 

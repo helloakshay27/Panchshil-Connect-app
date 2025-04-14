@@ -17,7 +17,7 @@ const CreatePasswordRustomjee = () => {
     minLength: false,
     hasUppercase: false,
     hasNumber: false,
-    hasSpecial: false
+    hasSpecial: false,
   });
 
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const CreatePasswordRustomjee = () => {
     const emailParam = params.get("email");
     const mobileParam = params.get("mobile");
     const tokenParam = params.get("token");
-    
+
     if (emailParam) setEmail(emailParam);
     if (mobileParam) setMobile(mobileParam);
     if (tokenParam) setToken(tokenParam);
@@ -52,11 +52,11 @@ const CreatePasswordRustomjee = () => {
       minLength: password.length >= 8,
       hasUppercase: /[A-Z]/.test(password),
       hasNumber: /[0-9]/.test(password),
-      hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+      hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
     };
-    
+
     setPasswordRequirements(requirements);
-    return Object.values(requirements).every(value => value);
+    return Object.values(requirements).every((value) => value);
   };
 
   const handlePasswordChange = (e) => {
@@ -88,17 +88,21 @@ const CreatePasswordRustomjee = () => {
         email,
         mobile,
         token,
-        password: newPassword
+        password: newPassword,
       });
 
       if (response.data.success) {
         toast.success("Password reset successfully");
         navigate("/login");
       } else {
-        setError(response.data.message || "An error occurred while resetting password");
+        setError(
+          response.data.message || "An error occurred while resetting password"
+        );
       }
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred during password reset");
+      setError(
+        err.response?.data?.message || "An error occurred during password reset"
+      );
     } finally {
       setLoading(false);
     }
@@ -151,32 +155,55 @@ const CreatePasswordRustomjee = () => {
                   </div>
 
                   <div className="mark-indicator-rust">
-  <div className="requirement-item">
-    <span className="bullet-point">•</span>
-    <p className={`requirement-text ${passwordRequirements.minLength ? "requirement-met" : ""}`}>
-      Minimum 8 characters
-    </p>
-  </div>
-  <div className="requirement-item">
-    <span className="bullet-point">•</span>
-    <p className={`requirement-text ${passwordRequirements.hasUppercase ? "requirement-met" : ""}`}>
-      At least one uppercase letter
-    </p>
-  </div>
-  <div className="requirement-item">
-    <span className="bullet-point">•</span>
-    <p className={`requirement-text ${passwordRequirements.hasNumber ? "requirement-met" : ""}`}>
-      At least one number
-    </p>
-  </div>
-  <div className="requirement-item">
-    <span className="bullet-point">•</span>
-    <p className={`requirement-text ${passwordRequirements.hasSpecial ? "requirement-met" : ""}`}>
-      At least one special character (!@#$%)
-    </p>
-  </div>
-</div>
-
+                    <div className="requirement-item">
+                      <span className="bullet-point">•</span>
+                      <p
+                        className={`requirement-text ${
+                          passwordRequirements.minLength
+                            ? "requirement-met"
+                            : ""
+                        }`}
+                      >
+                        Minimum 8 characters
+                      </p>
+                    </div>
+                    <div className="requirement-item">
+                      <span className="bullet-point">•</span>
+                      <p
+                        className={`requirement-text ${
+                          passwordRequirements.hasUppercase
+                            ? "requirement-met"
+                            : ""
+                        }`}
+                      >
+                        At least one uppercase letter
+                      </p>
+                    </div>
+                    <div className="requirement-item">
+                      <span className="bullet-point">•</span>
+                      <p
+                        className={`requirement-text ${
+                          passwordRequirements.hasNumber
+                            ? "requirement-met"
+                            : ""
+                        }`}
+                      >
+                        At least one number
+                      </p>
+                    </div>
+                    <div className="requirement-item">
+                      <span className="bullet-point">•</span>
+                      <p
+                        className={`requirement-text ${
+                          passwordRequirements.hasSpecial
+                            ? "requirement-met"
+                            : ""
+                        }`}
+                      >
+                        At least one special character (!@#$%)
+                      </p>
+                    </div>
+                  </div>
 
                   <div className="form-group position-relative">
                     <label
