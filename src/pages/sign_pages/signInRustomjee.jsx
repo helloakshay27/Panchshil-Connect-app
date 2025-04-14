@@ -181,27 +181,40 @@ const SignInRustomjee = () => {
 
   const renderOtpLogin = () => (
     <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
-      {OtpSection && (
-        <div className="form-group position-relative">
-          <label className={`mb-1 ${config.formTextColor}`} htmlFor="mobile">Mobile Number</label>
-          <input
-            type="tel"
-            id="mobile"
-            className="form-control mb-2"
-            placeholder="Enter mobile number"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            required
-          />
-          <button
-            type="button"
-            className="btn btn-danger-rustomjee mt-2"
-            onClick={handleSendOtp}
-          >
-            Send OTP
-          </button>
-        </div>
-      )}
+  {OtpSection && (
+    <>
+      <div className="form-group position-relative">
+        <label
+          className={`mb-1 ${config.formTextColor}`}
+          htmlFor="mobile"
+        >
+          Mobile Number
+        </label>
+        <input
+          style={{height:"40px"}}
+          type="tel"
+          id="mobile"
+          className="form-control mb-2"
+          placeholder="Enter mobile number"
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="d-flex align-items-center justify-content-center mt-5">
+        <button
+          type="button"
+          className="btn-rust btn-danger-rustomjee d-flex align-items-center justify-content-center"
+          onClick={handleSendOtp}
+        >
+          Send OTP
+        </button>
+      </div>
+    </>
+  )}
+
+
 
       {showOtpSection && (
         <div className="form-group position-relative">

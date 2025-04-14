@@ -217,6 +217,8 @@ h2 {
   background-color: #A78847 !important;
 }
 
+
+
 .login-sec {
   border-radius: 42px;
   border: 1px solid rgba(58, 58, 51, 0.4);
@@ -547,3 +549,143 @@ input#confirmPassword {
   background-color: white;
   border-radius: 50%;
 }
+
+.login-content-rust p {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+  margin: auto;
+}
+
+.login-content-rust,
+.otp-content,
+.create-new-password-content,
+.forget-password-content {
+  width: 100%;
+  max-width: 380px;
+}
+
+.back-login-link {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+}
+
+/* Resend Timer */
+.resend-timer {
+  font-weight: 500;
+  color: #fff;
+}
+
+.resend-time {
+  font-weight: bold;
+}
+
+/* GO BACK Link Styling */
+.go-back-wrapper {
+  font-weight: 500;
+  color: #fff;
+}
+
+.go-back-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  padding-left: 4px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.go-back-btn:hover {
+  text-decoration: underline;
+}
+
+.mark-indicator-rust {
+  display: flex;
+  flex-direction: column;
+  
+  align-items: flex-start;
+}
+.pass-len,
+.pass-upp,
+.pass-num,
+.pass-char {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.mark-indicator-rust p {
+  color: #FFFFFF;
+  margin: 0;
+  font-size: 14px;
+}
+
+.password-requirements {
+  margin-top: 8px;
+  margin-left: 8px;
+}
+
+.requirements-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.requirements-list li {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 300;
+  margin-bottom: 4px;
+  padding-left: 4px;
+}
+
+/* Style for when requirement is met */
+.requirements-list li.requirement-met {
+  color: #FFFFFF;
+}
+
+/* You can add a subtle visual indicator when requirements are met */
+.requirements-list li.requirement-met::marker {
+  color: #FFFFFF;
+}
+
+.mark-indicator-rust {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  margin-left: 8px;
+}
+
+.requirement-item {
+  display: flex;
+  align-items: center; /* Center align for better vertical alignment */
+  margin-bottom: 2px; /* Reduced from 4px to 2px */
+}
+
+.bullet-point {
+  color: #FFFFFF;
+  font-size: 20px; /* Smaller bullet size */
+  margin-right: 8px; /* Reduced from 8px to 4px to bring text closer to bullet */
+  line-height: 1;
+}
+
+.requirement-item p {
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 300;
+  margin: 0;
+  /* padding-top: 1px; */
+}
+
+.requirement-item p.requirement-met {
+  color: #FFFFFF;
+}
+
+.requirement-text{
+  margin-bottom: 0px !important;
+}
+

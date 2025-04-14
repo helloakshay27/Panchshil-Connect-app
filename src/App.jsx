@@ -75,6 +75,9 @@ import CategoryTypesEdit from "./pages/category-types-edit";
 import TagAdd from "./pages/tag-add";
 import SignInRustomjee from "./pages/sign_pages/signInRustomjee";
 import { baseURL } from "./pages/baseurl/apiDomain";
+import ForgotRustomjee from "./pages/sign_pages/ForgotRustomjee";
+import ForgotOtpRustomjee from "./pages/sign_pages/ForgotOtpRustomjee";
+import CreatePasswordRustomjee from "./pages/sign_pages/CreatePasswordRustomjee";
 
 
 // // import EditGallery from './EditGallery';
@@ -89,10 +92,22 @@ import { baseURL } from "./pages/baseurl/apiDomain";
 // const baseurl = window.location.origin;
 
 let LoginComponent;
-if (baseURL === "https://panchshil-super.lockated.com/") {
-  LoginComponent = <SignIn />;
+let ForgotPasswordComponent;
+let ForgotOtpComponent;
+let CreatePasswordComponent;
+
+if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+
+  LoginComponent = <SignInRustomjee />;
+  ForgotPasswordComponent = <ForgotRustomjee />;
+  ForgotOtpComponent = <ForgotOtpRustomjee />;  
+  CreatePasswordComponent = <CreatePasswordRustomjee/>
+  
 } else {
-  LoginComponent = <SignInRustomjee /> ;
+  LoginComponent = <SignIn />;
+  ForgotPasswordComponent = <Forgot />;
+  ForgotOtpComponent = <ForgotOtp />;  
+  CreatePasswordComponent = <CreatePassword />
 }
 
 function App() {
@@ -103,9 +118,12 @@ function App() {
       <Route path="/login" element={LoginComponent} />
         {/* <Route path="/login" element={<SignIn />} /> */}
         <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<Forgot />} />
-        <Route path="/forgot-otp" element={<ForgotOtp />} />
-        <Route path="/reset-password" element={<CreatePassword />} />
+        {/* <Route path="/forgot-password" element={<Forgot />} /> */}
+        <Route path="/forgot-password" element={ForgotPasswordComponent} />
+        {/* <Route path="/forgot-otp" element={<ForgotOtp />} /> */}
+        <Route path="/forgot-otp" element={ForgotOtpComponent} />
+        {/* <Route path="/reset-password" element={<CreatePassword />} /> */}
+        <Route path="/reset-password" element={CreatePasswordComponent} />
 
 
         <Route
