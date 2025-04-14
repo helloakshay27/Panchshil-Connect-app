@@ -9,13 +9,12 @@
   --grey: #3a3a33;
   --light-grey: #8692a6;
   --text-color: #084236;
-  --scrollbar-color: #de7008 /* Red color */;
+  --scrollbar-color: #A78847 /* Red color */;
 }
 
 /* .card-tools svg circle{
   fill: var(--red);
-}
-.card-tools svg path{
+.purple-btn2.card-tools svg path{
   fill: var(--body-bg-color);
 } */
 
@@ -26,6 +25,14 @@ svg path{
 
 .iti.iti--allow-dropdown.iti--separate-dial-code {
   width: 100%;
+}
+
+.sidebar path {
+  fill: var(--red);
+}
+
+table path {
+  fill: var(--red);
 }
 
 /* .tab-content svg path{

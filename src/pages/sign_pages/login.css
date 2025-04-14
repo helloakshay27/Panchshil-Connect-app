@@ -37,16 +37,16 @@ div {
   font-style: normal;
 }
 
-:root {
+/* :root {
   --body-bg-color: #ffffff;
-  --red: #de7008;
+  --red: #A78847;
   --lightred: #9e2c2d;
   --black: #000000;
   --light-green: #8ed7c6;
   --grey: #3a3a33;
   --light-grey: #8692a6;
   --text-color: #084236;
-}
+} */
 
 @font-face {
   font-family: "vi-regular";
@@ -249,7 +249,7 @@ h2 {
 }
 
 .login-sec-rustom.pt-5{
-  padding-top: 10rem !important;
+  padding-top: 5rem !important;
 }
 
 /* .login-sec-rustom.form-group{
