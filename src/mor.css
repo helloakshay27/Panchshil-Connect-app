@@ -610,11 +610,10 @@ section .locked img {
   border: 1px solid var(--black);
 }
 
-.sidebar svg:hover path,
+/* .sidebar svg:hover path,
 .sidebar .active svg path {
   fill: var(--red);
-  /* Change the fill color to the value of the --red variable */
-}
+} */
 
 .closebtn svg:hover path {
   fill: var(--body-bg-color);
