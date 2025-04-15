@@ -117,7 +117,7 @@ const ProjectConfigEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Name <span style={{ color: "#de7008" }}> *</span>
+                          Name <span className="otp-asterisk">{" "}*</span>
                         </label>
                         <input
                           className="form-control"
@@ -134,7 +134,7 @@ const ProjectConfigEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Icon <span style={{ color: "#de7008" }}> *</span>
+                          Icon <span className="otp-asterisk">{" "}*</span>
                         </label>
                         <input
                           className="form-control"

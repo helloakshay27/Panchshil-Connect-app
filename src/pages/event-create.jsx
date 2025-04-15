@@ -408,10 +408,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Name
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
+                          <span className="otp-asterisk">{" "}*</span>
                         </label>
                         <input
                           className="form-control"

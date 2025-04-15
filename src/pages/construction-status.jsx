@@ -54,9 +54,7 @@ const ConstructionStatus = () => {
                     <div className="form-group">
                       <label>
                         Name
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"

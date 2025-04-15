@@ -98,7 +98,7 @@ const SiteVisitSlotConfig = () => {
                   <div className="row">
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Start Hours *</label>
+                        <label>Start Hours <span className="otp-asterisk">{" "}*</span></label>
                         <SelectBox
                           options={hours.map((hour) => ({
                             label: hour.toString().padStart(2, "0"),
@@ -111,7 +111,7 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Start Minutes *</label>
+                        <label>Start Minutes <span className="otp-asterisk">{" "}*</span></label>
                         <SelectBox
                           options={minutes.map((minute) => ({
                             label: minute.toString().padStart(2, "0"),
@@ -124,7 +124,7 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>End Hours *</label>
+                        <label>End Hours <span className="otp-asterisk">{" "}*</span></label>
                         <SelectBox
                           options={hours.map((hour) => ({
                             label: hour.toString().padStart(2, "0"),
@@ -137,7 +137,7 @@ const SiteVisitSlotConfig = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>End Minutes *</label>
+                        <label>End Minutes <span className="otp-asterisk">{" "}*</span></label>
                         <SelectBox
                           options={minutes.map((minute) => ({
                             label: minute.toString().padStart(2, "0"),

@@ -106,7 +106,7 @@ const ProjectBuildingTypeEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Property Types <span className="otp-asterisk">*</span>
+                        Property Types <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <SelectBox
                         options={propertyTypeOptions}
@@ -128,7 +128,7 @@ const ProjectBuildingTypeEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Name <span className="otp-asterisk">*</span>
+                        Name <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"

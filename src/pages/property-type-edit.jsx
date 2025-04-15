@@ -77,10 +77,8 @@ const PropertyTypeEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Name{" "}
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        Name
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"

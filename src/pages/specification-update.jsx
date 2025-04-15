@@ -106,7 +106,7 @@ const SpecificationUpdate = () => {
                   {/* Name Input */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Name</label>
+                      <label>Name <span className="otp-asterisk">{" "}*</span></label>
                       <input
                         className="form-control"
                         type="text"

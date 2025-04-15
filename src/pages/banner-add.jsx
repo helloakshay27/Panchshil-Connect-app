@@ -204,7 +204,7 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
                     <div className="form-group">
                       <label>
                         Title 
-                        <span style={{ color: "#de7008" }}> *</span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -228,7 +228,7 @@ const [showVideoTooltip, setShowVideoTooltip] = useState(false);
                     <div className="form-group">
                       <label>
                         Project 
-                        <span style={{ color: "#de7008" }}> *</span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <SelectBox
                         options={projects.map((project) => ({

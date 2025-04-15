@@ -125,7 +125,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Name <span style={{ color: "#de7008" }}> *</span>
+                        Name <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -142,7 +142,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Domain <span style={{ color: "#de7008" }}> *</span>
+                        Domain <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -159,7 +159,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Sub-domain <span style={{ color: "#de7008" }}> *</span>
+                        Sub-domain <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -176,7 +176,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Country ID <span style={{ color: "#de7008" }}> *</span>
+                        Country ID <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -193,7 +193,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Mobile No <span style={{ color: "#de7008" }}> *</span>
+                        Mobile No <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -211,7 +211,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Attachment <span style={{ color: "#de7008" }}> *</span>
+                        Attachment <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
