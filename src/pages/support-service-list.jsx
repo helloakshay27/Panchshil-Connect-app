@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import { baseURL } from "./baseurl/apiDomain";
 
@@ -224,7 +224,7 @@ const SupportServiceList = () => {
                   </button>
                 </li>
 
-                {[...Array(totalPages)].map((_, index) => (
+                {/* {[...Array(totalPages)].map((_, index) => (
                   <li
                     key={index + 1}
                     className={`page-item ${
@@ -238,7 +238,39 @@ const SupportServiceList = () => {
                       {index + 1}
                     </button>
                   </li>
-                ))}
+                ))} */}
+                {Array.from(
+                            { length: totalPages },
+                            (_, index) => index + 1
+                        )
+                            .filter(
+                                (page) =>
+                                    page === 1 ||
+                                    page === totalPages ||
+                                    (page >= pagination.current_page - 1 &&
+                                        page <= pagination.current_page + 1)
+                            )
+                            .map((page, index, array) => (
+                                <Fragment key={page}>
+                                    {index > 0 && page !== array[index - 1] + 1 && (
+                                        <li className="page-item disabled">
+                                            <span className="page-link">...</span>
+                                        </li>
+                                    )}
+                                    <li
+                                        key={page}
+                                        className={`page-item ${pagination.current_page === page ? "active" : ""
+                                            }`}
+                                    >
+                                        <button
+                                            className="page-link"
+                                            onClick={() => handlePageChange(page)}
+                                        >
+                                            {page}
+                                        </button>
+                                    </li>
+                                </Fragment>
+                            ))}
                 <li
                   className={`page-item ${
                     pagination.current_page === totalPages ? "disabled" : ""
