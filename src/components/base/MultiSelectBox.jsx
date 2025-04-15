@@ -44,7 +44,7 @@ export default function MultiSelectBox({
       backgroundColor: state.isSelected
         ? "#D3D3D3"
         : state.isFocused
-          ? "#de7008"
+          ? "var(--red)"
           : "transparent",
       color: state.isSelected ? "#333" : state.isFocused ? "white" : "black",
       cursor: "pointer",
@@ -58,7 +58,7 @@ export default function MultiSelectBox({
     }),
     multiValue: (base) => ({
       ...base,
-      backgroundColor: "#de7008",
+      backgroundColor: "var(--red)",
       color: "white",
     }),
     multiValueLabel: (base) => ({
@@ -70,7 +70,7 @@ export default function MultiSelectBox({
       color: "white",
       cursor: "pointer",
       ":hover": {
-        backgroundColor: "#de7008",
+        backgroundColor: "var(--red)",
         color: "white",
       },
     }),
