@@ -204,10 +204,7 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Title
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -223,10 +220,7 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Press Releases Date
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -243,10 +237,7 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Description
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <textarea
                         className="form-control"
@@ -262,9 +253,7 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Attachment (Image)
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -285,10 +274,7 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Attachment URL
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"

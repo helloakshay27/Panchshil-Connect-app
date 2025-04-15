@@ -124,10 +124,7 @@ const CompanyEdit = () => {
                     <div className="form-group">
                       <label>
                         Company Name
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -149,10 +146,7 @@ const CompanyEdit = () => {
                     <div className="form-group">
                       <label>
                         Company Logo
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -180,10 +174,7 @@ const CompanyEdit = () => {
                     <div className="form-group">
                       <label>
                         Organization Id
-                        <span style={{ color: "red", fontSize: "16px" }}>
-                          {" "}
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <SelectBox
                         options={organization.map((org) => ({

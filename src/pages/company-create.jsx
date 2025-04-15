@@ -136,7 +136,7 @@ const CompanyCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company Name <span style={{ color: "red" }}>*</span>
+                        Company Name <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -166,7 +166,7 @@ const CompanyCreate = () => {
                             </span>
                           )}
                         </span>
-                        <span style={{ color: "red" }}>*</span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -181,7 +181,7 @@ const CompanyCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Organization ID <span style={{ color: "red" }}>*</span>
+                        Organization ID <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <SelectBox
                         name="organizationId"

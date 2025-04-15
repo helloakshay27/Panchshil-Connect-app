@@ -247,9 +247,7 @@ const PressReleasesEdit = () => {
                     <div className="form-group">
                       <label>
                         Title
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -265,9 +263,7 @@ const PressReleasesEdit = () => {
                     <div className="form-group">
                       <label>
                         Press Release Date
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -284,9 +280,7 @@ const PressReleasesEdit = () => {
                     <div className="form-group">
                       <label>
                         Description
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <textarea
                         className="form-control"
@@ -303,9 +297,7 @@ const PressReleasesEdit = () => {
                     <div className="form-group">
                       <label>
                         Attachment (Image)
-                        <span style={{ color: "#de7008", fontSize: "16px" }}>
-                          *
-                        </span>
+                        <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input
                         className="form-control"
@@ -338,7 +330,7 @@ const PressReleasesEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Attachment URL</label>
+                      <label>Attachment URL <span className="otp-asterisk">{" "}*</span></label>
                       <input
                         className="form-control"
                         type="url"
