@@ -9,7 +9,7 @@
   --grey: #3a3a33;
   --light-grey: #8692a6;
   --text-color: #084236;
-  --scrollbar-color: #A78847 /* Red color */;
+  --scrollbar-color: #de7008 /* Red color */;
 }
 
 /* .card-tools svg circle{
@@ -29,6 +29,7 @@ svg path{
 
 .sidebar path {
   fill: var(--red);
+  stroke: var(--red);
 }
 
 table path {

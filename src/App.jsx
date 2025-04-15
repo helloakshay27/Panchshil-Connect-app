@@ -96,18 +96,20 @@ let ForgotPasswordComponent;
 let ForgotOtpComponent;
 let CreatePasswordComponent;
 
-if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+if (baseURL === "https://panchshil-super.lockated.com/") {
 
+  LoginComponent = <SignIn />;
+  ForgotPasswordComponent = <Forgot />;
+  ForgotOtpComponent = <ForgotOtp />;  
+  CreatePasswordComponent = <CreatePassword />
+  
+  
+} else {
   LoginComponent = <SignInRustomjee />;
   ForgotPasswordComponent = <ForgotRustomjee />;
   ForgotOtpComponent = <ForgotOtpRustomjee />;  
   CreatePasswordComponent = <CreatePasswordRustomjee/>
   
-} else {
-  LoginComponent = <SignIn />;
-  ForgotPasswordComponent = <Forgot />;
-  ForgotOtpComponent = <ForgotOtp />;  
-  CreatePasswordComponent = <CreatePassword />
 }
 
 function App() {
