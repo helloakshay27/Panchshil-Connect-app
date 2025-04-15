@@ -90,6 +90,7 @@ const ProjectDetailsCreate = () => {
   const [selectedCreativeType, setSelectedCreativeType] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
   const [allBuildingTypes, setAllBuildingTypes] = useState([]);
+  const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -1366,12 +1367,29 @@ const ProjectDetailsCreate = () => {
       return { ...prev, [key]: updatedFiles };
     });
   };
+  useEffect(() => {
+    axios
+      .get(`${baseURL}/property_types.json`)
+      .then((response) => {
+        const options = response.data
+          .filter((item) => item.active) // optional: only include active types
+          .map((type) => ({
+            value: type.property_type,
+            label: type.property_type,
+          }));
+        setPropertyTypeOptions(options);
+      })
+      .catch((error) => {
+        console.error("Error fetching property types:", error);
+      });
+  }, []);
+  
 
-  const propertyTypeOptions = [
-    { value: "Office Parks", label: "Office Parks" },
-    // { value: "Plots", label: "Plots" },
-    { value: "Residential", label: "Residential" },
-  ];
+  // const propertyTypeOptions = [
+  //   { value: "Office Parks", label: "Office Parks" },
+  //   // { value: "Plots", label: "Plots" },
+  //   { value: "Residential", label: "Residential" },
+  // ];
 
   // const buildingTypeOptions = {
   //   "Office Parks": [
@@ -1381,15 +1399,16 @@ const ProjectDetailsCreate = () => {
   //     { value: "Built-to-Suit", label: "Built to Suit" },
   //     { value: "Upcoming-Developments", label: "Upcoming Developments" },
   //   ],
-    // Residential: [
-    //   { value: "Completed", label: "Completed" },
-    //   { value: "Ready-To-Move-In", label: "Ready To Move In" },
-    //   { value: "Upcoming-Developments", label: "Upcoming Developments" },
-    // ],
+  // Residential: [
+  //   { value: "Completed", label: "Completed" },
+  //   { value: "Ready-To-Move-In", label: "Ready To Move In" },
+  //   { value: "Upcoming-Developments", label: "Upcoming Developments" },
+  // ],
   // };
- 
+
   useEffect(() => {
-    axios.get(`${baseURL}/building_types.json`)
+    axios
+      .get(`${baseURL}/building_types.json`)
       .then((response) => {
         setAllBuildingTypes(response.data); // assumes structure is { "Office Parks": [{...}, {...}], ... }
       })
@@ -1457,7 +1476,7 @@ const ProjectDetailsCreate = () => {
                       setFormData((prev) => ({
                         ...prev,
                         Property_Type: value,
-                        building_type: "", // ✅ Reset building_type when Property_Type changes
+                       // ✅ Reset building_type
                       }))
                     }
                   />
@@ -1487,11 +1506,10 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <label>Project Building Type</label>
                   <SelectBox
-                    options={
-                      allBuildingTypes.map(type=>(
-                        ({ value: type.building_type, label: type.building_type }))
-                      )
-                    }
+                    options={allBuildingTypes.map((type) => ({
+                      value: type.building_type,
+                      label: type.building_type,
+                    }))}
                     value={formData.building_type}
                     onChange={(value) =>
                       setFormData((prev) => ({
