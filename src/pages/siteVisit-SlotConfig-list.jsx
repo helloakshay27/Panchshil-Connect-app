@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
@@ -295,7 +295,7 @@ const SiteVisitSlotConfigList = () => {
                   </table>
                 </div>
               )}
-
+            
               <div className="d-flex justify-content-between align-items-center px-3 mt-2">
                 <ul className="pagination justify-content-center d-flex">
                   {/* First */}
@@ -322,7 +322,7 @@ const SiteVisitSlotConfigList = () => {
                   </li>
 
                   {/* Page Numbers */}
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                  {/* {Array.from({ length: totalPages }, (_, index) => index + 1).map(
                     (pageNumber) => (
                       <li
                         key={pageNumber}
@@ -337,7 +337,39 @@ const SiteVisitSlotConfigList = () => {
                         </button>
                       </li>
                     )
-                  )}
+                  )} */}
+                  {Array.from(
+                            { length: totalPages },
+                            (_, index) => index + 1
+                        )
+                            .filter(
+                                (page) =>
+                                    page === 1 ||
+                                    page === totalPages ||
+                                    (page >= pagination.current_page - 1 &&
+                                        page <= pagination.current_page + 1)
+                            )
+                            .map((page, index, array) => (
+                                <Fragment key={page}>
+                                    {index > 0 && page !== array[index - 1] + 1 && (
+                                        <li className="page-item disabled">
+                                            <span className="page-link">...</span>
+                                        </li>
+                                    )}
+                                    <li
+                                        key={page}
+                                        className={`page-item ${pagination.current_page === page ? "active" : ""
+                                            }`}
+                                    >
+                                        <button
+                                            className="page-link"
+                                            onClick={() => handlePageChange(page)}
+                                        >
+                                            {page}
+                                        </button>
+                                    </li>
+                                </Fragment>
+                            ))}
 
                   {/* Next */}
                   <li
