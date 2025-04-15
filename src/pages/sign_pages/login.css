@@ -519,7 +519,7 @@ input#confirmPassword {
 
 
 /* Rustomjee */
-.form-check-box {
+/* .form-check-box {
   appearance: none;
   -webkit-appearance: none;
   background-color: transparent;
@@ -532,9 +532,9 @@ input#confirmPassword {
   transition: all 0.2s ease-in-out;
   display: inline-block;
   vertical-align: middle;
-}
+} */
 
-.form-check-box:checked {
+/* .form-check-box:checked {
   border-color: #ffffff;
   background-color: transparent;
 }
@@ -548,7 +548,42 @@ input#confirmPassword {
   height: 8px;
   background-color: white;
   border-radius: 50%;
+} */
+
+.form-check-box {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #fff;
+  border-radius: 50%; /* for radio style */
+  background-color: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  display: inline-block;
+  vertical-align: middle;
+  transition: border-color 0.2s ease-in-out;
 }
+
+.form-check-box:checked {
+  border-color: #ffffff;
+  background-color: transparent;
+}
+
+.form-check-box:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-color: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%); /* center magic */
+}
+
 
 .login-content-rust p {
   font-family: "Open Sans", sans-serif;
