@@ -1947,10 +1947,9 @@ const ProjectDetailsEdit = () => {
                         </span>
                       )}
                     </span>
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    <span className="otp-asterisk">
                       {" "}
-                      *
-                    </span>
+                      *</span>
                   </label>
                   <input
                     className="form-control"
@@ -1983,10 +1982,9 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Types
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    <span className="otp-asterisk">
                       {" "}
-                      *
-                    </span>
+                      *</span>
                   </label>
                   <SelectBox
                     options={[
@@ -2032,10 +2030,9 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Construction Status
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    <span className="otp-asterisk">
                       {" "}
-                      *
-                    </span>
+                      *</span>
                   </label>
                   <SelectBox
                     options={statusOptions[formData.Property_Type] || []}
@@ -2084,10 +2081,9 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Name
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    <span className="otp-asterisk">
                       {" "}
-                      *
-                    </span>
+                      *</span>
                   </label>
                   <input
                     className="form-control"
@@ -2102,10 +2098,9 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Location
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
+                    <span className="otp-asterisk">
                       {" "}
-                      *
-                    </span>
+                      *</span>
                   </label>
                   <input
                     className="form-control"
