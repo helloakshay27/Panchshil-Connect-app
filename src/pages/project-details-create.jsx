@@ -63,7 +63,8 @@ const ProjectDetailsCreate = () => {
     project_emailer_templetes: [],
     project_layout: [],
     project_sales_type: "",
-    order_no: null  });
+    order_no: null,
+  });
 
   useEffect(() => {
     console.log("formData updated:", formData);
@@ -88,6 +89,7 @@ const ProjectDetailsCreate = () => {
   const [categoryTypes, setCategoryTypes] = useState([]);
   const [selectedCreativeType, setSelectedCreativeType] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
+  const [allBuildingTypes, setAllBuildingTypes] = useState([]);
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -1371,20 +1373,30 @@ const ProjectDetailsCreate = () => {
     { value: "Residential", label: "Residential" },
   ];
 
-  const buildingTypeOptions = {
-    "Office Parks": [
-      { value: "Mixed-Use-Development", label: "Mixed Use Development" },
-      { value: "Special-Economic-Zone", label: "Special Economic Zone" },
-      { value: "Tech-Parks", label: "Tech Parks" },
-      { value: "Built-to-Suit", label: "Built to Suit" },
-      { value: "Upcoming-Developments", label: "Upcoming Developments" },
-    ],
+  // const buildingTypeOptions = {
+  //   "Office Parks": [
+  //     { value: "Mixed-Use-Development", label: "Mixed Use Development" },
+  //     { value: "Special-Economic-Zone", label: "Special Economic Zone" },
+  //     { value: "Tech-Parks", label: "Tech Parks" },
+  //     { value: "Built-to-Suit", label: "Built to Suit" },
+  //     { value: "Upcoming-Developments", label: "Upcoming Developments" },
+  //   ],
     // Residential: [
     //   { value: "Completed", label: "Completed" },
     //   { value: "Ready-To-Move-In", label: "Ready To Move In" },
     //   { value: "Upcoming-Developments", label: "Upcoming Developments" },
     // ],
-  };
+  // };
+ 
+  useEffect(() => {
+    axios.get(`${baseURL}/building_types.json`)
+      .then((response) => {
+        setAllBuildingTypes(response.data); // assumes structure is { "Office Parks": [{...}, {...}], ... }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch building types:", error);
+      });
+  }, []);
 
   return (
     <>
@@ -1452,18 +1464,14 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              {/* Project Building Type Dropdown */}
-              <div className="col-md-3 mt-1">
+              {/* <div className="col-md-3 mt-1">
                 <div className="form-group">
                   <label>
                     Project Building Type
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
+                    
                   </label>
                   <SelectBox
-                    options={buildingTypeOptions[formData.Property_Type] || []} // ✅ Show correct options
+                    options={buildingTypeOptions[formData.Property_Type] || []} 
                     value={formData.building_type}
                     onChange={(value) =>
                       setFormData((prev) => ({
@@ -1471,10 +1479,31 @@ const ProjectDetailsCreate = () => {
                         building_type: value,
                       }))
                     }
-                    isDisabled={!formData.Property_Type} // ✅ Disable if no Property_Type selected
+                    isDisabled={!formData.Property_Type} 
+                  />
+                </div>
+              </div> */}
+              <div className="col-md-3 mt-1">
+                <div className="form-group">
+                  <label>Project Building Type</label>
+                  <SelectBox
+                    options={
+                      allBuildingTypes.map(type=>(
+                        ({ value: type.building_type, label: type.building_type }))
+                      )
+                    }
+                    value={formData.building_type}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        building_type: value,
+                      }))
+                    }
+                    // isDisabled={!formData.Property_Type}
                   />
                 </div>
               </div>
+
               <div className="col-md-3 mt-0">
                 <div className="form-group">
                   <label>
