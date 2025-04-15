@@ -5700,6 +5700,12 @@ ul.pagination.justify-content-center {
   opacity: 1;
 }
 
+.otp-asterisk {
+  color: var(--red);
+  font-size: 16px;
+}
+
+
 
 
 /*# sourceMappingURL=mor.css-ed871f49aadae569d66f8e115a43114d30eed9833a2ddcbeef011041744e80a7.map */

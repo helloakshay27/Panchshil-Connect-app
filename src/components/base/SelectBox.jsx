@@ -51,7 +51,7 @@ export default function SelectBox({
     }),
     option: (base, state) => ({
       ...base,
-      backgroundColor: state.isSelected ? "#ccc" : state.isFocused ? "#de7008" : base.backgroundColor,
+      backgroundColor: state.isSelected ? "#ccc" : state.isFocused ? "var(--red)" : base.backgroundColor,
       color: state.isSelected ? "#000" : state.isFocused ? "#fff" : "#000", // Set text color to black
       cursor: "pointer",
       padding: "10px",
@@ -59,9 +59,9 @@ export default function SelectBox({
     }),
     multiValueRemove: (base, state) => ({
       ...base,
-      color: state.isFocused ? "#de7008" : base.color,
+      color: state.isFocused ? "var(--red)" : base.color,
       "&:hover": {
-        backgroundColor: "#de7008",
+        backgroundColor: "var(--red)",
         color: "#fff",
       },
     }),
