@@ -8,12 +8,15 @@ import "../mor.css";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import PropertySelect from "../components/base/PropertySelect";
+
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
-    Property_Type: [],
+    Property_Type: "",
+    Property_type_id:"",
     building_type: "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
@@ -91,6 +94,7 @@ const ProjectDetailsCreate = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [allBuildingTypes, setAllBuildingTypes] = useState([]);
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
+  console.log(propertyTypeOptions)
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -1376,6 +1380,7 @@ const ProjectDetailsCreate = () => {
           .map((type) => ({
             value: type.property_type,
             label: type.property_type,
+            id: type.id,
           }));
         setPropertyTypeOptions(options);
       })
@@ -1406,16 +1411,60 @@ const ProjectDetailsCreate = () => {
   // ],
   // };
 
+  // useEffect(() => {
+  //   axios
+  //     .get(`${baseURL}//building_types.json?q[property_type_id_eq]=${formData.Property_Type}`)
+  //     .then((response) => {
+  //       setAllBuildingTypes(response.data); // assumes structure is { "Office Parks": [{...}, {...}], ... }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Failed to fetch building types:", error);
+  //     });
+  // }, []);
   useEffect(() => {
-    axios
-      .get(`${baseURL}/building_types.json`)
-      .then((response) => {
-        setAllBuildingTypes(response.data); // assumes structure is { "Office Parks": [{...}, {...}], ... }
-      })
-      .catch((error) => {
-        console.error("Failed to fetch building types:", error);
-      });
-  }, []);
+    const fetchBuildingTypes = async () => {
+      const url = `${baseURL}building_types.json?q[property_type_id_eq]=${formData.Property_Type}`;
+
+      try {
+        const response = await axios.get(url);
+        setBuildingTypeOptions(response.data);
+        console.log(response)
+      } catch (error) {
+        console.error("Error fetching building types:", error);
+      }
+    }
+},[formData.Property_Type]);
+const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
+
+const handlePropertyTypeChange = async (selectedOption) => {
+  const { value, id } = selectedOption;
+
+  setFormData((prev) => ({
+    ...prev,
+    Property_Type: value,
+    Property_type_id: id,
+    building_type: "", // Optionally reset building_type
+  }));
+
+  try {
+    const response = await axios.get(
+      `https://panchshil-super.lockated.com/building_types.json?q[property_type_id_eq]=${id}`
+    );
+
+    const buildingTypes = response.data || [];
+
+    const formattedOptions = buildingTypes.map((item) => ({
+      value: item.building_type,
+      label: item.building_type,
+      id: item.id,
+    }));
+
+    setBuildingTypeOptions(formattedOptions);
+  } catch (error) {
+    console.error("Error fetching building types:", error);
+  }
+};
+
 
   return (
     <>
@@ -1467,16 +1516,10 @@ const ProjectDetailsCreate = () => {
                       {" "}
                       *</span>
                   </label>
-                  <SelectBox
+                  <PropertySelect
                     options={propertyTypeOptions}
                     value={formData.Property_Type}
-                    onChange={(value) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        Property_Type: value,
-                       // ✅ Reset building_type
-                      }))
-                    }
+                    onChange={(value) =>handlePropertyTypeChange(value)}
                   />
                 </div>
               </div>
@@ -1503,7 +1546,7 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-1">
                 <div className="form-group">
                   <label>Project Building Type</label>
-                  <SelectBox
+                  {/* <SelectBox
                     options={allBuildingTypes.map((type) => ({
                       value: type.building_type,
                       label: type.building_type,
@@ -1516,7 +1559,20 @@ const ProjectDetailsCreate = () => {
                       }))
                     }
                     // isDisabled={!formData.Property_Type}
+                  /> */}
+                  <SelectBox
+                    options={buildingTypeOptions}
+                    defaultValue={formData.building_type}
+                    onChange={(selected) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        building_type: selected.value,
+                        building_type_id: selected.id,
+                      }))
+                    }
                   />
+                {/* )} */}
+
                 </div>
               </div>
 
