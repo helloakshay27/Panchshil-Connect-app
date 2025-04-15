@@ -2,7 +2,6 @@ import React from "react";
 import "../mor.css";
 import { NavLink } from "react-router-dom";
 
-
 const Sidebar = () => {
   return (
     <>
@@ -389,7 +388,6 @@ const Sidebar = () => {
                 <NavLink
                   to="/project-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
@@ -407,7 +405,6 @@ const Sidebar = () => {
                     ></path>
                   </svg>
                   <span className="menu-link-text">Project</span>
-
                 </NavLink>
               </li>
               <li className="menu-item d-flex">
@@ -441,10 +438,9 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text">Banner</span>
                 </a> */}
-                 <NavLink
+                <NavLink
                   to="/banner-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
@@ -472,7 +468,6 @@ const Sidebar = () => {
                     ></path>
                   </svg>
                   <span className="menu-link-text">Banner</span>
-
                 </NavLink>
               </li>
               {/* <li className="menu-item d-flex">
@@ -549,12 +544,11 @@ const Sidebar = () => {
                 <NavLink
                   to="/testimonial-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
                 >
-                   <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -595,7 +589,6 @@ const Sidebar = () => {
                     />
                   </svg>
                   <span className="menu-link-text">Testimonial</span>
-
                 </NavLink>
               </li>
               {/* <li className="menu-item d-flex">
@@ -671,39 +664,23 @@ const Sidebar = () => {
                 <NavLink
                   to="/referral-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
+                    width="512"
+                    height="512"
+                    viewBox="0 0 512 512"
                     fill="none"
                   >
                     <path
-                      d="M6.9168 21.6804H22.2314V1.261H1.812V8.4078"
-                      stroke="#DD7007"
-                      fill="none"
-                    ></path>
-                    <path d="M9.9797 16.5755H18.1475" stroke="#DD7007" fill="none"></path>
-                    <path d="M5.8959 6.3658H18.1475" stroke="#DD7007" fill="none"></path>
-                    <path d="M9.9797 11.4707H18.1475" stroke="#DD7007" fill="none"></path>
-                    <path
-                      d="M6.9024 16.6194L6.9024 11.4856H1.7686"
-                      stroke="#DD7007"
-                      fill="none"
-                    ></path>
-                    <path
-                      d="M6.9094 11.4707L3.6146 14.7656C1.7106 16.6695 1.7106 19.7565 3.6146 21.6605L4.6932 22.739"
-                      stroke="#DD7007"
-                      fill="none"
-                    ></path>
+                      d="M209.781 397.618C209.781 394.299 212.471 391.609 215.79 391.609H281.712L266.842 376.723C264.496 374.375 264.498 370.57 266.846 368.224C269.194 365.877 272.999 365.88 275.345 368.228L300.46 393.371C302.177 395.09 302.69 397.675 301.76 399.919C300.83 402.163 298.639 403.627 296.209 403.627H215.79C212.471 403.627 209.781 400.937 209.781 397.618ZM296.209 420.268H215.79C213.359 420.268 211.167 421.733 210.237 423.979C209.307 426.226 209.823 428.811 211.543 430.529L236.686 455.644C237.859 456.816 239.396 457.402 240.933 457.402C242.47 457.402 244.011 456.815 245.184 455.64C247.53 453.292 247.528 449.487 245.18 447.141L230.309 432.286H296.208C299.527 432.286 302.217 429.597 302.217 426.278C302.217 422.959 299.527 420.269 296.208 420.269L296.209 420.268ZM502.004 290.441V337.638C502.004 342.562 497.999 346.566 493.075 346.566H421.103V411.934C421.103 415.253 418.413 417.943 415.094 417.943H339.624C336.531 461.396 300.227 495.811 256.014 495.811C211.801 495.811 175.47 461.396 172.376 417.943H96.9051C93.5861 417.943 90.8961 415.253 90.8961 411.934V346.566H18.9531C14.0141 346.566 9.99609 342.562 9.99609 337.638V290.441C9.99609 268.613 25.1551 250.262 45.7311 245.581C44.1921 240.592 43.3591 235.295 43.3591 229.807C43.3591 200.282 67.3801 176.261 96.9051 176.261C126.43 176.261 150.48 200.282 150.48 229.807C150.48 235.297 149.647 240.596 148.106 245.587C168.67 250.278 183.816 268.622 183.816 290.441V337.639C183.816 342.563 179.811 346.568 174.887 346.568H102.915V405.926H172.377C175.331 364.475 208.541 331.277 250.006 328.325V186.521H178.034C173.11 186.521 169.105 182.503 169.105 177.564V130.367C169.105 108.541 184.26 90.1925 204.835 85.5095C203.299 80.5285 202.469 75.2415 202.469 69.7625C202.469 40.2205 226.49 16.1875 256.015 16.1875C285.54 16.1875 309.561 40.2205 309.561 69.7625C309.561 75.2405 308.73 80.5285 307.195 85.5095C327.77 90.1935 342.925 108.541 342.925 130.367V177.564C342.925 182.503 338.92 186.521 333.996 186.521H262.024V328.324C303.474 331.277 336.672 364.473 339.624 405.924H409.085V346.566H337.142C332.203 346.566 328.185 342.562 328.185 337.638V290.441C328.185 268.613 343.343 250.262 363.92 245.581C362.381 240.592 361.548 235.295 361.548 229.807C361.548 200.282 385.569 176.261 415.094 176.261C444.619 176.261 468.669 200.282 468.669 229.807C468.669 235.297 467.836 240.596 466.295 245.587C486.859 250.278 502.005 268.622 502.005 290.441L502.004 290.441ZM214.486 69.7635C214.486 92.6615 233.115 111.292 256.014 111.292C278.913 111.292 297.542 92.6625 297.542 69.7635C297.542 46.8645 278.913 28.2075 256.014 28.2075C233.115 28.2075 214.486 46.8495 214.486 69.7635ZM181.122 174.503H330.905V130.368C330.905 113.441 318.57 99.3395 302.215 96.7815C292.908 112.635 275.689 123.311 256.013 123.311C236.337 123.311 219.118 112.636 209.811 96.7815C193.457 99.3405 181.121 113.441 181.121 130.368L181.122 174.503ZM55.3771 229.807C55.3771 252.721 74.0061 271.364 96.9041 271.364C119.802 271.364 138.46 252.721 138.46 229.807C138.46 206.893 119.818 188.281 96.9041 188.281C73.9901 188.281 55.3771 206.909 55.3771 229.807ZM22.0131 334.549H171.797V290.441C171.797 273.519 159.469 259.421 143.122 256.857C133.808 272.711 116.584 283.384 96.9051 283.384C77.2261 283.384 60.0201 272.71 50.7111 256.854C34.3531 259.409 22.0141 273.511 22.0141 290.441L22.0131 334.549ZM327.843 411.935C327.843 372.328 295.62 340.104 256.013 340.104C216.406 340.104 184.155 372.327 184.155 411.935C184.155 451.543 216.391 483.792 256.013 483.792C295.635 483.792 327.843 451.557 327.843 411.935ZM373.566 229.809C373.566 252.723 392.195 271.364 415.093 271.364C437.991 271.364 456.649 252.723 456.649 229.809C456.649 206.895 438.007 188.281 415.093 188.281C392.179 188.281 373.566 206.911 373.566 229.809ZM489.985 290.441C489.985 273.519 477.657 259.421 461.31 256.857C451.996 272.711 434.772 283.384 415.093 283.384C395.414 283.384 378.208 272.71 368.899 256.854C352.541 259.409 340.202 273.511 340.202 290.441V334.549H489.985V290.441Z"
+                      fill="#F58220"
+                    />
                   </svg>
                   <span className="menu-link-text">Referral</span>
-
                 </NavLink>
               </li>
               <li className="menu-item d-flex">
@@ -741,36 +718,52 @@ const Sidebar = () => {
                 <NavLink
                   to="/enquiry-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
                 >
-                 <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
+                    width="64"
+                    height="64"
+                    viewBox="0 0 64 64"
                     fill="none"
                   >
                     <path
-                      d="M6.9168 21.6804H22.2314V1.261H1.812V8.4078"
-                      stroke="#DD7007"
-                    ></path>
-                    <path d="M9.9797 16.5755H18.1475" stroke="#DD7007"></path>
-                    <path d="M5.8959 6.3658H18.1475" stroke="#DD7007"></path>
-                    <path d="M9.9797 11.4707H18.1475" stroke="#DD7007"></path>
+                      d="M34.6004 25.6992C31.7004 25.6992 29.4004 27.9992 29.4004 30.8992C29.4004 33.7992 30.1004 32.3992 30.9004 32.3992C31.7004 32.3992 32.4004 31.6992 32.4004 30.8992C32.4004 29.6992 33.4004 28.6992 34.6004 28.6992C35.8004 28.6992 36.8004 29.6992 36.8004 30.8992C36.8004 32.0992 36.4004 32.3992 35.8004 32.7992C34.1004 33.8992 33.1004 35.5992 33.1004 37.4992C33.1004 39.3992 33.8004 38.9992 34.6004 38.9992C35.4004 38.9992 36.1004 38.2992 36.1004 37.4992C36.1004 36.6992 36.6004 35.8992 37.4004 35.3992C38.9004 34.3992 39.8004 32.7992 39.8004 30.9992C39.8004 28.1992 37.5004 25.7992 34.6004 25.7992V25.6992Z"
+                      fill="#F58220"
+                    />
                     <path
-                      d="M6.9024 16.6194L6.9024 11.4856H1.7686"
-                      stroke="#DD7007"
-                    ></path>
+                      d="M36.0996 41.9V40.5H33.0996V43.5H36.0996V42.1V41.9Z"
+                      fill="#F58220"
+                    />
                     <path
-                      d="M6.9094 11.4707L3.6146 14.7656C1.7106 16.6695 1.7106 19.7565 3.6146 21.6605L4.6932 22.739"
-                      stroke="#DD7007"
-                    ></path>
+                      d="M60.7008 53.0992L50.2008 42.5992L48.9008 43.8992L46.4008 41.3992C49.5008 36.0992 48.6008 29.1992 44.2008 24.8992C38.9008 19.4992 30.1008 19.4992 24.8008 24.8992C22.2008 27.4992 20.8008 30.8992 20.8008 34.5992C20.8008 38.2992 22.2008 41.6992 24.8008 44.2992C27.4008 46.8992 31.0008 48.2992 34.5008 48.2992C36.8008 48.2992 39.2008 47.6992 41.3008 46.4992L43.8008 48.9992L42.6008 50.1992L45.3008 52.8992V57.4992H6.60078V6.49922H36.7008V15.9992H46.3008V22.3992H49.1008V14.0992L38.7008 3.69922H3.80078V60.3992H48.3008V55.7992L53.2008 60.6992L60.8008 53.0992H60.7008ZM39.4008 8.49922L44.2008 13.2992H39.4008V8.49922ZM57.1008 53.0992L53.2008 56.9992L46.4008 50.1992L50.3008 46.2992L57.1008 53.0992ZM27.0008 42.1992C25.0008 40.1992 23.9008 37.4992 23.9008 34.5992C23.9008 31.6992 25.0008 28.9992 27.0008 26.9992C29.1008 24.8992 31.8008 23.8992 34.6008 23.8992C37.4008 23.8992 40.1008 24.8992 42.2008 26.9992C45.8008 30.5992 46.4008 36.1992 43.6008 40.3992C43.2008 40.9992 42.7008 41.5992 42.2008 42.1992C41.7008 42.6992 41.1008 43.1992 40.4008 43.5992C36.2008 46.2992 30.6008 45.6992 27.0008 42.1992ZM43.9008 44.6992C44.0008 44.5992 44.2008 44.3992 44.3008 44.2992C44.4008 44.1992 44.6008 43.9992 44.7008 43.8992L46.9008 46.0992L46.1008 46.8992L43.9008 44.6992Z"
+                      fill="#F58220"
+                    />
+                    <path
+                      d="M34.4 51.5996H9.5V54.3996H34.4V51.5996Z"
+                      fill="#F58220"
+                    />
+                    <path
+                      d="M22.7 45.4004H9.5V48.2004H22.7V45.4004Z"
+                      fill="#F58220"
+                    />
+                    <path
+                      d="M16.9 32.3008H9.5V35.1008H16.9V32.3008Z"
+                      fill="#F58220"
+                    />
+                    <path
+                      d="M19.5 25.0996H9.5V27.8996H19.5V25.0996Z"
+                      fill="#F58220"
+                    />
+                    <path d="M23.8 18H9.5V20.8H23.8V18Z" fill="#F58220" />
+                    <path
+                      d="M32.5 10.8008H9.5V13.6008H32.5V10.8008Z"
+                      fill="#F58220"
+                    />
                   </svg>
                   <span className="menu-link-text">Enquiry</span>
-
                 </NavLink>
               </li>
               <li className="menu-item d-flex">
@@ -840,15 +833,14 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text">Event</span>
                 </a> */}
-                 <NavLink
+                <NavLink
                   to="/event-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
                 >
-                 <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     id="Outline"
                     version="1.1"
@@ -907,7 +899,6 @@ const Sidebar = () => {
                     />
                   </svg>
                   <span className="menu-link-text">Event</span>
-
                 </NavLink>
               </li>
               <li className="menu-item d-flex">
@@ -934,12 +925,11 @@ const Sidebar = () => {
                 <NavLink
                   to="/specification-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
                 >
-                 <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -952,7 +942,6 @@ const Sidebar = () => {
                     ></path>
                   </svg>
                   <span className="menu-link-text">Specification</span>
-
                 </NavLink>
               </li>
               {/* <li className="menu-item d-flex">
@@ -1009,33 +998,34 @@ const Sidebar = () => {
                 <NavLink
                   to="/sitevisit-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none" 
+                    width="60"
+                    height="60"
+                    viewBox="0 0 60 60"
+                    fill="none"
                   >
-                    <g
-                      id="location-pin-3--navigation-map-maps-pin-gps-location"
-                      stroke="#DD7007"
-                      strokeWidth="2"
-                    >
-                      <path id="Vector" d="M20 17L22 23H2L4 17" />
-                      <path id="Vector_2" d="M12.5 8.5h-1v-1h1v1Z" />
+                    <g clip-path="url(#clip0_12207_7408)">
                       <path
-                        id="Rectangle 2008"
-                        d="M5 8.03447C5 12.7241 12 18 12 18s7 -5.2759 7 -9.96553c0 -3.88503 -3.134 -7.03448 -7 -7.03448 -3.86599 0 -7 3.14945 -7 7.03448Z"
+                        d="M16.8008 18.0996C13.5008 18.0996 10.8008 20.7996 10.8008 24.0996C10.8008 27.3996 13.5008 30.0996 16.8008 30.0996C20.1008 30.0996 22.8008 27.3996 22.8008 24.0996C22.8008 20.7996 20.1008 18.0996 16.8008 18.0996ZM16.8008 27.6996C14.8008 27.6996 13.2008 26.0996 13.2008 24.0996C13.2008 22.0996 14.8008 20.4996 16.8008 20.4996C18.8008 20.4996 20.4008 22.0996 20.4008 24.0996C20.4008 26.0996 18.8008 27.6996 16.8008 27.6996Z"
+                        fill="#F58220"
+                      />
+                      <path
+                        d="M0 0V60H60V0H0ZM2.2 2.4H38.4V25.3H27.5C28.1 18.9 23.3 13.5 17.1 13.4C11 13.2 6 18.4 6 24.6V25.4H2.3V2.4H2.2ZM25.2 24.1C25.2 29.6 20.6 37 18 40.8V41C17.7 41.3 17.4 41.7 17.2 41.9L16.8 42.4L16.4 41.9C14 38.6 8.4 30.2 8.4 24.1C8.4 18 12.2 15.7 16.8 15.7C21.4 15.7 25.2 19.5 25.2 24.1ZM7.2 30.1H2.4V27.7H6.5C6.7 28.5 6.9 29.3 7.2 30.1ZM2.4 57.6V32.5H8.1C9.6 36 11.6 39.2 13.8 42.4L14.5 43.3L16.9 46.8L19.8 42.7C22.1 39.5 24 36.1 25.6 32.6H29.5L21.3 57.7H2.4V57.6ZM57.6 57.6H29.4L37.6 32.5H57.6V57.6ZM57.6 30.1H35.9L35.5 31.3L26.8 57.6H23.8L31.8 33.3L32 32.8L32.9 30.2H26.4C26.7 29.4 26.9 28.6 27.1 27.8H40.8V2.4H43.2V27.7H57.6V30.1ZM57.6 25.3H45.6V2.4H57.6V25.3Z"
+                        fill="#F58220"
                       />
                     </g>
+                    <defs>
+                      <clipPath id="clip0_12207_7408">
+                        <rect width="60" height="60" fill="white" />
+                      </clipPath>
+                    </defs>
                   </svg>
                   <span className="menu-link-text">Site visit</span>
-
                 </NavLink>
               </li>
               <li className="menu-item d-flex">
@@ -1062,7 +1052,6 @@ const Sidebar = () => {
                 <NavLink
                   to="/organization-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
@@ -1080,7 +1069,6 @@ const Sidebar = () => {
                     />
                   </svg>
                   <span className="menu-link-text">Organization</span>
-
                 </NavLink>
               </li>
               <li className="menu-item d-flex">
@@ -1107,7 +1095,6 @@ const Sidebar = () => {
                 <NavLink
                   to="/company-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
@@ -1125,7 +1112,6 @@ const Sidebar = () => {
                     />
                   </svg>
                   <span className="menu-link-text">Company</span>
-
                 </NavLink>
               </li>
               <li className="menu-item d-flex">
@@ -1173,12 +1159,11 @@ const Sidebar = () => {
                 <NavLink
                   to="/support-service-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
                 >
-                 <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     id="Outline"
                     version="1.1"
@@ -1211,8 +1196,9 @@ const Sidebar = () => {
                       ></path>
                     </g>
                   </svg>
-                  <span className="menu-link-text">Support <br /> Service</span>
-
+                  <span className="menu-link-text">
+                    Support <br /> Service
+                  </span>
                 </NavLink>
               </li>
               {/* <li className="menu-item d-flex">
@@ -1262,15 +1248,14 @@ const Sidebar = () => {
                   </svg>
                   <span className="menu-link-text text-center">Press <br /> Releases</span>
                 </a> */}
-                 <NavLink
+                <NavLink
                   to="/pressreleases-list"
                   style={{ flexDirection: "column" }}
-
                   className={({ isActive }) =>
                     `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
                   }
                 >
-                   <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -1282,8 +1267,9 @@ const Sidebar = () => {
                       fill="#DD7007"
                     />
                   </svg>
-                  <span className="menu-link-text text-center">Press <br /> Releases</span>
-
+                  <span className="menu-link-text text-center">
+                    Press <br /> Releases
+                  </span>
                 </NavLink>
               </li>
                          
