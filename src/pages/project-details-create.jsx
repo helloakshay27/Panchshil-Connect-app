@@ -63,7 +63,7 @@ const ProjectDetailsCreate = () => {
     project_emailer_templetes: [],
     project_layout: [],
     project_sales_type: "",
-  });
+    order_no: null  });
 
   useEffect(() => {
     console.log("formData updated:", formData);
@@ -160,8 +160,6 @@ const ProjectDetailsCreate = () => {
     }
   };
 
-  
-
   // const handleLayoutFileChange = (e, fieldName) => {
   //   if (fieldName === "Layoutimage") {
   //     const file = e.target.files[0]; // Only take the first file
@@ -198,7 +196,8 @@ const ProjectDetailsCreate = () => {
 
   // Filter amenities based on selected type
   useEffect(() => {
-    if (selectedType) {Area
+    if (selectedType) {
+      Area;
       setFilteredAmenities(
         amenities.filter((ammit) => ammit.amenity_type === selectedType.value)
       );
@@ -404,7 +403,7 @@ const ProjectDetailsCreate = () => {
     if (name === "project_exteriors") {
       const newFiles = Array.from(files);
       const validFiles = [];
-      Area
+      Area;
       newFiles.forEach((file) => {
         if (!allowedTypes.project_exteriors.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
@@ -884,6 +883,9 @@ const ProjectDetailsCreate = () => {
     const data = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
+      // if (key === "order_no") {
+      //   data.append("project[order_no]", parseInt(value) || null); // Append order_no as null if not provided
+      // }
       if (key === "Address") {
         for (const addressKey in value) {
           data.append(`project[Address][${addressKey}]`, value[addressKey]);
@@ -988,15 +990,11 @@ const ProjectDetailsCreate = () => {
     });
 
     try {
-      const response = await axios.post(
-        `${baseURL}projects.json`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+      const response = await axios.post(`${baseURL}projects.json`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
 
       console.log(response.data);
       toast.success("Project submitted successfully");
@@ -1013,8 +1011,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
-      const url =
-        `${baseURL}get_property_types.json`;
+      const url = `${baseURL}get_property_types.json`;
 
       try {
         const response = await axios.get(url, {
@@ -1036,8 +1033,7 @@ const ProjectDetailsCreate = () => {
 
   useEffect(() => {
     const fetchConfigurations = async () => {
-      const url =
-        `${baseURL}configuration_setups.json`;
+      const url = `${baseURL}configuration_setups.json`;
 
       try {
         const response = await axios.get(url);
@@ -1102,8 +1098,7 @@ const ProjectDetailsCreate = () => {
 
   useEffect(() => {
     const fetchSpecifications = async () => {
-      const url =
-        `${baseURL}specification_setups.json`;
+      const url = `${baseURL}specification_setups.json`;
 
       try {
         const response = await axios.get(url);
@@ -1144,9 +1139,7 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchCategoryTypes = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}category_types.json`
-        );
+        const response = await axios.get(`${baseURL}category_types.json`);
 
         if (response.data) {
           // Extract only category_type from each object
@@ -1214,12 +1207,12 @@ const ProjectDetailsCreate = () => {
       { value: "Completed", label: "Completed" },
       // { value: "Under-Construction", label: "Under Construction" },
       { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      { value: "Upcoming", label: "Upcoming"}
+      { value: "Upcoming", label: "Upcoming" },
     ],
     Residential: [
       { value: "Completed", label: "Completed" },
       { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      { value: "Upcoming", label: "Upcoming"}
+      { value: "Upcoming", label: "Upcoming" },
     ],
   };
 
@@ -1507,10 +1500,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Configuration Type
-                    
-                  </label>
+                  <label>Configuration Type</label>
                   <MultiSelectBox
                     options={configurations.map((config) => ({
                       value: config.name,
@@ -1613,10 +1603,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Price Onward
-                   
-                  </label>
+                  <label>Price Onward</label>
                   <input
                     className="form-control"
                     type="text-number"
@@ -1710,10 +1697,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    RERA Carpet Area (Sq. M)
-                   
-                  </label>
+                  <label>RERA Carpet Area (Sq. M)</label>
                   <input
                     className="form-control"
                     type="number"
@@ -1727,10 +1711,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    RERA Carpet Area (Sq. Ft.)
-                    
-                  </label>
+                  <label>RERA Carpet Area (Sq. Ft.)</label>
                   <input
                     className="form-control"
                     type="number"
@@ -1801,10 +1782,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Number of Units
-                    
-                  </label>
+                  <label>Number of Units</label>
                   <input
                     className="form-control"
                     type="number"
@@ -1849,10 +1827,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Land Area
-                   
-                  </label>
+                  <label>Land Area</label>
                   <input
                     className="form-control"
                     type="number"
@@ -1866,10 +1841,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Land UOM
-                   
-                  </label>
+                  <label>Land UOM</label>
                   <SelectBox
                     options={[
                       { value: "Square Meter", label: "Square Meter" },
@@ -1905,10 +1877,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Project Sales Type
-                   
-                  </label>
+                  <label>Project Sales Type</label>
                   <MultiSelectBox
                     options={[
                       { value: "Sales", label: "Sales" },
@@ -1927,7 +1896,19 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
-
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>Order Number</label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="order_no"
+                    placeholder="Enter Order Number"
+                    value={formData.order_no}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2031,40 +2012,44 @@ const ProjectDetailsCreate = () => {
         </div>
 
         <div className="card mt-3 pb-4 mx-4">
-  <div className="card-header3">
-    <h3 className="card-title">Amenities</h3>
-  </div>
-  <div className="card-body mt-0 pb-0">
-    <div className="row">
-      {/* Multi-Select Amenities Dropdown */}
-      <div className="col-md-3 mt-2">
-        <div className="form-group">
-          <label>
-            Amenities
-            {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-          </label>
-          <MultiSelectBox
-            options={amenities.map((ammit) => ({
-              value: ammit.id,
-              label: ammit.name,
-            }))}
-            value={formData.Amenities.map((id) => {
-              const ammit = amenities.find((ammit) => ammit.id === id);
-              return ammit ? { value: ammit.id, label: ammit.name } : null;
-            }).filter(Boolean)}
-            onChange={(selectedOptions) =>
-              setFormData((prev) => ({
-                ...prev,
-                Amenities: selectedOptions.map((option) => option.value),
-              }))
-            }
-            placeholder="Select amenities"
-          />
+          <div className="card-header3">
+            <h3 className="card-title">Amenities</h3>
+          </div>
+          <div className="card-body mt-0 pb-0">
+            <div className="row">
+              {/* Multi-Select Amenities Dropdown */}
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Amenities
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                  </label>
+                  <MultiSelectBox
+                    options={amenities.map((ammit) => ({
+                      value: ammit.id,
+                      label: ammit.name,
+                    }))}
+                    value={formData.Amenities.map((id) => {
+                      const ammit = amenities.find((ammit) => ammit.id === id);
+                      return ammit
+                        ? { value: ammit.id, label: ammit.name }
+                        : null;
+                    }).filter(Boolean)}
+                    onChange={(selectedOptions) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        Amenities: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      }))
+                    }
+                    placeholder="Select amenities"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
             <h3 className="card-title">Address</h3>
@@ -2525,7 +2510,7 @@ const ProjectDetailsCreate = () => {
               {/* 2D Images */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
-                Floor Plan{" "}
+                  Floor Plan{" "}
                   <span
                     className="tooltip-container"
                     onMouseEnter={() => setShowTooltip(true)}
@@ -3524,10 +3509,7 @@ const ProjectDetailsCreate = () => {
               {/* Virtual Tour Name */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Virtual Tour Name{" "}
-                   
-                  </label>
+                  <label>Virtual Tour Name </label>
                   <input
                     className="form-control"
                     type="text"
@@ -3542,10 +3524,7 @@ const ProjectDetailsCreate = () => {
               {/* Virtual Tour URL */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Virtual Tour URL{" "}
-                    
-                  </label>
+                  <label>Virtual Tour URL </label>
                   <input
                     className="form-control"
                     type="url"
