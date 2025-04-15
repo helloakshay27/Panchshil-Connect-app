@@ -281,8 +281,8 @@ const BannerList = () => {
                                   verticalAlign: "middle",
                                 }}
                               >
-                                <img
-                                  src={banner?.banner_image?.document_url || "NA"}
+                                <img  
+                                  src={banner?.attachfile?.document_url || "NA"}
                                   className="img-fluid rounded"
                                   alt={banner.title || "Banner Image"}
                                   style={{
