@@ -16,7 +16,7 @@ import { baseURL } from "./baseurl/apiDomain";
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
     Property_Type: "",
-    Property_type_id:"",
+    Property_type_id: "",
     building_type: "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
@@ -80,6 +80,8 @@ const ProjectDetailsCreate = () => {
   const [specifications, setSpecifications] = useState([]);
   const [amenities, setAmenities] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [statusOptions, setStatusOptions] = useState([]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const [virtualTourName, setVirtualTourName] = useState("");
@@ -94,7 +96,7 @@ const ProjectDetailsCreate = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [allBuildingTypes, setAllBuildingTypes] = useState([]);
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
-  console.log(propertyTypeOptions)
+  console.log(propertyTypeOptions);
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -1209,19 +1211,19 @@ const ProjectDetailsCreate = () => {
     Navigate(-1);
   };
 
-  const statusOptions = {
-    "Office Parks": [
-      { value: "Completed", label: "Completed" },
-      // { value: "Under-Construction", label: "Under Construction" },
-      { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      { value: "Upcoming", label: "Upcoming" },
-    ],
-    Residential: [
-      { value: "Completed", label: "Completed" },
-      { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      { value: "Upcoming", label: "Upcoming" },
-    ],
-  };
+  // const statusOptions = {
+  //   "Office Parks": [
+  //     { value: "Completed", label: "Completed" },
+  //     // { value: "Under-Construction", label: "Under Construction" },
+  //     { value: "Ready-To-Move-in", label: "Ready To Move in" },
+  //     { value: "Upcoming", label: "Upcoming" },
+  //   ],
+  //   Residential: [
+  //     { value: "Completed", label: "Completed" },
+  //     { value: "Ready-To-Move-in", label: "Ready To Move in" },
+  //     { value: "Upcoming", label: "Upcoming" },
+  //   ],
+  // };
 
   console.log("formData", formData);
   console.log("specification", specifications);
@@ -1388,7 +1390,6 @@ const ProjectDetailsCreate = () => {
         console.error("Error fetching property types:", error);
       });
   }, []);
-  
 
   // const propertyTypeOptions = [
   //   { value: "Office Parks", label: "Office Parks" },
@@ -1428,43 +1429,77 @@ const ProjectDetailsCreate = () => {
       try {
         const response = await axios.get(url);
         setBuildingTypeOptions(response.data);
-        console.log(response)
+        console.log(response);
       } catch (error) {
         console.error("Error fetching building types:", error);
       }
-    }
-},[formData.Property_Type]);
-const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
+    };
+  }, [formData.Property_Type]);
+  const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
 
-const handlePropertyTypeChange = async (selectedOption) => {
-  const { value, id } = selectedOption;
+  const handlePropertyTypeChange = async (selectedOption) => {
+    const { value, id } = selectedOption;
 
-  setFormData((prev) => ({
-    ...prev,
-    Property_Type: value,
-    Property_type_id: id,
-    building_type: "", // Optionally reset building_type
-  }));
-
-  try {
-    const response = await axios.get(
-      `https://panchshil-super.lockated.com/building_types.json?q[property_type_id_eq]=${id}`
-    );
-
-    const buildingTypes = response.data || [];
-
-    const formattedOptions = buildingTypes.map((item) => ({
-      value: item.building_type,
-      label: item.building_type,
-      id: item.id,
+    setFormData((prev) => ({
+      ...prev,
+      Property_Type: value,
+      Property_type_id: id,
+      building_type: "", // Optionally reset building_type
     }));
 
-    setBuildingTypeOptions(formattedOptions);
-  } catch (error) {
-    console.error("Error fetching building types:", error);
-  }
-};
+    try {
+      const response = await axios.get(
+        `https://panchshil-super.lockated.com/building_types.json?q[property_type_id_eq]=${id}`
+      );
 
+      const buildingTypes = response.data || [];
+
+      const formattedOptions = buildingTypes.map((item) => ({
+        value: item.building_type,
+        label: item.building_type,
+        id: item.id,
+      }));
+
+      setBuildingTypeOptions(formattedOptions);
+    } catch (error) {
+      console.error("Error fetching building types:", error);
+    }
+  };
+  // useEffect(() => {
+  //   const fetchConstructionStatuses = async () => {
+  //     try {
+  //       const response = await axios.get(`${baseURL}construction_statuses.json`);
+  //       const options = response.data.map((status) => ({
+  //         label: status.construction_status,
+  //         value: status.id,
+  //       }));
+  //       setStatusOptions(options);
+  //     } catch (error) {
+  //       console.error("Error fetching construction statuses:", error);
+  //     }
+  //   };
+  //   fetchConstructionStatuses();
+  // }, []);
+  useEffect(() => {
+    const fetchConstructionStatuses = async () => {
+      try {
+        const response = await axios.get(
+          `${baseURL}construction_statuses.json`
+        );
+        const options = response.data
+          .filter((status) => status.active) // Filter only active statuses
+          .map((status) => ({
+            label: status.construction_status, // Display name
+            value: status.id, // Unique identifier
+          }));
+        setStatusOptions(options); // Set the options for the dropdown
+      } catch (error) {
+        console.error("Error fetching construction statuses:", error);
+      }
+    };
+
+    fetchConstructionStatuses();
+  }, []);
 
   return (
     <>
@@ -1492,9 +1527,7 @@ const handlePropertyTypeChange = async (selectedOption) => {
                         </span>
                       )}
                     </span>
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
 
                   <input
@@ -1512,14 +1545,12 @@ const handlePropertyTypeChange = async (selectedOption) => {
                 <div className="form-group">
                   <label>
                     Property Types
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <PropertySelect
                     options={propertyTypeOptions}
                     value={formData.Property_Type}
-                    onChange={(value) =>handlePropertyTypeChange(value)}
+                    onChange={(value) => handlePropertyTypeChange(value)}
                   />
                 </div>
               </div>
@@ -1571,8 +1602,7 @@ const handlePropertyTypeChange = async (selectedOption) => {
                       }))
                     }
                   />
-                {/* )} */}
-
+                  {/* )} */}
                 </div>
               </div>
 
@@ -1580,20 +1610,17 @@ const handlePropertyTypeChange = async (selectedOption) => {
                 <div className="form-group">
                   <label>
                     Project Construction Status
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <SelectBox
-                    options={statusOptions[formData.Property_Type] || []}
+                    options={statusOptions} // Use the dynamically fetched options
                     defaultValue={formData.Project_Construction_Status}
-                    onChange={(value) =>
+                    onChange={(selectedOption) =>
                       setFormData((prev) => ({
                         ...prev,
-                        Project_Construction_Status: value,
+                        Project_Construction_Status: selectedOption.value, // Save the selected value
                       }))
                     }
-                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -1627,9 +1654,7 @@ const handlePropertyTypeChange = async (selectedOption) => {
                 <div className="form-group">
                   <label>
                     Project Name
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -1646,9 +1671,7 @@ const handlePropertyTypeChange = async (selectedOption) => {
                 <div className="form-group">
                   <label>
                     Location
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <input
                     className="form-control"
