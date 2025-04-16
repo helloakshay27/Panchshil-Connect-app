@@ -68,7 +68,7 @@ const ProjectDetailsEdit = () => {
     project_emailer_templetes: [],
     project_layout: [],
     project_sales_type: "",
-
+    video_preview_image_url: "",
   });
 
   console.log("formData", formData);
@@ -96,14 +96,11 @@ const ProjectDetailsEdit = () => {
 
   const fetchData = async (endpoint, setter) => {
     try {
-      const response = await axios.get(
-        `${baseURL}${endpoint}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+      const response = await axios.get(`${baseURL}${endpoint}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
 
       setter(response.data);
       console.log("response:---", response.data);
@@ -130,9 +127,7 @@ const ProjectDetailsEdit = () => {
   useEffect(() => {
     const fetchCategoryTypes = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}category_types.json`
-        );
+        const response = await axios.get(`${baseURL}category_types.json`);
 
         if (response.data) {
           // Extract only category_type from each object
@@ -156,16 +151,14 @@ const ProjectDetailsEdit = () => {
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}projects/${id}.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}projects/${id}.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        });
 
         const projectData = response.data;
+        console.log("projectData", projectData);
 
         setFormData({
           Property_Type: projectData.property_type || "",
@@ -216,6 +209,7 @@ const ProjectDetailsEdit = () => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
           fetched_gallery_image: projectData.gallery_image || [],
+          video_preview_image_url: projectData.video_list[0].video_preview_image_url || "",
           // project_ppt: [],
           // fetched_Project_PPT: projectData.project_ppt
           //   ? [projectData.project_ppt]
@@ -608,32 +602,30 @@ const ProjectDetailsEdit = () => {
 
       // Update state to remove the deleted image
       setFormData((prev) => {
-        const updatedFetchedGallery = prev[key].map((fileGroup, i) => {
-          if (i !== index) return fileGroup;
-      
-          const updatedAttachments = (fileGroup.attachfiles || []).filter(
-            (a) => a.id !== imageId
-          );
-      
-          return {
-            ...fileGroup,
-            attachfiles: updatedAttachments,
-          };
-        }).filter(group => (group.attachfiles && group.attachfiles.length > 0));
-      
+        const updatedFetchedGallery = prev[key]
+          .map((fileGroup, i) => {
+            if (i !== index) return fileGroup;
+
+            const updatedAttachments = (fileGroup.attachfiles || []).filter(
+              (a) => a.id !== imageId
+            );
+
+            return {
+              ...fileGroup,
+              attachfiles: updatedAttachments,
+            };
+          })
+          .filter((group) => group.attachfiles && group.attachfiles.length > 0);
+
         return {
           ...prev,
           [key]: updatedFetchedGallery,
         };
       });
-      
-      
-      
 
       toast.success("Image deleted successfully!");
       console.log(`Image with ID ${imageId} deleted successfully`);
     } catch (error) {
-    
       console.error("Error deleting image:", error.message);
       toast.error("Failed to delete image. Please try again.");
     }
@@ -1212,15 +1204,11 @@ const ProjectDetailsEdit = () => {
     }
 
     try {
-      const response = await axios.put(
-        `${baseURL}projects/${id}.json`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+      const response = await axios.put(`${baseURL}projects/${id}.json`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
 
       console.log(response.data);
       toast.success("Project updated successfully");
@@ -1252,12 +1240,12 @@ const ProjectDetailsEdit = () => {
       { value: "Completed", label: "Completed" },
       // { value: "Under-Construction", label: "Under Construction" },
       { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      { value: "Upcoming", label: "Upcoming"}
+      { value: "Upcoming", label: "Upcoming" },
     ],
     Residential: [
       { value: "Completed", label: "Completed" },
       { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      { value: "Upcoming", label: "Upcoming"}
+      { value: "Upcoming", label: "Upcoming" },
     ],
   };
 
@@ -1931,8 +1919,8 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body">
             <div className="row">
-            <div className="col-md-3">
-            <div className="form-group">
+              <div className="col-md-3">
+                <div className="form-group">
                   <label>
                     Project Banner Image
                     <span
@@ -1947,9 +1935,7 @@ const ProjectDetailsEdit = () => {
                         </span>
                       )}
                     </span>
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -1981,10 +1967,8 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
-                    Project Types
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    Property Type
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <SelectBox
                     options={[
@@ -2030,9 +2014,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Construction Status
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <SelectBox
                     options={statusOptions[formData.Property_Type] || []}
@@ -2081,9 +2063,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Project Name
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -2098,9 +2078,7 @@ const ProjectDetailsEdit = () => {
                 <div className="form-group">
                   <label>
                     Location
-                    <span className="otp-asterisk">
-                      {" "}
-                      *</span>
+                    <span className="otp-asterisk"> *</span>
                   </label>
                   <input
                     className="form-control"
@@ -2132,14 +2110,11 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-              <div className="col-md-6 mt-2">
+              {/* <div className="col-md-6 mt-2">
                 <div className="form-group">
                   <label>
                     Project Description
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
+                    
                   </label>
                   <textarea
                     className="form-control"
@@ -2150,7 +2125,7 @@ const ProjectDetailsEdit = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
+              </div> */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -2526,30 +2501,27 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-               <div className="col-md-3 mt-2">
-                              <div className="form-group">
-                                <label>
-                                  Project Sales Type
-                                 
-                                </label>
-                                <MultiSelectBox
-                                  options={[
-                                    { value: "Sales", label: "Sales" },
-                                    {
-                                      value: "Lease",
-                                      label: "Lease",
-                                    },
-                                  ]}
-                                  defaultValue={formData.project_sales_type}
-                                  onChange={(selectedOption) =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      project_sales_type: selectedOption,
-                                    }))
-                                  }
-                                />
-                              </div>
-                            </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>Project Sales Type</label>
+                  <MultiSelectBox
+                    options={[
+                      { value: "Sales", label: "Sales" },
+                      {
+                        value: "Lease",
+                        label: "Lease",
+                      },
+                    ]}
+                    defaultValue={formData.project_sales_type}
+                    onChange={(selectedOption) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        project_sales_type: selectedOption,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
               {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -3020,7 +2992,10 @@ const ProjectDetailsEdit = () => {
                                   style={{ maxWidth: 100, maxHeight: 100 }}
                                   className="img-fluid rounded"
                                   src={attachment.document_url}
-                                  alt={attachment.document_file_name || "Fetched Image"}
+                                  alt={
+                                    attachment.document_file_name ||
+                                    "Fetched Image"
+                                  }
                                 />
                               )}
                             </td>
@@ -3030,7 +3005,7 @@ const ProjectDetailsEdit = () => {
                                 className="purple-btn2"
                                 onClick={() =>
                                   handleFetchedDiscardGallery(
-                                        "fetched_gallery_image", // 🔥 correct key
+                                    "fetched_gallery_image", // 🔥 correct key
 
                                     index,
                                     attachment.id
@@ -3208,27 +3183,28 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
 
-                   <tbody>
-  {/* Show brochure only if it's a valid object with a name or file */}
-  {formData.brochure &&
-    (formData.brochure.name || formData.brochure.document_file_name) && (
-      <tr>
-        <td>
-          {formData.brochure.name || formData.brochure.document_file_name}
-        </td>
-        <td>
-          <button
-            type="button"
-            className="purple-btn2"
-            onClick={() => handleDiscardFile("brochure")}
-          >
-            x
-          </button>
-        </td>
-      </tr>
-  )}
-</tbody>
-
+                    <tbody>
+                      {/* Show brochure only if it's a valid object with a name or file */}
+                      {formData.brochure &&
+                        (formData.brochure.name ||
+                          formData.brochure.document_file_name) && (
+                          <tr>
+                            <td>
+                              {formData.brochure.name ||
+                                formData.brochure.document_file_name}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handleDiscardFile("brochure")}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        )}
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -3345,7 +3321,7 @@ const ProjectDetailsEdit = () => {
               {/* 2D Images */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
-                Floor Plan{" "}
+                  Floor Plan{" "}
                   <span
                     className="tooltip-container"
                     onMouseEnter={() => setShowTooltip(true)}
@@ -4285,6 +4261,18 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
+              <div className="form-group">
+                <label>Video Preview Image Url</label>
+                <input
+                  className="form-control"
+                  rows={1}
+                  name="video_preview_image_url"
+                  placeholder="Enter Video Url"
+                  value={formData.video_preview_image_url}
+                  onChange={handleChange}
+                />
+              </div>
+
               {/* <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project PPT{" "}

@@ -67,6 +67,7 @@ const ProjectDetailsCreate = () => {
     project_layout: [],
     project_sales_type: "",
     order_no: null,
+    video_preview_image_url: "",
   });
 
   useEffect(() => {
@@ -752,10 +753,10 @@ const ProjectDetailsCreate = () => {
     //   toast.error("Building Type is required.");
     //   return false;
     // }
-    if (!formData.Project_Construction_Status) {
-      toast.error("Construction Status is required.");
-      return false;
-    }
+    // if (!formData.Project_Construction_Status) {
+    //   toast.error("Construction Status is required.");
+    //   return false;
+    // }
     // if (!formData.Configuration_Type.length) {
     //   toast.error("Configuration Type is required.");
     //   return false;
@@ -3496,7 +3497,23 @@ const ProjectDetailsCreate = () => {
                     </tbody>
                   </table>
                 </div>
+
+                <div className="form-group">
+                  <label>
+                    Video Preview Image Url
+                  
+                  </label>
+                  <input
+                    className="form-control"
+                    rows={1}
+                    name="video_preview_image_url"
+                    placeholder="Enter Video Url"
+                    value={formData.video_preview_image_url}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
+        
 
               {/* <div className="d-flex justify-content-between align-items-end mx-1">
     <h5 className="mt-3">Project Creatives</h5>
