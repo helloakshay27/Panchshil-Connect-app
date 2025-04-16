@@ -21,10 +21,16 @@ const Testimonials = () => {
   const [buildingTypeId, setBuildingTypeId] = useState("");
   const [buildingType, setBuildingType] = useState({ id: "", name: "" });
   const [showTooltip, setShowTooltip] = useState(false);
+  const [videoFile, setVideoFile] = useState(null);
+  const [previewVideo, setPreviewVideo] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [showVideoTooltip, setShowVideoTooltip] = useState(false);
 
 
 
-
+  const [formData, setFormData] = useState({
+    testimonial_video: [],
+  });
 
   const handleBannerVideoChange = (e) => {
     const file = e.target.files[0];
@@ -116,6 +122,9 @@ const Testimonials = () => {
       "testimonial[building_type]",
       buildingTypeOptions.find((option) => option.id === buildingTypeId)?.building_type || ""
     );
+    if (formData.testimonial_video) {
+      form.append("testimonial[testimonial_video]", formData.testimonial_video);
+    }
   
     try {
       const response = await axios.post(`${baseURL}testimonials.json`, form, {
@@ -134,6 +143,8 @@ const Testimonials = () => {
       setUserProfile("");
       setUserType("");
       setContent("");
+      setPreviewVideo(null);
+      setFormData({ testimonial_video: null });
       navigate("/testimonial-list");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
@@ -370,7 +381,7 @@ const Testimonials = () => {
                         />
                       </div>
                     </div>
-                    {/* <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Testimonial Video{" "}
@@ -417,7 +428,7 @@ const Testimonials = () => {
                             />
                           )}
                         </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -134,9 +134,9 @@ console.log(testimonial)
       form.append("testimonial[content]", formData.content);
       
 
-      // if (formData.testimonial_video) {
-      //   form.append("testimonial[testimonial_video]", formData.testimonial_video);
-      // }
+      if (formData.testimonial_video) {
+        form.append("testimonial[testimonial_video]", formData.testimonial_video);
+      }
 
       await axios.put(`${baseURL}testimonials/${testimonial.id}.json`, form, {
         headers: {
@@ -233,7 +233,7 @@ console.log(testimonial)
                     </div>
                   </div>
 
-                  {/* <div className="col-md-3">
+                  <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Testimonial Video {" "}
@@ -284,7 +284,7 @@ console.log(testimonial)
                         </div>
                       )}
                     </div>
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>
