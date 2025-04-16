@@ -28,7 +28,7 @@ const CreatePasswordRustomjee = () => {
     baseURL: "https://dev-panchshil-super-app.lockated.com/",
     logoUrl: Rustomji_URL,
     loginBgClass: "login_bg_rustomji",
-    loginSecClass: "login-sec-rustom pt-5",
+    loginSecClass: "login-sec-rustom",
     logoStyle: { width: 335, height: 108, margin: "20px 0px 50px" },
     formTextColor: "text-light",
     alignContent: "justify-content-end",

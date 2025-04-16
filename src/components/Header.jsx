@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "../mor.css";
-import { baseURL, LOGO_URL, Rustomji_URL } from "../pages/baseurl/apiDomain";
+import {
+  baseURL,
+  LOGO_URL,
+  Rustomji_URL,
+  Rustomji_URL_Black,
+} from "../pages/baseurl/apiDomain";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
@@ -13,7 +18,7 @@ const Header = () => {
     if (baseURL === "https://panchshil-super.lockated.com/") {
       setCurrentLogo(LOGO_URL);
     } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
-      setCurrentLogo(Rustomji_URL);
+      setCurrentLogo(Rustomji_URL_Black);
     } else {
       // Default logo for other environments including localhost
       setCurrentLogo(LOGO_URL);
@@ -40,7 +45,11 @@ const Header = () => {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header border-0">
-              <button type="button" className="btn-close" onClick={handleClose} />
+              <button
+                type="button"
+                className="btn-close"
+                onClick={handleClose}
+              />
             </div>
             <div className="text-center pb-5">
               <div className="avatar2">
@@ -61,16 +70,34 @@ const Header = () => {
         <div className="container-fluid">
           {/* Left Section: Logo + Home & Setup Links */}
           <div className="nav-left">
-            <img
+            {/* <img
               className="logo"
               src={currentLogo}
               alt={currentLogo === LOGO_URL ? "Panchshil Logo" : "Rustomjee Logo"}
+            /> */}
+            <img
+              className={`logo ${
+                currentLogo === Rustomji_URL_Black
+                  ? "rustomjee-logo"
+                  : "panchshil-logo"
+              }`}
+              src={currentLogo}
+              alt={
+                currentLogo === LOGO_URL ? "Panchshil Logo" : "Rustomjee Logo"
+              }
             />
+
             <div className="nav-links ms-4">
-              <NavLink className="nav-link px-4 d-flex align-items-center" to="/project-list">
+              <NavLink
+                className="nav-link px-4 d-flex align-items-center"
+                to="/project-list"
+              >
                 Home
               </NavLink>
-              <NavLink className="nav-link px-4 d-flex align-items-center" to="/setup-member/property-type-list">
+              <NavLink
+                className="nav-link px-4 d-flex align-items-center"
+                to="/setup-member/property-type-list"
+              >
                 Setup
               </NavLink>
             </div>
