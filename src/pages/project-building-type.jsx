@@ -20,11 +20,12 @@ const ProjectBuildingType = () => {
 
   useEffect(() => {
     const fetchPropertyTypes = async () => {
-      const url = `${baseURL}get_property_types.json`;
+      const url = `${baseURL}property_types.json`; // Corrected API endpoint
 
       try {
         const response = await axios.get(url);
-        const fetchedPropertyTypes = response.data?.property_types || [];
+        // Handle the response format
+        const fetchedPropertyTypes = response.data || [];
 
         // Map to required format including ID
         const options = fetchedPropertyTypes.map((item) => ({
@@ -36,6 +37,7 @@ const ProjectBuildingType = () => {
         setPropertyTypeOptions(options);
       } catch (error) {
         console.error("Error fetching property types:", error);
+        toast.error("Failed to load property types");
       }
     };
 
@@ -96,9 +98,6 @@ const ProjectBuildingType = () => {
             <div className="card-body">
               <form onSubmit={handleSubmit}>
                 <div className="row">
-                  {/* Name Field */}
-                 
-
                   {/* Property Type SelectBox */}
                   <div className="col-md-3">
                     <div className="form-group">
@@ -122,6 +121,8 @@ const ProjectBuildingType = () => {
                       />
                     </div>
                   </div>
+                  
+                  {/* Name Field */}
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
@@ -137,16 +138,6 @@ const ProjectBuildingType = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Debug: show selected Property_Type_ID */}
-                {/* <div className="row">
-                  <div className="col-md-6">
-                    <p className="text-muted">
-                      Selected Property Type ID:{" "}
-                      <strong>{formData.Property_Type_ID}</strong>
-                    </p>
-                  </div>
-                </div> */}
 
                 <div className="row mt-2 justify-content-center">
                   <div className="col-md-2">
