@@ -1,10 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "../mor.css";
+import { baseURL, LOGO_URL, Rustomji_URL } from "../pages/baseurl/apiDomain";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
+  const [currentLogo, setCurrentLogo] = useState(LOGO_URL);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Determine which logo to display based on baseURL
+    if (baseURL === "https://panchshil-super.lockated.com/") {
+      setCurrentLogo(LOGO_URL);
+    } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+      setCurrentLogo(Rustomji_URL);
+    } else {
+      // Default logo for other environments including localhost
+      setCurrentLogo(LOGO_URL);
+    }
+  }, [baseURL]);
 
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);
@@ -49,8 +63,8 @@ const Header = () => {
           <div className="nav-left">
             <img
               className="logo"
-              src="https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png"
-              alt="Logo"
+              src={currentLogo}
+              alt={currentLogo === LOGO_URL ? "Panchshil Logo" : "Rustomjee Logo"}
             />
             <div className="nav-links ms-4">
               <NavLink className="nav-link px-4 d-flex align-items-center" to="/project-list">

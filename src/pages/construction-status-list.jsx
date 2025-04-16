@@ -57,9 +57,11 @@ const ConstructionStatusList = () => {
   };
 
   const filteredStatuses = statuses.filter((status) =>
-    status.construction_status.toLowerCase().includes(searchQuery.toLowerCase())
+    (status.construction_status || "")
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
   );
-
+  
   const totalFiltered = filteredStatuses.length;
   const totalPages = Math.ceil(totalFiltered / itemsPerPage);
 
