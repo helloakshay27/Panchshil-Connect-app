@@ -20,18 +20,11 @@ const Testimonials = () => {
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
   const [buildingTypeId, setBuildingTypeId] = useState("");
   const [buildingType, setBuildingType] = useState({ id: "", name: "" });
-  const [videoFile, setVideoFile] = useState(null);
-  const [previewVideo, setPreviewVideo] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [showVideoTooltip, setShowVideoTooltip] = useState(false);
-  const [existingVideoUrl, setExistingVideoUrl] = useState(null);
 
-  const [formData, setFormData] = useState({
-    testimonial_video: [],
-  });
 
-  console.log("fromrData", formData);
+
+
 
   const handleBannerVideoChange = (e) => {
     const file = e.target.files[0];
@@ -109,34 +102,21 @@ const Testimonials = () => {
 
     fetchBuildingTypes();
   }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     toast.dismiss();
-
-    // if (!userName.trim() || !userProfile.trim() || !content.trim()) {
-    //   toast.error("All fields are required.");
-    //   setLoading(false);
-    //   return;
-    // }
-
+  
     const form = new FormData();
     form.append("testimonial[user_name]", userName.trim());
-    form.append("testimonial[profile_of_user]", userProfile.trim());
     form.append("testimonial[content]", content.trim());
-    form.append("testimonial[video_url]", videoUrl.trim());
-    form.append("testimonial[video_preview_image_url]", imagePreview.trim());
+    form.append("testimonial[video_preview_image_url]", videoUrl.trim()); // 👈 Only this matters
     form.append("testimonial[building_id]", buildingTypeId?.toString() || "");
     form.append(
       "testimonial[building_type]",
-      buildingTypeOptions.find((option) => option.id === buildingTypeId)
-        ?.building_type || ""
+      buildingTypeOptions.find((option) => option.id === buildingTypeId)?.building_type || ""
     );
-    if (formData.testimonial_video) {
-      form.append("testimonial[testimonial_video]", formData.testimonial_video);
-    }
-
+  
     try {
       const response = await axios.post(`${baseURL}testimonials.json`, form, {
         headers: {
@@ -144,8 +124,9 @@ const Testimonials = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
+  
       toast.success("Data saved successfully!");
+  
       // Reset form
       setUserName("");
       setVideoUrl("");
@@ -153,9 +134,6 @@ const Testimonials = () => {
       setUserProfile("");
       setUserType("");
       setContent("");
-      setPreviewVideo(null);
-      setFormData({ testimonial_video: null });
-
       navigate("/testimonial-list");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
@@ -164,6 +142,62 @@ const Testimonials = () => {
       setLoading(false);
     }
   };
+  
+  
+
+ 
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   toast.dismiss();
+
+  //   // if (!userName.trim() || !userProfile.trim() || !content.trim()) {
+  //   //   toast.error("All fields are required.");
+  //   //   setLoading(false);
+  //   //   return;
+  //   // }
+
+  //   const form = new FormData();
+  //   form.append("testimonial[user_name]", userName.trim());
+  //   // form.append("testimonial[profile_of_user]", userProfile.trim());
+  //   form.append("testimonial[content]", content.trim());
+  //   form.append("testimonial[video_url]", videoUrl.trim());
+  //   form.append("testimonial[video_preview_image_url]", videoUrl.trim()); 
+
+  //   form.append("testimonial[building_id]", buildingTypeId?.toString() || "");
+  //   form.append(
+  //     "testimonial[building_type]",
+  //     buildingTypeOptions.find((option) => option.id === buildingTypeId)
+  //       ?.building_type || ""
+  //   );
+   
+
+  //   try {
+  //     const response = await axios.post(`${baseURL}testimonials.json`, form, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+
+  //     toast.success("Data saved successfully!");
+  //     // Reset form
+  //     setUserName("");
+  //     setVideoUrl("");
+  //     setImagePreview("");
+  //     setUserProfile("");
+  //     setUserType("");
+  //     setContent("");
+  //     setPreviewVideo(null);
+     
+
+  //     navigate("/testimonial-list");
+  //   } catch (error) {
+  //     console.error("Error submitting testimonial:", error);
+  //     toast.error("Failed to submit. Please check your input.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
@@ -299,7 +333,7 @@ const Testimonials = () => {
                       </div>
                     </div>
                     {/* User Testimonial Video Upload */}
-                    {/* <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Testimonial Video URL
@@ -311,23 +345,20 @@ const Testimonials = () => {
                         <input
                           className="form-control"
                           type="text"
-                          name="video_url" // 👈 backend parameter name
+                          name="video_preview_image_url" // 👈 backend parameter name
                           placeholder="Enter video URL"
                           value={videoUrl}
                           onChange={(e) => setVideoUrl(e.target.value)}
                         />
                       </div>
-                    </div> */}
+                    </div>
 
-                    {/* Content (Description) */}
+                   
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Description
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
+                         
                         </label>
                         <input
                           className="form-control"
@@ -339,7 +370,7 @@ const Testimonials = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Testimonial Video{" "}
@@ -355,10 +386,8 @@ const Testimonials = () => {
                               </span>
                             )}
                           </span>
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
+                         
+                          
                         </label>
                           <input
                             className="form-control"
@@ -373,7 +402,7 @@ const Testimonials = () => {
                             </span>
                           )}
 
-                          {/* Video Preview */}
+                          
                           {previewVideo &&  (
                             <video
                               src={previewVideo}
@@ -388,7 +417,7 @@ const Testimonials = () => {
                             />
                           )}
                         </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

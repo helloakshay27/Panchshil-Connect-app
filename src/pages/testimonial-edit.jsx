@@ -9,13 +9,13 @@ const TestimonialEdit = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { testimonial } = state || {};
-
+console.log(testimonial)
   const [formData, setFormData] = useState({
     user_name: testimonial?.user_name || "",
     user_profile: testimonial?.profile_of_user || "",
     building_id: testimonial?.building_id ?? null,
     content: testimonial?.content || "",
-    video_url: testimonial?.video_url || "",
+    video_url: testimonial?.video_preview_image_url || "",
   });
 
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
@@ -42,7 +42,7 @@ const TestimonialEdit = () => {
           user_profile: response.data.profile_of_user || "",
           building_id: response.data.building_id ?? null,
           content: response.data.content || "",
-          video_url: response.data.video_url || "",
+          video_url: response.data.video_preview_image_url || "",
         });
 
         const videoUrl = response.data?.testimonial_video?.document_url;
@@ -130,12 +130,13 @@ const TestimonialEdit = () => {
       form.append("testimonial[user_name]", formData.user_name);
       form.append("testimonial[profile_of_user]", formData.user_profile);
       form.append("testimonial[building_id]", formData.building_id);
+      form.append("testimonial[video_preview_image_url]", formData.video_url.trim());
       form.append("testimonial[content]", formData.content);
       
 
-      if (formData.testimonial_video) {
-        form.append("testimonial[testimonial_video]", formData.testimonial_video);
-      }
+      // if (formData.testimonial_video) {
+      //   form.append("testimonial[testimonial_video]", formData.testimonial_video);
+      // }
 
       await axios.put(`${baseURL}testimonials/${testimonial.id}.json`, form, {
         headers: {
@@ -217,8 +218,22 @@ const TestimonialEdit = () => {
                       />
                     </div>
                   </div>
-
                   <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Video URL
+                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
+                      </label>
+                      <input
+                        className="form-control"
+                        name="video_url"
+                        value={formData.video_url}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Testimonial Video {" "}
@@ -232,7 +247,7 @@ const TestimonialEdit = () => {
                             <span className="tooltip-text">Max Upload Size 50 MB</span>
                           )}
                         </span>
-                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                       
                       </label>
 
                       <input
@@ -269,7 +284,7 @@ const TestimonialEdit = () => {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
