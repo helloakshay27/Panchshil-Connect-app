@@ -1045,7 +1045,7 @@ const ProjectDetailsEdit = () => {
       } else if (key === "brochure" && value) {
         const file = value instanceof File ? value : value.file;
         if (file) {
-          data.append("project[brochure][]", file);
+          data.append("project[ProjectBrochure][]", file);
         }
       } else if (
         key === "project_emailer_templetes" &&
@@ -1055,7 +1055,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_emailer_templetes][]", file);
+            data.append("project[ProjectEmailerTempletes][]", file);
           }
         });
       } else if (
@@ -1066,7 +1066,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_ppt][]", file);
+            data.append("project[ProjectPPT][]", file);
           }
         });
       } else if (
@@ -1077,7 +1077,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[two_d_images][]", file);
+            data.append("project[Project2DImage][]", file);
           }
         });
       } else if (
@@ -1088,7 +1088,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_creatives][]", file);
+            data.append("project[ProjectCreatives][]", file);
           }
         });
       } else if (
@@ -1099,7 +1099,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_creative_generics][]", file);
+            data.append("project[ProjectCreativeGenerics][]", file);
           }
         });
       } else if (
@@ -1110,7 +1110,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_creative_offers][]", file);
+            data.append("project[ProjectCreativeOffers][]", file);
           }
         });
       } else if (
@@ -1121,7 +1121,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_interiors][]", file);
+            data.append("project[ProjectInteriors][]", file);
           }
         });
       } else if (
@@ -1132,7 +1132,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_exteriors][]", file);
+            data.append("project[ProjectExteriors][]", file);
           }
         });
       } else if (
@@ -1143,14 +1143,14 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_layout][]", file);
+            data.append("project[ProjectLayout][]", file);
           }
         });
       } else if (key === "videos" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[videos][]", file);
+            data.append("project[ProjectVideo][]", file);
           }
         });
       } else if (key === "gallery_image" && Array.isArray(value)) {
