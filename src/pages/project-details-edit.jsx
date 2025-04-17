@@ -69,6 +69,7 @@ const ProjectDetailsEdit = () => {
     project_layout: [],
     project_sales_type: "",
     video_preview_image_url: "",
+    document_url: "",
   });
 
   console.log("formData", formData);
