@@ -23,7 +23,7 @@ const ForgotOtpRustomjee = () => {
     logoUrl: Rustomji_URL,
     loginBgClass: "login_bg_rustomji",
     loginSecClass: "login-sec-rustom",
-    logoStyle: { width: 335, height: 108, margin: "20px 0px 50px" },
+    logoStyle: { width: 335, height: 108, margin: "20px 0px 30px" },
     formTextColor: "text-light",
     alignContent: "justify-content-end",
     columnClass: "col-lg-4 p-0 m-0 col-md-6",

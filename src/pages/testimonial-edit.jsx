@@ -9,7 +9,8 @@ const TestimonialEdit = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { testimonial } = state || {};
-console.log(testimonial)
+  console.log(testimonial);
+
   const [formData, setFormData] = useState({
     user_name: testimonial?.user_name || "",
     user_profile: testimonial?.profile_of_user || "",
@@ -21,9 +22,13 @@ console.log(testimonial)
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [existingVideoUrl, setExistingVideoUrl] = useState(null);
+  const [existingImageUrl, setExistingImageUrl] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
   const [errors, setErrors] = useState({});
   const [showVideoTooltip, setShowVideoTooltip] = useState(false);
+  const [previewImg, setPreviewImg] = useState(null);
+  const [previewFiles, setPreviewFiles] = useState([]);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     const fetchTestimonialData = async () => {
@@ -45,9 +50,16 @@ console.log(testimonial)
           video_url: response.data.video_preview_image_url || "",
         });
 
+        // Set existing video URL if available
         const videoUrl = response.data?.testimonial_video?.document_url;
         if (videoUrl) {
           setExistingVideoUrl(videoUrl);
+        }
+
+        // Set existing preview image if available
+        const imageUrl = response.data?.video_preview_image_url;
+        if (imageUrl) {
+          setExistingImageUrl(imageUrl);
         }
       } catch (error) {
         console.error("Error fetching testimonial data:", error);
@@ -96,7 +108,7 @@ console.log(testimonial)
     const file = e.target.files[0];
     if (file) {
       const maxSize = 100 * 1024 * 1024; // 100MB
-  
+
       if (file.size > maxSize) {
         setErrors((prev) => ({
           ...prev,
@@ -105,7 +117,7 @@ console.log(testimonial)
         toast.error("Video exceeds 100MB limit. Please upload a smaller file.");
         return;
       }
-  
+
       const videoUrl = URL.createObjectURL(file);
       setPreviewVideo(videoUrl);
       setFormData((prev) => ({
@@ -119,7 +131,46 @@ console.log(testimonial)
       setExistingVideoUrl(null);
     }
   };
-  
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+    if (files.length === 0) return;
+
+    const file = files[0]; // Get the first file
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = "";
+      return;
+    }
+
+    // Size validation (50MB max)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setErrors((prev) => ({
+        ...prev,
+        attachfile: "Max file size is 50 MB",
+      }));
+      toast.error("Image exceeds 50MB limit. Please upload a smaller file.");
+      return;
+    }
+
+    // Create image preview
+    const previewUrl = URL.createObjectURL(file);
+    setPreviewImg(previewUrl);
+    
+    // Clear existing image when uploading a new one
+    setExistingImageUrl(null);
+
+    // Update formData with the image file
+    setFormData(prev => ({
+      ...prev,
+      attachfile: file,
+      video_preview_image_url: previewUrl // Update the URL field as well
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,12 +181,21 @@ console.log(testimonial)
       form.append("testimonial[user_name]", formData.user_name);
       form.append("testimonial[profile_of_user]", formData.user_profile);
       form.append("testimonial[building_id]", formData.building_id);
-      form.append("testimonial[video_preview_image_url]", formData.video_url.trim());
-      form.append("testimonial[content]", formData.content);
       
+      // Only append the video_preview_image_url if it's the existing URL and no new file
+      if (!formData.attachfile && formData.video_url) {
+        form.append("testimonial[video_preview_image_url]", formData.video_url.trim());
+      }
+      
+      form.append("testimonial[content]", formData.content);
 
+      // Append new files if they exist
       if (formData.testimonial_video) {
         form.append("testimonial[testimonial_video]", formData.testimonial_video);
+      }
+      
+      if (formData.attachfile) {
+        form.append("testimonial[preview_image]", formData.attachfile);
       }
 
       await axios.put(`${baseURL}testimonials/${testimonial.id}.json`, form, {
@@ -172,10 +232,7 @@ console.log(testimonial)
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        User Name
-                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
-                      </label>
+                      <label>User Name</label>
                       <input
                         className="form-control"
                         name="user_name"
@@ -187,10 +244,7 @@ console.log(testimonial)
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Building Type
-                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
-                      </label>
+                      <label>Building Type</label>
                       <SelectBox
                         options={buildingTypeOptions.map((option) => ({
                           label: option.building_type,
@@ -206,10 +260,7 @@ console.log(testimonial)
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Description
-                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
-                      </label>
+                      <label>Description</label>
                       <input
                         className="form-control"
                         name="content"
@@ -218,25 +269,11 @@ console.log(testimonial)
                       />
                     </div>
                   </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Video URL
-                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
-                      </label>
-                      <input
-                        className="form-control"
-                        name="video_url"
-                        value={formData.video_url}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
 
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Testimonial Video {" "}
+                        Testimonial Video{" "}
                         <span
                           className="tooltip-container"
                           onMouseEnter={() => setShowVideoTooltip(true)}
@@ -247,7 +284,6 @@ console.log(testimonial)
                             <span className="tooltip-text">Max Upload Size 50 MB</span>
                           )}
                         </span>
-                       
                       </label>
 
                       <input
@@ -280,6 +316,70 @@ console.log(testimonial)
                             controls
                             className="img-fluid rounded"
                             style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Preview Image{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 50 MB
+                            </span>
+                          )}
+                        </span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="attachfile"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                      />
+                      {errors.attachfile && (
+                        <span className="error text-danger">
+                          {errors.attachfile}
+                        </span>
+                      )}
+                      
+                      {/* Show new preview image if selected */}
+                      {previewImg && (
+                        <div className="mt-2">
+                          <img
+                            src={previewImg}
+                            className="img-fluid rounded"
+                            alt="Preview"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
+                      
+                      {/* Show existing image if no new image is selected */}
+                      {!previewImg && existingImageUrl && (
+                        <div className="mt-2">
+                          <img
+                            src={existingImageUrl}
+                            className="img-fluid rounded"
+                            alt="Current Preview"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
                           />
                         </div>
                       )}

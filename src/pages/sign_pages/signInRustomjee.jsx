@@ -25,7 +25,7 @@ const SignInRustomjee = () => {
     logoUrl: Rustomji_URL,
     loginBgClass: "login_bg_rustomji",
     loginSecClass: "login-sec-rustom",
-    logoStyle: { width: 335, height: 108, margin: "20px 0px 50px" },
+    logoStyle: { width: 335, height: 108, margin: "20px 0px 30px" },
     showRegisterButton: false,
     formTextColor: "text-light",
     alignContent: "justify-content-end",
@@ -181,65 +181,71 @@ const SignInRustomjee = () => {
 
   const renderOtpLogin = () => (
     <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
-  {OtpSection && (
-    <>
-      <div className="form-group position-relative">
-        <label
-          className={`mb-1 ${config.formTextColor}`}
-          htmlFor="mobile"
-        >
-          Mobile Number
-        </label>
-        <input
-          style={{height:"40px"}}
-          type="tel"
-          id="mobile"
-          className="form-control mb-2"
-          placeholder="Enter mobile number"
-          value={mobile}
-          onChange={(e) => setMobile(e.target.value)}
-          required
-        />
-      </div>
-
-      <div className="d-flex align-items-center justify-content-center mt-5">
-        <button
-          type="button"
-          className="btn-rust btn-danger-rustomjee d-flex align-items-center justify-content-center border-0"
-          onClick={handleSendOtp}
-        >
-          Send OTP
-        </button>
-      </div>
-    </>
-  )}
-
-
-
-      {showOtpSection && (
-        <div className="form-group position-relative">
-          <label className={`mb-1 ${config.formTextColor}`} htmlFor="otp">Enter OTP</label>
-          <input
-            type="text"
-            id="otp"
-            className="form-control mb-2"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
-        </div>
+      {/* Mobile input section */}
+      {OtpSection && (
+        <>
+          <div className="form-group position-relative">
+            <label className={`mb-1 ${config.formTextColor}`} htmlFor="mobile">
+              Mobile Number
+            </label>
+            <input
+              style={{ height: "40px" }}
+              type="tel"
+              id="mobile"
+              className="form-control mb-2"
+              placeholder="Enter registred mobile number"
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
+              required
+            />
+          </div>
+  
+          <div className="d-flex align-items-center justify-content-center mt-5">
+            <button
+              type="button"
+              className="btn-rust btn-danger-rustomjee mt-10 border-0"
+              onClick={handleSendOtp}
+            >
+              SEND OTP
+            </button>
+          </div>
+        </>
       )}
-
+  
+      {/* OTP input section */}
+      {showOtpSection && (
+        <>
+          <div className="form-group position-relative">
+            <label className={`mb-1 ${config.formTextColor}`} htmlFor="otp">
+              Enter OTP
+            </label>
+            <input
+              style={{ height: "40px" }}
+              type="text"
+              id="otp"
+              className="form-control mb-2"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+          </div>
+  
+          <div className="d-flex align-items-center justify-content-center mt-5">
+            <button
+              type="submit"
+              className="btn-rust btn-danger-rustomjee mt-10 border-0"
+            >
+              Verify OTP
+            </button>
+          </div>
+        </>
+      )}
+  
       {error && <p className="text-danger">{error}</p>}
-
-      {showOtpSection && (
-        <button type="submit" className="btn btn-danger-rustomjee mt-2">
-          Verify OTP
-        </button>
-      )}
     </form>
   );
+  
 
   return (
     <main>
