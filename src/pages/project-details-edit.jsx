@@ -90,6 +90,10 @@ const ProjectDetailsEdit = () => {
   const [projectCreatives, setProjectCreatives] = useState([]);
   const [categoryTypes, setCategoryTypes] = useState([]);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [buildingTypes, setBuildingTypes] = useState([]);
+  const [statusOptions, setStatusOptions] = useState([]);
+  console.log(statusOptions)
+  
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
   // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
@@ -108,6 +112,49 @@ const ProjectDetailsEdit = () => {
       console.error(`Error fetching data from ${endpoint}:`, error);
     }
   };
+  //  useEffect(() => {
+  //     axios
+  //       .get(`${baseURL}/property_types.json`)
+  //       .then((response) => {
+  //         const options = response.data
+  //           .filter((item) => item.active) // optional: only include active types
+  //           .map((type) => ({
+  //             value: type.property_type,
+  //             label: type.property_type,
+  //             id: type.id,
+  //           }));
+  //         setPropertyTypeOptions(options);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching property types:", error);
+  //       });
+  //   }, []);
+
+    const fetchBuildingTypes = async () => {
+      // setLoading(tru/e);
+      try {
+        const response = await axios.get(
+          `${baseURL}/building_types.json`
+        );
+        const options = response.data
+            .filter((item) => item.active) // optional: only include active types
+            .map((type) => ({
+              value: type.building_type,
+              label: type.building_type,
+            }));
+        setBuildingTypes(options);
+      } catch (error) {
+        console.error("Error fetching building types:", error);
+        toast.error("Failed to fetch building types");
+      } finally {
+        // setLoading(false);
+        
+      }
+    };
+  
+    useEffect(() => {
+      fetchBuildingTypes();
+    }, []);
 
   useEffect(() => {
     fetchData("get_property_types.json", (data) =>
@@ -123,6 +170,27 @@ const ProjectDetailsEdit = () => {
       setAmenities(data?.amenities_setups || [])
     );
   }, []);
+   useEffect(() => {
+      const fetchConstructionStatuses = async () => {
+        try {
+          const response = await axios.get(
+            `${baseURL}construction_statuses.json`
+          );
+          const options = response.data
+            .filter((status) => status.active) // Filter only active statuses
+            .map((status) => ({
+              label: status.construction_status, // Display name
+              value: status.id, // Unique identifier
+              name: status.Project_Construction_Status_Name,
+            }));
+          setStatusOptions(options); // Set the options for the dropdown
+        } catch (error) {
+          console.error("Error fetching construction statuses:", error);
+        }
+      };
+  
+      fetchConstructionStatuses();
+    }, []);
 
   useEffect(() => {
     const fetchCategoryTypes = async () => {
@@ -209,7 +277,7 @@ const ProjectDetailsEdit = () => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
           fetched_gallery_image: projectData.gallery_image || [],
-          video_preview_image_url: projectData.video_list[0].video_preview_image_url || "",
+          video_preview_image_url: projectData?.video_list[0]?.video_preview_image_url || "",
           // project_ppt: [],
           // fetched_Project_PPT: projectData.project_ppt
           //   ? [projectData.project_ppt]
@@ -223,19 +291,23 @@ const ProjectDetailsEdit = () => {
           project_exteriors: projectData.project_exteriors || [],
           project_emailer_templetes:
             projectData.project_emailer_templetes || [],
-          project_ppt: projectData.project_ppt || [],
+          project_ppt: projectData.ProjectPPT.document_url || [],
+          ppt_name: projectData.ProjectPPT.document_file_name || [],
           project_sales_type: projectData.project_sales_type || [],
         });
 
         setProject(response.data);
       } catch (err) {
         setError("Failed to fetch project details.");
+        console.log(err)
       } finally {
         setLoading(false);
       }
     };
     fetchProjectDetails();
   }, []);
+
+  console.log(formData)
 
   const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
   const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -1045,7 +1117,7 @@ const ProjectDetailsEdit = () => {
       } else if (key === "brochure" && value) {
         const file = value instanceof File ? value : value.file;
         if (file) {
-          data.append("project[ProjectBrochure][]", file);
+          data.append("project[brochure][]", file);
         }
       } else if (
         key === "project_emailer_templetes" &&
@@ -1055,7 +1127,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectEmailerTempletes][]", file);
+            data.append("project[project_emailer_templetes][]", file);
           }
         });
       } else if (
@@ -1066,7 +1138,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectPPT][]", file);
+            data.append("project[project_ppt][]", file);
           }
         });
       } else if (
@@ -1077,7 +1149,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[Project2DImage][]", file);
+            data.append("project[two_d_images][]", file);
           }
         });
       } else if (
@@ -1088,7 +1160,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectCreatives][]", file);
+            data.append("project[project_creatives][]", file);
           }
         });
       } else if (
@@ -1099,7 +1171,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectCreativeGenerics][]", file);
+            data.append("project[project_creative_generics][]", file);
           }
         });
       } else if (
@@ -1110,7 +1182,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectCreativeOffers][]", file);
+            data.append("project[project_creative_offers][]", file);
           }
         });
       } else if (
@@ -1121,7 +1193,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectInteriors][]", file);
+            data.append("project[project_interiors][]", file);
           }
         });
       } else if (
@@ -1132,7 +1204,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectExteriors][]", file);
+            data.append("project[project_exteriors][]", file);
           }
         });
       } else if (
@@ -1143,14 +1215,14 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectLayout][]", file);
+            data.append("project[project_layout][]", file);
           }
         });
       } else if (key === "videos" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[ProjectVideo][]", file);
+            data.append("project[videos][]", file);
           }
         });
       } else if (key === "gallery_image" && Array.isArray(value)) {
@@ -1235,19 +1307,19 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-  const statusOptions = {
-    "Office Parks": [
-      { value: "Completed", label: "Completed" },
-      // { value: "Under-Construction", label: "Under Construction" },
-      { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      { value: "Upcoming", label: "Upcoming" },
-    ],
-    Residential: [
-      { value: "Completed", label: "Completed" },
-      { value: "Ready-To-Move-in", label: "Ready To Move in" },
-      { value: "Upcoming", label: "Upcoming" },
-    ],
-  };
+  // const statusOptions = {
+  //   "Office Parks": [
+  //     { value: "Completed", label: "Completed" },
+  //     // { value: "Under-Construction", label: "Under Construction" },
+  //     { value: "Ready-To-Move-in", label: "Ready To Move in" },
+  //     { value: "Upcoming", label: "Upcoming" },
+  //   ],
+  //   Residential: [
+  //     { value: "Completed", label: "Completed" },
+  //     { value: "Ready-To-Move-in", label: "Ready To Move in" },
+  //     { value: "Upcoming", label: "Upcoming" },
+  //   ],
+  // };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -1893,20 +1965,26 @@ const ProjectDetailsEdit = () => {
     { value: "Residential", label: "Residential" },
   ];
 
-  const buildingTypeOptions = {
-    "Office Parks": [
-      { value: "Mixed-Use-Development", label: "Mixed Use Development" },
-      { value: "Special-Economic-Zone", label: "Special Economic Zone" },
-      { value: "Tech-Parks", label: "Tech Parks" },
-      { value: "Built-to-Suit", label: "Built to Suit" },
-      { value: "Upcoming-Developments", label: "Upcoming Developments" },
-    ],
-    // Residential: [
-    //   { value: "Completed", label: "Completed" },
-    //   { value: "Ready-To-Move-In", label: "Ready To Move In" },
-    //   { value: "Upcoming-Developments", label: "Upcoming Developments" },
-    // ],
-  };
+  const buildingTypeOptions = [
+    buildingTypes.map((type) => ({  value: type.building_type, label: type.building_type })),
+    // { value: "Office Parks", label: "Office Parks" },
+    // { value: "Residential", label: "Residential" },
+  ];
+
+  // const buildingTypeOptions = {
+  //   "Office Parks": [
+  //     { value: "Mixed-Use-Development", label: "Mixed Use Development" },
+  //     { value: "Special-Economic-Zone", label: "Special Economic Zone" },
+  //     { value: "Tech-Parks", label: "Tech Parks" },
+  //     { value: "Built-to-Suit", label: "Built to Suit" },
+  //     { value: "Upcoming-Developments", label: "Upcoming Developments" },
+  //   ],
+  //   // Residential: [
+  //   //   { value: "Completed", label: "Completed" },
+  //   //   { value: "Ready-To-Move-In", label: "Ready To Move In" },
+  //   //   { value: "Upcoming-Developments", label: "Upcoming Developments" },
+  //   // ],
+  // };
 
   return (
     <>
@@ -1998,7 +2076,7 @@ const ProjectDetailsEdit = () => {
                     </span> */}
                   </label>
                   <SelectBox
-                    options={buildingTypeOptions[formData.Property_Type] || []} // ✅ Show correct options
+                    options={buildingTypes || []} // ✅ Show correct options
                     defaultValue={formData.building_type}
                     onChange={(selectedValue) =>
                       setFormData((prev) => ({
@@ -2017,9 +2095,12 @@ const ProjectDetailsEdit = () => {
                     <span className="otp-asterisk"> *</span>
                   </label>
                   <SelectBox
-                    options={statusOptions[formData.Property_Type] || []}
-                    defaultValue={formData.Project_Construction_Status}
-                    onChange={(selectedValue) =>
+                    options={ statusOptions.map((status) => ({
+                      value: status.value,
+                      label: status.label,
+                    }))}
+                    defaultValue={parseInt(formData.Project_Construction_Status)}
+                    onChange={(selectedValue) => 
                       setFormData((prev) => ({
                         ...prev,
                         Project_Construction_Status: selectedValue,
@@ -3269,14 +3350,14 @@ const ProjectDetailsEdit = () => {
                     </thead>
                     <tbody>
                       {/* Project PPT Files */}
-                      {formData.project_ppt &&
-                        (Array.isArray(formData.project_ppt) ? (
+                      {formData.project_ppt ?
+                        // (Array.isArray(formData.project_ppt) ? (
                           // If it's an array of files
-                          formData.project_ppt.map((file, index) => (
-                            <tr key={`ppt-${index}`}>
+                          // formData.project_ppt.map((file, index) => (
+                            <tr >
                               <td>
-                                {file?.name ||
-                                  file?.document_file_name ||
+                                {formData.ppt_name ||
+                                  formData.ppt_name ||
                                   "No File"}
                               </td>
                               <td>
@@ -3291,8 +3372,9 @@ const ProjectDetailsEdit = () => {
                                 </button>
                               </td>
                             </tr>
-                          ))
-                        ) : (
+                          // ))
+                        // )
+                         : (
                           // If it's a single file (as an object)
                           <tr>
                             <td>
@@ -3312,7 +3394,7 @@ const ProjectDetailsEdit = () => {
                               </button>
                             </td>
                           </tr>
-                        ))}
+                        )}
                     </tbody>
                   </table>
                 </div>
