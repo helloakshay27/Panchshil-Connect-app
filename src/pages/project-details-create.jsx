@@ -65,9 +65,9 @@ const ProjectDetailsCreate = () => {
     project_exteriors: [],
     project_emailer_templetes: [],
     project_layout: [],
-    project_sales_type: "",
+    project_sales_type: [],
     order_no: null,
-    video_preview_image_url: "",
+    video_preview_image_url: [],
   });
 
   useEffect(() => {
@@ -918,7 +918,13 @@ const ProjectDetailsCreate = () => {
         value.forEach((file) =>
           data.append("project[ProjectCreatives][]", file)
         );
-      } else if (key === "project_creative_generics" && Array.isArray(value)) {
+      }
+      // else if (key === "project_sales_type") {
+      //   value.forEach((file) =>
+      //     data.append("project[project_sales_type][]", value.vae)
+      //   );
+      // }
+      else if (key === "project_creative_generics" && Array.isArray(value)) {
         value.forEach((file) =>
           data.append("project[ProjectCreativeGenerics][]", file)
         );
@@ -994,6 +1000,13 @@ const ProjectDetailsCreate = () => {
             data.append(`project[project_creatives_types][]`, type); // Store selected type
           }
         });
+      }
+      else if (key === "project_sales_type" && Array.isArray(value)) {
+        // value.forEach(({ file, type }) => {
+          // if (file instanceof File) {
+            data.append("project[project_sales_type][]", value); // Upload file
+            // data.append(`project[project_sales_type][]`, type); // Store selected type
+          // }
       } else {
         data.append(`project[${key}]`, value);
       }
@@ -1008,7 +1021,7 @@ const ProjectDetailsCreate = () => {
 
       console.log(response.data);
       toast.success("Project submitted successfully");
-      Navigate("/project-list");
+      // Navigate("/project-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
       toast.error("Failed to submit the form. Please try again.");
@@ -1437,7 +1450,7 @@ const ProjectDetailsCreate = () => {
     };
   }, [formData.Property_Type]);
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
-  console.log(buildingTypeOptions)
+  console.log(buildingTypeOptions);
 
   const handlePropertyTypeChange = async (selectedOption) => {
     const { value, id } = selectedOption;
@@ -1597,15 +1610,14 @@ const ProjectDetailsCreate = () => {
                   <SelectBox
                     options={buildingTypeOptions}
                     defaultValue={formData.building_type}
-                    onChange={(selected) =>{
-                      console.log(selected)
+                    onChange={(selected) => {
+                      console.log(selected);
                       setFormData((prev) => ({
                         ...prev,
                         building_type: selected,
                         // building_type_id: selected.id,
-                      }))
-                    }
-                    }
+                      }));
+                    }}
                   />
                   {/* )} */}
                 </div>
@@ -2007,16 +2019,20 @@ const ProjectDetailsCreate = () => {
                   <MultiSelectBox
                     options={[
                       { value: "Sales", label: "Sales" },
-                      {
-                        value: "Lease",
-                        label: "Lease",
-                      },
+                      { value: "Lease", label: "Lease" },
                     ]}
-                    value={formData?.project_sales_type || ""}
-                    onChange={(value) =>
+                    value={
+                      formData.project_sales_type?.map((type) => ({
+                        value: type,
+                        label: type,
+                      })) || []
+                    }
+                    onChange={(selectedOptions) =>
                       setFormData((prev) => ({
                         ...prev,
-                        project_sales_type: value,
+                        project_sales_type: selectedOptions.map(
+                          (option) => option.value
+                        ), // just values
                       }))
                     }
                   />
@@ -3503,10 +3519,7 @@ const ProjectDetailsCreate = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>
-                    Video Preview Image Url
-                  
-                  </label>
+                  <label>Video Preview Image Url</label>
                   <input
                     className="form-control"
                     rows={1}
@@ -3517,7 +3530,6 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
-        
 
               {/* <div className="d-flex justify-content-between align-items-end mx-1">
     <h5 className="mt-3">Project Creatives</h5>
