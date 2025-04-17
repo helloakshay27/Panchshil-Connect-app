@@ -292,8 +292,8 @@ const ProjectDetailsEdit = () => {
           project_exteriors: projectData.project_exteriors || [],
           project_emailer_templetes:
             projectData.project_emailer_templetes || [],
-          project_ppt: projectData.ProjectPPT.document_url || [],
-          ppt_name: projectData.ProjectPPT.document_file_name || [],
+          project_ppt: projectData.ProjectPPT?.document_url || [],
+          ppt_name: projectData.ProjectPPT?.document_file_name || [],
           project_sales_type: projectData.project_sales_type || [],
         });
 
