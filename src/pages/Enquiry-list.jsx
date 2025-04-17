@@ -19,26 +19,31 @@ const EnquiryList = () => {
   const [currentPage, setCurrentPage] = useState(getPageFromStorage());
   const pageSize = 10;
 
+  const fetchEnquiries = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${baseURL}/enquiry_forms/get_all_enquiry.json`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      setEnquiries(response.data || []);
+      // console.log("re", response);
+
+    } catch (error) {
+      setError("Failed to fetch enquiries. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchEnquiries = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${baseURL}/enquiry_forms/get_all_enquiry.json`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          }
-        );
-        setEnquiries(response.data.Enquiries || []);
-      } catch (error) {
-        setError("Failed to fetch enquiries. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    
     fetchEnquiries();
     
     // Parse search query from URL if any
@@ -49,6 +54,7 @@ const EnquiryList = () => {
     }
   }, [location.search]);
 
+console.log("Enquiries:", enquiries);
   const handlePageChange = (pageNumber) => {
     // Ensure page is within valid range
     const validPage = Math.max(1, Math.min(pageNumber, totalPages));
@@ -185,9 +191,9 @@ const EnquiryList = () => {
                         displayedEnquiries.map((enquiry, index) => (
                           <tr key={enquiry.id}>
                             <td>{startIndex + index + 1}</td>
-                            <td>{enquiry.project?.project_name}</td>
+                            <td>{enquiry.project_name}</td>
                             <td>{enquiry.segment}</td>
-                            <td>{enquiry.name}</td>
+                            <td>{enquiry.first_name} {enquiry.last_name}</td>
                             <td>{enquiry.mobile_number}</td>
                             <td>{enquiry.email}</td>
                             <td>{enquiry.prefer_date}</td>
