@@ -22,10 +22,7 @@ const ConstructionStatus = () => {
     formData.append("construction_status[construction_status]", name); // ✅ Correct format
 
     try {
-      await axios.post(
-        `${baseURL}construction_statuses.json`,
-        formData
-      );
+      await axios.post(`${baseURL}construction_statuses.json`, formData);
 
       toast.success("Construction status added successfully!");
       setName(""); // Reset form
@@ -54,7 +51,7 @@ const ConstructionStatus = () => {
                     <div className="form-group">
                       <label>
                         Name
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -67,31 +64,32 @@ const ConstructionStatus = () => {
                   </div>
                 </div>
                 <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                className="purple-btn2 w-100"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
-            </div>
+                  <div className="col-md-2">
+                    <button
+                      type="submit"
+                      className="purple-btn2 w-100"
+                      disabled={loading}
+                    >
+                      {loading ? "Submitting..." : "Submit"}
+                    </button>
+                  </div>
 
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={() => navigate("/setup-member/construction-status-list")}
-                disabled={loading}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+                  <div className="col-md-2">
+                    <button
+                      type="button"
+                      className="purple-btn2 w-100"
+                      onClick={() =>
+                        navigate("/setup-member/construction-status-list")
+                      }
+                      disabled={loading}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
               </form>
             </div>
           </div>
-          
         </div>
       </div>
     </div>

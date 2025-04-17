@@ -413,7 +413,7 @@ const ProjectDetailsCreate = () => {
     if (name === "project_exteriors") {
       const newFiles = Array.from(files);
       const validFiles = [];
-      Area;
+      // Area;
       newFiles.forEach((file) => {
         if (!allowedTypes.project_exteriors.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
@@ -1437,6 +1437,7 @@ const ProjectDetailsCreate = () => {
     };
   }, [formData.Property_Type]);
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
+  console.log(buildingTypeOptions)
 
   const handlePropertyTypeChange = async (selectedOption) => {
     const { value, id } = selectedOption;
@@ -1595,12 +1596,14 @@ const ProjectDetailsCreate = () => {
                   <SelectBox
                     options={buildingTypeOptions}
                     defaultValue={formData.building_type}
-                    onChange={(selected) =>
+                    onChange={(selected) =>{
+                      console.log(selected)
                       setFormData((prev) => ({
                         ...prev,
-                        building_type: selected.value,
-                        building_type_id: selected.id,
+                        building_type: selected,
+                        // building_type_id: selected.id,
                       }))
+                    }
                     }
                   />
                   {/* )} */}
@@ -1619,7 +1622,7 @@ const ProjectDetailsCreate = () => {
                     onChange={(selectedOption) =>
                       setFormData((prev) => ({
                         ...prev,
-                        Project_Construction_Status: selectedOption.value, // Save the selected value
+                        Project_Construction_Status: selectedOption, // Save the selected value
                       }))
                     }
                   />
