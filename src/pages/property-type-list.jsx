@@ -68,6 +68,7 @@ const PropertyTypeList = () => {
   );
   // ✅ Toggle Active/Inactive Status
   const handleToggle = async (id, currentStatus) => {
+    toast.dismiss();
     const updatedStatus = !currentStatus;
     try {
       await axios.put(
@@ -81,6 +82,7 @@ const PropertyTypeList = () => {
         )
       );
       toast.success("Status updated successfully!");
+      
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status.");

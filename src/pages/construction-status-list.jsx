@@ -72,6 +72,7 @@ const ConstructionStatusList = () => {
 
   // ✅ Toggle Active/Inactive Status
   const handleToggle = async (id, currentStatus) => {
+    toast.dismiss();
     const updatedStatus = !currentStatus;
     try {
       await axios.put(`${baseURL}construction_statuses/${id}.json`, {

@@ -12,7 +12,7 @@ const SiteVisitSlotConfig = () => {
   const [endMinute, setEndMinute] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const hours = Array.from({ length: 12 }, (_, i) => i);
+  const hours = Array.from({ length: 24 }, (_, i) => i);
   const minutes = Array.from({ length: 60 }, (_, i) => i);
 
   const handleSubmit = async (e) => {

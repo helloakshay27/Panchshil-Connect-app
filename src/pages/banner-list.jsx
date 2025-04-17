@@ -29,6 +29,7 @@ const BannerList = () => {
   const navigate = useNavigate();
 
   const onToggle = async (bannerId, currentStatus) => {
+    toast.dismiss();
     setLoading(true);
     try {
       const response = await axios.put(

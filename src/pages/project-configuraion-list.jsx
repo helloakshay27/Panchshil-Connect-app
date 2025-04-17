@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import toast from "react-hot-toast";
 
 
 const getPageFromStorage = () => {
@@ -49,6 +50,7 @@ const ProjectConfigurationList = () => {
   };
 
   const handleToggleStatus = async (id, currentStatus) => {
+    toast.dismiss();
     try {
       await axios.patch(
         `${baseURL}/configuration_setups/${id}.json`,
@@ -61,6 +63,7 @@ const ProjectConfigurationList = () => {
           config.id === id ? { ...config, active: !currentStatus } : config
         )
       );
+      toast.success("Status updated successfully!");
     } catch (err) {
       setError("Failed to update status");
     }

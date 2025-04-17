@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import toast from "react-hot-toast";
 
 const getPageFromStorage = () => {
   return parseInt(localStorage.getItem("siteSlotVisitCurrentPage")) || 1;
@@ -106,6 +107,7 @@ const SiteVisitSlotConfigList = () => {
     }
   };
   const handleToggle = async (slotId, currentStatus) => {
+    toast.dismiss();
     try {
       const updatedStatus = currentStatus ? 0 : 1; // Convert true/false to 1/0 if needed
 
@@ -134,6 +136,8 @@ const SiteVisitSlotConfigList = () => {
       );
 
       console.log("Status updated successfully!");
+      toast.success("Status updated successfully!");
+      
     } catch (error) {
       console.error("Error updating slot status:", error.response?.data || error);
     }

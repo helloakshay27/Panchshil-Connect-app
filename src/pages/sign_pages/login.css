@@ -556,7 +556,7 @@ input#confirmPassword {
   width: 18px;
   height: 18px;
   border: 1px solid #fff;
-  border-radius: 50%; /* for radio style */
+  border-radius: 50%; 
   background-color: transparent;
   cursor: pointer;
   appearance: none;
@@ -582,7 +582,7 @@ input#confirmPassword {
   background-color: white;
   border-color: #fff;
   border-radius: 50%;
-  transform: translate(-50%, -50%); /* center magic */
+  transform: translate(-50%, -50%);
 }
 
 

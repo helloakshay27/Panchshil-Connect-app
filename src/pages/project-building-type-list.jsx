@@ -111,6 +111,7 @@ const ProjectBuildingTypeList = () => {
   );
 
   const handleToggle = async (id, currentStatus) => {
+    toast.dismiss();
     try {
       await axios.put(
         `${baseURL}building_types/${id}.json`,
