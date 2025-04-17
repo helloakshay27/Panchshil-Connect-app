@@ -362,7 +362,7 @@ const ProjectDetailsList = () => {
                               <td>{project?.property_type || "N/A"}</td>
                               <td>{project?.SFDC_Project_Id || "N/As"}</td>
                               <td>
-                                {project?.Project_Construction_Status || "N/A"}
+                                {project?.Project_Construction_Status_Name || "N/A"}
                               </td>
 
                               <td style={{ width: "200px" }}>

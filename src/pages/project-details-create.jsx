@@ -1493,6 +1493,7 @@ const ProjectDetailsCreate = () => {
           .map((status) => ({
             label: status.construction_status, // Display name
             value: status.id, // Unique identifier
+            name: status.Project_Construction_Status_Name,
           }));
         setStatusOptions(options); // Set the options for the dropdown
       } catch (error) {
