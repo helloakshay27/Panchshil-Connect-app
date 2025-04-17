@@ -1021,7 +1021,7 @@ const ProjectDetailsCreate = () => {
 
       console.log(response.data);
       toast.success("Project submitted successfully");
-      // Navigate("/project-list");
+      Navigate("/project-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
       toast.error("Failed to submit the form. Please try again.");
@@ -1450,7 +1450,7 @@ const ProjectDetailsCreate = () => {
     };
   }, [formData.Property_Type]);
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
-  console.log(buildingTypeOptions);
+  // console.log(buildingTypeOptions);
 
   const handlePropertyTypeChange = async (selectedOption) => {
     const { value, id } = selectedOption;
