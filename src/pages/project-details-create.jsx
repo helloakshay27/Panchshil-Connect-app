@@ -1463,8 +1463,12 @@ const ProjectDetailsCreate = () => {
     }));
 
     try {
+    
+      // const response = await axios.get(
+      //   `https://dev-panchshil-super-app.lockated.com/building_types.json?q[property_type_id_eq]=${id}`
+      // );
       const response = await axios.get(
-        `https://panchshil-super.lockated.com/building_types.json?q[property_type_id_eq]=${id}`
+        `${baseURL}building_types.json?q[property_type_id_eq]=${id}`
       );
 
       const buildingTypes = response.data || [];

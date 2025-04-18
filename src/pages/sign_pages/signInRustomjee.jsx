@@ -10,12 +10,10 @@ const SignInRustomjee = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
-  const [otp, setOtp] = useState("");
+  const [mobileError, setMobileError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedContent, setSelectedContent] = useState("content1");
-  const [showOtpSection, setShowOtpSection] = useState(false);
-  const [OtpSection, setOtpSection] = useState(true);
   
   const navigate = useNavigate();
   
@@ -35,10 +33,15 @@ const SignInRustomjee = () => {
   const toggleContent = (content) => {
     setSelectedContent(content);
     setError("");
+    setMobileError("");
   };
 
   const handlePasswordLogin = async (e) => {
+    toast.dismiss();
     e.preventDefault();
+    
+    if (loading) return; // Prevent multiple submissions
+    
     setError("");
     setLoading(true);
 
@@ -63,24 +66,50 @@ const SignInRustomjee = () => {
         sessionStorage.setItem("email", response.data.email);
         sessionStorage.setItem("firstname", response.data.firstname);
         navigate("/project-list");
-        toast.success("Login successful");
+        toast.success("Login successful", { id: "login-success" });
       } else {
         setError("Login failed. Please check your credentials.");
       }
     } catch (err) {
-      toast.error("Login failed. Please check your credentials.");
+      toast.error("Login failed. Please check your credentials.", { id: "login-error" });
       setError("An error occurred during login. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Handle mobile number input change with validation
+  const handleMobileChange = (e) => {
+    const value = e.target.value;
+    
+    // Only allow numeric input
+    if (value && !/^\d*$/.test(value)) {
+      return;
+    }
+    
+    setMobile(value);
+    
+    // Validate for 10 digits as user types
+    if (value && value.length !== 10) {
+      // setMobileError("Mobile number must be exactly 10 digits");
+    } else {
+      setMobileError("");
+    }
+  };
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    if (!mobile || !/^\d{10}$/.test(mobile)) {
+    
+    if (loading) return; // Prevent multiple submissions
+    
+    toast.dismiss();
+    
+    // Strict validation for 10-digit mobile number
+    if (!mobile || mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
       setError("Please enter a valid 10-digit mobile number.");
       return;
     }
+    
     setError("");
     setLoading(true);
 
@@ -89,45 +118,15 @@ const SignInRustomjee = () => {
         `${config.baseURL}/generate_code`,
         { mobile }
       );
-      setOtpSection(false);
-      toast.success("OTP Sent successfully");
-      setShowOtpSection(true);
+      
+      // Navigate to the dedicated OTP verification page with the mobile number as a query parameter
+      navigate(`/verify-otp?mobile=${encodeURIComponent(mobile)}`);
+      
+      toast.success("OTP Sent successfully", { id: "otp-sent" });
     } catch (err) {
-      toast.error("Failed to send OTP. Please try again.");
+      toast.error("Failed to send OTP. Please try again.", { id: "otp-error" });
       console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    if (!otp) {
-      setError("Please enter a valid OTP.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-
-    try {
-      const response = await axios.post(
-        `${config.baseURL}/verify_code.json`,
-        { mobile, otp }
-      );
-
-      const { access_token, email, firstname } = response.data;
-      if (access_token) {
-        localStorage.setItem("access_token", access_token);
-        sessionStorage.setItem("email", email);
-        sessionStorage.setItem("firstname", firstname);
-        navigate("/project-list");
-        toast.success("Login successfully");
-      } else {
-        setError("Login failed. Please check your credentials.");
-      }
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "An error occurred during login. Please try again.");
+      setError("Failed to send OTP. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -171,7 +170,12 @@ const SignInRustomjee = () => {
         {error && <p className="text-danger">{error}</p>}
         
         <div className="d-flex align-items-center justify-content-center mt-5">
-          <button onClick={handlePasswordLogin} type="submit" className="btn-rust btn-danger-rustomjee mt-10 border-0">
+          <button 
+            onClick={handlePasswordLogin} 
+            type="submit" 
+            className="btn-rust btn-danger-rustomjee mt-10 border-0"
+            disabled={loading}
+          >
             {loading ? "Logging in..." : "LOGIN"}
           </button>
         </div>
@@ -180,72 +184,38 @@ const SignInRustomjee = () => {
   };
 
   const renderOtpLogin = () => (
-    <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
-      {/* Mobile input section */}
-      {OtpSection && (
-        <>
-          <div className="form-group position-relative">
-            <label className={`mb-1 ${config.formTextColor}`} htmlFor="mobile">
-              Mobile Number
-            </label>
-            <input
-              style={{ height: "40px" }}
-              type="tel"
-              id="mobile"
-              className="form-control mb-2"
-              placeholder="Enter registred mobile number"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              required
-            />
-          </div>
-  
-          <div className="d-flex align-items-center justify-content-center mt-5">
-            <button
-              type="button"
-              className="btn-rust btn-danger-rustomjee mt-10 border-0"
-              onClick={handleSendOtp}
-            >
-              SEND OTP
-            </button>
-          </div>
-        </>
-      )}
-  
-      {/* OTP input section */}
-      {showOtpSection && (
-        <>
-          <div className="form-group position-relative">
-            <label className={`mb-1 ${config.formTextColor}`} htmlFor="otp">
-              Enter OTP
-            </label>
-            <input
-              style={{ height: "40px" }}
-              type="text"
-              id="otp"
-              className="form-control mb-2"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-            />
-          </div>
-  
-          <div className="d-flex align-items-center justify-content-center mt-5">
-            <button
-              type="submit"
-              className="btn-rust btn-danger-rustomjee mt-10 border-0"
-            >
-              Verify OTP
-            </button>
-          </div>
-        </>
-      )}
-  
+    <form onSubmit={handleSendOtp} className="mt-3 login-content">
+      <div className="form-group position-relative">
+        <label className={`mb-1 ${config.formTextColor}`} htmlFor="mobile">
+          Mobile Number
+        </label>
+        <input
+          style={{ height: "40px" }}
+          type="tel"
+          id="mobile"
+          className={`form-control mb-2 ${mobileError ? "border-danger" : ""}`}
+          placeholder="Enter registered mobile number"
+          value={mobile}
+          onChange={handleMobileChange}
+          maxLength={10}
+          required
+        />
+        {mobileError && <p className="text-danger small mb-0">{mobileError}</p>}
+      </div>
+
       {error && <p className="text-danger">{error}</p>}
+
+      <div className="d-flex align-items-center justify-content-center mt-5">
+        <button
+          type="submit"
+          className="btn-rust btn-danger-rustomjee mt-10 border-0"
+          disabled={loading || (mobile.length > 0 && mobile.length !== 10)}
+        >
+          {loading ? "Sending..." : "SEND OTP"}
+        </button>
+      </div>
     </form>
   );
-  
 
   return (
     <main>

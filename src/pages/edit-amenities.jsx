@@ -142,7 +142,7 @@ const EditAmenities = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Icon{" "}
+                        Upload Amenity{" "}
                         <span className="otp-asterisk">{" "}*</span>
                       </label>
                       <input

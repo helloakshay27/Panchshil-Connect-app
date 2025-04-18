@@ -78,6 +78,7 @@ import { baseURL } from "./pages/baseurl/apiDomain";
 import ForgotRustomjee from "./pages/sign_pages/ForgotRustomjee";
 import ForgotOtpRustomjee from "./pages/sign_pages/ForgotOtpRustomjee";
 import CreatePasswordRustomjee from "./pages/sign_pages/CreatePasswordRustomjee";
+import LoginWithOtpRustomjee from "./pages/sign_pages/LoginWithOtpRustomjee";
 
 
 // // import EditGallery from './EditGallery';
@@ -95,6 +96,7 @@ let LoginComponent;
 let ForgotPasswordComponent;
 let ForgotOtpComponent;
 let CreatePasswordComponent;
+let LoginWithOtpComponent;
 
 if (baseURL === "https://panchshil-super.lockated.com/") {
 
@@ -104,11 +106,16 @@ if (baseURL === "https://panchshil-super.lockated.com/") {
   CreatePasswordComponent = <CreatePassword />
   
   
+  
 } else {
+  
+ 
+
   LoginComponent = <SignInRustomjee />;
   ForgotPasswordComponent = <ForgotRustomjee />;
   ForgotOtpComponent = <ForgotOtpRustomjee />;  
   CreatePasswordComponent = <CreatePasswordRustomjee/>
+  LoginWithOtpComponent = <LoginWithOtpRustomjee />;
   
 }
 
@@ -126,6 +133,7 @@ function App() {
         <Route path="/forgot-otp" element={ForgotOtpComponent} />
         {/* <Route path="/reset-password" element={<CreatePassword />} /> */}
         <Route path="/reset-password" element={CreatePasswordComponent} />
+        <Route path="/verify-otp" element={<LoginWithOtpRustomjee />} />
 
 
         <Route
