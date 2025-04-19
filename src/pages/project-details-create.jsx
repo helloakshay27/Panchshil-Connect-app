@@ -1506,24 +1506,22 @@ const ProjectDetailsCreate = () => {
           `${baseURL}construction_statuses.json`
         );
         const options = response.data
-          .filter((status) => status.active) // Filter only active statuses
+          .filter((status) => status.active) 
           .map((status) => ({
-            label: status.construction_status, // Display name
-            value: status.id, // Unique identifier
+            label: status.construction_status, 
+            value: status.construction_status,
             name: status.Project_Construction_Status_Name,
           }));
-        setStatusOptions(options); // Set the options for the dropdown
+        setStatusOptions(options); 
       } catch (error) {
         console.error("Error fetching construction statuses:", error);
       }
     };
-
     fetchConstructionStatuses();
   }, []);
 
   return (
     <>
-      {/* <Header /> */}
       <div className="module-data-section p-3">
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
