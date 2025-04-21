@@ -961,9 +961,12 @@ input[type="checkbox"] {
   box-shadow: 0px 2.8828866481781006px 7.687697887420654px 0px #0000003d;
   overflow: auto;
   height: max-content;
-  /*  max-height: 300px;*/
   margin: 10px 0;
+
+  position: relative; /* ✅ Helps prevent floating/overlapping */
+  z-index: 0;         /* ✅ Ensures it stays below overlapping layers */
 }
+
 
 .select2-container {
   width: 100% !important;

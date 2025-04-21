@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import PropertySelect from "../components/base/PropertySelect";
 
 const ProjectDetailsEdit = () => {
   const { id } = useParams();
@@ -95,6 +96,7 @@ const ProjectDetailsEdit = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [buildingTypes, setBuildingTypes] = useState([]);
   const [statusOptions, setStatusOptions] = useState([]);
+  const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
   console.log(statusOptions)
   
 
@@ -115,23 +117,23 @@ const ProjectDetailsEdit = () => {
       console.error(`Error fetching data from ${endpoint}:`, error);
     }
   };
-  //  useEffect(() => {
-  //     axios
-  //       .get(`${baseURL}/property_types.json`)
-  //       .then((response) => {
-  //         const options = response.data
-  //           .filter((item) => item.active) // optional: only include active types
-  //           .map((type) => ({
-  //             value: type.property_type,
-  //             label: type.property_type,
-  //             id: type.id,
-  //           }));
-  //         setPropertyTypeOptions(options);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching property types:", error);
-  //       });
-  //   }, []);
+   useEffect(() => {
+      axios
+        .get(`${baseURL}/property_types.json`)
+        .then((response) => {
+          const options = response.data
+            .filter((item) => item.active) // optional: only include active types
+            .map((type) => ({
+              value: type.property_type,
+              label: type.property_type,
+              id: type.id,
+            }));
+        setPropertyTypeOptions(options);
+        })
+        .catch((error) => {
+          console.error("Error fetching property types:", error);
+        });
+    }, []);
 
     const fetchBuildingTypes = async () => {
       // setLoading(tru/e);
@@ -160,9 +162,9 @@ const ProjectDetailsEdit = () => {
     }, []);
 
   useEffect(() => {
-    fetchData("get_property_types.json", (data) =>
-      setProjectsType(data?.property_types || [])
-    );
+    // fetchData("get_property_types.json", (data) =>
+    //   setProjectsType(data?.property_types || [])
+    // );
     fetchData("configuration_setups.json", (data) =>
       setConfigurations(data || [])
     );
@@ -173,6 +175,8 @@ const ProjectDetailsEdit = () => {
       setAmenities(data?.amenities_setups || [])
     );
   }, []);
+
+  console.log("projectsType", projectsType);
    useEffect(() => {
       const fetchConstructionStatuses = async () => {
         try {
@@ -183,7 +187,7 @@ const ProjectDetailsEdit = () => {
             .filter((status) => status.active) // Filter only active statuses
             .map((status) => ({
               label: status.construction_status, // Display name
-              value: status.id, // Unique identifier
+              value: status.construction_status, // Unique identifier
               name: status.Project_Construction_Status_Name,
             }));
           setStatusOptions(options); // Set the options for the dropdown
@@ -1965,16 +1969,16 @@ const ProjectDetailsEdit = () => {
   //   });
   // };
 
-  const propertyTypeOptions = [
-    { value: "Office Parks", label: "Office Parks" },
-    { value: "Residential", label: "Residential" },
-  ];
+  // const propertyTypeOptions = [
+  //   { value: "Office Parks", label: "Office Parks" },
+  //   { value: "Residential", label: "Residential" },
+  // ];
 
-  const buildingTypeOptions = [
-    buildingTypes.map((type) => ({  value: type.building_type, label: type.building_type })),
-    // { value: "Office Parks", label: "Office Parks" },
-    // { value: "Residential", label: "Residential" },
-  ];
+  // const buildingTypeOptions = [
+  //   buildingTypes.map((type) => ({  value: type.building_type, label: type.building_type })),
+  //   // { value: "Office Parks", label: "Office Parks" },
+  //   // { value: "Residential", label: "Residential" },
+  // ];
 
   // const buildingTypeOptions = {
   //   "Office Parks": [
@@ -1990,6 +1994,39 @@ const ProjectDetailsEdit = () => {
   //   //   { value: "Upcoming-Developments", label: "Upcoming Developments" },
   //   // ],
   // };
+
+   const handlePropertyTypeChange = async (selectedOption) => {
+      const { value, id } = selectedOption;
+  
+      setFormData((prev) => ({
+        ...prev,
+        Property_Type: value,
+        Property_type_id: value,
+        building_type: "", // Optionally reset building_type
+      }));
+  
+      try {
+      
+        // const response = await axios.get(
+        //   `https://dev-panchshil-super-app.lockated.com/building_types.json?q[property_type_id_eq]=${id}`
+        // );
+        const response = await axios.get(
+          `${baseURL}building_types.json?q[property_type_id_eq]=${id}`
+        );
+  
+        const buildingTypes = response.data || [];
+  
+        const formattedOptions = buildingTypes.map((item) => ({
+          value: item.building_type,
+          label: item.building_type,
+          id: item.id,
+        }));
+  
+        setBuildingTypeOptions(formattedOptions);
+      } catch (error) {
+        console.error("Error fetching building types:", error);
+      }
+    };
 
   return (
     <>
@@ -2047,6 +2084,52 @@ const ProjectDetailsEdit = () => {
                   <span>No image selected</span>
                 )}
               </div>
+              {/* <div className="col-md-3">
+  <div className="form-group">
+    <label>
+      Property Type
+      <span className="otp-asterisk"> *</span>
+    </label>
+    <PropertySelect
+
+      options={propertyTypeOptions.map((type) => ({
+
+        value: type.property_type,
+
+        label: type.property_type,
+      }))} 
+      defaultValue={
+        propertyTypeOptions.find(
+          (type) => type.property_type === formData.Property_Type
+        ) || null // ✅ Ensure defaultValue is set correctly
+      }
+      
+      // value={
+      //   propertyTypeOptions.find(
+      //     (type) => type.property_type === formData.Property_Type
+      //   ) || null
+      // }
+      onChange={(selectedOption) => {
+        setFormData((prev) => ({
+          ...prev,
+          Property_Type: selectedOption?.value || "", // ✅ Ensure value is set correctly
+          building_type: null, // Reset building type when property type changes
+        }));
+      }}
+      isDisabled={false} // ✅ Enable the select box
+      isClearable={true} // ✅ Allow clearing the selection
+      isSearchable={true} // ✅ Enable search functionality
+      placeholder="Select Property Type"
+      
+      // onChange={(selectedOption) =>
+      //   setFormData((prev) => ({
+      //     ...prev,
+      //     Property_Type: selectedOption?.value || "",
+      //   }))
+      // }
+    />
+  </div>
+</div> */}
               <div className="col-md-3">
                 <div className="form-group">
                   <label>
@@ -2054,19 +2137,21 @@ const ProjectDetailsEdit = () => {
                     <span className="otp-asterisk"> *</span>
                   </label>
                   <SelectBox
-                    options={[
-                      //{ value: "", label: "Select status", isDisabled: true },
-                      { value: "Office Parks", label: "Office Parks" },
-                      { value: "Residential", label: "Residential" },
-                    ]}
-                    defaultValue={formData.Property_Type}
-                    onChange={(selectedValue) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        Property_Type: selectedValue,
-                      }))
+                    options={propertyTypeOptions.map((type) => ({
+                      value: type.property_type,
+                      label: type.property_type,
+                      id: type.id,
+                    }))}
+                    defaultValue={
+                      propertyTypeOptions.find(
+                        (type) => type.property_type === formData.Property_Type
+                      ) || null // ✅ Ensure defaultValue is set correctly
                     }
-                    //isDisableFirstOption={true}
+                    onChange={handlePropertyTypeChange}
+                    isDisabled={false} // ✅ Enable the select box
+                    isClearable={true} // ✅ Allow clearing the selection
+                    isSearchable={true} // ✅ Enable search functionality
+                    placeholder="Select Property Type"
                   />
                 </div>
               </div>

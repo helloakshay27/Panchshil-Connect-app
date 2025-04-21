@@ -1388,23 +1388,23 @@ const ProjectDetailsCreate = () => {
       return { ...prev, [key]: updatedFiles };
     });
   };
-  useEffect(() => {
-    axios
-      .get(`${baseURL}/property_types.json`)
-      .then((response) => {
-        const options = response.data
-          .filter((item) => item.active) // optional: only include active types
-          .map((type) => ({
-            value: type.property_type,
-            label: type.property_type,
-            id: type.id,
-          }));
-        setPropertyTypeOptions(options);
-      })
-      .catch((error) => {
-        console.error("Error fetching property types:", error);
-      });
-  }, []);
+useEffect(() => {
+  axios
+    .get(`${baseURL}/property_types.json`)
+    .then((response) => {
+      const options = response.data
+        .filter((item) => item.active) // optional: only include active types
+        .map((type) => ({
+          value: type.property_type,
+          label: type.property_type,
+          id: type.id,
+        }));
+      setPropertyTypeOptions(options);
+    })
+    .catch((error) => {
+      console.error("Error fetching property types:", error);
+    });
+}, []);
 
   // const propertyTypeOptions = [
   //   { value: "Office Parks", label: "Office Parks" },
@@ -1510,7 +1510,7 @@ const ProjectDetailsCreate = () => {
           .filter((status) => status.active) // Filter only active statuses
           .map((status) => ({
             label: status.construction_status, // Display name
-            value: status.id, // Unique identifier
+            value: status.construction_status, // Unique identifier
             name: status.Project_Construction_Status_Name,
           }));
         setStatusOptions(options); // Set the options for the dropdown
