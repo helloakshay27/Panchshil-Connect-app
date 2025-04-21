@@ -65,9 +65,10 @@ const ProjectDetailsCreate = () => {
     project_exteriors: [],
     project_emailer_templetes: [],
     project_layout: [],
-    project_sales_type: [],
+    project_sales_type: "",
     order_no: null,
     video_preview_image_url: [],
+    enable_enquiry: false,
   });
 
   useEffect(() => {
@@ -82,7 +83,7 @@ const ProjectDetailsCreate = () => {
   const [amenities, setAmenities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [statusOptions, setStatusOptions] = useState([]);
-
+  const [activeToastId, setActiveToastId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const [virtualTourName, setVirtualTourName] = useState("");
@@ -1506,22 +1507,73 @@ const ProjectDetailsCreate = () => {
           `${baseURL}construction_statuses.json`
         );
         const options = response.data
-          .filter((status) => status.active) 
+          .filter((status) => status.active) // Filter only active statuses
           .map((status) => ({
-            label: status.construction_status, 
-            value: status.construction_status,
+            label: status.construction_status, // Display name
+            value: status.id, // Unique identifier
             name: status.Project_Construction_Status_Name,
           }));
-        setStatusOptions(options); 
+        setStatusOptions(options); // Set the options for the dropdown
       } catch (error) {
         console.error("Error fetching construction statuses:", error);
       }
     };
+
     fetchConstructionStatuses();
   }, []);
 
+  const handleToggle = async (id, currentStatus) => {
+    const updatedStatus = !currentStatus;
+    
+    // Dismiss any existing toast first
+    if (activeToastId) {
+      toast.dismiss(activeToastId);
+    }
+    
+    try {
+      await axios.put(
+        `${baseURL}projects/${id}.json`,
+        { project: { published: updatedStatus } },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+          }
+        }
+      );
+      
+      setProjects((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, published: updatedStatus } : item
+        )
+      );
+      
+      // Show new toast and store its ID
+      const newToastId = toast.success("Status updated successfully!", {
+        duration: 3000, // Toast will auto-dismiss after 3 seconds
+        position: "top-center", // Position the toast at the top center
+        id: `toggle-${id}`, // Give each toast a unique ID based on project
+      });
+      
+      setActiveToastId(newToastId);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      
+      // Show error toast and store its ID
+      const newToastId = toast.error("Failed to update status.", {
+        duration: 3000,
+        position: "top-center",
+        id: `toggle-error-${id}`,
+      });
+      
+      setActiveToastId(newToastId);
+    }
+  };
+  
+
   return (
     <>
+      {/* <Header /> */}
       <div className="module-data-section p-3">
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
@@ -2018,23 +2070,16 @@ const ProjectDetailsCreate = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>Project Sales Type</label>
-                  <MultiSelectBox
+                  <SelectBox
                     options={[
                       { value: "Sales", label: "Sales" },
                       { value: "Lease", label: "Lease" },
                     ]}
-                    value={
-                      formData.project_sales_type?.map((type) => ({
-                        value: type,
-                        label: type,
-                      })) || []
-                    }
-                    onChange={(selectedOptions) =>
+                    value={formData?.project_sales_type || ""}
+                    onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
-                        project_sales_type: selectedOptions.map(
-                          (option) => option.value
-                        ), // just values
+                        project_sales_type: value,
                       }))
                     }
                   />
@@ -2053,6 +2098,51 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
+              <div className="col-md-3 mt-2">
+  <label>Enable Enquiry</label>
+  <div className="form-group">
+    <button
+      onClick={() =>
+        setFormData((prev) => ({
+          ...prev,
+          enable_enquiry: !prev.enable_enquiry, // Toggle the boolean value
+        }))
+      }
+      className="toggle-button"
+      style={{
+        border: "none",
+        background: "none",
+        cursor: "pointer",
+        padding: 0,
+        width: "35px",
+      }}
+    >
+      {formData.enable_enquiry ? (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="30"
+          fill="var(--red)"
+          className="bi bi-toggle-on"
+          viewBox="0 0 16 16"
+        >
+          <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+        </svg>
+      ) : (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="30"
+          fill="#667085"
+          className="bi bi-toggle-off"
+          viewBox="0 0 16 16"
+        >
+          <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+        </svg>
+      )}
+    </button>
+  </div>
+</div>
             </div>
           </div>
         </div>
@@ -3520,6 +3610,8 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
 
+                <div className="d-flex justify-content-between align-items-end mx-1">
+                <div className="col-md-12 mt-2">
                 <div className="form-group">
                   <label>Video Preview Image Url</label>
                   <input
@@ -3531,6 +3623,8 @@ const ProjectDetailsCreate = () => {
                     onChange={handleChange}
                   />
                 </div>
+              </div>
+              </div>
               </div>
 
               {/* <div className="d-flex justify-content-between align-items-end mx-1">

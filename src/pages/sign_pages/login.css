@@ -48,6 +48,301 @@ div {
   --text-color: #084236;
 } */
 
+/* Base responsive settings already in your CSS */
+
+/* Comprehensive responsive CSS for all screen sizes */
+
+/* Mobile Devices - Extra Small (Portrait phones) */
+@media only screen and (max-width: 575px) {
+  .login-sec {
+    padding: 20px 15px;
+    border-radius: 20px;
+    width: 90%;
+    margin: 0 auto;
+  }
+  
+  .login-sec-rustom {
+    padding: 20px;
+    height: 100vh;
+  }
+  
+  .login-content,
+  .otp-content,
+  .create-new-password-content,
+  .forget-password-content,
+  .login-content-rust {
+    max-width: 100%;
+  }
+  
+  .login-content p {
+    width: 100%;
+    font-size: 13px;
+  }
+  
+  .btn-danger-rustomjee {
+    width: 100%;
+  }
+  
+  .logo_img {
+    width: 120px;
+    height: 120px;
+  }
+  
+  h2 {
+    font-size: 20px;
+  }
+  
+  h3 {
+    font-size: 18px;
+  }
+  
+  .form-control {
+    padding: 8px 10px !important;
+  }
+  
+  .check-forgot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .paganation-sec {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .paganation {
+    align-items: center;
+  }
+  
+  .mark-indicator, .mark-indicator-rust {
+    width: 100%;
+  }
+  
+  .requirement-item p {
+    font-size: 12px;
+  }
+}
+
+/* Small Devices (Landscape phones) */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+  .login-sec {
+    padding: 25px 20px;
+    border-radius: 30px;
+    width: 85%;
+  }
+  
+  .login-sec-rustom {
+    padding: 30px;
+  }
+  
+  .login-content,
+  .otp-content,
+  .create-new-password-content,
+  .forget-password-content,
+  .login-content-rust {
+    max-width: 100%;
+  }
+  
+  .login-content p {
+    width: 90%;
+  }
+  
+  .btn-danger-rustomjee {
+    width: 100%;
+  }
+  
+  .logo_img {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+/* Medium Devices (Tablets) */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .login-sec {
+    padding: 30px 25px;
+    width: 75%;
+    max-width: 600px;
+  }
+  
+  .login-sec-rustom {
+    padding: 4% 8%;
+  }
+  
+  .login-content,
+  .otp-content,
+  .create-new-password-content,
+  .forget-password-content,
+  .login-content-rust {
+    max-width: 100%;
+  }
+  
+  .login-content p {
+    width: 80%;
+  }
+  
+  .logo_img {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .btn-danger-rustomjee {
+    width: 320px;
+  }
+  
+  form#otpForm, #createPasswordForm {
+    margin-top: 20vh;
+  }
+}
+
+/* Large Devices (Desktops) */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .login-sec {
+    padding: 35px 30px;
+    max-width: 650px;
+  }
+  
+  .login-content p {
+    width: 70%;
+  }
+  
+  .logo_img {
+    width: 170px;
+    height: 170px;
+  }
+}
+
+/* For all mobile and tablet view (fixes layout issues) */
+@media only screen and (max-width: 991px) {
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .btn {
+    padding: 8px 15px;
+  }
+  
+  .lock-icon {
+    width: 5% !important;
+    left: 8px;
+  }
+  
+  .password-toggle {
+    right: 8px;
+  }
+  
+  .another-way {
+    margin-top: 1rem;
+    font-size: 13px;
+  }
+  
+  .mark-indicator, .mark-indicator-rust {
+    gap: 0.3rem;
+  }
+  
+  .pass-len, .pass-upp, .pass-num, .pass-char {
+    gap: 0.5rem;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media only screen and (max-height: 500px) and (orientation: landscape) {
+  .login-sec-rustom {
+    height: auto;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .login-sec {
+    padding: 20px;
+  }
+  
+  .logo_img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  form#otpForm, #createPasswordForm {
+    margin-top: 10px;
+  }
+  
+  .login-sec-rustom.pt-5 {
+    padding-top: 2rem !important;
+  }
+}
+
+/* Fix for very large screens */
+@media only screen and (min-width: 1600px) {
+  .login-sec {
+    max-width: 800px;
+    padding: 40px;
+  }
+  
+  .login-content, 
+  .otp-content, 
+  .create-new-password-content, 
+  .forget-password-content,
+  .login-content-rust {
+    max-width: 500px;
+  }
+  
+  .logo_img {
+    width: 220px;
+    height: 220px;
+  }
+  
+  h2 {
+    font-size: 28px;
+  }
+  
+  h3 {
+    font-size: 24px;
+  }
+  
+  .form-control {
+    padding: 0.5rem 0.85rem !important;
+    font-size: 18px;
+  }
+  
+  .btn {
+    padding: 12px;
+    font-size: 18px;
+  }
+  
+  .requirement-item p {
+    font-size: 15px;
+  }
+}
+
+/* High-density displays */
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+       only screen and (min-resolution: 192dpi) {
+  .login_bg, .login_bg_rustomji {
+    background-size: cover;
+  }
+}
+
+/* Print styles */
+@media print {
+  .login-sec, .login-sec-rustom {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  
+  .login_bg, .login_bg_rustomji {
+    background-image: none !important;
+    background-color: #ffffff;
+  }
+  
+  .btn {
+    background-color: #000 !important;
+    color: #fff !important;
+  }
+}
+
 @font-face {
   font-family: "vi-regular";
   /* src: url(/assets/fonts/Vi-Regular.otf); */

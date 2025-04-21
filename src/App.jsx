@@ -100,17 +100,14 @@ let LoginWithOtpComponent;
 
 if (baseURL === "https://panchshil-super.lockated.com/") {
 
+ 
   LoginComponent = <SignIn />;
   ForgotPasswordComponent = <Forgot />;
   ForgotOtpComponent = <ForgotOtp />;  
   CreatePasswordComponent = <CreatePassword />
   
-  
-  
 } else {
-  
  
-
   LoginComponent = <SignInRustomjee />;
   ForgotPasswordComponent = <ForgotRustomjee />;
   ForgotOtpComponent = <ForgotOtpRustomjee />;  

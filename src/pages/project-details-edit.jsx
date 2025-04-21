@@ -70,6 +70,8 @@ const ProjectDetailsEdit = () => {
     project_sales_type: "",
     video_preview_image_url: "",
     document_url: "",
+    order_no: "",
+    enable_enquiry: false,
   });
 
   console.log("formData", formData);
@@ -294,7 +296,9 @@ const ProjectDetailsEdit = () => {
             projectData.project_emailer_templetes || [],
           project_ppt: projectData.ProjectPPT?.document_url || [],
           ppt_name: projectData.ProjectPPT?.document_file_name || [],
-          project_sales_type: projectData.project_sales_type || [],
+          project_sales_type: projectData.project_sales_type || "",
+          order_no: projectData.order_no || "",
+          enable_enquiry: projectData.enable_enquiry || false,
         });
 
         setProject(response.data);
@@ -2586,7 +2590,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>Project Sales Type</label>
-                  <MultiSelectBox
+                  <SelectBox
                     options={[
                       { value: "Sales", label: "Sales" },
                       {
@@ -2604,6 +2608,87 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                  Order Number
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span> */}
+                  </label>
+
+                  <input
+                    className="form-control"
+                    type="text-number"
+                    placeholder="Default input"
+                    name="order_no"
+                    value={formData.order_no}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+  <label>Enable Enquiry</label>
+  <div className="form-group">
+    <button
+      onClick={() =>
+        setFormData((prev) => ({
+          ...prev,
+          enable_enquiry: !prev.enable_enquiry, // Toggle the boolean value
+        }))
+      }
+      className="toggle-button"
+      style={{
+        border: "none",
+        background: "none",
+        cursor: "pointer",
+        padding: 0,
+        width: "35px",
+      }}
+    >
+      {formData.enable_enquiry ? (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="30"
+          fill="var(--red)"
+          className="bi bi-toggle-on"
+          viewBox="0 0 16 16"
+        >
+          <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+        </svg>
+      ) : (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="30"
+          fill="#667085"
+          className="bi bi-toggle-off"
+          viewBox="0 0 16 16"
+        >
+          <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+        </svg>
+      )}
+    </button>
+  </div>
+</div>
+
+              {/* <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>Order Number</label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    name="order_no"
+                    placeholder="Enter Order Number"
+                    value={formData.order_no}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div> */}
               {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
