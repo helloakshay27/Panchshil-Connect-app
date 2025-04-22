@@ -19,6 +19,7 @@ const ProjectDetailsEdit = () => {
 
   const [formData, setFormData] = useState({
     Property_Type: "",
+    Property_type_id: "",
     building_type: "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
@@ -117,23 +118,23 @@ const ProjectDetailsEdit = () => {
       console.error(`Error fetching data from ${endpoint}:`, error);
     }
   };
-   useEffect(() => {
-      axios
-        .get(`${baseURL}/property_types.json`)
-        .then((response) => {
-          const options = response.data
-            .filter((item) => item.active) // optional: only include active types
-            .map((type) => ({
-              value: type.property_type,
-              label: type.property_type,
-              id: type.id,
-            }));
+  useEffect(() => {
+    axios
+      .get(`${baseURL}/property_types.json`)
+      .then((response) => {
+        const options = response.data
+          .filter((item) => item.active) // Ensure only active types are included
+          .map((type) => ({
+            value: type.property_type,
+            label: type.property_type,
+            id: type.id,
+          }));
         setPropertyTypeOptions(options);
-        })
-        .catch((error) => {
-          console.error("Error fetching property types:", error);
-        });
-    }, []);
+      })
+      .catch((error) => {
+        console.error("Error fetching property types:", error);
+      });
+  }, []);
 
     const fetchBuildingTypes = async () => {
       // setLoading(tru/e);
@@ -237,6 +238,7 @@ const ProjectDetailsEdit = () => {
 
         setFormData({
           Property_Type: projectData.property_type || "",
+          Property_type_id: projectData.property_type_id || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
           building_type: projectData.building_type || "",
           Project_Construction_Status:
@@ -2136,23 +2138,20 @@ const ProjectDetailsEdit = () => {
                     Property Type
                     <span className="otp-asterisk"> *</span>
                   </label>
-                  <SelectBox
-                    options={propertyTypeOptions.map((type) => ({
-                      value: type.property_type,
-                      label: type.property_type,
-                      id: type.id,
-                    }))}
-                    defaultValue={
-                      propertyTypeOptions.find(
-                        (type) => type.property_type === formData.Property_Type
-                      ) || null // ✅ Ensure defaultValue is set correctly
-                    }
-                    onChange={handlePropertyTypeChange}
-                    isDisabled={false} // ✅ Enable the select box
-                    isClearable={true} // ✅ Allow clearing the selection
-                    isSearchable={true} // ✅ Enable search functionality
-                    placeholder="Select Property Type"
-                  />
+                  {propertyTypeOptions.length > 0 ? (
+  <PropertySelect
+    options={propertyTypeOptions}
+    defaultValue={propertyTypeOptions.find(
+      (type) => type.property_type === formData.Property_Type
+    )}
+    onChange={handlePropertyTypeChange}
+    isClearable
+    isSearchable
+    placeholder="Select Property Type"
+  />
+) : (
+  <p>No property types available</p>
+)}
                 </div>
               </div>
 
