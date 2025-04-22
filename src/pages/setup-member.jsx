@@ -17,6 +17,13 @@ const SetupMember = () => {
                   <h1>Panchshil Setup Member </h1>
                     <ul>
                     <li>
+                        <Link to="Role">User Role</Link>
+                      </li>
+                      <Link to="/setup-member/role-edit">Edit</Link>
+
+                      <Link to="/setup-member/role-list">User Role List</Link>
+
+                    <li>
                         <Link to="category-types">Category Type</Link>
                       </li>
                       <li>

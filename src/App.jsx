@@ -79,6 +79,10 @@ import ForgotRustomjee from "./pages/sign_pages/ForgotRustomjee";
 import ForgotOtpRustomjee from "./pages/sign_pages/ForgotOtpRustomjee";
 import CreatePasswordRustomjee from "./pages/sign_pages/CreatePasswordRustomjee";
 import LoginWithOtpRustomjee from "./pages/sign_pages/LoginWithOtpRustomjee";
+import UserRole from "./pages/LockFunctionCreate";
+import LockFunctionCreate from "./pages/LockFunctionCreate";
+import LockFunctionList from "./pages/LockFunctionList";
+import LockFunctionEdit from "./pages/LockFunctionEdit";
 
 
 // // import EditGallery from './EditGallery';
@@ -240,6 +244,17 @@ function App() {
             path="/setup-member/project-configuration-list"
             element={<ProjectConfiguraionList />}
           />
+
+           <Route
+            path="/setup-member/Role"
+            element={<LockFunctionCreate />}
+          />
+
+          <Route path="/setup-member/role-list" element={<LockFunctionList />} />
+
+
+          <Route path="/setup-member/role-edit/:id" element={<LockFunctionEdit />} />
+
           
         </Route>
       </Routes>
