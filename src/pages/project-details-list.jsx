@@ -358,11 +358,11 @@ const ProjectDetailsList = () => {
                                   index +
                                   1}
                               </td>
-                              <td>{project?.project_name || "N/A"}</td>
-                              <td>{project?.property_type || "N/A"}</td>
-                              <td>{project?.SFDC_Project_Id || "N/As"}</td>
+                              <td>{project?.project_name || "-"}</td>
+                              <td>{project?.property_type || "-"}</td>
+                              <td>{project?.SFDC_Project_Id || "-"}</td>
                               <td>
-                                {project?.Project_Construction_Status_Name || "N/A"}
+                                {project?.Project_Construction_Status || "-"}
                               </td>
 
                               <td style={{ width: "200px" }}>
@@ -382,18 +382,18 @@ const ProjectDetailsList = () => {
                                         </div>
                                       )
                                     )
-                                  : "No Configuration Type"}
+                                  : "-"}
                               </td>
 
-                              <td>{project?.price || "N/A"}</td>
-                              <td>{project?.project_size_sq_mtr || "N/A"}</td>
-                              <td>{project?.project_size_sq_ft || "N/A"}</td>
+                              <td>{project?.price || "-"}</td>
+                              <td>{project?.project_size_sq_mtr || "-"}</td>
+                              <td>{project?.project_size_sq_ft || "-"}</td>
                               <td>
-                                {project?.rera_carpet_area_sq_mtr || "N/A"}
+                                {project?.rera_carpet_area_sq_mtr || "-"}
                               </td>
-                              <td>{project?.rera_carpet_area_sqft || "N/A"}</td>
-                              <td>{project?.no_of_towers || "N/A"}</td>
-                              <td>{project?.no_of_apartments || "N/A"}</td>
+                              <td>{project?.rera_carpet_area_sqft || "-"}</td>
+                              <td>{project?.no_of_towers || "-"}</td>
+                              <td>{project?.no_of_apartments || "-"}</td>
                               <td>
                                 {project?.rera_number_multiple?.length > 0
                                   ? project.rera_number_multiple.map(
@@ -404,7 +404,7 @@ const ProjectDetailsList = () => {
                                         </div>
                                       )
                                     )
-                                  : "N/A"}
+                                  : "-"}
                               </td>
 
                               <td style={{ width: "200px" }}>
@@ -422,7 +422,7 @@ const ProjectDetailsList = () => {
                                         />
                                       </div>
                                     ))
-                                  : "No amenities"}
+                                  : "-"}
                               </td>
                             </tr>
                           ))}

@@ -89,6 +89,7 @@ const ProjectDetailsCreate = () => {
   const [virtualTourName, setVirtualTourName] = useState("");
   const [towerName, setTowerName] = useState("");
   const [reraNumber, setReraNumber] = useState("");
+  const [reraUrl, setReraUrl] = useState("");
   const [selectedType, setSelectedType] = useState(null);
   const [filteredAmenities, setFilteredAmenities] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -2178,6 +2179,22 @@ useEffect(() => {
                     name="rera_number"
                     placeholder="Enter RERA Number"
                     value={reraNumber}
+                    onChange={handleReraNumberChange}
+                    onBlur={handleReraNumberBlur} // Validate on blur
+                    maxLength={12} // Restrict input to 12 characters
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>RERA Url</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="rera_url"
+                    placeholder="Enter RERA Url"
+                    value={reraUrl}
                     onChange={handleReraNumberChange}
                     onBlur={handleReraNumberBlur} // Validate on blur
                     maxLength={12} // Restrict input to 12 characters

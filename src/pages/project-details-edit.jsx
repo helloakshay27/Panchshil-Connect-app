@@ -1997,38 +1997,32 @@ const ProjectDetailsEdit = () => {
   //   // ],
   // };
 
-   const handlePropertyTypeChange = async (selectedOption) => {
-      const { value, id } = selectedOption;
+  const handlePropertyTypeChange = async (selectedOption) => {
+    const { value, id } = selectedOption;
   
-      setFormData((prev) => ({
-        ...prev,
-        Property_Type: value,
-        Property_type_id: value,
-        building_type: "", // Optionally reset building_type
+    setFormData((prev) => ({
+      ...prev,
+      Property_Type: value,
+      Property_type_id: id, // Store the ID for API calls
+      building_type: "", // Reset building type when property type changes
+    }));
+  
+    try {
+      // Fetch building types based on the selected property type
+      const response = await axios.get(
+        `${baseURL}/building_types.json?q[property_type_id_eq]=${id}`
+      );
+  
+      const formattedBuildingTypes = response.data.map((item) => ({
+        value: item.building_type,
+        label: item.building_type,
       }));
   
-      try {
-      
-        // const response = await axios.get(
-        //   `https://dev-panchshil-super-app.lockated.com/building_types.json?q[property_type_id_eq]=${id}`
-        // );
-        const response = await axios.get(
-          `${baseURL}building_types.json?q[property_type_id_eq]=${id}`
-        );
-  
-        const buildingTypes = response.data || [];
-  
-        const formattedOptions = buildingTypes.map((item) => ({
-          value: item.building_type,
-          label: item.building_type,
-          id: item.id,
-        }));
-  
-        setBuildingTypeOptions(formattedOptions);
-      } catch (error) {
-        console.error("Error fetching building types:", error);
-      }
-    };
+      setBuildingTypes(formattedBuildingTypes); // Update the building types
+    } catch (error) {
+      console.error("Error fetching building types:", error);
+    }
+  };
 
   return (
     <>
@@ -2132,51 +2126,53 @@ const ProjectDetailsEdit = () => {
     />
   </div>
 </div> */}
-              <div className="col-md-3">
-                <div className="form-group">
-                  <label>
-                    Property Type
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  {propertyTypeOptions.length > 0 ? (
-  <PropertySelect
-    options={propertyTypeOptions}
-    defaultValue={propertyTypeOptions.find(
-      (type) => type.property_type === formData.Property_Type
+             <div className="col-md-3">
+  <div className="form-group">
+    <label>
+      Property Type
+      <span className="otp-asterisk"> *</span>
+    </label>
+    {propertyTypeOptions.length > 0 ? (
+      <PropertySelect
+        options={propertyTypeOptions}
+        defaultValue={formData.Property_Type}
+        value={
+         propertyTypeOptions.find( 
+          (type) => type.value === formData.Property_Type
+        ) || null // Ensure defaultValue is set correctly
+        }
+        // defaultValue={propertyTypeOptions.find(
+        //   (type) => type.value === formData.Property_Type
+        // )}
+        onChange={(value) => handlePropertyTypeChange(value)}
+        isClearable
+        isSearchable
+        placeholder="Select Property Type"
+      />
+    ) : (
+      <p>No property types available</p>
     )}
-    onChange={handlePropertyTypeChange}
-    isClearable
-    isSearchable
-    placeholder="Select Property Type"
-  />
-) : (
-  <p>No property types available</p>
-)}
-                </div>
-              </div>
+  </div>
+</div>
 
-              <div className="col-md-3 mt-1">
-                <div className="form-group">
-                  <label>
-                    Project Building Type
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <SelectBox
-                    options={buildingTypes || []} // ✅ Show correct options
-                    defaultValue={formData.building_type}
-                    onChange={(selectedValue) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        building_type: selectedValue,
-                      }))
-                    }
-                    isDisabled={!formData.Property_Type} // ✅ Disable if no Property_Type selected
-                  />
-                </div>
-              </div>
+<div className="col-md-3 mt-1">
+  <div className="form-group">
+    <label>
+      Project Building Type
+    </label>
+    <SelectBox
+      options={buildingTypes || []}
+      defaultValue={formData.building_type}
+      onChange={(selectedValue) =>
+        setFormData((prev) => ({
+          ...prev,
+          building_type: selectedValue,
+        }))
+      }
+      isDisabled={!formData.Property_Type}
+    />
+  </div>
+</div>
               <div className="col-md-3 mt-0">
                 <div className="form-group">
                   <label>
@@ -2184,11 +2180,14 @@ const ProjectDetailsEdit = () => {
                     <span className="otp-asterisk"> *</span>
                   </label>
                   <SelectBox
-                    options={ statusOptions.map((status) => ({
-                      value: status.value,
-                      label: status.label,
-                    }))}
-                    defaultValue={parseInt(formData.Project_Construction_Status)}
+                  options={statusOptions || []}
+                  defaultValue={formData.Project_Construction_Status}
+                  
+                    // options={ statusOptions.map((status) => ({
+                    //   value: status.value,
+                    //   label: status.label,
+                    // }))}
+                    // defaultValue={parseInt(formData.Project_Construction_Status)}
                     onChange={(selectedValue) => 
                       setFormData((prev) => ({
                         ...prev,
