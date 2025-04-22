@@ -69,6 +69,7 @@ const ProjectDetailsCreate = () => {
     order_no: null,
     video_preview_image_url: [],
     enable_enquiry: false,
+    rera_url: "",
   });
 
   useEffect(() => {
@@ -987,6 +988,10 @@ const ProjectDetailsCreate = () => {
               `project[Rera_Number_multiple][${index}][rera_number]`,
               item.rera_number
             );
+            data.append(
+              `project[Rera_Number_multiple][${index}][rera_url]`,
+              item.rera_url
+            );
           }
         });
       } else if (key === "project_ppt" && Array.isArray(value)) {
@@ -1002,13 +1007,12 @@ const ProjectDetailsCreate = () => {
             data.append(`project[project_creatives_types][]`, type); // Store selected type
           }
         });
-      }
-      else if (key === "project_sales_type" && Array.isArray(value)) {
+      } else if (key === "project_sales_type" && Array.isArray(value)) {
         // value.forEach(({ file, type }) => {
-          // if (file instanceof File) {
-            data.append("project[project_sales_type][]", value); // Upload file
-            // data.append(`project[project_sales_type][]`, type); // Store selected type
-          // }
+        // if (file instanceof File) {
+        data.append("project[project_sales_type][]", value); // Upload file
+        // data.append(`project[project_sales_type][]`, type); // Store selected type
+        // }
       } else {
         data.append(`project[${key}]`, value);
       }
@@ -1257,6 +1261,11 @@ const ProjectDetailsCreate = () => {
     }
   };
 
+  const handleReraUrlChange = (e) => {
+    setReraUrl(e.target.value);
+  };
+
+
   const handleReraNumberBlur = () => {
     if (reraNumber.length !== 12) {
       toast.error("RERA Number must be exactly 12 alphanumeric characters!", {
@@ -1284,6 +1293,7 @@ const ProjectDetailsCreate = () => {
         {
           tower_name: towerName,
           rera_number: reraNumber,
+          rera_url: reraUrl,
         },
       ],
     }));
@@ -1389,23 +1399,23 @@ const ProjectDetailsCreate = () => {
       return { ...prev, [key]: updatedFiles };
     });
   };
-useEffect(() => {
-  axios
-    .get(`${baseURL}/property_types.json`)
-    .then((response) => {
-      const options = response.data
-        .filter((item) => item.active) // optional: only include active types
-        .map((type) => ({
-          value: type.property_type,
-          label: type.property_type,
-          id: type.id,
-        }));
-      setPropertyTypeOptions(options);
-    })
-    .catch((error) => {
-      console.error("Error fetching property types:", error);
-    });
-}, []);
+  useEffect(() => {
+    axios
+      .get(`${baseURL}/property_types.json`)
+      .then((response) => {
+        const options = response.data
+          .filter((item) => item.active) // optional: only include active types
+          .map((type) => ({
+            value: type.property_type,
+            label: type.property_type,
+            id: type.id,
+          }));
+        setPropertyTypeOptions(options);
+      })
+      .catch((error) => {
+        console.error("Error fetching property types:", error);
+      });
+  }, []);
 
   // const propertyTypeOptions = [
   //   { value: "Office Parks", label: "Office Parks" },
@@ -1465,7 +1475,6 @@ useEffect(() => {
     }));
 
     try {
-    
       // const response = await axios.get(
       //   `https://dev-panchshil-super-app.lockated.com/building_types.json?q[property_type_id_eq]=${id}`
       // );
@@ -1525,12 +1534,12 @@ useEffect(() => {
 
   const handleToggle = async (id, currentStatus) => {
     const updatedStatus = !currentStatus;
-    
+
     // Dismiss any existing toast first
     if (activeToastId) {
       toast.dismiss(activeToastId);
     }
-    
+
     try {
       await axios.put(
         `${baseURL}projects/${id}.json`,
@@ -1538,39 +1547,38 @@ useEffect(() => {
         {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         }
       );
-      
+
       setProjects((prev) =>
         prev.map((item) =>
           item.id === id ? { ...item, published: updatedStatus } : item
         )
       );
-      
+
       // Show new toast and store its ID
       const newToastId = toast.success("Status updated successfully!", {
         duration: 3000, // Toast will auto-dismiss after 3 seconds
         position: "top-center", // Position the toast at the top center
         id: `toggle-${id}`, // Give each toast a unique ID based on project
       });
-      
+
       setActiveToastId(newToastId);
     } catch (error) {
       console.error("Error updating status:", error);
-      
+
       // Show error toast and store its ID
       const newToastId = toast.error("Failed to update status.", {
         duration: 3000,
         position: "top-center",
         id: `toggle-error-${id}`,
       });
-      
+
       setActiveToastId(newToastId);
     }
   };
-  
 
   return (
     <>
@@ -2100,50 +2108,50 @@ useEffect(() => {
                 </div>
               </div>
               <div className="col-md-3 mt-2">
-  <label>Enable Enquiry</label>
-  <div className="form-group">
-    <button
-      onClick={() =>
-        setFormData((prev) => ({
-          ...prev,
-          enable_enquiry: !prev.enable_enquiry, // Toggle the boolean value
-        }))
-      }
-      className="toggle-button"
-      style={{
-        border: "none",
-        background: "none",
-        cursor: "pointer",
-        padding: 0,
-        width: "35px",
-      }}
-    >
-      {formData.enable_enquiry ? (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="30"
-          fill="var(--red)"
-          className="bi bi-toggle-on"
-          viewBox="0 0 16 16"
-        >
-          <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
-        </svg>
-      ) : (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="30"
-          fill="#667085"
-          className="bi bi-toggle-off"
-          viewBox="0 0 16 16"
-        >
-          <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
-        </svg>
-      )}
-    </button>
-  </div>
-</div>
+                <label>Enable Enquiry</label>
+                <div className="form-group">
+                  <button
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        enable_enquiry: !prev.enable_enquiry, // Toggle the boolean value
+                      }))
+                    }
+                    className="toggle-button"
+                    style={{
+                      border: "none",
+                      background: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      width: "35px",
+                    }}
+                  >
+                    {formData.enable_enquiry ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="40"
+                        height="30"
+                        fill="var(--red)"
+                        className="bi bi-toggle-on"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="40"
+                        height="30"
+                        fill="#667085"
+                        className="bi bi-toggle-off"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2188,16 +2196,16 @@ useEffect(() => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>RERA Url</label>
+                  <label>RERA URL</label>
                   <input
                     className="form-control"
                     type="text"
                     name="rera_url"
-                    placeholder="Enter RERA Url"
+                    placeholder="Enter RERA URL"
                     value={reraUrl}
-                    onChange={handleReraNumberChange}
+                    onChange={handleReraUrlChange}
                     onBlur={handleReraNumberBlur} // Validate on blur
-                    maxLength={12} // Restrict input to 12 characters
+                   
                   />
                 </div>
               </div>
@@ -2234,6 +2242,7 @@ useEffect(() => {
                         <th>Sr No</th>
                         <th>Tower Name</th>
                         <th>RERA Number</th>
+                        <th>RERA URL</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -2243,6 +2252,7 @@ useEffect(() => {
                           <td>{index + 1}</td>
                           <td>{item.tower_name}</td>
                           <td>{item.rera_number}</td>
+                          <td>{item.rera_url}</td>
                           <td>
                             <button
                               type="button"
@@ -3628,20 +3638,20 @@ useEffect(() => {
                 </div>
 
                 <div className="d-flex justify-content-between align-items-end mx-1">
-                <div className="col-md-12 mt-2">
-                <div className="form-group">
-                  <label>Video Preview Image Url</label>
-                  <input
-                    className="form-control"
-                    rows={1}
-                    name="video_preview_image_url"
-                    placeholder="Enter Video Url"
-                    value={formData.video_preview_image_url}
-                    onChange={handleChange}
-                  />
+                  <div className="col-md-12 mt-2">
+                    <div className="form-group">
+                      <label>Video Preview Image Url</label>
+                      <input
+                        className="form-control"
+                        rows={1}
+                        name="video_preview_image_url"
+                        placeholder="Enter Video Url"
+                        value={formData.video_preview_image_url}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              </div>
               </div>
 
               {/* <div className="d-flex justify-content-between align-items-end mx-1">

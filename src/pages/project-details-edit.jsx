@@ -74,6 +74,7 @@ const ProjectDetailsEdit = () => {
     document_url: "",
     order_no: "",
     enable_enquiry: false,
+    rera_url: "",
   });
 
   console.log("formData", formData);
@@ -87,6 +88,7 @@ const ProjectDetailsEdit = () => {
   const [error, setError] = useState(null);
   const [towerName, setTowerName] = useState("");
   const [reraNumber, setReraNumber] = useState("");
+  const [reraUrl, setReraUrl] = useState("");
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const [virtualTourName, setVirtualTourName] = useState("");
   const [selectedType, setSelectedType] = useState(null);
@@ -1275,6 +1277,10 @@ const ProjectDetailsEdit = () => {
               `project[Rera_Number_multiple][${index}][rera_number]`,
               item.rera_number
             );
+            data.append(
+              `project[Rera_Number_multiple][${index}][rera_url]`,
+              item.rera_number
+            );
           }
         });
       } else {
@@ -1347,6 +1353,10 @@ const ProjectDetailsEdit = () => {
     setReraNumber(e.target.value);
   };
 
+  const handleReraUrlChange = (e) => {
+    setReraUrl(e.target.value);
+  };
+
   // Handle Adding a RERA Entry
   // const handleAddRera = () => {
   //   if (!towerName.trim() || !reraNumber.trim()) {
@@ -1391,7 +1401,7 @@ const ProjectDetailsEdit = () => {
       ...prevData,
       Rera_Number_multiple: [
         ...prevData.Rera_Number_multiple,
-        { tower_name: towerName, rera_number: reraNumber },
+        { tower_name: towerName, rera_number: reraNumber, rera_url: reraUrl },
       ],
     }));
 
@@ -2830,6 +2840,20 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>RERA URL </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="rera_url"
+                    placeholder="Enter RERA URL"
+                    value={reraUrl}
+                    onChange={ handleReraUrlChange}
+                  />
+                </div>
+              </div>
+
               {/* Add Button */}
               <div className="col-md-3 mt-2">
                 <button
@@ -2862,6 +2886,7 @@ const ProjectDetailsEdit = () => {
                         <th>Sr No</th>
                         <th>Tower Name</th>
                         <th>RERA Number</th>
+                        <th>Rera URL</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -2892,6 +2917,20 @@ const ProjectDetailsEdit = () => {
                                 handleEditRera(
                                   index,
                                   "rera_number",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={item.rera_url}
+                              onChange={(e) =>
+                                handleEditRera(
+                                  index,
+                                  "rera_url",
                                   e.target.value
                                 )
                               }
