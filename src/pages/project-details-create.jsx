@@ -70,6 +70,7 @@ const ProjectDetailsCreate = () => {
     video_preview_image_url: [],
     enable_enquiry: false,
     rera_url: "",
+    isDay: true,
   });
 
   useEffect(() => {
@@ -951,7 +952,7 @@ const ProjectDetailsCreate = () => {
         value.forEach((fileObj, index) => {
           if (fileObj.gallery_image instanceof File) {
             // ✅ Check for actual File
-            data.append("project[gallery_image][]", fileObj.gallery_image); // ✅ Send actual File
+            data.append("project[gallery_image][]", fileObj.gallery_image);
             data.append(
               `project[gallery_image_file_name][${index}]`,
               fileObj.gallery_image_file_name
@@ -959,6 +960,10 @@ const ProjectDetailsCreate = () => {
             data.append(
               `project[gallery_type]`,
               fileObj.gallery_image_file_type
+            );
+            data.append(
+              `project[gallery_image_is_day][${index}]`,
+              fileObj.isDay
             );
           }
         });
@@ -1252,6 +1257,14 @@ const ProjectDetailsCreate = () => {
     setTowerName(e.target.value);
   };
 
+  const handleDayNightChange = (index, isDay) => {
+    setFormData((prev) => {
+      const updatedGallery = [...prev.gallery_image];
+      updatedGallery[index].isDay = isDay; // Update isDay as a boolean
+      return { ...prev, gallery_image: updatedGallery };
+    });
+  };
+
   const handleReraNumberChange = (e) => {
     const { value } = e.target;
 
@@ -1264,7 +1277,6 @@ const ProjectDetailsCreate = () => {
   const handleReraUrlChange = (e) => {
     setReraUrl(e.target.value);
   };
-
 
   const handleReraNumberBlur = () => {
     if (reraNumber.length !== 12) {
@@ -1371,6 +1383,7 @@ const ProjectDetailsCreate = () => {
       gallery_image: file, // ✅ Store actual File
       gallery_image_file_name: file.name,
       gallery_image_file_type: selectedCategory,
+      isDay: true,
     }));
 
     setFormData((prev) => ({
@@ -2205,7 +2218,6 @@ const ProjectDetailsCreate = () => {
                     value={reraUrl}
                     onChange={handleReraUrlChange}
                     onBlur={handleReraNumberBlur} // Validate on blur
-                   
                   />
                 </div>
               </div>
@@ -2555,31 +2567,14 @@ const ProjectDetailsCreate = () => {
                         {/* <th>Image Category</th> */}
                         <th>File Name</th>
                         <th>Preview</th>
+                        <th>Day Night</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {formData.gallery_image.map((file, index) => (
                         <tr key={index}>
-                          {/* <td>{file.gallery_image_file_type}</td> */}
-                          <td>
-                            <input
-                              className="form-control"
-                              type="text"
-                              name="gallery_image_file_name"
-                              placeholder="Enter Image Name"
-                              value={file.gallery_image_file_name}
-                              onChange={(e) => handleImageNameChange(e, index)}
-                            />
-
-                            {/* <input
-                  
-                  name="file.gallery_image_file_name"
-                  value={file.gallery_image_file_name}
-
-                  onChange={handleChange}
-                  /> */}
-                          </td>
+                          <td>{file.gallery_image_file_name}</td>
                           <td>
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
@@ -2587,6 +2582,21 @@ const ProjectDetailsCreate = () => {
                               src={URL.createObjectURL(file.gallery_image)}
                               alt={file.gallery_image_file_name}
                             />
+                          </td>
+                          <td>
+                            <select
+                              className="form-control"
+                              value={file.isDay ? 1 : 0} // Convert boolean to 1 (Day) or 0 (Night)
+                              onChange={(e) =>
+                                handleDayNightChange(
+                                  index,
+                                  e.target.value === "1"
+                                )
+                              }
+                            >
+                              <option value={1}>Day</option>
+                              <option value={0}>Night</option>
+                            </select>
                           </td>
                           <td>
                             <button
