@@ -15,6 +15,18 @@ const SetupMember = () => {
           <div className="module-data-section container-fluid">
             <h1>Panchshil Setup Member </h1>
             <ul>
+            <li>
+                <Link to="/setup-member/lock-role-create">
+                  Lock Role Create
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/setup-member/lock-role-list">
+                  Lock Role List
+                </Link>
+              </li>
+
               <li>
                 <Link to="/setup-member/lock-function">
                   Lock Function Create

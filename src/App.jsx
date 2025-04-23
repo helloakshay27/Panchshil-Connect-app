@@ -83,6 +83,8 @@ import UserRole from "./pages/LockFunctionCreate";
 import LockFunctionCreate from "./pages/LockFunctionCreate";
 import LockFunctionList from "./pages/LockFunctionList";
 import LockFunctionEdit from "./pages/LockFunctionEdit";
+import LockRoleCreate from "./pages/lock-role-create";
+import LockRoleList from "./pages/lock-role-list";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -294,6 +296,15 @@ function App() {
           <Route
             path="/setup-member/lock-function-edit/:id"
             element={<LockFunctionEdit />}
+          />
+
+          <Route
+            path="/setup-member/lock-role-create"
+            element={<LockRoleCreate />}
+          />
+          <Route
+            path="/setup-member/lock-role-list"
+            element={<LockRoleList />}
           />
         </Route>
       </Routes>
