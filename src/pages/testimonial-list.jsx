@@ -45,6 +45,9 @@ const TestimonialList = () => {
     fetchTestimonials();
   }, []);
 
+
+  console.log("testimonials", testimonials);
+
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
   };
