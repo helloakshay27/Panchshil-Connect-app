@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import SelectBox from '../components/base/SelectBox';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import SelectBox from "../components/base/SelectBox";
 
 const LockFunctionEdit = () => {
   const navigate = useNavigate();
@@ -13,83 +13,94 @@ const LockFunctionEdit = () => {
   const [parentFunctions, setParentFunctions] = useState([]);
 
   const [formData, setFormData] = useState({
-    name: '',
-    action_name: '',
-    parent_function: '', 
-    active: 1
+    name: "",
+    action_name: "",
+    parent_function: "",
+    active: 1,
   });
 
   // Fetch lock function data by ID
   useEffect(() => {
     const fetchLockFunction = async () => {
       try {
-        const response = await axios.get(`https://panchshil-super.lockated.com/lock_functions/${id}.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        
+        const response = await axios.get(
+          `https://panchshil-super.lockated.com/lock_functions/${id}.json`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
         const functionData = response.data;
-        
+
         // Set form data with the fetched values
         setFormData({
-          name: functionData.name || '',
-          action_name: functionData.action_name || '',
-          parent_function: functionData.parent_function || 'all_functions',
-          active: functionData.active === true || functionData.active === 1 ? 1 : 0,
+          name: functionData.name || "",
+          action_name: functionData.action_name || "",
+          parent_function: functionData.parent_function || "all_functions",
+          active:
+            functionData.active === true || functionData.active === 1 ? 1 : 0,
         });
       } catch (error) {
-        console.error('Error fetching lock function:', error);
-        toast.error('Failed to fetch lock function details');
-        navigate('/setup-member/role-list'); // Redirect on error
+        console.error("Error fetching lock function:", error);
+        toast.error("Failed to fetch lock function details");
+        navigate("/setup-member/lock-function-list"); // Redirect on error
       }
     };
 
     // Fetch existing lock functions to get possible parent functions
     const fetchParentFunctions = async () => {
       try {
-        const response = await axios.get('https://panchshil-super.lockated.com/lock_functions.json', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        
+        const response = await axios.get(
+          "https://panchshil-super.lockated.com/lock_functions.json",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
         // Extract unique parent_function values from the response
-        const uniqueParentFunctions = [...new Set(
-          response.data.map(func => func.parent_function)
-        )].filter(Boolean);
-        
+        const uniqueParentFunctions = [
+          ...new Set(response.data.map((func) => func.parent_function)),
+        ].filter(Boolean);
+
         // Create options for the dropdown
-        const parentFunctionOptions = uniqueParentFunctions.map(func => ({
+        const parentFunctionOptions = uniqueParentFunctions.map((func) => ({
           id: func,
-          name: func
+          name: func,
         }));
-        
+
         // Add "all_functions" if it's not already in the list
-        if (!uniqueParentFunctions.includes('all_functions')) {
-          parentFunctionOptions.unshift({ id: 'all_functions', name: 'all_functions' });
+        if (!uniqueParentFunctions.includes("all_functions")) {
+          parentFunctionOptions.unshift({
+            id: "all_functions",
+            name: "all_functions",
+          });
         }
-        
+
         setParentFunctions(parentFunctionOptions);
       } catch (error) {
-        console.error('Error fetching parent functions:', error);
-        toast.error('Failed to fetch parent functions');
+        console.error("Error fetching parent functions:", error);
+        toast.error("Failed to fetch parent functions");
       }
     };
 
     // Execute both fetch operations and set loading to false when complete
-    Promise.all([fetchLockFunction(), fetchParentFunctions()])
-      .finally(() => setLoading(false));
+    Promise.all([fetchLockFunction(), fetchParentFunctions()]).finally(() =>
+      setLoading(false)
+    );
   }, [id, navigate]);
 
   // Input Handlers
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({ 
-      ...formData, 
-      [name]: type === 'checkbox' ? (checked ? 1 : 0) : value 
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? (checked ? 1 : 0) : value,
     });
   };
 
@@ -99,20 +110,20 @@ const LockFunctionEdit = () => {
     let isValid = true;
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-      toast.error('Name is required');
+      newErrors.name = "Name is required";
+      toast.error("Name is required");
       isValid = false;
     }
 
     if (!formData.action_name.trim()) {
-      newErrors.action_name = 'Action name is required';
-      toast.error('Action name is required');
+      newErrors.action_name = "Action name is required";
+      toast.error("Action name is required");
       isValid = false;
     }
 
     if (!formData.parent_function) {
-      newErrors.parent_function = 'Parent function is required';
-      toast.error('Parent function is required');
+      newErrors.parent_function = "Parent function is required";
+      toast.error("Parent function is required");
       isValid = false;
     }
 
@@ -124,7 +135,7 @@ const LockFunctionEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitLoading(true);
-  
+
     if (!validateForm()) {
       setSubmitLoading(false);
       return;
@@ -137,23 +148,30 @@ const LockFunctionEdit = () => {
           action_name: formData.action_name,
           parent_function: formData.parent_function,
           active: formData.active,
-          module_id: "1" // Default value as per the example
-        }
-      };
-      
-      await axios.put(`https://panchshil-super.lockated.com/lock_functions/${id}.json`, payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          'Content-Type': 'application/json',
+          module_id: "1", // Default value as per the example
         },
-      });
-  
-      toast.success('Lock function updated successfully');
-      navigate('/setup-member/role-list');
+      };
 
+      await axios.put(
+        `https://panchshil-super.lockated.com/lock_functions/${id}.json`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Lock function updated successfully");
+      navigate("/setup-member/lock-function-list");
     } catch (error) {
-      console.error('Error updating lock function:', error);
-      toast.error(`Error updating lock function: ${error.response?.data?.message || error.message}`);
+      console.error("Error updating lock function:", error);
+      toast.error(
+        `Error updating lock function: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     } finally {
       setSubmitLoading(false);
     }
@@ -190,8 +208,8 @@ const LockFunctionEdit = () => {
                   <div className="col-md-4">
                     <div className="form-group">
                       <label>
-                        Name 
-                        <span className="otp-asterisk">{" "}*</span>
+                        Name
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -202,9 +220,7 @@ const LockFunctionEdit = () => {
                         placeholder="Enter function name"
                       />
                       {errors.name && (
-                        <span className="error text-danger">
-                          {errors.name}
-                        </span>
+                        <span className="error text-danger">{errors.name}</span>
                       )}
                     </div>
                   </div>
@@ -214,7 +230,7 @@ const LockFunctionEdit = () => {
                     <div className="form-group">
                       <label>
                         Action Name
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -237,7 +253,7 @@ const LockFunctionEdit = () => {
                     <div className="form-group">
                       <label>
                         Parent Function
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <SelectBox
                         options={parentFunctions.map((func) => ({
@@ -281,7 +297,7 @@ const LockFunctionEdit = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Submit and Cancel Buttons */}
           <div className="row mt-4 justify-content-center">
             <div className="col-md-3">
@@ -290,7 +306,7 @@ const LockFunctionEdit = () => {
                 className="purple-btn2 w-100"
                 disabled={submitLoading}
               >
-                {submitLoading ? 'Updating...' : 'Update'}
+                {submitLoading ? "Updating..." : "Update"}
               </button>
             </div>
             <div className="col-md-3">

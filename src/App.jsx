@@ -84,7 +84,6 @@ import LockFunctionCreate from "./pages/LockFunctionCreate";
 import LockFunctionList from "./pages/LockFunctionList";
 import LockFunctionEdit from "./pages/LockFunctionEdit";
 
-
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
 //   <Route path="/login" element={<SignInRustomjee />} />
@@ -103,21 +102,16 @@ let CreatePasswordComponent;
 let LoginWithOtpComponent;
 
 if (baseURL === "https://panchshil-super.lockated.com/") {
-
- 
   LoginComponent = <SignIn />;
   ForgotPasswordComponent = <Forgot />;
-  ForgotOtpComponent = <ForgotOtp />;  
-  CreatePasswordComponent = <CreatePassword />
-  
+  ForgotOtpComponent = <ForgotOtp />;
+  CreatePasswordComponent = <CreatePassword />;
 } else {
- 
   LoginComponent = <SignInRustomjee />;
   ForgotPasswordComponent = <ForgotRustomjee />;
-  ForgotOtpComponent = <ForgotOtpRustomjee />;  
-  CreatePasswordComponent = <CreatePasswordRustomjee/>
+  ForgotOtpComponent = <ForgotOtpRustomjee />;
+  CreatePasswordComponent = <CreatePasswordRustomjee />;
   LoginWithOtpComponent = <LoginWithOtpRustomjee />;
-  
 }
 
 function App() {
@@ -125,7 +119,7 @@ function App() {
     <BrowserRouter>
       <Toaster />
       <Routes>
-      <Route path="/login" element={LoginComponent} />
+        <Route path="/login" element={LoginComponent} />
         {/* <Route path="/login" element={<SignIn />} /> */}
         <Route path="/register" element={<Register />} />
         {/* <Route path="/forgot-password" element={<Forgot />} /> */}
@@ -135,7 +129,6 @@ function App() {
         {/* <Route path="/reset-password" element={<CreatePassword />} /> */}
         <Route path="/reset-password" element={CreatePasswordComponent} />
         <Route path="/verify-otp" element={<LoginWithOtpRustomjee />} />
-
 
         <Route
           path="/"
@@ -154,25 +147,57 @@ function App() {
           <Route path="/project-create" element={<ProjectDetailsCreate />} />
           <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
           <Route path="/project-details/:id" element={<ProjectDetails />} />
-          <Route path="/setup-member/property-type" element={<PropertyType />}/>
-          <Route path="/setup-member/property-type-edit/:id" element={<PropertyTypeEdit />}/>
-          <Route path="/setup-member/property-type-list" element={<PropertyTypeList/>}/>
-          <Route path="/setup-member/project-building-type" element={<ProjectBuildingType/>}/>
-          <Route path="/setup-member/project-building-type-edit/:id" element={<ProjectBuildingTypeEdit/>}/>
+          <Route
+            path="/setup-member/property-type"
+            element={<PropertyType />}
+          />
+          <Route
+            path="/setup-member/property-type-edit/:id"
+            element={<PropertyTypeEdit />}
+          />
+          <Route
+            path="/setup-member/property-type-list"
+            element={<PropertyTypeList />}
+          />
+          <Route
+            path="/setup-member/project-building-type"
+            element={<ProjectBuildingType />}
+          />
+          <Route
+            path="/setup-member/project-building-type-edit/:id"
+            element={<ProjectBuildingTypeEdit />}
+          />
 
-          <Route path="/setup-member/project-building-type-list" element={<ProjectBuildingTypeList/>}/>
-          <Route path="/setup-member/construction-status" element={<ConstructionStatus />} />
-          <Route path="/setup-member/construction-status-edit/:id" element={<ConstructionStatusEdit />} />
+          <Route
+            path="/setup-member/project-building-type-list"
+            element={<ProjectBuildingTypeList />}
+          />
+          <Route
+            path="/setup-member/construction-status"
+            element={<ConstructionStatus />}
+          />
+          <Route
+            path="/setup-member/construction-status-edit/:id"
+            element={<ConstructionStatusEdit />}
+          />
 
-          <Route path="/setup-member/construction-status-list" element={<ConstructionStatusList />} />
-          
+          <Route
+            path="/setup-member/construction-status-list"
+            element={<ConstructionStatusList />}
+          />
 
           <Route path="/project-list" element={<ProjectDetailsList />} />
           <Route path="/banner-list" element={<BannerList />} />
           <Route path="/banner-add" element={<BannerAdd />} />
           <Route path="/setup-member/amenities" element={<Amenities />} />
-          <Route path="/setup-member/amenities-list" element={<AmenitiesList />} />
-          <Route path="/setup-member/edit-amenities/:id" element={<EditAmenities />} />
+          <Route
+            path="/setup-member/amenities-list"
+            element={<AmenitiesList />}
+          />
+          <Route
+            path="/setup-member/edit-amenities/:id"
+            element={<EditAmenities />}
+          />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonial-list" element={<TestimonialList />} />
           <Route path="/testimonial-edit" element={<TestimonialEdit />} />
@@ -216,9 +241,18 @@ function App() {
           <Route path="/company-create" element={<CompanyCreate />} />
           <Route path="/company-list" element={<CompanyList />} />
           <Route path="/company-edit/:id" element={<CompanyEdit />} />
-          <Route path="/setup-member/category-types" element={<CategoryTypes />} />
-          <Route path="/setup-member/category-types-list" element={<CategoryTypesList />} />
-          <Route path="/setup-member/category-types-edit/:id" element={<CategoryTypesEdit />} />
+          <Route
+            path="/setup-member/category-types"
+            element={<CategoryTypes />}
+          />
+          <Route
+            path="/setup-member/category-types-list"
+            element={<CategoryTypesList />}
+          />
+          <Route
+            path="/setup-member/category-types-edit/:id"
+            element={<CategoryTypesEdit />}
+          />
           <Route path="/setup-member/tag-add" element={<TagAdd />} />
 
           <Route
@@ -238,24 +272,29 @@ function App() {
             path="/setup-member/project-configuration"
             element={<ProjectConfiguraion />}
           />
-          <Route path="/setup-member/project-config-edit/:id"
-          element={<ProjectConfigEdit/>}/>
+          <Route
+            path="/setup-member/project-config-edit/:id"
+            element={<ProjectConfigEdit />}
+          />
           <Route
             path="/setup-member/project-configuration-list"
             element={<ProjectConfiguraionList />}
           />
 
-           <Route
-            path="/setup-member/Role"
+          <Route
+            path="/setup-member/lock-function"
             element={<LockFunctionCreate />}
           />
 
-          <Route path="/setup-member/role-list" element={<LockFunctionList />} />
+          <Route
+            path="/setup-member/lock-function-list"
+            element={<LockFunctionList />}
+          />
 
-
-          <Route path="/setup-member/role-edit/:id" element={<LockFunctionEdit />} />
-
-          
+          <Route
+            path="/setup-member/lock-function-edit/:id"
+            element={<LockFunctionEdit />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>
