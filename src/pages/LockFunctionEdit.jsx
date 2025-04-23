@@ -249,7 +249,7 @@ const LockFunctionEdit = () => {
                   </div>
 
                   {/* Parent Function Selection */}
-                  <div className="col-md-4">
+                  {/* <div className="col-md-4">
                     <div className="form-group">
                       <label>
                         Parent Function
@@ -260,6 +260,28 @@ const LockFunctionEdit = () => {
                           label: func.name,
                           value: func.id,
                         }))}
+                        defaultValue={formData.parent_function}
+                        onChange={(value) =>
+                          setFormData({ ...formData, parent_function: value })
+                        }
+                      />
+                      {errors.parent_function && (
+                        <span className="error text-danger">
+                          {errors.parent_function}
+                        </span>
+                      )}
+                    </div>
+                  </div> */}
+                  <div className="col-md-4">
+                    <div className="form-group">
+                      <label>
+                        Parent Function
+                        <span className="otp-asterisk"> *</span>
+                      </label>
+                      <SelectBox
+                        options={[
+                          { label: "All Functions", value: "All Functions" }, // Default option
+                        ]}
                         defaultValue={formData.parent_function}
                         onChange={(value) =>
                           setFormData({ ...formData, parent_function: value })
