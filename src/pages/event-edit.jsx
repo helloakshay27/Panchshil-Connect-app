@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import MultiSelectBox from "../components/base/MultiSelectBox";
 
 const EventEdit = () => {
   const { id } = useParams();
@@ -507,29 +508,32 @@ const EventEdit = () => {
                     </div>
 
                     <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event User ID
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
-                        <SelectBox
-                          options={eventUserID?.map((user) => ({
-                            value: user.id, // Store user.id instead of full name
-                            label: `${user.firstname} ${user.lastname}`, // Display full name
-                          }))}
-                          defaultValue={formData.user_id || ""} // Ensure the correct user_id is preselected
-                          onChange={(value) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              user_id: value, // Store user.id instead of full name
-                            }))
-                          }
-                        />
-                      </div>
-                    </div>
+  <div className="form-group">
+    <label>
+      Event User ID
+    </label>
+    <MultiSelectBox
+      options={eventUserID?.map((user) => ({
+        value: user.id, // Store user.id
+        label: `${user.firstname} ${user.lastname}`, // Display full name
+      }))}
+      defaultValue={
+        Array.isArray(formData.user_id)
+          ? formData.user_id.map((id) => {
+              const user = eventUserID.find((user) => user.id === id);
+              return user ? { value: user.id, label: `${user.firstname} ${user.lastname}` } : null;
+            }).filter(Boolean) // Filter out null values
+          : []
+      }
+      onChange={(value) =>
+        setFormData((prev) => ({
+          ...prev,
+          user_id: value.map((item) => item.value), // Store only the IDs
+        }))
+      }
+    />
+  </div>
+</div>
 
                     <div className="col-md-3">
                       <div className="form-group">

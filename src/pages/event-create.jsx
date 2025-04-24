@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
+import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 
 const EventCreate = () => {
@@ -696,7 +697,7 @@ const EventCreate = () => {
                             *
                           </span> */}
                         </label>
-                        <SelectBox
+                        <MultiSelectBox
                           options={eventUserID?.map((user) => ({
                             value: user.id, // Ensure we use user.id instead of full name
                             label: `${user.firstname} ${user.lastname}`, // Display full name but store ID
