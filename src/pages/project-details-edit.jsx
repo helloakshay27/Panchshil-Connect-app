@@ -1438,10 +1438,11 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleAddVirtualTour = () => {
-    // if (!virtualTourName || !virtualTourUrl) {
-    //   alert("Please enter both Tour Name and URL.");
-    //   return;
-    // }
+    toast.dismiss(); // Clear previous toasts
+    if (!virtualTourName || !virtualTourUrl) {
+      toast.error ("Please enter both Tour Name and URL.");
+      return;
+    }
 
     setFormData((prev) => {
       console.log("Previous state:", prev); // Debugging
@@ -2289,7 +2290,7 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-              {/* <div className="col-md-6 mt-2">
+              <div className="col-md-6 mt-2">
                 <div className="form-group">
                   <label>
                     Project Description
@@ -2304,7 +2305,7 @@ const ProjectDetailsEdit = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div> */}
+              </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
@@ -2836,6 +2837,7 @@ const ProjectDetailsEdit = () => {
                     placeholder="Enter RERA Number"
                     value={reraNumber}
                     onChange={handleReraNumberChange}
+                    maxLength={12}
                   />
                 </div>
               </div>

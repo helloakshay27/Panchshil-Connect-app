@@ -1798,7 +1798,7 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              {/* <div className="col-md-6 mt-2">
+              <div className="col-md-6 mt-2">
                 <div className="form-group">
                   <label>
                     Project Description
@@ -1813,7 +1813,7 @@ const ProjectDetailsCreate = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div> */}
+              </div>
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">

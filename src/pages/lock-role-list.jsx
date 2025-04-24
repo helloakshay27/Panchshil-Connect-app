@@ -424,7 +424,7 @@ const LockRoleList = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      {/* <style jsx>{`
         .role-list {
           max-height: 500px;
           overflow-y: auto;
@@ -488,7 +488,7 @@ const LockRoleList = () => {
           border-radius: 4px;
           font-weight: 500;
         }
-      `}</style>
+      `}</style> */}
     </div>
   );
 };
