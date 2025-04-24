@@ -792,7 +792,7 @@ const ProjectDetails = () => {
                   </table>
                 </div>
               </div>
-              <div className="col-md-12 ">
+              <div className="col-md-12 mt-2">
                 <h5 className=" ">Brochure</h5>
                 <div className=" tbl-container w-100">
                   <table className=" w-100">

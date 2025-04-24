@@ -180,11 +180,11 @@ const Referrallist = () => {
                                 index +
                                 1}
                             </td>
-                            <td>{referral.name}</td>
-                            <td>{referral.email}</td>
-                            <td>{referral.mobile}</td>
-                            <td>{referral.referral_code || "N/A"}</td>
-                            <td>{referral.project_name}</td>
+                            <td>{referral.name || "-"}</td>
+                            <td>{referral.email || "-"}</td>
+                            <td>{referral.mobile || "-"}</td>
+                            <td>{referral.referral_code || "-"}</td>
+                            <td>{referral.project_name || "-"}</td>
                           </tr>
                         ))
                       ) : (

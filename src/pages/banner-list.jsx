@@ -273,7 +273,7 @@ const BannerList = () => {
                               </td>
                               {/* <td>Lockated, Pune</td>
                               <td>{banner.company_name || "No Name"}</td> */}
-                              <td>{banner.title || "No Title"}</td>
+                              <td>{banner.title || "-"}</td>
                               <td
                                 className="text-center"
                                 style={{
@@ -283,7 +283,7 @@ const BannerList = () => {
                                 }}
                               >
                                 <img  
-                                  src={banner?.attachfile?.document_url || "NA"}
+                                  src={banner?.attachfile?.document_url || "-"}
                                   className="img-fluid rounded"
                                   alt={banner.title || "Banner Image"}
                                   style={{

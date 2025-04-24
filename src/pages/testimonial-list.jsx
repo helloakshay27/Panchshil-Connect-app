@@ -224,9 +224,9 @@ const TestimonialList = () => {
                                 index +
                                 1}
                             </td>
-                            <td>{testimonial.user_name}</td>
+                            <td>{testimonial.user_name || "-"}</td>
                             {/* <td>{testimonial.user_type}</td> */}
-                            <td>{testimonial.content}</td>
+                            <td>{testimonial.content || "-"}</td>
                             {/* <td>{testimonial.company_setup_id}</td> */}
                             {/* <td>{testimonial.company_name}</td> */}
                             <td>

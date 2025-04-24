@@ -287,12 +287,12 @@ const Eventlist = () => {
                                 </td>
 
                                 {/* <td>{event.project_name}</td> */}
-                                <td>{event.event_name}</td>
-                                <td>{event.event_at}</td>
+                                <td>{event.event_name || "-"}</td>
+                                <td>{event.event_at || "-"}</td>
 
-                                <td>{event.from_time}</td>
+                                <td>{event.from_time || "-"}</td>
 
-                                <td>{event.to_time}</td>
+                                <td>{event.to_time || "-"}</td>
                                 <td>
                                   <button
                                     onClick={() =>
