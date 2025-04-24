@@ -77,7 +77,6 @@ const ProjectDetailsEdit = () => {
     rera_url: "",
   });
 
-  console.log("formData", formData);
 
   const [projectsType, setProjectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
@@ -100,8 +99,11 @@ const ProjectDetailsEdit = () => {
   const [buildingTypes, setBuildingTypes] = useState([]);
   const [statusOptions, setStatusOptions] = useState([]);
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
-  console.log(statusOptions)
-  
+  // console.log(statusOptions);
+
+  useEffect(() => {
+    console.log("formData", formData);
+  }, [formData]);
 
   // const API_BASE_URL = "https://panchshil-super.lockated.com";
   // const AUTH_TOKEN = "Bearer RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q";
@@ -115,7 +117,7 @@ const ProjectDetailsEdit = () => {
       });
 
       setter(response.data);
-      console.log("response:---", response.data);
+      // console.log("response:---", response.data);
     } catch (error) {
       console.error(`Error fetching data from ${endpoint}:`, error);
     }
@@ -138,31 +140,28 @@ const ProjectDetailsEdit = () => {
       });
   }, []);
 
-    const fetchBuildingTypes = async () => {
-      // setLoading(tru/e);
-      try {
-        const response = await axios.get(
-          `${baseURL}/building_types.json`
-        );
-        const options = response.data
-            .filter((item) => item.active) // optional: only include active types
-            .map((type) => ({
-              value: type.building_type,
-              label: type.building_type,
-            }));
-        setBuildingTypes(options);
-      } catch (error) {
-        console.error("Error fetching building types:", error);
-        toast.error("Failed to fetch building types");
-      } finally {
-        // setLoading(false);
-        
-      }
-    };
-  
-    useEffect(() => {
-      fetchBuildingTypes();
-    }, []);
+  const fetchBuildingTypes = async () => {
+    // setLoading(tru/e);
+    try {
+      const response = await axios.get(`${baseURL}/building_types.json`);
+      const options = response.data
+        .filter((item) => item.active) // optional: only include active types
+        .map((type) => ({
+          value: type.building_type,
+          label: type.building_type,
+        }));
+      setBuildingTypes(options);
+    } catch (error) {
+      console.error("Error fetching building types:", error);
+      toast.error("Failed to fetch building types");
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBuildingTypes();
+  }, []);
 
   useEffect(() => {
     // fetchData("get_property_types.json", (data) =>
@@ -179,28 +178,28 @@ const ProjectDetailsEdit = () => {
     );
   }, []);
 
-  console.log("projectsType", projectsType);
-   useEffect(() => {
-      const fetchConstructionStatuses = async () => {
-        try {
-          const response = await axios.get(
-            `${baseURL}construction_statuses.json`
-          );
-          const options = response.data
-            .filter((status) => status.active) // Filter only active statuses
-            .map((status) => ({
-              label: status.construction_status, // Display name
-              value: status.construction_status, // Unique identifier
-              name: status.Project_Construction_Status_Name,
-            }));
-          setStatusOptions(options); // Set the options for the dropdown
-        } catch (error) {
-          console.error("Error fetching construction statuses:", error);
-        }
-      };
-  
-      fetchConstructionStatuses();
-    }, []);
+  // console.log("projectsType", projectsType);
+  useEffect(() => {
+    const fetchConstructionStatuses = async () => {
+      try {
+        const response = await axios.get(
+          `${baseURL}construction_statuses.json`
+        );
+        const options = response.data
+          .filter((status) => status.active) // Filter only active statuses
+          .map((status) => ({
+            label: status.construction_status, // Display name
+            value: status.construction_status, // Unique identifier
+            name: status.Project_Construction_Status_Name,
+          }));
+        setStatusOptions(options); // Set the options for the dropdown
+      } catch (error) {
+        console.error("Error fetching construction statuses:", error);
+      }
+    };
+
+    fetchConstructionStatuses();
+  }, []);
 
   useEffect(() => {
     const fetchCategoryTypes = async () => {
@@ -236,7 +235,7 @@ const ProjectDetailsEdit = () => {
         });
 
         const projectData = response.data;
-        console.log("projectData", projectData);
+        // console.log("projectData", projectData);
 
         setFormData({
           Property_Type: projectData.property_type || "",
@@ -288,7 +287,8 @@ const ProjectDetailsEdit = () => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
           fetched_gallery_image: projectData.gallery_image || [],
-          video_preview_image_url: projectData?.video_list[0]?.video_preview_image_url || "",
+          video_preview_image_url:
+            projectData?.video_list[0]?.video_preview_image_url || "",
           // project_ppt: [],
           // fetched_Project_PPT: projectData.project_ppt
           //   ? [projectData.project_ppt]
@@ -312,7 +312,7 @@ const ProjectDetailsEdit = () => {
         setProject(response.data);
       } catch (err) {
         setError("Failed to fetch project details.");
-        console.log(err)
+        console.log(err);
       } finally {
         setLoading(false);
       }
@@ -320,7 +320,7 @@ const ProjectDetailsEdit = () => {
     fetchProjectDetails();
   }, []);
 
-  console.log(formData)
+  // console.log(formData);
 
   const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
   const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -584,7 +584,7 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
 
-      console.log(`Image with ID ${image.id} deleted successfully`);
+      // console.log(`Image with ID ${image.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -709,7 +709,7 @@ const ProjectDetailsEdit = () => {
       });
 
       toast.success("Image deleted successfully!");
-      console.log(`Image with ID ${imageId} deleted successfully`);
+      // console.log(`Image with ID ${imageId} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error.message);
       toast.error("Failed to delete image. Please try again.");
@@ -745,7 +745,7 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
 
-      console.log(`Image with ID ${videos.id} deleted successfully`);
+      // console.log(`Image with ID ${videos.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -781,7 +781,7 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
 
-      console.log(`Image with ID ${Image.id} deleted successfully`);
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -817,7 +817,7 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
 
-      console.log(`Image with ID ${Image.id} deleted successfully`);
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -853,7 +853,7 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
 
-      console.log(`Image with ID ${Image.id} deleted successfully`);
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -889,7 +889,7 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
 
-      console.log(`Image with ID ${Image.id} deleted successfully`);
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -925,7 +925,7 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
 
-      console.log(`Image with ID ${Image.id} deleted successfully`);
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -961,7 +961,7 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = formData[key].filter((_, i) => i !== index);
       setFormData({ ...formData, [key]: updatedFiles });
 
-      console.log(`Image with ID ${Image.id} deleted successfully`);
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -1251,6 +1251,10 @@ const ProjectDetailsEdit = () => {
               `project[gallery_type]`,
               fileObj.gallery_image_file_type
             );
+            data.append(
+              `project[gallery_image_is_day][${index}]`,
+              fileObj.isDay
+            );
           }
         });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
@@ -1299,7 +1303,7 @@ const ProjectDetailsEdit = () => {
         },
       });
 
-      console.log(response.data);
+      // console.log(response.data);
       toast.success("Project updated successfully");
       navigate("/project-list");
     } catch (error) {
@@ -1440,12 +1444,12 @@ const ProjectDetailsEdit = () => {
   const handleAddVirtualTour = () => {
     toast.dismiss(); // Clear previous toasts
     if (!virtualTourName || !virtualTourUrl) {
-      toast.error ("Please enter both Tour Name and URL.");
+      toast.error("Please enter both Tour Name and URL.");
       return;
     }
 
     setFormData((prev) => {
-      console.log("Previous state:", prev); // Debugging
+      // console.log("Previous state:", prev);
       return {
         ...prev,
         virtual_tour_url_multiple: [
@@ -1565,7 +1569,7 @@ const ProjectDetailsEdit = () => {
 
       const updatedFiles = prev[key].filter((_, i) => i !== index);
 
-      console.log(`Updated ${key} after deletion:`, updatedFiles); // Debugging log
+      // console.log(`Updated ${key} after deletion:`, updatedFiles);
 
       return { ...prev, [key]: updatedFiles };
     });
@@ -2010,29 +2014,39 @@ const ProjectDetailsEdit = () => {
 
   const handlePropertyTypeChange = async (selectedOption) => {
     const { value, id } = selectedOption;
-  
+
     setFormData((prev) => ({
       ...prev,
       Property_Type: value,
       Property_type_id: id, // Store the ID for API calls
       building_type: "", // Reset building type when property type changes
     }));
-  
+
     try {
       // Fetch building types based on the selected property type
       const response = await axios.get(
         `${baseURL}/building_types.json?q[property_type_id_eq]=${id}`
       );
-  
+
       const formattedBuildingTypes = response.data.map((item) => ({
         value: item.building_type,
         label: item.building_type,
       }));
-  
-      setBuildingTypes(formattedBuildingTypes); // Update the building types
+
+      setBuildingTypes(formattedBuildingTypes);
     } catch (error) {
       console.error("Error fetching building types:", error);
     }
+  };
+
+  const handleDayNightChange = (index, isDay) => {
+    setFormData((prev) => {
+      const updatedGallery = [...(prev.gallery_image || [])];
+      if (updatedGallery[index]) {
+        updatedGallery[index].isDay = isDay;
+      }
+      return { ...prev, gallery_image: updatedGallery };
+    });
   };
 
   return (
@@ -2137,53 +2151,51 @@ const ProjectDetailsEdit = () => {
     />
   </div>
 </div> */}
-             <div className="col-md-3">
-  <div className="form-group">
-    <label>
-      Property Type
-      <span className="otp-asterisk"> *</span>
-    </label>
-    {propertyTypeOptions.length > 0 ? (
-      <PropertySelect
-        options={propertyTypeOptions}
-        defaultValue={formData.Property_Type}
-        value={
-         propertyTypeOptions.find( 
-          (type) => type.value === formData.Property_Type
-        ) || null // Ensure defaultValue is set correctly
-        }
-        // defaultValue={propertyTypeOptions.find(
-        //   (type) => type.value === formData.Property_Type
-        // )}
-        onChange={(value) => handlePropertyTypeChange(value)}
-        isClearable
-        isSearchable
-        placeholder="Select Property Type"
-      />
-    ) : (
-      <p>No property types available</p>
-    )}
-  </div>
-</div>
+              <div className="col-md-3">
+                <div className="form-group">
+                  <label>
+                    Property Type
+                    <span className="otp-asterisk"> *</span>
+                  </label>
+                  {propertyTypeOptions.length > 0 ? (
+                    <PropertySelect
+                      options={propertyTypeOptions}
+                      defaultValue={formData.Property_Type}
+                      value={
+                        propertyTypeOptions.find(
+                          (type) => type.value === formData.Property_Type
+                        ) || null // Ensure defaultValue is set correctly
+                      }
+                      // defaultValue={propertyTypeOptions.find(
+                      //   (type) => type.value === formData.Property_Type
+                      // )}
+                      onChange={(value) => handlePropertyTypeChange(value)}
+                      isClearable
+                      isSearchable
+                      placeholder="Select Property Type"
+                    />
+                  ) : (
+                    <p>No property types available</p>
+                  )}
+                </div>
+              </div>
 
-<div className="col-md-3 mt-1">
-  <div className="form-group">
-    <label>
-      Project Building Type
-    </label>
-    <SelectBox
-      options={buildingTypes || []}
-      defaultValue={formData.building_type}
-      onChange={(selectedValue) =>
-        setFormData((prev) => ({
-          ...prev,
-          building_type: selectedValue,
-        }))
-      }
-      isDisabled={!formData.Property_Type}
-    />
-  </div>
-</div>
+              <div className="col-md-3 mt-1">
+                <div className="form-group">
+                  <label>Project Building Type</label>
+                  <SelectBox
+                    options={buildingTypes || []}
+                    defaultValue={formData.building_type}
+                    onChange={(selectedValue) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        building_type: selectedValue,
+                      }))
+                    }
+                    isDisabled={!formData.Property_Type}
+                  />
+                </div>
+              </div>
               <div className="col-md-3 mt-0">
                 <div className="form-group">
                   <label>
@@ -2191,15 +2203,14 @@ const ProjectDetailsEdit = () => {
                     <span className="otp-asterisk"> *</span>
                   </label>
                   <SelectBox
-                  options={statusOptions || []}
-                  defaultValue={formData.Project_Construction_Status}
-                  
+                    options={statusOptions || []}
+                    defaultValue={formData.Project_Construction_Status}
                     // options={ statusOptions.map((status) => ({
                     //   value: status.value,
                     //   label: status.label,
                     // }))}
                     // defaultValue={parseInt(formData.Project_Construction_Status)}
-                    onChange={(selectedValue) => 
+                    onChange={(selectedValue) =>
                       setFormData((prev) => ({
                         ...prev,
                         Project_Construction_Status: selectedValue,
@@ -2292,10 +2303,7 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-6 mt-2">
                 <div className="form-group">
-                  <label>
-                    Project Description
-                    
-                  </label>
+                  <label>Project Description</label>
                   <textarea
                     className="form-control"
                     rows={1}
@@ -2706,7 +2714,7 @@ const ProjectDetailsEdit = () => {
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
-                  Order Number
+                    Order Number
                     {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
@@ -2725,50 +2733,50 @@ const ProjectDetailsEdit = () => {
               </div>
 
               <div className="col-md-3 mt-2">
-  <label>Enable Enquiry</label>
-  <div className="form-group">
-    <button
-      onClick={() =>
-        setFormData((prev) => ({
-          ...prev,
-          enable_enquiry: !prev.enable_enquiry, // Toggle the boolean value
-        }))
-      }
-      className="toggle-button"
-      style={{
-        border: "none",
-        background: "none",
-        cursor: "pointer",
-        padding: 0,
-        width: "35px",
-      }}
-    >
-      {formData.enable_enquiry ? (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="30"
-          fill="var(--red)"
-          className="bi bi-toggle-on"
-          viewBox="0 0 16 16"
-        >
-          <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
-        </svg>
-      ) : (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="30"
-          fill="#667085"
-          className="bi bi-toggle-off"
-          viewBox="0 0 16 16"
-        >
-          <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
-        </svg>
-      )}
-    </button>
-  </div>
-</div>
+                <label>Enable Enquiry</label>
+                <div className="form-group">
+                  <button
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        enable_enquiry: !prev.enable_enquiry, // Toggle the boolean value
+                      }))
+                    }
+                    className="toggle-button"
+                    style={{
+                      border: "none",
+                      background: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      width: "35px",
+                    }}
+                  >
+                    {formData.enable_enquiry ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="40"
+                        height="30"
+                        fill="var(--red)"
+                        className="bi bi-toggle-on"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="40"
+                        height="30"
+                        fill="#667085"
+                        className="bi bi-toggle-off"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
 
               {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
@@ -2851,7 +2859,7 @@ const ProjectDetailsEdit = () => {
                     name="rera_url"
                     placeholder="Enter RERA URL"
                     value={reraUrl}
-                    onChange={ handleReraUrlChange}
+                    onChange={handleReraUrlChange}
                   />
                 </div>
               </div>
@@ -3267,6 +3275,7 @@ const ProjectDetailsEdit = () => {
                         {/* <th>Image Category</th> */}
                         <th>Image Name</th>
                         <th>Image</th>
+                        <th>Day/Night</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -3291,13 +3300,15 @@ const ProjectDetailsEdit = () => {
                               )}
                             </td>
                             <td>
+                              <div>{file.day_night ? "Day" : "Night"}</div>
+                            </td>
+                            <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
                                 onClick={() =>
                                   handleFetchedDiscardGallery(
-                                    "fetched_gallery_image", // 🔥 correct key
-
+                                    "fetched_gallery_image",
                                     index,
                                     attachment.id
                                   )
@@ -3313,16 +3324,7 @@ const ProjectDetailsEdit = () => {
                       {(formData.gallery_image ?? []).map((file, index) => (
                         <tr key={`new-${index}`}>
                           {/* <td>{file.gallery_image_file_type || "N/A"}</td> */}
-                          <td>
-                            <input
-                              className="form-control"
-                              type="text"
-                              name="gallery_image_file_name"
-                              placeholder="Enter Image Name"
-                              value={file.gallery_image_file_name}
-                              onChange={(e) => handleImageNameChange(e, index)}
-                            />
-                          </td>
+                          <td>{file.gallery_image_file_name || "N/A"}</td>
                           <td>
                             {file.gallery_image && (
                               <img
@@ -3335,6 +3337,23 @@ const ProjectDetailsEdit = () => {
                                 alt="Preview"
                               />
                             )}
+                          </td>
+                          <td>
+                            <select
+                              className="form-control"
+                              value={
+                                file.isDay === undefined || file.isDay ? 1 : 0
+                              }
+                              onChange={(e) =>
+                                handleDayNightChange(
+                                  index,
+                                  e.target.value === "1" ? true : false
+                                )
+                              }
+                            >
+                              <option value={1}>Day</option>
+                              <option value={0}>Night</option>
+                            </select>
                           </td>
                           <td>
                             <button
@@ -3560,51 +3579,51 @@ const ProjectDetailsEdit = () => {
                     </thead>
                     <tbody>
                       {/* Project PPT Files */}
-                      {formData.project_ppt ?
+                      {formData.project_ppt ? (
                         // (Array.isArray(formData.project_ppt) ? (
-                          // If it's an array of files
-                          // formData.project_ppt.map((file, index) => (
-                            <tr >
-                              <td>
-                                {formData.ppt_name ||
-                                  formData.ppt_name ||
-                                  "No File"}
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleDiscardFile("project_ppt", index)
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          // ))
+                        // If it's an array of files
+                        // formData.project_ppt.map((file, index) => (
+                        <tr>
+                          <td>
+                            {formData.ppt_name ||
+                              formData.ppt_name ||
+                              "No File"}
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardFile("project_ppt", index)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ) : (
+                        // ))
                         // )
-                         : (
-                          // If it's a single file (as an object)
-                          <tr>
-                            <td>
-                              {formData.project_ppt?.name ||
-                                formData.project_ppt?.document_file_name ||
-                                "No File"}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() =>
-                                  handleDiscardFile("project_ppt", 0)
-                                }
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        )}
+                        // If it's a single file (as an object)
+                        <tr>
+                          <td>
+                            {formData.project_ppt?.name ||
+                              formData.project_ppt?.document_file_name ||
+                              "No File"}
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardFile("project_ppt", 0)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>

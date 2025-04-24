@@ -1260,7 +1260,7 @@ const ProjectDetailsCreate = () => {
   const handleDayNightChange = (index, isDay) => {
     setFormData((prev) => {
       const updatedGallery = [...prev.gallery_image];
-      updatedGallery[index].isDay = isDay; // Update isDay as a boolean
+      updatedGallery[index].isDay = isDay;
       return { ...prev, gallery_image: updatedGallery };
     });
   };
