@@ -96,7 +96,7 @@ const Header = () => {
               </NavLink>
               <NavLink
                 className="nav-link px-4 d-flex align-items-center"
-                to="/setup-member/property-type-list"
+                to="/setup-member/lock-role-list"
               >
                 Setup
               </NavLink>
