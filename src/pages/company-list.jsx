@@ -197,7 +197,7 @@ const CompanyList = () => {
                               </a>
                             </td>
                             <td>{startIndex + index + 1}</td>
-                            <td>{company.name}</td>
+                            <td>{company.name || "-"}</td>
                             <td
                               className="text-center"
                               style={{
@@ -207,7 +207,7 @@ const CompanyList = () => {
                               }}
                             >
                               <img
-                                src={company?.attachfile?.document_url || "NA"}
+                                src={company?.attachfile?.document_url || "-"}
                                 className="img-fluid rounded"
                                 alt={company.title || "Company Logo"}
                                 style={{
@@ -217,7 +217,7 @@ const CompanyList = () => {
                                 }}
                               />
                             </td>
-                            <td>{company.organization_name}</td>
+                            <td>{company.organization_name || "-"}</td>
                           </tr>
                         ))}
                       </tbody>

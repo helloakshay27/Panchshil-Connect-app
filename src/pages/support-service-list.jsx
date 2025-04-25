@@ -172,14 +172,14 @@ const SupportServiceList = () => {
                             {(pagination.current_page - 1) * pageSize +
                               index +
                               1}
-                            <td>{service.name}</td>
-                            <td>{service.email}</td>
-                            <td>{service.mobile_number}</td>
-                            <td>{service.service_category}</td>
-                            <td>{service.property_type}</td>
-                            <td>{service.unit_type}</td>
-                            <td>{service.price_range_from}</td>
-                            <td>{service.price_range_to}</td>
+                            <td>{service.name || "-"}</td>
+                            <td>{service.email || "-"}</td>
+                            <td>{service.mobile_number || "-"}</td>
+                            <td>{service.service_category || "-"}</td>
+                            <td>{service.property_type || "-"}</td>
+                            <td>{service.unit_type || "-"}</td>
+                            <td>{service.price_range_from || "-"}</td>
+                            <td>{service.price_range_to || "-"}</td>
                           </tr>
                         ))
                       ) : (

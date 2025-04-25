@@ -221,9 +221,9 @@ const OrganizationList = () => {
                                 index +
                                 1}
                             </td>
-                            <td>{org.name}</td>
-                            <td>{org.domain || "N/A"}</td>
-                            <td>{org.sub_domain || "N/A"}</td>
+                            <td>{org.name || "-"}</td>
+                            <td>{org.domain || "-"}</td>
+                            <td>{org.sub_domain || "-"}</td>
                             <td>
                               {org.attachfile?.document_url ? (
                                 <img

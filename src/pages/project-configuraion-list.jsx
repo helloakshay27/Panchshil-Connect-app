@@ -212,7 +212,7 @@ const ProjectConfigurationList = () => {
                                 index +
                                 1}
                             </td>
-                            <td>{config.name}</td>
+                            <td>{config.name || "-"}</td>
                             <td>
                               {config.attachfile?.document_file_name ? (
                                 config.attachfile.document_content_type?.startsWith(

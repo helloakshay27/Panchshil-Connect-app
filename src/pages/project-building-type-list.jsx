@@ -249,7 +249,7 @@ const ProjectBuildingTypeList = () => {
                                   index +
                                   1}
                               </td>
-                              <td>{type.building_type}</td>
+                              <td>{type.building_type || "-"}</td>
                               <td>
                                 <button
                                   onClick={() =>

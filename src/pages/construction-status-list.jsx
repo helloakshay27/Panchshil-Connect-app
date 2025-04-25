@@ -210,7 +210,7 @@ const ConstructionStatusList = () => {
                                 index +
                                 1}
                             </td>{" "}
-                            <td>{status.construction_status}</td>
+                            <td>{status.construction_status || "-"}</td>
                             <td>
                               <button
                                 onClick={() =>

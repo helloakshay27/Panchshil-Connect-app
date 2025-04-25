@@ -230,7 +230,7 @@ const PropertyTypeList = () => {
                                 index +
                                 1}
                             </td>
-                            <td>{property.property_type || "N/A"}</td>
+                            <td>{property.property_type || "-"}</td>
                             <td>
                               <button
                                 onClick={() =>

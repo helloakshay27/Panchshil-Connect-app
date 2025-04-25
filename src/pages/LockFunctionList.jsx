@@ -327,11 +327,11 @@ const LockFunctionList = () => {
                               </button>
                             </div>
                           </td>
-                          <td>{func.id}</td>
-                          <td>{func.name}</td>
-                          <td>{func.action_name}</td>
-                          <td>{func.parent_function}</td>
-                          <td>{func.module_id}</td>
+                          <td>{func.id || "-"}</td>
+                          <td>{func.name || "-"}</td>
+                          <td>{func.action_name || "-"}</td>
+                          <td>{func.parent_function || "-"}</td>
+                          <td>{func.module_id || "-"}</td>
                           {/* <td>
                             <span
                               className={`badge ${

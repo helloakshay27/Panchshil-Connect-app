@@ -235,12 +235,12 @@ const SitevisitList = () => {
                               </a>
                             </td>
                             <td>{startIndex + index + 1}</td>
-                            <td>{visit.status}</td>
-                            <td>{visit.scheduled_time}</td>
-                            <td>{visit.project_name || "No Project Name"}</td>
-                            <td>{visit.name || "N/A"}</td>
-                            <td>{visit.email || "N/A"}</td>
-                            <td>{visit.mobile_no || "N/A"}</td>
+                            <td>{visit.status || "-"}</td>
+                            <td>{visit.scheduled_time || "-"}</td>
+                            <td>{visit.project_name || "-"}</td>
+                            <td>{visit.name || "-"}</td>
+                            <td>{visit.email || "-"}</td>
+                            <td>{visit.mobile_no || "-"}</td>
                             
                           </tr>
                         ))

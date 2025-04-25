@@ -283,7 +283,7 @@ const AmenitiesList = () => {
                                   index +
                                   1}
                               </td>
-                              <td>{amenity.name || "No Name"}</td>
+                              <td>{amenity.name || "-"}</td>
 
                               <td>
                                 {amenity.icon_url ? (

@@ -269,7 +269,7 @@ const PressReleasesList = () => {
                                     index +
                                     1}  
                                 </td>
-                                <td>{release.title || "N/A"}</td>
+                                <td>{release.title || "-"}</td>
                                 {/* <td>{release.company_name || "N/A"}</td>
                                 <td>{release.project_name || "N/A"}</td> */}
                                 <td
@@ -282,10 +282,10 @@ const PressReleasesList = () => {
                                     cursor: "pointer",
                                   }}
                                 >
-                                  {release.description || "No description"}
+                                  {release.description || "-"}
                                 </td>
 
-                                <td>{release.release_date || "Unknown"}</td>
+                                <td>{release.release_date || "-"}</td>
                                 <td
                                   className="text-center"
                                   style={{
