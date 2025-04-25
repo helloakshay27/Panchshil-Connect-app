@@ -75,6 +75,7 @@ const ProjectDetails = () => {
     enable_enquiry: false,
     rera_url: "",
     isDay: true,
+    video_url: "",
   });
 
   console.log("formdata", formData);
@@ -89,15 +90,12 @@ const ProjectDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}get_all_projects.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}get_all_projects.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         const projects = response.data.projects;
         console.log("Projects:", projects);
@@ -523,7 +521,9 @@ const ProjectDetails = () => {
                   <div className="col-6">
                     <label className="text">
                       <span className="me-3">
-                        <span className="text-dark">: {formData.project_sales_type}</span>
+                        <span className="text-dark">
+                          : {formData.project_sales_type}
+                        </span>
                       </span>
                     </label>
                   </div>
@@ -535,9 +535,7 @@ const ProjectDetails = () => {
                   <div className="col-6">
                     <label className="text">
                       <span className="me-3">
-                        <span className="text-dark">
-                          : {formData.order_no}
-                        </span>
+                        <span className="text-dark">: {formData.order_no}</span>
                       </span>
                     </label>
                   </div>
@@ -802,61 +800,60 @@ const ProjectDetails = () => {
               <div className="col-md-12 mt-2">
                 <h5 className=" ">Gallery Images</h5>
                 {loading ? (
-                    <div className="text-center">
-                      <div
-                        className="spinner-border"
-                        role="status"
-                        style={{ color: "var(--red)" }}
-                      >
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
+                  <div className="text-center">
+                    <div
+                      className="spinner-border"
+                      role="status"
+                      style={{ color: "var(--red)" }}
+                    >
+                      <span className="visually-hidden">Loading...</span>
                     </div>
-                  ) : (
+                  </div>
+                ) : (
+                  <div className="mt-4 tbl-container">
+                    <table className="   w-100">
+                      <thead>
+                        <tr>
+                          <th>Category Type</th>
+                          <th>File Name</th>
 
-                <div className="mt-4 tbl-container">
-                  <table className="   w-100">
-                    <thead>
-                      <tr>
-                        <th>Category Type</th>
-                        <th>File Name</th>
-
-                        <th>File Type</th>
-                        <th>updated at</th>
-                        <th>Image</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {formData.gallery_image?.map((file, index) =>
-                        file.attachfiles?.map((attachment, idx) => (
-                          <tr key={`fetched-${index}-${idx}`}>
-                            <td>{file.gallery_type || "N/A"}</td>
-                            <td>{attachment.document_file_name || "N/A"}</td>
-                            <td>{attachment.document_content_type}</td>
-                            <td>{attachment.document_updated_at}</td>
-                            <td>
-                              <a href={`${attachment.document_url}`}>
-                                {" "}
-                                <svg
-                                  width="15"
-                                  height="16"
-                                  viewBox="0 0 22 23"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
-                                    fill="#8B0203"
-                                  ></path>
-                                </svg>
-                              </a>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                          <th>File Type</th>
+                          <th>updated at</th>
+                          <th>Image</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {formData.gallery_image?.map((file, index) =>
+                          file.attachfiles?.map((attachment, idx) => (
+                            <tr key={`fetched-${index}-${idx}`}>
+                              <td>{file.gallery_type || "N/A"}</td>
+                              <td>{attachment.document_file_name || "N/A"}</td>
+                              <td>{attachment.document_content_type}</td>
+                              <td>{attachment.document_updated_at}</td>
+                              <td>
+                                <a href={`${attachment.document_url}`}>
+                                  {" "}
+                                  <svg
+                                    width="15"
+                                    height="16"
+                                    viewBox="0 0 22 23"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
+                                      fill="#8B0203"
+                                    ></path>
+                                  </svg>
+                                </a>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
               <div className="col-md-12 mt-2">
                 <h5 className=" ">Brochure</h5>
@@ -1093,30 +1090,32 @@ const ProjectDetails = () => {
                     </thead>
                     <tbody>
                       {formData.project_creative_generics.length > 0 &&
-                        formData.project_creative_generics.map((file, index) => (
-                          <tr key={index}>
-                            <td>{file.document_file_name}</td>
-                            <td>{file.document_content_type}</td>
-                            <td>{file.document_updated_at}</td>
-                            <td>
-                              <a href={`${file.document_url}`}>
-                                {" "}
-                                <svg
-                                  width="15"
-                                  height="16"
-                                  viewBox="0 0 22 23"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
-                                    fill="#8B0203"
-                                  ></path>
-                                </svg>
-                              </a>
-                            </td>
-                          </tr>
-                        ))}
+                        formData.project_creative_generics.map(
+                          (file, index) => (
+                            <tr key={index}>
+                              <td>{file.document_file_name}</td>
+                              <td>{file.document_content_type}</td>
+                              <td>{file.document_updated_at}</td>
+                              <td>
+                                <a href={`${file.document_url}`}>
+                                  {" "}
+                                  <svg
+                                    width="15"
+                                    height="16"
+                                    viewBox="0 0 22 23"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
+                                      fill="#8B0203"
+                                    ></path>
+                                  </svg>
+                                </a>
+                              </td>
+                            </tr>
+                          )
+                        )}
                     </tbody>
                   </table>
                 </div>
@@ -1270,34 +1269,38 @@ const ProjectDetails = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.project_emailer_templetes && (
-                        <tr>
-                          <td>{formData.project_emailer_templetes?.document_file_name}</td>
-                          <td>{formData.project_emailer_templetes?.document_content_type}</td>
-                          <td>{formData.project_emailer_templetes?.document_updated_at}</td>
-                          <td>
-                            <a href={`${formData.project_emailer_templetes?.document_url}`}>
-                              <svg
-                                width="15"
-                                height="16"
-                                viewBox="0 0 22 23"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
+                      {formData.project_emailer_templetes &&
+                        formData.project_emailer_templetes.map((doc, index) => (
+                          <tr key={index}>
+                            <td>{doc.document_file_name}</td>
+                            <td>{doc.document_content_type}</td>
+                            <td>{doc.document_updated_at}</td>
+                            <td>
+                              <a
+                                href={doc.document_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
                               >
-                                <path
-                                  d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
-                                  fill="#8B0203"
-                                ></path>
-                              </svg>
-                            </a>
-                          </td>
-                        </tr>
-                      )}
+                                <svg
+                                  width="15"
+                                  height="16"
+                                  viewBox="0 0 22 23"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
+                                    fill="#8B0203"
+                                  />
+                                </svg>
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
               </div>
-
 
               <div className="col-md-12 mt-2">
                 <h5 className=" ">Videos</h5>
@@ -1341,6 +1344,24 @@ const ProjectDetails = () => {
                   </table>
                 </div>
               </div>
+              <div className="col-md-12 mt-2">
+                <h5 className="">
+                  Video Preview Image Url :{" "}
+                  <a
+                    href={formData.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-dark"
+                    style={{
+                      textDecoration: "underline",
+                      fontWeight: "500",
+                      color: "var(--red)",
+                    }}
+                  >
+                    Check Here
+                  </a>
+                </h5>
+              </div>
             </div>
           </div>
         </div>
@@ -1351,7 +1372,7 @@ const ProjectDetails = () => {
           </div>
           <div className="card-body">
             <div className="row">
-            <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+              <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                 <div className="col-6 ">
                   <label>Country</label>
                 </div>
@@ -1359,7 +1380,8 @@ const ProjectDetails = () => {
                   <label className="text">
                     <span className="me-3">
                       <span className="text-dark">
-                        :{formData?.virtual_tour_url_multiple?.length > 0
+                        :
+                        {formData?.virtual_tour_url_multiple?.length > 0
                           ? formData.virtual_tour_url_multiple.map(
                               (virtual, idx) => (
                                 <div key={idx}>
