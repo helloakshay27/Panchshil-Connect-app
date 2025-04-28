@@ -21,8 +21,11 @@ const SignIn = () => {
   
   // Panchshil configuration
   const config = {
-    baseURL: "https://panchshil-super.lockated.com/",
-    logoUrl: LOGO_URL,
+    // baseURL: "https://panchshil-super.lockated.com/",
+    // baseURL: "http://localhost:3000/",
+
+    baseURL: "https://api-connect.panchshil.com/",
+    logoUrl: LOGO_URL, 
     loginBgClass: "login_bg",
     loginSecClass: "login-sec",
     logoStyle: { width: 100, height: 100, margin: "auto" },
