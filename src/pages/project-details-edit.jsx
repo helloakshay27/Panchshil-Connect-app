@@ -1130,7 +1130,7 @@ const ProjectDetailsEdit = () => {
       } else if (key === "brochure" && value) {
         const file = value instanceof File ? value : value.file;
         if (file) {
-          data.append("project[brochure][]", file);
+          data.append("project[ProjectBrochure][]", file);
         }
       } else if (
         key === "project_emailer_templetes" &&
@@ -1140,7 +1140,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_emailer_templetes][]", file);
+            data.append("project[ProjectEmailerTempletes][]", file);
           }
         });
       } else if (
@@ -1151,7 +1151,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_ppt][]", file);
+            data.append("project[ProjectPPT][]", file);
           }
         });
       } else if (
@@ -1162,7 +1162,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[two_d_images][]", file);
+            data.append("project[Project2DImage][]", file);
           }
         });
       } else if (
@@ -1173,7 +1173,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_creatives][]", file);
+            data.append("project[ProjectCreatives][]", file);
           }
         });
       } else if (
@@ -1184,7 +1184,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_creative_generics][]", file);
+            data.append("project[ProjectCreativeGenerics][]", file);
           }
         });
       } else if (
@@ -1195,7 +1195,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_creative_offers][]", file);
+            data.append("project[ProjectCreativeOffers][]", file);
           }
         });
       } else if (
@@ -1206,7 +1206,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_interiors][]", file);
+            data.append("project[ProjectInteriors][]", file);
           }
         });
       } else if (
@@ -1217,7 +1217,7 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_exteriors][]", file);
+            data.append("project[ProjectExteriors][]", file);
           }
         });
       } else if (
@@ -1228,14 +1228,14 @@ const ProjectDetailsEdit = () => {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[project_layout][]", file);
+            data.append("project[ProjectLayout][]", file);
           }
         });
       } else if (key === "videos" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
-            data.append("project[videos][]", file);
+            data.append("project[ProjectVideo][]", file);
           }
         });
       } else if (key === "gallery_image" && Array.isArray(value)) {
@@ -1528,17 +1528,16 @@ const ProjectDetailsEdit = () => {
       gallery_image: file, // ✅ Store the actual File object
       gallery_image_file_name: file.name,
       gallery_image_file_type: selectedCategory,
-      attachfile: { document_url: URL.createObjectURL(file) }, // ✅ Add temporary URL
+      attachfile: { document_url: URL.createObjectURL(file) },
     }));
 
     setFormData((prev) => ({
       ...prev,
-      gallery_image: [...(prev.gallery_image || []), ...updatedImages], // ✅ Preserve previous images
+      gallery_image: [...(prev.gallery_image || []), ...updatedImages], 
     }));
 
-    event.target.value = ""; // Reset file input
+    event.target.value = ""; 
   };
-
   const handleGalleryImageUpload = (event) => {
     const files = Array.from(event.target.files);
     if (!files.length) return;
@@ -1547,25 +1546,23 @@ const ProjectDetailsEdit = () => {
       id: null, // No ID for new uploads
       document_file_name: file.name,
       document_content_type: file.type,
-      document_url: URL.createObjectURL(file), // Temporary preview
-      file, // Store the actual file for upload later
+      document_url: URL.createObjectURL(file), 
+      file, 
     }));
     setFormData((prev) => ({
       ...prev,
-      gallery_image: [...prev.gallery_image, ...files], // Append new images
+      gallery_image: [...prev.gallery_image, ...files], 
     }));
   };
-
   const handleDiscardGallery = (index) => {
     setFormData((prev) => ({
       ...prev,
       gallery_image: prev.gallery_image.filter((_, i) => i !== index),
     }));
   };
-
   const handleDiscardPpt = (key, index) => {
     setFormData((prev) => {
-      if (!prev[key] || !Array.isArray(prev[key])) return prev; // Ensure key exists and is an array
+      if (!prev[key] || !Array.isArray(prev[key])) return prev; 
 
       const updatedFiles = prev[key].filter((_, i) => i !== index);
 
@@ -1574,9 +1571,7 @@ const ProjectDetailsEdit = () => {
       return { ...prev, [key]: updatedFiles };
     });
   };
-
   const MAX_PPT_SIZE = 10 * 1024 * 1024; // 10MB
-
   // Modify the handleFileUpload function to handle gallery_images
   const handleFileUpload = (name, files) => {
     const MAX_SIZES = {
@@ -1594,7 +1589,6 @@ const ProjectDetailsEdit = () => {
       project_emailer_templetes: MAX_BROCHURE_SIZE,
       project_layout: MAX_IMAGE_SIZE,
     };
-
     const allowedTypes = {
       image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
