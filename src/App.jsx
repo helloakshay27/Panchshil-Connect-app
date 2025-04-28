@@ -104,6 +104,7 @@ let CreatePasswordComponent;
 let LoginWithOtpComponent;
 
 if (baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://api-connect.panchshil.com/") {
+  // if (baseURL === "https://api-connect.panchshil.com/") {
   // if (baseURL === "http://localhost:3000/") {
   LoginComponent = <SignIn />;
   ForgotPasswordComponent = <Forgot />;
