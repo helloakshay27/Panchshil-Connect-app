@@ -239,6 +239,17 @@ const EventEdit = () => {
     navigate(-1);
   };
 
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+  
+
   return (
     <>
       <div className="main-content">
@@ -332,43 +343,34 @@ const EventEdit = () => {
                       </div>
                     </div>
                     <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event From
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
-                        <input
-                          className="form-control"
-                          type="datetime-local"
-                          name="from_time"
-                          placeholder="Enter Event From"
-                          value={formatDateForInput(formData.from_time) || "NA"}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event To
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
-                        <input
-                          className="form-control"
-                          type="datetime-local"
-                          name="to_time"
-                          placeholder="Enter Event To"
-                          value={formatDateForInput(formData.to_time)}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
+  <div className="form-group">
+    <label>Event From</label>
+    <input
+      className="form-control"
+      type="datetime-local"
+      name="from_time"
+      placeholder="Enter Event From"
+      min={getCurrentDateTime()}
+      value={formatDateForInput(formData.from_time) || "NA"}
+      onChange={handleChange}
+    />
+  </div>
+</div>
+
+<div className="col-md-3">
+  <div className="form-group">
+    <label>Event To</label>
+    <input
+      className="form-control"
+      type="datetime-local"
+      name="to_time"
+      placeholder="Enter Event To"
+      min={getCurrentDateTime()}
+      value={formatDateForInput(formData.to_time)}
+      onChange={handleChange}
+    />
+  </div>
+</div>
 
                     <div className="col-md-3">
                       <div className="form-group">

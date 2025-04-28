@@ -4355,9 +4355,9 @@ label {
   color: var(--black);
 }
 
-label span {
+/* label span {
   color: var(--red);
-}
+} */
 
 .mor {
   border-radius: 18px;

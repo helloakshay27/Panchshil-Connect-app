@@ -4,18 +4,28 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { baseURL } from "./baseurl/apiDomain";
 
+const getPageFromStorage = () => {
+  return parseInt(localStorage.getItem("organization_currentPage")) || 1;
+};
+
 const LockFunctionList = () => {
   const [lockFunctions, setLockFunctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [pagination, setPagination] = useState({
+    current_page: getPageFromStorage(),
+    total_count: 0,
+    total_pages: 0,
+  });
+  const pageSize = 10;
 
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchLockFunctions();
-  }, []);
+  }, [pagination.current_page]);
 
   const fetchLockFunctions = async () => {
     try {
@@ -31,6 +41,13 @@ const LockFunctionList = () => {
       );
 
       setLockFunctions(response.data || []);
+      
+      // Update pagination information based on data length
+      setPagination(prev => ({
+        ...prev,
+        total_count: response.data?.length || 0,
+        total_pages: Math.ceil((response.data?.length || 0) / pageSize)
+      }));
     } catch (error) {
       console.error("Error fetching lock functions:", error);
       toast.error("Failed to load lock functions");
@@ -96,28 +113,15 @@ const LockFunctionList = () => {
       func.action_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       func.parent_function?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  //   const handleToggleStatus = async (id, currentStatus) => {
-  //     const updatedStatus = currentStatus === 1 ? 0 : 1;
-  //     try {
-  //       const response = await axios.put(
-  //         `${baseURL}/lock_functions/${id}.json`,
-  //         { lock_function: { active: updatedStatus } }
-  //       );
-
-  //       if (response.status === 200) {
-  //         setLockFunctions((prev) =>
-  //           prev.map((item) =>
-  //             item.id === id ? { ...item, active: updatedStatus } : item
-  //           )
-  //         );
-  //         toast.success("Status updated successfully!");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error updating status:", error);
-  //       toast.error("Failed to update status.");
-  //     }
-  //   };
+  
+  // Calculate pagination for filtered results
+  const totalFiltered = filteredFunctions.length;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
+  
+  // Get current page items
+  const indexOfLastItem = pagination.current_page * pageSize;
+  const indexOfFirstItem = indexOfLastItem - pageSize;
+  const currentItems = filteredFunctions.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -126,6 +130,16 @@ const LockFunctionList = () => {
       params.set("s[name_cont]", searchQuery);
     }
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+    // Reset to first page when searching
+    handlePageChange(1);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setPagination((prevState) => ({
+      ...prevState,
+      current_page: pageNumber,
+    }));
+    localStorage.setItem("organization_currentPage", pageNumber);
   };
 
   return (
@@ -227,36 +241,9 @@ const LockFunctionList = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredFunctions.length > 0 ? (
-                      filteredFunctions.map((func) => (
+                    {currentItems.length > 0 ? (
+                      currentItems.map((func) => (
                         <tr key={func.id}>
-                          {/* <td>
-                            <div className="btn-group" role="group">
-                              <Link
-                                to={`/edit-lock-function/${func.id}`}
-                                className="btn btn-sm btn-info me-1"
-                                title="Edit"
-                              >
-                                <i className="fas fa-edit"></i>
-                              </Link>
-                              <button
-                                className={`btn btn-sm ${
-                                  func.active === 1 ? 'btn-warning' : 'btn-success'
-                                } me-1`}
-                                title={func.active === 1 ? 'Deactivate' : 'Activate'}
-                                onClick={() => handleToggleStatus(func.id, func.active)}
-                              >
-                                <i className={`fas ${func.active === 1 ? 'fa-ban' : 'fa-check'}`}></i>
-                              </button>
-                              <button
-                                className="btn btn-sm btn-danger"
-                                title="Delete"
-                                onClick={() => handleDelete(func.id)}
-                              >
-                                <i className="fas fa-trash"></i>
-                              </button>
-                            </div>
-                          </td> */}
                           <td>
                             <div
                               style={{
@@ -273,16 +260,6 @@ const LockFunctionList = () => {
                                     `/setup-member/lock-function-edit/${func.id}`
                                   );
                                 }}
-                                style={
-                                  {
-                                    // background: "none",
-                                    // border: "none",
-                                    // padding: "0",
-                                    // display: "flex",
-                                    // alignItems: "center",
-                                    // justifyContent: "flex-start",
-                                  }
-                                }
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -308,7 +285,6 @@ const LockFunctionList = () => {
                                   background: "none",
                                   border: "none",
                                   padding: "0",
-
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "flex-start",
@@ -318,7 +294,6 @@ const LockFunctionList = () => {
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
                                   height="16"
-                                  // fill="currentColor"
                                   className="bi bi-trash3"
                                   viewBox="0 0 16 16"
                                 >
@@ -332,25 +307,8 @@ const LockFunctionList = () => {
                           <td>{func.action_name || "-"}</td>
                           <td>{func.parent_function || "-"}</td>
                           <td>{func.module_id || "-"}</td>
-                          {/* <td>
-                            <span
-                              className={`badge ${
-                                func.active === 1 ? 'bg-success' : 'bg-danger'
-                              }`}
-                            >
-                              {func.active === 1 ? 'Active' : 'Inactive'}
-                            </span>
-                          </td> */}
                           <td>
                             <div className="btn-group" role="group">
-                              {/* <Link
-      to={`/edit-lock-function/${func.id}`}
-      className="btn btn-sm btn-info me-1"
-      title="Edit"
-    >
-      <i className="fas fa-edit"></i>
-    </Link> */}
-
                               <button
                                 className="btn btn-sm me-1"
                                 title={
@@ -389,14 +347,6 @@ const LockFunctionList = () => {
                                   </svg>
                                 )}
                               </button>
-
-                              {/* <button
-      className="btn btn-sm btn-danger"
-      title="Delete"
-      onClick={() => handleDelete(func.id)}
-    >
-      <i className="fas fa-trash"></i>
-    </button> */}
                             </div>
                           </td>
                         </tr>
@@ -412,6 +362,83 @@ const LockFunctionList = () => {
                 </table>
               </div>
             )}
+             <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                <ul className="pagination justify-content-center d-flex">
+                  <li
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(1)}
+                    >
+                      First
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                      }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page - 1)
+                      }
+                      disabled={pagination.current_page === 1}
+                    >
+                      Prev
+                    </button>
+                  </li>
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
+                    <li
+                      key={pageNumber}
+                      className={`page-item ${pagination.current_page === pageNumber ? "active" : ""
+                        }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""
+                      }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() =>
+                        handlePageChange(pagination.current_page + 1)
+                      }
+                      disabled={pagination.current_page === totalPages}
+                    >
+                      Next
+                    </button>
+                  </li>
+                  <li
+                    className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""
+                      }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(totalPages)}
+                      disabled={pagination.current_page === totalPages}
+                    >
+                      Last
+                    </button>
+                  </li>
+                </ul>
+                <p>
+                  Showing {totalFiltered > 0 ? (pagination.current_page - 1) * pageSize + 1 : 0} to{" "}
+                  {Math.min(pagination.current_page * pageSize, totalFiltered)} of {totalFiltered}{" "}
+                  entries
+                </p>
+              </div>
           </div>
         </div>
       </div>

@@ -408,7 +408,7 @@ const ProjectDetails = () => {
                     </label>
                   </div>
                 </div>
-                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                {/* <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
                     <label>Rera Sellable Area</label>
                   </div>
@@ -421,7 +421,7 @@ const ProjectDetails = () => {
                       </span>
                     </label>
                   </div>
-                </div>
+                </div> */}
                 <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
                     <label>Number of Towers</label>

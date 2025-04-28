@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Toaster, toast } from 'react-hot-toast';
+
 
 const LockRoleList = () => {
   const [lockRoles, setLockRoles] = useState([]);
@@ -163,11 +164,12 @@ const LockRoleList = () => {
   };
 
   const savePermissions = async () => {
+    toast.dismiss(); // Dismiss any existing toasts
     if (!selectedRole) return;
-    
+  
     try {
       const permissionsHash = JSON.stringify(editedPermissions);
-      
+  
       await axios.put(
         `https://panchshil-super.lockated.com/lock_roles/${selectedRole.id}.json`,
         {
@@ -182,23 +184,24 @@ const LockRoleList = () => {
           },
         }
       );
-      
-      // Update the local state
+  
       const updatedRoles = lockRoles.map(role => 
         role.id === selectedRole.id 
           ? { ...role, permissions_hash: permissionsHash } 
           : role
       );
-      
+  
       setLockRoles(updatedRoles);
-      
-      // Show success toast
-      toast.success("Permissions updated successfully!");
+  
+      // ✅ Beautiful green toast
+      toast.success("Role Updated successfully!");
     } catch (error) {
       console.error("Error saving permissions:", error);
-      toast.error("Failed to save permissions");
+      toast.error("Failed to update role.");
     }
   };
+  
+  
 
   const filteredRoles = lockRoles.filter(
     (role) =>
@@ -351,7 +354,7 @@ const LockRoleList = () => {
                          <table className="w-100">
                           <thead>
                             <tr className="bg-light">
-                              <th></th>
+                              <th>Functions</th>
                               <th >All</th>
                               <th >Add</th>
                               <th >View</th>
@@ -405,13 +408,31 @@ const LockRoleList = () => {
                         </div>
                         
                         <div className="text-end mt-3">
-                          <button 
-                            className="update-btn"
-                            onClick={savePermissions}
-                          >
-                            Update
-                          </button>
-                        </div>
+    <button 
+      className="update-btn"
+      onClick={savePermissions}
+    >
+      Update
+    </button>
+  </div>
+
+  {/* Toaster component */}
+  {/* <Toaster
+    position="top-right"
+    toastOptions={{
+      style: {
+        border: '1px solid #e0e0e0',
+        padding: '10px 16px',
+        color: '#333',
+        fontWeight: '500',
+      },
+      iconTheme: {
+        primary: '#22c55e', // green
+        secondary: '#f0fdf4',
+      },
+    }}
+  /> */}
+
                       </>
                     )}
                   </div>
