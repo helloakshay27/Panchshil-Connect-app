@@ -647,11 +647,9 @@ const ProjectDetailsEdit = () => {
 
   const handleImageNameChange = (e, index) => {
     const { value } = e.target;
-
     setFormData((prev) => {
       const updatedGallery = [...prev.gallery_image];
       updatedGallery[index].gallery_image_file_name = value;
-
       return { ...prev, gallery_image: updatedGallery };
     });
   };
@@ -662,11 +660,6 @@ const ProjectDetailsEdit = () => {
       toast.error("Failed to delete image. Image ID is missing.");
       return;
     }
-
-    // const confirmDelete = window.confirm(
-    //   "Are you sure you want to delete this image?"
-    // );
-    // if (!confirmDelete) return;
 
     try {
       const response = await fetch(
@@ -929,6 +922,42 @@ const ProjectDetailsEdit = () => {
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
+    }
+  };
+
+  const handleFileDiscardEmailerTemplate = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}projects/${id}/remove_emailer_templetes_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete Templetes");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting Templetes:", error);
+      alert("Failed to delete Templete. Please try again.");
     }
   };
 
@@ -1779,7 +1808,7 @@ const ProjectDetailsEdit = () => {
           project_creative_offers: [
             ...(prev.project_creative_offers || []),
             ...validFiles,
-          ], // ✅ Fix: Ensure existing files are kept
+          ], 
         }));
       }
     }
@@ -1793,12 +1822,10 @@ const ProjectDetailsEdit = () => {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
           return;
         }
-
         if (file.size > MAX_SIZES.project_creative_generics) {
           toast.error(`File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-
         validFiles.push(file);
       });
 
@@ -1808,7 +1835,7 @@ const ProjectDetailsEdit = () => {
           project_creative_generics: [
             ...(prev.project_creative_generics || []),
             ...validFiles,
-          ], // ✅ Fix: Ensure existing files are kept
+          ], 
         }));
       }
     }
@@ -1816,21 +1843,17 @@ const ProjectDetailsEdit = () => {
     if (name === "project_creatives") {
       const newFiles = Array.from(files);
       const validFiles = [];
-
       newFiles.forEach((file) => {
         if (!allowedTypes.project_creatives.includes(file.type)) {
           toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
           return;
         }
-
         if (file.size > MAX_SIZES.project_creatives) {
           toast.error(`File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-
         validFiles.push(file);
       });
-
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
@@ -1842,21 +1865,17 @@ const ProjectDetailsEdit = () => {
     if (name === "project_ppt") {
       const newFiles = Array.from(files);
       const validFiles = [];
-
       newFiles.forEach((file) => {
         if (!allowedTypes.project_ppt.includes(file.type)) {
           toast.error("Only PPT and PPTX files are allowed for Project PPT.");
           return;
         }
-
         if (file.size > MAX_SIZES.project_ppt) {
           toast.error(`File too large: ${file.name}. Max size is 10MB.`);
           return;
         }
-
         validFiles.push(file);
       });
-
       if (validFiles.length > 0) {
         setFormData((prev) => {
           // Make sure we're properly handling all possible states of prev.project_ppt
@@ -4430,7 +4449,7 @@ const ProjectDetailsEdit = () => {
                                     type="button"
                                     className="purple-btn2"
                                     onClick={() =>
-                                      handleDiscardFile(
+                                      handleFileDiscardEmailerTemplate(
                                         "project_emailer_templetes",
                                         index
                                       )
@@ -4443,7 +4462,6 @@ const ProjectDetailsEdit = () => {
                             )
                           )
                         ) : (
-                          // If it's a single file (as an object)
                           <tr>
                             <td>
                               {formData.project_emailer_templetes?.name ||
