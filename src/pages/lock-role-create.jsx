@@ -190,9 +190,9 @@ const LockRoleCreate = () => {
 
   return (
     <>
-      <div className="main-content">
-        <div className="website-content overflow-hidden">
-          <div className="module-data-section">
+      {/* <div className="main-content"> */}
+        <div className="module-data-section">
+          {/* <div className="module-data-section"> */}
             <div className="card mt-4 pb-4 mx-4">
               <div className="card-header">
                 <h3 className="card-title">Create Lock Role</h3>
@@ -283,7 +283,7 @@ const LockRoleCreate = () => {
                 </div>
               </div>
             </div>
-          </div>
+          {/* </div> */}
 
           {/* Submit and Cancel Buttons */}
           <div className="row mt-4 justify-content-center">
@@ -307,7 +307,7 @@ const LockRoleCreate = () => {
             </div>
           </div>
         </div>
-      </div>
+      {/* </div> */}
     </>
   );
 };

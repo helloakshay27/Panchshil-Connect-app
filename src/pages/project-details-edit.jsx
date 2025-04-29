@@ -75,6 +75,7 @@ const ProjectDetailsEdit = () => {
     order_no: "",
     enable_enquiry: false,
     rera_url: "",
+    Disclaimer: "",
   });
 
 
@@ -307,6 +308,7 @@ const ProjectDetailsEdit = () => {
           project_sales_type: projectData.project_sales_type || "",
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
+          Disclaimer: projectData.disclaimer || "",
         });
 
         setProject(response.data);
@@ -2740,6 +2742,20 @@ const ProjectDetailsEdit = () => {
                     placeholder="Default input"
                     name="order_no"
                     value={formData.order_no}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6 mt-2">
+                <div className="form-group">
+                  <label>Disclaimer</label>
+                  <textarea
+                    className="form-control"
+                    rows={1}
+                    placeholder="Enter disclaimer..."
+                    name="Disclaimer"
+                    value={formData.Disclaimer}
                     onChange={handleChange}
                   />
                 </div>

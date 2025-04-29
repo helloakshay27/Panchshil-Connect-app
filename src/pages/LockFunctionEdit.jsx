@@ -11,6 +11,7 @@ const LockFunctionEdit = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [parentFunctions, setParentFunctions] = useState([]);
+  const [showActionName, setShowActionName] = useState(true);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -39,7 +40,7 @@ const LockFunctionEdit = () => {
         setFormData({
           name: functionData.name || "",
           action_name: functionData.action_name || "",
-          parent_function: functionData.parent_function || "all_functions",
+          parent_function: functionData.parent_function || "",
           active:
             functionData.active === true || functionData.active === 1 ? 1 : 0,
         });
@@ -102,6 +103,61 @@ const LockFunctionEdit = () => {
       ...formData,
       [name]: type === "checkbox" ? (checked ? 1 : 0) : value,
     });
+  };
+
+  // Handle name selection and auto-fill action_name
+  const handleNameChange = (value) => {
+    let actionName = "";
+
+    if (value === "Project") {
+      actionName = "project";
+    } else if (value === "Banner") {
+      actionName = "banner";
+    } else if (value === "Testimonial") {
+      actionName = "testimonial";
+    } else if (value === "Referral") {
+      actionName = "referral";
+    } else if (value === "Enquiry") {
+      actionName = "enquiry";
+    } else if (value === "Event") {
+      actionName = "event";
+    } else if (value === "Specification") {
+      actionName = "specification";
+    } else if (value === "Site Visit") {
+      actionName = "site_visit";
+    } else if (value === "Organization") {
+      actionName = "organization";
+    } else if (value === "Company") {
+      actionName = "company";
+    } else if (value === "Support Service") {
+      actionName = "support_service";
+    } else if (value === "Press Releases") {
+      actionName = "press_releases";
+    } else if (value === "User Role") {
+      actionName = "user_role";
+    } else if (value === "Lock Function") {
+      actionName = "lock_function";
+    } else if (value === "Property Type") {
+      actionName = "property_type";
+    } else if (value === "Project Building") {
+      actionName = "project_building";
+    } else if (value === "Construction") {
+      actionName = "construction";
+    } else if (value === "Project Config") {
+      actionName = "project_config";
+    } else if (value === "Amenities") {
+      actionName = "amenities";
+    } else if (value === "Site Slot") {
+      actionName = "site_slot";
+    }
+
+    setFormData({
+      ...formData,
+      name: value,
+      action_name: actionName, // auto-fill
+    });
+
+    setShowActionName(false); // Hide Action Name field
   };
 
   // Form Validation
@@ -193,6 +249,30 @@ const LockFunctionEdit = () => {
     );
   }
 
+  // Prepare the name options for the dropdown
+  const nameOptions = [
+    { label: "Project", value: "Project" },
+    { label: "Banner", value: "Banner" },
+    { label: "Testimonial", value: "Testimonial" },
+    { label: "Referral", value: "Referral" },
+    { label: "Enquiry", value: "Enquiry" },
+    { label: "Event", value: "Event" },
+    { label: "Specification", value: "Specification" },
+    { label: "Site Visit", value: "Site Visit" },
+    { label: "Organization", value: "Organization" },
+    { label: "Company", value: "Company" },
+    { label: "Support Service", value: "Support Service" },
+    { label: "Press Releases", value: "Press Releases" },
+    { label: "User Role", value: "User Role" },
+    { label: "Lock Function", value: "Lock Function" },
+    { label: "Property Type", value: "Property Type" },
+    { label: "Project Building", value: "Project Building" },
+    { label: "Construction", value: "Construction" },
+    { label: "Project Config", value: "Project Config" },
+    { label: "Amenities", value: "Amenities" },
+    { label: "Site Slot", value: "Site Slot" },
+  ];
+
   return (
     <>
       <div className="main-content">
@@ -204,20 +284,17 @@ const LockFunctionEdit = () => {
               </div>
               <div className="card-body">
                 <div className="row">
-                  {/* Name Input */}
+                  {/* Name Input - Changed to SelectBox */}
                   <div className="col-md-4">
                     <div className="form-group">
                       <label>
                         Name
                         <span className="otp-asterisk"> *</span>
                       </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter function name"
+                      <SelectBox
+                        options={nameOptions}
+                        defaultValue={formData.name}
+                        onChange={(value) => handleNameChange(value)}
                       />
                       {errors.name && (
                         <span className="error text-danger">{errors.name}</span>
@@ -225,53 +302,33 @@ const LockFunctionEdit = () => {
                     </div>
                   </div>
 
-                  {/* Action Name Input */}
-                  <div className="col-md-4">
-                    <div className="form-group">
-                      <label>
-                        Action Name
-                        <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="action_name"
-                        value={formData.action_name}
-                        onChange={handleChange}
-                        placeholder="Enter action name"
-                      />
-                      {errors.action_name && (
-                        <span className="error text-danger">
-                          {errors.action_name}
-                        </span>
-                      )}
+                  {/* Action Name Input - Now conditionally shown */}
+                  {showActionName && (
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>
+                          Action Name
+                          <span className="otp-asterisk"> *</span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="action_name"
+                          value={formData.action_name}
+                          onChange={handleChange}
+                          placeholder="Enter action name"
+                          readOnly // Make it readonly since it fills automatically
+                        />
+                        {errors.action_name && (
+                          <span className="error text-danger">
+                            {errors.action_name}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Parent Function Selection */}
-                  {/* <div className="col-md-4">
-                    <div className="form-group">
-                      <label>
-                        Parent Function
-                        <span className="otp-asterisk"> *</span>
-                      </label>
-                      <SelectBox
-                        options={parentFunctions.map((func) => ({
-                          label: func.name,
-                          value: func.id,
-                        }))}
-                        defaultValue={formData.parent_function}
-                        onChange={(value) =>
-                          setFormData({ ...formData, parent_function: value })
-                        }
-                      />
-                      {errors.parent_function && (
-                        <span className="error text-danger">
-                          {errors.parent_function}
-                        </span>
-                      )}
-                    </div>
-                  </div> */}
                   <div className="col-md-4">
                     <div className="form-group">
                       <label>
@@ -280,7 +337,7 @@ const LockFunctionEdit = () => {
                       </label>
                       <SelectBox
                         options={[
-                          { label: "All Functions", value: "All Functions" }, // Default option
+                          { label: "All Functions", value: "All Functions" }, 
                         ]}
                         defaultValue={formData.parent_function}
                         onChange={(value) =>

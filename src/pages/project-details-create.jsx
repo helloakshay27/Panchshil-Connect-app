@@ -71,6 +71,7 @@ const ProjectDetailsCreate = () => {
     enable_enquiry: false,
     rera_url: "",
     isDay: true,
+    Disclaimer: "",
   });
 
   useEffect(() => {
@@ -2116,6 +2117,22 @@ const ProjectDetailsCreate = () => {
                     name="order_no"
                     placeholder="Enter Order Number"
                     value={formData.order_no}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                  Disclaimer
+                  
+                  </label>
+                  <textarea
+                    className="form-control"
+                    rows={1}
+                    name="Disclaimer"
+                    placeholder="Enter Disclaimer"
+                    value={formData.disclaimer}
                     onChange={handleChange}
                   />
                 </div>

@@ -10,11 +10,12 @@ const LockFunctionCreate = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [parentFunctions, setParentFunctions] = useState([]);
+  const [showActionName, setShowActionName] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
     action_name: "",
-    parent_function: "all_functions", // Default value
+    parent_function: "", // Default value
     active: 1,
   });
 
@@ -149,6 +150,60 @@ const LockFunctionCreate = () => {
     navigate(-1);
   };
 
+  const handleNameChange = (value) => {
+    let actionName = "";
+
+    if (value === "Project") {
+      actionName = "project";
+    } else if (value === "Banner") {
+      actionName = "banner";
+    } else if (value === "Testimonial") {
+      actionName = "testimonial";
+    } else if (value === "Referral") {
+      actionName = "referral";
+    } else if (value === "Enquiry") {
+      actionName = "enquiry";
+    } else if (value === "Event") {
+      actionName = "event";
+    } else if (value === "Specification") {
+      actionName = "specification";
+    } else if (value === "Site Visit") {
+      actionName = "site_visit";
+    } else if (value === "Organization") {
+      actionName = "organization";
+    } else if (value === "Company") {
+      actionName = "company";
+    } else if (value === "Support Service") {
+      actionName = "support_service";
+    } else if (value === "Press Releases") {
+      actionName = "press_releases";
+    } else if (value === "User Role") {
+      actionName = "user_role";
+    } else if (value === "Lock Function") {
+      actionName = "lock_function";
+    } else if (value === "Property Type") {
+      actionName = "property_type";
+    } else if (value === "Project Building") {
+      actionName = "project_building";
+    } else if (value === "Construction") {
+      actionName = "construction";
+    } else if (value === "Project Config") {
+      actionName = "project_config";
+    } else if (value === "Amenities") {
+      actionName = "amenities";
+    } else if (value === "Site Slot") {
+      actionName = "site_slot";
+    }
+
+    setFormData({
+      ...formData,
+      name: value,
+      action_name: actionName, // auto-fill
+    });
+
+    setShowActionName(false); // Hide Action Name field
+  };
+
   return (
     <>
       <div className="main-content">
@@ -167,42 +222,73 @@ const LockFunctionCreate = () => {
                         Name
                         <span className="otp-asterisk"> *</span>
                       </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter function name"
+
+                      {/* Changed input to select */}
+                      <SelectBox
+                        options={[
+                          { label: "Project", value: "Project" },
+                          { label: "Banner", value: "Banner" },
+                          { label: "Testimonial", value: "Testimonial" },
+                          { label: "Referral", value: "Referral" },
+                          { label: "Enquiry", value: "Enquiry" },
+                          { label: "Event", value: "Event" },
+                          { label: "Specification", value: "Specification" },
+                          { label: "Site Visit", value: "Site Visit" },
+                          { label: "Organization", value: "Organization" },
+                          { label: "Company", value: "Company" },
+                          {
+                            label: "Support Service",
+                            value: "Support Service",
+                          },
+                          { label: "Press Releases", value: "Press Releases" },
+                          { label: "User Role", value: "User Role" },
+                          { label: "Lock Function", value: "Lock Function" },
+                          { label: "Property Type", value: "Property Type" },
+                          {
+                            label: "Project Building",
+                            value: "Project Building",
+                          },
+                          { label: "Construction", value: "Construction" },
+                          { label: "Project Config", value: "Project Config" },
+                          { label: "Amenities", value: "Amenities" },
+                          { label: "Site Slot", value: "Site Slot" },
+                          // Add more if needed
+                        ]}
+                        Value={formData.name}
+                        onChange={(value) => handleNameChange(value)}
                       />
+
                       {errors.name && (
                         <span className="error text-danger">{errors.name}</span>
                       )}
                     </div>
                   </div>
 
-                  {/* Action Name Input */}
-                  <div className="col-md-4">
-                    <div className="form-group">
-                      <label>
-                        Action Name
-                        <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="action_name"
-                        value={formData.action_name}
-                        onChange={handleChange}
-                        placeholder="Enter action name"
-                      />
-                      {errors.action_name && (
-                        <span className="error text-danger">
-                          {errors.action_name}
-                        </span>
-                      )}
+                  {/* Action Name Field */}
+                  {showActionName && ( // Only show if needed
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>
+                          Action Name
+                          <span className="otp-asterisk"> *</span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="action_name"
+                          value={formData.action_name}
+                          onChange={handleChange}
+                          placeholder="Enter action name"
+                          readOnly // Make it readonly since it fills automatically
+                        />
+                        {errors.action_name && (
+                          <span className="error text-danger">
+                            {errors.action_name}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Parent Function Selection */}
                   {/* <div className="col-md-4">
