@@ -31,7 +31,7 @@ const LockFunctionList = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/lock_functions.json",
+        `${baseURL}/lock_functions.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -59,7 +59,7 @@ const LockFunctionList = () => {
   const handleToggleStatus = async (id, currentStatus) => {
     try {
       await axios.patch(
-        `https://panchshil-super.lockated.com/lock_functions/${id}.json`,
+        `${baseURL}/lock_functions/${id}.json`,
         {
           lock_function: {
             active: currentStatus === 1 ? 0 : 1,
@@ -85,7 +85,7 @@ const LockFunctionList = () => {
     if (window.confirm("Are you sure you want to delete this lock function?")) {
       try {
         await axios.delete(
-          `https://panchshil-super.lockated.com/lock_functions/${id}.json`,
+          `${baseURL}/lock_functions/${id}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,

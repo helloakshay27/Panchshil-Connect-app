@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from 'react-hot-toast';
+import { baseURL } from "./baseurl/apiDomain";
 
 
 const LockRoleList = () => {
@@ -75,7 +76,7 @@ const LockRoleList = () => {
     try {
       setFunctionsLoading(true);
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/lock_functions.json",
+        `${baseURL}/lock_functions.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -97,7 +98,7 @@ const LockRoleList = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://panchshil-super.lockated.com/lock_roles.json",
+        `${baseURL}/lock_roles.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -171,7 +172,7 @@ const LockRoleList = () => {
       const permissionsHash = JSON.stringify(editedPermissions);
   
       await axios.put(
-        `https://panchshil-super.lockated.com/lock_roles/${selectedRole.id}.json`,
+        `${baseURL}/lock_roles/${selectedRole.id}.json`,
         {
           lock_role: {
             permissions_hash: permissionsHash

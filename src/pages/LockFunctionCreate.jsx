@@ -24,7 +24,7 @@ const LockFunctionCreate = () => {
     const fetchParentFunctions = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/lock_functions.json",
+          `${baseURL}/lock_functions.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -122,7 +122,7 @@ const LockFunctionCreate = () => {
       };
 
       await axios.post(
-        "https://panchshil-super.lockated.com/lock_functions.json",
+        `${baseURL}/lock_functions.json`,
         payload,
         {
           headers: {

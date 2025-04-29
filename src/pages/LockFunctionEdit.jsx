@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
 
 const LockFunctionEdit = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const LockFunctionEdit = () => {
     const fetchLockFunction = async () => {
       try {
         const response = await axios.get(
-          `https://panchshil-super.lockated.com/lock_functions/${id}.json`,
+          `${baseURL}/lock_functions/${id}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -55,7 +56,7 @@ const LockFunctionEdit = () => {
     const fetchParentFunctions = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/lock_functions.json",
+          `${baseURL}/lock_functions.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -209,7 +210,7 @@ const LockFunctionEdit = () => {
       };
 
       await axios.put(
-        `https://panchshil-super.lockated.com/lock_functions/${id}.json`,
+        `${baseURL}/lock_functions/${id}.json`,
         payload,
         {
           headers: {

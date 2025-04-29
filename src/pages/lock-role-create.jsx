@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { baseURL } from "./baseurl/apiDomain";
 
 const LockRoleCreate = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const LockRoleCreate = () => {
     const fetchLockFunctions = async () => {
       try {
         const response = await axios.get(
-          "https://panchshil-super.lockated.com/lock_functions.json",
+          `${baseURL}/lock_functions.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -160,7 +161,7 @@ const LockRoleCreate = () => {
       };
 
       await axios.post(
-        "https://panchshil-super.lockated.com/lock_roles.json",
+        `${baseURL}/lock_roles.json`,
         payload,
         {
           headers: {
