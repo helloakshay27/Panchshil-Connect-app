@@ -508,34 +508,37 @@ const EventEdit = () => {
                         </div>
                       </div>
                     </div>
-
                     <div className="col-md-3">
-  <div className="form-group">
-    <label>
-      Event User ID
-    </label>
-    <MultiSelectBox
-      options={eventUserID?.map((user) => ({
-        value: user.id, // Store user.id
-        label: `${user.firstname} ${user.lastname}`, // Display full name
-      }))}
-      defaultValue={
-        Array.isArray(formData.user_id)
-          ? formData.user_id.map((id) => {
-              const user = eventUserID.find((user) => user.id === id);
-              return user ? { value: user.id, label: `${user.firstname} ${user.lastname}` } : null;
-            }).filter(Boolean) // Filter out null values
-          : []
-      }
-      onChange={(value) =>
-        setFormData((prev) => ({
-          ...prev,
-          user_id: value.map((item) => item.value), // Store only the IDs
-        }))
-      }
-    />
-  </div>
-</div>
+                    <div className="form-group">
+                        <label>Event User ID</label>
+                        <MultiSelectBox
+                          options={eventUserID?.map((user) => ({
+                            value: user.id, // Store user.id
+                            label: `${user.firstname} ${user.lastname}`, // Display full name
+                          }))}
+                          value={
+                            Array.isArray(formData.user_id)
+                              ? formData.user_id.map((id) => {
+                                  const user = eventUserID.find(
+                                    (user) => user.id === id
+                                  ); // Find the user by ID
+                                  return user
+                                    ? { value: user.id, label: `${user.firstname} ${user.lastname}` } // Map to value and label
+                                    : null;
+                                }).filter(Boolean) // Filter out null values
+                              : []
+                          }
+                          onChange={(selectedOptions) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              user_id: selectedOptions.map(
+                                (option) => option.value
+                              ), // Store only the IDs
+                            }))
+                          }
+                        />
+                      </div>
+                    </div>
 
                     <div className="col-md-3">
                       <div className="form-group">

@@ -36,7 +36,7 @@ const EventCreate = () => {
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
 
-  console.log("AA", eventType);
+  // console.log("AA", eventType);
   console.log("bb", eventUserID);
 
   // Handle input change for form fields
@@ -202,7 +202,7 @@ const EventCreate = () => {
     data.append("event[rsvp_action]", formData.rsvp_action);
     data.append("event[description]", formData.description);
     data.append("event[publish]", formData.publish);
-    data.append("event[user_id]", formData.user_id);
+    data.append("event[user_ids]", formData.user_id);
     data.append("event[comment]", formData.comment);
     data.append("event[shared]", formData.shared);
     data.append("event[share_groups]", formData.share_groups);
@@ -233,16 +233,12 @@ const EventCreate = () => {
 
     try {
       // Make the POST request
-      const response = await axios.post(
-        `${baseURL}events.json`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${baseURL}events.json`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Event created successfully!");
       setFormData({
@@ -409,7 +405,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Name
-                          <span className="otp-asterisk">{" "}*</span>
+                          <span className="otp-asterisk"> *</span>
                         </label>
                         <input
                           className="form-control"
@@ -699,14 +695,30 @@ const EventCreate = () => {
                         </label>
                         <MultiSelectBox
                           options={eventUserID?.map((user) => ({
-                            value: user.id, // Ensure we use user.id instead of full name
-                            label: `${user.firstname} ${user.lastname}`, // Display full name but store ID
+                            value: user.id,
+                            label: `${user.firstname} ${user.lastname}`,
                           }))}
-                          value={formData.user_id || ""} // Ensure the correct user_id is preselected
-                          onChange={(value) =>
+                          value={
+                            formData.user_id
+                              ? formData.user_id.split(",").map((id) => ({
+                                  value: id,
+                                  label:
+                                    eventUserID.find(
+                                      (user) => user.id.toString() === id
+                                    )?.firstname +
+                                    " " +
+                                    eventUserID.find(
+                                      (user) => user.id.toString() === id
+                                    )?.lastname,
+                                }))
+                              : []
+                          } // Map the string of IDs back to objects for display
+                          onChange={(selectedOptions) =>
                             setFormData((prev) => ({
                               ...prev,
-                              user_id: value, // Store user.id instead of full name
+                              user_id: selectedOptions
+                                .map((option) => option.value)
+                                .join(","), // Join IDs into a comma-separated string
                             }))
                           }
                         />

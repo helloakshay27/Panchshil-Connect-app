@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import toast from "react-hot-toast";
 
 const Eventlist = () => {
   const [events, setEvents] = useState([]);
@@ -103,6 +104,7 @@ const Eventlist = () => {
         }
       );
 
+      toast.success("Updated Status")
       if (!response.ok) {
         throw new Error("Failed to update event status");
       }
