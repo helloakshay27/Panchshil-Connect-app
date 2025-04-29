@@ -17,6 +17,27 @@ const BannerList = () => {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [bannerPermissions, setBannerPermissions] = useState({});
+
+ const getBannerPermissions = () => {
+     try {
+       const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+       if (!lockRolePermissions) return {};
+   
+       const permissions = JSON.parse(lockRolePermissions);
+       return permissions.banners || {}; 
+     } catch (e) {
+       console.error("Error parsing lock_role_permissions:", e);
+       return {};
+     }
+   };
+     
+     console.log("banner permission:", bannerPermissions);
+  
+  useEffect(() => {
+    setBannerPermissions(getBannerPermissions());
+  }, []);
+
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("banner_list_currentPage")) || 1;
   };
@@ -27,6 +48,9 @@ const BannerList = () => {
   });
   const [pageSize] = useState(10);
   const navigate = useNavigate();
+
+
+
 
   const onToggle = async (bannerId, currentStatus) => {
     toast.dismiss();
@@ -185,25 +209,28 @@ const BannerList = () => {
                   </div>
                 </form>{" "}
               </div>
+              { bannerPermissions.create === "true" && (
               <div className="card-tools mt-1">
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() => navigate("/banner-add")}
+              <button
+                className="purple-btn2 rounded-3"
+                fdprocessedid="xn3e6n"
+                onClick={() => navigate("/banner-add")}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={26}
+                  height={20}
+                  fill="currentColor"
+                  className="bi bi-plus"
+                  viewBox="0 0 16 16"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={26}
-                    height={20}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-              </div>
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                </svg>
+                <span>Add</span>
+              </button>
+            </div>
+            )}
+              
             </div>
 
             {/* {Table content} */}

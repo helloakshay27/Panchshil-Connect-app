@@ -10,6 +10,7 @@ const getPageFromStorage = () => {
 
 const SiteVisitSlotConfigList = () => {
   const [slots, setSlots] = useState([]);
+  const [siteSlotsPermissions, setSiteSlotsPermissions] = useState({});
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
@@ -144,7 +145,24 @@ const SiteVisitSlotConfigList = () => {
   };
 
 
-
+  //Lock Role
+  const getSiteSlotsPermissions = () => {
+    try {
+      const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+      if (!lockRolePermissions) return {};
+  
+      const permissions = JSON.parse(lockRolePermissions);
+      return permissions.site_slot || {}; 
+    } catch (e) {
+      console.error("Error parsing lock_role_permissions:", e);
+      return {};
+    }
+  };
+    useEffect(() => {
+      setSiteSlotsPermissions(getSiteSlotsPermissions());
+    }, []);
+    
+    console.log("site slots per", siteSlotsPermissions);
   return (
     <div className="main-content">
       {/* <div className="website-content overflow-auto"> */}
@@ -185,6 +203,8 @@ const SiteVisitSlotConfigList = () => {
                 </div>
               </div>
             </div>
+            
+            { siteSlotsPermissions.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -203,6 +223,7 @@ const SiteVisitSlotConfigList = () => {
                 Add
               </button>
             </div>
+            )}
           </div>
 
           <div className="card mt-3 pb-4 mx-4">

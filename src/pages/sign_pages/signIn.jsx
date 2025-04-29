@@ -21,10 +21,10 @@ const SignIn = () => {
   
   // Panchshil configuration
   const config = {
-    baseURL: "https://panchshil-super.lockated.com/",
+    // baseURL: "https://panchshil-super.lockated.com/",
     // baseURL: "http://localhost:3000/",
 
-    // baseURL: "https://api-connect.panchshil.com/",
+    baseURL: "https://api-connect.panchshil.com/",
     logoUrl: LOGO_URL, 
     loginBgClass: "login_bg",
     loginSecClass: "login-sec",
@@ -65,11 +65,37 @@ const SignIn = () => {
           password,
         },
       });
-
+      console.log("Response:", response);
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);
         sessionStorage.setItem("email", response.data.email);
         sessionStorage.setItem("firstname", response.data.firstname);
+        
+        // Get All Lock Roles 
+        
+        // const lockRolesResponse = await axios.get(
+        //   `${config.baseURL}/lock_roles.json`,
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${response.data.access_token}`,
+        //     },
+        //   }
+        // );        
+        // const lockRoles = lockRolesResponse.data || [];
+        // lockRoles.forEach(role => {
+        //   if (role.name && role.permissions_hash) {
+        //     localStorage.setItem(role.name, role.permissions_hash);
+        //   }
+        // });
+        // localStorage.setItem("lock_roles", JSON.stringify(lockRoles));
+
+        // From Users Sign in Api Lock Roles
+        const lockRole = response.data.lock_role;
+        if(lockRole) {
+          localStorage.setItem("lock_role_name", lockRole.name);
+          localStorage.setItem("lock_role_permissions", lockRole.permissions_hash);
+        }
+        // console.log("Lock Roles:", lockRole);
         navigate("/project-list");
         toast.success("Login successful");
       } else {
