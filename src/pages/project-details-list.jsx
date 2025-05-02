@@ -14,7 +14,7 @@ const ProjectDetailsList = () => {
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [projectPermission, setProjectPermission] = useState({});
   const getPageFromStorage = () => {
     return (
       parseInt(localStorage.getItem("project_details_list_currentPage")) || 1
@@ -42,6 +42,25 @@ const ProjectDetailsList = () => {
   const pageSize = 10; // Items per page
 
   const navigate = useNavigate();
+
+   const getProjectPermission = () => {
+      try {
+        const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+        if (!lockRolePermissions) return {};
+    
+        const permissions = JSON.parse(lockRolePermissions);
+        return permissions.project || {}; // 👈 Fetching amenities-specific permissions
+      } catch (e) {
+        console.error("Error parsing lock_role_permissions:", e);
+        return {};
+      }
+    };
+  
+    useEffect(() => {
+      const permissions = getProjectPermission();
+      console.log("Project permissions:", permissions);
+      setProjectPermission(permissions);
+    }, []);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -214,6 +233,7 @@ const ProjectDetailsList = () => {
                   </div>
                 </form>{" "}
               </div>
+              { projectPermission.create === "true" && (
               <div className="card-tools mt-1">
                 <button
                   className="purple-btn2 rounded-3"
@@ -233,6 +253,7 @@ const ProjectDetailsList = () => {
                   <span>Add</span>
                 </button>
               </div>
+              )}
             </div>
             <div className="module-data-section container-fluid">
               <div className="card mt-4 pb-4 mx-3">
@@ -277,6 +298,7 @@ const ProjectDetailsList = () => {
                           {displayedProjects?.map((project, index) => (
                             <tr key={index}>
                               <td key={project.id}>
+                              { projectPermission.show === "true" && (
                               <button
                                   onClick={() =>
                                     handleToggle(project.id, project.published)
@@ -314,6 +336,8 @@ const ProjectDetailsList = () => {
                                     </svg>
                                   )}
                                 </button>
+                              )}
+                              { projectPermission.update === "true" && (
                                 <a
                                   href={`/project-edit/${project?.id || "N/A"}`}
                                 >
@@ -334,7 +358,8 @@ const ProjectDetailsList = () => {
                                     />
                                   </svg>
                                 </a>
-
+                              )}
+                                { projectPermission.show === "true" && (
                                 <a
                                   href={`/project-details/${
                                     project?.id || "N/A"
@@ -352,6 +377,7 @@ const ProjectDetailsList = () => {
                                     <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"></path>
                                   </svg>
                                 </a>
+                                )}
                               </td>
                               <td>
                                 {(pagination.current_page - 1) * pageSize +
