@@ -324,7 +324,8 @@ const Eventlist = () => {
 
                                 <td>{event.to_time || "-"}</td>
                                 <td>
-                                  <button
+                                  {eventPermission.destroy === "true" && (
+                                    <button
                                     onClick={() =>
                                       handleToggleEvent(event.id, event.active)
                                     }
@@ -361,6 +362,8 @@ const Eventlist = () => {
                                     </svg>
                                     )}
                                   </button>
+                                  )}
+                                  
                                 </td>
 
                                 <td
