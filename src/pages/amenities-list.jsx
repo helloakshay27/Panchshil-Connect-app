@@ -9,6 +9,8 @@ const AmenitiesList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [amenitiesPermissions, setAmenitiesPermissions] = useState({});
+
   
   const pageSize = 10;
   const getPageFromStorage = () => parseInt(localStorage.getItem("amenities_list_currentPage")) || 1;
@@ -19,6 +21,25 @@ const AmenitiesList = () => {
   });
 
   const navigate = useNavigate();
+
+  const getAmenitiesPermissions = () => {
+    try {
+      const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+      if (!lockRolePermissions) return {};
+  
+      const permissions = JSON.parse(lockRolePermissions);
+      return permissions.amenities || {}; // 👈 Fetching amenities-specific permissions
+    } catch (e) {
+      console.error("Error parsing lock_role_permissions:", e);
+      return {};
+    }
+  };
+
+  useEffect(() => {
+    const permissions = getAmenitiesPermissions();
+    console.log("Amenities permissions:", permissions);
+    setAmenitiesPermissions(permissions);
+  }, []);
 
   useEffect(() => {
     const fetchAmenities = async () => {
@@ -163,6 +184,7 @@ const AmenitiesList = () => {
                 </div>
               </form>
             </div>
+            { amenitiesPermissions.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -182,6 +204,7 @@ const AmenitiesList = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
           <div className="module-data-section container-fluid">
             <div className="card mt-4 pb-4 mx-3">
@@ -218,6 +241,7 @@ const AmenitiesList = () => {
                           displayedAmenities.map((amenity, index) => (
                             <tr key={amenity.id}>
                               <td >
+                              { amenitiesPermissions.update === "true" && (
                               <div style={{ display: "flex", gap: "1px", alignItems: "center" }}>
                                 <button
                                   className="btn btn-link"
@@ -277,6 +301,7 @@ const AmenitiesList = () => {
                                 </svg>
                               </button>
                                 </div>
+                              )}
                               </td>
                               <td>
                                 {(pagination.current_page - 1) * pageSize +

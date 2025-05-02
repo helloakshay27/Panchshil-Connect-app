@@ -11,6 +11,7 @@ const TestimonialList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [testimonialPermissions, setTestimonialPermissions] = useState({});
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("testimonial_list_currentPage")) || 1;
   };
@@ -21,6 +22,28 @@ const TestimonialList = () => {
   });
   const pageSize = 10; // Or any value that suits you
   const navigate = useNavigate();
+
+  const getTestimonialPermissions = () => {
+    try {
+      const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+      if (!lockRolePermissions) return {};
+  
+      const permissions = JSON.parse(lockRolePermissions);
+      return permissions.testimonial || {};
+    } catch (e) {
+      console.error("Error parsing lock_role_permissions:", e);
+      return {};
+    }
+  };
+  
+  
+  
+  useEffect(() => {
+    setTestimonialPermissions(getTestimonialPermissions());
+  }, []);
+  
+  console.log("testimonial permission:", testimonialPermissions);
+  
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -126,6 +149,7 @@ const TestimonialList = () => {
                 </div>
               </form>{" "}
             </div>
+            { testimonialPermissions.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -145,6 +169,7 @@ const TestimonialList = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
 
           <div className="module-data-section container-fluid">
@@ -185,6 +210,7 @@ const TestimonialList = () => {
                         displayedTestimonials.map((testimonial, index) => (
                           <tr key={testimonial.id}>
                             <td>
+                            { testimonialPermissions.create === "true" && (
                               <button
                                 className="btn btn-link"
                                 onClick={() =>
@@ -218,6 +244,7 @@ const TestimonialList = () => {
                                   />
                                 </svg>
                               </button>
+                            )}
                             </td>
                             <td>
                               {(pagination.current_page - 1) * pageSize +

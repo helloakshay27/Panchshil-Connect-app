@@ -25,7 +25,7 @@ const BannerList = () => {
        if (!lockRolePermissions) return {};
    
        const permissions = JSON.parse(lockRolePermissions);
-       return permissions.banners || {}; 
+       return permissions.banner || {}; 
      } catch (e) {
        console.error("Error parsing lock_role_permissions:", e);
        return {};
@@ -271,6 +271,7 @@ const BannerList = () => {
                             <tr key={banner.id}>
                               <td>
                                 {/* Edit Icon */}
+                                { bannerPermissions.update === "true" && (
                                 <a
                                   href={`/banner-edit/${banner.id}`}
                                   className="me-2"
@@ -292,6 +293,7 @@ const BannerList = () => {
                                     />
                                   </svg>
                                 </a>
+                                 )}
                               </td>
                               <td>
                                 {(pagination.current_page - 1) * pageSize +

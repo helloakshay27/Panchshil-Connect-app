@@ -17,6 +17,7 @@ const PressReleasesList = () => {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
+  const [pressReleasePermissions, setPressReleasePermissions] = useState({});
 
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("press_list_currentPage")) || 1;
@@ -30,6 +31,25 @@ const PressReleasesList = () => {
 
   const [pageSize] = useState(10);
   const navigate = useNavigate();
+
+  const getPressReleasePermissions = () => {
+    try {
+      const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+      if (!lockRolePermissions) return {};
+  
+      const permissions = JSON.parse(lockRolePermissions);
+      return permissions.press_releases || {}; // Fetching press_releases-specific permissions
+    } catch (e) {
+      console.error("Error parsing lock_role_permissions:", e);
+      return {};
+    }
+  };
+
+  useEffect(() => {
+    const permissions = getPressReleasePermissions();
+    console.log("Press Release permissions:", permissions);
+    setPressReleasePermissions(permissions);
+  }, []);
 
   const fetchPressReleases = async () => {
     setLoading(true);
@@ -173,6 +193,7 @@ const PressReleasesList = () => {
                   </div>
                 </form>{" "}
               </div>
+              {pressReleasePermissions.create === "true" && (
               <div className="card-tools mt-1">
                 <button
                   className="purple-btn2 rounded-3"
@@ -192,6 +213,7 @@ const PressReleasesList = () => {
                   <span>Add</span>
                 </button>
               </div>
+              )}
             </div>
 
             {/* {Table content} */}
@@ -237,6 +259,7 @@ const PressReleasesList = () => {
                             .map((release, index) => (
                               <tr key={release.id}>
                                  <td>
+                                 {pressReleasePermissions.update === "true" && (
                                   <a
                                     href=""
                                     onClick={(e) => {
@@ -263,6 +286,7 @@ const PressReleasesList = () => {
                                       />
                                     </svg>
                                   </a>
+                                )}
                                 </td>
                                 <td>
                                   {(pagination.current_page - 1) * pageSize +

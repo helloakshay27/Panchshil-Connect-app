@@ -29,6 +29,25 @@ const SiteVisitSlotConfigList = () => {
     fetchSlots();
   }, []);
 
+  const getSiteSlotsPermissions = () => {
+    try {
+      const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+      if (!lockRolePermissions) return {};
+  
+      const permissions = JSON.parse(lockRolePermissions);
+      return permissions.site_slot || {}; 
+    } catch (e) {
+      console.error("Error parsing lock_role_permissions:", e);
+      return {};
+    }
+  };
+    useEffect(() => {
+      setSiteSlotsPermissions(getSiteSlotsPermissions());
+    }, []);
+    
+    console.log("site slots per", siteSlotsPermissions);
+  
+
   const fetchSlots = async () => {
     setLoading(true);
     try {
@@ -146,23 +165,7 @@ const SiteVisitSlotConfigList = () => {
 
 
   //Lock Role
-  const getSiteSlotsPermissions = () => {
-    try {
-      const lockRolePermissions = localStorage.getItem("lock_role_permissions");
-      if (!lockRolePermissions) return {};
-  
-      const permissions = JSON.parse(lockRolePermissions);
-      return permissions.site_slot || {}; 
-    } catch (e) {
-      console.error("Error parsing lock_role_permissions:", e);
-      return {};
-    }
-  };
-    useEffect(() => {
-      setSiteSlotsPermissions(getSiteSlotsPermissions());
-    }, []);
-    
-    console.log("site slots per", siteSlotsPermissions);
+ 
   return (
     <div className="main-content">
       {/* <div className="website-content overflow-auto"> */}
@@ -265,6 +268,7 @@ const SiteVisitSlotConfigList = () => {
                             {/* <td>{slot.project_name || "N/A"}</td>
                             <td>{slot.scheduled_date || "N/A"}</td> */}
                             <td>
+                              {siteSlotsPermissions.show === "true" && (
                               <button
                                 onClick={() =>
                                   handleToggle(
@@ -303,6 +307,7 @@ const SiteVisitSlotConfigList = () => {
                                   </svg>
                                 )}
                               </button>
+                              )}
                             </td>
                             <td>
                               {slot.start_time} to {slot.end_time}

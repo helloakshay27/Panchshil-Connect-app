@@ -8,6 +8,7 @@ const ConstructionStatusList = () => {
   const [statuses, setStatuses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [constructionStatusPermissions, setConstructionStatusPermissions] = useState({});
   const getPageFromStorage = () => {
     return (
       parseInt(localStorage.getItem("construction_status_currentPage")) || 1
@@ -20,6 +21,26 @@ const ConstructionStatusList = () => {
   });
   const itemsPerPage = 10;
   const navigate = useNavigate();
+
+  const getConstructionStatusPermissions = () => {
+    try {
+      const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+      if (!lockRolePermissions) return {};
+  
+      const permissions = JSON.parse(lockRolePermissions);
+      return permissions.construction || {}; // 👈 Fetching construction status-specific permissions
+    } catch (e) {
+      console.error("Error parsing lock_role_permissions:", e);
+      return {};
+    }
+  };
+
+  // ✅ Load permissions on component mount
+  useEffect(() => {
+    const permissions = getConstructionStatusPermissions();
+    console.log("Construction Status permissions:", permissions);
+    setConstructionStatusPermissions(permissions);
+  }, []);
 
   // ✅ Fetch Construction Statuses
   useEffect(() => {
@@ -129,6 +150,7 @@ const ConstructionStatusList = () => {
                 </div>
               </div>
             </div>
+            {constructionStatusPermissions.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -145,6 +167,7 @@ const ConstructionStatusList = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
 
           <div className="card mt-4 pb-4 mx-3">
@@ -179,6 +202,7 @@ const ConstructionStatusList = () => {
                         displayedStatuses.map((status, index) => (
                           <tr key={status.id}>
                             <td>
+                            { constructionStatusPermissions.update === "true" && (
                               <button
                                 className="btn btn-link p-0"
                                 onClick={() =>
@@ -204,6 +228,7 @@ const ConstructionStatusList = () => {
                                   />
                                 </svg>
                               </button>
+                            )}
                             </td>
                             <td>
                               {(pagination.current_page - 1) * itemsPerPage +
