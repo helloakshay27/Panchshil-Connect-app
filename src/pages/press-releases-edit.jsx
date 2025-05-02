@@ -22,6 +22,7 @@ const PressReleasesEdit = () => {
     release_date: "",
     pr_image: null,
     attachment_url: "",
+    source_details: "",
   });
 
   useEffect(() => {
@@ -87,6 +88,7 @@ const PressReleasesEdit = () => {
             release_date: data.release_date ? formatDateForInput(data.release_date) : "",
             pr_image: data.attachfile?.document_url || [],
             attachment_url: data.attachment_url || "",
+            source_details: data.source_details || "",
           });
         } catch (error) {
           console.error("Error fetching press release:", error);
@@ -164,6 +166,7 @@ const PressReleasesEdit = () => {
       !formData.description.trim() ||
       formData.pr_image.length === 0 ||
       !formData.attachment_url.trim()
+      
     ) {
       toast.dismiss();
       toast.error("Please fill in all the required fields.");
@@ -288,6 +291,23 @@ const PressReleasesEdit = () => {
                         name="description"
                         placeholder="Enter Description"
                         value={formData.description}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Source Details
+                        <span className="otp-asterisk">{" "}*</span>
+                      </label>
+                      <textarea
+                        className="form-control"
+                        rows={1}
+                        name="source_details"
+                        placeholder="Enter Source Details"
+                        value={formData.source_details}
                         onChange={handleChange}
                       />
                     </div>

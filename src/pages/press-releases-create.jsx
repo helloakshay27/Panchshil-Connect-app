@@ -15,6 +15,7 @@ const PressReleasesCreate = () => {
     release_date: "",
     pr_image: [],
     attachment_url: "",
+    source_details: "",
   });
 
   const fetchCompany = async () => {
@@ -245,6 +246,22 @@ const PressReleasesCreate = () => {
                         name="description"
                         placeholder="Enter Description"
                         value={formData.description}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Source Details
+                        <span className="otp-asterisk">{" "}*</span>
+                      </label>
+                      <textarea
+                        className="form-control"
+                        rows={1}
+                        name="source_details"
+                        placeholder="Enter Source Details"
+                        value={formData.source_details}
                         onChange={handleChange}
                       />
                     </div>
