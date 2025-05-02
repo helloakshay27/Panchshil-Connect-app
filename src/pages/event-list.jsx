@@ -7,6 +7,7 @@ const Eventlist = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [eventPermission, setEventPermission] = useState({});
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("event_list_currentPage")) || 1;
   };
@@ -18,6 +19,25 @@ const Eventlist = () => {
 
   const pageSize = 10;
   const navigate = useNavigate();
+
+   const getEventPermission = () => {
+          try {
+            const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+            if (!lockRolePermissions) return {};
+        
+            const permissions = JSON.parse(lockRolePermissions);
+            return permissions.event || {}; // 👈 Fetching amenities-specific permissions
+          } catch (e) {
+            console.error("Error parsing lock_role_permissions:", e);
+            return {};
+          }
+        };
+      
+        useEffect(() => {
+          const permissions = getEventPermission();
+          console.log("Event permissions:", permissions);
+          setEventPermission(permissions);
+        }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -173,6 +193,7 @@ const Eventlist = () => {
               </form>
             </div>
 
+            { eventPermission.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -193,6 +214,7 @@ const Eventlist = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
 
           <div className="module-data-section container-fluid">
@@ -240,6 +262,8 @@ const Eventlist = () => {
                             displayedEvents.map((event, index) => (
                               <tr key={event.id}>
                                 <td>
+                                { eventPermission.update === "true" && (
+                                  
                                   <a
                                     href=""
                                     onClick={() =>
@@ -263,6 +287,8 @@ const Eventlist = () => {
                                       />
                                     </svg>
                                   </a>
+                                )}
+                                 { eventPermission.show === "true" && (
                                   <a
                                     href=""
                                     onClick={() =>
@@ -281,6 +307,8 @@ const Eventlist = () => {
                                       <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"></path>
                                     </svg>
                                   </a>
+                                )}
+                                  
                                 </td>
                                 <td>
                                   {(pagination.current_page - 1) * pageSize +

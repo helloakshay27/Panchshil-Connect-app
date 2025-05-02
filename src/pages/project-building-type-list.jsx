@@ -9,6 +9,7 @@ const ProjectBuildingTypeList = () => {
   const [buildingTypes, setBuildingTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [projectBuildingPermission, setProjectBuildingPermission] = useState({});
 
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("building_type_currentPage")) || 1;
@@ -21,6 +22,25 @@ const ProjectBuildingTypeList = () => {
   });
 
   const pageSize = 10;
+
+   const getProjectBuildingPermission = () => {
+        try {
+          const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+          if (!lockRolePermissions) return {};
+      
+          const permissions = JSON.parse(lockRolePermissions);
+          return permissions.project_building || {}; // 👈 Fetching amenities-specific permissions
+        } catch (e) {
+          console.error("Error parsing lock_role_permissions:", e);
+          return {};
+        }
+      };
+    
+      useEffect(() => {
+        const permissions = getProjectBuildingPermission();
+        console.log("Project Building permissions:", permissions);
+        setProjectBuildingPermission(permissions);
+      }, []);
 
   //  useEffect(() => {
   //   const fetchBuildingTypes = async () => {
@@ -166,6 +186,7 @@ const ProjectBuildingTypeList = () => {
                 </div>
               </div>
             </div>
+            { projectBuildingPermission.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -184,6 +205,7 @@ const ProjectBuildingTypeList = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
           <div className="module-data-section container-fluid">
             <div className="card mt-3 pb-4 mx-4">
@@ -218,6 +240,7 @@ const ProjectBuildingTypeList = () => {
                           {displayedBuildingTypes.map((type, index) => (
                             <tr key={type.id}>
                                <td>
+                               { projectBuildingPermission.update === "true" && (
                                 <button
                                   className="btn btn-link p-0"
                                   onClick={() =>
@@ -243,6 +266,7 @@ const ProjectBuildingTypeList = () => {
                                     />
                                   </svg>
                                 </button>
+                              )}
                               </td>
                               <td>
                                 {(pagination.current_page - 1) * pageSize +
@@ -251,6 +275,7 @@ const ProjectBuildingTypeList = () => {
                               </td>
                               <td>{type.building_type || "-"}</td>
                               <td>
+                              { projectBuildingPermission.show === "true" && (
                                 <button
                                   onClick={() =>
                                     handleToggle(type.id, type.active)
@@ -288,6 +313,7 @@ const ProjectBuildingTypeList = () => {
                                     </svg>
                                   )}
                                 </button>
+                              )}
                               </td>
                              
                             </tr>

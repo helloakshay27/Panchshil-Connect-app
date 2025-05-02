@@ -14,6 +14,7 @@ const ProjectConfigurationList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // ✅ Added search state
+  const [projectConfigurationPermission, setProjectConfigurationPermission] = useState({});
   const navigate = useNavigate();
 
   const [pagination, setPagination] = useState({
@@ -22,6 +23,25 @@ const ProjectConfigurationList = () => {
     total_pages: 0,
   });
   const itemsPerPage = 10;
+
+  const getProjectConfigurationPermission = () => {
+      try {
+        const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+        if (!lockRolePermissions) return {};
+    
+        const permissions = JSON.parse(lockRolePermissions);
+        return permissions.project_config || {}; // 👈 Fetching amenities-specific permissions
+      } catch (e) {
+        console.error("Error parsing lock_role_permissions:", e);
+        return {};
+      }
+    };
+  
+    useEffect(() => {
+      const permissions = getProjectConfigurationPermission();
+      console.log("Project Configuration permissions:", permissions);
+      setProjectConfigurationPermission(permissions);
+    }, []);
 
   useEffect(() => {
     const fetchConfigurations = async () => {
@@ -131,6 +151,7 @@ const ProjectConfigurationList = () => {
               </div>
               </form>
             </div>
+            { projectConfigurationPermission.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -149,6 +170,7 @@ const ProjectConfigurationList = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
           <div className="module-data-section container-fluid">
           <div className="card mt-4 pb-4 mx-3">
@@ -185,6 +207,7 @@ const ProjectConfigurationList = () => {
                           <tr key={config.id}>
                             <td>
                               {/* Edit Icon */}
+                              { projectConfigurationPermission.update === "true" && (
                               <a
                                 href={`/setup-member/project-config-edit/${config.id}`}
                                 className="me-2"
@@ -206,6 +229,7 @@ const ProjectConfigurationList = () => {
                                   />
                                 </svg>
                               </a>
+                              )}
                             </td>
                             <td>
                               {(pagination.current_page - 1) * itemsPerPage +
@@ -242,6 +266,7 @@ const ProjectConfigurationList = () => {
                             </td>
 
                             <td>
+                            { projectConfigurationPermission.show === "true" && (
                               <button
                                 onClick={() =>
                                   handleToggleStatus(config.id, config.active)
@@ -277,6 +302,7 @@ const ProjectConfigurationList = () => {
                                   </svg>
                                 )}
                               </button>
+                            )}
                             </td>
                             
                           </tr>

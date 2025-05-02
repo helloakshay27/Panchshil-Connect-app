@@ -15,8 +15,28 @@ const OrganizationList = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
+  const [organizationPermission, setOrganizationPermission] = useState({});
   const pageSize = 10;
   const navigate = useNavigate();
+
+  const getOrganizationPermission = () => {
+            try {
+              const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+              if (!lockRolePermissions) return {};
+          
+              const permissions = JSON.parse(lockRolePermissions);
+              return permissions.organization || {}; // 👈 Fetching amenities-specific permissions
+            } catch (e) {
+              console.error("Error parsing lock_role_permissions:", e);
+              return {};
+            }
+          };
+        
+          useEffect(() => {
+            const permissions = getOrganizationPermission();
+            console.log("Organization permissions:", permissions);
+            setOrganizationPermission(permissions);
+          }, []);
 
   useEffect(() => {
     setLoading(true); // Start loading
@@ -136,6 +156,7 @@ const OrganizationList = () => {
                 </div>
               </div>
             </div>
+            { organizationPermission.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -155,6 +176,7 @@ const OrganizationList = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
@@ -191,6 +213,7 @@ const OrganizationList = () => {
                         displayedOrganizations.map((org, index) => (
                           <tr key={org.id}>
                              <td style={{ textAlign: "left" }}>
+                             { organizationPermission.update === "true" && (
                               <button
                                 className="btn btn-link"
                                 onClick={() =>
@@ -215,6 +238,7 @@ const OrganizationList = () => {
                                   />
                                 </svg>
                               </button>
+                            )}
                             </td>
                             <td>
                               {(pagination.current_page - 1) * pageSize +

@@ -8,6 +8,7 @@ const CompanyList = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
+  const [companyPermission, setCompanyPermission] = useState({});
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("company_list_currentPage")) || 1;
   };
@@ -17,6 +18,26 @@ const CompanyList = () => {
     total_pages: 0,
   });
   const pageSize = 10;
+
+   const getCompanyPermission = () => {
+              try {
+                const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+                if (!lockRolePermissions) return {};
+            
+                const permissions = JSON.parse(lockRolePermissions);
+                return permissions.company || {}; // 👈 Fetching amenities-specific permissions
+              } catch (e) {
+                console.error("Error parsing lock_role_permissions:", e);
+                return {};
+              }
+            };
+          
+            useEffect(() => {
+              const permissions = getCompanyPermission();
+              console.log("Company permissions:", permissions);
+              setCompanyPermission(permissions);
+            }, []);
+
   useEffect(() => {
     const fetchCompanyList = async () => {
       setLoading(true);
@@ -123,6 +144,7 @@ const CompanyList = () => {
                 </div>
               </form>
             </div>
+            { companyPermission.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -142,6 +164,7 @@ const CompanyList = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
 
           <div className="card mx-3 mt-4">
@@ -177,6 +200,7 @@ const CompanyList = () => {
                         {displayedCompanies.map((company, index) => (
                           <tr key={company.id}>
                             <td>
+                            { companyPermission.update === "true" && (
                               <a href={`/company-edit/${company.id}`}>
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -195,6 +219,7 @@ const CompanyList = () => {
                                   />
                                 </svg>
                               </a>
+                            )}
                             </td>
                             <td>{startIndex + index + 1}</td>
                             <td>{company.name || "-"}</td>

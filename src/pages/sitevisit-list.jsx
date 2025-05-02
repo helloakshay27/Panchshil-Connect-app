@@ -10,6 +10,7 @@ const SitevisitList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [siteVisitPermission, setSiteVisitPermission] = useState({});
   const navigate = useNavigate();
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("sitevisit_list_currentPage")) || 1;
@@ -21,6 +22,25 @@ const SitevisitList = () => {
   });
   const pageSize = 10;
 
+  const getSiteVisitPermission = () => {
+            try {
+              const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+              if (!lockRolePermissions) return {};
+          
+              const permissions = JSON.parse(lockRolePermissions);
+              return permissions.site_visit || {}; // 👈 Fetching amenities-specific permissions
+            } catch (e) {
+              console.error("Error parsing lock_role_permissions:", e);
+              return {};
+            }
+          };
+        
+          useEffect(() => {
+            const permissions = getSiteVisitPermission();
+            console.log("Event permissions:", permissions);
+            setSiteVisitPermission(permissions);
+          }, []);
+  
 
   useEffect(() => {
     const fetchSiteVisits = async () => {
@@ -195,7 +215,7 @@ const SitevisitList = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                      <th>Action</th>
+                      {/* <th>Action</th> */}
 
                         <th>Sr No</th>
                         <th>Status</th>
@@ -211,7 +231,7 @@ const SitevisitList = () => {
                       {displayedVisits?.length > 0 ? (
                         displayedVisits.map((visit, index) => (
                           <tr key={visit.id}>
-                            <td>
+                            {/* <td>
                               <a
                                 href={`/sitevisit-edit/${visit.id}`}
                                 className="me-2"
@@ -233,7 +253,7 @@ const SitevisitList = () => {
                                   />
                                 </svg>
                               </a>
-                            </td>
+                            </td> */}
                             <td>{startIndex + index + 1}</td>
                             <td>{visit.status || "-"}</td>
                             <td>{visit.scheduled_time || "-"}</td>

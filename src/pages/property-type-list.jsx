@@ -8,6 +8,7 @@ const PropertyTypeList = () => {
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [propertyTypePermission, setPropertyTypePermission] = useState({});
   const navigate = useNavigate();
 
   const getPageFromStorage = () => {
@@ -21,6 +22,25 @@ const PropertyTypeList = () => {
   });
 
   const pageSize = 10;
+
+   const getPropertyTypePermission = () => {
+        try {
+          const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+          if (!lockRolePermissions) return {};
+      
+          const permissions = JSON.parse(lockRolePermissions);
+          return permissions.property_type || {}; // 👈 Fetching amenities-specific permissions
+        } catch (e) {
+          console.error("Error parsing lock_role_permissions:", e);
+          return {};
+        }
+      };
+    
+      useEffect(() => {
+        const permissions = getPropertyTypePermission();
+        console.log("Property Type permissions:", permissions);
+        setPropertyTypePermission(permissions);
+      }, []);
 
   // ✅ Fetch Property Types
   useEffect(() => {
@@ -138,6 +158,7 @@ const PropertyTypeList = () => {
                 </div>
               </form>
             </div>
+            { propertyTypePermission.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -157,6 +178,7 @@ const PropertyTypeList = () => {
                 <span>Add</span>
               </button>
             </div>
+            )}
           </div>
           {/* Table Content */}
           <div className="card mt-4 pb-4 mx-3">
@@ -191,6 +213,7 @@ const PropertyTypeList = () => {
                         displayedPropertyTypes.map((property, index) => (
                           <tr key={property.id}>
                             <td style={{ textAlign: "left" }}>
+                            { propertyTypePermission.update === "true" && (
                               <button
                                 className="btn btn-link p-0"
                                 onClick={() =>
@@ -224,6 +247,7 @@ const PropertyTypeList = () => {
                                   />
                                 </svg>
                               </button>
+                            )}
                             </td>
                             <td>
                               {(pagination.current_page - 1) * pageSize +
@@ -232,6 +256,7 @@ const PropertyTypeList = () => {
                             </td>
                             <td>{property.property_type || "-"}</td>
                             <td>
+                            { propertyTypePermission.show === "true" && (
                               <button
                                 onClick={() =>
                                   handleToggle(property.id, property.active)
@@ -269,6 +294,7 @@ const PropertyTypeList = () => {
                                   </svg>
                                 )}
                               </button>
+                            )}
                             </td>
                             
                           </tr>
