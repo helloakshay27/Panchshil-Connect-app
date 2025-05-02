@@ -266,6 +266,7 @@ const BannerList = () => {
                         </tr>
                       </thead>
                       <tbody>
+                        
                         {displayedBanners.length > 0 ? (
                           displayedBanners.map((banner, index) => (
                             <tr key={banner.id}>
