@@ -5757,7 +5757,7 @@ ul.pagination.justify-content-center {
 }
 
 .card-title-badge {
-  background-color: #f38120;
+  background-color: var(--red);
   color: white;
   padding: 5px 15px;
   border-radius: 4px;
@@ -5765,7 +5765,7 @@ ul.pagination.justify-content-center {
 }
 
 .update-btn {
-  background-color: #f38120;
+  background-color: var(--red);
   color: white;
   border: none;
   padding: 8px 20px;
