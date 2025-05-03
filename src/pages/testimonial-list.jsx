@@ -210,7 +210,7 @@ const TestimonialList = () => {
                         displayedTestimonials.map((testimonial, index) => (
                           <tr key={testimonial.id}>
                             <td>
-                            { testimonialPermissions.create === "true" && (
+                            { testimonialPermissions.update === "true" && (
                               <button
                                 className="btn btn-link"
                                 onClick={() =>

@@ -16,6 +16,22 @@ const SetupMember = () => {
             <h1>Panchshil Setup Member </h1>
             <ul>
             <li>
+                <Link to="/setup-member/user-list">
+                  User List
+                </Link>
+              </li>
+            <li>
+                <Link to="/setup-member/user-create">
+                  User Create
+                </Link>
+              </li>
+            
+            <li>
+                <Link to="/setup-member/user-edit/:id">
+                  User Edit
+                </Link>
+              </li>
+            <li>
                 <Link to="/setup-member/lock-role-create">
                   Lock Role Create
                 </Link>
