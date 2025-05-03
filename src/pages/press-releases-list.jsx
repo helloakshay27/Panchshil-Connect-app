@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import SearchIcon from "../components/Icons/SearchIcon";
 import axios from "axios";
+import { baseURL } from "./baseurl/apiDomain";
 
 const PressReleasesList = () => {
   const [pressReleases, setPressReleases] = useState([]);
@@ -55,7 +56,7 @@ const PressReleasesList = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://panchshil-super.lockated.com/press_releases.json"
+        `${baseURL}/press_releases.json`
       );
 
       const data = await response.json();

@@ -166,6 +166,7 @@ const PressReleasesEdit = () => {
       !formData.description.trim() ||
       formData.pr_image.length === 0 ||
       !formData.attachment_url.trim()
+      
     ) {
       toast.dismiss();
       toast.error("Please fill in all the required fields.");
@@ -282,24 +283,6 @@ const PressReleasesEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Press Release Source
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <textarea
-                        className="form-control"
-                        rows={1}
-                        name="press_source"
-                        placeholder="Enter Source"
-                        value={formData.press_source}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-
-
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
                         Description
                         <span className="otp-asterisk">{" "}*</span>
                       </label>
@@ -309,6 +292,23 @@ const PressReleasesEdit = () => {
                         name="description"
                         placeholder="Enter Description"
                         value={formData.description}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Source Details
+                        <span className="otp-asterisk">{" "}*</span>
+                      </label>
+                      <textarea
+                        className="form-control"
+                        rows={1}
+                        name="press_source"
+                        placeholder="Enter Source Details"
+                        value={formData.press_source}
                         onChange={handleChange}
                       />
                     </div>

@@ -139,7 +139,6 @@ const PressReleasesCreate = () => {
     if (!validateForm()) {
       return;
     }
-
     setLoading(true);
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -147,7 +146,6 @@ const PressReleasesCreate = () => {
       setLoading(false);
       return;
     }
-
     try {
       const sendData = new FormData();
       sendData.append("press_release[title]", formData.title);
@@ -176,7 +174,6 @@ const PressReleasesCreate = () => {
           },
         }
       );
-
       toast.success("Press release created successfully!");
       navigate("/pressreleases-list");
     } catch (error) {
@@ -186,11 +183,9 @@ const PressReleasesCreate = () => {
       setLoading(false);
     }
   };
-
   const handleCancel = () => {
     navigate(-1);
   };
-
   return (
     <>
       <div className="main-content">
@@ -235,22 +230,7 @@ const PressReleasesCreate = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Press Releases Source
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="input"
-                        name="press_source"
-                        placeholder="Enter Source"
-                        value={formData.press_source}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
+        
 
                   <div className="col-md-3">
                     <div className="form-group">
@@ -264,6 +244,22 @@ const PressReleasesCreate = () => {
                         name="description"
                         placeholder="Enter Description"
                         value={formData.description}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Source Details
+                        <span className="otp-asterisk">{" "}*</span>
+                      </label>
+                      <textarea
+                        className="form-control"
+                        rows={1}
+                        name="press_source"
+                        placeholder="Enter Source Details"
+                        value={formData.press_source}
                         onChange={handleChange}
                       />
                     </div>
