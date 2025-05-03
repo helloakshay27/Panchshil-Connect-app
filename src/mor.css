@@ -5729,7 +5729,7 @@ ul.pagination.justify-content-center {
   /* border-left: 3px solid #8B0203; */
   font-weight: 600;
   
-}
+  } 
 
 .permissions-table {
   border: 1px solid #dee2e6;
@@ -5757,7 +5757,7 @@ ul.pagination.justify-content-center {
 }
 
 .card-title-badge {
-  background-color: #f38120;
+  background-color: var(--red);
   color: white;
   padding: 5px 15px;
   border-radius: 4px;
@@ -5765,13 +5765,68 @@ ul.pagination.justify-content-center {
 }
 
 .update-btn {
-  background-color: #f38120;
+  background-color: var(--red);
   color: white;
   border: none;
   padding: 8px 20px;
   border-radius: 4px;
   font-weight: 500;
 }
+
+.role-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.role-item:hover {
+  background-color: #f5f5f5;
+  border-radius: 8px; /* Rounded corners on hover */
+
+}
+
+.role-item.active {
+  background-color: var(--red); /* your orange */
+  color: white;
+  font-weight: bold;
+  border-radius: 8px; /* Rounded corners on hover */
+
+}
+.role-item.active:hover {
+  background-color: var(--red); /* your orange */
+  color: white;
+}
+
+.role-list {
+  padding: 10px; /* Add padding to allow radius to show clearly */
+}
+
+.role-item {
+  margin-bottom: 8px; /* Space between items */
+  padding: 10px 15px;
+  cursor: pointer;
+  background-color: rgb(251, 246, 246);
+  color: black;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.role-item:hover {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.role-item.active {
+  background-color: var(--red);
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+
+
 
 
 
