@@ -15,6 +15,7 @@ const PressReleasesCreate = () => {
     release_date: "",
     pr_image: [],
     attachment_url: "",
+    press_source: "",
   });
 
   const fetchCompany = async () => {
@@ -151,7 +152,8 @@ const PressReleasesCreate = () => {
       const sendData = new FormData();
       sendData.append("press_release[title]", formData.title);
       sendData.append("press_release[release_date]", formData.release_date);
-      sendData.append("press_release[description]", formData.description);
+      sendData.append("press_release[release_date]", formData.release_date);
+      sendData.append("press_release[press_source]", formData.press_source);
 
       // Append multiple images
       if (formData.pr_image?.length) {
@@ -228,6 +230,23 @@ const PressReleasesCreate = () => {
                         name="release_date"
                         placeholder="Enter date"
                         value={formData.release_date}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Press Releases Source
+                        <span className="otp-asterisk">{" "}*</span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="input"
+                        name="press_source"
+                        placeholder="Enter Source"
+                        value={formData.press_source}
                         onChange={handleChange}
                       />
                     </div>

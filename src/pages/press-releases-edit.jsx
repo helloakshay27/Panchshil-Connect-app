@@ -21,6 +21,7 @@ const PressReleasesEdit = () => {
     project_id: "",
     release_date: "",
     pr_image: null,
+    press_source: "",
     attachment_url: "",
   });
 
@@ -87,6 +88,7 @@ const PressReleasesEdit = () => {
             release_date: data.release_date ? formatDateForInput(data.release_date) : "",
             pr_image: data.attachfile?.document_url || [],
             attachment_url: data.attachment_url || "",
+            press_source: data.press_source || "",
           });
         } catch (error) {
           console.error("Error fetching press release:", error);
@@ -196,6 +198,7 @@ const PressReleasesEdit = () => {
       sendData.append("press_release[release_date]", formData.release_date);
       sendData.append("press_release[description]", formData.description);
       sendData.append("press_release[project_id]", formData.project_id);
+      sendData.append("press_release[press_source]", formData.press_source);
 
       // Append images
       sendData.append("press_release[pr_image]", formData.pr_image);
@@ -275,6 +278,24 @@ const PressReleasesEdit = () => {
                       />
                     </div>
                   </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Press Release Source
+                        <span className="otp-asterisk">{" "}*</span>
+                      </label>
+                      <textarea
+                        className="form-control"
+                        rows={1}
+                        name="press_source"
+                        placeholder="Enter Source"
+                        value={formData.press_source}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
 
                   <div className="col-md-3">
                     <div className="form-group">

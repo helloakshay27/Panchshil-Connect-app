@@ -245,6 +245,7 @@ const PressReleasesList = () => {
                           {/* <th>Company Name</th>
                           <th>Project Name</th> */}
                           <th>Description</th>
+                          <th>Press Source</th>
                           <th>Release Date</th>
                           <th>Attachment</th>
                         </tr>
@@ -308,7 +309,7 @@ const PressReleasesList = () => {
                                 >
                                   {release.description || "-"}
                                 </td>
-
+                                <td>{release.press_source || "-"}</td>
                                 <td>{release.release_date || "-"}</td>
                                 <td
                                   className="text-center"
