@@ -33,16 +33,13 @@ const UserEdit = () => {
     site_id: ""
   });
 
-  // Fetch user data when component mounts
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setFetchingUser(true);
-        // Using the users/get_users.json endpoint for fetching user details
         const response = await axios.get(
-          `${baseURL}users/get_users.json`,
+          `${baseURL}/user_details/${id}.json`,
           {
-            params: { id: id }, // Send ID as a query parameter
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               "Content-Type": "application/json",
@@ -50,33 +47,26 @@ const UserEdit = () => {
           }
         );
         
-        // Get user data from the response
-        // First check the response structure and access user data properly
         console.log("API Response:", response.data);
         
-        // Try to access user data from different possible paths
-        const userData = response.data.user || 
+        const userData = response.data.users || 
                          response.data.data || 
                          (Array.isArray(response.data) ? response.data[0] : response.data);
         
-        // Check if we have valid user data
         if (!userData) {
           throw new Error("Invalid user data structure in API response");
         }
         
-        // Handle birth_date if it exists
         if (userData.birth_date) {
           try {
-            // Convert date format from DD-MM-YYYY to YYYY-MM-DD for input date field
             const [day, month, year] = userData.birth_date.split('-');
             userData.birth_date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
           } catch (error) {
             console.warn("Could not parse birth_date:", error);
-            userData.birth_date = ""; // Set to empty if parsing fails
+            userData.birth_date = ""; 
           }
         }
         
-        // Convert string IDs to strings to avoid type mismatches in the form
         const processedData = {
           ...userData,
           role_id: userData.role_id?.toString() || "",
@@ -98,31 +88,24 @@ const UserEdit = () => {
     fetchUserData();
   }, [id]);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const fieldValue = type === "checkbox" ? checked : value;
-    
-    // Clear error for this field when user starts typing
-    if (errors[name]) {
+     if (errors[name]) {
       setErrors({
         ...errors,
         [name]: ""
       });
     }
-    
     setFormData(prev => ({
       ...prev,
       [name]: fieldValue
     }));
   };
-
-  // Validate form data
-  const validateForm = () => {
+ const validateForm = () => {
     let newErrors = {};
     let isValid = true;
     
-    // Required fields validation
     const requiredFields = [
       { field: "firstname", label: "First Name" },
       { field: "lastname", label: "Last Name" },
@@ -132,19 +115,14 @@ const UserEdit = () => {
       { field: "company_id", label: "Company ID" }
     ];
     
-    // Check all mandatory fields
     let emptyFields = requiredFields.filter(
       ({ field }) => !formData[field] || String(formData[field]).trim() === ""
     );
-    
-    // If all required fields are empty, show a general message
     if (emptyFields.length === requiredFields.length) {
       toast.dismiss();
       toast.error("Please fill in all the required fields.");
       return false;
     }
-    
-    // Sequential validation - check one field at a time
     for (const { field, label } of requiredFields) {
       if (!formData[field] || String(formData[field]).trim() === "") {
         newErrors[field] = `${label} is mandatory`;
@@ -219,7 +197,7 @@ const UserEdit = () => {
     try {
       // Using the user_details endpoint for updating user
       const response = await axios.put(
-        `${baseURL}user_details/${id}.json`,
+        `${baseURL}users/${id}.json`,
         userData,
         {
           headers: {

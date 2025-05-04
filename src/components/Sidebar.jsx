@@ -1,8 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../mor.css";
 import { NavLink } from "react-router-dom";
+import { hasPermission } from "../utils/permission";
 
 const Sidebar = () => {
+  const [showProjectSidebar, setShowProjectSidebar] = useState(false);
+  const [bannerActive, setBannerActive] = useState(false);
+  const [eventActive, setEventActive] = useState(false);
+  const [amenitiesActive, setAmenitoiesActive] = useState(false);
+  const[testimonialActive, setTestimonialActive] = useState(false);
+  const [referralActive, setReferralActive] = useState(false);
+  const[enquiryActive, setEnquiryActive] = useState(false);
+  const[specificationActive, setSpecificationActive] = useState(false);
+  const [siteVisitActive, setSiteVisitActive] = useState(false);
+  const[organizationActive, setOrganizationActive] = useState(false);
+  const[companyActive, setCompanyActive] = useState(false);
+  const [pressReleasesActive, setPressReleasesActive] = useState(false);
+  const [supportServiceActive, setSupportServiceActive] = useState(false);
+
+useEffect(() => {
+  const hasProjectPermission = hasPermission("project");
+  setShowProjectSidebar(hasProjectPermission);
+
+  const BannerPermission = hasPermission("banner");
+  setBannerActive(BannerPermission);
+
+  const EventPermission = hasPermission("event");
+  setEventActive(EventPermission);
+
+  const amenitiesPermission = hasPermission("amenities");
+  setAmenitoiesActive(amenitiesPermission);
+
+  const testimonialPermission = hasPermission("testimonial");
+  setTestimonialActive(testimonialPermission);
+
+  const referralPermission = hasPermission("referral");
+  setReferralActive(referralPermission);
+
+  const enquiryPermission = hasPermission("enquiry");
+  setEnquiryActive(enquiryPermission);
+
+  const specificPermissions = hasPermission("specification");
+  setSpecificationActive(specificPermissions);
+
+  const sitevisitPermission = hasPermission("site_visit");
+  setSiteVisitActive(sitevisitPermission);
+
+  const organizationPermission = hasPermission("organization");
+  setOrganizationActive(organizationPermission);
+
+  const companyPermission = hasPermission("company");
+  setCompanyActive(companyPermission);
+
+  const pressreleasesPermission = hasPermission("press_releases");
+  setPressReleasesActive(pressreleasesPermission);
+
+  const supporrtServicePermission = hasPermission("support_service");
+  setSupportServiceActive(supporrtServicePermission);
+
+}, []);
   return (
     <>
       <aside>
@@ -364,6 +420,7 @@ const Sidebar = () => {
               className="menu-list px-2 d-flex pt-2"
               style={{ flexDirection: "column" }}
             >
+              {showProjectSidebar && (
               <li className="menu-item d-flex">
                 {/* <a
                   className=" d-flex"
@@ -404,17 +461,33 @@ const Sidebar = () => {
                       fill="#DD7007"
                     ></path>
                   </svg> */}
-                 <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="72.000000pt" height="72.000000pt" viewBox="0 0 72.000000 72.000000" preserveAspectRatio="xMidYMid meet">
-<metadata>
-Created by potrace 1.10, written by Peter Selinger 2001-2011
-</metadata>
-<g transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
-<path d="M265 643 c-211 -76 -272 -336 -115 -493 61 -61 119 -85 210 -85 91 0 149 24 210 85 61 61 85 119 85 210 0 91 -24 149 -85 210 -80 80 -203 109 -305 73z m143 -19 c12 -4 22 -12 22 -20 0 -24 -21 -26 -44 -5 l-23 21 -27 -21 c-22 -17 -29 -19 -42 -8 -14 12 -14 14 2 26 19 14 73 17 112 7z m-22 -76 c10 -29 21 -56 22 -60 2 -4 -20 -8 -48 -8 -28 0 -50 4 -48 8 2 4 12 31 22 60 11 29 23 52 26 52 3 0 15 -23 26 -52z m-96 35 c-1 -5 -7 -19 -15 -33 -8 -14 -14 -35 -15 -47 0 -21 -5 -23 -56 -23 l-55 0 21 28 c22 27 96 82 112 82 4 0 8 -3 8 -7z m202 -23 c26 -17 53 -42 62 -55 l16 -25 -55 0 c-50 0 -55 2 -55 23 -1 12 -7 33 -15 47 -28 50 -17 52 47 10z m-342 -100 c0 -10 -31 -22 -38 -16 -2 3 -2 12 1 20 6 15 37 12 37 -4z m156 9 c3 -6 -3 -20 -14 -32 -18 -17 -23 -18 -37 -7 -14 12 -14 15 1 31 19 21 39 24 50 8z m158 -8 c15 -16 15 -19 1 -31 -14 -11 -19 -10 -37 7 -21 21 -18 43 6 43 7 0 20 -8 30 -19z m144 -4 c4 -19 -6 -21 -27 -8 -16 10 -5 34 12 28 7 -2 13 -11 15 -20z m-368 -97 l0 -60 -60 0 -60 0 0 60 0 60 60 0 60 0 0 -60z m180 0 l0 -60 -60 0 -60 0 0 60 0 60 60 0 60 0 0 -60z m180 0 l0 -60 -60 0 -60 0 0 60 0 60 60 0 60 0 0 -60z m-305 -80 c27 -30 5 -49 -30 -26 -21 14 -24 20 -14 32 15 19 22 18 44 -6z m173 8 c9 -9 8 -16 -5 -30 -9 -10 -22 -18 -29 -18 -22 0 -27 21 -8 41 20 22 26 23 42 7z m-328 -18 c13 -9 13 -11 0 -19 -17 -12 -30 -5 -30 15 0 16 9 18 30 4z m470 -4 c0 -22 -19 -29 -36 -15 -14 12 -14 14 3 20 27 11 33 10 33 -5z m-350 -48 c1 -13 7 -34 15 -48 28 -50 17 -52 -47 -10 -26 17 -53 42 -62 55 l-16 25 55 0 c50 0 55 -2 55 -22z m148 14 c-1 -4 -12 -31 -22 -60 -11 -29 -23 -52 -26 -52 -3 0 -16 27 -28 60 l-21 60 50 0 c28 0 49 -4 47 -8z m142 -19 c-22 -29 -96 -83 -112 -83 -5 0 -7 6 -4 13 3 6 11 31 18 55 l12 42 54 0 53 0 -21 -27z m-220 -88 c16 -20 39 -19 63 2 18 17 19 17 33 -2 13 -18 12 -20 -12 -27 -30 -8 -111 -4 -121 5 -8 8 4 37 15 37 5 0 15 -7 22 -15z"/>
-</g>
-</svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.0"
+                    width="72.000000pt"
+                    height="72.000000pt"
+                    viewBox="0 0 72.000000 72.000000"
+                    preserveAspectRatio="xMidYMid meet"
+                  >
+                    <metadata>
+                      Created by potrace 1.10, written by Peter Selinger
+                      2001-2011
+                    </metadata>
+                    <g
+                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                      fill="#000000"
+                      stroke="none"
+                    >
+                      <path d="M265 643 c-211 -76 -272 -336 -115 -493 61 -61 119 -85 210 -85 91 0 149 24 210 85 61 61 85 119 85 210 0 91 -24 149 -85 210 -80 80 -203 109 -305 73z m143 -19 c12 -4 22 -12 22 -20 0 -24 -21 -26 -44 -5 l-23 21 -27 -21 c-22 -17 -29 -19 -42 -8 -14 12 -14 14 2 26 19 14 73 17 112 7z m-22 -76 c10 -29 21 -56 22 -60 2 -4 -20 -8 -48 -8 -28 0 -50 4 -48 8 2 4 12 31 22 60 11 29 23 52 26 52 3 0 15 -23 26 -52z m-96 35 c-1 -5 -7 -19 -15 -33 -8 -14 -14 -35 -15 -47 0 -21 -5 -23 -56 -23 l-55 0 21 28 c22 27 96 82 112 82 4 0 8 -3 8 -7z m202 -23 c26 -17 53 -42 62 -55 l16 -25 -55 0 c-50 0 -55 2 -55 23 -1 12 -7 33 -15 47 -28 50 -17 52 47 10z m-342 -100 c0 -10 -31 -22 -38 -16 -2 3 -2 12 1 20 6 15 37 12 37 -4z m156 9 c3 -6 -3 -20 -14 -32 -18 -17 -23 -18 -37 -7 -14 12 -14 15 1 31 19 21 39 24 50 8z m158 -8 c15 -16 15 -19 1 -31 -14 -11 -19 -10 -37 7 -21 21 -18 43 6 43 7 0 20 -8 30 -19z m144 -4 c4 -19 -6 -21 -27 -8 -16 10 -5 34 12 28 7 -2 13 -11 15 -20z m-368 -97 l0 -60 -60 0 -60 0 0 60 0 60 60 0 60 0 0 -60z m180 0 l0 -60 -60 0 -60 0 0 60 0 60 60 0 60 0 0 -60z m180 0 l0 -60 -60 0 -60 0 0 60 0 60 60 0 60 0 0 -60z m-305 -80 c27 -30 5 -49 -30 -26 -21 14 -24 20 -14 32 15 19 22 18 44 -6z m173 8 c9 -9 8 -16 -5 -30 -9 -10 -22 -18 -29 -18 -22 0 -27 21 -8 41 20 22 26 23 42 7z m-328 -18 c13 -9 13 -11 0 -19 -17 -12 -30 -5 -30 15 0 16 9 18 30 4z m470 -4 c0 -22 -19 -29 -36 -15 -14 12 -14 14 3 20 27 11 33 10 33 -5z m-350 -48 c1 -13 7 -34 15 -48 28 -50 17 -52 -47 -10 -26 17 -53 42 -62 55 l-16 25 55 0 c50 0 55 -2 55 -22z m148 14 c-1 -4 -12 -31 -22 -60 -11 -29 -23 -52 -26 -52 -3 0 -16 27 -28 60 l-21 60 50 0 c28 0 49 -4 47 -8z m142 -19 c-22 -29 -96 -83 -112 -83 -5 0 -7 6 -4 13 3 6 11 31 18 55 l12 42 54 0 53 0 -21 -27z m-220 -88 c16 -20 39 -19 63 2 18 17 19 17 33 -2 13 -18 12 -20 -12 -27 -30 -8 -111 -4 -121 5 -8 8 4 37 15 37 5 0 15 -7 22 -15z" />
+                    </g>
+                  </svg>
                   <span className="menu-link-text">Project</span>
                 </NavLink>
               </li>
+              )}
+              { bannerActive &&(
+
+             
               <li className="menu-item d-flex">
                 {/* <a
                   className=" d-flex"
@@ -478,6 +551,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Banner</span>
                 </NavLink>
               </li>
+               )}
               {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
@@ -500,6 +574,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Amenities</span>
                 </a>
               </li> */}
+              { testimonialActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -599,6 +674,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Testimonial</span>
                 </NavLink>
               </li>
+              )}
               {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
@@ -637,6 +713,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Gallery</span>
                 </a>
               </li> */}
+              { referralActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -691,6 +768,9 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Referral</span>
                 </NavLink>
               </li>
+              )}
+
+              { enquiryActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -774,6 +854,8 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Enquiry</span>
                 </NavLink>
               </li>
+              )}
+              { eventActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -909,6 +991,9 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Event</span>
                 </NavLink>
               </li>
+              )}
+
+            {specificationActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -952,6 +1037,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Specification</span>
                 </NavLink>
               </li>
+              )}
               {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
@@ -974,6 +1060,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Site Slot </span>
                 </a>
               </li> */}
+              { siteVisitActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -1036,6 +1123,8 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Site visit</span>
                 </NavLink>
               </li>
+              )}
+              { organizationActive &&(
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -1079,6 +1168,8 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Organization</span>
                 </NavLink>
               </li>
+              )}
+              { companyActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -1122,6 +1213,9 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Company</span>
                 </NavLink>
               </li>
+              )}
+
+              { supportServiceActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -1209,6 +1303,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   </span>
                 </NavLink>
               </li>
+              )}
               {/* <li className="menu-item d-flex">
                 <a
                   className="menu-link d-flex"
@@ -1231,6 +1326,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   <span className="menu-link-text">Project <br /> Config</span>
                 </a>
               </li> */}
+              { pressReleasesActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -1280,6 +1376,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
                   </span>
                 </NavLink>
               </li>
+              )}
                          
             </ul>
           </div>
