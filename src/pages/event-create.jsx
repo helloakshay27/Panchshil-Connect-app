@@ -24,6 +24,7 @@ const EventCreate = () => {
     attachfile: [],
     is_important: "",
     email_trigger_enabled: "",
+    set_reminders_attributes: [],
   });
 
   console.log("formData", formData);
@@ -36,6 +37,83 @@ const EventCreate = () => {
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const [reminderDateTime, setReminderDateTime] = useState(""); // Value for the date-time reminder
+  const [reminders2, setReminders2] = useState([]); // List of reminders
+
+  const handleAddNReminder = () => {
+    if (new Date(reminderDateTime) >= new Date(formData.from_time)) {
+      alert("Reminder date must be earlier than the Event From date.");
+      return;
+    }
+
+    const diffInMs = new Date(formData.from_time) - new Date(reminderDateTime);
+
+    const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    const hours = Math.floor(
+      (diffInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+
+    setReminders2((prev) => [...prev, { date: reminderDateTime, days, hours }]);
+
+    setReminderDateTime("");
+  };
+  // const [reminderDateTime, setReminderDateTime] = useState(""); // Value for the date-time reminder
+  // const [reminders, setReminders] = useState([]); // List of reminders
+
+  // const handleAddReminder = () => {
+
+  //   if (new Date(reminderDateTime) >= new Date(formData.from_time)) {
+  //     alert("Reminder date must be earlier than the Event From date.");
+  //     return;
+  //   }
+
+  //   const diffInMs = new Date(formData.from_time) - new Date(reminderDateTime);
+
+  //   const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  //   const hours = Math.floor(
+  //     (diffInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  //   );
+
+  //   setReminders((prev) => [...prev, { date: reminderDateTime, days, hours }]);
+
+  //   setReminderDateTime("");
+  // };
+
+  // const handleRemoveReminder = (index) => {
+  //   setReminders((prev) => prev.filter((_, i) => i !== index));
+  // };
+
+  const [day, setDay] = useState("");
+  const [hour, setHour] = useState("");
+  const [reminders, setReminders] = useState([]);
+
+  const handleAddReminder = () => {
+    if (day === "" && hour === "") return;
+
+    const newReminder = { days: day || 0, hours: hour || 0 };
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      set_reminders_attributes: [
+        ...prevFormData.set_reminders_attributes,
+        newReminder,
+      ],
+    }));
+
+    setDay("");
+    setHour("");
+  };
+
+  const handleRemoveReminder = (index) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      set_reminders_attributes: prevFormData.set_reminders_attributes.filter(
+        (_, i) => i !== index
+      ),
+    }));
+  };
   // console.log("AA", eventType);
   console.log("bb", eventUserID);
 
@@ -209,14 +287,20 @@ const EventCreate = () => {
     data.append("event[is_important]", formData.is_important);
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
     data.append("event[project_id]", selectedProjectId);
-
-    // Append RSVP details if RSVP action is "yes"
     if (formData.rsvp_action === "yes") {
       data.append("event[rsvp_name]", formData.rsvp_name);
       data.append("event[rsvp_number]", formData.rsvp_number);
     }
+    formData.set_reminders_attributes.forEach((reminder, index) => {
+      data.append(`event[set_reminders_attributes][${index}][days]`, reminder.days);
+      data.append(`event[set_reminders_attributes][${index}][hours]`, reminder.hours);
+    });
 
-    // Handling Attachments
+    // date reminder send
+    reminders2.forEach((reminder, index) => {
+      data.append(`event[set_reminders_attributes][${index}][reminder_on]`, reminder.date);
+    });
+
     if (formData.attachfile && formData.attachfile.length > 0) {
       formData.attachfile.forEach((file) => {
         if (file instanceof File) {
@@ -230,16 +314,13 @@ const EventCreate = () => {
       setLoading(false);
       return;
     }
-
     try {
-      // Make the POST request
       const response = await axios.post(`${baseURL}events.json`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "multipart/form-data",
         },
       });
-
       toast.success("Event created successfully!");
       setFormData({
         event_type: "",
@@ -905,6 +986,142 @@ const EventCreate = () => {
                         </div>
                       </div>
                     </div>
+
+                    <div className="col-md-12">
+                      <label className="form-label">Set Reminders</label>
+                      <div className="row mb-2">
+                        <div className="col-md-2">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Days"
+                            value={day}
+                            onChange={(e) => setDay(e.target.value)}
+                            min="0"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Hours"
+                            value={hour}
+                            onChange={(e) => setHour(e.target.value)}
+                            min="0"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <button
+                            className="btn btn-danger w-100"
+                            onClick={handleAddReminder}
+                            disabled={!day && !hour}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+
+                      {formData.set_reminders_attributes.map(
+                        (reminder, index) => (
+                          <div className="row mb-2" key={index}>
+                            <div className="col-md-2">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={`${reminder.days} Day(s)`}
+                                readOnly
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={`${reminder.hours} Hour(s)`}
+                                readOnly
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              <button
+                                className="btn btn-sm btn-danger w-100"
+                                onClick={() => handleRemoveReminder(index)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+
+
+  {/* For Date Selection  */}
+                     {/* <div className="col-6">
+                        <div className="form-group">
+                        <label>Set Reminders</label>
+                        <div className="d-flex align-items-center mb-2">
+                          
+                          <input
+                            className="form-control me-2"
+                            placeholder="Time Before"
+                            type="datetime-local"
+                            value={reminderDateTime}
+                            onChange={(e) =>
+                              setReminderDateTime(e.target.value)
+                            }
+                          />
+                          <button
+                            className="btn btn-danger"
+                            onClick={handleAddNReminder}
+                            disabled={!reminderDateTime}
+                          >
+                            Add
+                          </button>
+                        </div>
+
+                       
+                        <div className="col-6">
+                          {reminders2.map((reminder, index) => (
+                            <div
+                              key={index}
+                              className="d-flex m-4 justify-content-between align-items-center mb-2"
+                            >
+                              <span>
+                                {reminder.date} -{" "}
+                                {reminder.days > 0
+                                  ? `${reminder.days} day${
+                                      reminder.days > 1 ? "s" : ""
+                                    }`
+                                  : ""}
+                                {reminder.hours > 0
+                                  ? ` ${reminder.hours} hour${
+                                      reminder.hours > 1 ? "s" : ""
+                                    }`
+                                  : ""}{" "}
+                                before
+                              </span>
+                              <div className="d-flex">
+                                <button
+                                  className="btn btn-sm btn-danger ms-2"
+                                  onClick={() => handleRemoveNReminder(index)}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>  */}
+                    {/* <div className="col-4 ">
+                        <div className="d-flex">
+                          <div>Hours defore</div>
+                          <div>Days before</div>
+                          <div>
+                            <button>Destroy</button>
+                          </div>
+                        </div>
+                      </div> */}
+                    {/* </div> */}
                   </div>
                 </div>
               </div>
