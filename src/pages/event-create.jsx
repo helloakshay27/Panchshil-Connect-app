@@ -245,10 +245,10 @@ const EventCreate = () => {
     // }
 
     // File validation (files must be present)
-    if (!formData.attachfile) {
-      errors.push("attachment is required.");
-      return errors; // Return the first error immediately
-    }
+    // if (!formData.attachfile) {
+    //   errors.push("attachment is required.");
+    //   return errors; // Return the first error immediately
+    // }
     // if (formData.two_d_images.length === 0) {
     //   errors.push("At least one 2D image is required.");
     //   return errors; // Return the first error immediately

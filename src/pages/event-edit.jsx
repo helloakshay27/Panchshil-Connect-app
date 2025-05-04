@@ -33,6 +33,7 @@ const EventEdit = () => {
     previewImage: "",
     is_important: "false",
     email_trigger_enabled: "false",
+    set_reminders_attributes: []
   });
 
   console.log("Data", formData);
@@ -40,6 +41,50 @@ const EventEdit = () => {
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
   const [loading, setLoading] = useState(false);
+
+
+  // Set Reminders
+  const [day, setDay] = useState("");
+  const [hour, setHour] = useState("");
+  const [reminders, setReminders] = useState([]);
+
+  const handleAddReminder = () => {
+    if (day === "" && hour === "") return;
+
+    const newReminder = { days: day || 0, hours: hour || 0 };
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      set_reminders_attributes: [
+        ...prevFormData.set_reminders_attributes,
+        newReminder,
+      ],
+    }));
+
+    setDay("");
+    setHour("");
+  };
+
+  const handleRemoveReminder = (index) => {
+    setFormData((prevFormData) => {
+      const reminders = [...prevFormData.set_reminders_attributes];
+
+      // Check if the reminder has an ID (existing reminder)
+      if (reminders[index]?.id) {
+        // Mark the reminder for deletion by adding `_destroy: true`
+        reminders[index]._destroy = true;
+      } else {
+        // Remove the reminder directly if it's a new one
+        reminders.splice(index, 1);
+      }
+      console.log("Updated Reminders:", reminders);
+
+      return {
+        ...prevFormData,
+        set_reminders_attributes: reminders,
+      };
+    });
+  };
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -59,6 +104,7 @@ const EventEdit = () => {
           ...response.data,
           attachfile: null, // Reset file input
           previewImage: response?.data?.attachfile?.document_url || "", // Set existing image preview
+          set_reminders_attributes: response.data.reminders || [], // Set existing reminders
         }));
       } catch (error) {
         console.error("Error fetching event:", error);
@@ -185,8 +231,8 @@ const EventEdit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if(!validateForm()) return;
+
+    if (!validateForm()) return;
 
     setLoading(true);
 
@@ -196,6 +242,20 @@ const EventEdit = () => {
     Object.keys(formData).forEach((key) => {
       if (key === "attachfile" && formData.attachfile) {
         data.append("event[event_image]", formData.attachfile); // Ensure file is appended
+      } else if (key === "set_reminders_attributes") {
+        // Append reminders properly
+        formData.set_reminders_attributes.forEach((reminder, index) => {
+          if (reminder.id) {
+            // Include the id for existing reminders
+            data.append(`event[set_reminders_attributes][${index}][id]`, reminder.id);
+          }
+          data.append(`event[set_reminders_attributes][${index}][days]`, reminder.days);
+          data.append(`event[set_reminders_attributes][${index}][hours]`, reminder.hours);
+          if (reminder._destroy) {
+            // Include _destroy flag for reminders marked for deletion
+            data.append(`event[set_reminders_attributes][${index}][_destroy]`, true);
+          }
+        });
       } else {
         data.append(`event[${key}]`, formData[key]);
       }
@@ -705,6 +765,71 @@ const EventEdit = () => {
                           </div>
                         </div>
                       </div>
+                    </div>
+                    <div className="col-md-12">
+                      <label className="form-label">Set Reminders</label>
+                      <div className="row mb-2">
+                        <div className="col-md-2">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Days"
+                            value={day}
+                            onChange={(e) => setDay(e.target.value)}
+                            min="0"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Hours"
+                            value={hour}
+                            onChange={(e) => setHour(e.target.value)}
+                            min="0"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <button
+                            className="btn btn-danger w-100"
+                            onClick={handleAddReminder}
+                            disabled={!day && !hour}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+
+                      {formData.set_reminders_attributes
+                        .filter((reminder) => !reminder._destroy) // Exclude reminders marked for deletion
+                        .map((reminder, index) => (
+                          <div className="row mb-2" key={index}>
+                            <div className="col-md-2">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={`${reminder.days} Day(s)`}
+                                readOnly
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={`${reminder.hours} Hour(s)`}
+                                readOnly
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              <button
+                                className="btn btn-sm btn-danger w-100"
+                                onClick={() => handleRemoveReminder(index)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        ))}
                     </div>
                   </div>
                 </div>
