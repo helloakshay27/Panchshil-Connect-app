@@ -32,8 +32,8 @@ const Header = () => {
   const userInitial = firstname ? firstname.charAt(0).toUpperCase() : "";
 
   const signout = () => {
+    localStorage.clear();
     sessionStorage.clear();
-    localStorage.removeItem("access_token");
     setShowModal(false);
     navigate("/login");
   };
@@ -55,8 +55,11 @@ const Header = () => {
               <div className="avatar2">
                 <div className="avatar__letters2">{userInitial || "A"}</div>
               </div>
-              <h5>{firstname || "First Name"}</h5>
-              <p>{sessionStorage.getItem("email") || "example@example.com"}</p>
+              <h5 className="text-black">{firstname || "First Name"}</h5>
+              <p className="text-black">
+                {sessionStorage.getItem("email") || "example@example.com"}
+              </p>
+
               <button className="purple-btn2 my-3" onClick={signout}>
                 Sign Out
               </button>
@@ -96,7 +99,7 @@ const Header = () => {
               </NavLink>
               <NavLink
                 className="nav-link px-4 d-flex align-items-center"
-                to="/setup-member/lock-role-list"
+                to="/setup-member/user-list"
               >
                 Setup
               </NavLink>

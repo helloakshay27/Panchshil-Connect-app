@@ -42,15 +42,12 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${baseURL}users`,
-        {
-          email,
-          firstname,
-          lastname,
-          mobile,
-        }
-      );
+      const response = await axios.post(`${baseURL}users`, {
+        email,
+        firstname,
+        lastname,
+        mobile,
+      });
 
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);
@@ -76,14 +73,22 @@ const Register = () => {
     navigate("/login");
   };
 
+  const goToLoginPage = () => {
+    window.location.href = "/login"; // or your actual login URL
+  };
+
   return (
     <div>
       <main>
         <section className="login_module">
           <div className="container-fluid">
             <div className="row align-items-center vh-100 login_bg justify-content-center">
-              <div className="col-lg-7 col-md-7 vh-50 d-flex align-items-center">
-                <div className="login-sec">
+              <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
+                <div
+                  className="login-sec"
+                  style={{ padding: "6% 10%" }}
+                  id="forgetPasswordContainer"
+                >
                   <img
                     className="logo_img"
                     style={{ width: 100, height: 100, margin: "auto" }}
@@ -93,24 +98,24 @@ const Register = () => {
 
                   <form
                     onSubmit={handlePasswordLogin}
-                    className="mt-2 login-content"
-                    style={{ width: "295px" }}
+                    className="mt-2 login-content "
+                    style={{ width: "100%" }}
                   >
                     <div className="form-group position-relative">
-                      <label className="mb-1" htmlFor="email">
-                        First Name
+                      <label className="mb-1 text-white" htmlFor="email">
+                        Full Name
                       </label>
                       <input
                         type="text"
                         id="email"
-                        className="form-control mb-2"
-                        placeholder="Enter firstname"
+                        className="form-control-panchshil mb-2"
+                        placeholder="Enter fullname here..."
                         value={firstname}
                         onChange={(e) => setFirstname(e.target.value)}
                         required
                       />
                     </div>
-                    <div className="form-group position-relative">
+                    {/* <div className="form-group position-relative">
                       <label className="mb-1" htmlFor="password">
                         Last Name
                       </label>
@@ -123,31 +128,32 @@ const Register = () => {
                         onChange={(e) => setLastname(e.target.value)}
                         required
                       />
-                    </div>
+                    </div> */}
                     <div className="form-group position-relative">
-                      <label className="mb-1" htmlFor="Email">
-                        Email
+                      <label className="mb-1 text-white" htmlFor="Email">
+                        Email ID
                       </label>
                       <input
                         type="Email"
                         id="password"
-                        className="form-control"
-                        placeholder="Enter email"
+                        className="form-control-panchshil mb-2"
+                        placeholder="Enter email id here..."
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
                     <div className="form-group position-relative">
-                      <label className="mb-1" htmlFor="mobile">
-                        Mobile<span style={{ color: "#de7008" }}> *</span>
+                      <label className="mb-1 text-white" htmlFor="mobile">
+                        Mobile Number
+                        {/* <span style={{ color: "#de7008" }}> *</span> */}
                       </label>
                       <input
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9]{10}"
-                        className="form-control mb-2"
-                        placeholder="Enter mobile"
+                        className="form-control-panchshil mb-2"
+                        placeholder="Enter mobile number here..."
                         id="mobile"
                         name="mobile"
                         value={mobile}
@@ -159,20 +165,28 @@ const Register = () => {
                     </div>
 
                     {error && <p className="text-danger">{error}</p>}
-                    <button type="submit" className="btn btn-danger mt-2">
+                    <button
+                      type="submit"
+                      className="btn-panchshil btn-danger mt-2"
+                    >
                       {loading ? "Register in..." : "Register"}
                     </button>
-                    <button
-                      className="btn purple-btn2 mt-3 "
-                      onClick={regiterPage}
+                    <div
+                      className="mt-4"
                       style={{
-                        width: "100%",
-                        background: "white",
-                        color: "black",
+                        textAlign: "center",
+                        marginTop: "1rem",
+                        color: "white",
                       }}
                     >
-                      {loading ? "Signing In..." : "Sign In"}
-                    </button>
+                      Already have an account?{" "}
+                      <span
+                        style={{ fontWeight: "bold", cursor: "pointer" }}
+                        onClick={goToLoginPage}
+                      >
+                        LOGIN
+                      </span>
+                    </div>
                   </form>
                 </div>
               </div>

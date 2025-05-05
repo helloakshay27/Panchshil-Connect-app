@@ -261,12 +261,12 @@ const UserCreate = () => {
                       {/* Alternate Email 1 */}
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>Alternate Email 1</label>
+                          <label>Alternate Email</label>
                           <input
                             className={`form-control ${errors.alternate_email1 ? "is-invalid" : ""}`}
                             type="email"
                             name="alternate_email1"
-                            placeholder="Enter alternate email 1"
+                            placeholder="Enter alternate email"
                             value={formData.alternate_email1}
                             onChange={handleChange}
                           />
@@ -275,7 +275,7 @@ const UserCreate = () => {
                       </div>
 
                       {/* Alternate Email 2 */}
-                      <div className="col-md-3">
+                      {/* <div className="col-md-3">
                         <div className="form-group">
                           <label>Alternate Email 2</label>
                           <input
@@ -288,12 +288,12 @@ const UserCreate = () => {
                           />
                           {errors.alternate_email2 && <div className="invalid-feedback">{errors.alternate_email2}</div>}
                         </div>
-                      </div>
+                      </div> */}
 
                       {/* Alternate Address */}
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>Alternate Address</label>
+                          <label>Address</label>
                           <input
                             className="form-control"
                             type="text"
@@ -419,7 +419,8 @@ const UserCreate = () => {
                       {/* Role ID */}
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>Role ID <span className="otp-asterisk">*</span></label>
+                          <label>User Role
+                            <span className="otp-asterisk">*</span></label>
                           <input
                             className={`form-control ${errors.role_id ? "is-invalid" : ""}`}
                             type="text"
