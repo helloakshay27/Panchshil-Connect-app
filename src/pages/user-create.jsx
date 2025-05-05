@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,8 @@ const UserCreate = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [roles, setRoles] = useState([]);
+  const [rolesLoading, setRolesLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -31,6 +33,41 @@ const UserCreate = () => {
     site_id: ""
   });
 
+  // Fetch roles when component mounts
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  // Fetch roles from API
+  const fetchRoles = async () => {
+    setRolesLoading(true);
+    try {
+      const response = await axios.get(
+        `${baseURL}lock_roles.json`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      
+      if (response.data && Array.isArray(response.data)) {
+        setRoles(response.data);
+      } else {
+        console.error("Invalid roles data format:", response.data);
+        toast.error("Failed to load roles: Invalid data format");
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      toast.error("Failed to load roles. Please try again later.");
+    } finally {
+      setRolesLoading(false);
+    }
+  };
+
+  console.log("Roles fetched:", roles);
+  console.log("Form data:", formData);
+
   // Handle input changes
   const handleChange = (e) => {
     if (!e || !e.target) return; // Prevents the crash
@@ -44,7 +81,6 @@ const UserCreate = () => {
     }));
   };
   
-
   // Validate form data
   const validateForm = () => {
     let newErrors = {};
@@ -165,6 +201,18 @@ const UserCreate = () => {
     navigate(-1); // This navigates back one step in history
   };
 
+  // Prepare role options for SelectBox
+  const roleOptions = [
+    // { label: "Select Role", value: "" },
+    ...roles.map(role => ({
+      label: role.name || `Role ${role.id}`,
+      value: role.id.toString()
+    }))
+  ];
+
+  console.log("Role options:", roleOptions);
+  console.log("Form data:", formData);
+
   return (
     <div className="main-content">
       <div className="">
@@ -244,7 +292,7 @@ const UserCreate = () => {
                       </div>
 
                       {/* Country Code */}
-                      <div className="col-md-3">
+                      {/* <div className="col-md-3">
                         <div className="form-group">
                           <label>Country Code</label>
                           <input
@@ -256,7 +304,7 @@ const UserCreate = () => {
                             onChange={handleChange}
                           />
                         </div>
-                      </div>
+                      </div> */}
 
                       {/* Alternate Email 1 */}
                       <div className="col-md-3">
@@ -273,22 +321,6 @@ const UserCreate = () => {
                           {errors.alternate_email1 && <div className="invalid-feedback">{errors.alternate_email1}</div>}
                         </div>
                       </div>
-
-                      {/* Alternate Email 2 */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Alternate Email 2</label>
-                          <input
-                            className={`form-control ${errors.alternate_email2 ? "is-invalid" : ""}`}
-                            type="email"
-                            name="alternate_email2"
-                            placeholder="Enter alternate email 2"
-                            value={formData.alternate_email2}
-                            onChange={handleChange}
-                          />
-                          {errors.alternate_email2 && <div className="invalid-feedback">{errors.alternate_email2}</div>}
-                        </div>
-                      </div> */}
 
                       {/* Alternate Address */}
                       <div className="col-md-3">
@@ -329,7 +361,7 @@ const UserCreate = () => {
                             value={formData.gender}
                             onChange={handleChange}
                             options={[
-                              { label: "Select", value: "" },
+                              // { label: "Select", value: "" },
                               { label: "Male", value: "Male" },
                               { label: "Female", value: "Female" },
                               { label: "Other", value: "Other" },
@@ -352,21 +384,6 @@ const UserCreate = () => {
                         </div>
                       </div>
 
-                      {/* Blood Group */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Blood Group</label>
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="blood_group"
-                            placeholder="Enter blood group"
-                            value={formData.blood_group}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div> */}
-
                       {/* Employee Type */}
                       <div className="col-md-3">
                         <div className="form-group">
@@ -381,9 +398,6 @@ const UserCreate = () => {
                           />
                         </div>
                       </div>
-
-                      {/* Is Admin */}
-                     
 
                       {/* Company ID */}
                       <div className="col-md-3">
@@ -419,15 +433,14 @@ const UserCreate = () => {
                       {/* Role ID */}
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>User Role
-                            <span className="otp-asterisk">*</span></label>
-                          <input
-                            className={`form-control ${errors.role_id ? "is-invalid" : ""}`}
-                            type="text"
+                          <label>User Role <span className="otp-asterisk">*</span></label>
+                          <SelectBox
                             name="role_id"
-                            placeholder="Enter Role ID"
                             value={formData.role_id}
                             onChange={handleChange}
+                            options={roleOptions}
+                            isLoading={rolesLoading}
+                            className={errors.role_id ? "is-invalid" : ""}
                           />
                           {errors.role_id && <div className="invalid-feedback">{errors.role_id}</div>}
                         </div>
@@ -466,7 +479,7 @@ const UserCreate = () => {
                       <div className="col-md-3">
                         <div className="form-group mt-4">
                           <div className="form-check">
-                          <label>Is Admin</label>
+                            Is Admin
                             <input
                               className="form-check-input"
                               type="checkbox"
