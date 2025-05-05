@@ -308,7 +308,7 @@ const ProjectDetailsEdit = () => {
           project_sales_type: projectData.project_sales_type || "",
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
-          Disclaimer: projectData.disclaimer || "",
+          Disclaimer: projectData.project_disclaimer || "",
         });
 
         setProject(response.data);
