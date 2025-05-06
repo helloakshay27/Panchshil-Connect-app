@@ -74,7 +74,7 @@ const UserEdit = () => {
         throw new Error("Invalid user data structure in API response");
       }
 
-      if (userData.birth_date) {
+      if (userData?.birth_date) {
         try {
           const [day, month, year] = userData.birth_date.split("-");
           userData.birth_date = `${year}-${month.padStart(
@@ -297,7 +297,7 @@ const UserEdit = () => {
 
     // Format birth date for API if it exists
     let formattedData = { ...formData };
-    if (formData.birth_date) {
+    if (formData?.birth_date) {
       const [year, month, day] = formData.birth_date.split("-");
       formattedData.birth_date = `${day}-${month}-${year}`;
     }
@@ -350,29 +350,35 @@ const UserEdit = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1); // This navigates back one step in history
+    navigate(-1); 
   };
 
-  const [day, month, year] = formData.birth_date.split('-');
-if (day && month && year) {
-  formData.birth_date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
-
-
-const formatDateToDisplay = (dateStr) => {
-  if (!dateStr) return "";
-  const [year, month, day] = dateStr.split("-");
-  return `${day}-${month}-${year}`;
-};
-
-  // Format birth_date for posting in dd-mm-yyyy format
-  if (formData.birth_date) {
-    const [day, month, year] = formData.birth_date.split('-');
+  if (formData?.birth_date) {
+    const [day, month, year] = formData.birth_date.split("-");
+    
     if (day && month && year) {
-      formData.birth_date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      formData.birth_date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     }
+  } else {
+    //FallBack
+    console.warn("birth_date is null or undefined");
   }
   
+
+  const formatDateToDisplay = (dateStr) => {
+    if (!dateStr) return "";
+    const [year, month, day] = dateStr.split("-");
+    return `${day}-${month}-${year}`;
+  };
+
+  if (formData.birth_date) {
+    const [day, month, year] = formData.birth_date.split("-");
+    if (day && month && year) {
+      formData.birth_date = `${year}-${String(month).padStart(2, "0")}-${String(
+        day
+      ).padStart(2, "0")}`;
+    }
+  }
 
   // Prepare dropdown options
   const roleOptions = [
@@ -382,8 +388,6 @@ const formatDateToDisplay = (dateStr) => {
       value: role.id.toString(),
     })),
   ];
-
-  
 
   const organizationOptions = [
     { label: "Select Organization", value: "" },

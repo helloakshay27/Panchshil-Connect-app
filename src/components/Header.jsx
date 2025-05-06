@@ -27,9 +27,12 @@ const Header = () => {
 
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);
-
   const firstname = sessionStorage.getItem("firstname");
+  const lastname = sessionStorage.getItem("lastname");
   const userInitial = firstname ? firstname.charAt(0).toUpperCase() : "";
+  const profile_icon = sessionStorage.getItem("profile_icon");
+  const isValidImage =
+    profile_icon && profile_icon !== "null" && profile_icon !== "undefined";
 
   const signout = () => {
     localStorage.clear();
@@ -53,13 +56,25 @@ const Header = () => {
             </div>
             <div className="text-center pb-5">
               <div className="avatar2">
-                <div className="avatar__letters2">{userInitial || "A"}</div>
+                {profile_icon ? (
+                  <img
+                    src={profile_icon}
+                    alt="Profile"
+                    className="avatar__image2"
+                  />
+                ) : (
+                  <div className="avatar__letters2">{userInitial}</div>
+                )}
               </div>
-              <h5 className="text-black">{firstname || "First Name"}</h5>
+              <h5 className="text-black">
+                {firstname || lastname
+                  ? `${firstname || ""} ${lastname || ""}`
+                  : "First Name"}
+              </h5>
+
               <p className="text-black">
                 {sessionStorage.getItem("email") || "example@example.com"}
               </p>
-
               <button className="purple-btn2 my-3" onClick={signout}>
                 Sign Out
               </button>

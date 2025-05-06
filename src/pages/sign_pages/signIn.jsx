@@ -15,15 +15,15 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const [selectedContent, setSelectedContent] = useState("content1");
   const [showOtpSection, setShowOtpSection] = useState(false);
-  
+
   const [OtpSection, setOtpSection] = useState(true);
 
   const navigate = useNavigate();
 
   // Panchshil configuration
   const config = {
-    baseURL: "https://panchshil-super.lockated.com/",
-    // baseURL: "http://localhost:3000/",
+    // baseURL: "https://panchshil-super.lockated.com/",
+    baseURL: "http://localhost:3000/",
 
     // baseURL: "https://api-connect.panchshil.com/",
     logoUrl: LOGO_URL,
@@ -68,9 +68,13 @@ const SignIn = () => {
       });
       console.log("Response:", response);
       if (response.data.access_token) {
-        localStorage.setItem("access_token", response.data.access_token);
-        sessionStorage.setItem("email", response.data.email);
-        sessionStorage.setItem("firstname", response.data.firstname);
+        localStorage.setItem("access_token", response.data?.access_token);
+        sessionStorage.setItem("email", response.data?.email);
+        sessionStorage.setItem("firstname", response.data?.firstname);
+        sessionStorage.setItem("lastname", response.data?.lastname);
+        sessionStorage.setItem("user_id", response.data?.id);
+        sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
+
 
         // Get All Lock Roles
 
@@ -91,7 +95,7 @@ const SignIn = () => {
         // localStorage.setItem("lock_roles", JSON.stringify(lockRoles));
 
         // From Users Sign in Api Lock Roles
-        const lockRole = response.data.lock_role;
+        const lockRole = response?.data?.lock_role;
         if (lockRole) {
           localStorage.setItem("lock_role_name", lockRole.name);
           localStorage.setItem(
@@ -131,7 +135,7 @@ const SignIn = () => {
       setShowOtpSection(true);
       // navigate("/verify-otp");// Redirect to OTP verification page
     } catch (err) {
-      toast.error("Failed to send OTP. Please try again.");
+      toast.error(err.response?.data?.error || "An error occurred to Send OTP");
       console.error(err);
     } finally {
       setLoading(false);
@@ -154,11 +158,26 @@ const SignIn = () => {
         otp,
       });
 
+    console.log("Response: verify code", response);
       const { access_token, email, firstname } = response.data;
       if (access_token) {
         localStorage.setItem("access_token", access_token);
-        sessionStorage.setItem("email", email);
-        sessionStorage.setItem("firstname", firstname);
+        const lockRole = response.data?.lock_role;
+        if (lockRole) {
+          localStorage.setItem("lock_role_name", lockRole.name);
+          localStorage.setItem(
+            "lock_role_permissions",
+            lockRole.permissions_hash
+          );
+        }
+        sessionStorage.setItem("email", response.data?.email);
+        sessionStorage.setItem("firstname", response.data?.firstname);
+        sessionStorage.setItem("lastname", response.data?.lastname);
+        sessionStorage.setItem("user_id", response.data?.id);
+        sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
+        localStorage.setItem("user_id", response.data?.id);
+        // sessionStorage.setItem("email", email);
+        // sessionStorage.setItem("firstname", firstname);
         navigate("/project-list");
         toast.success("Login successfully");
       } else {
@@ -273,7 +292,10 @@ const SignIn = () => {
 
       {showOtpSection && (
         <div className="form-group position-relative">
-          <label className={`mb-1 text-white ${config.formTextColor}`} htmlFor="otp">
+          <label
+            className={`mb-1 text-white ${config.formTextColor}`}
+            htmlFor="otp"
+          >
             Enter OTP
           </label>
           <input
