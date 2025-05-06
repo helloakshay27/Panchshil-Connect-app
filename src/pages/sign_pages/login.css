@@ -1076,5 +1076,43 @@ input#confirmPassword {
   /* filter: brightness(0) invert(1); or whatever styling */
 }
 
+/* Add these styles to your login.css file */
 
+.success-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.requirement-met {
+  color: #00C853;
+}
+
+.requirement-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.requirement-text {
+  margin-left: 5px;
+  margin-bottom: 0;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.bullet-point {
+  color: #ccc;
+  margin-right: 5px;
+}
+
+/* Optional: Add animation for the success screen */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.success-icon {
+  animation: fadeIn 0.5s ease-in-out;
+}
 
