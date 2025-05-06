@@ -344,14 +344,14 @@ const LockRoleList = () => {
                     </div>
                   </div>
                 ) : selectedRole ? (
-                  <div className="permissions-table-container mt-3 mb-4">
+                  <div className="permissions-table-container mb-4">
                     {(!editedPermissions || typeof editedPermissions !== 'object') ? (
                       <div className="alert alert-warning">
                         Unable to load permissions. Using default empty permissions.
                       </div>
                     ) : (
                       <>
-                         <div className="tbl-container mt-3">
+                         <div className="tbl-container">
                          <table className="w-100">
                           <thead>
                             <tr className="bg-light">
