@@ -10,7 +10,11 @@ const UserCreate = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [roles, setRoles] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [rolesLoading, setRolesLoading] = useState(false);
+  const [organizationsLoading, setOrganizationsLoading] = useState(false);
+  const [companiesLoading, setCompaniesLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -33,9 +37,11 @@ const UserCreate = () => {
     site_id: ""
   });
 
-  // Fetch roles when component mounts
+  // Fetch roles, companies, and organizations when component mounts
   useEffect(() => {
     fetchRoles();
+    fetchOrganizations();
+    fetchCompanies();
   }, []);
 
   // Fetch roles from API
@@ -65,8 +71,59 @@ const UserCreate = () => {
     }
   };
 
-  console.log("Roles fetched:", roles);
-  console.log("Form data:", formData);
+  // Fetch organizations from API
+  const fetchOrganizations = async () => {
+    setOrganizationsLoading(true);
+    try {
+      const response = await axios.get(
+        `${baseURL}organizations.json`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      
+      if (response.data && response.data.organizations && Array.isArray(response.data.organizations)) {
+        setOrganizations(response.data.organizations);
+      } else {
+        console.error("Invalid organizations data format:", response.data);
+        toast.error("Failed to load organizations: Invalid data format");
+      }
+    } catch (error) {
+      console.error("Error fetching organizations:", error);
+      toast.error("Failed to load organizations. Please try again later.");
+    } finally {
+      setOrganizationsLoading(false);
+    }
+  };
+
+  // Fetch companies from API
+  const fetchCompanies = async () => {
+    setCompaniesLoading(true);
+    try {
+      const response = await axios.get(
+        `${baseURL}company_setups.json`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      
+      if (response.data && Array.isArray(response.data.company_setups)) {
+        setCompanies(response.data.company_setups);
+      } else {
+        console.error("Invalid companies data format:", response.data);
+        toast.error("Failed to load companies: Invalid data format");
+      }
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      toast.error("Failed to load companies. Please try again later.");
+    } finally {
+      setCompaniesLoading(false);
+    }
+  };
 
   // Handle input changes
   const handleChange = (e) => {
@@ -92,8 +149,8 @@ const UserCreate = () => {
       { field: "lastname", label: "Last Name" },
       { field: "mobile", label: "Mobile Number" },
       { field: "email", label: "Email" },
-      { field: "role_id", label: "Role ID" },
-      { field: "company_id", label: "Company ID" }
+      // { field: "role_id", label: "Role ID" },
+      // { field: "company_id", label: "Company" }
     ];
     
     // Check all mandatory fields
@@ -203,15 +260,27 @@ const UserCreate = () => {
 
   // Prepare role options for SelectBox
   const roleOptions = [
-    // { label: "Select Role", value: "" },
     ...roles.map(role => ({
       label: role.name || `Role ${role.id}`,
       value: role.id.toString()
     }))
   ];
 
-  console.log("Role options:", roleOptions);
-  console.log("Form data:", formData);
+  // Prepare organization options for SelectBox
+  const organizationOptions = [
+    ...organizations.map(org => ({
+      label: org.name || `Organization ${org.id}`,
+      value: org.id.toString()
+    }))
+  ];
+
+  // Prepare company options for SelectBox
+  const companyOptions = [
+    ...companies.map(company => ({
+      label: company.name || `Company ${company.id}`,
+      value: company.id.toString()
+    }))
+  ];
 
   return (
     <div className="main-content">
@@ -291,21 +360,6 @@ const UserCreate = () => {
                         </div>
                       </div>
 
-                      {/* Country Code */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Country Code</label>
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="country_code"
-                            placeholder="Enter country code"
-                            value={formData.country_code}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div> */}
-
                       {/* Alternate Email 1 */}
                       <div className="col-md-3">
                         <div className="form-group">
@@ -361,7 +415,6 @@ const UserCreate = () => {
                             value={formData.gender}
                             onChange={handleChange}
                             options={[
-                              // { label: "Select", value: "" },
                               { label: "Male", value: "Male" },
                               { label: "Female", value: "Female" },
                               { label: "Other", value: "Other" },
@@ -399,33 +452,34 @@ const UserCreate = () => {
                         </div>
                       </div>
 
-                      {/* Company ID */}
+                      {/* Company Dropdown */}
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>Company ID <span className="otp-asterisk">*</span></label>
-                          <input
-                            className={`form-control ${errors.company_id ? "is-invalid" : ""}`}
-                            type="text"
+                          <label>Company 
+                            {/* <span className="otp-asterisk">*</span> */}
+                            </label>
+                          <SelectBox
                             name="company_id"
-                            placeholder="Enter Company ID"
                             value={formData.company_id}
                             onChange={handleChange}
+                            options={companyOptions}
+                            isLoading={companiesLoading}
+                            className={errors.company_id ? "is-invalid" : ""}
                           />
                           {errors.company_id && <div className="invalid-feedback">{errors.company_id}</div>}
                         </div>
                       </div>
 
-                      {/* Organization ID */}
+                      {/* Organization Dropdown */}
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>Organization ID</label>
-                          <input
-                            className="form-control"
-                            type="text"
+                          <label>Organization</label>
+                          <SelectBox
                             name="organization_id"
-                            placeholder="Enter Organization ID"
                             value={formData.organization_id}
                             onChange={handleChange}
+                            options={organizationOptions}
+                            isLoading={organizationsLoading}
                           />
                         </div>
                       </div>
@@ -476,10 +530,9 @@ const UserCreate = () => {
                         </div>
                       </div>
 
-                      <div className="col-md-3">
+                      {/* <div className="col-md-3">
                         <div className="form-group mt-4">
                           <div className="form-check">
-                            Is Admin
                             <input
                               className="form-check-input"
                               type="checkbox"
@@ -493,7 +546,7 @@ const UserCreate = () => {
                             </label>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

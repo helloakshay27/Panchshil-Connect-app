@@ -15,6 +15,7 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const [selectedContent, setSelectedContent] = useState("content1");
   const [showOtpSection, setShowOtpSection] = useState(false);
+  
   const [OtpSection, setOtpSection] = useState(true);
 
   const navigate = useNavigate();
@@ -128,6 +129,7 @@ const SignIn = () => {
       setOtpSection(false);
       toast.success("OTP Sent successfully");
       setShowOtpSection(true);
+      navigate("/verify-otp");
     } catch (err) {
       toast.error("Failed to send OTP. Please try again.");
       console.error(err);
