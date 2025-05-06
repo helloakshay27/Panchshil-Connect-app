@@ -43,15 +43,12 @@ const UserList = () => {
     const fetchUsers = async () => {
       setLoading(true); // Start loading
       try {
-        const response = await fetch(
-          `${baseURL}users/get_users.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`${baseURL}users/get_users.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
         const data = await response.json();
 
         if (Array.isArray(data.users)) {
@@ -80,10 +77,11 @@ const UserList = () => {
     setPagination((prevState) => ({ ...prevState, current_page: 1 }));
   };
 
-  const filteredUsers = users.filter((user) =>
-    user.firstname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.lastname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.firstname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.lastname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const displayedUsers = filteredUsers.slice(
@@ -110,19 +108,16 @@ const UserList = () => {
 
   const handleToggleUser = async (userId, currentStatus) => {
     try {
-      const response = await fetch(
-        `${baseURL}users/${userId}.json`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user: { active: !currentStatus } }),
-        }
-      );
+      const response = await fetch(`${baseURL}users/${userId}.json`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user: { active: !currentStatus } }),
+      });
 
-      toast.success("Updated Status")
+      toast.success("Updated Status");
       if (!response.ok) {
         throw new Error("Failed to update user status");
       }
@@ -137,8 +132,6 @@ const UserList = () => {
       console.error("Error updating user status:", error);
     }
   };
-
-  
 
   return (
     <div className="main-content">
@@ -193,26 +186,26 @@ const UserList = () => {
           </div>
 
           {/* {userPermission.create === "true" && ( */}
-            <div className="card-tools mt-1">
-              <button
-                className="purple-btn2 rounded-3"
-                fdprocessedid="xn3e6n"
-                onClick={() => navigate("/setup-member/user-create")}
+          <div className="card-tools mt-1">
+            <button
+              className="purple-btn2 rounded-3"
+              fdprocessedid="xn3e6n"
+              onClick={() => navigate("/setup-member/user-create")}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={26}
+                height={20}
+                fill="currentColor"
+                className="bi bi-plus"
+                viewBox="0 0 16 16"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={26}
-                  height={20}
-                  fill="currentColor"
-                  className="bi bi-plus"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                </svg>
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+              </svg>
 
-                <span>Add</span>
-              </button>
-            </div>
+              <span>Add</span>
+            </button>
+          </div>
           {/* )} */}
         </div>
 
@@ -261,30 +254,32 @@ const UserList = () => {
                             <tr key={user.id}>
                               <td>
                                 {/* {userPermission.update === "true" && ( */}
-                                  <a
-                                    href=""
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      navigate(`/setup-member/user-edit/${user.id}`);
-                                    }}
+                                <a
+                                  href=""
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    navigate(
+                                      `/setup-member/user-edit/${user.id}`
+                                    );
+                                  }}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="24"
-                                      height="24"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                    >
-                                      <path
-                                        d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
-                                        fill="#667085"
-                                      />
-                                      <path
-                                        d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
-                                        fill="#667085"
-                                      />
-                                    </svg>
-                                  </a>
+                                    <path
+                                      d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
+                                      fill="#667085"
+                                    />
+                                    <path
+                                      d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
+                                      fill="#667085"
+                                    />
+                                  </svg>
+                                </a>
                                 {/* )} */}
                                 {userPermission.show === "true" && (
                                   <a
@@ -316,7 +311,12 @@ const UserList = () => {
                               <td>{user.firstname || "-"}</td>
                               <td>{user.lastname || "-"}</td>
                               <td>{user.email || "-"}</td>
-                              <td>{user.country_code ? `+${user.country_code} ` : ""}{user.mobile || "-"}</td>
+                              <td>
+                                {user.country_code
+                                  ? `+${user.country_code} `
+                                  : ""}
+                                {user.mobile || "-"}
+                              </td>
                               <td>{user.role_id || "-"}</td>
                               <td>{user.company_id || "-"}</td>
                               <td>
@@ -367,157 +367,186 @@ const UserList = () => {
                     </table>
                   </div>
                   <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
-  <ul className="pagination" role="navigation" aria-label="pager">
-    {/* First Button */}
-    <li
-      className={`page-item ${
-        pagination.current_page === 1 ? "disabled" : ""
-      }`}
-    >
-      <button
-        className="page-link"
-        onClick={() => handlePageChange(1)}
-        disabled={pagination.current_page === 1}
-      >
-        First
-      </button>
-    </li>
+                    <ul
+                      className="pagination"
+                      role="navigation"
+                      aria-label="pager"
+                    >
+                      {/* First Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === 1 ? "disabled" : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(1)}
+                          disabled={pagination.current_page === 1}
+                        >
+                          First
+                        </button>
+                      </li>
 
-    {/* Previous Button */}
-    <li
-      className={`page-item ${
-        pagination.current_page === 1 ? "disabled" : ""
-      }`}
-    >
-      <button
-        className="page-link"
-        onClick={() => handlePageChange(pagination.current_page - 1)}
-        disabled={pagination.current_page === 1}
-      >
-        Prev
-      </button>
-    </li>
+                      {/* Previous Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === 1 ? "disabled" : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            handlePageChange(pagination.current_page - 1)
+                          }
+                          disabled={pagination.current_page === 1}
+                        >
+                          Prev
+                        </button>
+                      </li>
 
-    {/* Dynamic Page Numbers with Ellipsis */}
-    {(() => {
-      const totalPages = pagination.total_pages;
-      const currentPage = pagination.current_page;
-      const pageNumbers = [];
+                      {/* Dynamic Page Numbers with Ellipsis */}
+                      {(() => {
+                        const totalPages = pagination.total_pages;
+                        const currentPage = pagination.current_page;
+                        const pageNumbers = [];
 
-      let startPage = Math.max(currentPage - 2, 1);
-      let endPage = Math.min(startPage + 4, totalPages);
+                        let startPage = Math.max(currentPage - 2, 1);
+                        let endPage = Math.min(startPage + 4, totalPages);
 
-      // Adjust start if end is near total
-      if (endPage - startPage < 5) {
-        startPage = Math.max(endPage - 4, 1);
-      }
+                        // Adjust start if end is near total
+                        if (endPage - startPage < 5) {
+                          startPage = Math.max(endPage - 4, 1);
+                        }
 
-      // Show first page and ellipsis if needed
-      if (startPage > 1) {
-        pageNumbers.push(
-          <li key={1} className="page-item">
-            <button className="page-link" onClick={() => handlePageChange(1)}>
-              1
-            </button>
-          </li>
-        );
-        if (startPage > 2) {
-          pageNumbers.push(
-            <li key="start-ellipsis" className="page-item disabled">
-              <span className="page-link">...</span>
-            </li>
-          );
-        }
-      }
+                        // Show first page and ellipsis if needed
+                        if (startPage > 1) {
+                          pageNumbers.push(
+                            <li key={1} className="page-item">
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(1)}
+                              >
+                                1
+                              </button>
+                            </li>
+                          );
+                          if (startPage > 2) {
+                            pageNumbers.push(
+                              <li
+                                key="start-ellipsis"
+                                className="page-item disabled"
+                              >
+                                <span className="page-link">...</span>
+                              </li>
+                            );
+                          }
+                        }
 
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(
-          <li
-            key={i}
-            className={`page-item ${
-              pagination.current_page === i ? "active" : ""
-            }`}
-          >
-            <button className="page-link" onClick={() => handlePageChange(i)}>
-              {i}
-            </button>
-          </li>
-        );
-      }
+                        for (let i = startPage; i <= endPage; i++) {
+                          pageNumbers.push(
+                            <li
+                              key={i}
+                              className={`page-item ${
+                                pagination.current_page === i ? "active" : ""
+                              }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(i)}
+                              >
+                                {i}
+                              </button>
+                            </li>
+                          );
+                        }
 
-      // Show end ellipsis and last page
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-          pageNumbers.push(
-            <li key="end-ellipsis" className="page-item disabled">
-              <span className="page-link">...</span>
-            </li>
-          );
-        }
-        pageNumbers.push(
-          <li key={totalPages} className="page-item">
-            <button
-              className="page-link"
-              onClick={() => handlePageChange(totalPages)}
-            >
-              {totalPages}
-            </button>
-          </li>
-        );
-      }
+                        // Show end ellipsis and last page
+                        if (endPage < totalPages) {
+                          if (endPage < totalPages - 1) {
+                            pageNumbers.push(
+                              <li
+                                key="end-ellipsis"
+                                className="page-item disabled"
+                              >
+                                <span className="page-link">...</span>
+                              </li>
+                            );
+                          }
+                          pageNumbers.push(
+                            <li key={totalPages} className="page-item">
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(totalPages)}
+                              >
+                                {totalPages}
+                              </button>
+                            </li>
+                          );
+                        }
 
-      return pageNumbers;
-    })()}
+                        return pageNumbers;
+                      })()}
 
-    {/* Next Button */}
-    <li
-      className={`page-item ${
-        pagination.current_page === pagination.total_pages ? "disabled" : ""
-      }`}
-    >
-      <button
-        className="page-link"
-        onClick={() => handlePageChange(pagination.current_page + 1)}
-        disabled={pagination.current_page === pagination.total_pages}
-      >
-        Next
-      </button>
-    </li>
+                      {/* Next Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === pagination.total_pages
+                            ? "disabled"
+                            : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            handlePageChange(pagination.current_page + 1)
+                          }
+                          disabled={
+                            pagination.current_page === pagination.total_pages
+                          }
+                        >
+                          Next
+                        </button>
+                      </li>
 
-    {/* Last Button */}
-    <li
-      className={`page-item ${
-        pagination.current_page === pagination.total_pages ? "disabled" : ""
-      }`}
-    >
-      <button
-        className="page-link"
-        onClick={() => handlePageChange(pagination.total_pages)}
-        disabled={pagination.current_page === pagination.total_pages}
-      >
-        Last
-      </button>
-    </li>
-  </ul>
+                      {/* Last Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === pagination.total_pages
+                            ? "disabled"
+                            : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            handlePageChange(pagination.total_pages)
+                          }
+                          disabled={
+                            pagination.current_page === pagination.total_pages
+                          }
+                        >
+                          Last
+                        </button>
+                      </li>
+                    </ul>
 
-  {/* Showing entries count */}
-  <div>
-    <p className="mb-0">
-      Showing{" "}
-      {Math.min(
-        (pagination.current_page - 1) * pageSize + 1 || 1,
-        pagination.total_count
-      )}{" "}
-      to{" "}
-      {Math.min(
-        pagination.current_page * pageSize,
-        pagination.total_count
-      )}{" "}
-      of {pagination.total_count} entries
-    </p>
-  </div>
-</div>
-
+                    {/* Showing entries count */}
+                    <div>
+                      <p className="mb-0">
+                        Showing{" "}
+                        {Math.min(
+                          (pagination.current_page - 1) * pageSize + 1 || 1,
+                          pagination.total_count
+                        )}{" "}
+                        to{" "}
+                        {Math.min(
+                          pagination.current_page * pageSize,
+                          pagination.total_count
+                        )}{" "}
+                        of {pagination.total_count} entries
+                      </p>
+                    </div>
+                  </div>
                 </>
               )}
             </div>

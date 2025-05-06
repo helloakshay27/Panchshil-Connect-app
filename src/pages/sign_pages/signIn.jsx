@@ -129,7 +129,7 @@ const SignIn = () => {
       setOtpSection(false);
       toast.success("OTP Sent successfully");
       setShowOtpSection(true);
-      navigate("/verify-otp");
+      // navigate("/verify-otp");// Redirect to OTP verification page
     } catch (err) {
       toast.error("Failed to send OTP. Please try again.");
       console.error(err);
@@ -273,7 +273,7 @@ const SignIn = () => {
 
       {showOtpSection && (
         <div className="form-group position-relative">
-          <label className={`mb-1 ${config.formTextColor}`} htmlFor="otp">
+          <label className={`mb-1 text-white ${config.formTextColor}`} htmlFor="otp">
             Enter OTP
           </label>
           <input
