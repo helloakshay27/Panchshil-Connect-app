@@ -313,7 +313,7 @@ const EventEdit = () => {
   return (
     <>
       <div className="main-content">
-        <div className="website-content overflow-auto">
+        <div className="">
           <div className="module-data-section container-fluid">
             <div className="module-data-section p-3">
               <div className="card mt-4 pb-4 mx-4">

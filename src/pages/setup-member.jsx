@@ -31,6 +31,11 @@ const SetupMember = () => {
                   User Edit
                 </Link>
               </li>
+              <li>
+                <Link to="/setup-member/user-details/:id">
+                  User Details
+                </Link>
+              </li>
             <li>
                 <Link to="/setup-member/lock-role-create">
                   Lock Role Create

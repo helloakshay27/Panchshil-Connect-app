@@ -238,8 +238,8 @@ const UserList = () => {
                           <th>Last Name</th>
                           <th>Email</th>
                           <th>Mobile</th>
-                          <th>Role ID</th>
-                          <th>Company ID</th>
+                          {/* <th>Role ID</th>
+                          <th>Company ID</th> */}
                           <th>Status</th>
                         </tr>
                       </thead>
@@ -281,12 +281,12 @@ const UserList = () => {
                                   </svg>
                                 </a>
                                 {/* )} */}
-                                {userPermission.show === "true" && (
+                                {/* {userPermission.show === "true" && ( */}
                                   <a
                                     href=""
                                     onClick={(e) => {
                                       e.preventDefault();
-                                      navigate(`/user-details/${user.id}`);
+                                      navigate(`/setup-member/user-details/${user.id}`);
                                     }}
                                   >
                                     <svg
@@ -301,7 +301,7 @@ const UserList = () => {
                                       <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"></path>
                                     </svg>
                                   </a>
-                                )}
+                                {/* )} */}
                               </td>
                               <td>
                                 {(pagination.current_page - 1) * pageSize +
@@ -317,10 +317,10 @@ const UserList = () => {
                                   : ""}
                                 {user.mobile || "-"}
                               </td>
-                              <td>{user.role_id || "-"}</td>
-                              <td>{user.company_id || "-"}</td>
+                              {/* <td>{user.role_id || "-"}</td>
+                              <td>{user.company_id || "-"}</td> */}
                               <td>
-                                {userPermission.destroy === "true" && (
+                                {/* {userPermission.destroy === "true" && ( */}
                                   <button
                                     onClick={() =>
                                       handleToggleUser(user.id, user.active)
@@ -358,7 +358,7 @@ const UserList = () => {
                                       </svg>
                                     )}
                                   </button>
-                                )}
+                                {/* )} */}
                               </td>
                             </tr>
                           ))

@@ -601,7 +601,7 @@ const UserEdit = () => {
                         </div>
                       </div> */}
 
-                      <div className="col-md-3 mt-2">
+                      <div className="col-md-3">
                         <div className="form-group">
                           <label>Gender</label>
                           <SelectBox
@@ -764,7 +764,7 @@ const UserEdit = () => {
                       </div> */}
 
                       {/* Department ID */}
-                      <div className="col-md-3">
+                      <div className="col-md-3 mt-1">
                         <div className="form-group">
                           <label>Department ID</label>
                           <input
@@ -779,7 +779,7 @@ const UserEdit = () => {
                       </div>
 
                       {/* Site ID */}
-                      <div className="col-md-3">
+                      <div className="col-md-3 mt-1">
                         <div className="form-group">
                           <label>Site ID</label>
                           <input

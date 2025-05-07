@@ -88,6 +88,7 @@ import LockRoleList from "./pages/lock-role-list";
 import UserCreate from "./pages/user-create";
 import UserEdit from "./pages/user-edit";
 import UserList from "./pages/user-list";
+import UserDetails from "./pages/user-details";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -322,6 +323,10 @@ function App() {
            <Route
             path="/setup-member/user-list"
             element={<UserList />}
+          />
+           <Route
+            path="/setup-member/user-details/:id"
+            element={<UserDetails />}
           />
 
         </Route>
