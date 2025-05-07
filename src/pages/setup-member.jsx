@@ -24,8 +24,7 @@ const SetupMember = () => {
                 <Link to="/setup-member/user-create">
                   User Create
                 </Link>
-              </li>
-            
+              </li>           
             <li>
                 <Link to="/setup-member/user-edit/:id">
                   User Edit

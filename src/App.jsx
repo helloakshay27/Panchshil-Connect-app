@@ -89,6 +89,9 @@ import UserCreate from "./pages/user-create";
 import UserEdit from "./pages/user-edit";
 import UserList from "./pages/user-list";
 import UserDetails from "./pages/user-details";
+import DepartmentCreate from "./pages/department-create";
+import DepartmentList from "./pages/department-list";
+import DepartmentEdit from "./pages/department-edit";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -238,6 +241,9 @@ function App() {
           <Route path="/sitevisit-create" element={<SitevisitCreate />} />
           <Route path="/sitevisit-list" element={<SitevisitList />} />
           <Route path="/sitevisit-edit/:id" element={<SitevisitEdit />} />
+          <Route path="/department-create" element={<DepartmentCreate />} />
+          <Route path="/department-list" element={<DepartmentList />} />
+          <Route path="/department-edit/:id" element={<DepartmentEdit />} />
           <Route
             path="/setup-member/siteslot-create"
             element={<SiteVisitSlotConfig />}
