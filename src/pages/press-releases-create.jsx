@@ -152,6 +152,7 @@ const PressReleasesCreate = () => {
       sendData.append("press_release[release_date]", formData.release_date);
       sendData.append("press_release[release_date]", formData.release_date);
       sendData.append("press_release[press_source]", formData.press_source);
+      sendData.append("press_release[description]", formData.description);
 
       // Append multiple images
       if (formData.pr_image?.length) {
@@ -189,8 +190,8 @@ const PressReleasesCreate = () => {
   return (
     <>
       <div className="main-content">
-        <div className="website-content overflow-auto">
-          <div className="module-data-section container-fluid">
+        <div className="website-content overflow-aut">
+          <div className="">
             <div className="card mt-4 pb-4 mx-4">
               <div className="card-header">
                 <h3 className="card-title">Create Press Releases</h3>
