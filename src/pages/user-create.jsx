@@ -15,6 +15,8 @@ const UserCreate = () => {
   const [rolesLoading, setRolesLoading] = useState(false);
   const [organizationsLoading, setOrganizationsLoading] = useState(false);
   const [companiesLoading, setCompaniesLoading] = useState(false);
+  const [departments, setDepartments] = useState([]); // Changed variable name for consistency
+  const [departmentsLoading, setDepartmentsLoading] = useState(false); // Changed variable name for consistency
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -38,12 +40,14 @@ const UserCreate = () => {
   });
 
   console.log("Form Data:", formData); // Debugging line
+  console.log("Departments:", departments); // Added debugging line for departments
 
-  // Fetch roles, companies, and organizations when component mounts
+  // Fetch roles, companies, organizations, and departments when component mounts
   useEffect(() => {
     fetchRoles();
     fetchOrganizations();
     fetchCompanies();
+    fetchDepartments(); // Changed function name for consistency
   }, []);
 
   // Fetch roles from API
@@ -122,6 +126,36 @@ const UserCreate = () => {
     }
   };
 
+  // Fetch departments from API (renamed and fixed function)
+  const fetchDepartments = async () => {
+    setDepartmentsLoading(true);
+    try {
+      const response = await axios.get(`${baseURL}departments.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      console.log("Department API response:", response.data); // Debug the API response
+
+      // Check if response.data is directly an array (as shown in the error message)
+      if (response.data && Array.isArray(response.data)) {
+        setDepartments(response.data);
+      } else if (response.data && Array.isArray(response.data.departments)) {
+        // Fallback to original expected structure
+        setDepartments(response.data.departments);
+      } else {
+        console.error("Invalid department data format:", response.data);
+        toast.error("Failed to load departments: Invalid data format");
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      toast.error("Failed to load departments. Please try again later.");
+    } finally {
+      setDepartmentsLoading(false);
+    }
+  };
+
   // Handle input changes
   const handleChange = (e) => {
     if (!e || !e.target) return; // Prevents the crash
@@ -146,8 +180,10 @@ const UserCreate = () => {
       { field: "lastname", label: "Last Name" },
       { field: "mobile", label: "Mobile Number" },
       { field: "email", label: "Email" },
-      // { field: "role_id", label: "Role ID" },
-      // { field: "company_id", label: "Company" }
+      { field: "role_id", label: "Role" },
+      { field: "company_id", label: "Company" },
+      { field: "organization_id", label: "Organization" },
+      { field: "department_id", label: "Department" }
     ];
 
     // Check all mandatory fields
@@ -222,21 +258,7 @@ const UserCreate = () => {
 
     setLoading(true);
 
-    // Create user object from form data
-    // const userData = {
-    //   user: {
-    //     ...formData,
-    //     // Convert string IDs to numbers where needed
-    //     role_id: formData.role_id ? parseInt(formData.role_id) : null,
-    //     company_id: formData.company_id ? parseInt(formData.company_id) : null,
-    //     organization_id: formData.organization_id ? parseInt(formData.organization_id) : null,
-    //     department_id: formData.department_id ? parseInt(formData.department_id) : null,
-    //     site_id: formData.site_id ? parseInt(formData.site_id) : null
-    //   }
-    // };
-
     const data = new FormData();
-    // formDataToSend.append("company_setup[name]", formData.companyName);
     data.append("user[organization_id]", formData.organization_id);
     data.append("user[company_id]", formData.company_id);
     data.append("user[role_id]", formData.role_id);
@@ -245,20 +267,13 @@ const UserCreate = () => {
     data.append("user[mobile]", formData.mobile);
     data.append("user[email]", formData.email);
     data.append("user[alternate_email1]", formData.alternate_email1);
-    // data.append(
-    //   "user[alternate_email2]",
-    //   formData.alternate_email2
-    // );
     data.append("user[alternate_address]", formData.alternate_address);
-    // data.append("user[is_admin]", formData.is_admin);
     data.append("user[employee_type]", formData.employee_type);
     data.append("user[user_title]", formData.user_title);
     data.append("user[gender]", formData.gender);
     data.append("user[birth_date]", formData.birth_date);
-    // data.append("user[blood_group]", formData.blood_group);
     data.append("user[site_id]", formData.site_id);
     data.append("user[department_id]", formData.department_id);
-    // data.append("user[country_code]", formData.country_code);
 
     try {
       const response = await axios.post(`${baseURL}users.json`, data, {
@@ -308,6 +323,14 @@ const UserCreate = () => {
     })),
   ];
 
+  // Prepare department options for SelectBox
+  const departmentOptions = [
+    ...departments.map((dept) => ({
+      label: dept.name || `Department ${dept.id}`,
+      value: dept.id.toString(),
+    })),
+  ];
+
   return (
     <div className="main-content">
       <div className="">
@@ -319,418 +342,358 @@ const UserCreate = () => {
                   <h3 className="card-title">Create User</h3>
                 </div>
                 <div className="card-body">
-                  {/* <div className="row"> */}
-                    <div className="row">
-                      {/* First Name */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            First Name <span className="otp-asterisk">*</span>
-                          </label>
-                          <input
-                            className={`form-control ${
-                              errors.firstname ? "is-invalid" : ""
-                            }`}
-                            type="text"
-                            name="firstname"
-                            placeholder="Enter firstname"
-                            value={formData.firstname}
-                            onChange={handleChange}
-                          />
-                          {errors.firstname && (
-                            <div className="invalid-feedback">
-                              {errors.firstname}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Last Name */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            Last Name <span className="otp-asterisk">*</span>
-                          </label>
-                          <input
-                            className={`form-control ${
-                              errors.lastname ? "is-invalid" : ""
-                            }`}
-                            type="text"
-                            name="lastname"
-                            placeholder="Enter lastname"
-                            value={formData.lastname}
-                            onChange={handleChange}
-                          />
-                          {errors.lastname && (
-                            <div className="invalid-feedback">
-                              {errors.lastname}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Mobile */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            Mobile Number{" "}
-                            <span className="otp-asterisk">*</span>
-                          </label>
-                          <input
-                            className={`form-control ${
-                              errors.mobile ? "is-invalid" : ""
-                            }`}
-                            type="text"
-                            name="mobile"
-                            placeholder="Enter mobile"
-                            value={formData.mobile}
-                            onChange={handleChange}
-                            maxLength={10}
-                          />
-                          {errors.mobile && (
-                            <div className="invalid-feedback">
-                              {errors.mobile}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Email */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            Email <span className="otp-asterisk">*</span>
-                          </label>
-                          <input
-                            className={`form-control ${
-                              errors.email ? "is-invalid" : ""
-                            }`}
-                            type="email"
-                            name="email"
-                            placeholder="Enter email"
-                            value={formData.email}
-                            onChange={handleChange}
-                          />
-                          {errors.email && (
-                            <div className="invalid-feedback">
-                              {errors.email}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Alternate Email 1 */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Alternate Email</label>
-                          <input
-                            className={`form-control ${
-                              errors.alternate_email1 ? "is-invalid" : ""
-                            }`}
-                            type="email"
-                            name="alternate_email1"
-                            placeholder="Enter alternate email"
-                            value={formData.alternate_email1}
-                            onChange={handleChange}
-                          />
-                          {errors.alternate_email1 && (
-                            <div className="invalid-feedback">
-                              {errors.alternate_email1}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Alternate Address */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Address</label>
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="alternate_address"
-                            placeholder="Enter alternate address"
-                            value={formData.alternate_address}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-
-                      {/* User Title */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>User Title</label>
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="user_title"
-                            placeholder="Enter user title"
-                            value={formData.user_title}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Gender */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Gender</label>
-                          <SelectBox
-                            name="gender"
-                            value={formData.gender}
-                            onChange={handleChange}
-                            options={[
-                              { label: "Male", value: "Male" },
-                              { label: "Female", value: "Female" },
-                              { label: "Other", value: "Other" },
-                            ]}
-                          />
-                        </div>
-                      </div> */}
-
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Gender</label>
-                          <SelectBox
-                            options={[
-                              { label: "Male", value: "Male" },
-                              { label: "Female", value: "Female" },
-                              { label: "Other", value: "Other" },
-                            ]}
-                            defaultValue={formData.gender}
-                            onChange={(value) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                gender: value,
-                              }))
-                            }
-                            //isDisableFirstOption={true}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Birth Date */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Birth Date</label>
-                          <input
-                            className="form-control"
-                            type="date"
-                            name="birth_date"
-                            value={formData.birth_date}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Employee Type */}
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Employee Type</label>
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="employee_type"
-                            placeholder="Enter employee type"
-                            value={formData.employee_type}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Company Dropdown */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            Company
-                           
-                          </label>
-                          <SelectBox
-                            name="company_id"
-                            value={formData.company_id}
-                            onChange={handleChange}
-                            options={companyOptions}
-                            isLoading={companiesLoading}
-                            className={errors.company_id ? "is-invalid" : ""}
-                          />
-                          {errors.company_id && (
-                            <div className="invalid-feedback">
-                              {errors.company_id}
-                            </div>
-                          )}
-                        </div>
-                      </div> */}
-
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            Company{" "}
-                            <span className="otp-asterisk"> *</span>
-                          </label>
-                          <SelectBox
-                            name="company_id"
-                            options={
-                              loading
-                                ? [{ value: "", label: "Loading..." }]
-                                : companies.length > 0
-                                ? companies.map((comp) => ({
-                                    value: comp.id,
-                                    label: comp.name,
-                                  }))
-                                : [{ value: "", label: "No company found" }]
-                            }
-                            value={formData.company_id}
-                            onChange={(value) =>
-                              setFormData({ ...formData, company_id: value })
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      {/* Organization Dropdown */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Organization</label>
-                          <SelectBox
-                            name="organization_id"
-                            value={formData.organization_id}
-                            onChange={handleChange}
-                            options={organizationOptions}
-                            isLoading={organizationsLoading}
-                          />
-                        </div>
-                      </div> */}
-
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            Organization{" "}
-                            <span className="otp-asterisk"> *</span>
-                          </label>
-                          <SelectBox
-                            name="organizationId"
-                            options={
-                              loading
-                                ? [{ value: "", label: "Loading..." }]
-                                : organizations.length > 0
-                                ? organizations.map((org) => ({
-                                    value: org.id,
-                                    label: org.name,
-                                  }))
-                                : [
-                                    {
-                                      value: "",
-                                      label: "No organizations found",
-                                    },
-                                  ]
-                            }
-                            value={formData.organization_id}
-                            onChange={(value) =>
-                              setFormData({
-                                ...formData,
-                                organization_id: value,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            User Role <span className="otp-asterisk"> *</span>
-                          </label>
-                          <SelectBox
-                            name="role_id"
-                            options={
-                              loading
-                                ? [{ value: "", label: "Loading..." }]
-                                : roles.length > 0
-                                ? roles.map((role) => ({
-                                    value: role.id,
-                                    label: role.name,
-                                  }))
-                                : [{ value: "", label: "No Role found" }]
-                            }
-                            value={formData.role_id}
-                            onChange={(value) =>
-                              setFormData({ ...formData, role_id: value })
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      {/* Role ID */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>
-                            User Role <span className="otp-asterisk">*</span>
-                          </label>
-                          <SelectBox
-                            name="role_id"
-                            value={formData.role_id}
-                            onChange={handleChange}
-                            options={roleOptions}
-                            isLoading={rolesLoading}
-                            className={errors.role_id ? "is-invalid" : ""}
-                          />
-                          {errors.role_id && (
-                            <div className="invalid-feedback">
-                              {errors.role_id}
-                            </div>
-                          )}
-                        </div>
-                      </div> */}
-
-                      {/* Department ID */}
-                      <div className="col-md-3 mt-1">
-                        <div className="form-group">
-                          <label>Department ID</label>
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="department_id"
-                            placeholder="Enter Department ID"
-                            value={formData.department_id}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Site ID */}
-                      <div className="col-md-3 mt-1">
-                        <div className="form-group">
-                          <label>Site ID</label>
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="site_id"
-                            placeholder="Enter Site ID"
-                            value={formData.site_id}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-
-                      {/* <div className="col-md-3">
-                        <div className="form-group mt-4">
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              id="is_admin"
-                              name="is_admin"
-                              checked={formData.is_admin}
-                              onChange={handleChange}
-                            />
-                            <label className="form-check-label" htmlFor="is_admin">
-                              Is Admin
-                            </label>
+                  <div className="row">
+                    {/* First Name */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          First Name <span className="otp-asterisk">*</span>
+                        </label>
+                        <input
+                          className={`form-control ${
+                            errors.firstname ? "is-invalid" : ""
+                          }`}
+                          type="text"
+                          name="firstname"
+                          placeholder="Enter firstname"
+                          value={formData.firstname}
+                          onChange={handleChange}
+                        />
+                        {errors.firstname && (
+                          <div className="invalid-feedback">
+                            {errors.firstname}
                           </div>
-                        </div>
-                      </div> */}
+                        )}
+                      </div>
                     </div>
-                  {/* </div> */}
+
+                    {/* Last Name */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Last Name <span className="otp-asterisk">*</span>
+                        </label>
+                        <input
+                          className={`form-control ${
+                            errors.lastname ? "is-invalid" : ""
+                          }`}
+                          type="text"
+                          name="lastname"
+                          placeholder="Enter lastname"
+                          value={formData.lastname}
+                          onChange={handleChange}
+                        />
+                        {errors.lastname && (
+                          <div className="invalid-feedback">
+                            {errors.lastname}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Mobile */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Mobile Number{" "}
+                          <span className="otp-asterisk">*</span>
+                        </label>
+                        <input
+                          className={`form-control ${
+                            errors.mobile ? "is-invalid" : ""
+                          }`}
+                          type="text"
+                          name="mobile"
+                          placeholder="Enter mobile"
+                          value={formData.mobile}
+                          onChange={handleChange}
+                          maxLength={10}
+                        />
+                        {errors.mobile && (
+                          <div className="invalid-feedback">
+                            {errors.mobile}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Email */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Email <span className="otp-asterisk">*</span>
+                        </label>
+                        <input
+                          className={`form-control ${
+                            errors.email ? "is-invalid" : ""
+                          }`}
+                          type="email"
+                          name="email"
+                          placeholder="Enter email"
+                          value={formData.email}
+                          onChange={handleChange}
+                        />
+                        {errors.email && (
+                          <div className="invalid-feedback">
+                            {errors.email}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Alternate Email 1 */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Alternate Email</label>
+                        <input
+                          className={`form-control ${
+                            errors.alternate_email1 ? "is-invalid" : ""
+                          }`}
+                          type="email"
+                          name="alternate_email1"
+                          placeholder="Enter alternate email"
+                          value={formData.alternate_email1}
+                          onChange={handleChange}
+                        />
+                        {errors.alternate_email1 && (
+                          <div className="invalid-feedback">
+                            {errors.alternate_email1}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Alternate Address */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Address</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="alternate_address"
+                          placeholder="Enter alternate address"
+                          value={formData.alternate_address}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    {/* User Title */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>User Title</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="user_title"
+                          placeholder="Enter user title"
+                          value={formData.user_title}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Gender */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Gender</label>
+                        <SelectBox
+                          options={[
+                            { label: "Male", value: "Male" },
+                            { label: "Female", value: "Female" },
+                            { label: "Other", value: "Other" },
+                          ]}
+                          defaultValue={formData.gender}
+                          onChange={(value) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              gender: value,
+                            }))
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {/* Birth Date */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Birth Date</label>
+                        <input
+                          className="form-control"
+                          type="date"
+                          name="birth_date"
+                          value={formData.birth_date}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Employee Type */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Employee Type</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="employee_type"
+                          placeholder="Enter employee type"
+                          value={formData.employee_type}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Company Dropdown */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Company <span className="otp-asterisk">*</span>
+                        </label>
+                        <SelectBox
+                          name="company_id"
+                          options={
+                            companiesLoading
+                              ? [{ value: "", label: "Loading..." }]
+                              : companies.length > 0
+                              ? companies.map((comp) => ({
+                                  value: comp.id,
+                                  label: comp.name,
+                                }))
+                              : [{ value: "", label: "No company found" }]
+                          }
+                          value={formData.company_id}
+                          onChange={(value) =>
+                            setFormData({ ...formData, company_id: value })
+                          }
+                          className={errors.company_id ? "is-invalid" : ""}
+                        />
+                        {errors.company_id && (
+                          <div className="invalid-feedback">
+                            {errors.company_id}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Organization Dropdown */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Organization <span className="otp-asterisk">*</span>
+                        </label>
+                        <SelectBox
+                          name="organization_id"
+                          options={
+                            organizationsLoading
+                              ? [{ value: "", label: "Loading..." }]
+                              : organizations.length > 0
+                              ? organizations.map((org) => ({
+                                  value: org.id,
+                                  label: org.name,
+                                }))
+                              : [
+                                  {
+                                    value: "",
+                                    label: "No organizations found",
+                                  },
+                                ]
+                          }
+                          value={formData.organization_id}
+                          onChange={(value) =>
+                            setFormData({
+                              ...formData,
+                              organization_id: value,
+                            })
+                          }
+                          className={errors.organization_id ? "is-invalid" : ""}
+                        />
+                        {errors.organization_id && (
+                          <div className="invalid-feedback">
+                            {errors.organization_id}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Role Dropdown */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          User Role <span className="otp-asterisk">*</span>
+                        </label>
+                        <SelectBox
+                          name="role_id"
+                          options={
+                            rolesLoading
+                              ? [{ value: "", label: "Loading..." }]
+                              : roles.length > 0
+                              ? roles.map((role) => ({
+                                  value: role.id,
+                                  label: role.name,
+                                }))
+                              : [{ value: "", label: "No Role found" }]
+                          }
+                          value={formData.role_id}
+                          onChange={(value) =>
+                            setFormData({ ...formData, role_id: value })
+                          }
+                          className={errors.role_id ? "is-invalid" : ""}
+                        />
+                        {errors.role_id && (
+                          <div className="invalid-feedback">
+                            {errors.role_id}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Department Dropdown */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Department <span className="otp-asterisk">*</span>
+                        </label>
+                        <SelectBox
+                          name="department_id"
+                          options={
+                            departmentsLoading
+                              ? [{ value: "", label: "Loading..." }]
+                              : departments.length > 0
+                              ? departments.map((dept) => ({
+                                  value: dept.id,
+                                  label: dept.name,
+                                }))
+                              : [{ value: "", label: "No departments found" }]
+                          }
+                          value={formData.department_id}
+                          onChange={(value) =>
+                            setFormData({ ...formData, department_id: value })
+                          }
+                          className={errors.department_id ? "is-invalid" : ""}
+                        />
+                        {errors.department_id && (
+                          <div className="invalid-feedback">
+                            {errors.department_id}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Site ID */}
+                    <div className="col-md-3 mt-1">
+                      <div className="form-group">
+                        <label>Site ID</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="site_id"
+                          placeholder="Enter Site ID"
+                          value={formData.site_id}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 

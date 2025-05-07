@@ -16,9 +16,11 @@ const UserEdit = () => {
   const [roles, setRoles] = useState([]);
   const [organizations, setOrganizations] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [departments, setDepartments] = useState([]); // Added departments state
   const [rolesLoading, setRolesLoading] = useState(false);
   const [organizationsLoading, setOrganizationsLoading] = useState(false);
   const [companiesLoading, setCompaniesLoading] = useState(false);
+  const [departmentsLoading, setDepartmentsLoading] = useState(false); // Added departments loading state
 
   const [formData, setFormData] = useState({
     firstname: "",
@@ -43,12 +45,14 @@ const UserEdit = () => {
   });
 
   console.log("Form Data:", formData);
+  console.log("Departments:", departments); // Added debugging line for departments
 
   // Fetch dropdown data and user data when component mounts
   useEffect(() => {
     fetchRoles();
     fetchOrganizations();
     fetchCompanies();
+    fetchDepartments(); // Added department fetching
     fetchUserData();
   }, [id]);
 
@@ -200,7 +204,39 @@ const UserEdit = () => {
     }
   };
 
+  // Fetch departments from API
+  const fetchDepartments = async () => {
+    setDepartmentsLoading(true);
+    try {
+      const response = await axios.get(`${baseURL}departments.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      console.log("Department API response:", response.data); // Debug the API response
+
+      // Check if response.data is directly an array
+      if (response.data && Array.isArray(response.data)) {
+        setDepartments(response.data);
+      } else if (response.data && Array.isArray(response.data.departments)) {
+        // Fallback to original expected structure
+        setDepartments(response.data.departments);
+      } else {
+        console.error("Invalid department data format:", response.data);
+        toast.error("Failed to load departments: Invalid data format");
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      toast.error("Failed to load departments. Please try again later.");
+    } finally {
+      setDepartmentsLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
+    if (!e || !e.target) return; // Prevents the crash
+    
     const { name, value, type, checked } = e.target;
     const fieldValue = type === "checkbox" ? checked : value;
     if (errors[name]) {
@@ -226,6 +262,7 @@ const UserEdit = () => {
       { field: "email", label: "Email" },
       { field: "role_id", label: "Role" },
       { field: "company_id", label: "Company" },
+      { field: "department_id", label: "Department" }, // Added department to required fields
     ];
 
     let emptyFields = requiredFields.filter(
@@ -304,7 +341,6 @@ const UserEdit = () => {
 
     // Create user object from form data
     const data = new FormData();
-    // formDataToSend.append("company_setup[name]", formData.companyName);
     data.append("user[organization_id]", formData.organization_id);
     data.append("user[company_id]", formData.company_id);
     data.append("user[role_id]", formData.role_id);
@@ -313,20 +349,13 @@ const UserEdit = () => {
     data.append("user[mobile]", formData.mobile);
     data.append("user[email]", formData.email);
     data.append("user[alternate_email1]", formData.alternate_email1);
-    // data.append(
-    //   "user[alternate_email2]",
-    //   formData.alternate_email2
-    // );
     data.append("user[alternate_address]", formData.alternate_address);
-    // data.append("user[is_admin]", formData.is_admin);
     data.append("user[employee_type]", formData.employee_type);
     data.append("user[user_title]", formData.user_title);
     data.append("user[gender]", formData.gender);
     data.append("user[birth_date]", formData.birth_date);
-    // data.append("user[blood_group]", formData.blood_group);
     data.append("user[site_id]", formData.site_id);
     data.append("user[department_id]", formData.department_id);
-    // data.append("user[country_code]", formData.country_code);
 
     try {
       // Using the user_details endpoint for updating user
@@ -364,7 +393,6 @@ const UserEdit = () => {
     console.warn("birth_date is null or undefined");
   }
   
-
   const formatDateToDisplay = (dateStr) => {
     if (!dateStr) return "";
     const [year, month, day] = dateStr.split("-");
@@ -402,6 +430,15 @@ const UserEdit = () => {
     ...companies.map((company) => ({
       label: company.name || `Company ${company.id}`,
       value: company.id.toString(),
+    })),
+  ];
+
+  // Added department options
+  const departmentOptions = [
+    { label: "Select Department", value: "" },
+    ...departments.map((dept) => ({
+      label: dept.name || `Department ${dept.id}`,
+      value: dept.id.toString(),
     })),
   ];
 
@@ -584,23 +621,6 @@ const UserEdit = () => {
                       </div>
 
                       {/* Gender */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Gender</label>
-                          <SelectBox
-                            name="gender"
-                            value={formData.gender || ""}
-                            onChange={handleChange}
-                            options={[
-                              { label: "Select", value: "" },
-                              { label: "Male", value: "Male" },
-                              { label: "Female", value: "Female" },
-                              { label: "Other", value: "Other" },
-                            ]}
-                          />
-                        </div>
-                      </div> */}
-
                       <div className="col-md-3">
                         <div className="form-group">
                           <label>Gender</label>
@@ -617,7 +637,6 @@ const UserEdit = () => {
                                 gender: value,
                               }))
                             }
-                            // isDisableFirstOption={true}
                           />
                         </div>
                       </div>
@@ -651,22 +670,7 @@ const UserEdit = () => {
                         </div>
                       </div>
 
-                      {/* Company Dropdown
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Company <span className="otp-asterisk">*</span></label>
-                          <SelectBox
-                            name="company_id"
-                            value={formData.company_id}
-                            onChange={handleChange}
-                            options={companyOptions}
-                            isLoading={companiesLoading}
-                            className={errors.company_id ? "is-invalid" : ""}
-                          />
-                          {errors.company_id && <div className="invalid-feedback">{errors.company_id}</div>}
-                        </div>
-                      </div> */}
-
+                      {/* Company Dropdown */}
                       <div className="col-md-3">
                         <div className="form-group">
                           <label>
@@ -685,28 +689,21 @@ const UserEdit = () => {
                                 company_id: value,
                               });
                             }}
+                            className={errors.company_id ? "is-invalid" : ""}
                           />
+                          {errors.company_id && (
+                            <div className="invalid-feedback">
+                              {errors.company_id}
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       {/* Organization Dropdown */}
-                      {/* <div className="col-md-3">
-                        <div className="form-group">
-                          <label>Organization</label>
-                          <SelectBox
-                            name="organization_id"
-                            value={formData.organization_id || ""}
-                            onChange={handleChange}
-                            options={organizationOptions}
-                            isLoading={organizationsLoading}
-                          />
-                        </div>
-                      </div> */}
-
                       <div className="col-md-3">
                         <div className="form-group">
                           <label>
-                            Organization Id
+                            Organization
                             <span className="otp-asterisk"> *</span>
                           </label>
                           <SelectBox
@@ -721,10 +718,17 @@ const UserEdit = () => {
                                 organization_id: value,
                               });
                             }}
+                            className={errors.organization_id ? "is-invalid" : ""}
                           />
+                          {errors.organization_id && (
+                            <div className="invalid-feedback">
+                              {errors.organization_id}
+                            </div>
+                          )}
                         </div>
                       </div>
 
+                      {/* Role Dropdown */}
                       <div className="col-md-3">
                         <div className="form-group">
                           <label>
@@ -743,38 +747,44 @@ const UserEdit = () => {
                                 role_id: value,
                               });
                             }}
+                            className={errors.role_id ? "is-invalid" : ""}
                           />
+                          {errors.role_id && (
+                            <div className="invalid-feedback">
+                              {errors.role_id}
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      {/* Role Dropdown */}
-                      {/* <div className="col-md-3">
+                      {/* Department Dropdown - Added from UserCreate */}
+                      <div className="col-md-3">
                         <div className="form-group">
-                          <label>User Role <span className="otp-asterisk">*</span></label>
+                          <label>
+                            Department <span className="otp-asterisk">*</span>
+                          </label>
                           <SelectBox
-                            name="role_id"
-                            value={formData.role_id}
-                            onChange={handleChange}
-                            options={roleOptions}
-                            isLoading={rolesLoading}
-                            className={errors.role_id ? "is-invalid" : ""}
+                            options={
+                              departmentsLoading
+                                ? [{ value: "", label: "Loading..." }]
+                                : departments.length > 0
+                                ? departments.map((dept) => ({
+                                    value: dept.id,
+                                    label: dept.name,
+                                  }))
+                                : [{ value: "", label: "No departments found" }]
+                            }
+                            defaultValue={formData.department_id}
+                            onChange={(value) =>
+                              setFormData({ ...formData, department_id: value })
+                            }
+                            className={errors.department_id ? "is-invalid" : ""}
                           />
-                          {errors.role_id && <div className="invalid-feedback">{errors.role_id}</div>}
-                        </div>
-                      </div> */}
-
-                      {/* Department ID */}
-                      <div className="col-md-3 mt-1">
-                        <div className="form-group">
-                          <label>Department ID</label>
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="department_id"
-                            placeholder="Enter Department ID"
-                            value={formData.department_id || ""}
-                            onChange={handleChange}
-                          />
+                          {errors.department_id && (
+                            <div className="invalid-feedback">
+                              {errors.department_id}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -805,7 +815,7 @@ const UserEdit = () => {
                     className="purple-btn2 w-100"
                     disabled={loading}
                   >
-                    {loading ? "Updating..." : "Update"}
+                    {loading ? "Updating..." : "Submit"}
                   </button>
                 </div>
                 <div className="col-md-2">
