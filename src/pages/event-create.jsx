@@ -292,13 +292,22 @@ const EventCreate = () => {
       data.append("event[rsvp_number]", formData.rsvp_number);
     }
     formData.set_reminders_attributes.forEach((reminder, index) => {
-      data.append(`event[set_reminders_attributes][${index}][days]`, reminder.days);
-      data.append(`event[set_reminders_attributes][${index}][hours]`, reminder.hours);
+      data.append(
+        `event[set_reminders_attributes][${index}][days]`,
+        reminder.days
+      );
+      data.append(
+        `event[set_reminders_attributes][${index}][hours]`,
+        reminder.hours
+      );
     });
 
     // date reminder send
     reminders2.forEach((reminder, index) => {
-      data.append(`event[set_reminders_attributes][${index}][reminder_on]`, reminder.date);
+      data.append(
+        `event[set_reminders_attributes][${index}][reminder_on]`,
+        reminder.date
+      );
     });
 
     if (formData.attachfile && formData.attachfile.length > 0) {
@@ -613,41 +622,8 @@ const EventCreate = () => {
                         </div>
                       </div>
                     </div> */}
-                   
 
                     {/* Conditionally render fields when 'Yes' is selected */}
-                    {formData.rsvp_action === "yes" && (
-                      <>
-                        <div className="col-md-3">
-                          <div className="form-group">
-                            <label>RSVP Name</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter RSVP Name"
-                              name="rsvp_name"
-                              value={formData.rsvp_name || ""}
-                              onChange={handleChange}
-                              required
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md-3">
-                          <div className="form-group">
-                            <label>RSVP Number</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter RSVP Number"
-                              name="rsvp_number"
-                              value={formData.rsvp_number || ""}
-                              onChange={handleChange}
-                              required
-                            />
-                          </div>
-                        </div>
-                      </>
-                    )}
 
                     {/* <div className="col-md-3">
                       <div className="form-group">
@@ -923,6 +899,12 @@ const EventCreate = () => {
                         </div>
                         <div className="col-md-2">
                           <button
+                            style={{
+                              height: "35px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
                             className="btn btn-danger w-100"
                             onClick={handleAddReminder}
                             disabled={!day && !hour}
@@ -1000,7 +982,39 @@ const EventCreate = () => {
                         </div>
                       </div>
                     </div>
-                   
+
+                    {formData.rsvp_action === "yes" && (
+                      <>
+                        <div className="col-md-3">
+                          <div className="form-group">
+                            <label>RSVP Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter RSVP Name"
+                              name="rsvp_name"
+                              value={formData.rsvp_name || ""}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-3">
+                          <div className="form-group">
+                            <label>RSVP Number</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter RSVP Number"
+                              name="rsvp_number"
+                              value={formData.rsvp_number || ""}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
 
                     {/* <div className="col-md-3">
                       <div className="form-group">
@@ -1040,9 +1054,8 @@ const EventCreate = () => {
                       </div>
                     </div> */}
 
-
                     {/* For Date Selection  */}
-                     {/* <div className="col-6">
+                    {/* <div className="col-6">
                         <div className="form-group">
                         <label>Set Reminders</label>
                         <div className="d-flex align-items-center mb-2">

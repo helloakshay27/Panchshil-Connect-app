@@ -23,15 +23,12 @@ const LockFunctionCreate = () => {
   useEffect(() => {
     const fetchParentFunctions = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}/lock_functions.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}/lock_functions.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         // Extract unique parent_function values from the response
         const uniqueParentFunctions = [
@@ -121,16 +118,12 @@ const LockFunctionCreate = () => {
         },
       };
 
-      await axios.post(
-        `${baseURL}/lock_functions.json`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.post(`${baseURL}/lock_functions.json`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       toast.success("Lock function created successfully");
       navigate("/setup-member/lock-function-list");
@@ -173,6 +166,8 @@ const LockFunctionCreate = () => {
       actionName = "organization";
     } else if (value === "Company") {
       actionName = "company";
+    } else if (value === "Department") {
+      actionName = "department";
     } else if (value === "Support Service") {
       actionName = "support_service";
     } else if (value === "Press Releases") {
@@ -181,6 +176,8 @@ const LockFunctionCreate = () => {
       actionName = "user_role";
     } else if (value === "Lock Function") {
       actionName = "lock_function";
+    } else if (value === "User Module") {
+      actionName = "user_module";
     } else if (value === "Property Type") {
       actionName = "property_type";
     } else if (value === "Project Building") {
@@ -236,6 +233,7 @@ const LockFunctionCreate = () => {
                           { label: "Site Visit", value: "Site Visit" },
                           { label: "Organization", value: "Organization" },
                           { label: "Company", value: "Company" },
+                          { label: "Department", value: "Department" },
                           {
                             label: "Support Service",
                             value: "Support Service",
@@ -243,6 +241,7 @@ const LockFunctionCreate = () => {
                           { label: "Press Releases", value: "Press Releases" },
                           { label: "User Role", value: "User Role" },
                           { label: "Lock Function", value: "Lock Function" },
+                          { label: "User Module", value: "User Module" },
                           { label: "Property Type", value: "Property Type" },
                           {
                             label: "Project Building",

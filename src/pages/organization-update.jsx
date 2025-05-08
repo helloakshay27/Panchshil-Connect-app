@@ -9,6 +9,7 @@ const OrganizationUpdate = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [existingImageUrl, setExistingImageUrl] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -23,15 +24,12 @@ const OrganizationUpdate = () => {
   useEffect(() => {
     const fetchOrganization = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}organizations/${id}.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}organizations/${id}.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
         const org = response.data;
         setFormData({
           name: org.name || "",
@@ -39,8 +37,11 @@ const OrganizationUpdate = () => {
           sub_domain: org.sub_domain || "",
           country_id: org.country_id || "",
           mobile: org.mobile || "",
-          attachment: null, // File upload will be handled separately
+          attachment: null, // Only for new upload
         });
+        if (org.attachfile?.document_url) {
+          setExistingImageUrl(org.attachfile.document_url);
+        }
       } catch (error) {
         console.error("Error fetching organization:", error);
         toast.error("Failed to load organization data.");
@@ -90,7 +91,6 @@ const OrganizationUpdate = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-          
         }
       );
 
@@ -126,7 +126,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Name <span className="otp-asterisk">{" "}*</span>
+                        Name <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -143,7 +143,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Domain <span className="otp-asterisk">{" "}*</span>
+                        Domain <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -160,7 +160,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Sub-domain <span className="otp-asterisk">{" "}*</span>
+                        Sub-domain <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -177,7 +177,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Country ID <span className="otp-asterisk">{" "}*</span>
+                        Country ID <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -194,7 +194,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Mobile No <span className="otp-asterisk">{" "}*</span>
+                        Mobile No <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -212,7 +212,7 @@ const OrganizationUpdate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Attachment <span className="otp-asterisk">{" "}*</span>
+                        Attachment <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -223,9 +223,9 @@ const OrganizationUpdate = () => {
                       />
 
                       {/* Image Preview Section */}
-                      {imagePreviews.length > 0 && (
-                        <div className="mt-2 d-flex flex-wrap">
-                          {imagePreviews.map((src, index) => (
+                      <div className="mt-2 d-flex flex-wrap">
+                        {imagePreviews.length > 0 ? (
+                          imagePreviews.map((src, index) => (
                             <div key={index} className="position-relative me-2">
                               <img
                                 src={src}
@@ -234,13 +234,26 @@ const OrganizationUpdate = () => {
                                   maxWidth: "100px",
                                   maxHeight: "100px",
                                   borderRadius: "5px",
-                                  marginTop: "10px", // Space between input & previews
+                                  marginTop: "10px",
                                 }}
                               />
                             </div>
-                          ))}
-                        </div>
-                      )}
+                          ))
+                        ) : existingImageUrl ? (
+                          <div className="position-relative me-2">
+                            <img
+                              src={existingImageUrl}
+                              alt="Existing"
+                              style={{
+                                maxWidth: "100px",
+                                maxHeight: "100px",
+                                borderRadius: "5px",
+                                marginTop: "10px",
+                              }}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                 </div>
