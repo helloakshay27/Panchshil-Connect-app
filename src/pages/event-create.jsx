@@ -245,10 +245,10 @@ const EventCreate = () => {
     // }
 
     // File validation (files must be present)
-    // if (!formData.attachfile) {
-    //   errors.push("attachment is required.");
-    //   return errors; // Return the first error immediately
-    // }
+    if (!formData.attachfile) {
+      errors.push("attachment is required.");
+      return errors; // Return the first error immediately
+    }
     // if (formData.two_d_images.length === 0) {
     //   errors.push("At least one 2D image is required.");
     //   return errors; // Return the first error immediately
@@ -438,7 +438,7 @@ const EventCreate = () => {
   return (
     <>
       <div className="main-content">
-        <div className="">
+        <div className="website-content overflow-auto">
           <div className="module-data-section container-fluid">
             <div className="module-data-section p-3">
               <div className="card mt-4 pb-4 mx-4">
@@ -613,43 +613,7 @@ const EventCreate = () => {
                         </div>
                       </div>
                     </div> */}
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          RSVP Action
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="rsvp_action"
-                              value="yes"
-                              checked={formData.rsvp_action === "yes"}
-                              onChange={handleChange}
-                              required
-                            />
-                            <label className="form-check-label">Yes</label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="rsvp_action"
-                              value="no"
-                              checked={formData.rsvp_action === "no"}
-                              onChange={handleChange}
-                              required
-                            />
-                            <label className="form-check-label">No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                   
 
                     {/* Conditionally render fields when 'Yes' is selected */}
                     {formData.rsvp_action === "yes" && (
@@ -717,14 +681,11 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Event Publish
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
+                         
                         </label>
                         <div className="d-flex">
                           <div className="form-check me-3">
@@ -763,147 +724,11 @@ const EventCreate = () => {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Event User ID
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
-                        <MultiSelectBox
-                          options={eventUserID?.map((user) => ({
-                            value: user.id,
-                            label: `${user.firstname} ${user.lastname}`,
-                          }))}
-                          value={
-                            formData.user_id
-                              ? formData.user_id.split(",").map((id) => ({
-                                  value: id,
-                                  label:
-                                    eventUserID.find(
-                                      (user) => user.id.toString() === id
-                                    )?.firstname +
-                                    " " +
-                                    eventUserID.find(
-                                      (user) => user.id.toString() === id
-                                    )?.lastname,
-                                }))
-                              : []
-                          } // Map the string of IDs back to objects for display
-                          onChange={(selectedOptions) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              user_id: selectedOptions
-                                .map((option) => option.value)
-                                .join(","), // Join IDs into a comma-separated string
-                            }))
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event Comment
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
-                        <textarea
-                          className="form-control"
-                          rows={1}
-                          name="comment"
-                          placeholder="Enter Comment"
-                          value={formData.comment}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event Shared
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          required
-                          name="shared"
-                          placeholder="Enter Event Shared"
-                          value={formData.shared}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event Share Groups
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          required
-                          name="share_groups"
-                          placeholder="Enter Shared Groups"
-                          value={formData.share_groups}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Attachment
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                          <span
-                            className="tooltip-container"
-                            onMouseEnter={() => setShowTooltip(true)}
-                            onMouseLeave={() => setShowTooltip(false)}
-                          >
-                            [i]
-                            {showTooltip && (
-                              <span className="tooltip-text">
-                                Max Upload Size 10 MB
-                              </span>
-                            )}
-                          </span>
-                          <span />
-                        </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="attachfile"
-                          accept="image/*" // Ensures only image files can be selected
-                          multiple
-                          required
-                          onChange={(e) => handleFileChange(e, "attachfile")}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event is Important</label>
+                        <label>Mark Important</label>
                         <div className="d-flex">
                           <div className="form-check me-3">
                             <input
@@ -943,7 +768,7 @@ const EventCreate = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Email Trigger Enabled</label>
+                        <label>Send Email</label>
                         <div className="d-flex">
                           <div className="form-check me-3">
                             <input
@@ -987,7 +812,93 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-12">
+                    {/* <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Event Comment
+                         
+                        </label>
+                        <textarea
+                          className="form-control"
+                          rows={1}
+                          name="comment"
+                          placeholder="Enter Comment"
+                          value={formData.comment}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div> */}
+                    {/* <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Event Shared
+                        
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          required
+                          name="shared"
+                          placeholder="Enter Event Shared"
+                          value={formData.shared}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div> */}
+                    {/* <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Event Share Groups
+                         
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          required
+                          name="share_groups"
+                          placeholder="Enter Shared Groups"
+                          value={formData.share_groups}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div> */}
+
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Attachment
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span> */}
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            [i]
+                            {showTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 10 MB
+                              </span>
+                            )}
+                          </span>
+                          <span />
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="attachfile"
+                          accept="image/*" // Ensures only image files can be selected
+                          multiple
+                          required
+                          onChange={(e) => handleFileChange(e, "attachfile")}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-6">
                       <label className="form-label">Set Reminders</label>
                       <div className="row mb-2">
                         <div className="col-md-2">
@@ -1052,9 +963,85 @@ const EventCreate = () => {
                         )
                       )}
                     </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          RSVP Action
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span> */}
+                        </label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="yes"
+                              checked={formData.rsvp_action === "yes"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="no"
+                              checked={formData.rsvp_action === "no"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                   
+
+                    {/* <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Event User ID
+                         
+                        </label>
+                        <MultiSelectBox
+                          options={eventUserID?.map((user) => ({
+                            value: user.id,
+                            label: `${user.firstname} ${user.lastname}`,
+                          }))}
+                          value={
+                            formData.user_id
+                              ? formData.user_id.split(",").map((id) => ({
+                                  value: id,
+                                  label:
+                                    eventUserID.find(
+                                      (user) => user.id.toString() === id
+                                    )?.firstname +
+                                    " " +
+                                    eventUserID.find(
+                                      (user) => user.id.toString() === id
+                                    )?.lastname,
+                                }))
+                              : []
+                          } // Map the string of IDs back to objects for display
+                          onChange={(selectedOptions) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              user_id: selectedOptions
+                                .map((option) => option.value)
+                                .join(","), // Join IDs into a comma-separated string
+                            }))
+                          }
+                        />
+                      </div>
+                    </div> */}
 
 
-  {/* For Date Selection  */}
+                    {/* For Date Selection  */}
                      {/* <div className="col-6">
                         <div className="form-group">
                         <label>Set Reminders</label>
