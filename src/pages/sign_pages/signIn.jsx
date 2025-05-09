@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
-import { LOGO_URL } from "../baseurl/apiDomain";
+import { baseURL, LOGO_URL } from "../baseurl/apiDomain";
 
 const SignIn = () => {
   // State management
@@ -22,8 +22,9 @@ const SignIn = () => {
 
   // Panchshil configuration
   const config = {
-    baseURL: "https://panchshil-super.lockated.com/",
+    // baseURL: "https://panchshil-super.lockated.com/",
     // baseURL: "http://localhost:3000/",
+    baseURL: "https://api-connect.panchshil.com/",
 
     // baseURL: "https://api-connect.panchshil.com/",
     logoUrl: LOGO_URL,

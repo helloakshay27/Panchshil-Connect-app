@@ -16,10 +16,10 @@ const Forgot = () => {
   const navigate = useNavigate();
 
   const config = {
-    baseURL: "https://panchshil-super.lockated.com/",
+    // baseURL: "https://panchshil-super.lockated.com/",
     // baseURL: "http://localhost:3000/",
 
-    // baseURL: "https://api-connect.panchshil.com/",
+    baseURL: "https://api-connect.panchshil.com/",
     logoUrl: LOGO_URL,
     loginBgClass: "login_bg",
     loginSecClass: "login-sec",
