@@ -4,6 +4,7 @@ import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
 import { baseURL, LOGO_URL } from "../baseurl/apiDomain";
+import { Eye, EyeOff } from "lucide-react";
 
 const SignIn = () => {
   // State management
@@ -15,6 +16,8 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const [selectedContent, setSelectedContent] = useState("content1");
   const [showOtpSection, setShowOtpSection] = useState(false);
+  // const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [OtpSection, setOtpSection] = useState(true);
 
@@ -218,7 +221,7 @@ const SignIn = () => {
             required
           />
         </div>
-        <div className="form-group position-relative">
+        {/* <div className="form-group position-relative">
           <label
             className={`mb-1 text-white ${config.formTextColor}`}
             htmlFor="password"
@@ -235,7 +238,47 @@ const SignIn = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
+        </div> */}
+        <div className="form-group position-relative">
+      <label
+        className={`mb-1 text-white ${config.formTextColor}`}
+        htmlFor="password"
+      >
+        Password
+      </label>
+      <div className="position-relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          id="password"
+          className="form-control-panchshil pr-5" // add right padding for eye icon
+          placeholder="Enter password here..."
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{ paddingRight: "40px" }} // ensures the eye doesn't overlap text
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="position-absolute"
+          style={{
+            top: "50%",
+            right: "12px",
+            transform: "translateY(-50%)",
+            background: "transparent",
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
+          }}
+        >
+          {showPassword ? (
+            <EyeOff size={18} color="var(--red)" /> // orange-red color as per screenshot
+          ) : (
+            <Eye size={18} color="var(--red)" />
+          )}
+        </button>
+      </div>
+    </div>
         <div className="d-flex justify-content-end mt-2 mb-3 gap-2">
           <a className="rustomjee-forget-btn" href="/forgot-password">
             Forgot password?
@@ -353,7 +396,7 @@ const SignIn = () => {
                       <label
                         className={`form-check-label ${config.formTextColor}`}
                       >
-                        Login With Password
+                        Login with password
                       </label>
                     </div>
                   </div>
@@ -370,7 +413,7 @@ const SignIn = () => {
                       <label
                         className={`form-check-label ${config.formTextColor}`}
                       >
-                        Login With OTP
+                        Login with OTP
                       </label>
                     </div>
                   </div>

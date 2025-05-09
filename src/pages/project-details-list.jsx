@@ -273,7 +273,7 @@ const ProjectDetailsList = () => {
                   </div>
                 ) : (
                   <div className="tbl-container mt-3 ">
-                    <table className="w-110" style={{ width: "max-content" }}>
+                    <table className="w-100" style={{ width: "max-content" }}>
                       <thead>
                         <tr>
                           <th>Action</th>
@@ -283,7 +283,8 @@ const ProjectDetailsList = () => {
                           <th>SFDC Project ID</th>
                           <th>Project Construction Status</th>
                           <th>Configuration Type</th>
-                          <th>Price Onward</th>
+                          <th>Project Tag</th>
+                          {/* <th>Price Onward</th>
                           <th>Project Size (Sq. Mtr)</th>
                           <th>Project Size (Sq. Ft)</th>
                           <th>Rera Carpet Area (Sq. M)</th>
@@ -291,7 +292,7 @@ const ProjectDetailsList = () => {
                           <th>Number Of Towers</th>
                           <th>Number Of Units</th>
                           <th>Rera Number</th>
-                          <th>Amenities</th>
+                          <th>Amenities</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -425,8 +426,9 @@ const ProjectDetailsList = () => {
                                   )
                                 : "-"}
                             </td>
+                            <td>{project?.project_tag || "-"}</td>
 
-                            <td>{project?.price || "-"}</td>
+                            {/* <td>{project?.price || "-"}</td>
                             <td>{project?.project_size_sq_mtr || "-"}</td>
                             <td>{project?.project_size_sq_ft || "-"}</td>
                             <td>{project?.rera_carpet_area_sq_mtr || "-"}</td>
@@ -462,7 +464,7 @@ const ProjectDetailsList = () => {
                                     </div>
                                   ))
                                 : "-"}
-                            </td>
+                            </td> */}
                           </tr>
                         ))}
                       </tbody>
@@ -472,124 +474,186 @@ const ProjectDetailsList = () => {
 
                 {/* Pagination */}
                 <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
-                  <ul
-                    className="pagination"
-                    role="navigation"
-                    aria-label="pager"
-                  >
-                    {/* First Page Button */}
-                    <li
-                      className={`page-item ${
-                        pagination.current_page === 1 ? "disabled" : ""
-                      }`}
+                    <ul
+                      className="pagination"
+                      role="navigation"
+                      aria-label="pager"
                     >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(1)}
-                        disabled={pagination.current_page === 1}
-                      >
-                        First
-                      </button>
-                    </li>
-
-                    {/* Previous Page Button */}
-                    <li
-                      className={`page-item ${
-                        pagination.current_page === 1 ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() =>
-                          handlePageChange(pagination.current_page - 1)
-                        }
-                        disabled={pagination.current_page === 1}
-                      >
-                        Prev
-                      </button>
-                    </li>
-
-                    {/* Page Number Buttons */}
-                    {Array.from(
-                      {
-                        length: Math.ceil(filteredProjects.length / pageSize),
-                      },
-                      (_, index) => index + 1
-                    ).map((page) => (
+                      {/* First Button */}
                       <li
-                        key={page}
                         className={`page-item ${
-                          pagination.current_page === page ? "active" : ""
+                          pagination.current_page === 1 ? "disabled" : ""
                         }`}
                       >
                         <button
                           className="page-link"
-                          onClick={() => handlePageChange(page)}
+                          onClick={() => handlePageChange(1)}
+                          disabled={pagination.current_page === 1}
                         >
-                          {page}
+                          First
                         </button>
                       </li>
-                    ))}
 
-                    {/* Next Page Button */}
-                    <li
-                      className={`page-item ${
-                        pagination.current_page === totalFilteredPages
-                          ? "disabled"
-                          : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() =>
-                          handlePageChange(pagination.current_page + 1)
-                        }
-                        disabled={
-                          pagination.current_page === totalFilteredPages
-                        }
+                      {/* Previous Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === 1 ? "disabled" : ""
+                        }`}
                       >
-                        Next
-                      </button>
-                    </li>
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            handlePageChange(pagination.current_page - 1)
+                          }
+                          disabled={pagination.current_page === 1}
+                        >
+                          Prev
+                        </button>
+                      </li>
 
-                    {/* Last Page Button */}
-                    <li
-                      className={`page-item ${
-                        pagination.current_page === totalFilteredPages
-                          ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(totalFilteredPages)}
-                        disabled={
-                          pagination.current_page === totalFilteredPages
+                      {/* Dynamic Page Numbers with Ellipsis */}
+                      {(() => {
+                        const totalPages = pagination.total_pages;
+                        const currentPage = pagination.current_page;
+                        const pageNumbers = [];
+
+                        let startPage = Math.max(currentPage - 2, 1);
+                        let endPage = Math.min(startPage + 4, totalPages);
+
+                        // Adjust start if end is near total
+                        if (endPage - startPage < 5) {
+                          startPage = Math.max(endPage - 4, 1);
                         }
-                      >
-                        Last
-                      </button>
-                    </li>
-                  </ul>
 
-                  {/* Showing Entries Information */}
-                  <div>
-                    <p>
-                      Showing{" "}
-                      {filteredProjects.length > 0
-                        ? Math.min(
-                            (pagination.current_page - 1) * pageSize + 1,
-                            filteredProjects.length
-                          )
-                        : 0}{" "}
-                      to{" "}
-                      {Math.min(
-                        pagination.current_page * pageSize,
-                        filteredProjects.length
-                      )}{" "}
-                      of {filteredProjects.length} entries
-                    </p>
+                        // Show first page and ellipsis if needed
+                        if (startPage > 1) {
+                          pageNumbers.push(
+                            <li key={1} className="page-item">
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(1)}
+                              >
+                                1
+                              </button>
+                            </li>
+                          );
+                          if (startPage > 2) {
+                            pageNumbers.push(
+                              <li
+                                key="start-ellipsis"
+                                className="page-item disabled"
+                              >
+                                <span className="page-link">...</span>
+                              </li>
+                            );
+                          }
+                        }
+
+                        for (let i = startPage; i <= endPage; i++) {
+                          pageNumbers.push(
+                            <li
+                              key={i}
+                              className={`page-item ${
+                                pagination.current_page === i ? "active" : ""
+                              }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(i)}
+                              >
+                                {i}
+                              </button>
+                            </li>
+                          );
+                        }
+
+                        // Show end ellipsis and last page
+                        if (endPage < totalPages) {
+                          if (endPage < totalPages - 1) {
+                            pageNumbers.push(
+                              <li
+                                key="end-ellipsis"
+                                className="page-item disabled"
+                              >
+                                <span className="page-link">...</span>
+                              </li>
+                            );
+                          }
+                          pageNumbers.push(
+                            <li key={totalPages} className="page-item">
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(totalPages)}
+                              >
+                                {totalPages}
+                              </button>
+                            </li>
+                          );
+                        }
+
+                        return pageNumbers;
+                      })()}
+
+                      {/* Next Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === pagination.total_pages
+                            ? "disabled"
+                            : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            handlePageChange(pagination.current_page + 1)
+                          }
+                          disabled={
+                            pagination.current_page === pagination.total_pages
+                          }
+                        >
+                          Next
+                        </button>
+                      </li>
+
+                      {/* Last Button */}
+                      <li
+                        className={`page-item ${
+                          pagination.current_page === pagination.total_pages
+                            ? "disabled"
+                            : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            handlePageChange(pagination.total_pages)
+                          }
+                          disabled={
+                            pagination.current_page === pagination.total_pages
+                          }
+                        >
+                          Last
+                        </button>
+                      </li>
+                    </ul>
+
+                    {/* Showing entries count */}
+                    <div>
+                      <p className="mb-0">
+                        Showing{" "}
+                        {Math.min(
+                          (pagination.current_page - 1) * pageSize + 1 || 1,
+                          pagination.total_count
+                        )}{" "}
+                        to{" "}
+                        {Math.min(
+                          pagination.current_page * pageSize,
+                          pagination.total_count
+                        )}{" "}
+                        of {pagination.total_count} entries
+                      </p>
+                    </div>
                   </div>
-                </div>
               </div>
             </div>
           </div>

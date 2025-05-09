@@ -4,6 +4,7 @@ import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
 import { Rustomji_URL } from "../baseurl/apiDomain";
+import { Eye, EyeOff } from "lucide-react";
 
 const SignInRustomjee = () => {
   // State management
@@ -14,6 +15,7 @@ const SignInRustomjee = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedContent, setSelectedContent] = useState("content1");
+  const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
   
@@ -148,7 +150,7 @@ const SignInRustomjee = () => {
             required
           />
         </div>
-        <div className="form-group position-relative">
+        {/* <div className="form-group position-relative">
           <label className={`mb-1 ${config.formTextColor}`} htmlFor="password">Password</label>
           <input
             style={{height:"40px"}}
@@ -160,7 +162,44 @@ const SignInRustomjee = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
+        </div> */}
+         <div className="form-group position-relative">
+      <label className={`mb-1 ${config.formTextColor}`} htmlFor="password">Password</label>
+      
+      <div className="position-relative">
+        <input
+          style={{ height: "40px", paddingRight: "40px" }}
+          type={showPassword ? "text" : "password"}
+          id="password"
+          className="form-control"
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="position-absolute"
+          style={{
+            top: "50%",
+            right: "10px",
+            transform: "translateY(-50%)",
+            background: "transparent",
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
+          }}
+          aria-label={showPassword ? "Hide password" : "Show password"}
+        >
+          {showPassword ? (
+            <EyeOff size={18} color="var(--red)" />
+          ) : (
+            <Eye size={18} color="var(--red)" />
+          )}
+        </button>
+      </div>
+    </div>
         <div className="d-flex justify-content-end mt-2 mb-3 gap-2">
           <a className="rustomjee-forget-btn" href="/forgot-password">
             Forgot password?
