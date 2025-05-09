@@ -1,7 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { use } from "react";
 import { NavLink } from "react-router-dom";
+import { hasPermission } from "../utils/permission";
 
 const SetupSidebar = () => {
+
+  const [showUserModuleSidebar, setShowUserModuleSidebar] = useState(false);
+  const [userRoleActive, setUserRoleActive] = useState(false);
+  const [lockFunctionActive, setLockFunctionActive] = useState(false);
+  const [propertyTypeActive, setPropertyTypeActive] = useState(false);
+  const [projectBuildingActive, setProjectBuildingActive] = useState(false);
+  const [constructionActive, setConstructionActive] = useState(false);
+  const [projectConfigActive, setProjectConfigActive] = useState(false);
+  const [amenitiesActive, setAmenitiesActive] = useState(false);
+  const [siteSlotActive, setSiteSlotActive] = useState(false);
+
+
+
+  useEffect(() => {
+     const userModulePermission = hasPermission("user_module");
+      setShowUserModuleSidebar(userModulePermission);
+
+       const UserRolePermission = hasPermission("user_role");
+        setUserRoleActive(UserRolePermission);
+
+        const lockFunctionPermission = hasPermission("lock_function");
+        setLockFunctionActive(lockFunctionPermission);
+
+        const PropertyTypePermission = hasPermission("property_type");
+        setPropertyTypeActive(PropertyTypePermission);
+
+        const ProjectBuildingPermission = hasPermission("project_building");
+        setProjectBuildingActive(ProjectBuildingPermission);
+
+        const ConstructionPermission = hasPermission("construction");
+        setConstructionActive(ConstructionPermission);
+
+        const ProjectConfigPermission = hasPermission("project_config");
+        setProjectConfigActive(ProjectConfigPermission);
+
+        const AmenitiesPermission = hasPermission("amenities");
+        setAmenitiesActive(AmenitiesPermission);
+
+        const SiteSlotPermission = hasPermission("site_slot");
+        setSiteSlotActive(SiteSlotPermission);
+
+
+    }, []);
+
   return (
     <>
       <aside>
@@ -11,6 +57,7 @@ const SetupSidebar = () => {
               className="menu-list px-2 d-flex pt-2"
               style={{ flexDirection: "column" }}
             >
+              {showUserModuleSidebar && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -65,6 +112,8 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">User Module</span>
                 </NavLink>
               </li>
+           )}
+           {userRoleActive && (
                 <li className="menu-item d-flex">
                 <NavLink
                   to="/setup-member/lock-role-list"
@@ -99,6 +148,8 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">User Role </span>
                 </NavLink>
               </li>
+            )}
+            {lockFunctionActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -152,6 +203,9 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">Lock Function</span>
                 </NavLink>
               </li>
+              ) }
+
+              {propertyTypeActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -207,6 +261,8 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">Property Type</span>
                 </NavLink>
               </li>
+              )}
+              {projectBuildingActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -262,6 +318,8 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">Project Building </span>
                 </NavLink>
               </li>
+              )}
+              {constructionActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -319,6 +377,8 @@ const SetupSidebar = () => {
                   </span>
                 </NavLink>
               </li>
+              )}
+              {projectConfigActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -375,6 +435,8 @@ const SetupSidebar = () => {
                   </span>
                 </NavLink>
               </li>
+              )}
+              {amenitiesActive && (
               <li className="menu-item d-flex">
                 {/* <a
                 className="menu-link d-flex"
@@ -427,6 +489,8 @@ const SetupSidebar = () => {
                   Amenities
                 </NavLink>
               </li>
+              )}
+              {siteSlotActive && (
               <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -479,6 +543,7 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">Site Slot </span>
                 </NavLink>
               </li>
+              )}
                          
             </ul>
           </div>
