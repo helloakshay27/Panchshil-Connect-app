@@ -168,6 +168,8 @@ const LockFunctionCreate = () => {
       actionName = "company";
     } else if (value === "Department") {
       actionName = "department";
+    }  else if (value === "Site") {
+      actionName = "site";  
     } else if (value === "Support Service") {
       actionName = "support_service";
     } else if (value === "Press Releases") {
@@ -234,6 +236,7 @@ const LockFunctionCreate = () => {
                           { label: "Organization", value: "Organization" },
                           { label: "Company", value: "Company" },
                           { label: "Department", value: "Department" },
+                          { label: "Site", value: "Site" },
                           {
                             label: "Support Service",
                             value: "Support Service",

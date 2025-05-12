@@ -11,7 +11,9 @@ const UserCreate = () => {
   const [errors, setErrors] = useState({});
   const [roles, setRoles] = useState([]);
   const [organizations, setOrganizations] = useState([]);
+  const [sites, setSites] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [sitesLoading, setSitesLoading] = useState([]);
   const [rolesLoading, setRolesLoading] = useState(false);
   const [organizationsLoading, setOrganizationsLoading] = useState(false);
   const [companiesLoading, setCompaniesLoading] = useState(false);
@@ -47,7 +49,8 @@ const UserCreate = () => {
     fetchRoles();
     fetchOrganizations();
     fetchCompanies();
-    fetchDepartments(); // Changed function name for consistency
+    fetchDepartments();
+    fetchSites(); // Changed function name for consistency
   }, []);
 
   // Fetch roles from API
@@ -155,6 +158,36 @@ const UserCreate = () => {
       setDepartmentsLoading(false);
     }
   };
+
+  const fetchSites = async () => {
+    setSitesLoading(true);
+    try {
+      const response = await axios.get(`${baseURL}sites.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+  
+      console.log("Sites API response:", response.data); // Debug the API response
+  
+      // Check if response.data is directly an array
+      if (response.data && Array.isArray(response.data)) {
+        setSites(response.data);
+      } else if (response.data && Array.isArray(response.data.sites)) {
+        // Fallback to original expected structure
+        setSites(response.data.sites);
+      } else {
+        console.error("Invalid sites data format:", response.data);
+        toast.error("Failed to load sites: Invalid data format");
+      }
+    } catch (error) {
+      console.error("Error fetching sites:", error);
+      toast.error("Failed to load sites. Please try again later.");
+    } finally {
+      setSitesLoading(false);
+    }
+  };
+  
 
   // Handle input changes
   const handleChange = (e) => {
@@ -328,6 +361,13 @@ const UserCreate = () => {
     ...departments.map((dept) => ({
       label: dept.name || `Department ${dept.id}`,
       value: dept.id.toString(),
+    })),
+  ];
+
+  const siteoptions = [
+    ...sites.map((site) => ({
+      label: site.name || `Department ${site.id}`,
+      value: site.id.toString(),
     })),
   ];
 
@@ -679,8 +719,39 @@ const UserCreate = () => {
                       </div>
                     </div>
 
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Site <span className="otp-asterisk">*</span>
+                        </label>
+                        <SelectBox
+                          name="site_id"
+                          options={
+                            sitesLoading
+                              ? [{ value: "", label: "Loading..." }]
+                              : sites.length > 0
+                              ? sites.map((site) => ({
+                                  value: site.id,
+                                  label: site.name,
+                                }))
+                              : [{ value: "", label: "No site found" }]
+                          }
+                          value={formData.site_id}
+                          onChange={(value) =>
+                            setFormData({ ...formData, site_id: value })
+                          }
+                          className={errors.site_id ? "is-invalid" : ""}
+                        />
+                        {errors.site && (
+                          <div className="invalid-feedback">
+                            {errors.site_id}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
                     {/* Site ID */}
-                    <div className="col-md-3 mt-1">
+                    {/* <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Site ID</label>
                         <input
@@ -692,7 +763,7 @@ const UserCreate = () => {
                           onChange={handleChange}
                         />
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

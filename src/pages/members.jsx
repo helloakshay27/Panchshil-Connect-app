@@ -139,6 +139,15 @@ const Members = () => {
                 <Link to="/department-edit/:id">Department Edit</Link>
               </li>
               <li>
+                <Link to="/site-create">Site Create</Link>
+              </li>
+              <li>
+                <Link to="/site-list">Site List</Link>
+              </li>
+              <li>
+                <Link to="/site-edit/:id">Site Edit</Link>
+              </li>
+              <li>
                 <Link to="/support-service-list">Support Service List</Link>
               </li>
               <li>

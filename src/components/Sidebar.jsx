@@ -18,6 +18,7 @@ const Sidebar = () => {
   const [departmentActive, setDepartmentActive] = useState(false);
   const [pressReleasesActive, setPressReleasesActive] = useState(false);
   const [supportServiceActive, setSupportServiceActive] = useState(false);
+  const [siteActive, setSiteActive] = useState(false);
 
 useEffect(() => {
   const hasProjectPermission = hasPermission("project");
@@ -55,6 +56,9 @@ useEffect(() => {
 
   const departmentPermission = hasPermission("department");
   setDepartmentActive(departmentPermission);
+
+  const sitePermission = hasPermission("site");
+  setSiteActive(sitePermission);
 
   const pressreleasesPermission = hasPermission("press_releases");
   setPressReleasesActive(pressreleasesPermission);
@@ -1261,6 +1265,71 @@ useEffect(() => {
                     />
                   </svg>
                   <span className="menu-link-text">Department</span>
+                </NavLink>
+              </li>
+              )}
+
+              { siteActive && (
+              <li className="menu-item d-flex">
+                {/* <a
+                  className="menu-link d-flex"
+                  style={{ flexDirection: "column" }}
+                  href="/sitevisit-list"
+                  data-section="security"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none" 
+                  >
+                    <g
+                      id="location-pin-3--navigation-map-maps-pin-gps-location"
+                      stroke="#DD7007"
+                      strokeWidth="2"
+                    >
+                      <path id="Vector" d="M20 17L22 23H2L4 17" />
+                      <path id="Vector_2" d="M12.5 8.5h-1v-1h1v1Z" />
+                      <path
+                        id="Rectangle 2008"
+                        d="M5 8.03447C5 12.7241 12 18 12 18s7 -5.2759 7 -9.96553c0 -3.88503 -3.134 -7.03448 -7 -7.03448 -3.86599 0 -7 3.14945 -7 7.03448Z"
+                      />
+                    </g>
+                  </svg>
+                  <span className="menu-link-text">Site visit</span>
+                </a> */}
+                <NavLink
+                  to="/site-list"
+                  style={{ flexDirection: "column" }}
+                  className={({ isActive }) =>
+                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="60"
+                    height="60"
+                    viewBox="0 0 60 60"
+                    fill="none"
+                  >
+                    <g clipPath="url(#clip0_12207_7408)">
+                      <path
+                        d="M16.8008 18.0996C13.5008 18.0996 10.8008 20.7996 10.8008 24.0996C10.8008 27.3996 13.5008 30.0996 16.8008 30.0996C20.1008 30.0996 22.8008 27.3996 22.8008 24.0996C22.8008 20.7996 20.1008 18.0996 16.8008 18.0996ZM16.8008 27.6996C14.8008 27.6996 13.2008 26.0996 13.2008 24.0996C13.2008 22.0996 14.8008 20.4996 16.8008 20.4996C18.8008 20.4996 20.4008 22.0996 20.4008 24.0996C20.4008 26.0996 18.8008 27.6996 16.8008 27.6996Z"
+                        fill="#F58220"
+                      />
+                      <path
+                        d="M0 0V60H60V0H0ZM2.2 2.4H38.4V25.3H27.5C28.1 18.9 23.3 13.5 17.1 13.4C11 13.2 6 18.4 6 24.6V25.4H2.3V2.4H2.2ZM25.2 24.1C25.2 29.6 20.6 37 18 40.8V41C17.7 41.3 17.4 41.7 17.2 41.9L16.8 42.4L16.4 41.9C14 38.6 8.4 30.2 8.4 24.1C8.4 18 12.2 15.7 16.8 15.7C21.4 15.7 25.2 19.5 25.2 24.1ZM7.2 30.1H2.4V27.7H6.5C6.7 28.5 6.9 29.3 7.2 30.1ZM2.4 57.6V32.5H8.1C9.6 36 11.6 39.2 13.8 42.4L14.5 43.3L16.9 46.8L19.8 42.7C22.1 39.5 24 36.1 25.6 32.6H29.5L21.3 57.7H2.4V57.6ZM57.6 57.6H29.4L37.6 32.5H57.6V57.6ZM57.6 30.1H35.9L35.5 31.3L26.8 57.6H23.8L31.8 33.3L32 32.8L32.9 30.2H26.4C26.7 29.4 26.9 28.6 27.1 27.8H40.8V2.4H43.2V27.7H57.6V30.1ZM57.6 25.3H45.6V2.4H57.6V25.3Z"
+                        fill="#F58220"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_12207_7408">
+                        <rect width="60" height="60" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  <span className="menu-link-text">Site</span>
                 </NavLink>
               </li>
               )}
