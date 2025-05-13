@@ -133,6 +133,15 @@ const UserList = () => {
     }
   };
 
+    useEffect(() => {
+      setPagination(prev => ({
+        ...prev,
+        total_count: filteredUsers.length,
+        total_pages: Math.ceil(filteredUsers.length / pageSize),
+        current_page: searchQuery ? 1 : prev.current_page // Reset to page 1 when searching
+      }));
+    }, [filteredUsers.length, pageSize, searchQuery]);
+
   return (
     <div className="main-content">
       <div className="module-data-section container-fluid">

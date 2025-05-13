@@ -182,6 +182,15 @@ const ProjectDetailsList = () => {
     pagination.current_page * pageSize
   );
 
+   useEffect(() => {
+        setPagination(prev => ({
+          ...prev,
+          total_count: filteredProjects.length,
+          total_pages: Math.ceil(filteredProjects.length / pageSize),
+          current_page: searchQuery ? 1 : prev.current_page // Reset to page 1 when searching
+        }));
+      }, [filteredProjects.length, pageSize, searchQuery]);
+
   return (
     <>
       <div className="main-content">
