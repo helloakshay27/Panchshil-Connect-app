@@ -107,6 +107,7 @@ const UserList = () => {
   };
 
   const handleToggleUser = async (userId, currentStatus) => {
+    toast.dismiss();
     try {
       const response = await fetch(`${baseURL}users/${userId}.json`, {
         method: "PUT",
@@ -118,6 +119,7 @@ const UserList = () => {
       });
 
       toast.success("Updated Status");
+      
       if (!response.ok) {
         throw new Error("Failed to update user status");
       }
