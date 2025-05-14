@@ -33,7 +33,7 @@ const EventEdit = () => {
     previewImage: "",
     is_important: "false",
     email_trigger_enabled: "false",
-    set_reminders_attributes: []
+    set_reminders_attributes: [],
   });
 
   console.log("Data", formData);
@@ -41,7 +41,6 @@ const EventEdit = () => {
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
   const [loading, setLoading] = useState(false);
-
 
   // Set Reminders
   const [day, setDay] = useState("");
@@ -89,22 +88,30 @@ const EventEdit = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}events/${id}.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}events/${id}.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
         // console.log(response?.data);
+
+        // Ensure reminders are properly formatted with numeric days and hours
+        const formattedReminders = (response.data.reminders || []).map(
+          (reminder) => ({
+            ...reminder,
+            days: Number(reminder.days || 0),
+            hours: Number(reminder.hours || 0),
+            id: reminder.id, // Preserve the ID for existing reminders
+          })
+        );
+
         setFormData((prev) => ({
           ...prev,
           ...response.data,
           attachfile: null, // Reset file input
           previewImage: response?.data?.attachfile?.document_url || "", // Set existing image preview
-          set_reminders_attributes: response.data.reminders || [], // Set existing reminders
+          set_reminders_attributes: formattedReminders, // Set existing reminders with proper formatting
         }));
       } catch (error) {
         console.error("Error fetching event:", error);
@@ -120,15 +127,12 @@ const EventEdit = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}get_all_projects.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}get_all_projects.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         console.log("Fetched Projects:", response.data);
 
@@ -141,38 +145,15 @@ const EventEdit = () => {
     fetchProjects();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchEventTypes = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "${baseURL}events.json",
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       );
-  //       setEventType(response.data.events);
-  //     } catch (error) {
-  //       console.error("Error fetching event types:", error);
-  //     }
-  //   };
-  //   fetchEventTypes();
-  // }, []);
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}users/get_users`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}users/get_users`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
         setEventUserID(response.data.users || []);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -188,7 +169,6 @@ const EventEdit = () => {
       [name]: value,
     });
   };
-
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -209,22 +189,15 @@ const EventEdit = () => {
     }));
   };
   const validateForm = () => {
-    // const errors = [];
-    // if (!formData.event_name) {
-    //   errors.push("Event Name is required.");
-    //   return errors; // Return the first error immediately
-    // }
-    // return errors; // Return the first error message if any
-    const errors = {}
+    const errors = {};
     if (!formData.event_name) {
       errors.event_name = "Event Name is required.";
     }
     setFormErrors(errors); // Update state with errors
 
-    if(Object.keys(errors).length > 0) {
-     toast.error(Object.values(errors)[0]) 
-     return false
-
+    if (Object.keys(errors).length > 0) {
+      toast.error(Object.values(errors)[0]);
+      return false;
     }
     return true; // Return true if no errors
   };
@@ -247,13 +220,25 @@ const EventEdit = () => {
         formData.set_reminders_attributes.forEach((reminder, index) => {
           if (reminder.id) {
             // Include the id for existing reminders
-            data.append(`event[set_reminders_attributes][${index}][id]`, reminder.id);
+            data.append(
+              `event[set_reminders_attributes][${index}][id]`,
+              reminder.id
+            );
           }
-          data.append(`event[set_reminders_attributes][${index}][days]`, reminder.days);
-          data.append(`event[set_reminders_attributes][${index}][hours]`, reminder.hours);
+          data.append(
+            `event[set_reminders_attributes][${index}][days]`,
+            reminder.days
+          );
+          data.append(
+            `event[set_reminders_attributes][${index}][hours]`,
+            reminder.hours
+          );
           if (reminder._destroy) {
             // Include _destroy flag for reminders marked for deletion
-            data.append(`event[set_reminders_attributes][${index}][_destroy]`, true);
+            data.append(
+              `event[set_reminders_attributes][${index}][_destroy]`,
+              true
+            );
           }
         });
       } else {
@@ -268,16 +253,12 @@ const EventEdit = () => {
     }
 
     try {
-      await axios.put(
-        `${baseURL}events/${id}.json`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data", // Important for file uploads
-          },
-        }
-      );
+      await axios.put(`${baseURL}events/${id}.json`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data", // Important for file uploads
+        },
+      });
       toast.success("Event updated successfully!");
       navigate("/event-list");
     } catch (error) {
@@ -287,7 +268,6 @@ const EventEdit = () => {
       setLoading(false);
     }
   };
-
 
   const formatDateForInput = (isoString) => {
     if (!isoString) return ""; // Handle empty values
@@ -302,298 +282,237 @@ const EventEdit = () => {
   const getCurrentDateTime = () => {
     const now = new Date();
     const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
-  
 
- return (
-  <>
-    <div className="main-content">
-      <div className="">
-        <div className="module-data-section container-fluid">
-          <div className="module-data-section p-3">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Edit Event</h3>
-              </div>
+  return (
+    <>
+      <div className="main-content">
+        <div className="">
+          <div className="module-data-section container-fluid">
+            <div className="module-data-section p-3">
+              <div className="card mt-4 pb-4 mx-4">
+                <div className="card-header">
+                  <h3 className="card-title">Edit Event</h3>
+                </div>
 
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Project</label>
-                      <SelectBox
-                        options={projects.map((project) => ({
-                          value: project.id,
-                          label: project.project_name,
-                        }))}
-                        defaultValue={formData.project_id || ""}
-                        onChange={(value) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            project_id: value,
-                          }))
-                        }
-                      />
+                <div className="card-body">
+                  <div className="row">
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Project</label>
+                        <SelectBox
+                          options={projects.map((project) => ({
+                            value: project.id, // Ensure this matches API response field
+                            label: project.project_name, // Ensure correct field name
+                          }))}
+                          defaultValue={formData.project_id || ""}
+                          onChange={(value) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              project_id: value,
+                            }))
+                          }
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Event Type</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="event_type"
-                        value={formData.event_type || ""}
-                        onChange={handleChange}
-                      />
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Type</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="event_type"
+                          value={formData.event_type || ""}
+                          onChange={handleChange}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Event Name</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="event_name"
-                        placeholder="Enter Event Name"
-                        value={formData.event_name}
-                        onChange={handleChange}
-                      />
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Event Name
+                          <span className="otp-asterisk"> *</span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="event_name"
+                          placeholder="Enter Event Name"
+                          value={formData.event_name}
+                          onChange={handleChange}
+                        />
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Event At</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="event_at"
-                        placeholder="Enter Event At"
-                        value={formData.event_at}
-                        onChange={handleChange}
-                      />
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event At</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="event_at"
+                          placeholder="Enter Evnet At"
+                          value={formData.event_at}
+                          onChange={handleChange}
+                        />
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Event From</label>
-                      <input
-                        className="form-control"
-                        type="datetime-local"
-                        name="from_time"
-                        placeholder="Enter Event From"
-                        min={getCurrentDateTime()}
-                        value={formatDateForInput(formData.from_time) || "NA"}
-                        onChange={handleChange}
-                      />
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event From</label>
+                        <input
+                          className="form-control"
+                          type="datetime-local"
+                          name="from_time"
+                          placeholder="Enter Event From"
+                          min={getCurrentDateTime()}
+                          value={formatDateForInput(formData.from_time) || "NA"}
+                          onChange={handleChange}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Event To</label>
-                      <input
-                        className="form-control"
-                        type="datetime-local"
-                        name="to_time"
-                        placeholder="Enter Event To"
-                        min={getCurrentDateTime()}
-                        value={formatDateForInput(formData.to_time)}
-                        onChange={handleChange}
-                      />
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event To</label>
+                        <input
+                          className="form-control"
+                          type="datetime-local"
+                          name="to_time"
+                          placeholder="Enter Event To"
+                          min={getCurrentDateTime()}
+                          value={formatDateForInput(formData.to_time)}
+                          onChange={handleChange}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>RSVP Action</label>
-                      <div className="d-flex">
-                        <div className="form-check me-3">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="rsvp_action"
-                            value="yes"
-                            checked={formData.rsvp_action === "yes"}
-                            onChange={handleChange}
-                          />
-                          <label className="form-check-label">Yes</label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="rsvp_action"
-                            value="no"
-                            checked={formData.rsvp_action === "no"}
-                            onChange={handleChange}
-                          />
-                          <label className="form-check-label">No</label>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>RSVP Action</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="yes"
+                              checked={formData.rsvp_action === "yes"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="rsvp_action"
+                              value="no"
+                              checked={formData.rsvp_action === "no"}
+                              onChange={handleChange}
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {formData.rsvp_action === "yes" && (
-                    <>
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>RSVP Name</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Enter RSVP Name"
-                            name="rsvp_name"
-                            value={formData.rsvp_name || ""}
-                            onChange={handleChange}
-                          />
+                    {/* Show RSVP Name and RSVP Number only if RSVP Action is "yes" */}
+                    {formData.rsvp_action === "yes" && (
+                      <>
+                        <div className="col-md-3">
+                          <div className="form-group">
+                            <label>RSVP Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter RSVP Name"
+                              name="rsvp_name"
+                              value={formData.rsvp_name || ""}
+                              onChange={handleChange}
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="form-group">
-                          <label>RSVP Number</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Enter RSVP Number"
-                            name="rsvp_number"
-                            value={formData.rsvp_number || ""}
-                            onChange={handleChange}
-                          />
+                        <div className="col-md-3">
+                          <div className="form-group">
+                            <label>RSVP Number</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter RSVP Number"
+                              name="rsvp_number"
+                              value={formData.rsvp_number || ""}
+                              onChange={handleChange}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </>
-                  )}
-
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Event Description</label>
-                      <textarea
-                        className="form-control"
-                        rows={1}
-                        name="description"
-                        placeholder="Enter Project Description"
-                        value={formData.description}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Attachment</label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        name="attachfile"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                      />
-                    </div>
-
-                    {formData.previewImage && (
-                      <img
-                        src={formData.previewImage}
-                        alt="Uploaded Preview"
-                        className="img-fluid rounded mt-2"
-                        style={{
-                          maxWidth: "100px",
-                          maxHeight: "100px",
-                          objectFit: "cover",
-                        }}
-                      />
+                      </>
                     )}
-                  </div>
 
-                  <div className="col-md-3">
-  <div className="form-group">
-    <label>Send Email</label>
-    <div className="d-flex">
-      <div className="form-check me-3">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="email_trigger_enabled"
-          value="true"
-          checked={formData.email_trigger_enabled === "true"}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              email_trigger_enabled: e.target.value,
-            }))
-          }
-        />
-        <label className="form-check-label">Yes</label>
-      </div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="email_trigger_enabled"
-          value="false"
-          checked={formData.email_trigger_enabled === "false"}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              email_trigger_enabled: e.target.value,
-            }))
-          }
-        />
-        <label className="form-check-label">No</label>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div className="col-md-3">
-  <div className="form-group">
-    <label>Share With</label>
-    <div className="d-flex gap-3">
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="shareWith"
-          value="individual"
-          checked={formData.shareWith === "individual"}
-          onChange={() =>
-            setFormData((prev) => ({
-              ...prev,
-              shareWith: "individual",
-            }))
-          }
-        />
-        <label className="form-check-label" style={{ color: "black" }}>
-          Individuals
-        </label>
-      </div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          name="shareWith"
-          value="group"
-          disabled // Groups option is disabled for now
-        />
-        <label className="form-check-label" style={{ color: "black" }}>
-          Groups
-        </label>
-      </div>
-    </div>
-  </div>
-
-  {/* Conditional rendering based on selected option */}
-  {formData.shareWith === "individual" && (
-   <div className="form-group">
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Description</label>
+                        <textarea
+                          className="form-control"
+                          rows={1}
+                          name="description"
+                          placeholder="Enter Project Description"
+                          value={formData.description}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Publish</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="publish"
+                              value="1"
+                              checked={parseInt(formData.publish) === 1} // Ensure correct value selection
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  publish: parseInt(e.target.value), // Store as number
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="publish"
+                              value="0"
+                              checked={parseInt(formData.publish) === 0} // Ensure correct value selection
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  publish: parseInt(e.target.value), // Store as number
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
                         <label>Event User ID</label>
                         <MultiSelectBox
                           options={eventUserID?.map((user) => ({
@@ -602,14 +521,19 @@ const EventEdit = () => {
                           }))}
                           value={
                             Array.isArray(formData.user_id)
-                              ? formData.user_id.map((id) => {
-                                  const user = eventUserID.find(
-                                    (user) => user.id === id
-                                  ); // Find the user by ID
-                                  return user
-                                    ? { value: user.id, label: `${user.firstname} ${user.lastname}` } // Map to value and label
-                                    : null;
-                                }).filter(Boolean) // Filter out null values
+                              ? formData.user_id
+                                  .map((id) => {
+                                    const user = eventUserID.find(
+                                      (user) => user.id === id
+                                    ); // Find the user by ID
+                                    return user
+                                      ? {
+                                          value: user.id,
+                                          label: `${user.firstname} ${user.lastname}`,
+                                        } // Map to value and label
+                                      : null;
+                                  })
+                                  .filter(Boolean) // Filter out null values
                               : []
                           }
                           onChange={(selectedOptions) =>
@@ -622,133 +546,249 @@ const EventEdit = () => {
                           }
                         />
                       </div>
-  )}
+                    </div>
 
-  {formData.shareWith === "group" && (
-    <div className="form-group">
-      <label>Share with Groups</label>
-      <MultiSelectBox
-        options={groups?.map((group) => ({
-          value: group.id,
-          label: group.name,
-        }))}
-        value={
-          formData.share_groups
-            ? formData.share_groups.split(",").map((id) => ({
-                value: id,
-                label: groups.find((group) => group.id.toString() === id)?.name,
-              }))
-            : []
-        }
-        onChange={(selectedOptions) =>
-          setFormData((prev) => ({
-            ...prev,
-            share_groups: selectedOptions
-              .map((option) => option.value)
-              .join(","), // Join IDs into a comma-separated string
-          }))
-        }
-      />
-    </div>
-  )}
-</div>
-
-                  <div className="col-md-12">
-                    <label className="form-label">Set Reminders</label>
-                    <div className="row mb-2">
-                      <div className="col-md-2">
-                        <input
-                          type="number"
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Comment</label>
+                        <textarea
                           className="form-control"
-                          placeholder="Days"
-                          value={day}
-                          onChange={(e) => setDay(e.target.value)}
-                          min="0"
+                          rows={1}
+                          name="comment"
+                          placeholder="Enter Project Description"
+                          value={formData.comment}
+                          onChange={handleChange}
                         />
                       </div>
-                      <div className="col-md-2">
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Shared</label>
                         <input
-                          type="number"
                           className="form-control"
-                          placeholder="Hours"
-                          value={hour}
-                          onChange={(e) => setHour(e.target.value)}
-                          min="0"
+                          type="text"
+                          name="shared"
+                          placeholder="Enter Event Shared"
+                          value={formData.shared}
+                          onChange={handleChange}
                         />
                       </div>
-                      <div className="col-md-2">
-                        <button
-                          className="btn btn-danger w-100"
-                          onClick={handleAddReminder}
-                          disabled={!day && !hour}
-                        >
-                          Add
-                        </button>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Share Groups</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="share_groups"
+                          placeholder="Enter Shared Groups"
+                          value={formData.share_groups}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Attachment</label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="attachfile"
+                          accept="image/*"
+                          onChange={handleFileChange} // Handle file selection
+                        />
+                      </div>
+
+                      {/* Image Preview */}
+                      {formData.previewImage && (
+                        <img
+                          src={formData.previewImage}
+                          alt="Uploaded Preview"
+                          className="img-fluid rounded mt-2"
+                          style={{
+                            maxWidth: "100px",
+                            maxHeight: "100px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      )}
+                    </div>
+
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event is Important</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="is_important"
+                              value="true"
+                              checked={formData.is_important == true}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="is_important"
+                              value="false"
+                              checked={formData.is_important == false}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    {formData.set_reminders_attributes
-                      .filter((reminder) => !reminder._destroy)
-                      .map((reminder, index) => (
-                        <div className="row mb-2" key={index}>
-                          <div className="col-md-2">
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Email Trigger Enabled</label>
+                        <div className="d-flex">
+                          {/* Yes Option */}
+                          <div className="form-check me-3">
                             <input
-                              type="text"
-                              className="form-control"
-                              value={`${reminder.days} Day(s)`}
-                              readOnly
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="true"
+                              checked={formData.email_trigger_enabled === true} // Compare as boolean
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled:
+                                    e.target.value === "true", // Convert to boolean
+                                }))
+                              }
+                              required
                             />
+                            <label className="form-check-label">Yes</label>
                           </div>
-                          <div className="col-md-2">
+
+                          {/* No Option */}
+                          <div className="form-check">
                             <input
-                              type="text"
-                              className="form-control"
-                              value={`${reminder.hours} Hour(s)`}
-                              readOnly
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="false"
+                              checked={formData.email_trigger_enabled === false} // Compare as boolean
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled:
+                                    e.target.value === "true", // Convert to boolean
+                                }))
+                              }
+                              required
                             />
-                          </div>
-                          <div className="col-md-2">
-                            <button
-                              className="btn btn-sm btn-danger w-100"
-                              onClick={() => handleRemoveReminder(index)}
-                            >
-                              Remove
-                            </button>
+                            <label className="form-check-label">No</label>
                           </div>
                         </div>
-                      ))}
+                      </div>
+                    </div>
+                    <div className="col-md-12">
+                      <label className="form-label">Set Reminders</label>
+                      <div className="row mb-2">
+                        <div className="col-md-2">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Days"
+                            value={day}
+                            onChange={(e) => setDay(e.target.value)}
+                            min="0"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Hours"
+                            value={hour}
+                            onChange={(e) => setHour(e.target.value)}
+                            min="0"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <button
+                            type="button"
+                            className="btn btn-danger w-100"
+                            onClick={handleAddReminder}
+                            disabled={!day && !hour}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Fixed reminders display - Always display numeric values */}
+                      {formData.set_reminders_attributes
+                        .filter((reminder) => !reminder._destroy) // Exclude reminders marked for deletion
+                        .map((reminder, index) => (
+                          <div className="row mb-2" key={index}>
+                            <div className="col-md-2">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={`${Number(reminder.days)} Day(s)`}
+                                readOnly
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={`${Number(reminder.hours)} Hour(s)`}
+                                readOnly
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-danger w-100"
+                                onClick={() => handleRemoveReminder(index)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="row mt-2 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  onClick={handleSubmit}
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={loading}
-                >
-                  Submit
-                </button>
-              </div>
+              <div className="row mt-2 justify-content-center">
+                <div className="col-md-2">
+                  <button
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="purple-btn2 w-100"
+                    disabled={loading}
+                  >
+                    Submit
+                  </button>
+                </div>
 
-              <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 w-100"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
+                <div className="col-md-2">
+                  <button
+                    type="button"
+                    className="purple-btn2 w-100"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
 };
 
 export default EventEdit;

@@ -75,7 +75,7 @@ const ProjectDetailsEdit = () => {
     order_no: "",
     enable_enquiry: false,
     rera_url: "",
-    project_disclaimer: "",
+    disclaimer: "",
   });
 
 
@@ -308,7 +308,7 @@ const ProjectDetailsEdit = () => {
           project_sales_type: projectData.project_sales_type || "",
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
-          project_disclaimer: projectData.project_disclaimer || "",
+          disclaimer: projectData.project_disclaimer || "",
         });
 
         setProject(response.data);
@@ -2747,15 +2747,15 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-6 mt-2">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>Disclaimer</label>
                   <textarea
                     className="form-control"
                     rows={1}
-                    placeholder="Enter project disclaimer..."
-                    name="project_disclaimer"
-                    value={formData.project_disclaimer}
+                    placeholder="Enter disclaimer..."
+                    name="disclaimer"
+                    value={formData.disclaimer}
                     onChange={handleChange}
                   />
                 </div>

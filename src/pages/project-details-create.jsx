@@ -71,7 +71,7 @@ const ProjectDetailsCreate = () => {
     enable_enquiry: false,
     rera_url: "",
     isDay: true,
-    project_disclaimer: "",
+    disclaimer: "",
   });
 
   useEffect(() => {
@@ -2130,9 +2130,9 @@ const ProjectDetailsCreate = () => {
                   <textarea
                     className="form-control"
                     rows={1}
-                    name="project_disclaimer"
-                    placeholder="Enter project disclaimer"
-                    value={formData.project_disclaimer}
+                    name="disclaimer"
+                    placeholder="Enter disclaimer"
+                    value={formData.disclaimer}
                     onChange={handleChange}
                   />
                 </div>
