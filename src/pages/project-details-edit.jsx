@@ -76,9 +76,8 @@ const ProjectDetailsEdit = () => {
     enable_enquiry: false,
     rera_url: "",
     disclaimer: "",
-    project_qrcode_image : [],
+    project_qrcode_image: [],
   });
-
 
   const [projectsType, setProjectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
@@ -310,7 +309,7 @@ const ProjectDetailsEdit = () => {
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
           disclaimer: projectData.project_disclaimer || "",
-          project_qrcode_image : projectData.project_qrcode_image || [],
+          project_qrcode_image: projectData.project_qrcode_images || [],
         });
 
         setProject(response.data);
@@ -1151,13 +1150,6 @@ const ProjectDetailsEdit = () => {
 
     const data = new FormData();
 
-    if (formData.image) {
-      data.append("project[image]", formData.image);
-    } else if (formData.project_qrcode_image) {
-      data.append("project[project_qrcode_image]", formData.project_qrcode_image);
-    }
-
-
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
@@ -1293,6 +1285,32 @@ const ProjectDetailsEdit = () => {
             );
           }
         });
+      } else if (key === "project_qrcode_image" && Array.isArray(value)) {
+        value.forEach((fileObj) => {
+          if (fileObj.project_qrcode_image instanceof File) {
+            data.append(
+              "project[project_qrcode_image][]",
+              fileObj.project_qrcode_image
+            );
+          }
+          if (fileObj.title) {
+            data.append(
+              "project[project_qrcode_image_titles][]",
+              fileObj.title
+            );
+          }
+        });
+        // else if (key === "project_qrcode_image" && Array.isArray(value)) {
+        // const qrCodeImages = value.map((fileObj) => {
+        //   return {
+        //     document_file_name: fileObj.project_qrcode_image instanceof File
+        //       ? URL.createObjectURL(fileObj.project_qrcode_image) // Generate a temporary URL for the file
+        //       : fileObj.document_file_name, // Use existing URL if available
+        //     title: fileObj.title || "", // Include the title
+        //   };
+        // });
+        // Append the array as a JSON string
+        // data.append("project[project_qrcode_image]", JSON.stringify(qrCodeImages));
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
@@ -1561,7 +1579,7 @@ const ProjectDetailsEdit = () => {
     // }
 
     const updatedImages = files.map((file) => ({
-      gallery_image: file, // ✅ Store the actual File object
+      gallery_image: file,
       gallery_image_file_name: file.name,
       gallery_image_file_type: selectedCategory,
       attachfile: { document_url: URL.createObjectURL(file) },
@@ -1569,36 +1587,70 @@ const ProjectDetailsEdit = () => {
 
     setFormData((prev) => ({
       ...prev,
-      gallery_image: [...(prev.gallery_image || []), ...updatedImages], 
+      gallery_image: [...(prev.gallery_image || []), ...updatedImages],
     }));
 
-    event.target.value = ""; 
+    event.target.value = "";
   };
-  const handleGalleryImageUpload = (event) => {
-    const files = Array.from(event.target.files);
-    if (!files.length) return;
 
-    const newFiles = files.map((file) => ({
-      id: null, // No ID for new uploads
-      document_file_name: file.name,
-      document_content_type: file.type,
-      document_url: URL.createObjectURL(file), 
-      file, 
+  const handleQRCodeImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newImages = files.map((file) => ({
+      project_qrcode_image: file,
+      title: file.name,
     }));
+
     setFormData((prev) => ({
       ...prev,
-      gallery_image: [...prev.gallery_image, ...files], 
+      project_qrcode_image: [
+        ...(prev.project_qrcode_image || []),
+        ...newImages,
+      ],
     }));
   };
-  const handleDiscardGallery = (index) => {
+
+  const handleQRCodeImageNameChange = (index, newName) => {
+    setFormData((prev) => {
+      const updatedImages = [...prev.project_qrcode_image];
+      updatedImages[index].title = newName; // Update the title
+      return { ...prev, project_qrcode_image: updatedImages };
+    });
+  };
+
+  const handleRemoveQRCodeImage = (index) => {
     setFormData((prev) => ({
       ...prev,
-      gallery_image: prev.gallery_image.filter((_, i) => i !== index),
+      project_qrcode_image: prev.project_qrcode_image.filter(
+        (_, i) => i !== index
+      ),
     }));
   };
+
+  // const handleGalleryImageUpload = (event) => {
+  //   const files = Array.from(event.target.files);
+  //   if (!files.length) return;
+
+  //   const newFiles = files.map((file) => ({
+  //     id: null, // No ID for new uploads
+  //     document_file_name: file.name,
+  //     document_content_type: file.type,
+  //     document_url: URL.createObjectURL(file),
+  //     file,
+  //   }));
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     gallery_image: [...prev.gallery_image, ...files],
+  //   }));
+  // };
+  // const handleDiscardGallery = (index) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     gallery_image: prev.gallery_image.filter((_, i) => i !== index),
+  //   }));
+  // };
   const handleDiscardPpt = (key, index) => {
     setFormData((prev) => {
-      if (!prev[key] || !Array.isArray(prev[key])) return prev; 
+      if (!prev[key] || !Array.isArray(prev[key])) return prev;
 
       const updatedFiles = prev[key].filter((_, i) => i !== index);
 
@@ -1616,6 +1668,7 @@ const ProjectDetailsEdit = () => {
       videos: MAX_VIDEO_SIZE,
       image: MAX_IMAGE_SIZE,
       gallery_image: MAX_IMAGE_SIZE,
+      project_qrcode_image: MAX_IMAGE_SIZE,
       project_ppt: MAX_PPT_SIZE, // ✅ Ensure Project_PPT is included
       project_creatives: MAX_IMAGE_SIZE, // Add creatives support
       project_creative_generics: MAX_IMAGE_SIZE,
@@ -1629,6 +1682,12 @@ const ProjectDetailsEdit = () => {
       image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      project_qrcode_image: [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ],
       videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
       brochure: [
         "application/pdf",
@@ -1815,7 +1874,7 @@ const ProjectDetailsEdit = () => {
           project_creative_offers: [
             ...(prev.project_creative_offers || []),
             ...validFiles,
-          ], 
+          ],
         }));
       }
     }
@@ -1842,7 +1901,7 @@ const ProjectDetailsEdit = () => {
           project_creative_generics: [
             ...(prev.project_creative_generics || []),
             ...validFiles,
-          ], 
+          ],
         }));
       }
     }
@@ -1930,7 +1989,8 @@ const ProjectDetailsEdit = () => {
     } else if (
       name === "two_d_images" ||
       name === "videos" ||
-      name === "gallery_image"
+      name === "gallery_image" ||
+      name === "project_qrcode_image"
     ) {
       // Handle multiple files for images, videos, gallery
       const newFiles = Array.from(files);
@@ -2765,11 +2825,10 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-
-              <div className="col-md-3">
+                <div className="col-md-6">
                 <div className="form-group">
                   <label>
-                    Project QR code Image
+                    Project QR Code Images
                     <span
                       className="tooltip-container"
                       onMouseEnter={() => setShowTooltip(true)}
@@ -2789,29 +2848,59 @@ const ProjectDetailsEdit = () => {
                     type="file"
                     name="project_qrcode_image"
                     accept="image/*"
-                    required
-                    onChange={handleInputChange}
+                    multiple
+                    onChange={handleQRCodeImageChange}
                   />
                 </div>
 
-                {/* Show selected or previously uploaded image */}
-                {formData.previewImage || formData.project_qrcode_image ? (
-                  <img
-                    src={formData.previewImage || formData.project_qrcode_image} // Show updated image first
-                    alt="Uploaded Preview"
-                    className="img-fluid rounded mt-2"
-                    style={{
-                      maxWidth: "100px",
-                      maxHeight: "100px",
-                      objectFit: "cover",
-                      marginBottom: "15px",
-                    }}
-                  />
-                ) : (
-                  <span>No image selected</span>
-                )}
+                {/* Display uploaded or existing QR code images */}
+                <div className="mt-2">
+                  {formData.project_qrcode_image.length > 0 ? (
+                    formData.project_qrcode_image.map((image, index) => (
+                      <div
+                        key={index}
+                        className="d-flex align-items-center mb-2"
+                      >
+                        <img
+                          src={
+                            image.document_url
+                              ? image.document_url // URL from backend (fetched)
+                              : image.project_qrcode_image instanceof File
+                              ? URL.createObjectURL(image.project_qrcode_image) // New file preview
+                              : "" // Fallback to empty string
+                          }
+                          alt="QR Code Preview"
+                          className="img-fluid rounded"
+                          style={{
+                            maxWidth: "100px",
+                            maxHeight: "100px",
+                            objectFit: "cover",
+                            marginRight: "10px",
+                          }}
+                        />
+                        <input
+                          type="text"
+                          className="form-control me-2"
+                          placeholder="Enter image name"
+                          value={image.file_name || ""}
+                          onChange={(e) =>
+                            handleQRCodeImageNameChange(index, e.target.value)
+                          }
+                        />
+                        <button
+                          type="button"
+                          className="purple-btn2"
+                          onClick={() => handleRemoveQRCodeImage(index)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <span>No images selected</span>
+                  )}
+                </div>
               </div>
-
               <div className="col-md-3 mt-2">
                 <label>Enable Enquiry</label>
                 <div className="form-group">
