@@ -742,52 +742,6 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Send Email</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="email_trigger_enabled"
-                              value="true"
-                              checked={
-                                formData.email_trigger_enabled === "true"
-                              }
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  email_trigger_enabled: e.target.value, // Store "true" as string
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">Yes</label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="email_trigger_enabled"
-                              value="false"
-                              checked={
-                                formData.email_trigger_enabled === "false"
-                              }
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  email_trigger_enabled: e.target.value, // Store "false" as string
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
                     {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -873,79 +827,163 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Set Reminders</label>
-                      <div className="row mb-2">
-                        <div className="col-md-2">
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Days"
-                            value={day}
-                            onChange={(e) => setDay(e.target.value)}
-                            min="0"
-                          />
-                        </div>
-                        <div className="col-md-2">
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Hours"
-                            value={hour}
-                            onChange={(e) => setHour(e.target.value)}
-                            min="0"
-                          />
-                        </div>
-                        <div className="col-md-2">
-                          <button
-                            style={{
-                              height: "35px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                            className="btn btn-danger w-100"
-                            onClick={handleAddReminder}
-                            disabled={!day && !hour}
-                          >
-                            Add
-                          </button>
+                   
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Share With</label>
+                        <div className="d-flex gap-3">
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shareWith"
+                              value="individual"
+                              checked={formData.shareWith === "individual"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shareWith: "individual",
+                                }))
+                              }
+                            />
+                            <label className="form-check-label" style={{ color: "black" }}>
+                              Individuals
+                            </label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shareWith"
+                              value="group"
+                              // checked={formData.shareWith === "group"}
+                              disabled
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shareWith: "group",
+                                }))
+                              }
+                            />
+                            <label className="form-check-label" style={{ color: "black" }}>Groups</label>
+                          </div>
                         </div>
                       </div>
 
-                      {formData.set_reminders_attributes.map(
-                        (reminder, index) => (
-                          <div className="row mb-2" key={index}>
-                            <div className="col-md-2">
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={`${reminder.days} Day(s)`}
-                                readOnly
-                              />
-                            </div>
-                            <div className="col-md-2">
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={`${reminder.hours} Hour(s)`}
-                                readOnly
-                              />
-                            </div>
-                            <div className="col-md-2">
-                              <button
-                                className="btn btn-sm btn-danger w-100"
-                                onClick={() => handleRemoveReminder(index)}
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        )
+                      {/* Conditional rendering based on selected option */}
+                      {formData.shareWith === "individual" && (
+                        <div className="form-group">
+                          <label>Event User ID</label>
+                          <MultiSelectBox
+                            options={eventUserID?.map((user) => ({
+                              value: user.id,
+                              label: `${user.firstname} ${user.lastname}`,
+                            }))}
+                            value={
+                              formData.user_id
+                                ? formData.user_id.split(",").map((id) => ({
+                                    value: id,
+                                    label:
+                                      eventUserID.find(
+                                        (user) => user.id.toString() === id
+                                      )?.firstname +
+                                      " " +
+                                      eventUserID.find(
+                                        (user) => user.id.toString() === id
+                                      )?.lastname,
+                                  }))
+                                : []
+                            } // Map the string of IDs back to objects for display
+                            onChange={(selectedOptions) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                user_id: selectedOptions
+                                  .map((option) => option.value)
+                                  .join(","), // Join IDs into a comma-separated string
+                              }))
+                            }
+                          />
+                        </div>
+                      )}
+
+                      {formData.shareWith === "group" && (
+                        <div className="form-group">
+                          <label>Share with Groups</label>
+                          <MultiSelectBox
+                            options={groups?.map((group) => ({
+                              value: group.id,
+                              label: group.name,
+                            }))}
+                            value={
+                              formData.share_groups
+                                ? formData.share_groups
+                                    .split(",")
+                                    .map((id) => ({
+                                      value: id,
+                                      label: groups.find(
+                                        (group) => group.id.toString() === id
+                                      )?.name,
+                                    }))
+                                : []
+                            } // Map the string of IDs back to objects for display
+                            onChange={(selectedOptions) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                share_groups: selectedOptions
+                                  .map((option) => option.value)
+                                  .join(","), // Join IDs into a comma-separated string
+                              }))
+                            }
+                          />
+                        </div>
                       )}
                     </div>
                     <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Send Email</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="true"
+                              checked={
+                                formData.email_trigger_enabled === "true"
+                              }
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled: e.target.value, // Store "true" as string
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="false"
+                              checked={
+                                formData.email_trigger_enabled === "false"
+                              }
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled: e.target.value, // Store "false" as string
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           RSVP Action
@@ -1015,7 +1053,83 @@ const EventCreate = () => {
                         </div>
                       </>
                     )}
+                    <div className="col-md-6">
+                      <label className="form-label">Set Reminders</label>
+                      <div className="row mb-2">
+                        <div className="col-md-2">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Days"
+                            value={day}
+                            onChange={(e) => setDay(e.target.value)}
+                            min="0"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Hours"
+                            value={hour}
+                            onChange={(e) => setHour(e.target.value)}
+                            min="0"
+                          />
+                        </div>
+                        <div className="col-md-2">
+                          <button
+                            style={{
+                              height: "35px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            className="btn btn-danger w-100"
+                            onClick={handleAddReminder}
+                            disabled={!day && !hour}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
 
+                      {formData.set_reminders_attributes.map(
+                        (reminder, index) => (
+                          <div className="row mb-2" key={index}>
+                            <div className="col-md-2">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={`${reminder.days} Day(s)`}
+                                readOnly
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={`${reminder.hours} Hour(s)`}
+                                readOnly
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              <button
+                                style={{
+                                  height: "35px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                                className="btn btn-sm btn-danger w-100"
+                                onClick={() => handleRemoveReminder(index)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
                     {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
