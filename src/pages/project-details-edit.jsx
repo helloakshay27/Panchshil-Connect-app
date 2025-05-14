@@ -309,7 +309,7 @@ const ProjectDetailsEdit = () => {
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
           disclaimer: projectData.project_disclaimer || "",
-          project_qrcode_image: projectData.project_qrcode_images || [],
+          project_qrcode_image: projectData.project_qrcode_image || [],
         });
 
         setProject(response.data);
@@ -1286,32 +1286,25 @@ const ProjectDetailsEdit = () => {
           }
         });
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
-        value.forEach((fileObj) => {
-          if (fileObj.project_qrcode_image instanceof File) {
-            data.append(
-              "project[project_qrcode_image][]",
-              fileObj.project_qrcode_image
-            );
-          }
-          if (fileObj.title) {
-            data.append(
-              "project[project_qrcode_image_titles][]",
-              fileObj.title
-            );
-          }
-        });
-        // else if (key === "project_qrcode_image" && Array.isArray(value)) {
-        // const qrCodeImages = value.map((fileObj) => {
-        //   return {
-        //     document_file_name: fileObj.project_qrcode_image instanceof File
-        //       ? URL.createObjectURL(fileObj.project_qrcode_image) // Generate a temporary URL for the file
-        //       : fileObj.document_file_name, // Use existing URL if available
-        //     title: fileObj.title || "", // Include the title
-        //   };
-        // });
-        // Append the array as a JSON string
-        // data.append("project[project_qrcode_image]", JSON.stringify(qrCodeImages));
-      } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
+  const newTitles = []; // Array to store titles of new images
+
+  value.forEach((fileObj) => {
+    if (fileObj.project_qrcode_image instanceof File) {
+      // Append the image file
+      data.append("project[project_qrcode_image][]", fileObj.project_qrcode_image);
+    }
+    if (fileObj.isNew) {
+      // Collect titles of new images
+      newTitles.push(fileObj.title || "");
+    }
+  });
+
+  // Append only the titles of new images
+  newTitles.forEach((title) => {
+    data.append("project[project_qrcode_image_titles][]", title);
+  });
+}
+else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
             data.append(
@@ -1596,8 +1589,9 @@ const ProjectDetailsEdit = () => {
   const handleQRCodeImageChange = (e) => {
     const files = Array.from(e.target.files);
     const newImages = files.map((file) => ({
-      project_qrcode_image: file,
-      title: file.name,
+      project_qrcode_image: file, // Store the file
+      title: file.name, // Default title is the file name
+      isNew: true, // Mark as a new image
     }));
 
     setFormData((prev) => ({
@@ -2825,7 +2819,7 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-                <div className="col-md-6">
+              <div className="col-md-6">
                 <div className="form-group">
                   <label>
                     Project QR Code Images
@@ -2863,11 +2857,9 @@ const ProjectDetailsEdit = () => {
                       >
                         <img
                           src={
-                            image.document_url
-                              ? image.document_url // URL from backend (fetched)
-                              : image.project_qrcode_image instanceof File
-                              ? URL.createObjectURL(image.project_qrcode_image) // New file preview
-                              : "" // Fallback to empty string
+                            image.isNew
+                              ? URL.createObjectURL(image.project_qrcode_image) // Preview for new images
+                              : image.document_file_name // URL for existing images
                           }
                           alt="QR Code Preview"
                           className="img-fluid rounded"
@@ -2882,10 +2874,11 @@ const ProjectDetailsEdit = () => {
                           type="text"
                           className="form-control me-2"
                           placeholder="Enter image name"
-                          value={image.file_name || ""}
+                          value={image.title || ""}
                           onChange={(e) =>
                             handleQRCodeImageNameChange(index, e.target.value)
                           }
+                          disabled={!image.isNew} // Disable input for existing images
                         />
                         <button
                           type="button"
