@@ -72,6 +72,7 @@ const ProjectDetailsCreate = () => {
     rera_url: "",
     isDay: true,
     disclaimer: "",
+    project_qrcode_image: [],
   });
 
   useEffect(() => {
@@ -102,6 +103,8 @@ const ProjectDetailsCreate = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [allBuildingTypes, setAllBuildingTypes] = useState([]);
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
+  // const [showTooltip, setShowTooltip] = useState(false);
+  const [showQrTooltip, setShowQrTooltip] = useState(false);
   console.log(propertyTypeOptions);
 
   const errorToastRef = useRef(null);
@@ -970,6 +973,8 @@ const ProjectDetailsCreate = () => {
         });
       } else if (key === "image" && value instanceof File) {
         data.append("project[image]", value);
+      } else if (key === "project_qrcode_image" && value instanceof File) {
+        data.append("project[project_qrcode_image]", value);
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
@@ -1594,6 +1599,17 @@ const ProjectDetailsCreate = () => {
     }
   };
 
+  const handleQRFileChange = (e, field) => {
+    const files = Array.from(e.target.files);
+    const previews = files.map((file) => URL.createObjectURL(file));
+
+    setFormData((prev) => ({
+      ...prev,
+      [field]: files, // save files (can be image or project_qr_code_image)
+      [`${field}Preview`]: previews,
+    }));
+  };
+
   return (
     <>
       {/* <Header /> */}
@@ -1801,10 +1817,7 @@ const ProjectDetailsCreate = () => {
 
               <div className="col-md-6 mt-2">
                 <div className="form-group">
-                  <label>
-                    Project Description
-                  
-                  </label>
+                  <label>Project Description</label>
                   <textarea
                     className="form-control"
                     rows={1}
@@ -2123,10 +2136,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                  Disclaimer
-                  
-                  </label>
+                  <label>Disclaimer</label>
                   <textarea
                     className="form-control"
                     rows={1}
@@ -2137,6 +2147,40 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
+
+              <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Project QR Code Images
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowQrTooltip(true)}
+                      onMouseLeave={() => setShowQrTooltip(false)}
+                    >
+                      [i]
+                      {showQrTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 50 MB
+                        </span>
+                      )}
+                    </span>
+                    <span className="otp-asterisk"> *</span>
+                  </label>
+
+                  <input
+                    className="form-control"
+                    type="file"
+                    name="project_qrcode_image"
+                    accept="image/*"
+                    multiple
+                    required
+                    onChange={(e) =>
+                      handleQRFileChange(e, "project_qrcode_image")
+                    }
+                  />
+                </div>
+              </div>
+
               <div className="col-md-3 mt-2">
                 <label>Enable Enquiry</label>
                 <div className="form-group">

@@ -76,6 +76,7 @@ const ProjectDetailsEdit = () => {
     enable_enquiry: false,
     rera_url: "",
     disclaimer: "",
+    project_qrcode_image : [],
   });
 
 
@@ -309,6 +310,7 @@ const ProjectDetailsEdit = () => {
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
           disclaimer: projectData.project_disclaimer || "",
+          project_qrcode_image : projectData.project_qrcode_image || [],
         });
 
         setProject(response.data);
@@ -1151,7 +1153,10 @@ const ProjectDetailsEdit = () => {
 
     if (formData.image) {
       data.append("project[image]", formData.image);
+    } else if (formData.project_qrcode_image) {
+      data.append("project[project_qrcode_image]", formData.project_qrcode_image);
     }
+
 
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
@@ -2759,6 +2764,52 @@ const ProjectDetailsEdit = () => {
                     onChange={handleChange}
                   />
                 </div>
+              </div>
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <label>
+                    Project QR code Image
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 50 MB
+                        </span>
+                      )}
+                    </span>
+                    <span className="otp-asterisk"> *</span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="file"
+                    name="project_qrcode_image"
+                    accept="image/*"
+                    required
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                {/* Show selected or previously uploaded image */}
+                {formData.previewImage || formData.project_qrcode_image ? (
+                  <img
+                    src={formData.previewImage || formData.project_qrcode_image} // Show updated image first
+                    alt="Uploaded Preview"
+                    className="img-fluid rounded mt-2"
+                    style={{
+                      maxWidth: "100px",
+                      maxHeight: "100px",
+                      objectFit: "cover",
+                      marginBottom: "15px",
+                    }}
+                  />
+                ) : (
+                  <span>No image selected</span>
+                )}
               </div>
 
               <div className="col-md-3 mt-2">
