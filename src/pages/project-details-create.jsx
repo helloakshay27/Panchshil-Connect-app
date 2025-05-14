@@ -318,6 +318,7 @@ const ProjectDetailsCreate = () => {
       project_exteriors: MAX_IMAGE_SIZE,
       project_emailer_templetes: MAX_BROCHURE_SIZE,
       project_layout: MAX_IMAGE_SIZE,
+       project_qrcode_image: MAX_IMAGE_SIZE,
     };
 
     const allowedTypes = {
@@ -325,6 +326,12 @@ const ProjectDetailsCreate = () => {
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
+        project_qrcode_image: [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ],
       brochure: [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -605,7 +612,8 @@ const ProjectDetailsCreate = () => {
     } else if (
       name === "two_d_images" ||
       name === "videos" ||
-      name === "gallery_image"
+      name === "gallery_image" ||
+      name === "project_qrcode_image"
     ) {
       // Handle multiple files for images, videos, gallery
       const newFiles = Array.from(files);
@@ -973,8 +981,27 @@ const ProjectDetailsCreate = () => {
         });
       } else if (key === "image" && value instanceof File) {
         data.append("project[image]", value);
-      } else if (key === "project_qrcode_image" && value instanceof File) {
-        data.append("project[project_qrcode_image]", value);
+      }else if (key === "project_qrcode_image" && Array.isArray(value)) {
+        const newTitles = []; // Array to store titles of new images
+
+        value.forEach((fileObj) => {
+          if (fileObj.project_qrcode_image instanceof File) {
+            // Append the image file
+            data.append(
+              "project[project_qrcode_image][]",
+              fileObj.project_qrcode_image
+            );
+          }
+          if (fileObj.isNew) {
+            // Collect titles of new images
+            newTitles.push(fileObj.title || "");
+          }
+        });
+
+        // Append only the titles of new images
+        newTitles.forEach((title) => {
+          data.append("project[project_qrcode_image_titles][]", title);
+        });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
@@ -1610,6 +1637,40 @@ const ProjectDetailsCreate = () => {
     }));
   };
 
+   const handleQRCodeImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newImages = files.map((file) => ({
+      project_qrcode_image: file, // Store the file
+      title: file.name, // Default title is the file name
+      isNew: true, // Mark as a new image
+    }));
+
+    setFormData((prev) => ({
+      ...prev,
+      project_qrcode_image: [
+        ...(prev.project_qrcode_image || []),
+        ...newImages,
+      ],
+    }));
+  };
+
+  const handleQRCodeImageNameChange = (index, newName) => {
+    setFormData((prev) => {
+      const updatedImages = [...prev.project_qrcode_image];
+      updatedImages[index].title = newName; // Update the title
+      return { ...prev, project_qrcode_image: updatedImages };
+    });
+  };
+
+  const handleRemoveQRCodeImage = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      project_qrcode_image: prev.project_qrcode_image.filter(
+        (_, i) => i !== index
+      ),
+    }));
+  };
+
   return (
     <>
       {/* <Header /> */}
@@ -2148,17 +2209,17 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              <div className="col-md-3 mt-2">
+               <div className="col-md-6">
                 <div className="form-group">
                   <label>
                     Project QR Code Images
                     <span
                       className="tooltip-container"
-                      onMouseEnter={() => setShowQrTooltip(true)}
-                      onMouseLeave={() => setShowQrTooltip(false)}
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
                     >
                       [i]
-                      {showQrTooltip && (
+                      {showTooltip && (
                         <span className="tooltip-text">
                           Max Upload Size 50 MB
                         </span>
@@ -2166,18 +2227,65 @@ const ProjectDetailsCreate = () => {
                     </span>
                     <span className="otp-asterisk"> *</span>
                   </label>
-
                   <input
                     className="form-control"
                     type="file"
                     name="project_qrcode_image"
                     accept="image/*"
                     multiple
-                    required
-                    onChange={(e) =>
-                      handleQRFileChange(e, "project_qrcode_image")
-                    }
+                    onChange={handleQRCodeImageChange}
                   />
+                </div>
+
+                {/* Display uploaded or existing QR code images */}
+                <div className="mt-2">
+                  {formData.project_qrcode_image.length > 0 ? (
+                    formData.project_qrcode_image.map((image, index) => (
+                      <div
+                        key={index}
+                        className="d-flex align-items-center mb-2"
+                      >
+                        <img
+                          src={
+                            image.isNew
+                              ? URL.createObjectURL(image.project_qrcode_image) // Preview for new images
+                              : image.document_url // URL for existing images
+                          }
+                          alt="QR Code Preview"
+                          className="img-fluid rounded"
+                          style={{
+                            maxWidth: "100px",
+                            maxHeight: "100px",
+                            objectFit: "cover",
+                            marginRight: "10px",
+                          }}
+                        />
+                        <input
+                          type="text"
+                          className="form-control me-2"
+                          placeholder="Enter image name"
+                          value={
+                            image.isNew
+                              ? image.title || "" // For new uploads, use editable title
+                              : image.title || image.file_name || "" // For existing, show title if present, else fallback to file_name
+                          }
+                          onChange={(e) =>
+                            handleQRCodeImageNameChange(index, e.target.value)
+                          }
+                          disabled={!image.isNew} // Disable input for existing images
+                        />
+                        <button
+                          type="button"
+                          className="purple-btn2"
+                          onClick={() => handleRemoveQRCodeImage(index)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <span>No images selected</span>
+                  )}
                 </div>
               </div>
 

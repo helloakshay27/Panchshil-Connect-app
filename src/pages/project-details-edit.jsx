@@ -309,7 +309,7 @@ const ProjectDetailsEdit = () => {
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
           disclaimer: projectData.project_disclaimer || "",
-          project_qrcode_image: projectData.project_qrcode_image || [],
+          project_qrcode_image: projectData.project_qrcode_images || [],
         });
 
         setProject(response.data);
@@ -999,6 +999,7 @@ const ProjectDetailsEdit = () => {
       alert("Failed to delete image. Please try again.");
     }
   };
+  
 
   const validateForm = (formData) => {
     // Clear previous toasts
@@ -1286,25 +1287,27 @@ const ProjectDetailsEdit = () => {
           }
         });
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
-  const newTitles = []; // Array to store titles of new images
+        const newTitles = []; // Array to store titles of new images
 
-  value.forEach((fileObj) => {
-    if (fileObj.project_qrcode_image instanceof File) {
-      // Append the image file
-      data.append("project[project_qrcode_image][]", fileObj.project_qrcode_image);
-    }
-    if (fileObj.isNew) {
-      // Collect titles of new images
-      newTitles.push(fileObj.title || "");
-    }
-  });
+        value.forEach((fileObj) => {
+          if (fileObj.project_qrcode_image instanceof File) {
+            // Append the image file
+            data.append(
+              "project[project_qrcode_image][]",
+              fileObj.project_qrcode_image
+            );
+          }
+          if (fileObj.isNew) {
+            // Collect titles of new images
+            newTitles.push(fileObj.title || "");
+          }
+        });
 
-  // Append only the titles of new images
-  newTitles.forEach((title) => {
-    data.append("project[project_qrcode_image_titles][]", title);
-  });
-}
-else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
+        // Append only the titles of new images
+        newTitles.forEach((title) => {
+          data.append("project[project_qrcode_image_titles][]", title);
+        });
+      } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
             data.append(
@@ -2859,7 +2862,7 @@ else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
                           src={
                             image.isNew
                               ? URL.createObjectURL(image.project_qrcode_image) // Preview for new images
-                              : image.document_file_name // URL for existing images
+                              : image.document_url // URL for existing images
                           }
                           alt="QR Code Preview"
                           className="img-fluid rounded"
@@ -2874,7 +2877,11 @@ else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
                           type="text"
                           className="form-control me-2"
                           placeholder="Enter image name"
-                          value={image.title || ""}
+                          value={
+                            image.isNew
+                              ? image.title || "" // For new uploads, use editable title
+                              : image.title || image.file_name || "" // For existing, show title if present, else fallback to file_name
+                          }
                           onChange={(e) =>
                             handleQRCodeImageNameChange(index, e.target.value)
                           }
