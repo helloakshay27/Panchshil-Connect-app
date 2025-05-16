@@ -999,7 +999,6 @@ const ProjectDetailsEdit = () => {
       alert("Failed to delete image. Please try again.");
     }
   };
-  
 
   const validateForm = (formData) => {
     // Clear previous toasts
@@ -1614,13 +1613,46 @@ const ProjectDetailsEdit = () => {
     });
   };
 
-  const handleRemoveQRCodeImage = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      project_qrcode_image: prev.project_qrcode_image.filter(
-        (_, i) => i !== index
-      ),
-    }));
+  const handleRemoveQRCodeImage = async (key, index, imageId) => {
+    if (!imageId) {
+      console.error("Error: No image ID found for deletion.");
+      toast.error("Failed to delete image. Image ID is missing.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}projects/${id}/remove_qr_code_images/${imageId}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to delete image. Server response: ${errorText}`
+        );
+      }
+
+      // Remove the image from the state
+      setFormData((prev) => {
+        const updatedImages = prev[key].filter((_, i) => i !== index);
+        return {
+          ...prev,
+          [key]: updatedImages,
+        };
+      });
+
+      toast.success("QR Code image deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting image:", error.message);
+      toast.error("Failed to delete image. Please try again.");
+    }
   };
 
   // const handleGalleryImageUpload = (event) => {
@@ -2890,7 +2922,13 @@ const ProjectDetailsEdit = () => {
                         <button
                           type="button"
                           className="purple-btn2"
-                          onClick={() => handleRemoveQRCodeImage(index)}
+                          onClick={() =>
+                            handleRemoveQRCodeImage(
+                              "project_qrcode_image",
+                              index,
+                              image.id
+                            )
+                          }
                         >
                           Remove
                         </button>

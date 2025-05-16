@@ -27,8 +27,9 @@ const BannerAdd = () => {
     banner_redirect: "",
     project_id: "",
     title: "",
-    attachfile: [],
-    banner_video: null,
+    // attachfile: [],
+    banner_video: [],
+    active: true,
   });
 
   // Fetch Projects
@@ -103,13 +104,41 @@ const BannerAdd = () => {
       }
 
       setErrors((prev) => ({ ...prev, banner_video: "" }));
-      setPreviewVideo(URL.createObjectURL(file));
+      
+      // Check if it's a video
+      if (file.type.startsWith('video/')) {
+        setPreviewVideo(URL.createObjectURL(file));
+        setPreviewImg(null);
+      } 
+      // Check if it's an image
+      else if (file.type.startsWith('image/')) {
+        setPreviewImg(URL.createObjectURL(file));
+        setPreviewVideo(null);
+      } 
+      // Try to determine from extension if MIME type is not recognized
+      else {
+        const extension = file.name.split('.').pop().toLowerCase();
+        const videoExtensions = ['mp4', 'avi', 'mov', 'webm', 'mkv', 'flv', 'wmv', 'mpeg', 'm4v'];
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'tiff'];
+        
+        if (videoExtensions.includes(extension)) {
+          setPreviewVideo(URL.createObjectURL(file));
+          setPreviewImg(null);
+        } else if (imageExtensions.includes(extension)) {
+          setPreviewImg(URL.createObjectURL(file));
+          setPreviewVideo(null);
+        } else {
+          // If can't determine file type, still accept but don't show preview
+          setPreviewVideo(null);
+          setPreviewImg(null);
+        }
+      }
+      
       setFormData((prev) => ({
         ...prev,
         banner_video: file,
         attachfile: [], // Clear images when video is selected
       }));
-      setPreviewImg(null); // Clear image preview
       setBannerVideoSelected(true);
       setBannerImageSelected(false); // Disable image
     } else {
@@ -256,7 +285,7 @@ const BannerAdd = () => {
                   </div>
 
                   {/* Banner File Upload */}
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Banner Image{" "}
@@ -287,7 +316,7 @@ const BannerAdd = () => {
                           {errors.attachfile}
                         </span>
                       )}
-                      {/* Preview Image */}
+                     
                       {previewImg && (
                         <div className="mt-2">
                           <img
@@ -303,13 +332,13 @@ const BannerAdd = () => {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Banner Video Upload */}
-                  <div className="col-md-3">
+                  <div className="col-md-3 mt-1">
                     <div className="form-group">
                       <label>
-                        Banner Video{" "}
+                        Banner Attachment{" "}
                         <span
                           className="tooltip-container"
                           onMouseEnter={() => setShowVideoTooltip(true)}
@@ -318,7 +347,7 @@ const BannerAdd = () => {
                           [i]
                           {showVideoTooltip && (
                             <span className="tooltip-text">
-                              Max Upload Size 50 MB
+                              16:9 Format Should Only Be Allowed
                             </span>
                           )}
                         </span>
@@ -327,9 +356,7 @@ const BannerAdd = () => {
                         className="form-control"
                         type="file"
                         name="banner_video"
-                        accept="video/*"
                         onChange={handleBannerVideoChange}
-                        disabled={bannerImageSelected}
                       />
                       {errors.banner_video && (
                         <span className="error text-danger">
@@ -337,7 +364,21 @@ const BannerAdd = () => {
                         </span>
                       )}
 
-                      {/* Video Preview */}
+                      {previewImg && (
+                        <div className="mt-2">
+                          <img
+                            src={previewImg}
+                            className="img-fluid rounded"
+                            alt="Preview"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
+                  
                       {previewVideo && (
                         <div className="mt-2">
                           <video

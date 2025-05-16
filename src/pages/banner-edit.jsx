@@ -12,14 +12,17 @@ const BannerEdit = () => {
   const [projects, setProjects] = useState([]);
   const [errors, setErrors] = useState({});
   const [previewImg, setPreviewImg] = useState(null);
-  const [previewVideo, setPreviewVideo] = useState(null); // ← NEW
+  const [previewVideo, setPreviewVideo] = useState(null);
+   const [showVideoTooltip, setShowVideoTooltip] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
     project_id: "",
-    attachfile: null,
+    // attachfile: null,
     // existingImages: [],
     banner_video: [],
+    active: true,
+
   });
 
   useEffect(() => {
@@ -79,28 +82,35 @@ const BannerEdit = () => {
     setFormData({ ...formData, attachfile: validFiles[0] });
   };
 
-  console.log(formData);
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
 
- const handleVideoChange = (e) => {
-  const file = e.target.files[0];
+    if (!file) return;
 
-  if (!file) return;
+    // Expanded allowed file types
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/bmp", "image/tiff"];
+    const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"];
+    
+    const isAllowedType = [...allowedImageTypes, ...allowedVideoTypes].includes(file.type);
+    
+    if (!isAllowedType) {
+      toast.error("Please upload a valid image or video file.");
+      return;
+    }
 
-  // Allow video files and GIFs
-  const allowedTypes = ["video/mp4", "video/webm", "video/ogg", "image/gif"];
-  if (!allowedTypes.includes(file.type)) {
-    toast.error("Only video files (MP4, WebM, OGG) or GIFs are allowed.");
-    return;
-  }
+    // File size limit (100MB)
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error("File size should not exceed 100MB.");
+      return;
+    }
 
-  if (file.size > 100 * 1024 * 1024) {
-    toast.error("Max video size is 100MB.");
-    return;
-  }
-
-  setPreviewVideo(URL.createObjectURL(file));
-  setFormData((prev) => ({ ...prev, banner_video: file }));
-};
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file);
+    setPreviewVideo(previewUrl);
+    
+    // Update form data
+    setFormData((prev) => ({ ...prev, banner_video: file }));
+  };
 
   const validateForm = () => {
     let newErrors = {};
@@ -147,7 +157,20 @@ const BannerEdit = () => {
     }
   };
 
-  console.log(formData);
+  const isImageFile = (file) => {
+    if (!file) return false;
+    
+    const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/bmp", "image/tiff"];
+    
+    if (typeof file === 'string') {
+      // Handle URL strings - check common image extensions
+      const extension = file.split('.').pop().toLowerCase();
+      return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff'].includes(extension);
+    }
+    
+    // Handle File objects
+    return file.type && imageTypes.includes(file.type);
+  };
 
   const handleCancel = () => navigate(-1);
 
@@ -203,7 +226,7 @@ const BannerEdit = () => {
                       )}
                     </div>
                   </div>
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>Banner Image </label>
                       <input
@@ -245,80 +268,92 @@ const BannerEdit = () => {
                         )}
                       </div>
                     </div>
-                  </div>
-                  <div className="col-md-3">
+                  </div> */}
+                  <div className="col-md-3 mt-1">
                     <div className="form-group">
-                      <label>Banner Video</label>
-                     <input
-  className="form-control"
-  type="file"
-  name="banner_video"
-  accept="video/mp4,video/webm,video/ogg,image/gif"
-  onChange={handleVideoChange}
-/>
+                      <label>Banner Attachment
+                         <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowVideoTooltip(true)}
+                          onMouseLeave={() => setShowVideoTooltip(false)}
+                        >
+                          [i]
+                          {showVideoTooltip && (
+                            <span className="tooltip-text">
+                              16:9 Format Should Only Be Allowed
+                            </span>
+                          )}
+                        </span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="banner_video"
+                        accept="image/*,video/*"
+                        onChange={handleVideoChange}
+                      />
                       {errors.banner_video && (
                         <span className="text-danger">
                           {errors.banner_video}
                         </span>
                       )}
 
-                     <div className="mt-2">
-  {previewVideo ? (
-    previewVideo.endsWith(".gif") || (formData.banner_video && formData.banner_video.type === "image/gif") ? (
-      <img
-        src={previewVideo}
-        className="img-fluid rounded mt-2"
-        alt="GIF Preview"
-        style={{
-          maxWidth: "100px",
-          maxHeight: "150px",
-          objectFit: "cover",
-        }}
-      />
-    ) : (
-      <video
-        src={previewVideo}
-        controls
-        className="img-fluid rounded mt-2"
-        style={{
-          maxWidth: "100px",
-          maxHeight: "150px",
-          objectFit: "cover",
-        }}
-      />
-    )
-  ) : formData.banner_video && formData.banner_video.document_url ? (
-    formData.banner_video.document_url.endsWith(".gif") ? (
-      <img
-        src={formData.banner_video.document_url}
-        className="img-fluid rounded mt-2"
-        alt="GIF Preview"
-        style={{
-          maxWidth: "100px",
-          maxHeight: "150px",
-          objectFit: "cover",
-        }}
-      />
-    ) : (
-      <video
-        src={formData.banner_video.document_url}
-        controls
-        className="img-fluid rounded mt-2"
-        style={{
-          maxWidth: "200px",
-          maxHeight: "150px",
-          objectFit: "cover",
-        }}
-      />
-    )
-  ) : (
-    <span>No video selected</span>
-  )}
-</div>
+                      <div className="mt-2">
+                        {previewVideo ? (
+                          isImageFile(previewVideo) ? (
+                            <img
+                              src={previewVideo}
+                              className="img-fluid rounded mt-2"
+                              alt="Image Preview"
+                              style={{
+                                maxWidth: "100px",
+                                maxHeight: "150px",
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
+                            <video
+                              src={previewVideo}
+                              controls
+                              className="img-fluid rounded mt-2"
+                              style={{
+                                maxWidth: "100px",
+                                maxHeight: "150px",
+                                objectFit: "cover",
+                              }}
+                            />
+                          )
+                        ) : formData.banner_video && formData.banner_video.document_url ? (
+                          isImageFile(formData.banner_video.document_url) ? (
+                            <img
+                              src={formData.banner_video.document_url}
+                              className="img-fluid rounded mt-2"
+                              alt="Image Preview"
+                              style={{
+                                maxWidth: "100px",
+                                maxHeight: "150px",
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
+                            <video
+                              src={formData.banner_video.document_url}
+                              controls
+                              className="img-fluid rounded mt-2"
+                              style={{
+                                maxWidth: "200px",
+                                maxHeight: "150px",
+                                objectFit: "cover",
+                              }}
+                            />
+                          )
+                        ) : (
+                          <span>No file selected</span>
+                        )}
                       </div>
                     </div>
                   </div>
-              
+                </div>
               )}
             </div>
           </div>
