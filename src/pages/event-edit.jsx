@@ -25,10 +25,11 @@ const EventEdit = () => {
     rsvp_number: "",
     description: "",
     publish: "",
-    user_id: "",
+    user_id: [], // Initialize as empty array
     comment: "",
     shared: "",
     share_groups: "",
+    shareWith: "individual", // Default to individual
     attachfile: [],
     previewImage: "",
     is_important: "false",
@@ -40,6 +41,7 @@ const EventEdit = () => {
 
   const [eventType, setEventType] = useState([]);
   const [eventUserID, setEventUserID] = useState([]);
+  const [groups, setGroups] = useState([]); // State to store groups
   const [loading, setLoading] = useState(false);
 
   // Set Reminders
@@ -106,9 +108,21 @@ const EventEdit = () => {
           })
         );
 
+        // Ensure user_id is always an array
+        const userIds = Array.isArray(response.data.user_id)
+          ? response.data.user_id
+          : response.data.user_id
+          ? [response.data.user_id]
+          : [];
+
+        // Determine shareWith based on data
+        const shareWith = response.data.share_groups ? "group" : "individual";
+
         setFormData((prev) => ({
           ...prev,
           ...response.data,
+          user_id: userIds, // Ensure user_id is always an array
+          shareWith: shareWith, // Set shareWith based on data
           attachfile: null, // Reset file input
           previewImage: response?.data?.attachfile?.document_url || "", // Set existing image preview
           set_reminders_attributes: formattedReminders, // Set existing reminders with proper formatting
@@ -160,6 +174,24 @@ const EventEdit = () => {
       }
     };
     fetchUsers();
+  }, []);
+
+  // Fetch groups
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await axios.get(`${baseURL}groups`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+        setGroups(response.data.groups || []);
+      } catch (error) {
+        console.error("Error fetching groups:", error);
+      }
+    };
+    fetchGroups();
   }, []);
 
   const handleChange = (e) => {
@@ -241,6 +273,20 @@ const EventEdit = () => {
             );
           }
         });
+      } else if (key === "user_id" && Array.isArray(formData.user_id)) {
+        // Properly append user_id array values
+        if (formData.user_id.length > 0) {
+          // Append as user_ids[] for Rails API format
+          formData.user_id.forEach((userId) => {
+            data.append("event[user_ids][]", userId);
+          });
+        } else {
+          // Send empty array to clear all users
+          data.append("event[user_ids][]", "");
+        }
+      } else if (key === "shareWith") {
+        // Skip this field as it's only for UI, not part of the API
+        // continue;
       } else {
         data.append(`event[${key}]`, formData[key]);
       }
@@ -253,12 +299,13 @@ const EventEdit = () => {
     }
 
     try {
-      await axios.put(`${baseURL}events/${id}.json`, data, {
+      const response = await axios.put(`${baseURL}events/${id}.json`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "multipart/form-data", // Important for file uploads
         },
       });
+      console.log("Update response:", response.data);
       toast.success("Event updated successfully!");
       navigate("/event-list");
     } catch (error) {
@@ -357,7 +404,7 @@ const EventEdit = () => {
                           className="form-control"
                           type="text"
                           name="event_at"
-                          placeholder="Enter Evnet At"
+                          placeholder="Enter Event At"
                           value={formData.event_at}
                           onChange={handleChange}
                         />
@@ -394,6 +441,306 @@ const EventEdit = () => {
                     </div>
 
                     <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Description</label>
+                        <textarea
+                          className="form-control"
+                          rows={1}
+                          name="description"
+                          placeholder="Enter Project Description"
+                          value={formData.description}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Attachment</label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="attachfile"
+                          accept="image/*"
+                          onChange={handleFileChange} // Handle file selection
+                        />
+                      </div>
+
+                      {/* Image Preview */}
+                      {formData.previewImage && (
+                        <img
+                          src={formData.previewImage}
+                          alt="Uploaded Preview"
+                          className="img-fluid rounded mt-2"
+                          style={{
+                            maxWidth: "100px",
+                            maxHeight: "100px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      )}
+                    </div>
+
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Mark Important</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="is_important"
+                              value="true"
+                              checked={formData.is_important === true}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="is_important"
+                              value="false"
+                              checked={formData.is_important === false}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  
+
+                    {/* <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Publish</label>
+                        <div className="d-flex">
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="publish"
+                              value="1"
+                              checked={parseInt(formData.publish) === 1} // Ensure correct value selection
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  publish: parseInt(e.target.value), // Store as number
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="publish"
+                              value="0"
+                              checked={parseInt(formData.publish) === 0} // Ensure correct value selection
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  publish: parseInt(e.target.value), // Store as number
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div> */}
+
+                    {/* Share With Radio Buttons */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Share With</label>
+                        <div className="d-flex gap-3">
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shareWith"
+                              value="individual"
+                              checked={formData.shareWith === "individual"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shareWith: "individual",
+                                }))
+                              }
+                              disabled={
+                                !eventUserID || eventUserID.length === 0
+                              } // Disable if no users available
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{
+                                color:
+                                  !eventUserID || eventUserID.length === 0
+                                    ? "gray"
+                                    : "black",
+                              }}
+                            >
+                              Individuals
+                            </label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shareWith"
+                              value="group"
+                              checked={formData.shareWith === "group"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shareWith: "group",
+                                }))
+                              }
+                              disabled={!groups || groups.length === 0} // Disable if no groups available
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{
+                                color:
+                                  !groups || groups.length === 0
+                                    ? "gray"
+                                    : "black",
+                              }}
+                            >
+                              Groups
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Conditional rendering based on selected option */}
+                      {formData.shareWith === "individual" && (
+                        <div className="form-group">
+                          <label>Event User ID</label>
+                          <MultiSelectBox
+                            options={eventUserID?.map((user) => ({
+                              value: user.id,
+                              label: `${user.firstname} ${user.lastname}`,
+                            }))}
+                            value={
+                              Array.isArray(formData.user_id)
+                                ? formData.user_id.map((userId) => {
+                                    const user = eventUserID.find(
+                                      (u) => u.id === userId
+                                    );
+                                    return user
+                                      ? {
+                                          value: userId,
+                                          label: `${user.firstname} ${user.lastname}`,
+                                        }
+                                      : {
+                                          value: userId,
+                                          label: `User ${userId}`,
+                                        }; // Fallback if user not found
+                                  })
+                                : []
+                            }
+                            onChange={(selectedOptions) => {
+                              console.log("Selected Users:", selectedOptions);
+                              setFormData((prev) => ({
+                                ...prev,
+                                user_id: selectedOptions.map(
+                                  (option) => option.value
+                                ),
+                              }));
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {formData.shareWith === "group" && (
+                        <div className="form-group">
+                          <label>Share with Groups</label>
+                          <MultiSelectBox
+                            options={groups?.map((group) => ({
+                              value: group.id,
+                              label: group.name,
+                            }))}
+                            value={
+                              formData.share_groups
+                                ? formData.share_groups
+                                    .split(",")
+                                    .map((id) => ({
+                                      value: id,
+                                      label:
+                                        groups.find(
+                                          (group) => group.id.toString() === id
+                                        )?.name || `Group ${id}`,
+                                    }))
+                                : []
+                            }
+                            onChange={(selectedOptions) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                share_groups: selectedOptions
+                                  .map((option) => option.value)
+                                  .join(","),
+                              }))
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                     <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Send Email</label>
+                        <div className="d-flex">
+                          {/* Yes Option */}
+                          <div className="form-check me-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="true"
+                              checked={formData.email_trigger_enabled === true} // Compare as boolean
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled:
+                                    e.target.value === "true", // Convert to boolean
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">Yes</label>
+                          </div>
+
+                          {/* No Option */}
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="email_trigger_enabled"
+                              value="false"
+                              checked={formData.email_trigger_enabled === false} // Compare as boolean
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  email_trigger_enabled:
+                                    e.target.value === "true", // Convert to boolean
+                                }))
+                              }
+                              required
+                            />
+                            <label className="form-check-label">No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                      <div className="col-md-3">
                       <div className="form-group">
                         <label>RSVP Action</label>
                         <div className="d-flex">
@@ -457,111 +804,7 @@ const EventEdit = () => {
                       </>
                     )}
 
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event Description</label>
-                        <textarea
-                          className="form-control"
-                          rows={1}
-                          name="description"
-                          placeholder="Enter Project Description"
-                          value={formData.description}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event Publish</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="publish"
-                              value="1"
-                              checked={parseInt(formData.publish) === 1} // Ensure correct value selection
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  publish: parseInt(e.target.value), // Store as number
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">Yes</label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="publish"
-                              value="0"
-                              checked={parseInt(formData.publish) === 0} // Ensure correct value selection
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  publish: parseInt(e.target.value), // Store as number
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event User ID</label>
-                        <MultiSelectBox
-                          options={eventUserID?.map((user) => ({
-                            value: user.id, // Store user.id
-                            label: `${user.firstname} ${user.lastname}`, // Display full name
-                          }))}
-                          value={
-                            Array.isArray(formData.user_id)
-                              ? formData.user_id
-                                  .map((id) => {
-                                    const user = eventUserID.find(
-                                      (user) => user.id === id
-                                    ); // Find the user by ID
-                                    return user
-                                      ? {
-                                          value: user.id,
-                                          label: `${user.firstname} ${user.lastname}`,
-                                        } // Map to value and label
-                                      : null;
-                                  })
-                                  .filter(Boolean) // Filter out null values
-                              : []
-                          }
-                          onChange={(selectedOptions) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              user_id: selectedOptions.map(
-                                (option) => option.value
-                              ), // Store only the IDs
-                            }))
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event Comment</label>
-                        <textarea
-                          className="form-control"
-                          rows={1}
-                          name="comment"
-                          placeholder="Enter Project Description"
-                          value={formData.comment}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Shared</label>
                         <input
@@ -573,123 +816,9 @@ const EventEdit = () => {
                           onChange={handleChange}
                         />
                       </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event Share Groups</label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="share_groups"
-                          placeholder="Enter Shared Groups"
-                          value={formData.share_groups}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Attachment</label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="attachfile"
-                          accept="image/*"
-                          onChange={handleFileChange} // Handle file selection
-                        />
-                      </div>
+                    </div> */}
 
-                      {/* Image Preview */}
-                      {formData.previewImage && (
-                        <img
-                          src={formData.previewImage}
-                          alt="Uploaded Preview"
-                          className="img-fluid rounded mt-2"
-                          style={{
-                            maxWidth: "100px",
-                            maxHeight: "100px",
-                            objectFit: "cover",
-                          }}
-                        />
-                      )}
-                    </div>
-
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event is Important</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="is_important"
-                              value="true"
-                              checked={formData.is_important == true}
-                              onChange={handleRadioChange}
-                            />
-                            <label className="form-check-label">Yes</label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="is_important"
-                              value="false"
-                              checked={formData.is_important == false}
-                              onChange={handleRadioChange}
-                            />
-                            <label className="form-check-label">No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event Email Trigger Enabled</label>
-                        <div className="d-flex">
-                          {/* Yes Option */}
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="email_trigger_enabled"
-                              value="true"
-                              checked={formData.email_trigger_enabled === true} // Compare as boolean
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  email_trigger_enabled:
-                                    e.target.value === "true", // Convert to boolean
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">Yes</label>
-                          </div>
-
-                          {/* No Option */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="email_trigger_enabled"
-                              value="false"
-                              checked={formData.email_trigger_enabled === false} // Compare as boolean
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  email_trigger_enabled:
-                                    e.target.value === "true", // Convert to boolean
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                   
                     <div className="col-md-12">
                       <label className="form-label">Set Reminders</label>
                       <div className="row mb-2">

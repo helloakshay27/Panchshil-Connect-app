@@ -245,8 +245,8 @@ const Eventlist = () => {
                             {/* <th>Project Name</th> */}
                             <th>Event Name</th>
                             <th>Event At</th>
-                            <th>From Time</th>
-                            <th>To Time</th>
+                            <th>Event From</th>
+                            <th>Event To</th>
                             <th>Status</th>
                             <th>Event Image</th>
                             

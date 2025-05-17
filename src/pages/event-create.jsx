@@ -447,7 +447,7 @@ const EventCreate = () => {
   return (
     <>
       <div className="main-content">
-        <div className="website-content overflow-auto">
+        <div className="">
           <div className="module-data-section container-fluid">
             <div className="module-data-section p-3">
               <div className="card mt-4 pb-4 mx-4">
@@ -657,6 +657,40 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
+
+                     <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Attachment
+                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
+                            {" "}
+                            *
+                          </span> */}
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            [i]
+                            {showTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 10 MB
+                              </span>
+                            )}
+                          </span>
+                          <span />
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="attachfile"
+                          accept="image/*" // Ensures only image files can be selected
+                          multiple
+                          required
+                          onChange={(e) => handleFileChange(e, "attachfile")}
+                        />
+                      </div>
+                    </div>
                     {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -794,39 +828,7 @@ const EventCreate = () => {
                       </div>
                     </div> */}
 
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Attachment
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                          <span
-                            className="tooltip-container"
-                            onMouseEnter={() => setShowTooltip(true)}
-                            onMouseLeave={() => setShowTooltip(false)}
-                          >
-                            [i]
-                            {showTooltip && (
-                              <span className="tooltip-text">
-                                Max Upload Size 10 MB
-                              </span>
-                            )}
-                          </span>
-                          <span />
-                        </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="attachfile"
-                          accept="image/*" // Ensures only image files can be selected
-                          multiple
-                          required
-                          onChange={(e) => handleFileChange(e, "attachfile")}
-                        />
-                      </div>
-                    </div>
+                   
                    
                     <div className="col-md-3">
                       <div className="form-group">
