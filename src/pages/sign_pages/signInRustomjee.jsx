@@ -64,9 +64,25 @@ const SignInRustomjee = () => {
       });
 
       if (response.data.access_token) {
-        localStorage.setItem("access_token", response.data.access_token);
-        sessionStorage.setItem("email", response.data.email);
-        sessionStorage.setItem("firstname", response.data.firstname);
+         localStorage.setItem("access_token", response.data?.access_token);
+        sessionStorage.setItem("email", response.data?.email);
+        sessionStorage.setItem("firstname", response.data?.firstname);
+        sessionStorage.setItem("lastname", response.data?.lastname);
+        sessionStorage.setItem("user_id", response.data?.id);
+        sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
+
+         const lockRole = response?.data?.lock_role;
+        if (lockRole) {
+          localStorage.setItem("lock_role_name", lockRole.name);
+          localStorage.setItem(
+            "lock_role_permissions",
+            lockRole.permissions_hash
+          );
+        }
+
+        // localStorage.setItem("access_token", response.data.access_token);
+        // sessionStorage.setItem("email", response.data.email);
+        // sessionStorage.setItem("firstname", response.data.firstname);
         navigate("/project-list");
         toast.success("Login successful", { id: "login-success" });
       } else {
