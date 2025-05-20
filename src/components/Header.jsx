@@ -27,10 +27,10 @@ const Header = () => {
 
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);
-  const firstname = sessionStorage.getItem("firstname");
-  const lastname = sessionStorage.getItem("lastname");
+  const firstname = localStorage.getItem("firstname");
+  const lastname = localStorage.getItem("lastname");
   const userInitial = firstname ? firstname.charAt(0).toUpperCase() : "";
-  const profile_icon = sessionStorage.getItem("profile_icon");
+  const profile_icon = localStorage.getItem("profile_icon");
   const isValidImage =
     profile_icon && profile_icon !== "null" && profile_icon !== "undefined";
 
@@ -73,7 +73,7 @@ const Header = () => {
               </h5>
 
               <p className="text-black">
-                {sessionStorage.getItem("email") || "example@example.com"}
+                {localStorage.getItem("email") || "example@example.com"}
               </p>
               <button className="purple-btn2 my-3" onClick={signout}>
                 Sign Out
