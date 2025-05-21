@@ -1116,3 +1116,121 @@ input#confirmPassword {
   animation: fadeIn 0.5s ease-in-out;
 }
 
+
+/* Password Reset Success Page Styles */
+.password_reset_success_module {
+  height: 100vh;
+  width: 100%;
+}
+
+/* .login_bg {
+  background-image: url('../assets/images/login-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+} */
+
+.login_bg::before {
+  /* content: ''; */
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 0;
+}
+
+.reset-success-sec {
+  /* background-color: rgba(50, 50, 50, 0.8); */
+  backdrop-filter: blur(5px);
+  /* border-radius: 10px; */
+  padding: 80px 30px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  background-color: #291b117f;
+
+}
+
+.logo_img {
+  display: block;
+  margin: 0 auto 30px;
+}
+
+.reset-success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  margin-top: 20px;
+}
+
+.success-icon {
+  margin-bottom: 20px;
+}
+
+.reset-success-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.reset-success-message {
+  font-size: 16px;
+  color: #e0e0e0;
+  margin-bottom: 20px;
+}
+
+/* Button styles from original login component */
+.btn-panchshil {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-danger {
+  background: var(--red, #DB4C42);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c13930;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .reset-success-sec {
+    padding: 30px 20px;
+    max-width: 90%;
+  }
+  
+  .reset-success-title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .col-lg-7 {
+    padding: 0 15px;
+  }
+  
+  .logo_img {
+    width: 80px !important;
+    height: 80px !important;
+  }
+}
+

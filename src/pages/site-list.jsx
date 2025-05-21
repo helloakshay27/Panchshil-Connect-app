@@ -229,9 +229,9 @@ const SiteList = () => {
                             </td>
                             <td>{startIndex + index + 1}</td>
                             <td>{site.name || "-"}</td>
-                            <td>{site.company_id || "-"}</td>
-                            <td>{site.department_id || "-"}</td>
-                            <td>{site.project_id || "-"}</td>
+                            <td>{site.site_company_name || "-"}</td>
+                            <td>{site.site_department_name || "-"}</td>
+                            <td>{site.site_project_name || "-"}</td>
                           </tr>
                         ))
                       ) : (

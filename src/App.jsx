@@ -95,6 +95,7 @@ import DepartmentEdit from "./pages/department-edit";
 import SiteCreate from "./pages/site-create";
 import SiteList from "./pages/site-list";
 import SiteEdit from "./pages/site-edit";
+import PasswordResetSuccess from "./pages/sign_pages/PasswordSuccess";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -143,6 +144,7 @@ function App() {
         {/* <Route path="/reset-password" element={<CreatePassword />} /> */}
         <Route path="/reset-password" element={CreatePasswordComponent} />
         <Route path="/verify-otp" element={<LoginWithOtpRustomjee />} />
+        
 
         <Route
           path="/"
@@ -250,6 +252,8 @@ function App() {
           <Route path="/site-create" element={<SiteCreate />} />
           <Route path="/site-list" element={<SiteList />} />
           <Route path="/site-edit/:id" element={<SiteEdit />} />
+          <Route path="/password-success" element={<PasswordResetSuccess />} />
+
           <Route
             path="/setup-member/siteslot-create"
             element={<SiteVisitSlotConfig />}
@@ -340,6 +344,7 @@ function App() {
             path="/setup-member/user-details/:id"
             element={<UserDetails />}
           />
+
 
         </Route>
       </Routes>
