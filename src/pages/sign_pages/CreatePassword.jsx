@@ -94,7 +94,7 @@ const CreatePassword = () => {
         sessionStorage.setItem("firstname", response.data.firstname);
 
         // Redirect to the home page
-        navigate("/");
+        navigate("/password-success");
         toast.success("Password reset successfully!");
       } else {
         setError("Password reset failed. Please try again.");

@@ -276,6 +276,7 @@ const ProjectDetailsEdit = () => {
             projectData.virtual_tour_url_multiple || [],
           map_url: projectData.map_url || "",
           image: projectData.image_url || [],
+          video_preview_image_url: projectData.video_preview_image_url || [],
           Address: {
             address_line_1: projectData.location?.address || "",
             address_line_2: projectData.location?.address_line_two || "",
@@ -288,8 +289,8 @@ const ProjectDetailsEdit = () => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
           fetched_gallery_image: projectData.gallery_image || [],
-          video_preview_image_url:
-            projectData?.video_list[0]?.video_preview_image_url || "",
+          // video_preview_image_url:
+          //   projectData?.video_list[0]?.video_preview_image_url || "",
           // project_ppt: [],
           // fetched_Project_PPT: projectData.project_ppt
           //   ? [projectData.project_ppt]
@@ -491,7 +492,47 @@ const ProjectDetailsEdit = () => {
           image: file,
         }));
       }
-    } else {
+    } else if (name === "video_preview_image_url") {
+        const files = Array.from(e.target.files);
+        const allowedTypes = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+
+        // First check file type
+        const validTypeFiles = files.filter((file) =>
+          allowedTypes.includes(file.type)
+        );
+
+        if (validTypeFiles.length !== files.length) {
+          toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+          e.target.value = "";
+          return;
+        }
+
+        // Then check file size
+        const file = validTypeFiles[0];
+        const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
+
+        if (!sizeCheck.valid) {
+          toast.error(
+            `Image file too large: ${sizeCheck.name} (${
+              sizeCheck.size
+            }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
+          );
+          e.target.value = ""; // Reset input
+          return;
+        }
+
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          video_preview_image_url: file,
+        }));
+      }
+    
+    else {
       if (
         [
           "address_line_1",
@@ -1696,6 +1737,7 @@ const ProjectDetailsEdit = () => {
       two_d_images: MAX_IMAGE_SIZE,
       videos: MAX_VIDEO_SIZE,
       image: MAX_IMAGE_SIZE,
+      video_preview_image_url: MAX_IMAGE_SIZE,
       gallery_image: MAX_IMAGE_SIZE,
       project_qrcode_image: MAX_IMAGE_SIZE,
       project_ppt: MAX_PPT_SIZE, // ✅ Ensure Project_PPT is included
@@ -1709,6 +1751,7 @@ const ProjectDetailsEdit = () => {
     };
     const allowedTypes = {
       image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      video_preview_image_url: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       project_qrcode_image: [
@@ -2082,7 +2125,26 @@ const ProjectDetailsEdit = () => {
         return;
       }
 
-      setFormData((prev) => ({ ...prev, image: file }));
+      setFormData((prev) => ({ ...prev, video_preview_image_url: file }));
+    } else if (name === "video_preview_image_url") {
+      // Handle single image
+      const file = files[0];
+      if (!allowedTypes.video_preview_image_url.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+
+      const sizeCheck = isFileSizeValid(file, MAX_SIZES.video_preview_image_url);
+      if (!sizeCheck.valid) {
+        toast.error(
+          `File too large: ${sizeCheck.name} (${
+            sizeCheck.size
+          }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
+        );
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, video_preview_image_url: file }));
     }
   };
 
@@ -4778,6 +4840,52 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
+ 
+                {/* <div className="col-md-3 mt-4">
+                <div className="form-group">
+                  <label>
+                    Video Preview Image Url
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 50 MB
+                        </span>
+                      )}
+                    </span>
+                  
+                  </label>
+                  <input
+                    className="form-control"
+                    type="file"
+                    name="video_preview_image_url"
+                    accept="image/*"
+                    required
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                {formData.previewImage || formData.video_preview_image_url ? (
+                  <img
+                    src={formData.previewImage || formData.video_preview_image_url} 
+                    alt=""
+                    className="img-fluid rounded mt-2"
+                    style={{
+                      maxWidth: "100px",
+                      maxHeight: "100px",
+                      objectFit: "cover",
+                      marginBottom: "15px",
+                    }}
+                  />
+                ) : (
+                  <span>No image selected</span>
+                )}
+              </div> */}
+
               <div className="form-group">
                 <label>Video Preview Image Url</label>
                 <input

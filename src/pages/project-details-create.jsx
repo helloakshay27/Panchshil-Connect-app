@@ -309,6 +309,7 @@ const ProjectDetailsCreate = () => {
       two_d_images: MAX_IMAGE_SIZE,
       videos: MAX_VIDEO_SIZE,
       image: MAX_IMAGE_SIZE,
+      video_preview_image_url: MAX_IMAGE_SIZE,
       gallery_image: MAX_IMAGE_SIZE,
       project_ppt: MAX_PPT_SIZE, // ✅ Ensure project_ppt is included
       project_creatives: MAX_IMAGE_SIZE, // Add creatives support
@@ -323,6 +324,7 @@ const ProjectDetailsCreate = () => {
 
     const allowedTypes = {
       image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      video_preview_image_url: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
@@ -676,7 +678,26 @@ const ProjectDetailsCreate = () => {
         return;
       }
 
-      setFormData((prev) => ({ ...prev, image: file }));
+      setFormData((prev) => ({ ...prev, video_preview_image_url: file }));
+    } else if (name === "video_preview_image_url") {
+      // Handle single image
+      const file = files[0];
+      if (!allowedTypes.video_preview_image_url.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+
+      const sizeCheck = isFileSizeValid(file, MAX_SIZES.video_preview_image_url);
+      if (!sizeCheck.valid) {
+        toast.error(
+          `File too large: ${sizeCheck.name} (${
+            sizeCheck.size
+          }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
+        );
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, video_preview_image_url: file }));
     }
   };
   // Add this to your file:
@@ -981,7 +1002,10 @@ const ProjectDetailsCreate = () => {
         });
       } else if (key === "image" && value instanceof File) {
         data.append("project[image]", value);
-      }else if (key === "project_qrcode_image" && Array.isArray(value)) {
+      }  else if (key === "video_preview_image_url" && value instanceof File) {
+        data.append("project[video_preview_image_url]", value);
+      }
+      else if (key === "project_qrcode_image" && Array.isArray(value)) {
         const newTitles = []; // Array to store titles of new images
 
         value.forEach((fileObj) => {
@@ -3815,6 +3839,37 @@ const ProjectDetailsCreate = () => {
                     </tbody>
                   </table>
                 </div>
+
+                 {/* <div className="col-md-3 mt-4">
+                <div className="form-group">
+                  <label>
+                    Video Preview Image Url
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 50 MB
+                        </span>
+                      )}
+                    </span>
+                    
+                  </label>
+
+                  <input
+                    className="form-control"
+                    type="file"
+                    name="video_preview_image_url"
+                    accept="image/*"
+                    multiple
+                    required
+                    onChange={(e) => handleFileChange(e, "video_preview_image_url")}
+                  />
+                </div>
+              </div> */}
 
                 <div className="d-flex justify-content-between align-items-end mx-1">
                   <div className="col-md-12 mt-2">
