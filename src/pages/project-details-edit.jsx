@@ -2916,6 +2916,7 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
+              
               <div className="col-md-6">
                 <div className="form-group">
                   <label>

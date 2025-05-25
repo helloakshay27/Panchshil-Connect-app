@@ -151,10 +151,32 @@ const Testimonials = () => {
     setVideoUrl(previewUrl);
   };
 
+    const validateForm = (formData) => {
+    const errors = [];
+
+    if (!formData.testimonial_video) {
+      errors.push("Testimonial video is required.");
+      return errors; // Return the first error immediately
+    }
+    if (!formData.attachfile) {
+      errors.push("Preview image is required.");
+      return errors; // Return the first error immediately
+    }
+
+    return errors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     toast.dismiss();
+
+      const validationErrors = validateForm(formData);
+        if (validationErrors.length > 0) {
+          validationErrors.forEach((error) => toast.error(error));
+          setLoading(false);
+          return;
+        }
   
     const form = new FormData();
     form.append("testimonial[user_name]", userName.trim());

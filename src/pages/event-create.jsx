@@ -313,7 +313,7 @@ const EventCreate = () => {
     if (formData.attachfile && formData.attachfile.length > 0) {
       formData.attachfile.forEach((file) => {
         if (file instanceof File) {
-          data.append("event[event_image]", file);
+          data.append("event[event_images][]", file);
         } else {
           console.warn("Invalid file detected:", file);
         }
@@ -662,10 +662,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Attachment
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
+                        
                           <span
                             className="tooltip-container"
                             onMouseEnter={() => setShowTooltip(true)}
@@ -684,7 +681,7 @@ const EventCreate = () => {
                           className="form-control"
                           type="file"
                           name="attachfile"
-                          accept="image/*" // Ensures only image files can be selected
+                          accept="image/*" 
                           multiple
                           required
                           onChange={(e) => handleFileChange(e, "attachfile")}

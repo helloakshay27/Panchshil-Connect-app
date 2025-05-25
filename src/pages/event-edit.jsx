@@ -31,7 +31,7 @@ const EventEdit = () => {
     share_groups: "",
     shareWith: "individual", // Default to individual
     attachfile: [],
-    previewImage: "",
+    previewImage: [],
     is_important: "false",
     email_trigger_enabled: "false",
     set_reminders_attributes: [],
@@ -125,6 +125,7 @@ const EventEdit = () => {
           shareWith: shareWith, // Set shareWith based on data
           attachfile: null, // Reset file input
           previewImage: response?.data?.attachfile?.document_url || "", // Set existing image preview
+          
           set_reminders_attributes: formattedReminders, // Set existing reminders with proper formatting
         }));
       } catch (error) {
@@ -203,12 +204,17 @@ const EventEdit = () => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      const previews = files.map((file) => ({
+        url: URL.createObjectURL(file),
+        type: file.type,
+      }));
+
       setFormData((prev) => ({
         ...prev,
-        attachfile: file, // Store actual file
-        previewImage: URL.createObjectURL(file), // Generate preview
+        attachfile: files,
+        previewImage: previews,
       }));
     }
   };
@@ -245,8 +251,10 @@ const EventEdit = () => {
 
     // Append all form data fields
     Object.keys(formData).forEach((key) => {
-      if (key === "attachfile" && formData.attachfile) {
-        data.append("event[event_image]", formData.attachfile); // Ensure file is appended
+      if (key === "attachfile" && Array.isArray(formData.attachfile)) {
+        formData.attachfile.forEach((file) => {
+          data.append("event[event_images][]", file); // ✅ append each file
+        });
       } else if (key === "set_reminders_attributes") {
         // Append reminders properly
         formData.set_reminders_attributes.forEach((reminder, index) => {
@@ -461,24 +469,48 @@ const EventEdit = () => {
                           className="form-control"
                           type="file"
                           name="attachfile"
-                          accept="image/*"
+                          accept="image/*,video/*" // ✅ Accept only images and videos
+                          multiple
                           onChange={handleFileChange} // Handle file selection
                         />
                       </div>
 
                       {/* Image Preview */}
-                      {formData.previewImage && (
-                        <img
-                          src={formData.previewImage}
-                          alt="Uploaded Preview"
-                          className="img-fluid rounded mt-2"
-                          style={{
-                            maxWidth: "100px",
-                            maxHeight: "100px",
-                            objectFit: "cover",
-                          }}
-                        />
-                      )}
+                      {Array.isArray(formData.previewImage) &&
+                        formData.previewImage.length > 0 && (
+                          <div className="d-flex flex-wrap gap-2 mt-2">
+                            {formData.previewImage.map((fileObj, index) => {
+                              const { url, type } = fileObj;
+                              const isVideo = type.startsWith("video");
+
+                              return isVideo ? (
+                                <video
+                                  key={index}
+                                  src={url}
+                                  controls
+                                  className="rounded"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              ) : (
+                                <img
+                                  key={index}
+                                  src={url}
+                                  alt={`Preview ${index}`}
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
+                        )}
                     </div>
 
                     <div className="col-md-3">
@@ -510,8 +542,6 @@ const EventEdit = () => {
                         </div>
                       </div>
                     </div>
-
-                  
 
                     {/* <div className="col-md-3">
                       <div className="form-group">
@@ -693,7 +723,7 @@ const EventEdit = () => {
                       )}
                     </div>
 
-                     <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>Send Email</label>
                         <div className="d-flex">
@@ -740,7 +770,7 @@ const EventEdit = () => {
                       </div>
                     </div>
 
-                      <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>RSVP Action</label>
                         <div className="d-flex">
@@ -818,7 +848,6 @@ const EventEdit = () => {
                       </div>
                     </div> */}
 
-                   
                     <div className="col-md-12">
                       <label className="form-label">Set Reminders</label>
                       <div className="row mb-2">
