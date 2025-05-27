@@ -320,6 +320,8 @@ const Testimonials = () => {
                               </span>
                             )}
                           </span>
+                          <span className="otp-asterisk"> *</span>
+
                         </label>
                         <input
                           className="form-control"
@@ -365,6 +367,8 @@ const Testimonials = () => {
                               </span>
                             )}
                           </span>
+                          <span className="otp-asterisk"> *</span>
+
                         </label>
                         <input
                           className="form-control"

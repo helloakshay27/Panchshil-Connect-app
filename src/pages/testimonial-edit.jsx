@@ -284,6 +284,8 @@ const TestimonialEdit = () => {
                             <span className="tooltip-text">Max Upload Size 50 MB</span>
                           )}
                         </span>
+                         <span className="otp-asterisk"> *</span>
+
                       </label>
 
                       <input
@@ -338,6 +340,8 @@ const TestimonialEdit = () => {
                             </span>
                           )}
                         </span>
+                         <span className="otp-asterisk"> *</span>
+
                       </label>
                       <input
                         className="form-control"

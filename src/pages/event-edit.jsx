@@ -631,7 +631,7 @@ const EventEdit = () => {
                                       fontSize: "8px",
                                     }}
                                   >
-                                    {isExisting ? "Existing" : "New"}
+                                    {isExisting ? "" : ""}
                                   </small>
                                 </div>
                               );
