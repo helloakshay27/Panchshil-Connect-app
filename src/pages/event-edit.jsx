@@ -231,42 +231,57 @@ const EventEdit = () => {
   };
 
   // Function to remove image from preview
-  const handleRemoveImage = (index) => {
-    setFormData((prev) => {
-      const imageToRemove = prev.previewImage[index];
-      
-      if (imageToRemove.isExisting) {
-        // If it's an existing image, remove from existingImages
-        const updatedExistingImages = prev.existingImages.filter(
-          (img) => img.id !== imageToRemove.id
-        );
+ const handleRemoveImage = async (index) => {
+  toast.dismiss();
+  setFormData((prev) => {
+    const imageToRemove = prev.previewImage[index];
+
+    if (imageToRemove.isExisting) {
+      // Call backend API to remove the image
+      axios
+        .delete(`${baseURL}events/${id}/remove_image/${imageToRemove.id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        })
+        .then(() => {
+          toast.success("Image removed successfully!");
+        })
+        .catch(() => {
+          toast.error("Failed to remove image from server.");
+        });
+
+      // Optimistically update UI
+      const updatedExistingImages = prev.existingImages.filter(
+        (img) => img.id !== imageToRemove.id
+      );
+      return {
+        ...prev,
+        existingImages: updatedExistingImages,
+        previewImage: prev.previewImage.filter((_, i) => i !== index),
+      };
+    } else {
+      // If it's a new image, remove from newImages and attachfile
+      const newImageIndex = prev.newImages.findIndex(
+        (img) => img.url === imageToRemove.url
+      );
+
+      if (newImageIndex !== -1) {
+        const updatedNewImages = prev.newImages.filter((_, i) => i !== newImageIndex);
+        const updatedFiles = Array.from(prev.attachfile).filter((_, i) => i !== newImageIndex);
+
         return {
           ...prev,
-          existingImages: updatedExistingImages,
+          newImages: updatedNewImages,
+          attachfile: updatedFiles,
           previewImage: prev.previewImage.filter((_, i) => i !== index),
         };
-      } else {
-        // If it's a new image, remove from newImages and attachfile
-        const newImageIndex = prev.newImages.findIndex(
-          (img) => img.url === imageToRemove.url
-        );
-        
-        if (newImageIndex !== -1) {
-          const updatedNewImages = prev.newImages.filter((_, i) => i !== newImageIndex);
-          const updatedFiles = Array.from(prev.attachfile).filter((_, i) => i !== newImageIndex);
-          
-          return {
-            ...prev,
-            newImages: updatedNewImages,
-            attachfile: updatedFiles,
-            previewImage: prev.previewImage.filter((_, i) => i !== index),
-          };
-        }
       }
-      
-      return prev;
-    });
-  };
+    }
+
+    return prev;
+  });
+};
 
   const handleRadioChange = (e) => {
     const { name, value } = e.target;
