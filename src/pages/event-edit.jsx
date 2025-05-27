@@ -35,6 +35,8 @@ const EventEdit = () => {
     is_important: "false",
     email_trigger_enabled: "false",
     set_reminders_attributes: [],
+     existingImages: [], // for previously uploaded images
+     newImages: [], 
   });
 
   console.log("Data", formData);
@@ -89,50 +91,51 @@ const EventEdit = () => {
 
   useEffect(() => {
     const fetchEvent = async () => {
-      try {
-        const response = await axios.get(`${baseURL}events/${id}.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        });
-        // console.log(response?.data);
+  try {
+    const response = await axios.get(`${baseURL}events/${id}.json`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-        // Ensure reminders are properly formatted with numeric days and hours
-        const formattedReminders = (response.data.reminders || []).map(
-          (reminder) => ({
-            ...reminder,
-            days: Number(reminder.days || 0),
-            hours: Number(reminder.hours || 0),
-            id: reminder.id, // Preserve the ID for existing reminders
-          })
-        );
+    const formattedReminders = (response.data.reminders || []).map(
+      (reminder) => ({
+        ...reminder,
+        days: Number(reminder.days || 0),
+        hours: Number(reminder.hours || 0),
+        id: reminder.id,
+      })
+    );
 
-        // Ensure user_id is always an array
-        const userIds = Array.isArray(response.data.user_id)
-          ? response.data.user_id
-          : response.data.user_id
-          ? [response.data.user_id]
-          : [];
+    const userIds = Array.isArray(response.data.user_id)
+      ? response.data.user_id
+      : response.data.user_id
+      ? [response.data.user_id]
+      : [];
 
-        // Determine shareWith based on data
-        const shareWith = response.data.share_groups ? "group" : "individual";
+    const shareWith = response.data.share_groups ? "group" : "individual";
 
-        setFormData((prev) => ({
-          ...prev,
-          ...response.data,
-          user_id: userIds, // Ensure user_id is always an array
-          shareWith: shareWith, // Set shareWith based on data
-          attachfile: null, // Reset file input
-          previewImage: response?.data?.attachfile?.document_url || "", // Set existing image preview
-          
-          set_reminders_attributes: formattedReminders, // Set existing reminders with proper formatting
-        }));
-      } catch (error) {
-        console.error("Error fetching event:", error);
-      }
-    };
+    // Create preview objects for existing images
+    const existingImages = response.data.event_images?.map((image) => ({
+      url: image.document_url,
+      type: image.document_content_type,
+      id: image.id, // Keep track of existing image IDs
+    })) || [];
 
+    setFormData((prev) => ({
+      ...prev,
+      ...response.data,
+      user_id: userIds,
+      shareWith: shareWith,
+      attachfile: null, // Reset file input for new uploads
+      previewImage: existingImages, // Set existing images for preview
+      set_reminders_attributes: formattedReminders,
+    }));
+  } catch (error) {
+    console.error("Error fetching event:", error);
+  }
+};
     if (id) fetchEvent();
     console.log("project_id: " + formData.project_id);
   }, [id]);
