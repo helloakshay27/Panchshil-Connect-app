@@ -30,13 +30,13 @@ const EventEdit = () => {
     shared: "",
     share_groups: "",
     shareWith: "individual", // Default to individual
-    attachfile: [],
+    attachfile: [], // Changed to array to handle multiple files
     previewImage: [],
     is_important: "false",
     email_trigger_enabled: "false",
     set_reminders_attributes: [],
-     existingImages: [], // for previously uploaded images
-     newImages: [], 
+    existingImages: [], // for previously uploaded images
+    newImages: [], // for newly selected images
   });
 
   console.log("Data", formData);
@@ -91,51 +91,54 @@ const EventEdit = () => {
 
   useEffect(() => {
     const fetchEvent = async () => {
-  try {
-    const response = await axios.get(`${baseURL}events/${id}.json`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        "Content-Type": "application/json",
-      },
-    });
+      try {
+        const response = await axios.get(`${baseURL}events/${id}.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-    const formattedReminders = (response.data.reminders || []).map(
-      (reminder) => ({
-        ...reminder,
-        days: Number(reminder.days || 0),
-        hours: Number(reminder.hours || 0),
-        id: reminder.id,
-      })
-    );
+        const formattedReminders = (response.data.reminders || []).map(
+          (reminder) => ({
+            ...reminder,
+            days: Number(reminder.days || 0),
+            hours: Number(reminder.hours || 0),
+            id: reminder.id,
+          })
+        );
 
-    const userIds = Array.isArray(response.data.user_id)
-      ? response.data.user_id
-      : response.data.user_id
-      ? [response.data.user_id]
-      : [];
+        const userIds = Array.isArray(response.data.user_id)
+          ? response.data.user_id
+          : response.data.user_id
+          ? [response.data.user_id]
+          : [];
 
-    const shareWith = response.data.share_groups ? "group" : "individual";
+        const shareWith = response.data.share_groups ? "group" : "individual";
 
-    // Create preview objects for existing images
-    const existingImages = response.data.event_images?.map((image) => ({
-      url: image.document_url,
-      type: image.document_content_type,
-      id: image.id, // Keep track of existing image IDs
-    })) || [];
+        // Create preview objects for existing images
+        const existingImages = response.data.event_images?.map((image) => ({
+          url: image.document_url,
+          type: image.document_content_type,
+          id: image.id, // Keep track of existing image IDs
+          isExisting: true, // Flag to identify existing images
+        })) || [];
 
-    setFormData((prev) => ({
-      ...prev,
-      ...response.data,
-      user_id: userIds,
-      shareWith: shareWith,
-      attachfile: null, // Reset file input for new uploads
-      previewImage: existingImages, // Set existing images for preview
-      set_reminders_attributes: formattedReminders,
-    }));
-  } catch (error) {
-    console.error("Error fetching event:", error);
-  }
-};
+        setFormData((prev) => ({
+          ...prev,
+          ...response.data,
+          user_id: userIds,
+          shareWith: shareWith,
+          attachfile: [], // Reset file input for new uploads
+          previewImage: existingImages, // Set existing images for preview
+          existingImages: existingImages, // Keep track of existing images
+          newImages: [], // Reset new images
+          set_reminders_attributes: formattedReminders,
+        }));
+      } catch (error) {
+        console.error("Error fetching event:", error);
+      }
+    };
     if (id) fetchEvent();
     console.log("project_id: " + formData.project_id);
   }, [id]);
@@ -209,17 +212,60 @@ const EventEdit = () => {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
-      const previews = files.map((file) => ({
+      // Create preview objects for new files
+      const newPreviews = files.map((file) => ({
         url: URL.createObjectURL(file),
         type: file.type,
+        file: file, // Keep reference to the actual file
+        isExisting: false, // Flag to identify new images
       }));
 
       setFormData((prev) => ({
         ...prev,
-        attachfile: files,
-        previewImage: previews,
+        attachfile: files, // Store the actual files
+        newImages: newPreviews, // Store new image previews separately
+        // Combine existing and new images for preview
+        previewImage: [...prev.existingImages, ...newPreviews],
       }));
     }
+  };
+
+  // Function to remove image from preview
+  const handleRemoveImage = (index) => {
+    setFormData((prev) => {
+      const imageToRemove = prev.previewImage[index];
+      
+      if (imageToRemove.isExisting) {
+        // If it's an existing image, remove from existingImages
+        const updatedExistingImages = prev.existingImages.filter(
+          (img) => img.id !== imageToRemove.id
+        );
+        return {
+          ...prev,
+          existingImages: updatedExistingImages,
+          previewImage: prev.previewImage.filter((_, i) => i !== index),
+        };
+      } else {
+        // If it's a new image, remove from newImages and attachfile
+        const newImageIndex = prev.newImages.findIndex(
+          (img) => img.url === imageToRemove.url
+        );
+        
+        if (newImageIndex !== -1) {
+          const updatedNewImages = prev.newImages.filter((_, i) => i !== newImageIndex);
+          const updatedFiles = Array.from(prev.attachfile).filter((_, i) => i !== newImageIndex);
+          
+          return {
+            ...prev,
+            newImages: updatedNewImages,
+            attachfile: updatedFiles,
+            previewImage: prev.previewImage.filter((_, i) => i !== index),
+          };
+        }
+      }
+      
+      return prev;
+    });
   };
 
   const handleRadioChange = (e) => {
@@ -229,6 +275,7 @@ const EventEdit = () => {
       [name]: value === "true", // Convert string to boolean
     }));
   };
+
   const validateForm = () => {
     const errors = {};
     if (!formData.event_name) {
@@ -243,89 +290,118 @@ const EventEdit = () => {
     return true; // Return true if no errors
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    setLoading(true);
+  setLoading(true);
 
-    const data = new FormData();
+  const data = new FormData();
 
-    // Append all form data fields
-    Object.keys(formData).forEach((key) => {
-      if (key === "attachfile" && Array.isArray(formData.attachfile)) {
-        formData.attachfile.forEach((file) => {
-          data.append("event[event_images][]", file); // ✅ append each file
-        });
-      } else if (key === "set_reminders_attributes") {
-        // Append reminders properly
-        formData.set_reminders_attributes.forEach((reminder, index) => {
-          if (reminder.id) {
-            // Include the id for existing reminders
-            data.append(
-              `event[set_reminders_attributes][${index}][id]`,
-              reminder.id
-            );
-          }
-          data.append(
-            `event[set_reminders_attributes][${index}][days]`,
-            reminder.days
-          );
-          data.append(
-            `event[set_reminders_attributes][${index}][hours]`,
-            reminder.hours
-          );
-          if (reminder._destroy) {
-            // Include _destroy flag for reminders marked for deletion
-            data.append(
-              `event[set_reminders_attributes][${index}][_destroy]`,
-              true
-            );
-          }
-        });
-      } else if (key === "user_id" && Array.isArray(formData.user_id)) {
-        // Properly append user_id array values
-        if (formData.user_id.length > 0) {
-          // Append as user_ids[] for Rails API format
-          formData.user_id.forEach((userId) => {
-            data.append("event[user_ids][]", userId);
-          });
-        } else {
-          // Send empty array to clear all users
-          data.append("event[user_ids][]", "");
+  // Append all form data fields
+  Object.keys(formData).forEach((key) => {
+    if (key === "attachfile" && Array.isArray(formData.attachfile)) {
+      // Only append new files (File objects)
+      formData.attachfile.forEach((file) => {
+        if (file instanceof File) {
+          data.append("event[event_images][]", file);
         }
-      } else if (key === "shareWith") {
-        // Skip this field as it's only for UI, not part of the API
-        // continue;
-      } else {
-        data.append(`event[${key}]`, formData[key]);
-      }
-    });
-
-    // Append RSVP fields if RSVP action is "yes"
-    if (formData.rsvp_action === "yes") {
-      data.append("event[rsvp_name]", formData.rsvp_name || "");
-      data.append("event[rsvp_number]", formData.rsvp_number || "");
-    }
-
-    try {
-      const response = await axios.put(`${baseURL}events/${id}.json`, data, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "multipart/form-data", // Important for file uploads
-        },
       });
-      console.log("Update response:", response.data);
-      toast.success("Event updated successfully!");
-      navigate("/event-list");
-    } catch (error) {
-      console.error("Error updating event:", error);
-      toast.error("Failed to update event.");
-    } finally {
-      setLoading(false);
+    } else if (key === "set_reminders_attributes") {
+      // Append reminders properly (each property separately)
+      formData.set_reminders_attributes.forEach((reminder, index) => {
+        if (reminder.id) {
+          data.append(
+            `event[set_reminders_attributes][${index}][id]`,
+            reminder.id
+          );
+        }
+        data.append(
+          `event[set_reminders_attributes][${index}][days]`,
+          reminder.days ?? 0
+        );
+        data.append(
+          `event[set_reminders_attributes][${index}][hours]`,
+          reminder.hours ?? 0
+        );
+        if (reminder._destroy) {
+          data.append(
+            `event[set_reminders_attributes][${index}][_destroy]`,
+            "1"
+          );
+        }
+      });
+    } else if (key === "user_id" && Array.isArray(formData.user_id)) {
+      // Properly append user_id array values
+      if (formData.user_id.length > 0) {
+        formData.user_id.forEach((userId) => {
+          data.append("event[user_ids][]", userId);
+        });
+      } else {
+        data.append("event[user_ids][]", "");
+      }
+    } else if (
+      key === "shareWith" ||
+      key === "previewImage" ||
+      key === "existingImages" ||
+      key === "newImages"
+    ) {
+      // Skip UI-only fields
+      return;
+    } else if (key === "attachfile") {
+      // Skip, handled above
+      return;
+    } else {
+      // Only append primitive values
+      const value = formData[key];
+      if (
+        value !== null &&
+        value !== undefined &&
+        typeof value !== "object"
+      ) {
+        data.append(`event[${key}]`, value);
+      }
     }
-  };
+  });
+
+  // Handle removed existing images
+  const originalImageIds = formData.existingImages.map((img) => img.id);
+  const currentImageIds = formData.previewImage
+    .filter((img) => img.isExisting)
+    .map((img) => img.id);
+
+  const removedImageIds = originalImageIds.filter(
+    (id) => !currentImageIds.includes(id)
+  );
+
+  if (removedImageIds.length > 0) {
+    removedImageIds.forEach((id) => {
+      data.append("event[removed_image_ids][]", id);
+    });
+  }
+
+  // Append RSVP fields if RSVP action is "yes"
+  if (formData.rsvp_action === "yes") {
+    data.append("event[rsvp_name]", formData.rsvp_name || "");
+    data.append("event[rsvp_number]", formData.rsvp_number || "");
+  }
+
+  try {
+    const response = await axios.put(`${baseURL}events/${id}.json`, data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    toast.success("Event updated successfully!");
+    navigate("/event-list");
+  } catch (error) {
+    toast.error("Failed to update event.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const formatDateForInput = (isoString) => {
     if (!isoString) return ""; // Handle empty values
@@ -430,7 +506,7 @@ const EventEdit = () => {
                           name="from_time"
                           placeholder="Enter Event From"
                           min={getCurrentDateTime()}
-                          value={formatDateForInput(formData.from_time) || "NA"}
+                          value={formatDateForInput(formData.from_time) || ""}
                           onChange={handleChange}
                         />
                       </div>
@@ -478,38 +554,71 @@ const EventEdit = () => {
                         />
                       </div>
 
-                      {/* Image Preview */}
+                      {/* Image Preview with Remove Button */}
                       {Array.isArray(formData.previewImage) &&
                         formData.previewImage.length > 0 && (
                           <div className="d-flex flex-wrap gap-2 mt-2">
                             {formData.previewImage.map((fileObj, index) => {
-                              const { url, type } = fileObj;
+                              const { url, type, isExisting } = fileObj;
                               const isVideo = type.startsWith("video");
 
-                              return isVideo ? (
-                                <video
-                                  key={index}
-                                  src={url}
-                                  controls
-                                  className="rounded"
-                                  style={{
-                                    maxWidth: "100px",
-                                    maxHeight: "100px",
-                                    objectFit: "cover",
-                                  }}
-                                />
-                              ) : (
-                                <img
-                                  key={index}
-                                  src={url}
-                                  alt={`Preview ${index}`}
-                                  className="img-fluid rounded"
-                                  style={{
-                                    maxWidth: "100px",
-                                    maxHeight: "100px",
-                                    objectFit: "cover",
-                                  }}
-                                />
+                              return (
+                                <div key={index} className="position-relative">
+                                  {isVideo ? (
+                                    <video
+                                      src={url}
+                                      controls
+                                      className="rounded"
+                                      style={{
+                                        maxWidth: "100px",
+                                        maxHeight: "100px",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  ) : (
+                                    <img
+                                      src={url}
+                                      alt={`Preview ${index}`}
+                                      className="img-fluid rounded"
+                                      style={{
+                                        maxWidth: "100px",
+                                        maxHeight: "100px",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  )}
+                                  {/* Remove button */}
+                                  <button
+                                    type="button"
+                                    className="btn btn-danger btn-sm position-absolute"
+                                    style={{
+                                      top: "-5px",
+                                      right: "-5px",
+                                      fontSize: "10px",
+                                      width: "20px",
+                                      height: "20px",
+                                      padding: "0",
+                                      borderRadius: "50%",
+                                    }}
+                                    onClick={() => handleRemoveImage(index)}
+                                    title={isExisting ? "Remove existing image" : "Remove new image"}
+                                  >
+                                    ×
+                                  </button>
+                                  {/* Badge to show if image is existing or new */}
+                                  <small
+                                    className={`badge ${
+                                      isExisting ? "bg-info" : "bg-success"
+                                    } position-absolute`}
+                                    style={{
+                                      bottom: "-5px",
+                                      left: "5px",
+                                      fontSize: "8px",
+                                    }}
+                                  >
+                                    {isExisting ? "Existing" : "New"}
+                                  </small>
+                                </div>
                               );
                             })}
                           </div>
@@ -545,48 +654,6 @@ const EventEdit = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event Publish</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="publish"
-                              value="1"
-                              checked={parseInt(formData.publish) === 1} // Ensure correct value selection
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  publish: parseInt(e.target.value), // Store as number
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">Yes</label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="publish"
-                              value="0"
-                              checked={parseInt(formData.publish) === 0} // Ensure correct value selection
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  publish: parseInt(e.target.value), // Store as number
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div> */}
 
                     {/* Share With Radio Buttons */}
                     <div className="col-md-3">
