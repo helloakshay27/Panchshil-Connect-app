@@ -305,7 +305,7 @@ const EventEdit = () => {
     return true; // Return true if no errors
   };
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!validateForm()) return;
@@ -323,6 +323,12 @@ const EventEdit = () => {
           data.append("event[event_images][]", file);
         }
       });
+    } else if (key === "cover_image" && formData.cover_image && formData.cover_image.length > 0) {
+      // Append cover image if present
+      const file = formData.cover_image[0];
+      if (file instanceof File) {
+        data.append("event[cover_image]", file);
+      }
     } else if (key === "set_reminders_attributes") {
       // Append reminders properly (each property separately)
       formData.set_reminders_attributes.forEach((reminder, index) => {
@@ -364,7 +370,7 @@ const EventEdit = () => {
     ) {
       // Skip UI-only fields
       return;
-    } else if (key === "attachfile") {
+    } else if (key === "attachfile" || key === "cover_image") {
       // Skip, handled above
       return;
     } else {
@@ -639,6 +645,42 @@ const EventEdit = () => {
                           </div>
                         )}
                     </div>
+
+                      <div className="col-md-3">
+
+                    <div className="form-group mt-3">
+  <label>Cover Image</label>
+  <input
+    className="form-control"
+    type="file"
+    name="cover_image"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files[0];
+      setFormData((prev) => ({
+        ...prev,
+        cover_image: file ? [file] : [],
+      }));
+    }}
+  />
+  {formData.cover_image && formData.cover_image[0] && (
+    <img
+      src={
+        formData.cover_image[0] instanceof File
+          ? URL.createObjectURL(formData.cover_image[0])
+          : formData.cover_image[0]
+      }
+      alt="Cover Preview"
+      className="img-fluid rounded mt-2"
+      style={{
+        maxWidth: "100px",
+        maxHeight: "100px",
+        objectFit: "cover",
+      }}
+    />
+  )}
+</div>
+    </div>
 
                     <div className="col-md-3">
                       <div className="form-group">

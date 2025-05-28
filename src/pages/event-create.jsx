@@ -22,6 +22,7 @@ const EventCreate = () => {
     shared: "",
     share_groups: "",
     attachfile: [],
+    cover_image: [],
     is_important: "",
     email_trigger_enabled: "",
     set_reminders_attributes: [],
@@ -257,7 +258,7 @@ const EventCreate = () => {
     return errors; // Return the first error message if any
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     toast.dismiss();
@@ -287,6 +288,15 @@ const EventCreate = () => {
     data.append("event[is_important]", formData.is_important);
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
     data.append("event[project_id]", selectedProjectId);
+
+    // Add cover image if present
+    if (formData.cover_image && formData.cover_image.length > 0) {
+      const file = formData.cover_image[0];
+      if (file instanceof File) {
+        data.append("event[cover_image]", file);
+      }
+    }
+
     if (formData.rsvp_action === "yes") {
       data.append("event[rsvp_name]", formData.rsvp_name);
       data.append("event[rsvp_number]", formData.rsvp_number);
@@ -345,6 +355,7 @@ const EventCreate = () => {
         shared: "",
         share_groups: "",
         attachfile: [],
+        cover_image: [],
         is_important: "",
         email_trigger_enabled: "",
       });
@@ -688,6 +699,52 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
+
+                    <div className="col-md-3">
+  <div className="form-group">
+    <label>
+      Cover Image
+      <span
+        className="tooltip-container"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        [i]
+        {showTooltip && (
+          <span className="tooltip-text">
+            Max Upload Size 10 MB
+          </span>
+        )}
+      </span>
+    </label>
+    <input
+      className="form-control"
+      type="file"
+      name="cover_image"
+      accept="image/*"
+      required
+      onChange={(e) => {
+        const file = e.target.files[0];
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          cover_image: file ? [file] : [],
+        }));
+      }}
+    />
+    {formData.cover_image && formData.cover_image[0] && (
+      <img
+        src={URL.createObjectURL(formData.cover_image[0])}
+        alt="Cover Preview"
+        className="img-fluid rounded mt-2"
+        style={{
+          maxWidth: "100px",
+          maxHeight: "100px",
+          objectFit: "cover",
+        }}
+      />
+    )}
+  </div>
+</div>
                     {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
