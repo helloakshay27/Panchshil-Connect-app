@@ -37,6 +37,8 @@ const EventEdit = () => {
     set_reminders_attributes: [],
     existingImages: [], // for previously uploaded images
     newImages: [], // for newly selected images
+    cover_image: null, // Changed from array to single value
+    existingCoverImage: null, // Add this to track existing cover image
   });
 
   console.log("Data", formData);
@@ -99,51 +101,78 @@ const EventEdit = () => {
           },
         });
 
-        const formattedReminders = (response.data.reminders || []).map(
-          (reminder) => ({
-            ...reminder,
-            days: Number(reminder.days || 0),
-            hours: Number(reminder.hours || 0),
-            id: reminder.id,
-          })
-        );
+        const data = response.data;
 
-        const userIds = Array.isArray(response.data.user_id)
-          ? response.data.user_id
-          : response.data.user_id
-          ? [response.data.user_id]
+        // Format reminders
+        const formattedReminders = (data.reminders || []).map((reminder) => ({
+          ...reminder,
+          days: Number(reminder.days || 0),
+          hours: Number(reminder.hours || 0),
+          id: reminder.id,
+        }));
+
+        // Normalize user_id
+        const userIds = Array.isArray(data.user_id)
+          ? data.user_id
+          : data.user_id
+          ? [data.user_id]
           : [];
 
-        const shareWith = response.data.share_groups ? "group" : "individual";
+        // Determine share type
+        const shareWith = data.share_groups ? "group" : "individual";
 
-        // Create preview objects for existing images
-        const existingImages = response.data.event_images?.map((image) => ({
-          url: image.document_url,
-          type: image.document_content_type,
-          id: image.id, // Keep track of existing image IDs
-          isExisting: true, // Flag to identify existing images
-        })) || [];
+        // Prepare cover image preview (extract from object)
+        const existingCoverImage =
+          data.cover_image && data.cover_image.document_url
+            ? {
+                url: data.cover_image.document_url,
+                id: data.cover_image.id,
+                isExisting: true,
+              }
+            : null;
+
+        // Prepare existing event image previews
+        const existingImages =
+          data.event_images?.map((img) => ({
+            url: img.document_url,
+            type: img.document_content_type,
+            id: img.id,
+            isExisting: true,
+          })) || [];
 
         setFormData((prev) => ({
           ...prev,
-          ...response.data,
+          ...data,
           user_id: userIds,
           shareWith: shareWith,
-          attachfile: [], // Reset file input for new uploads
-          previewImage: existingImages, // Set existing images for preview
-          existingImages: existingImages, // Keep track of existing images
-          newImages: [], // Reset new images
+          attachfile: [],
+          newImages: [],
+          existingImages: existingImages,
+          previewImage: existingImages,
+          existingCoverImage: existingCoverImage, // <-- use the correct object
+          cover_image: null,
           set_reminders_attributes: formattedReminders,
         }));
+
+        console.log("project_id: ", data.project_id);
       } catch (error) {
         console.error("Error fetching event:", error);
       }
     };
+
     if (id) fetchEvent();
-    console.log("project_id: " + formData.project_id);
   }, [id]);
 
   const [projects, setProjects] = useState([]); // State to store projects
+
+  const handleCoverImageChange = (e) => {
+    const file = e.target.files[0];
+    setFormData((prev) => ({
+      ...prev,
+      cover_image: file || null,
+      existingCoverImage: null, // Clear existing if new selected
+    }));
+  };
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -231,57 +260,61 @@ const EventEdit = () => {
   };
 
   // Function to remove image from preview
- const handleRemoveImage = async (index) => {
-  toast.dismiss();
-  setFormData((prev) => {
-    const imageToRemove = prev.previewImage[index];
+  const handleRemoveImage = async (index) => {
+    toast.dismiss();
+    setFormData((prev) => {
+      const imageToRemove = prev.previewImage[index];
 
-    if (imageToRemove.isExisting) {
-      // Call backend API to remove the image
-      axios
-        .delete(`${baseURL}events/${id}/remove_image/${imageToRemove.id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        })
-        .then(() => {
-          toast.success("Image removed successfully!");
-        })
-        .catch(() => {
-          toast.error("Failed to remove image from server.");
-        });
+      if (imageToRemove.isExisting) {
+        // Call backend API to remove the image
+        axios
+          .delete(`${baseURL}events/${id}/remove_image/${imageToRemove.id}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          })
+          .then(() => {
+            toast.success("Image removed successfully!");
+          })
+          .catch(() => {
+            toast.error("Failed to remove image from server.");
+          });
 
-      // Optimistically update UI
-      const updatedExistingImages = prev.existingImages.filter(
-        (img) => img.id !== imageToRemove.id
-      );
-      return {
-        ...prev,
-        existingImages: updatedExistingImages,
-        previewImage: prev.previewImage.filter((_, i) => i !== index),
-      };
-    } else {
-      // If it's a new image, remove from newImages and attachfile
-      const newImageIndex = prev.newImages.findIndex(
-        (img) => img.url === imageToRemove.url
-      );
-
-      if (newImageIndex !== -1) {
-        const updatedNewImages = prev.newImages.filter((_, i) => i !== newImageIndex);
-        const updatedFiles = Array.from(prev.attachfile).filter((_, i) => i !== newImageIndex);
-
+        // Optimistically update UI
+        const updatedExistingImages = prev.existingImages.filter(
+          (img) => img.id !== imageToRemove.id
+        );
         return {
           ...prev,
-          newImages: updatedNewImages,
-          attachfile: updatedFiles,
+          existingImages: updatedExistingImages,
           previewImage: prev.previewImage.filter((_, i) => i !== index),
         };
-      }
-    }
+      } else {
+        // If it's a new image, remove from newImages and attachfile
+        const newImageIndex = prev.newImages.findIndex(
+          (img) => img.url === imageToRemove.url
+        );
 
-    return prev;
-  });
-};
+        if (newImageIndex !== -1) {
+          const updatedNewImages = prev.newImages.filter(
+            (_, i) => i !== newImageIndex
+          );
+          const updatedFiles = Array.from(prev.attachfile).filter(
+            (_, i) => i !== newImageIndex
+          );
+
+          return {
+            ...prev,
+            newImages: updatedNewImages,
+            attachfile: updatedFiles,
+            previewImage: prev.previewImage.filter((_, i) => i !== index),
+          };
+        }
+      }
+
+      return prev;
+    });
+  };
 
   const handleRadioChange = (e) => {
     const { name, value } = e.target;
@@ -305,32 +338,33 @@ const EventEdit = () => {
     return true; // Return true if no errors
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!validateForm()) return;
+    if (!validateForm()) return;
+    setLoading(true);
 
-  setLoading(true);
+    const data = new FormData();
 
-  const data = new FormData();
+    // === COVER IMAGE ===
+    if (formData.cover_image instanceof File) {
+      data.append("event[cover_image]", formData.cover_image);
+    } else if (!formData.cover_image && formData.existingCoverImage === null) {
+      // User removed the existing cover image
+      data.append("event[remove_cover_image]", "1");
+    }
 
-  // Append all form data fields
-  Object.keys(formData).forEach((key) => {
-    if (key === "attachfile" && Array.isArray(formData.attachfile)) {
-      // Only append new files (File objects)
+    // === EVENT IMAGES (NEW ONLY) ===
+    if (Array.isArray(formData.attachfile)) {
       formData.attachfile.forEach((file) => {
         if (file instanceof File) {
           data.append("event[event_images][]", file);
         }
       });
-    } else if (key === "cover_image" && formData.cover_image && formData.cover_image.length > 0) {
-      // Append cover image if present
-      const file = formData.cover_image[0];
-      if (file instanceof File) {
-        data.append("event[cover_image]", file);
-      }
-    } else if (key === "set_reminders_attributes") {
-      // Append reminders properly (each property separately)
+    }
+
+    // === REMINDERS ===
+    if (Array.isArray(formData.set_reminders_attributes)) {
       formData.set_reminders_attributes.forEach((reminder, index) => {
         if (reminder.id) {
           data.append(
@@ -353,76 +387,75 @@ const handleSubmit = async (e) => {
           );
         }
       });
-    } else if (key === "user_id" && Array.isArray(formData.user_id)) {
-      // Properly append user_id array values
+    }
+
+    // === USERS ===
+    if (Array.isArray(formData.user_id)) {
       if (formData.user_id.length > 0) {
-        formData.user_id.forEach((userId) => {
-          data.append("event[user_ids][]", userId);
-        });
+        formData.user_id.forEach((id) => data.append("event[user_ids][]", id));
       } else {
-        data.append("event[user_ids][]", "");
-      }
-    } else if (
-      key === "shareWith" ||
-      key === "previewImage" ||
-      key === "existingImages" ||
-      key === "newImages"
-    ) {
-      // Skip UI-only fields
-      return;
-    } else if (key === "attachfile" || key === "cover_image") {
-      // Skip, handled above
-      return;
-    } else {
-      // Only append primitive values
-      const value = formData[key];
-      if (
-        value !== null &&
-        value !== undefined &&
-        typeof value !== "object"
-      ) {
-        data.append(`event[${key}]`, value);
+        data.append("event[user_ids][]", ""); // to clear users
       }
     }
-  });
 
-  // Handle removed existing images
-  const originalImageIds = formData.existingImages.map((img) => img.id);
-  const currentImageIds = formData.previewImage
-    .filter((img) => img.isExisting)
-    .map((img) => img.id);
+    // === RSVP FIELDS ===
+    if (formData.rsvp_action === "yes") {
+      data.append("event[rsvp_name]", formData.rsvp_name || "");
+      data.append("event[rsvp_number]", formData.rsvp_number || "");
+    }
 
-  const removedImageIds = originalImageIds.filter(
-    (id) => !currentImageIds.includes(id)
-  );
+    // === REMOVED EXISTING IMAGES ===
+    const originalIds = formData.existingImages?.map((img) => img.id) || [];
+    const currentIds =
+      formData.previewImage
+        ?.filter((img) => img.isExisting)
+        .map((img) => img.id) || [];
 
-  if (removedImageIds.length > 0) {
-    removedImageIds.forEach((id) => {
-      data.append("event[removed_image_ids][]", id);
+    const removedIds = originalIds.filter((id) => !currentIds.includes(id));
+    removedIds.forEach((id) => data.append("event[removed_image_ids][]", id));
+
+    // === EVERYTHING ELSE (Primitive values only) ===
+    Object.entries(formData).forEach(([key, value]) => {
+      if (
+        [
+          "cover_image",
+          "attachfile",
+          "existingImages",
+          "newImages",
+          "previewImage",
+          "shareWith",
+          "set_reminders_attributes",
+          "user_id",
+          "rsvp_name",
+          "rsvp_number",
+        ].includes(key)
+      ) {
+        return; // Skip handled keys
+      }
+
+      if (value !== null && value !== undefined && typeof value !== "object") {
+        data.append(`event[${key}]`, value);
+      }
     });
-  }
 
-  // Append RSVP fields if RSVP action is "yes"
-  if (formData.rsvp_action === "yes") {
-    data.append("event[rsvp_name]", formData.rsvp_name || "");
-    data.append("event[rsvp_number]", formData.rsvp_number || "");
-  }
+    // === SEND REQUEST ===
+    try {
+      const response = await axios.put(`${baseURL}events/${id}.json`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-  try {
-    const response = await axios.put(`${baseURL}events/${id}.json`, data, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    toast.success("Event updated successfully!");
-    navigate("/event-list");
-  } catch (error) {
-    toast.error("Failed to update event.");
-  } finally {
-    setLoading(false);
-  }
-};
+      toast.success("Event updated successfully!");
+      navigate("/event-list");
+    } catch (error) {
+      console.error("Submit error:", error);
+      toast.error("Failed to update event.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatDateForInput = (isoString) => {
     if (!isoString) return ""; // Handle empty values
@@ -622,7 +655,11 @@ const handleSubmit = async (e) => {
                                       borderRadius: "50%",
                                     }}
                                     onClick={() => handleRemoveImage(index)}
-                                    title={isExisting ? "Remove existing image" : "Remove new image"}
+                                    title={
+                                      isExisting
+                                        ? "Remove existing image"
+                                        : "Remove new image"
+                                    }
                                   >
                                     ×
                                   </button>
@@ -645,42 +682,39 @@ const handleSubmit = async (e) => {
                           </div>
                         )}
                     </div>
-
-                      <div className="col-md-3">
-
-                    <div className="form-group mt-3">
-  <label>Cover Image</label>
-  <input
-    className="form-control"
-    type="file"
-    name="cover_image"
-    accept="image/*"
-    onChange={(e) => {
-      const file = e.target.files[0];
-      setFormData((prev) => ({
-        ...prev,
-        cover_image: file ? [file] : [],
-      }));
-    }}
-  />
-  {formData.cover_image && formData.cover_image[0] && (
-    <img
-      src={
-        formData.cover_image[0] instanceof File
-          ? URL.createObjectURL(formData.cover_image[0])
-          : formData.cover_image[0]
-      }
-      alt="Cover Preview"
-      className="img-fluid rounded mt-2"
-      style={{
-        maxWidth: "100px",
-        maxHeight: "100px",
-        objectFit: "cover",
-      }}
-    />
-  )}
-</div>
-    </div>
+                    <div className="col-md-3">
+                      <div className="form-group mt-3">
+                        <label>Cover Image</label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="cover_image"
+                          accept="image/*"
+                          onChange={handleCoverImageChange}
+                        />
+                        {/* Cover Image Preview */}
+                        {(formData.cover_image ||
+                          formData.existingCoverImage) && (
+                          <div className="position-relative mt-2">
+                            <img
+                              src={
+                                formData.cover_image
+                                  ? URL.createObjectURL(formData.cover_image)
+                                  : formData.existingCoverImage?.url
+                              }
+                              alt="Cover Preview"
+                              className="img-fluid rounded"
+                              style={{
+                                maxWidth: "100px",
+                                maxHeight: "100px",
+                                objectFit: "cover",
+                              }}
+                            />
+                            {/* ...remove button... */}
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
                     <div className="col-md-3">
                       <div className="form-group">

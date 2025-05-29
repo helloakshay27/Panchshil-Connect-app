@@ -258,7 +258,7 @@ const EventCreate = () => {
     return errors; // Return the first error message if any
   };
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     toast.dismiss();
@@ -669,11 +669,10 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                     <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Attachment
-                        
                           <span
                             className="tooltip-container"
                             onMouseEnter={() => setShowTooltip(true)}
@@ -692,7 +691,7 @@ const EventCreate = () => {
                           className="form-control"
                           type="file"
                           name="attachfile"
-                          accept="image/*" 
+                          accept="image/*"
                           multiple
                           required
                           onChange={(e) => handleFileChange(e, "attachfile")}
@@ -701,50 +700,50 @@ const EventCreate = () => {
                     </div>
 
                     <div className="col-md-3">
-  <div className="form-group">
-    <label>
-      Cover Image
-      <span
-        className="tooltip-container"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-      >
-        [i]
-        {showTooltip && (
-          <span className="tooltip-text">
-            Max Upload Size 10 MB
-          </span>
-        )}
-      </span>
-    </label>
-    <input
-      className="form-control"
-      type="file"
-      name="cover_image"
-      accept="image/*"
-      required
-      onChange={(e) => {
-        const file = e.target.files[0];
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          cover_image: file ? [file] : [],
-        }));
-      }}
-    />
-    {formData.cover_image && formData.cover_image[0] && (
-      <img
-        src={URL.createObjectURL(formData.cover_image[0])}
-        alt="Cover Preview"
-        className="img-fluid rounded mt-2"
-        style={{
-          maxWidth: "100px",
-          maxHeight: "100px",
-          objectFit: "cover",
-        }}
-      />
-    )}
-  </div>
-</div>
+                      <div className="form-group">
+                        <label>
+                          Cover Image
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            [i]
+                            {showTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 10 MB
+                              </span>
+                            )}
+                          </span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          name="cover_image"
+                          accept="image/*"
+                          required
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            setFormData((prevFormData) => ({
+                              ...prevFormData,
+                              cover_image: file ? [file] : [],
+                            }));
+                          }}
+                        />
+                        {formData.cover_image && formData.cover_image[0] && (
+                          <img
+                            src={URL.createObjectURL(formData.cover_image[0])}
+                            alt="Cover Preview"
+                            className="img-fluid rounded mt-2"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
                     {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -882,8 +881,6 @@ const EventCreate = () => {
                       </div>
                     </div> */}
 
-                   
-                   
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Share With</label>
@@ -902,7 +899,10 @@ const EventCreate = () => {
                                 }))
                               }
                             />
-                            <label className="form-check-label" style={{ color: "black" }}>
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
                               Individuals
                             </label>
                           </div>
@@ -921,7 +921,12 @@ const EventCreate = () => {
                                 }))
                               }
                             />
-                            <label className="form-check-label" style={{ color: "black" }}>Groups</label>
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              Groups
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -1039,7 +1044,7 @@ const EventCreate = () => {
                         </div>
                       </div>
                     </div>
-                     <div className="col-md-3">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           RSVP Action
