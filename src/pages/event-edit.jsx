@@ -10,6 +10,8 @@ const EventEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState({});
+  const [errors, setErrors] = useState({});
+
 
   console.log("id", id);
 
@@ -165,14 +167,42 @@ const EventEdit = () => {
 
   const [projects, setProjects] = useState([]); // State to store projects
 
-  const handleCoverImageChange = (e) => {
-    const file = e.target.files[0];
+const handleCoverImageChange = (e) => {
+  const file = e.target.files[0];
+
+  if (file) {
+    // Size check: must be below 3MB
+    if (file.size > 3 * 1024 * 1024) {
+      setErrors((prev) => ({
+        ...prev,
+        cover_image: "Image size must be under 3MB",
+      }));
+      toast.error("Image size must be under 3MB");
+      e.target.value = ""; // Clear the input
+      return;
+    }
+
+    // Clear previous error if size is valid
+    setErrors((prev) => ({
+      ...prev,
+      cover_image: "",
+    }));
+
+    // Save the image
     setFormData((prev) => ({
       ...prev,
-      cover_image: file || null,
-      existingCoverImage: null, // Clear existing if new selected
+      cover_image: file,
+      existingCoverImage: null,
     }));
-  };
+  } else {
+    // If no file is selected
+    setFormData((prev) => ({
+      ...prev,
+      cover_image: null,
+    }));
+  }
+};
+
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -238,26 +268,54 @@ const EventEdit = () => {
     });
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      // Create preview objects for new files
-      const newPreviews = files.map((file) => ({
+const handleFileChange = (e) => {
+  const files = Array.from(e.target.files);
+
+  if (files.length > 0) {
+    const allowedImages = [];
+    const newPreviews = [];
+
+    files.forEach((file) => {
+      const isImage = file.type.startsWith("image/");
+      const isVideo = file.type.startsWith("video/");
+
+      // Validate size based on type
+      if (isImage && file.size > 3 * 1024 * 1024) {
+        toast.error(`${file.name} exceeds 3MB limit for images`);
+        return;
+      }
+
+      if (isVideo && file.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name} exceeds 10MB limit for videos`);
+        return;
+      }
+
+      if (!isImage && !isVideo) {
+        toast.error(`${file.name} is not a supported file type`);
+        return;
+      }
+
+      // If valid, add to list
+      allowedImages.push(file);
+      newPreviews.push({
         url: URL.createObjectURL(file),
         type: file.type,
-        file: file, // Keep reference to the actual file
-        isExisting: false, // Flag to identify new images
-      }));
+        file: file,
+        isExisting: false,
+      });
+    });
 
+    if (allowedImages.length > 0) {
       setFormData((prev) => ({
         ...prev,
-        attachfile: files, // Store the actual files
-        newImages: newPreviews, // Store new image previews separately
-        // Combine existing and new images for preview
+        attachfile: allowedImages,
+        newImages: newPreviews,
         previewImage: [...prev.existingImages, ...newPreviews],
       }));
     }
-  };
+  }
+};
+
 
   // Function to remove image from preview
   const handleRemoveImage = async (index) => {
@@ -347,12 +405,13 @@ const EventEdit = () => {
     const data = new FormData();
 
     // === COVER IMAGE ===
-    if (formData.cover_image instanceof File) {
-      data.append("event[cover_image]", formData.cover_image);
-    } else if (!formData.cover_image && formData.existingCoverImage === null) {
-      // User removed the existing cover image
-      data.append("event[remove_cover_image]", "1");
-    }
+    // === COVER IMAGE ===
+if (formData.cover_image && formData.cover_image instanceof File) {
+  data.append("event[cover_image]", formData.cover_image);
+} else if (!formData.cover_image && !formData.existingCoverImage) {
+  // Only send remove if both are null (user removed cover image)
+  data.append("event[remove_cover_image]", "1");
+}
 
     // === EVENT IMAGES (NEW ONLY) ===
     if (Array.isArray(formData.attachfile)) {

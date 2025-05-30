@@ -34,30 +34,30 @@ const Testimonials = () => {
     video_preview_image_url: "",
   });
 
-  const handleBannerVideoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const maxSize = 100 * 1024 * 1024; // 100MB
-  
-      if (file.size > maxSize) {
-        setErrors((prev) => ({
-          ...prev,
-          testimonial_video: "Max file size is 100 MB",
-        }));
-        toast.error("Video exceeds 100MB limit. Please upload a smaller file.");
-        return;
-      }
+ const handleBannerVideoChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const maxSize = 10 * 1024 * 1024; // 10MB
 
-      setErrors((prev) => ({ ...prev, testimonial_video: "" }));
-      setPreviewVideo(URL.createObjectURL(file));
-
-      // Store file in state
-      setFormData((prev) => ({
+    if (file.size > maxSize) {
+      setErrors((prev) => ({
         ...prev,
-        testimonial_video: file,
+        testimonial_video: "Max file size is 10 MB",
       }));
+      toast.error("Upload videos below 10MB only, please 🙏");
+      return;
     }
-  };
+
+    setErrors((prev) => ({ ...prev, testimonial_video: "" }));
+    setPreviewVideo(URL.createObjectURL(file));
+
+    setFormData((prev) => ({
+      ...prev,
+      testimonial_video: file,
+    }));
+  }
+};
+
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -111,45 +111,42 @@ const Testimonials = () => {
     fetchBuildingTypes();
   }, []);
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-    
-    if (files.length === 0) return;
-    
-    const file = files[0]; // Get the first file
-    
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = "";
-      return;
-    }
-    
-    // Size validation (50MB max)
-    const maxSize = 50 * 1024 * 1024;
-    if (file.size > maxSize) {
-      setErrors((prev) => ({
-        ...prev,
-        attachfile: "Max file size is 50 MB",
-      }));
-      toast.error("Image exceeds 50MB limit. Please upload a smaller file.");
-      return;
-    }
-    
-    // Create image preview
-    const previewUrl = URL.createObjectURL(file);
-    setPreviewImg(previewUrl);
-    
-    // Update formData with the image file and also set the URL for backend
-    setFormData(prev => ({
+ const handleFileChange = (e) => {
+  const files = Array.from(e.target.files);
+  const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+  if (files.length === 0) return;
+
+  const file = files[0];
+
+  if (!allowedTypes.includes(file.type)) {
+    toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+    e.target.value = "";
+    return;
+  }
+
+  const maxSize = 3 * 1024 * 1024; // 3MB
+  if (file.size > maxSize) {
+    setErrors((prev) => ({
       ...prev,
-      attachfile: file,
-      video_preview_image_url: previewUrl // This is needed for the backend
+      attachfile: "Max file size is 3 MB",
     }));
-    
-    // Also update the videoUrl state which is used in form submit
-    setVideoUrl(previewUrl);
-  };
+    toast.error("Upload images below 3MB only 🖼️");
+    return;
+  }
+
+  const previewUrl = URL.createObjectURL(file);
+  setPreviewImg(previewUrl);
+
+  setFormData((prev) => ({
+    ...prev,
+    attachfile: file,
+    video_preview_image_url: previewUrl,
+  }));
+
+  setVideoUrl(previewUrl);
+};
+
 
     const validateForm = (formData) => {
     const errors = [];
@@ -316,7 +313,7 @@ const Testimonials = () => {
                             [i]
                             {showVideoTooltip && (
                               <span className="tooltip-text">
-                                Max Upload Size 100 MB
+                                Max Upload Size 10 MB
                               </span>
                             )}
                           </span>
@@ -363,7 +360,7 @@ const Testimonials = () => {
                             [i]
                             {showTooltip && (
                               <span className="tooltip-text">
-                                Max Upload Size 50 MB
+                                Max Upload Size 3 MB
                               </span>
                             )}
                           </span>
