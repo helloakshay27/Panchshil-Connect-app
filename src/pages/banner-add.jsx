@@ -68,11 +68,13 @@ const BannerAdd = () => {
 
     const validFiles = files.filter((file) => allowedTypes.includes(file.type));
 
-    if (validFiles.length !== files.length) {
-      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = "";
-      return;
-    }
+   const oversizedImage = validFiles.find(file => file.size > 3 * 1024 * 1024); // 3MB
+if (oversizedImage) {
+  toast.error("Each image must be under 3MB.");
+  e.target.value = "";
+  return;
+}
+
 
     if (validFiles.length > 0) {
       setPreviewImg(URL.createObjectURL(validFiles[0]));
@@ -93,14 +95,31 @@ const BannerAdd = () => {
   const handleBannerVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 50 * 1024 * 1024) {
-        setErrors((prev) => ({
-          ...prev,
-          banner_video: "Video size must be under 50MB",
-        }));
-        toast.error("Video size must be under 50MB");
-        e.target.value = "";
-        return;
+      if (file) {
+  const isVideo = file.type.startsWith('video/');
+  const isImage = file.type.startsWith('image/');
+
+  // Check video size (max 10MB)
+  if (isVideo && file.size > 10 * 1024 * 1024) {
+    setErrors((prev) => ({
+      ...prev,
+      banner_video: "Video size must be under 10MB",
+    }));
+    toast.error("Video size must be under 10MB");
+    e.target.value = "";
+    return;
+  }
+
+  // Check image size (max 3MB)
+  if (isImage && file.size > 3 * 1024 * 1024) {
+    setErrors((prev) => ({
+      ...prev,
+      banner_video: "Image size must be under 3MB",
+    }));
+    toast.error("Image size must be under 3MB");
+    e.target.value = "";
+    return;
+  }
       }
 
       setErrors((prev) => ({ ...prev, banner_video: "" }));

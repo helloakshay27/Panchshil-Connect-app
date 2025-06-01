@@ -82,35 +82,44 @@ const BannerEdit = () => {
     setFormData({ ...formData, attachfile: validFiles[0] });
   };
 
-  const handleVideoChange = (e) => {
-    const file = e.target.files[0];
+ const handleVideoChange = (e) => {
+  const file = e.target.files[0];
 
-    if (!file) return;
+  if (!file) return;
 
-    // Expanded allowed file types
-    const allowedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/bmp", "image/tiff"];
-    const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"];
-    
-    const isAllowedType = [...allowedImageTypes, ...allowedVideoTypes].includes(file.type);
-    
-    if (!isAllowedType) {
-      toast.error("Please upload a valid image or video file.");
-      return;
-    }
+  const allowedImageTypes = [
+    "image/jpeg", "image/png", "image/gif", "image/webp",
+    "image/svg+xml", "image/bmp", "image/tiff"
+  ];
+  const allowedVideoTypes = [
+    "video/mp4", "video/webm", "video/ogg", "video/quicktime",
+    "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"
+  ];
 
-    // File size limit (100MB)
-    if (file.size > 100 * 1024 * 1024) {
-      toast.error("File size should not exceed 100MB.");
-      return;
-    }
+  const isImage = allowedImageTypes.includes(file.type);
+  const isVideo = allowedVideoTypes.includes(file.type);
 
-    // Create preview URL
-    const previewUrl = URL.createObjectURL(file);
-    setPreviewVideo(previewUrl);
-    
-    // Update form data
-    setFormData((prev) => ({ ...prev, banner_video: file }));
-  };
+  if (!isImage && !isVideo) {
+    toast.error("Please upload a valid image or video file.");
+    return;
+  }
+
+  // Size check: Image ≤ 3MB, Video ≤ 10MB
+  const sizeInMB = file.size / (1024 * 1024);
+  if (isImage && sizeInMB > 3) {
+    toast.error("Image file size should not exceed 3MB.");
+    return;
+  }
+  if (isVideo && sizeInMB > 10) {
+    toast.error("Video file size should not exceed 10MB.");
+    return;
+  }
+
+  const previewUrl = URL.createObjectURL(file);
+  setPreviewVideo(previewUrl);
+  setFormData((prev) => ({ ...prev, banner_video: file }));
+};
+
 
   const validateForm = () => {
     let newErrors = {};
