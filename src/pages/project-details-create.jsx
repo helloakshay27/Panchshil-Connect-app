@@ -1978,6 +1978,7 @@ const ProjectDetailsCreate = () => {
                       type="text"
                       name="SFDC_Project_Id"
                       placeholder="Enter SFDC Project ID"
+                      maxLength={18}
                       value={formData.SFDC_Project_Id}
                       onChange={handleChange}
                     />
