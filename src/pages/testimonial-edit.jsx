@@ -112,9 +112,9 @@ const TestimonialEdit = () => {
     if (file.size > maxSize) {
       setErrors((prev) => ({
         ...prev,
-        testimonial_video: "Max file size is 10 MB",
+        testimonial_video: "",
       }));
-      toast.error("Video exceeds 10MB limit. Please upload a smaller file.");
+      toast.error("Video size must be less than 10MB.");
       return;
     }
 
@@ -151,9 +151,9 @@ const handleFileChange = (e) => {
   if (file.size > maxSize) {
     setErrors((prev) => ({
       ...prev,
-      attachfile: "Max file size is 3 MB",
+      attachfile: "",
     }));
-    toast.error("Image exceeds 3MB limit. Please upload a smaller file.");
+    toast.error("Image size must be less than 3MB.");
     return;
   }
 

@@ -157,7 +157,7 @@ const Amenities = () => {
                     </div>
 
                     {/* Amenity Type SelectBox */}
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Amenity Type{" "}
@@ -172,7 +172,7 @@ const Amenities = () => {
                           onChange={setAmenityType} // ✅ Corrected onChange
                         />
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

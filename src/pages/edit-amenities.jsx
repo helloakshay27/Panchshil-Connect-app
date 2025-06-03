@@ -176,7 +176,7 @@ const EditAmenities = () => {
                   </div>
 
                   {/* Amenity Type SelectBox */}
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Amenity Type{" "}
@@ -191,7 +191,7 @@ const EditAmenities = () => {
                         onChange={setAmenityType}
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

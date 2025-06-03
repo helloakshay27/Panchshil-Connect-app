@@ -42,9 +42,9 @@ const Testimonials = () => {
     if (file.size > maxSize) {
       setErrors((prev) => ({
         ...prev,
-        testimonial_video: "Max file size is 10 MB",
+        testimonial_video: "",
       }));
-      toast.error("Upload videos below 10MB only, please 🙏");
+      toast.error("Video size must be less than 10MB.");
       return;
     }
 
@@ -129,9 +129,9 @@ const Testimonials = () => {
   if (file.size > maxSize) {
     setErrors((prev) => ({
       ...prev,
-      attachfile: "Max file size is 3 MB",
+      attachfile: "",
     }));
-    toast.error("Upload images below 3MB only 🖼️");
+    toast.error("Image size must be less than 3MB.");
     return;
   }
 

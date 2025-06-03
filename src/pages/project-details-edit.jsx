@@ -326,8 +326,8 @@ const ProjectDetailsEdit = () => {
 
   // console.log(formData);
 
-  const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
-  const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+  const MAX_VIDEO_SIZE = 10 * 1024 * 1024; // 10MB (changed from 100MB)
+  const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB (changed from 10MB)
   const MAX_BROCHURE_SIZE = 20 * 1024 * 1024; // 20MB
 
   // Format file size to human-readable format
@@ -394,9 +394,7 @@ const ProjectDetailsEdit = () => {
             .map((f) => `${f.name} (${f.size})`)
             .join(", ");
           toast.error(
-            `Image file(s) too large: ${fileList}. Maximum allowed size is ${formatFileSize(
-              MAX_IMAGE_SIZE
-            )} per file.`,
+            "Image size must be less than 3MB.",
             {
               duration: 5000,
             }
@@ -433,9 +431,7 @@ const ProjectDetailsEdit = () => {
             .map((f) => `${f.name} (${f.size})`)
             .join(", ");
           toast.error(
-            `Video file(s) too large: ${fileList}. Maximum allowed size is ${formatFileSize(
-              MAX_VIDEO_SIZE
-            )} per file.`,
+            "Video size must be less than 10MB.",
             {
               duration: 5000,
             }
@@ -598,7 +594,8 @@ const ProjectDetailsEdit = () => {
         image: file,
       }));
     }
-  };
+  };  
+  
   const handleDiscardTwoDImage = async (key, index) => {
     const image = formData[key][index]; // Get the selected image
     if (!image.id) {
@@ -1404,19 +1401,28 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
+ const handleInputChange = (e) => {
+  const { name, files } = e.target;
 
-    if (files && files[0]) {
-      const imageURL = URL.createObjectURL(files[0]); // Generate a preview URL
+  if (files && files[0]) {
+    const file = files[0];
+    const maxSizeInBytes = 3 * 1024 * 1024; // 3MB
 
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: files[0], // Store the actual file for submission
-        previewImage: imageURL, // Store preview URL for display
-      }));
+    if (file.size > maxSizeInBytes) {
+      toast.error("Image size must be less than 3MB.");
+      return;
     }
-  };
+
+    const imageURL = URL.createObjectURL(file);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: file,
+      previewImage: imageURL,
+    }));
+  }
+};
+
 
   // const statusOptions = {
   //   "Office Parks": [
@@ -1607,27 +1613,42 @@ const ProjectDetailsEdit = () => {
   // };
 
   const handleImageUpload = (event) => {
-    const files = Array.from(event.target.files);
+  const files = Array.from(event.target.files);
+  const maxSizeInBytes = 3 * 1024 * 1024; // 3MB
 
-    // if (!selectedCategory) {
-    //   alert("Please select an image category first.");
-    //   return;
-    // }
+  const validFiles = [];
+  const rejectedFiles = [];
 
-    const updatedImages = files.map((file) => ({
-      gallery_image: file,
-      gallery_image_file_name: file.name,
-      gallery_image_file_type: selectedCategory,
-      attachfile: { document_url: URL.createObjectURL(file) },
-    }));
+  files.forEach((file) => {
+    if (file.size <= maxSizeInBytes) {
+      validFiles.push(file);
+    } else {
+      rejectedFiles.push(file.name);
+    }
+  });
 
-    setFormData((prev) => ({
-      ...prev,
-      gallery_image: [...(prev.gallery_image || []), ...updatedImages],
-    }));
+  if (rejectedFiles.length > 0) {
+    toast.error("Image size must be less than 3MB.");
+  }
 
-    event.target.value = "";
-  };
+  if (validFiles.length === 0) {
+    return;
+  }
+
+  const updatedImages = validFiles.map((file) => ({
+    gallery_image: file,
+    gallery_image_file_name: file.name,
+    gallery_image_file_type: selectedCategory, // Assuming selectedCategory exists in scope
+    attachfile: { document_url: URL.createObjectURL(file) },
+  }));
+
+  setFormData((prev) => ({
+    ...prev,
+    gallery_image: [...(prev.gallery_image || []), ...updatedImages],
+  }));
+
+  event.target.value = "";
+};
 
   const handleQRCodeImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -1729,425 +1750,430 @@ const ProjectDetailsEdit = () => {
       return { ...prev, [key]: updatedFiles };
     });
   };
-  const MAX_PPT_SIZE = 10 * 1024 * 1024; // 10MB
-  // Modify the handleFileUpload function to handle gallery_images
-  const handleFileUpload = (name, files) => {
-    const MAX_SIZES = {
-      brochure: MAX_BROCHURE_SIZE,
-      two_d_images: MAX_IMAGE_SIZE,
-      videos: MAX_VIDEO_SIZE,
-      image: MAX_IMAGE_SIZE,
-      video_preview_image_url: MAX_IMAGE_SIZE,
-      gallery_image: MAX_IMAGE_SIZE,
-      project_qrcode_image: MAX_IMAGE_SIZE,
-      project_ppt: MAX_PPT_SIZE, // ✅ Ensure Project_PPT is included
-      project_creatives: MAX_IMAGE_SIZE, // Add creatives support
-      project_creative_generics: MAX_IMAGE_SIZE,
-      project_creative_offers: MAX_IMAGE_SIZE,
-      project_interiors: MAX_IMAGE_SIZE,
-      project_exteriors: MAX_IMAGE_SIZE,
-      project_emailer_templetes: MAX_BROCHURE_SIZE,
-      project_layout: MAX_IMAGE_SIZE,
-    };
-    const allowedTypes = {
-      image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      video_preview_image_url: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      project_qrcode_image: [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ],
-      videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
-      brochure: [
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ],
-      project_ppt: [
-        "application/vnd.ms-powerpoint",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      ], // ✅ PPT & PPTX support
-      project_emailer_templetes: [
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ],
-      project_creatives: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      project_creative_generics: [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ],
-      project_creative_offers: [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ],
-      project_interiors: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      project_exteriors: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-      project_layout: [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.ms-powerpoint",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "application/vnd.ms-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      ],
-    };
 
-    if (!files || !files.length) return;
+//   const MAX_VIDEO_SIZE = 10 * 1024 * 1024; 3.
+// const MAX_IMAGE_SIZE = 3 * 1024 * 1024; 
+// const MAX_BROCHURE_SIZE = 20 * 1024 * 1024; 
+const MAX_PPT_SIZE = 10 * 1024 * 1024; // 10MB
 
-    if (name === "project_layout") {
-      const MAX_SIZE = 10 * 1024 * 1024; // 10MB limit
-
-      const newFiles = Array.from(files);
-      const validFiles = [];
-
-      newFiles.forEach((file) => {
-        if (file.size > MAX_SIZE) {
-          toast.error(`❌ File too large: ${file.name}. Max size is 10MB.`);
-          return;
-        }
-
-        validFiles.push(file);
-      });
-
-      if (validFiles.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          project_layout: [...(prev.project_layout || []), ...validFiles],
-        }));
-      }
-    } else {
-      // toast.error("⚠️ Invalid upload category.");
-    }
-
-    if (name === "project_emailer_templetes") {
-      const newFiles = Array.from(files);
-      const validFiles = [];
-
-      newFiles.forEach((file) => {
-        if (!allowedTypes.project_emailer_templetes.includes(file.type)) {
-          toast.error("Only PPT and PPTX files are allowed for Project PPT.");
-          return;
-        }
-
-        if (file.size > MAX_SIZES.project_emailer_templetes) {
-          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-          return;
-        }
-
-        validFiles.push(file);
-      });
-
-      if (validFiles.length > 0) {
-        setFormData((prev) => {
-          // Make sure we're properly handling all possible states of prev.project_ppt
-          let currentPPTs = [];
-
-          // If project_ppt exists and is an array, use it
-          if (
-            prev.project_emailer_templetes &&
-            Array.isArray(prev.project_emailer_templetes)
-          ) {
-            currentPPTs = [...prev.project_emailer_templetes];
-          }
-          // If project_ppt exists but is not an array (single file object), convert to array
-          else if (prev.project_emailer_templetes) {
-            currentPPTs = [prev.project_emailer_templetes];
-          }
-
-          // Return updated state with combined files
-          return {
-            ...prev,
-            project_emailer_templetes: [...currentPPTs, ...validFiles],
-          };
-        });
-      }
-    }
-
-    if (name === "project_exteriors") {
-      const newFiles = Array.from(files);
-      const validFiles = [];
-
-      newFiles.forEach((file) => {
-        if (!allowedTypes.project_exteriors.includes(file.type)) {
-          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-          return;
-        }
-
-        if (file.size > MAX_SIZES.project_exteriors) {
-          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-          return;
-        }
-
-        validFiles.push(file);
-      });
-
-      if (validFiles.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          project_exteriors: [...(prev.project_exteriors || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
-        }));
-      }
-    }
-
-    if (name === "project_interiors") {
-      const newFiles = Array.from(files);
-      const validFiles = [];
-
-      newFiles.forEach((file) => {
-        if (!allowedTypes.project_interiors.includes(file.type)) {
-          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-          return;
-        }
-
-        if (file.size > MAX_SIZES.project_interiors) {
-          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-          return;
-        }
-
-        validFiles.push(file);
-      });
-
-      if (validFiles.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          project_interiors: [...(prev.project_interiors || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
-        }));
-      }
-    }
-
-    if (name === "project_creative_offers") {
-      const newFiles = Array.from(files);
-      const validFiles = [];
-
-      newFiles.forEach((file) => {
-        if (!allowedTypes.project_creative_offers.includes(file.type)) {
-          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-          return;
-        }
-
-        if (file.size > MAX_SIZES.project_creative_offers) {
-          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-          return;
-        }
-
-        validFiles.push(file);
-      });
-
-      if (validFiles.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          project_creative_offers: [
-            ...(prev.project_creative_offers || []),
-            ...validFiles,
-          ],
-        }));
-      }
-    }
-
-    if (name === "project_creative_generics") {
-      const newFiles = Array.from(files);
-      const validFiles = [];
-
-      newFiles.forEach((file) => {
-        if (!allowedTypes.project_creative_generics.includes(file.type)) {
-          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-          return;
-        }
-        if (file.size > MAX_SIZES.project_creative_generics) {
-          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-          return;
-        }
-        validFiles.push(file);
-      });
-
-      if (validFiles.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          project_creative_generics: [
-            ...(prev.project_creative_generics || []),
-            ...validFiles,
-          ],
-        }));
-      }
-    }
-
-    if (name === "project_creatives") {
-      const newFiles = Array.from(files);
-      const validFiles = [];
-      newFiles.forEach((file) => {
-        if (!allowedTypes.project_creatives.includes(file.type)) {
-          toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-          return;
-        }
-        if (file.size > MAX_SIZES.project_creatives) {
-          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-          return;
-        }
-        validFiles.push(file);
-      });
-      if (validFiles.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          project_creatives: [...(prev.project_creatives || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
-        }));
-      }
-    }
-
-    if (name === "project_ppt") {
-      const newFiles = Array.from(files);
-      const validFiles = [];
-      newFiles.forEach((file) => {
-        if (!allowedTypes.project_ppt.includes(file.type)) {
-          toast.error("Only PPT and PPTX files are allowed for Project PPT.");
-          return;
-        }
-        if (file.size > MAX_SIZES.project_ppt) {
-          toast.error(`File too large: ${file.name}. Max size is 10MB.`);
-          return;
-        }
-        validFiles.push(file);
-      });
-      if (validFiles.length > 0) {
-        setFormData((prev) => {
-          // Make sure we're properly handling all possible states of prev.project_ppt
-          let currentPPTs = [];
-
-          // If project_ppt exists and is an array, use it
-          if (prev.project_ppt && Array.isArray(prev.project_ppt)) {
-            currentPPTs = [...prev.project_ppt];
-          }
-          // If project_ppt exists but is not an array (single file object), convert to array
-          else if (prev.project_ppt) {
-            currentPPTs = [prev.project_ppt];
-          }
-
-          // Return updated state with combined files
-          return {
-            ...prev,
-            project_ppt: [...currentPPTs, ...validFiles],
-          };
-        });
-      }
-    }
-
-    if (name === "brochure") {
-      // Handle multiple brochure files
-      const newFiles = Array.from(files);
-      const validFiles = [];
-
-      newFiles.forEach((file) => {
-        if (!allowedTypes.brochure.includes(file.type)) {
-          toast.error("Only PDF and DOCX files are allowed for brochure.");
-          return;
-        }
-
-        if (!validateFile(file, MAX_SIZES[name])) return;
-        validFiles.push(file);
-      });
-
-      if (validFiles.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          brochure: [...prev.brochure, ...validFiles],
-        }));
-      }
-    } else if (
-      name === "two_d_images" ||
-      name === "videos" ||
-      name === "gallery_image" ||
-      name === "project_qrcode_image"
-    ) {
-      // Handle multiple files for images, videos, gallery
-      const newFiles = Array.from(files);
-      const validFiles = [];
-      const tooLargeFiles = [];
-
-      newFiles.forEach((file) => {
-        // Check file type if there are allowed types specified
-        if (allowedTypes[name] && !allowedTypes[name].includes(file.type)) {
-          const fileType = name === "videos" ? "video" : "image";
-          toast.error(
-            `Only supported ${fileType} formats are allowed for ${name.replace(
-              "_",
-              " "
-            )}.`
-          );
-          return;
-        }
-
-        const sizeCheck = isFileSizeValid(file, MAX_SIZES[name]);
-        if (!sizeCheck.valid) {
-          tooLargeFiles.push(sizeCheck);
-          return;
-        }
-
-        validFiles.push(file);
-      });
-
-      if (tooLargeFiles.length > 0) {
-        tooLargeFiles.forEach((file) => {
-          toast.error(
-            `File too large: ${file.name} (${
-              file.size
-            }). Max size: ${formatFileSize(MAX_SIZES[name])}`
-          );
-        });
-      }
-
-      if (validFiles.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: [...(prev[name] || []), ...validFiles],
-        }));
-      }
-    } else if (name === "image") {
-      // Handle single image
-      const file = files[0];
-      if (!allowedTypes.image.includes(file.type)) {
-        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-        return;
-      }
-
-      const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
-      if (!sizeCheck.valid) {
-        toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
-          }). Max size: ${formatFileSize(MAX_SIZES.image)}`
-        );
-        return;
-      }
-
-      setFormData((prev) => ({ ...prev, video_preview_image_url: file }));
-    } else if (name === "video_preview_image_url") {
-      // Handle single image
-      const file = files[0];
-      if (!allowedTypes.video_preview_image_url.includes(file.type)) {
-        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-        return;
-      }
-
-      const sizeCheck = isFileSizeValid(file, MAX_SIZES.video_preview_image_url);
-      if (!sizeCheck.valid) {
-        toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
-          }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
-        );
-        return;
-      }
-
-      setFormData((prev) => ({ ...prev, video_preview_image_url: file }));
-    }
+// Modify the handleFileUpload function to handle gallery_images
+const handleFileUpload = (name, files) => {
+  const MAX_SIZES = {
+    brochure: MAX_BROCHURE_SIZE,
+    two_d_images: MAX_IMAGE_SIZE, // 3MB
+    videos: MAX_VIDEO_SIZE, // 10MB
+    image: MAX_IMAGE_SIZE, // 3MB
+    video_preview_image_url: MAX_IMAGE_SIZE, // 3MB
+    gallery_image: MAX_IMAGE_SIZE, // 3MB
+    project_qrcode_image: MAX_IMAGE_SIZE, // 3MB
+    project_ppt: MAX_PPT_SIZE, // 10MB
+    project_creatives: MAX_IMAGE_SIZE, // 3MB
+    project_creative_generics: MAX_IMAGE_SIZE, // 3MB
+    project_creative_offers: MAX_IMAGE_SIZE, // 3MB
+    project_interiors: MAX_IMAGE_SIZE, // 3MB
+    project_exteriors: MAX_IMAGE_SIZE, // 3MB
+    project_emailer_templetes: MAX_BROCHURE_SIZE,
+    project_layout: MAX_IMAGE_SIZE, // 3MB
+  };
+  
+  const allowedTypes = {
+    image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    video_preview_image_url: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    project_qrcode_image: [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ],
+    videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
+    brochure: [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ],
+    project_ppt: [
+      "application/vnd.ms-powerpoint",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ], // ✅ PPT & PPTX support
+    project_emailer_templetes: [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ],
+    project_creatives: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    project_creative_generics: [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ],
+    project_creative_offers: [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ],
+    project_interiors: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    project_exteriors: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    project_layout: [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-powerpoint",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ],
   };
 
+  if (!files || !files.length) return;
+
+  if (name === "project_layout") {
+    const MAX_SIZE = 3 * 1024 * 1024; // 3MB limit (updated)
+
+    const newFiles = Array.from(files);
+    const validFiles = [];
+
+    newFiles.forEach((file) => {
+      if (file.size > MAX_SIZE) {
+        toast.error("Image size must be less than 3MB.");
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        project_layout: [...(prev.project_layout || []), ...validFiles],
+      }));
+    }
+  } else {
+    // toast.error("⚠️ Invalid upload category.");
+  }
+
+  if (name === "project_emailer_templetes") {
+    const newFiles = Array.from(files);
+    const validFiles = [];
+
+    newFiles.forEach((file) => {
+      if (!allowedTypes.project_emailer_templetes.includes(file.type)) {
+        toast.error("Only PDF and DOCX files are allowed for Project Email Templates.");
+        return;
+      }
+
+      if (file.size > MAX_SIZES.project_emailer_templetes) {
+        toast.error(`File too large: ${file.name}. Max size is 20MB.`);
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => {
+        // Make sure we're properly handling all possible states of prev.project_emailer_templetes
+        let currentTemplates = [];
+
+        // If project_emailer_templetes exists and is an array, use it
+        if (
+          prev.project_emailer_templetes &&
+          Array.isArray(prev.project_emailer_templetes)
+        ) {
+          currentTemplates = [...prev.project_emailer_templetes];
+        }
+        // If project_emailer_templetes exists but is not an array (single file object), convert to array
+        else if (prev.project_emailer_templetes) {
+          currentTemplates = [prev.project_emailer_templetes];
+        }
+
+        // Return updated state with combined files
+        return {
+          ...prev,
+          project_emailer_templetes: [...currentTemplates, ...validFiles],
+        };
+      });
+    }
+  }
+
+  if (name === "project_exteriors") {
+    const newFiles = Array.from(files);
+    const validFiles = [];
+
+    newFiles.forEach((file) => {
+      if (!allowedTypes.project_exteriors.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+
+      if (file.size > MAX_SIZES.project_exteriors) {
+        toast.error("Image size must be less than 3MB.");
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        project_exteriors: [...(prev.project_exteriors || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+      }));
+    }
+  }
+
+  if (name === "project_interiors") {
+    const newFiles = Array.from(files);
+    const validFiles = [];
+
+    newFiles.forEach((file) => {
+      if (!allowedTypes.project_interiors.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+
+      if (file.size > MAX_SIZES.project_interiors) {
+        toast.error("Image size must be less than 3MB.");
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        project_interiors: [...(prev.project_interiors || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+      }));
+    }
+  }
+
+  if (name === "project_creative_offers") {
+    const newFiles = Array.from(files);
+    const validFiles = [];
+
+    newFiles.forEach((file) => {
+      if (!allowedTypes.project_creative_offers.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+
+      if (file.size > MAX_SIZES.project_creative_offers) {
+        toast.error("Image size must be less than 3MB.");
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        project_creative_offers: [
+          ...(prev.project_creative_offers || []),
+          ...validFiles,
+        ],
+      }));
+    }
+  }
+
+  if (name === "project_creative_generics") {
+    const newFiles = Array.from(files);
+    const validFiles = [];
+
+    newFiles.forEach((file) => {
+      if (!allowedTypes.project_creative_generics.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+      if (file.size > MAX_SIZES.project_creative_generics) {
+        toast.error("Image size must be less than 3MB.");
+        return;
+      }
+      validFiles.push(file);
+    });
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        project_creative_generics: [
+          ...(prev.project_creative_generics || []),
+          ...validFiles,
+        ],
+      }));
+    }
+  }
+
+  if (name === "project_creatives") {
+    const newFiles = Array.from(files);
+    const validFiles = [];
+    newFiles.forEach((file) => {
+      if (!allowedTypes.project_creatives.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+      if (file.size > MAX_SIZES.project_creatives) {
+        toast.error("Image size must be less than 3MB.");
+        return;
+      }
+      validFiles.push(file);
+    });
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        project_creatives: [...(prev.project_creatives || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+      }));
+    }
+  }
+
+  if (name === "project_ppt") {
+    const newFiles = Array.from(files);
+    const validFiles = [];
+    newFiles.forEach((file) => {
+      if (!allowedTypes.project_ppt.includes(file.type)) {
+        toast.error("Only PPT and PPTX files are allowed for Project PPT.");
+        return;
+      }
+      if (file.size > MAX_SIZES.project_ppt) {
+        toast.error(`File too large: ${file.name}. Max size is 10MB.`);
+        return;
+      }
+      validFiles.push(file);
+    });
+    if (validFiles.length > 0) {
+      setFormData((prev) => {
+        // Make sure we're properly handling all possible states of prev.project_ppt
+        let currentPPTs = [];
+
+        // If project_ppt exists and is an array, use it
+        if (prev.project_ppt && Array.isArray(prev.project_ppt)) {
+          currentPPTs = [...prev.project_ppt];
+        }
+        // If project_ppt exists but is not an array (single file object), convert to array
+        else if (prev.project_ppt) {
+          currentPPTs = [prev.project_ppt];
+        }
+
+        // Return updated state with combined files
+        return {
+          ...prev,
+          project_ppt: [...currentPPTs, ...validFiles],
+        };
+      });
+    }
+  }
+
+  if (name === "brochure") {
+    // Handle multiple brochure files
+    const newFiles = Array.from(files);
+    const validFiles = [];
+
+    newFiles.forEach((file) => {
+      if (!allowedTypes.brochure.includes(file.type)) {
+        toast.error("Only PDF and DOCX files are allowed for brochure.");
+        return;
+      }
+
+      if (!validateFile(file, MAX_SIZES[name])) return;
+      validFiles.push(file);
+    });
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        brochure: [...prev.brochure, ...validFiles],
+      }));
+    }
+  } else if (
+    name === "two_d_images" ||
+    name === "videos" ||
+    name === "gallery_image" ||
+    name === "project_qrcode_image"
+  ) {
+    // Handle multiple files for images, videos, gallery
+    const newFiles = Array.from(files);
+    const validFiles = [];
+    const tooLargeFiles = [];
+
+    newFiles.forEach((file) => {
+      // Check file type if there are allowed types specified
+      if (allowedTypes[name] && !allowedTypes[name].includes(file.type)) {
+        const fileType = name === "videos" ? "video" : "image";
+        toast.error(
+          `Only supported ${fileType} formats are allowed for ${name.replace(
+            "_",
+            " "
+          )}.`
+        );
+        return;
+      }
+
+      const sizeCheck = isFileSizeValid(file, MAX_SIZES[name]);
+      if (!sizeCheck.valid) {
+        tooLargeFiles.push(sizeCheck);
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (tooLargeFiles.length > 0) {
+      tooLargeFiles.forEach((file) => {
+        toast.error(
+          `File too large: ${file.name} (${
+            file.size
+          }). Max size: ${formatFileSize(MAX_SIZES[name])}`
+        );
+      });
+    }
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: [...(prev[name] || []), ...validFiles],
+      }));
+    }
+  } else if (name === "image") {
+    // Handle single image
+    const file = files[0];
+    if (!allowedTypes.image.includes(file.type)) {
+      toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+      return;
+    }
+
+    const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
+    if (!sizeCheck.valid) {
+      toast.error(
+        `File too large: ${sizeCheck.name} (${
+          sizeCheck.size
+        }). Max size: ${formatFileSize(MAX_SIZES.image)}`
+      );
+      return;
+    }
+
+    setFormData((prev) => ({ ...prev, video_preview_image_url: file }));
+  } else if (name === "video_preview_image_url") {
+    // Handle single image
+    const file = files[0];
+    if (!allowedTypes.video_preview_image_url.includes(file.type)) {
+      toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+      return;
+    }
+
+    const sizeCheck = isFileSizeValid(file, MAX_SIZES.video_preview_image_url);
+    if (!sizeCheck.valid) {
+      toast.error(
+        `File too large: ${sizeCheck.name} (${
+          sizeCheck.size
+        }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
+      );
+      return;
+    }
+
+    setFormData((prev) => ({ ...prev, video_preview_image_url: file }));
+  }
+};
   // const handleFetchedDiscardPPT = (index, id) => {
   //   setFormData((prev) => {
   //     const updatedPPT = prev.fetched_Project_PPT.filter(

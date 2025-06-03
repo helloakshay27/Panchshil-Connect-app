@@ -103,9 +103,9 @@ if (oversizedImage) {
   if (isVideo && file.size > 10 * 1024 * 1024) {
     setErrors((prev) => ({
       ...prev,
-      banner_video: "Video size must be under 10MB",
+      banner_video: "",
     }));
-    toast.error("Video size must be under 10MB");
+    toast.error("Video size must be less than 10MB.");
     e.target.value = "";
     return;
   }
@@ -114,9 +114,9 @@ if (oversizedImage) {
   if (isImage && file.size > 3 * 1024 * 1024) {
     setErrors((prev) => ({
       ...prev,
-      banner_video: "Image size must be under 3MB",
+      banner_video: "",
     }));
-    toast.error("Image size must be under 3MB");
+    toast.error("Image size must be less than 3MB.");
     e.target.value = "";
     return;
   }

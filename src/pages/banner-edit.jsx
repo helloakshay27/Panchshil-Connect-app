@@ -107,11 +107,11 @@ const BannerEdit = () => {
   // Size check: Image ≤ 3MB, Video ≤ 10MB
   const sizeInMB = file.size / (1024 * 1024);
   if (isImage && sizeInMB > 3) {
-    toast.error("Image file size should not exceed 3MB.");
+    toast.error("Image size must be less than 3MB.");
     return;
   }
   if (isVideo && sizeInMB > 10) {
-    toast.error("Video file size should not exceed 10MB.");
+    toast.error("Video size must be less than 10MB.");
     return;
   }
 

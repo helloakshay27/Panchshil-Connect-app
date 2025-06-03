@@ -44,33 +44,49 @@ const PressReleasesCreate = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    const fieldName = e.target.name;
+ const handleFileChange = (e) => {
+  const files = Array.from(e.target.files);
+  const fieldName = e.target.name;
 
-    if (fieldName === "pr_image") {
-      const allowedImageTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ];
-      const validImages = files.filter((file) =>
-        allowedImageTypes.includes(file.type)
-      );
+  if (fieldName === "pr_image") {
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    
+    // Maximum file size: 3MB (3 * 1024 * 1024 bytes)
+    const maxFileSize = 3 * 1024 * 1024;
+    
+    // Validate file types
+    const validImages = files.filter((file) =>
+      allowedImageTypes.includes(file.type)
+    );
 
-      if (validImages.length !== files.length) {
-        toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-        e.target.value = "";
-        return;
-      }
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        pr_image: validImages,
-      }));
+    if (validImages.length !== files.length) {
+      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = "";
+      return;
     }
-  };
+
+    // Validate file sizes
+    const oversizedFiles = validImages.filter((file) => file.size > maxFileSize);
+    
+    if (oversizedFiles.length > 0) {
+      const oversizedFileNames = oversizedFiles.map(file => file.name).join(", ");
+      toast.error("Image size must be less than 3MB.");
+      e.target.value = "";
+      return;
+    }
+
+    // All validations passed
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      pr_image: validImages,
+    }));
+  }
+};
 
   const validateForm = () => {
     let newErrors = {};

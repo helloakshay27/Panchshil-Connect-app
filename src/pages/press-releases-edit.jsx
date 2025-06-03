@@ -118,44 +118,67 @@ const PressReleasesEdit = () => {
     });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]; // Since only one image is allowed
-    const fieldName = e.target.name;
+const handleFileChange = (e) => {
+  const file = e.target.files[0]; // Since only one image is allowed
+  const fieldName = e.target.name;
 
-    if (fieldName === "pr_image") {
-      const allowedImageTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ];
+  if (fieldName === "pr_image") {
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    
+    // Maximum file size: 3MB (3 * 1024 * 1024 bytes)
+    const maxFileSize = 3 * 1024 * 1024;
 
-      if (file && !allowedImageTypes.includes(file.type)) {
-        toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-        e.target.value = "";
-        return;
-      }
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        pr_image: file,
-      }));
+    // Validate file type
+    if (file && !allowedImageTypes.includes(file.type)) {
+      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+      e.target.value = "";
+      return;
     }
 
-    if (fieldName === "attachment_url") {
-      const allowedPdfTypes = ["application/pdf"];
-      if (file && !allowedPdfTypes.includes(file.type)) {
-        toast.error("Only PDF files are allowed.");
-        e.target.value = "";
-        return;
-      }
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        attachment_url: file,
-      }));
+    // Validate file size
+    if (file && file.size > maxFileSize) {
+      toast.error("Image size must be less than 3MB.");
+      e.target.value = "";
+      return;
     }
-  };
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      pr_image: file,
+    }));
+  }
+
+  if (fieldName === "attachment_url") {
+    const allowedPdfTypes = ["application/pdf"];
+    
+    // Maximum file size: 3MB (3 * 1024 * 1024 bytes) - if you want to apply same limit to PDFs
+    const maxFileSize = 3 * 1024 * 1024;
+
+    // Validate file type
+    if (file && !allowedPdfTypes.includes(file.type)) {
+      toast.error("Only PDF files are allowed.");
+      e.target.value = "";
+      return;
+    }
+
+    // Validate file size for PDFs (optional - remove if not needed)
+    if (file && file.size > maxFileSize) {
+      toast.error(`PDF file size must be 3MB or less. Current file size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
+      e.target.value = "";
+      return;
+    }
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      attachment_url: file,
+    }));
+  }
+};
 
   const validateForm = () => {
     let newErrors = {};
