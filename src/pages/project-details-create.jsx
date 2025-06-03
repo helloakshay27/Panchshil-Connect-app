@@ -73,6 +73,7 @@ const ProjectDetailsCreate = () => {
     isDay: true,
     disclaimer: "",
     project_qrcode_image: [],
+    cover_images: [],
   });
 
   useEffect(() => {
@@ -310,6 +311,7 @@ const handleFileUpload = (name, files) => {
     gallery_image: MAX_IMAGE_SIZE,
     project_ppt: MAX_PPT_SIZE, // ✅ Ensure project_ppt is included
     project_creatives: MAX_IMAGE_SIZE, // Add creatives support
+     cover_images: MAX_IMAGE_SIZE,
     project_creative_generics: MAX_IMAGE_SIZE,
     project_creative_offers: MAX_IMAGE_SIZE,
     project_interiors: MAX_IMAGE_SIZE,
@@ -344,6 +346,7 @@ const handleFileUpload = (name, files) => {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ],
     project_creatives: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+    cover_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
     project_creative_generics: [
       "image/jpeg",
       "image/png",
@@ -560,6 +563,32 @@ const handleFileUpload = (name, files) => {
     }
   }
 
+   if (name === "cover_images") {
+    const newFiles = Array.from(files);
+    const validFiles = [];
+
+    newFiles.forEach((file) => {
+      if (!allowedTypes.cover_images.includes(file.type)) {
+        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+        return;
+      }
+
+      if (file.size > MAX_SIZES.cover_images) {
+        toast.error("Image size must be less than 3MB.");
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        cover_images: [...(prev.cover_images || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+      }));
+    }
+  }
+
   if (name === "project_ppt") {
     // Handle multiple PPT files
     const newFiles = Array.from(files);
@@ -737,7 +766,12 @@ const handleFileUpload = (name, files) => {
       const updatedFiles = [...formData.project_creatives];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, project_creatives: updatedFiles });
-    } else if (fileType === "project_creative_generics") {
+    } else if (fileType === "cover_images") {
+      const updatedFiles = [...formData.cover_images];
+      updatedFiles.splice(index, 1);
+      setFormData({ ...formData, cover_images: updatedFiles });
+    }
+    else if (fileType === "project_creative_generics") {
       const updatedFiles = [...formData.project_creative_generics];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, project_creative_generics: updatedFiles });
@@ -953,6 +987,11 @@ const handleFileUpload = (name, files) => {
         value.forEach((file) =>
           data.append("project[ProjectCreatives][]", file)
         );
+      } 
+      else if (key === "cover_images" && Array.isArray(value)) {
+        value.forEach((file) =>
+          data.append("project[cover_images][]", file)
+        );
       }
       // else if (key === "project_sales_type") {
       //   value.forEach((file) =>
@@ -1067,7 +1106,15 @@ const handleFileUpload = (name, files) => {
             data.append(`project[project_creatives_types][]`, type); // Store selected type
           }
         });
-      } else if (key === "project_sales_type" && Array.isArray(value)) {
+      } else if (key === "cover_images" && Array.isArray(value)) {
+        value.forEach(({ file, type }) => {
+          if (file instanceof File) {
+            data.append("project[cover_images][]", file); // Upload file
+            data.append(`project[cover_images_types][]`, type); // Store selected type
+          }
+        });
+      }
+      else if (key === "project_sales_type" && Array.isArray(value)) {
         // value.forEach(({ file, type }) => {
         // if (file instanceof File) {
         data.append("project[project_sales_type][]", value); // Upload file
@@ -2737,6 +2784,102 @@ const handleFileUpload = (name, files) => {
           <div className="card-body">
             <div className="row">
               {/* Gallery Section */}
+                <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Project Cover Image{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 10 MB
+                      </span>
+                    )}
+                  </span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                </h5>
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  onClick={() =>
+                    document.getElementById("cover_images").click()
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+                <input
+                  id="cover_images"
+                  className="form-control"
+                  type="file"
+                  name="cover_images"
+                  accept="image/*"
+                  onChange={(e) =>
+                    handleFileUpload("cover_images", e.target.files)
+                  }
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
+
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* 2D Images */}
+                      {formData.cover_images.map((file, index) => (
+                        <tr key={index}>
+                          <td> {file.name}</td>
+                          <td>
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={
+                                file.type.startsWith("image")
+                                  ? URL.createObjectURL(file)
+                                  : null
+                              }
+                              alt=""
+                            />
+                          </td>
+
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardFile("cover_images", index)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Gallery Images{" "}
