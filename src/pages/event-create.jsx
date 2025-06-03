@@ -38,6 +38,25 @@ const EventCreate = () => {
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
 
+  // Enhanced reminder state
+  const [reminderValue, setReminderValue] = useState("");
+  const [reminderUnit, setReminderUnit] = useState("");
+
+  const timeOptions = [
+    { value: "", label: "Select Unit" },
+    { value: "minutes", label: "Minutes" },
+    { value: "hours", label: "Hours" },
+    { value: "days", label: "Days" },
+    { value: "weeks", label: "Weeks" },
+  ];
+
+  const timeConstraints = {
+    minutes: { min: 0, max: 40320 },
+    hours: { min: 0, max: 672 },
+    days: { min: 0, max: 28 },
+    weeks: { min: 0, max: 4 },
+  };
+
   const [reminderDateTime, setReminderDateTime] = useState(""); // Value for the date-time reminder
   const [reminders2, setReminders2] = useState([]); // List of reminders
 
@@ -59,41 +78,15 @@ const EventCreate = () => {
 
     setReminderDateTime("");
   };
-  // const [reminderDateTime, setReminderDateTime] = useState(""); // Value for the date-time reminder
-  // const [reminders, setReminders] = useState([]); // List of reminders
 
-  // const handleAddReminder = () => {
-
-  //   if (new Date(reminderDateTime) >= new Date(formData.from_time)) {
-  //     alert("Reminder date must be earlier than the Event From date.");
-  //     return;
-  //   }
-
-  //   const diffInMs = new Date(formData.from_time) - new Date(reminderDateTime);
-
-  //   const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-  //   const hours = Math.floor(
-  //     (diffInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  //   );
-
-  //   setReminders((prev) => [...prev, { date: reminderDateTime, days, hours }]);
-
-  //   setReminderDateTime("");
-  // };
-
-  // const handleRemoveReminder = (index) => {
-  //   setReminders((prev) => prev.filter((_, i) => i !== index));
-  // };
-
-  const [day, setDay] = useState("");
-  const [hour, setHour] = useState("");
-  const [reminders, setReminders] = useState([]);
-
+  // Enhanced reminder handler
   const handleAddReminder = () => {
-    if (day === "" && hour === "") return;
+    if (!reminderValue || !reminderUnit) return;
 
-    const newReminder = { days: day || 0, hours: hour || 0 };
+    const newReminder = {
+      value: reminderValue,
+      unit: reminderUnit,
+    };
 
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -103,8 +96,8 @@ const EventCreate = () => {
       ],
     }));
 
-    setDay("");
-    setHour("");
+    setReminderValue("");
+    setReminderUnit("");
   };
 
   const handleRemoveReminder = (index) => {
@@ -115,7 +108,7 @@ const EventCreate = () => {
       ),
     }));
   };
-  // console.log("AA", eventType);
+
   console.log("bb", eventUserID);
 
   // Handle input change for form fields
@@ -175,87 +168,11 @@ const EventCreate = () => {
   const validateForm = (formData) => {
     const errors = [];
 
-    // Required fields (text fields)
-    // if (!formData.property_type) {
-    //   errors.push("Project Type is required.");
-    //   return errors; // Return the first error immediately
-    // }
-    // if (!formData.event_type) {
-    //   errors.push("Event Type is Reqired.");
-    //   return errors; // Return the first error immediately
-    // }
     if (!formData.event_name) {
       errors.push("Event Name is required.");
       return errors; // Return the first error immediately
     }
-    // if (!formData.event_at) {
-    //   errors.push("Event At is required.");
-    //   return errors; // Return the first error immediately
-    // }
-    // if (!formData.from_time) {
-    //   errors.push("Event from time is required.");
-    //   return errors; // Return the first error immediately
-    // }
-    // if (!formData.to_time) {
-    //   errors.push("Event to Time is required.");
-    //   return errors; // Return the first error immediately
-    // }
-    // if (!formData.rsvp_action) {
-    //   errors.push("RSVP action is required.");
-    //   return errors; // Return the first error immediately
-    // }
-    // if (formData.rsvp_action === "yes") {
-    //   if (!formData.rsvp_name) {
-    //     errors.push("RSVP Name is required.");
-    //   }
-    //   if (!formData.rsvp_number) {
-    //     errors.push("RSVP Number is required.");
-    //   }
-    // }
-
-    // Continue with other form validation checks...
-
     return errors;
-    if (!formData.description) {
-      errors.push("Event description is required.");
-      return errors; // Return the first error immediately
-    }
-    if (!formData.publish) {
-      errors.push("Event Publish is required.");
-      return errors; // Return the first error immediately
-    }
-    if (!formData.user_id) {
-      errors.push("Event User ID is required.");
-      return errors; // Return the first error immediately
-    }
-    if (!formData.comment) {
-      errors.push("Event Comment is required.");
-      return errors; // Return the first error immediately
-    }
-    if (!formData.shared) {
-      errors.push("Event Shared is required.");
-      return errors; // Return the first error immediately
-    }
-    if (!formData.share_groups) {
-      errors.push("Event Shared Group is required.");
-      return errors; // Return the first error immediately
-    }
-    // if (!formData.attachment) {
-    //   errors.push("Attachment is required.");
-    //   return errors; // Return the first error immediately
-    // }
-
-    // File validation (files must be present)
-    if (!formData.attachfile) {
-      errors.push("attachment is required.");
-      return errors; // Return the first error immediately
-    }
-    // if (formData.two_d_images.length === 0) {
-    //   errors.push("At least one 2D image is required.");
-    //   return errors; // Return the first error immediately
-    // }
-
-    return errors; // Return the first error message if any
   };
 
   const handleSubmit = async (e) => {
@@ -263,7 +180,6 @@ const EventCreate = () => {
     setLoading(true);
     toast.dismiss();
 
-    // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
       validationErrors.forEach((error) => toast.error(error));
@@ -271,7 +187,6 @@ const EventCreate = () => {
       return;
     }
 
-    // Create FormData to send with the request
     const data = new FormData();
     data.append("event[event_type]", formData.event_type);
     data.append("event[event_name]", formData.event_name);
@@ -289,7 +204,6 @@ const EventCreate = () => {
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
     data.append("event[project_id]", selectedProjectId);
 
-    // Add cover image if present
     if (formData.cover_image && formData.cover_image.length > 0) {
       const file = formData.cover_image[0];
       if (file instanceof File) {
@@ -301,18 +215,19 @@ const EventCreate = () => {
       data.append("event[rsvp_name]", formData.rsvp_name);
       data.append("event[rsvp_number]", formData.rsvp_number);
     }
+
+    // Updated reminder data appending
     formData.set_reminders_attributes.forEach((reminder, index) => {
       data.append(
-        `event[set_reminders_attributes][${index}][days]`,
-        reminder.days
+        `event[set_reminders_attributes][${index}][value]`,
+        reminder.value
       );
       data.append(
-        `event[set_reminders_attributes][${index}][hours]`,
-        reminder.hours
+        `event[set_reminders_attributes][${index}][unit]`,
+        reminder.unit
       );
     });
 
-    // date reminder send
     reminders2.forEach((reminder, index) => {
       data.append(
         `event[set_reminders_attributes][${index}][reminder_on]`,
@@ -358,6 +273,7 @@ const EventCreate = () => {
         cover_image: [],
         is_important: "",
         email_trigger_enabled: "",
+        set_reminders_attributes: [],
       });
 
       navigate("/event-list");
@@ -377,7 +293,6 @@ const EventCreate = () => {
 
   useEffect(() => {
     const fetchEvent = async () => {
-      // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
       const url = `${baseURL}events.json`;
 
       try {
@@ -477,20 +392,14 @@ const EventCreate = () => {
                             value: proj.id,
                             label: proj.project_name,
                           }))}
-                          value={selectedProjectId || ""} // Ensure it's controlled
+                          value={selectedProjectId || ""}
                           onChange={(value) => setSelectedProjectId(value)}
                         />
                       </div>
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Event Type
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
+                        <label>Event Type</label>
                         <input
                           className="form-control"
                           type="text"
@@ -521,13 +430,7 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Event At
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
+                        <label>Event At</label>
                         <input
                           className="form-control"
                           type="text"
@@ -541,13 +444,7 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Event From
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
+                        <label>Event From</label>
                         <input
                           className="form-control"
                           type="datetime-local"
@@ -562,13 +459,7 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Event To
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
+                        <label>Event To</label>
                         <input
                           className="form-control"
                           type="datetime-local"
@@ -584,79 +475,10 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event Time</label>
-                        <input
-                          className="form-control"
-                          type="time"
-                          name="SFDC_Project_Id"
-                          placeholder="Enter Event Time"
-                          value=""
-                        />
-                      </div>
-                    </div> */}
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          RSVP Action
-                          <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span>
-                        </label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="rsvp_action"
-                              value="yes"
-                              checked={formData.rsvp_action === "yes"}
-                              onChange={handleChange}
-                              required
-                            />
-                            <label className="form-check-label">Yes</label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="rsvp_action"
-                              value="no"
-                              checked={formData.rsvp_action === "no"}
-                              onChange={handleChange}
-                              required
-                            />
-                            <label className="form-check-label">No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div> */}
 
-                    {/* Conditionally render fields when 'Yes' is selected */}
-
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Event Delete</label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="SFDC_Project_Id"
-                          placeholder="Enter Delete"
-                          value=""
-                        />
-                      </div>
-                    </div> */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Event Description
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
+                        <label>Event Description</label>
                         <textarea
                           className="form-control"
                           rows={1}
@@ -744,50 +566,6 @@ const EventCreate = () => {
                         )}
                       </div>
                     </div>
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event Publish
-                         
-                        </label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="publish"
-                              value="1"
-                              checked={parseInt(formData.publish) === 1} // Convert to number for proper comparison
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  publish: parseInt(e.target.value), // Ensure value is stored as number
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">Yes</label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="publish"
-                              value="0"
-                              checked={parseInt(formData.publish) === 0} // Convert to number for proper comparison
-                              onChange={(e) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  publish: parseInt(e.target.value), // Ensure value is stored as number
-                                }))
-                              }
-                              required
-                            />
-                            <label className="form-check-label">No</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div> */}
 
                     <div className="col-md-3">
                       <div className="form-group">
@@ -828,58 +606,6 @@ const EventCreate = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event Comment
-                         
-                        </label>
-                        <textarea
-                          className="form-control"
-                          rows={1}
-                          name="comment"
-                          placeholder="Enter Comment"
-                          value={formData.comment}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                    </div> */}
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event Shared
-                        
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          required
-                          name="shared"
-                          placeholder="Enter Event Shared"
-                          value={formData.shared}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div> */}
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event Share Groups
-                         
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          required
-                          name="share_groups"
-                          placeholder="Enter Shared Groups"
-                          value={formData.share_groups}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div> */}
 
                     <div className="col-md-3">
                       <div className="form-group">
@@ -930,8 +656,6 @@ const EventCreate = () => {
                           </div>
                         </div>
                       </div>
-
-                      {/* Conditional rendering based on selected option */}
                       {formData.shareWith === "individual" && (
                         <div className="form-group">
                           <label>Event User ID</label>
@@ -954,13 +678,13 @@ const EventCreate = () => {
                                       )?.lastname,
                                   }))
                                 : []
-                            } // Map the string of IDs back to objects for display
+                            }
                             onChange={(selectedOptions) =>
                               setFormData((prev) => ({
                                 ...prev,
                                 user_id: selectedOptions
                                   .map((option) => option.value)
-                                  .join(","), // Join IDs into a comma-separated string
+                                  .join(","),
                               }))
                             }
                           />
@@ -1046,13 +770,7 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          RSVP Action
-                          {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                            {" "}
-                            *
-                          </span> */}
-                        </label>
+                        <label>RSVP Action</label>
                         <div className="d-flex">
                           <div className="form-check me-3">
                             <input
@@ -1114,31 +832,55 @@ const EventCreate = () => {
                         </div>
                       </>
                     )}
+
                     <div className="col-md-6">
                       <label className="form-label">Set Reminders</label>
+
+                      {/* Input fields for adding new reminders */}
                       <div className="row mb-2">
-                        <div className="col-md-2">
+                        <div className="col-md-4">
                           <input
                             type="number"
                             className="form-control"
-                            placeholder="Days"
-                            value={day}
-                            onChange={(e) => setDay(e.target.value)}
-                            min="0"
+                            placeholder="Value"
+                            value={reminderValue}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              const unit = reminderUnit;
+                              const constraints = timeConstraints[unit] || {
+                                min: 0,
+                                max: Infinity,
+                              };
+                              if (
+                                val >= constraints.min &&
+                                val <= constraints.max
+                              ) {
+                                setReminderValue(e.target.value);
+                              }
+                            }}
+                            min={timeConstraints[reminderUnit]?.min || 0}
+                            max={timeConstraints[reminderUnit]?.max || ""}
+                            title={
+                              reminderUnit
+                                ? `Must be between ${timeConstraints[reminderUnit].min} to ${timeConstraints[reminderUnit].max} ${reminderUnit}`
+                                : "Please select a time unit first"
+                            }
                           />
                         </div>
-                        <div className="col-md-2">
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Hours"
-                            value={hour}
-                            onChange={(e) => setHour(e.target.value)}
-                            min="0"
+                        <div className="col-md-4">
+                          <SelectBox
+                            options={timeOptions}
+                            value={reminderUnit || ""}
+                            onChange={(value) => {
+                              setReminderUnit(value);
+                              // Reset value when unit changes to enforce constraints
+                              setReminderValue("");
+                            }}
                           />
                         </div>
-                        <div className="col-md-2">
+                        <div className="col-md-4">
                           <button
+                            type="button"
                             style={{
                               height: "35px",
                               display: "flex",
@@ -1147,156 +889,62 @@ const EventCreate = () => {
                             }}
                             className="btn btn-danger w-100"
                             onClick={handleAddReminder}
-                            disabled={!day && !hour}
+                            disabled={!reminderValue || !reminderUnit}
                           >
-                            Add
+                            Add Reminder
                           </button>
                         </div>
                       </div>
 
+                      {/* Display added reminders */}
                       {formData.set_reminders_attributes.map(
                         (reminder, index) => (
                           <div className="row mb-2" key={index}>
-                            <div className="col-md-2">
+                            <div className="col-md-4">
                               <input
-                                type="text"
+                                type="number"
                                 className="form-control"
-                                value={`${reminder.days} Day(s)`}
+                                value={reminder.value}
                                 readOnly
+                                style={{ backgroundColor: "#f8f9fa" }}
                               />
                             </div>
-                            <div className="col-md-2">
-                              <input
-                                type="text"
+                            <div className="col-md-4">
+                              <select
                                 className="form-control"
-                                value={`${reminder.hours} Hour(s)`}
-                                readOnly
-                              />
+                                value={reminder.unit}
+                                disabled
+                                style={{ backgroundColor: "#f8f9fa" }}
+                              >
+                                {timeOptions.map((option) => (
+                                  <option
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
-                            <div className="col-md-2">
+                            <div className="col-md-4">
                               <button
+                                type="button"
                                 style={{
                                   height: "35px",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
                                 }}
-                                className="btn btn-sm btn-danger w-100"
+                                className="btn btn-danger w-100"
                                 onClick={() => handleRemoveReminder(index)}
                               >
-                                Remove
+                                x
                               </button>
                             </div>
                           </div>
                         )
                       )}
                     </div>
-                    {/* <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Event User ID
-                         
-                        </label>
-                        <MultiSelectBox
-                          options={eventUserID?.map((user) => ({
-                            value: user.id,
-                            label: `${user.firstname} ${user.lastname}`,
-                          }))}
-                          value={
-                            formData.user_id
-                              ? formData.user_id.split(",").map((id) => ({
-                                  value: id,
-                                  label:
-                                    eventUserID.find(
-                                      (user) => user.id.toString() === id
-                                    )?.firstname +
-                                    " " +
-                                    eventUserID.find(
-                                      (user) => user.id.toString() === id
-                                    )?.lastname,
-                                }))
-                              : []
-                          } // Map the string of IDs back to objects for display
-                          onChange={(selectedOptions) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              user_id: selectedOptions
-                                .map((option) => option.value)
-                                .join(","), // Join IDs into a comma-separated string
-                            }))
-                          }
-                        />
-                      </div>
-                    </div> */}
-
-                    {/* For Date Selection  */}
-                    {/* <div className="col-6">
-                        <div className="form-group">
-                        <label>Set Reminders</label>
-                        <div className="d-flex align-items-center mb-2">
-                          
-                          <input
-                            className="form-control me-2"
-                            placeholder="Time Before"
-                            type="datetime-local"
-                            value={reminderDateTime}
-                            onChange={(e) =>
-                              setReminderDateTime(e.target.value)
-                            }
-                          />
-                          <button
-                            className="btn btn-danger"
-                            onClick={handleAddNReminder}
-                            disabled={!reminderDateTime}
-                          >
-                            Add
-                          </button>
-                        </div>
-
-                       
-                        <div className="col-6">
-                          {reminders2.map((reminder, index) => (
-                            <div
-                              key={index}
-                              className="d-flex m-4 justify-content-between align-items-center mb-2"
-                            >
-                              <span>
-                                {reminder.date} -{" "}
-                                {reminder.days > 0
-                                  ? `${reminder.days} day${
-                                      reminder.days > 1 ? "s" : ""
-                                    }`
-                                  : ""}
-                                {reminder.hours > 0
-                                  ? ` ${reminder.hours} hour${
-                                      reminder.hours > 1 ? "s" : ""
-                                    }`
-                                  : ""}{" "}
-                                before
-                              </span>
-                              <div className="d-flex">
-                                <button
-                                  className="btn btn-sm btn-danger ms-2"
-                                  onClick={() => handleRemoveNReminder(index)}
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>  */}
-                    {/* <div className="col-4 ">
-                        <div className="d-flex">
-                          <div>Hours defore</div>
-                          <div>Days before</div>
-                          <div>
-                            <button>Destroy</button>
-                          </div>
-                        </div>
-                      </div> */}
-                    {/* </div> */}
                   </div>
                 </div>
               </div>

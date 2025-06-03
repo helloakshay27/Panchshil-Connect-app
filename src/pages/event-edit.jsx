@@ -50,15 +50,36 @@ const EventEdit = () => {
   const [groups, setGroups] = useState([]); // State to store groups
   const [loading, setLoading] = useState(false);
 
+    const [reminderValue, setReminderValue] = useState("");
+  const [reminderUnit, setReminderUnit] = useState("");
+  
+  const timeOptions = [
+    // { value: "", label: "Select Unit" },
+    { value: "minutes", label: "Minutes" },
+    { value: "hours", label: "Hours" },
+    { value: "days", label: "Days" },
+    { value: "weeks", label: "Weeks" },
+  ];
+
+  const timeConstraints = {
+    minutes: { min: 0, max: 40320 },
+    hours: { min: 0, max: 672 },
+    days: { min: 0, max: 28 },
+    weeks: { min: 0, max: 4 },
+  };
+
   // Set Reminders
   const [day, setDay] = useState("");
   const [hour, setHour] = useState("");
   const [reminders, setReminders] = useState([]);
 
-  const handleAddReminder = () => {
-    if (day === "" && hour === "") return;
+ const handleAddReminder = () => {
+    if (!reminderValue || !reminderUnit) return;
 
-    const newReminder = { days: day || 0, hours: hour || 0 };
+    const newReminder = {
+      value: reminderValue,
+      unit: reminderUnit,
+    };
 
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -68,8 +89,8 @@ const EventEdit = () => {
       ],
     }));
 
-    setDay("");
-    setHour("");
+    setReminderValue("");
+    setReminderUnit("");
   };
 
   const handleRemoveReminder = (index) => {
@@ -84,7 +105,6 @@ const EventEdit = () => {
         // Remove the reminder directly if it's a new one
         reminders.splice(index, 1);
       }
-      console.log("Updated Reminders:", reminders);
 
       return {
         ...prevFormData,
@@ -92,6 +112,27 @@ const EventEdit = () => {
       };
     });
   };
+
+  // Convert reminders to API format before submission
+ const prepareRemindersForSubmission = () => {
+  return formData.set_reminders_attributes.map(reminder => {
+    if (reminder._destroy) {
+      return { id: reminder.id, _destroy: true };
+    }
+    const baseReminder = { id: reminder.id };
+    if (reminder.unit === "days") {
+      baseReminder.days = Number(reminder.value);
+    } else if (reminder.unit === "hours") {
+      baseReminder.hours = Number(reminder.value);
+    } else if (reminder.unit === "minutes") {
+      baseReminder.minutes = Number(reminder.value);
+    } else if (reminder.unit === "weeks") {
+      baseReminder.weeks = Number(reminder.value);
+    }
+    return baseReminder;
+  }).filter(r => !r._destroy || r.id);
+};
+
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -106,11 +147,45 @@ const EventEdit = () => {
         const data = response.data;
 
         // Format reminders
-        const formattedReminders = (data.reminders || []).map((reminder) => ({
-          ...reminder,
-          days: Number(reminder.days || 0),
-          hours: Number(reminder.hours || 0),
-          id: reminder.id,
+       // ...existing code...
+const formattedReminders = (data.reminders || []).map((reminder) => {
+  if (typeof reminder.days !== "undefined" && reminder.days !== null) {
+    return {
+      id: reminder.id,
+      value: reminder.days,
+      unit: "days",
+      _destroy: false
+    };
+  } else if (typeof reminder.hours !== "undefined" && reminder.hours !== null) {
+    return {
+      id: reminder.id,
+      value: reminder.hours,
+      unit: "hours",
+      _destroy: false
+    };
+  } else if (typeof reminder.minutes !== "undefined" && reminder.minutes !== null) {
+    return {
+      id: reminder.id,
+      value: reminder.minutes,
+      unit: "minutes",
+      _destroy: false
+    };
+  } else if (typeof reminder.weeks !== "undefined" && reminder.weeks !== null) {
+    return {
+      id: reminder.id,
+      value: reminder.weeks,
+      unit: "weeks",
+      _destroy: false
+    };
+  }
+  return reminder;
+});
+// ...existing code...
+
+        setFormData(prev => ({
+          ...prev,
+          ...data,
+          set_reminders_attributes: formattedReminders
         }));
 
         // Normalize user_id
@@ -404,6 +479,8 @@ const handleFileChange = (e) => {
 
     const data = new FormData();
 
+     const preparedReminders = prepareRemindersForSubmission();
+
     // === COVER IMAGE ===
     // === COVER IMAGE ===
 if (formData.cover_image && formData.cover_image instanceof File) {
@@ -423,30 +500,19 @@ if (formData.cover_image && formData.cover_image instanceof File) {
     }
 
     // === REMINDERS ===
-    if (Array.isArray(formData.set_reminders_attributes)) {
-      formData.set_reminders_attributes.forEach((reminder, index) => {
-        if (reminder.id) {
-          data.append(
-            `event[set_reminders_attributes][${index}][id]`,
-            reminder.id
-          );
-        }
-        data.append(
-          `event[set_reminders_attributes][${index}][days]`,
-          reminder.days ?? 0
-        );
-        data.append(
-          `event[set_reminders_attributes][${index}][hours]`,
-          reminder.hours ?? 0
-        );
-        if (reminder._destroy) {
-          data.append(
-            `event[set_reminders_attributes][${index}][_destroy]`,
-            "1"
-          );
-        }
-      });
-    }
+  
+    preparedReminders.forEach((reminder, index) => {
+      if (reminder.id) data.append(`event[set_reminders_attributes][${index}][id]`, reminder.id);
+      if (reminder._destroy) {
+        data.append(`event[set_reminders_attributes][${index}][_destroy]`, "1");
+      } else {
+        if (reminder.days) data.append(`event[set_reminders_attributes][${index}][days]`, reminder.days);
+        if (reminder.hours) data.append(`event[set_reminders_attributes][${index}][hours]`, reminder.hours);
+        if (reminder.minutes) data.append(`event[set_reminders_attributes][${index}][minutes]`, reminder.minutes);
+        if (reminder.weeks) data.append(`event[set_reminders_attributes][${index}][weeks]`, reminder.weeks);
+
+      }
+    });
 
     // === USERS ===
     if (Array.isArray(formData.user_id)) {
@@ -1068,74 +1134,102 @@ if (formData.cover_image && formData.cover_image instanceof File) {
                       </div>
                     </div> */}
 
-                    <div className="col-md-12">
-                      <label className="form-label">Set Reminders</label>
-                      <div className="row mb-2">
-                        <div className="col-md-2">
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Days"
-                            value={day}
-                            onChange={(e) => setDay(e.target.value)}
-                            min="0"
-                          />
-                        </div>
-                        <div className="col-md-2">
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Hours"
-                            value={hour}
-                            onChange={(e) => setHour(e.target.value)}
-                            min="0"
-                          />
-                        </div>
-                        <div className="col-md-2">
-                          <button
-                            type="button"
-                            className="btn btn-danger w-100"
-                            onClick={handleAddReminder}
-                            disabled={!day && !hour}
-                          >
-                            Add
-                          </button>
-                        </div>
-                      </div>
+                   <div className="col-md-12">
+      <label className="form-label">Set Reminders</label>
+      
+      {/* Input fields for adding new reminders */}
+      <div className="row mb-2">
+        <div className="col-md-4">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Value"
+            value={reminderValue}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              const unit = reminderUnit;
+              const constraints = timeConstraints[unit] || { min: 0, max: Infinity };
+              if (val >= constraints.min && val <= constraints.max) {
+                setReminderValue(e.target.value);
+              }
+            }}
+            min={timeConstraints[reminderUnit]?.min || 0}
+            max={timeConstraints[reminderUnit]?.max || ""}
+            title={reminderUnit ? 
+              `Must be between ${timeConstraints[reminderUnit].min} to ${timeConstraints[reminderUnit].max} ${reminderUnit}` : 
+              "Please select a time unit first"}
+          />
+        </div>
+        <div className="col-md-4">
+          <SelectBox
+            options={timeOptions}
+            value={reminderUnit || ""}
+            onChange={(value) => {
+              setReminderUnit(value);
+              setReminderValue("");
+            }}
+          />
+        </div>
+        <div className="col-md-4">
+          <button
+            type="button"
+            className="btn btn-danger w-100"
+            onClick={handleAddReminder}
+            disabled={!reminderValue || !reminderUnit}
+            style={{ height: "35px", display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            Add Reminder
+          </button>
+        </div>
+      </div>
 
-                      {/* Fixed reminders display - Always display numeric values */}
-                      {formData.set_reminders_attributes
-                        .filter((reminder) => !reminder._destroy) // Exclude reminders marked for deletion
-                        .map((reminder, index) => (
-                          <div className="row mb-2" key={index}>
-                            <div className="col-md-2">
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={`${Number(reminder.days)} Day(s)`}
-                                readOnly
-                              />
-                            </div>
-                            <div className="col-md-2">
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={`${Number(reminder.hours)} Hour(s)`}
-                                readOnly
-                              />
-                            </div>
-                            <div className="col-md-2">
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-danger w-100"
-                                onClick={() => handleRemoveReminder(index)}
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
+      {/* Display added reminders */}
+     {formData.set_reminders_attributes
+  .filter((reminder) => !reminder._destroy)
+  .map((reminder, index) => (
+    <div className="row mb-2" key={index}>
+      <div className="col-md-4">
+        <input
+          type="number"
+          className="form-control"
+          value={reminder.value}
+          readOnly
+          style={{ backgroundColor: "#f8f9fa" }}
+        />
+      </div>
+      <div className="col-md-4">
+        <select
+          className="form-control"
+          value={reminder.unit}
+          disabled
+          style={{ backgroundColor: "#f8f9fa" }}
+        >
+          {timeOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="col-md-4">
+        <button
+          type="button"
+          className="btn btn-danger w-100"
+          onClick={() => handleRemoveReminder(index)}
+          style={{
+            height: "35px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  ))}
+
+    </div>
                   </div>
                 </div>
               </div>
