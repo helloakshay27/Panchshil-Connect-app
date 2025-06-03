@@ -108,6 +108,15 @@ import PasswordResetSuccess from "./pages/sign_pages/PasswordSuccess";
 
 // const baseurl = window.location.origin;
 
+// const baseURL = process.env.REACT_APP_BASE_URL; // or your const
+
+if (baseURL === "https://api-connect.panchshil.com/") {
+  document.body.classList.add("theme-connect");
+} else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+  document.body.classList.add("theme-dev");
+}
+
+
 let LoginComponent;
 let ForgotPasswordComponent;
 let ForgotOtpComponent;

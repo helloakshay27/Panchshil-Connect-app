@@ -2,16 +2,29 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 :root {
   --body-bg-color: #ffffff;
-  --red: #de7008;
-  --lightred: #de7008;
+  --red: #000000;
+  --lightred: #000000;
   --black: #000000;
   --light-green: #8ed7c6;
   --grey: #3a3a33;
   --light-grey: #8692a6;
   --text-color: #084236;
-  --scrollbar-color: #de7008 /* Red color */;
+  --scrollbar-color: #000000;
 }
 
+/* === Theme: API-CONNECT === */
+body.theme-connect {
+  --red: #de7008;
+  --lightred: #de7008;
+  --scrollbar-color: #de7008;
+}
+
+/* === Theme: DEV-PANCHSHIL === */
+body.theme-dev {
+  --red: #A78847;
+  --lightred: #A78847;
+  --scrollbar-color: #A78847;
+}
 /* .card-tools svg circle{
   fill: var(--red);
 .purple-btn2.card-tools svg path{
