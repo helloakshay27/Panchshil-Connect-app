@@ -12,7 +12,6 @@ const EventEdit = () => {
   const [formErrors, setFormErrors] = useState({});
   const [errors, setErrors] = useState({});
 
-
   console.log("id", id);
 
   const [formData, setFormData] = useState({
@@ -50,9 +49,9 @@ const EventEdit = () => {
   const [groups, setGroups] = useState([]); // State to store groups
   const [loading, setLoading] = useState(false);
 
-    const [reminderValue, setReminderValue] = useState("");
+  const [reminderValue, setReminderValue] = useState("");
   const [reminderUnit, setReminderUnit] = useState("");
-  
+
   const timeOptions = [
     // { value: "", label: "Select Unit" },
     { value: "minutes", label: "Minutes" },
@@ -73,7 +72,7 @@ const EventEdit = () => {
   const [hour, setHour] = useState("");
   const [reminders, setReminders] = useState([]);
 
- const handleAddReminder = () => {
+  const handleAddReminder = () => {
     if (!reminderValue || !reminderUnit) return;
 
     const newReminder = {
@@ -114,25 +113,26 @@ const EventEdit = () => {
   };
 
   // Convert reminders to API format before submission
- const prepareRemindersForSubmission = () => {
-  return formData.set_reminders_attributes.map(reminder => {
-    if (reminder._destroy) {
-      return { id: reminder.id, _destroy: true };
-    }
-    const baseReminder = { id: reminder.id };
-    if (reminder.unit === "days") {
-      baseReminder.days = Number(reminder.value);
-    } else if (reminder.unit === "hours") {
-      baseReminder.hours = Number(reminder.value);
-    } else if (reminder.unit === "minutes") {
-      baseReminder.minutes = Number(reminder.value);
-    } else if (reminder.unit === "weeks") {
-      baseReminder.weeks = Number(reminder.value);
-    }
-    return baseReminder;
-  }).filter(r => !r._destroy || r.id);
-};
-
+  const prepareRemindersForSubmission = () => {
+    return formData.set_reminders_attributes
+      .map((reminder) => {
+        if (reminder._destroy) {
+          return { id: reminder.id, _destroy: true };
+        }
+        const baseReminder = { id: reminder.id };
+        if (reminder.unit === "days") {
+          baseReminder.days = Number(reminder.value);
+        } else if (reminder.unit === "hours") {
+          baseReminder.hours = Number(reminder.value);
+        } else if (reminder.unit === "minutes") {
+          baseReminder.minutes = Number(reminder.value);
+        } else if (reminder.unit === "weeks") {
+          baseReminder.weeks = Number(reminder.value);
+        }
+        return baseReminder;
+      })
+      .filter((r) => !r._destroy || r.id);
+  };
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -147,45 +147,54 @@ const EventEdit = () => {
         const data = response.data;
 
         // Format reminders
-       // ...existing code...
-const formattedReminders = (data.reminders || []).map((reminder) => {
-  if (typeof reminder.days !== "undefined" && reminder.days !== null) {
-    return {
-      id: reminder.id,
-      value: reminder.days,
-      unit: "days",
-      _destroy: false
-    };
-  } else if (typeof reminder.hours !== "undefined" && reminder.hours !== null) {
-    return {
-      id: reminder.id,
-      value: reminder.hours,
-      unit: "hours",
-      _destroy: false
-    };
-  } else if (typeof reminder.minutes !== "undefined" && reminder.minutes !== null) {
-    return {
-      id: reminder.id,
-      value: reminder.minutes,
-      unit: "minutes",
-      _destroy: false
-    };
-  } else if (typeof reminder.weeks !== "undefined" && reminder.weeks !== null) {
-    return {
-      id: reminder.id,
-      value: reminder.weeks,
-      unit: "weeks",
-      _destroy: false
-    };
-  }
-  return reminder;
-});
-// ...existing code...
+        // ...existing code...
+        const formattedReminders = (data.reminders || []).map((reminder) => {
+          if (typeof reminder.days !== "undefined" && reminder.days !== null) {
+            return {
+              id: reminder.id,
+              value: reminder.days,
+              unit: "days",
+              _destroy: false,
+            };
+          } else if (
+            typeof reminder.hours !== "undefined" &&
+            reminder.hours !== null
+          ) {
+            return {
+              id: reminder.id,
+              value: reminder.hours,
+              unit: "hours",
+              _destroy: false,
+            };
+          } else if (
+            typeof reminder.minutes !== "undefined" &&
+            reminder.minutes !== null
+          ) {
+            return {
+              id: reminder.id,
+              value: reminder.minutes,
+              unit: "minutes",
+              _destroy: false,
+            };
+          } else if (
+            typeof reminder.weeks !== "undefined" &&
+            reminder.weeks !== null
+          ) {
+            return {
+              id: reminder.id,
+              value: reminder.weeks,
+              unit: "weeks",
+              _destroy: false,
+            };
+          }
+          return reminder;
+        });
+        // ...existing code...
 
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           ...data,
-          set_reminders_attributes: formattedReminders
+          set_reminders_attributes: formattedReminders,
         }));
 
         // Normalize user_id
@@ -242,42 +251,41 @@ const formattedReminders = (data.reminders || []).map((reminder) => {
 
   const [projects, setProjects] = useState([]); // State to store projects
 
-const handleCoverImageChange = (e) => {
-  const file = e.target.files[0];
+  const handleCoverImageChange = (e) => {
+    const file = e.target.files[0];
 
-  if (file) {
-    // Size check: must be below 3MB
-    if (file.size > 3 * 1024 * 1024) {
+    if (file) {
+      // Size check: must be below 3MB
+      if (file.size > 3 * 1024 * 1024) {
+        setErrors((prev) => ({
+          ...prev,
+          cover_image: "Image size must be under 3MB",
+        }));
+        toast.error("Image size must be under 3MB");
+        e.target.value = ""; // Clear the input
+        return;
+      }
+
+      // Clear previous error if size is valid
       setErrors((prev) => ({
         ...prev,
-        cover_image: "Image size must be under 3MB",
+        cover_image: "",
       }));
-      toast.error("Image size must be under 3MB");
-      e.target.value = ""; // Clear the input
-      return;
+
+      // Save the image
+      setFormData((prev) => ({
+        ...prev,
+        cover_image: file,
+        existingCoverImage: null,
+      }));
+    } else {
+      // If no file is selected
+      setFormData((prev) => ({
+        ...prev,
+        cover_image: null,
+      }));
     }
-
-    // Clear previous error if size is valid
-    setErrors((prev) => ({
-      ...prev,
-      cover_image: "",
-    }));
-
-    // Save the image
-    setFormData((prev) => ({
-      ...prev,
-      cover_image: file,
-      existingCoverImage: null,
-    }));
-  } else {
-    // If no file is selected
-    setFormData((prev) => ({
-      ...prev,
-      cover_image: null,
-    }));
-  }
-};
-
+  };
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -343,54 +351,53 @@ const handleCoverImageChange = (e) => {
     });
   };
 
-const handleFileChange = (e) => {
-  const files = Array.from(e.target.files);
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
 
-  if (files.length > 0) {
-    const allowedImages = [];
-    const newPreviews = [];
+    if (files.length > 0) {
+      const allowedImages = [];
+      const newPreviews = [];
 
-    files.forEach((file) => {
-      const isImage = file.type.startsWith("image/");
-      const isVideo = file.type.startsWith("video/");
+      files.forEach((file) => {
+        const isImage = file.type.startsWith("image/");
+        const isVideo = file.type.startsWith("video/");
 
-      // Validate size based on type
-      if (isImage && file.size > 3 * 1024 * 1024) {
-        toast.error(`${file.name} exceeds 3MB limit for images`);
-        return;
-      }
+        // Validate size based on type
+        if (isImage && file.size > 3 * 1024 * 1024) {
+          toast.error(`${file.name} exceeds 3MB limit for images`);
+          return;
+        }
 
-      if (isVideo && file.size > 10 * 1024 * 1024) {
-        toast.error(`${file.name} exceeds 10MB limit for videos`);
-        return;
-      }
+        if (isVideo && file.size > 10 * 1024 * 1024) {
+          toast.error(`${file.name} exceeds 10MB limit for videos`);
+          return;
+        }
 
-      if (!isImage && !isVideo) {
-        toast.error(`${file.name} is not a supported file type`);
-        return;
-      }
+        if (!isImage && !isVideo) {
+          toast.error(`${file.name} is not a supported file type`);
+          return;
+        }
 
-      // If valid, add to list
-      allowedImages.push(file);
-      newPreviews.push({
-        url: URL.createObjectURL(file),
-        type: file.type,
-        file: file,
-        isExisting: false,
+        // If valid, add to list
+        allowedImages.push(file);
+        newPreviews.push({
+          url: URL.createObjectURL(file),
+          type: file.type,
+          file: file,
+          isExisting: false,
+        });
       });
-    });
 
-    if (allowedImages.length > 0) {
-      setFormData((prev) => ({
-        ...prev,
-        attachfile: allowedImages,
-        newImages: newPreviews,
-        previewImage: [...prev.existingImages, ...newPreviews],
-      }));
+      if (allowedImages.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          attachfile: allowedImages,
+          newImages: newPreviews,
+          previewImage: [...prev.existingImages, ...newPreviews],
+        }));
+      }
     }
-  }
-};
-
+  };
 
   // Function to remove image from preview
   const handleRemoveImage = async (index) => {
@@ -479,16 +486,16 @@ const handleFileChange = (e) => {
 
     const data = new FormData();
 
-     const preparedReminders = prepareRemindersForSubmission();
+    const preparedReminders = prepareRemindersForSubmission();
 
     // === COVER IMAGE ===
     // === COVER IMAGE ===
-if (formData.cover_image && formData.cover_image instanceof File) {
-  data.append("event[cover_image]", formData.cover_image);
-} else if (!formData.cover_image && !formData.existingCoverImage) {
-  // Only send remove if both are null (user removed cover image)
-  data.append("event[remove_cover_image]", "1");
-}
+    if (formData.cover_image && formData.cover_image instanceof File) {
+      data.append("event[cover_image]", formData.cover_image);
+    } else if (!formData.cover_image && !formData.existingCoverImage) {
+      // Only send remove if both are null (user removed cover image)
+      data.append("event[remove_cover_image]", "1");
+    }
 
     // === EVENT IMAGES (NEW ONLY) ===
     if (Array.isArray(formData.attachfile)) {
@@ -500,17 +507,36 @@ if (formData.cover_image && formData.cover_image instanceof File) {
     }
 
     // === REMINDERS ===
-  
+
     preparedReminders.forEach((reminder, index) => {
-      if (reminder.id) data.append(`event[set_reminders_attributes][${index}][id]`, reminder.id);
+      if (reminder.id)
+        data.append(
+          `event[set_reminders_attributes][${index}][id]`,
+          reminder.id
+        );
       if (reminder._destroy) {
         data.append(`event[set_reminders_attributes][${index}][_destroy]`, "1");
       } else {
-        if (reminder.days) data.append(`event[set_reminders_attributes][${index}][days]`, reminder.days);
-        if (reminder.hours) data.append(`event[set_reminders_attributes][${index}][hours]`, reminder.hours);
-        if (reminder.minutes) data.append(`event[set_reminders_attributes][${index}][minutes]`, reminder.minutes);
-        if (reminder.weeks) data.append(`event[set_reminders_attributes][${index}][weeks]`, reminder.weeks);
-
+        if (reminder.days)
+          data.append(
+            `event[set_reminders_attributes][${index}][days]`,
+            reminder.days
+          );
+        if (reminder.hours)
+          data.append(
+            `event[set_reminders_attributes][${index}][hours]`,
+            reminder.hours
+          );
+        if (reminder.minutes)
+          data.append(
+            `event[set_reminders_attributes][${index}][minutes]`,
+            reminder.minutes
+          );
+        if (reminder.weeks)
+          data.append(
+            `event[set_reminders_attributes][${index}][weeks]`,
+            reminder.weeks
+          );
       }
     });
 
@@ -583,11 +609,17 @@ if (formData.cover_image && formData.cover_image instanceof File) {
   };
 
   const formatDateForInput = (isoString) => {
-    if (!isoString) return ""; // Handle empty values
+    if (!isoString) return "";
     const date = new Date(isoString);
-    return date.toISOString().slice(0, 16); // Extract "YYYY-MM-DDTHH:MM"
+    // Get local date and time in "YYYY-MM-DDTHH:MM" format
+    const pad = (n) => n.toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
-
   const handleCancel = () => {
     navigate(-1);
   };
@@ -684,7 +716,6 @@ if (formData.cover_image && formData.cover_image instanceof File) {
                           type="datetime-local"
                           name="from_time"
                           placeholder="Enter Event From"
-                          min={getCurrentDateTime()}
                           value={formatDateForInput(formData.from_time) || ""}
                           onChange={handleChange}
                         />
@@ -699,7 +730,6 @@ if (formData.cover_image && formData.cover_image instanceof File) {
                           type="datetime-local"
                           name="to_time"
                           placeholder="Enter Event To"
-                          min={getCurrentDateTime()}
                           value={formatDateForInput(formData.to_time)}
                           onChange={handleChange}
                         />
@@ -1134,102 +1164,117 @@ if (formData.cover_image && formData.cover_image instanceof File) {
                       </div>
                     </div> */}
 
-                   <div className="col-md-12">
-      <label className="form-label">Set Reminders</label>
-      
-      {/* Input fields for adding new reminders */}
-      <div className="row mb-2">
-        <div className="col-md-4">
-          <input
-            type="number"
-            className="form-control"
-            placeholder="Value"
-            value={reminderValue}
-            onChange={(e) => {
-              const val = Number(e.target.value);
-              const unit = reminderUnit;
-              const constraints = timeConstraints[unit] || { min: 0, max: Infinity };
-              if (val >= constraints.min && val <= constraints.max) {
-                setReminderValue(e.target.value);
-              }
-            }}
-            min={timeConstraints[reminderUnit]?.min || 0}
-            max={timeConstraints[reminderUnit]?.max || ""}
-            title={reminderUnit ? 
-              `Must be between ${timeConstraints[reminderUnit].min} to ${timeConstraints[reminderUnit].max} ${reminderUnit}` : 
-              "Please select a time unit first"}
-          />
-        </div>
-        <div className="col-md-4">
-          <SelectBox
-            options={timeOptions}
-            value={reminderUnit || ""}
-            onChange={(value) => {
-              setReminderUnit(value);
-              setReminderValue("");
-            }}
-          />
-        </div>
-        <div className="col-md-4">
-          <button
-            type="button"
-            className="btn btn-danger w-100"
-            onClick={handleAddReminder}
-            disabled={!reminderValue || !reminderUnit}
-            style={{ height: "35px", display: "flex", alignItems: "center", justifyContent: "center" }}
-          >
-            Add Reminder
-          </button>
-        </div>
-      </div>
+                    <div className="col-md-12">
+                      <label className="form-label">Set Reminders</label>
 
-      {/* Display added reminders */}
-     {formData.set_reminders_attributes
-  .filter((reminder) => !reminder._destroy)
-  .map((reminder, index) => (
-    <div className="row mb-2" key={index}>
-      <div className="col-md-4">
-        <input
-          type="number"
-          className="form-control"
-          value={reminder.value}
-          readOnly
-          style={{ backgroundColor: "#f8f9fa" }}
-        />
-      </div>
-      <div className="col-md-4">
-        <select
-          className="form-control"
-          value={reminder.unit}
-          disabled
-          style={{ backgroundColor: "#f8f9fa" }}
-        >
-          {timeOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="col-md-4">
-        <button
-          type="button"
-          className="btn btn-danger w-100"
-          onClick={() => handleRemoveReminder(index)}
-          style={{
-            height: "35px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          ×
-        </button>
-      </div>
-    </div>
-  ))}
+                      {/* Input fields for adding new reminders */}
+                      <div className="row mb-2">
+                        <div className="col-md-4">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Value"
+                            value={reminderValue}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              const unit = reminderUnit;
+                              const constraints = timeConstraints[unit] || {
+                                min: 0,
+                                max: Infinity,
+                              };
+                              if (
+                                val >= constraints.min &&
+                                val <= constraints.max
+                              ) {
+                                setReminderValue(e.target.value);
+                              }
+                            }}
+                            min={timeConstraints[reminderUnit]?.min || 0}
+                            max={timeConstraints[reminderUnit]?.max || ""}
+                            title={
+                              reminderUnit
+                                ? `Must be between ${timeConstraints[reminderUnit].min} to ${timeConstraints[reminderUnit].max} ${reminderUnit}`
+                                : "Please select a time unit first"
+                            }
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <SelectBox
+                            options={timeOptions}
+                            value={reminderUnit || ""}
+                            onChange={(value) => {
+                              setReminderUnit(value);
+                              setReminderValue("");
+                            }}
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <button
+                            type="button"
+                            className="btn btn-danger w-100"
+                            onClick={handleAddReminder}
+                            disabled={!reminderValue || !reminderUnit}
+                            style={{
+                              height: "35px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            Add Reminder
+                          </button>
+                        </div>
+                      </div>
 
-    </div>
+                      {/* Display added reminders */}
+                      {formData.set_reminders_attributes
+                        .filter((reminder) => !reminder._destroy)
+                        .map((reminder, index) => (
+                          <div className="row mb-2" key={index}>
+                            <div className="col-md-4">
+                              <input
+                                type="number"
+                                className="form-control"
+                                value={reminder.value}
+                                readOnly
+                                style={{ backgroundColor: "#f8f9fa" }}
+                              />
+                            </div>
+                            <div className="col-md-4">
+                              <select
+                                className="form-control"
+                                value={reminder.unit}
+                                disabled
+                                style={{ backgroundColor: "#f8f9fa" }}
+                              >
+                                {timeOptions.map((option) => (
+                                  <option
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="col-md-4">
+                              <button
+                                type="button"
+                                className="btn btn-danger w-100"
+                                onClick={() => handleRemoveReminder(index)}
+                                style={{
+                                  height: "35px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </div>
               </div>

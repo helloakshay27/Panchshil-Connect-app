@@ -452,7 +452,7 @@ const EventCreate = () => {
                           placeholder="Enter Event From "
                           value={formData.from_time}
                           required
-                          min={new Date().toISOString().slice(0, 16)}
+                          // min={new Date().toISOString().slice(0, 16)}
                           onChange={handleChange}
                         />
                       </div>
@@ -467,10 +467,6 @@ const EventCreate = () => {
                           placeholder="Enter Event To"
                           required
                           value={formData.to_time}
-                          min={
-                            formData.from_time ||
-                            new Date().toISOString().slice(0, 16)
-                          }
                           onChange={handleChange}
                         />
                       </div>
