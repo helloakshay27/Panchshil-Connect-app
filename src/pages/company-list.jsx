@@ -193,7 +193,7 @@ const CompanyList = () => {
                           <th>Sr No</th>
                           <th>Company Name</th>
                           <th>Logo</th>
-                          <th>Organization Id</th>
+                          {/* <th>Organization Id</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -242,7 +242,7 @@ const CompanyList = () => {
                                 }}
                               />
                             </td>
-                            <td>{company.organization_name || "-"}</td>
+                            {/* <td>{company.organization_name || "-"}</td> */}
                           </tr>
                         ))}
                       </tbody>

@@ -170,7 +170,7 @@ const CompanyEdit = () => {
                       "No Image Selected"
                     )}
                   </div>
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Organization Id
@@ -190,7 +190,7 @@ const CompanyEdit = () => {
                         }}
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

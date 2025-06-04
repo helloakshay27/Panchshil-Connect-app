@@ -65,10 +65,10 @@ const CompanyCreate = () => {
       toast.error("Company Logo is required.");
       return false;
     }
-    if (!formData.organizationId) {
-      toast.error("Organization ID is required.");
-      return false;
-    }
+    // if (!formData.organizationId) {
+    //   toast.error("Organization ID is required.");
+    //   return false;
+    // }
     return true;
   };
 
@@ -178,7 +178,7 @@ const CompanyCreate = () => {
                   </div>
 
                   {/* Organization ID */}
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Organization ID <span className="otp-asterisk">{" "}*</span>
@@ -201,7 +201,7 @@ const CompanyCreate = () => {
                         }
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
