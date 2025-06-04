@@ -96,6 +96,7 @@ import SiteCreate from "./pages/site-create";
 import SiteList from "./pages/site-list";
 import SiteEdit from "./pages/site-edit";
 import PasswordResetSuccess from "./pages/sign_pages/PasswordSuccess";
+import ReferralEdit from "./pages/referral-edit";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -235,6 +236,7 @@ function App() {
           <Route path="/event-create" element={<EventCreate />} />
           <Route path="/referral-create" element={<Referralcreate />} />
           <Route path="/referral-list" element={<Referrallist />} />
+          <Route path="/referral-edit/:id" element={<ReferralEdit />} />
           <Route path="/event-list" element={<Eventlist />} />
           <Route path="/event-details/:id" element={<EventDetails />} />
           <Route path="/event-details" element={<EventDetails />} />

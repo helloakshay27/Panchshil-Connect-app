@@ -1,6 +1,6 @@
 // const baseURL = "https://panchshil-super.lockated.com/";
-// const baseURL = "https://dev-panchshil-super-app.lockated.com/";
-const baseURL = "https://api-connect.panchshil.com/"
+const baseURL = "https://dev-panchshil-super-app.lockated.com/";
+// const baseURL = "https://api-connect.panchshil.com/"
 // const baseURL = "http://localhost:3000/";
 
 
