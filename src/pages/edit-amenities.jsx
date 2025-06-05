@@ -97,11 +97,11 @@ const EditAmenities = () => {
   };
 
   const validateForm = () => {
-    if (!name.trim() || !amenityType) {
-      toast.dismiss();
-      toast.error("Please fill in all required fields.");
-      return false;
-    }
+    // if (!name.trim() || !amenityType) {
+    //   toast.dismiss();
+    //   toast.error("Please fill in all required fields.");
+    //   return false;
+    // }
     return true;
   };
 

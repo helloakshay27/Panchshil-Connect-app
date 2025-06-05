@@ -74,11 +74,11 @@ const Amenities = () => {
   };
 
   const validateForm = () => {
-    if (!name.trim() || !amenityType || !icon) {
-      toast.dismiss();
-      toast.error("Please fill in all the required fields.");
-      return false;
-    }
+    // if (!name.trim() || !amenityType || !icon) {
+    //   toast.dismiss();
+    //   toast.error("Please fill in all the required fields.");
+    //   return false;
+    // }
     return true;
   };
 
