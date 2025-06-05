@@ -825,6 +825,44 @@ const ProjectDetailsEdit = () => {
     }
   };
 
+    const handleFileDiscardCoverImage = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}projects/${id}/remove_cover_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Image deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
+  };
+
+
   const handleFileDiscardCreativeGenerics = async (key, index) => {
     const Image = formData[key][index]; // Get the selected image
     if (!Image.id) {
@@ -1590,14 +1628,16 @@ const ProjectDetailsEdit = () => {
     });
   };
 
-  const handleDeleteVirtualTour = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      virtual_tour_url_multiple: prev.virtual_tour_url_multiple.filter(
-        (_, i) => i !== index
-      ),
-    }));
-  };
+ const handleDeleteVirtualTour = (index) => {
+  setFormData((prev) => ({
+    ...prev,
+    virtual_tour_url_multiple: prev.virtual_tour_url_multiple.filter((_, i) => i !== index),
+  }));
+
+  toast.success("Virtual tour removed!");
+};
+
+
 
   const amenityTypes = [
     ...new Set(amenities.map((ammit) => ammit.amenity_type)),
@@ -3676,7 +3716,7 @@ const ProjectDetailsEdit = () => {
                     </thead>
                     <tbody>
                       {/* 2D Images */}
-                      {formData.cover_images.map((file, index) => (
+                      {formData.cover_images?.map((file, index) => (
                         <tr key={index}>
                           <td>{file.document_file_name || file.name}</td>{" "}
                           {/* Show name from API or uploaded file */}
@@ -3701,7 +3741,7 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleFileDiscardCreative("cover_images", index)
+                                handleFileDiscardCoverImage("cover_images", index)
                               }
                             >
                               x

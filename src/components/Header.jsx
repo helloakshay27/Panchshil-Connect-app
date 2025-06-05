@@ -15,7 +15,7 @@ const Header = () => {
 
   useEffect(() => {
     // Determine which logo to display based on baseURL
-    if (baseURL === "https://panchshil-super.lockated.com/") {
+    if (baseURL === "https://api-connect.panchshil.com/") {
       setCurrentLogo(LOGO_URL);
     } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
       setCurrentLogo(Rustomji_URL_Black);
@@ -71,7 +71,6 @@ const Header = () => {
                   ? `${firstname || ""} ${lastname || ""}`
                   : "First Name"}
               </h5>
-
               <p className="text-black">
                 {localStorage.getItem("email") || "example@example.com"}
               </p>

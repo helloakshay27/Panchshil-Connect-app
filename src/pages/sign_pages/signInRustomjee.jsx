@@ -64,14 +64,13 @@ const SignInRustomjee = () => {
       });
 
       if (response.data.access_token) {
-         localStorage.setItem("access_token", response.data?.access_token);
-        sessionStorage.setItem("email", response.data?.email);
-        sessionStorage.setItem("firstname", response.data?.firstname);
-        sessionStorage.setItem("lastname", response.data?.lastname);
-        sessionStorage.setItem("user_id", response.data?.id);
-        sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
-
-         const lockRole = response?.data?.lock_role;
+        localStorage.setItem("access_token", response.data?.access_token);
+        localStorage.setItem("email", response.data?.email);
+        localStorage.setItem("firstname", response.data?.firstname);
+        localStorage.setItem("lastname", response.data?.lastname);
+        localStorage.setItem("user_id", response.data?.id);
+        localStorage.setItem("profile_icon", response?.data?.profile_icon_url);
+        const lockRole = response?.data?.lock_role;
         if (lockRole) {
           localStorage.setItem("lock_role_name", lockRole.name);
           localStorage.setItem(
