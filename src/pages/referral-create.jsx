@@ -209,82 +209,82 @@ const ReferralCreate = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section p-3">
-          <form onSubmit={handleSubmit}>
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Create Referral</h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  {/* Project Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Project <span className="otp-asterisk"> *</span>
-                      </label>
-                      <SelectBox
-                        options={projects.map((proj) => ({
-                          label: proj.project_name,
-                          value: proj.id,
-                        }))}
-                        value={selectedProjectId}
-                        onChange={(value) => setSelectedProjectId(value)}
-                        required
-                      />
-                    </div>
+      {/* <div className="website-content overflow-auto"> */}
+      <div className="module-data-section p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card mt-4 pb-4 mx-4">
+            <div className="card-header">
+              <h3 className="card-title">Create Referral</h3>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                {/* Project Field */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Project <span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={projects.map((proj) => ({
+                        label: proj.project_name,
+                        value: proj.id,
+                      }))}
+                      value={selectedProjectId}
+                      onChange={(value) => setSelectedProjectId(value)}
+                      required
+                    />
                   </div>
+                </div>
 
-                  {/* Name Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Name</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Enter Name"
-                        name="name"
-                        value={referralData.name}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                {/* Name Field */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Name</label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Enter Name"
+                      name="name"
+                      value={referralData.name}
+                      onChange={handleInputChange}
+                    />
                   </div>
+                </div>
 
-                  {/* Email Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Email</label>
-                      <input
-                        className="form-control"
-                        type="email"
-                        placeholder="Enter Email"
-                        name="email"
-                        value={referralData.email}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                {/* Email Field */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      className="form-control"
+                      type="email"
+                      placeholder="Enter Email"
+                      name="email"
+                      value={referralData.email}
+                      onChange={handleInputChange}
+                    />
                   </div>
+                </div>
 
-                  {/* Mobile Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Mobile No</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="Enter Mobile No"
-                        name="mobile"
-                        value={referralData.mobile}
-                        maxLength={10}
-                        onChange={handleMobileChange}
-                      />
-                    </div>
+                {/* Mobile Field */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Mobile No</label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Enter Mobile No"
+                      name="mobile"
+                      value={referralData.mobile}
+                      maxLength={10}
+                      onChange={handleMobileChange}
+                    />
                   </div>
+                </div>
 
-                  {/* Referral Code Field */}
-                  <div className="col-md-3">
+                {/* Referral Code Field */}
+                {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>Referral Code</label>
                       <input
@@ -296,149 +296,154 @@ const ReferralCreate = () => {
                         onChange={handleInputChange}
                       />
                     </div>
+                  </div> */}
+
+                {/* Title Field */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Title <span className="otp-asterisk"> *</span>
+                    </label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Enter Title"
+                      name="title"
+                      value={referralData.title}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </div>
+                </div>
 
-                  {/* Title Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Title <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Enter Title"
-                        name="title"
-                        value={referralData.title}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
+                {/* Description Field */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                      className="form-control"
+                      rows={1}
+                      placeholder="Enter Description"
+                      name="description"
+                      value={referralData.description}
+                      onChange={handleInputChange}
+                    />
                   </div>
+                </div>
 
-                  {/* Description Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Description</label>
-                      <textarea
-                        className="form-control"
-                        rows={1}
-                        placeholder="Enter Description"
-                        name="description"
-                        value={referralData.description}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
+                {/* Images Field */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Images{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max 5 images, 3MB each
+                          </span>
+                        )}
+                      </span>
+                    </label>
+                    <input
+                      className="form-control"
+                      type="file"
+                      name="referral_images"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      multiple
+                    />
 
-                  {/* Images Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Images{" "}
-                        <span
-                          className="tooltip-container"
-                          onMouseEnter={() => setShowTooltip(true)}
-                          onMouseLeave={() => setShowTooltip(false)}
-                        >
-                          [i]
-                          {showTooltip && (
-                            <span className="tooltip-text">
-                              Max 5 images, 3MB each
-                            </span>
-                          )}
-                        </span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        name="referral_images"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        multiple
-                      />
-
-                      {/* Image Preview */}
-                      {referralData.images.length > 0 && (
-                        <div className="mt-3">
-                          <label className="form-label fw-bold">
-                            Image Preview:
-                          </label>
-                          <div className="d-flex flex-wrap gap-2">
-                            {referralData.images.map((image, index) => (
-                              <div
-                                key={index}
-                                className="position-relative"
-                                style={{ width: "100px", height: "100px" }}
+                    {/* Image Preview */}
+                    {referralData.images.length > 0 && (
+                      <div className="mt-3">
+                        <label className="form-label fw-bold">
+                          {/* Image Preview: */}
+                        </label>
+                        <div className="d-flex flex-wrap gap-2">
+                          {referralData.images.map((image, index) => (
+                            <div
+                              key={index}
+                              className="position-relative"
+                              style={{ width: "100px", height: "100px" }}
+                            >
+                              <img
+                                src={URL.createObjectURL(image)}
+                                alt={`Preview ${index + 1}`}
+                                className="img-thumbnail"
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
+                              />
+                              <button
+                                type="button"
+                                className="btn btn-danger btn-sm position-absolute"
+                                title="Remove image"
+                                style={{
+                                  top: "-5px",
+                                  right: "-5px",
+                                  fontSize: "10px",
+                                  width: "20px",
+                                  height: "20px",
+                                  padding: "0px",
+                                  borderRadius: "50%",
+                                }}
+                                onClick={() => removeImage(index)}
+                                // title="Remove image"
                               >
-                                <img
-                                  src={URL.createObjectURL(image)}
-                                  alt={`Preview ${index + 1}`}
-                                  className="img-thumbnail"
-                                  style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                  }}
-                                />
-                                <button
-                                  type="button"
-                                  className="btn btn-danger btn-sm position-absolute top-0 end-0"
-                                  style={{
-                                    padding: "2px 6px",
-                                    fontSize: "12px",
-                                    transform: "translate(25%, -25%)",
-                                  }}
-                                  onClick={() => removeImage(index)}
-                                  title="Remove image"
+                                ×
+                              </button>
+                              <div className="text-center mt-1">
+                                <small
+                                  className="text-muted"
+                                  style={{ fontSize: "10px" }}
                                 >
-                                  ×
-                                </button>
-                                <div className="text-center mt-1">
-                                  <small
-                                    className="text-muted"
-                                    style={{ fontSize: "10px" }}
-                                  >
-                                    {image.name.length > 15
-                                      ? `${image.name.substring(0, 15)}...`
-                                      : image.name}
-                                  </small>
-                                </div>
+                                  {image.name.length > 15
+                                    ? `${image.name.substring(0, 15)}...`
+                                    : image.name}
+                                </small>
                               </div>
-                            ))}
-                          </div>
+                            </div>
+                          ))}
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Submit and Cancel Buttons */}
-            <div className="row mt-2 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 purple-btn2-shadow w-100"
-                  disabled={loading}
-                >
-                  {loading ? "Submitting..." : "Submit"}
-                </button>
-              </div>
-              <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 purple-btn2-shadow w-100"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-              </div>
+          {/* Submit and Cancel Buttons */}
+          <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button
+                type="submit"
+                className="purple-btn2 purple-btn2-shadow w-100"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
             </div>
-          </form>
-        </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 purple-btn2-shadow w-100"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
+      {/* </div> */}
     </div>
   );
 };

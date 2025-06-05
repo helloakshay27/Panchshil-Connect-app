@@ -14,6 +14,7 @@ const ReferralEdit = () => {
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(true);
   const [existingImages, setExistingImages] = useState([]); // For existing images from server
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -155,7 +156,7 @@ const ReferralEdit = () => {
   const removeExistingImage = async (imageId, indexToRemove) => {
     try {
       // Make API call to remove image from server using the remove_images endpoint
-      await axios.delete(`${baseURL}referrals/${id}/remove_images.json`, {
+      await axios.delete(`${baseURL}referrals/${id}/remove_images/${imageId}.json`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "application/json",
@@ -302,7 +303,7 @@ const ReferralEdit = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
+      {/* <div className="website-content overflow-auto"> */}
         <div className="module-data-section p-3">
           <form onSubmit={handleSubmit}>
             <div className="card mt-4 pb-4 mx-4">
@@ -378,7 +379,7 @@ const ReferralEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Referral Code
@@ -393,7 +394,7 @@ const ReferralEdit = () => {
                         onChange={handleChange}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* New row for title, description, and image */}
                   {/* <div className="row"> */}
@@ -428,7 +429,18 @@ const ReferralEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Images<span style={{ color: "#de7008" }}> *</span>
+                        Images <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max 5 images, 3MB each
+                          </span>
+                        )}
+                      </span>
                         <small className="text-muted"> </small>
                       </label>
                       <input
@@ -446,7 +458,7 @@ const ReferralEdit = () => {
                         formData.images.length === 0 && (
                           <div className="mb-3">
                             <label className="form-label fw-bold">
-                              Current Images:
+                              {/* Current Images: */}
                             </label>
                             <div className="d-flex flex-wrap gap-2">
                               {existingImages.map((image, index) => (
@@ -505,7 +517,7 @@ const ReferralEdit = () => {
                       {formData.images.length > 0 && (
                         <div className="mt-3">
                           <label className="form-label fw-bold">
-                            New Image Preview:
+                            {/* New Image Preview: */}
                           </label>
                           <div className="d-flex flex-wrap gap-2">
                             {/* Only show the first image */}
@@ -596,7 +608,7 @@ const ReferralEdit = () => {
             </div>
           </form>
         </div>
-      </div>
+      {/* </div> */}
     </div>
   );
 };
