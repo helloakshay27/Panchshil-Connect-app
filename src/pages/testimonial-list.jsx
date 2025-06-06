@@ -110,7 +110,7 @@ const TestimonialList = () => {
     try {
       await axios.put(
         `${baseURL}testimonials/${id}.json`,
-        { testimonial: { published: updatedStatus } }, // Changed from 'project' to 'testimonial'
+        { testimonial: { active: updatedStatus } }, // Changed from 'project' to 'testimonial'
         {
           headers: {
             "Content-Type": "application/json",
@@ -122,7 +122,7 @@ const TestimonialList = () => {
       // Update testimonials state instead of projects
       setTestimonials((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, published: updatedStatus } : item
+          item.id === id ? { ...item, active: updatedStatus } : item
         )
       );
 
@@ -300,7 +300,7 @@ const TestimonialList = () => {
                               {testimonialPermissions.show === "true" && (
                                 <button
                                   onClick={() =>
-                                    handleToggle(testimonial.id, testimonial.published)
+                                    handleToggle(testimonial.id, testimonial.active)
                                   }
                                   className="toggle-button"
                                   style={{
@@ -311,7 +311,7 @@ const TestimonialList = () => {
                                     width: "35px",
                                   }}
                                 >
-                                  {testimonial.published ? (
+                                  {testimonial.active ? (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       width="40"
