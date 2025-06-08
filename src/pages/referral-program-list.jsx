@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 
-const Referrallist = () => {
+const ReferralProgramList = () => {
   const [referrals, setReferrals] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("referral_list_currentPage")) || 1;
   };
+
   const [pagination, setPagination] = useState({
     current_page: getPageFromStorage(),
     total_count: 0,
@@ -19,46 +21,53 @@ const Referrallist = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchReferrals = async () => {
-      setLoading(true); // Start loading
-      try {
-        const response = await fetch(`${baseURL}referrals/get_all_referrals`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        });
-
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          if (response.status === 401) {
-            setError("Unauthorized: Please check your API key or token.");
-          } else {
-            setError(`HTTP error! status: ${response.status}`);
-          }
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setReferrals(data.referrals || []);
-        console.log(data.referrals);
-        setPagination((prevState) => ({
-          ...prevState,
-          total_count: data.referrals.length,
-          total_pages: Math.ceil(data.referrals.length / pageSize),
-          current_page: getPageFromStorage(),
-        }));
-      } catch (error) {
-        console.error("Error fetching referral data:", error);
-        setError("Failed to fetch data.");
-        setReferrals([]);
-      } finally {
-        setLoading(false); // Stop loading after fetching
-      }
-    };
-
     fetchReferrals();
   }, []);
+
+  const fetchReferrals = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(`${baseURL}/referral_configs.json`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError("Unauthorized: Please check your API key or token.");
+        } else if (response.status === 404) {
+          setError("Referral configs not found.");
+        } else {
+          setError(`HTTP error! status: ${response.status}`);
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("API Response:", data);
+      
+      // Handle different possible response structures
+      const referralList = data.referrals || data.referral_configs || data || [];
+      
+      setReferrals(referralList);
+      setPagination((prevState) => ({
+        ...prevState,
+        total_count: referralList.length,
+        total_pages: Math.ceil(referralList.length / pageSize),
+        current_page: getPageFromStorage(),
+      }));
+    } catch (error) {
+      console.error("Error fetching referral data:", error);
+      setError("Failed to fetch referral data. Please try again.");
+      setReferrals([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({
@@ -69,7 +78,8 @@ const Referrallist = () => {
   };
 
   const filteredReferrals = referrals.filter((referral) =>
-    (referral.name || "").toLowerCase().includes(searchQuery.toLowerCase())
+    (referral.title || referral.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (referral.description || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const totalFiltered = filteredReferrals.length;
@@ -82,16 +92,16 @@ const Referrallist = () => {
 
   return (
     <div className="main-content">
-      {/* <div className="website-content overflow-auto"> */}
       <div className="module-data-section container-fluid">
         {error && <div className="alert alert-danger">{error}</div>}
+        
         <div className="d-flex justify-content-end px-4 pt-2 mt-3">
           <div className="col-md-4 pe-2 pt-2">
             <div className="input-group">
               <input
                 type="text"
                 className="form-control tbl-search table_search"
-                placeholder="Search"
+                placeholder="Search by title or description"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -120,11 +130,11 @@ const Referrallist = () => {
               </div>
             </div>
           </div>
-          {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+          {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/referral-create")}
+                onClick={() => navigate("/referral-program-create")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -139,12 +149,12 @@ const Referrallist = () => {
                 <span>Add</span>
               </button>
             </div>
-          )} */}
+          )}
         </div>
 
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
-            <h3 className="card-title">Referral List</h3>
+            <h3 className="card-title">Referral Program List</h3>
           </div>
           <div className="card-body mt-4 pb-4 pt-0">
             {loading ? (
@@ -158,35 +168,30 @@ const Referrallist = () => {
                 </div>
               </div>
             ) : (
-              <div className="tbl-container mt-4 ">
+              <div className="tbl-container mt-4">
                 <table className="w-100">
                   <thead>
                     <tr>
-                      {/* {baseURL ===
-                        "https://dev-panchshil-super-app.lockated.com/" && (
+                      {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
                         <th>Action</th>
-                      )} */}
-
+                      {/* )} */}
                       <th>Sr No</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Mobile No</th>
-                      <th>Referral Code</th>
-                      <th>Project Name</th>
+                      <th>Title</th>
+                      <th>Description</th>
+                      <th>Attachments</th>
+                      {/* <th>Created Date</th> */}
                     </tr>
                   </thead>
                   <tbody>
                     {displayedReferrals.length > 0 ? (
                       displayedReferrals.map((referral, index) => (
-                        <tr key={referral.id}>
-                          {/* {baseURL ===
-                              "https://dev-panchshil-super-app.lockated.com/" && (
-                          <td>
-                            
+                        <tr key={referral.id || index}>
+                          {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
+                            <td>
                               <a
-                                href={`/referral-edit/${referral.id}`}
+                                href={`/referral-program-edit/${referral.id}`}
                                 className="me-2"
-                                title="Edit Referral"
+                                title="Edit Referral Config"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -205,26 +210,70 @@ const Referrallist = () => {
                                   />
                                 </svg>
                               </a>
-                           
-                          </td>
-                           )} */}
-
+                            </td>
+                          {/* )} */}
                           <td>
-                            {(pagination.current_page - 1) * pageSize +
-                              index +
-                              1}
+                            {(pagination.current_page - 1) * pageSize + index + 1}
                           </td>
-                          <td>{referral.name || "-"}</td>
-                          <td>{referral.email || "-"}</td>
-                          <td>{referral.mobile || "-"}</td>
-                          <td>{referral.referral_code || "-"}</td>
-                          <td>{referral.project_name || "-"}</td>
+                          <td>{referral.title || "-"}</td>
+                          <td>{referral.description || "-"}</td>
+                         <td className="text-center">
+  {referral.attachments && referral.attachments.length > 0 ? (
+    (() => {
+      const previewFile = referral.attachments.find(file =>
+        file.document_content_type?.startsWith("image/") ||
+        file.document_content_type?.startsWith("video/")
+      );
+
+      if (!previewFile) return "Attachment available";
+
+      return previewFile.document_content_type.startsWith("video/") ? (
+        <video
+          width="100"
+          height="65"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            display: "block",
+            borderRadius: "8px",
+            objectFit: "cover",
+          }}
+        >
+          <source src={previewFile.document_url} type={previewFile.document_content_type} />
+          Your browser does not support the video tag.
+        </video>
+      ) : (
+        <img
+          src={previewFile.document_url}
+          alt="Attachment Preview"
+          className="img-fluid rounded"
+          style={{
+            maxWidth: "100px",
+            maxHeight: "100px",
+            display: "block",
+          }}
+        />
+      );
+    })()
+  ) : (
+    "No attachments"
+  )}
+</td>
+
+                          {/* <td>
+                            {referral.created_at 
+                              ? new Date(referral.created_at).toLocaleDateString() 
+                              : "-"
+                            }
+                          </td> */}
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="7" className="text-center">
-                          No referrals found.
+                        <td colSpan="6" className="text-center">
+                          No referral configs found.
                         </td>
                       </tr>
                     )}
@@ -233,6 +282,7 @@ const Referrallist = () => {
               </div>
             )}
 
+            {/* Pagination Section */}
             <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
               <ul className="pagination" role="navigation" aria-label="pager">
                 {/* First Button */}
@@ -276,12 +326,10 @@ const Referrallist = () => {
                   let startPage = Math.max(currentPage - 2, 1);
                   let endPage = Math.min(startPage + 4, totalPages);
 
-                  // Adjust start if end is near total
                   if (endPage - startPage < 5) {
                     startPage = Math.max(endPage - 4, 1);
                   }
 
-                  // Show first page and ellipsis if needed
                   if (startPage > 1) {
                     pageNumbers.push(
                       <li key={1} className="page-item">
@@ -320,7 +368,6 @@ const Referrallist = () => {
                     );
                   }
 
-                  // Show end ellipsis and last page
                   if (endPage < totalPages) {
                     if (endPage < totalPages - 1) {
                       pageNumbers.push(
@@ -404,10 +451,9 @@ const Referrallist = () => {
             </div>
           </div>
         </div>
-        {/* </div> */}
       </div>
     </div>
   );
 };
 
-export default Referrallist;
+export default ReferralProgramList;

@@ -211,6 +211,24 @@ const Members = () => {
                     Enquiry List
                 </Link>
               </li>
+
+                <li>
+                <Link to="/referral-program-list">
+                    Referral Program List
+                </Link>
+              </li>
+
+               <li>
+                <Link to="/referral-program-create">
+                    Referral Program Create
+                </Link>
+              </li>
+
+               <li>
+                <Link to="/referral-program-edit/:id">
+                    Referral Program Edit
+                </Link>
+              </li>
             
               <li className="pb-5">{/* add above this li */}</li>
             </ul>

@@ -97,6 +97,9 @@ import SiteList from "./pages/site-list";
 import SiteEdit from "./pages/site-edit";
 import PasswordResetSuccess from "./pages/sign_pages/PasswordSuccess";
 import ReferralEdit from "./pages/referral-edit";
+import ReferralProgramCreate from "./pages/referral-program-create";
+import ReferralProgramList from "./pages/referral-program-list";
+import ReferralProgramEdit from "./pages/referral-program-edit";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -264,6 +267,9 @@ function App() {
           <Route path="/site-list" element={<SiteList />} />
           <Route path="/site-edit/:id" element={<SiteEdit />} />
           <Route path="/password-success" element={<PasswordResetSuccess />} />
+          <Route path="/referral-program-create" element={<ReferralProgramCreate />} />
+          <Route path="/referral-program-list" element={<ReferralProgramList />} />
+          <Route path="/referral-program-edit/:id" element={<ReferralProgramEdit />} />
 
           <Route
             path="/setup-member/siteslot-create"

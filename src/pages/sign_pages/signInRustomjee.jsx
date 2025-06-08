@@ -22,6 +22,7 @@ const SignInRustomjee = () => {
   // Rustomjee configuration
   const config = {
     baseURL: "https://dev-panchshil-super-app.lockated.com/",
+    // baseURL: "https://piramal-loyalty-dev.lockated.com/",
     logoUrl: Rustomji_URL,
     loginBgClass: "login_bg_rustomji",
     loginSecClass: "login-sec-rustom",

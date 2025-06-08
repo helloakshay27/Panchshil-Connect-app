@@ -1396,6 +1396,8 @@ const ProjectDetailsEdit = () => {
         newTitles.forEach((title) => {
           data.append("project[project_qrcode_image_titles][]", title);
         });
+
+
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
@@ -1407,6 +1409,8 @@ const ProjectDetailsEdit = () => {
               `project[virtual_tour_url_multiple][${index}][virtual_tour_name]`,
               item.virtual_tour_name
             );
+            console.log("Virtual Tour URL:", item.virtual_tour_url);
+            console.log("Virtual Tour Name:", item.virtual_tour_name);
           }
         });
       } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
@@ -1452,6 +1456,7 @@ const ProjectDetailsEdit = () => {
       setLoading(false);
     }
   };
+
 
   const handleInputChange = (e) => {
     const { name, files } = e.target;
