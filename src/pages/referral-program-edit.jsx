@@ -227,11 +227,11 @@ const ReferralProgramEdit = () => {
       if (formData.attachments && formData.attachments.length > 0) {
         // If we have new images, use FormData (multipart/form-data)
         const formDataPayload = new FormData();
-        formDataPayload.append("referral[title]", formData.title.trim());
-        formDataPayload.append("referral[description]", formData.description.trim());
+        formDataPayload.append("referral_config[title]", formData.title.trim());
+        formDataPayload.append("referral_config[description]", formData.description.trim());
         
         formData.attachments.forEach((image) => {
-          formDataPayload.append("referral[attachments][]", image);
+          formDataPayload.append("referral_config[attachments][]", image);
         });
 
         console.log("Sending with FormData (has new images)");
@@ -248,7 +248,7 @@ const ReferralProgramEdit = () => {
       } else {
         // If no new images, send as JSON
         const jsonPayload = {
-          referral: {
+          referral_config: {
             title: formData.title.trim(),
             description: formData.description.trim()
           }

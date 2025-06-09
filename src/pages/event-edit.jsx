@@ -259,9 +259,9 @@ const EventEdit = () => {
       if (file.size > 3 * 1024 * 1024) {
         setErrors((prev) => ({
           ...prev,
-          cover_image: "Image size must be under 3MB",
+          cover_image: "Image size must be less than 3MB",
         }));
-        toast.error("Image size must be under 3MB");
+        toast.error("Image size must be less than 3MB");
         e.target.value = ""; // Clear the input
         return;
       }
@@ -364,12 +364,12 @@ const EventEdit = () => {
 
         // Validate size based on type
         if (isImage && file.size > 3 * 1024 * 1024) {
-          toast.error(`${file.name} exceeds 3MB limit for images`);
+          toast.error("Image size must be less than 3MB");
           return;
         }
 
         if (isVideo && file.size > 10 * 1024 * 1024) {
-          toast.error(`${file.name} exceeds 10MB limit for videos`);
+          toast.error("Video size must be less than 10MB");
           return;
         }
 

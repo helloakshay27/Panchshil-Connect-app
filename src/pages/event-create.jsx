@@ -121,24 +121,51 @@ const EventCreate = () => {
   };
 
   //for files into array
+  const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
+  const MAX_VIDEO_SIZE = 10 * 1024 * 1024; // 10MB
+
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files); // Convert FileList to array
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const selectedFiles = Array.from(e.target.files);
 
-    // ✅ Filter only valid image files
-    const validFiles = selectedFiles.filter((file) =>
-      allowedTypes.includes(file.type)
-    );
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
 
-    if (validFiles.length !== selectedFiles.length) {
-      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = ""; // Reset input field
-      return;
+    for (let file of selectedFiles) {
+      const isImage = allowedImageTypes.includes(file.type);
+      const isVideo = allowedVideoTypes.includes(file.type);
+
+      // Type validation
+      if (!isImage && !isVideo) {
+        toast.error(
+          `Invalid file type "${file.name}". Only JPG, PNG, GIF, WebP (images) or MP4, WebM, OGG (videos) allowed.`
+        );
+        e.target.value = "";
+        return;
+      }
+
+      // Size validation
+      if (isImage && file.size > MAX_IMAGE_SIZE) {
+        toast.error("Image size must be less than 3MB");
+        e.target.value = "";
+        return;
+      }
+
+      if (isVideo && file.size > MAX_VIDEO_SIZE) {
+        toast.error("Video size must be less than 10MB");
+        e.target.value = "";
+        return;
+      }
     }
 
+    // All files are valid ✅
     setFormData((prevFormData) => ({
       ...prevFormData,
-      attachfile: [...prevFormData.attachfile, ...validFiles], // Append files
+      attachfile: [...prevFormData.attachfile, ...selectedFiles],
     }));
   };
 
@@ -509,7 +536,7 @@ const EventCreate = () => {
                           className="form-control"
                           type="file"
                           name="attachfile"
-                          accept="image/*"
+                          accept="image/* video/*"
                           multiple
                           required
                           onChange={(e) => handleFileChange(e, "attachfile")}
@@ -542,6 +569,14 @@ const EventCreate = () => {
                           required
                           onChange={(e) => {
                             const file = e.target.files[0];
+                            const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
+
+                            if (file && file.size > MAX_IMAGE_SIZE) {
+                              toast.error("Image size must be less than 3MB");
+                              e.target.value = ""; // Reset file input
+                              return;
+                            }
+
                             setFormData((prevFormData) => ({
                               ...prevFormData,
                               cover_image: file ? [file] : [],
