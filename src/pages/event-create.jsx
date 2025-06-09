@@ -43,7 +43,7 @@ const EventCreate = () => {
   const [reminderUnit, setReminderUnit] = useState("");
 
   const timeOptions = [
-    { value: "", label: "Select Unit" },
+    // { value: "", label: "Select Unit" },
     { value: "minutes", label: "Minutes" },
     { value: "hours", label: "Hours" },
     { value: "days", label: "Days" },
