@@ -424,7 +424,7 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Event Type</label>
                         <input
@@ -455,14 +455,14 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Event At</label>
                         <input
                           className="form-control"
                           type="text"
                           name="event_at"
-                          placeholder="Enter Evnet At"
+                          placeholder="Enter Event At"
                           value={formData.event_at}
                           required
                           onChange={handleChange}
@@ -616,7 +616,7 @@ const EventCreate = () => {
                                 }))
                               }
                             />
-                            <label className="form-check-label">Yes</label>
+                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
                           </div>
                           <div className="form-check">
                             <input
@@ -632,7 +632,7 @@ const EventCreate = () => {
                                 }))
                               }
                             />
-                            <label className="form-check-label">No</label>
+                            <label className="form-check-label" style={{ color: "black" }}>No</label>
                           </div>
                         </div>
                       </div>
@@ -775,7 +775,7 @@ const EventCreate = () => {
                               }
                               required
                             />
-                            <label className="form-check-label">Yes</label>
+                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
                           </div>
                           <div className="form-check">
                             <input
@@ -794,7 +794,7 @@ const EventCreate = () => {
                               }
                               required
                             />
-                            <label className="form-check-label">No</label>
+                            <label className="form-check-label" style={{ color: "black" }}>No</label>
                           </div>
                         </div>
                       </div>
@@ -813,7 +813,7 @@ const EventCreate = () => {
                               onChange={handleChange}
                               required
                             />
-                            <label className="form-check-label">Yes</label>
+                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
                           </div>
                           <div className="form-check">
                             <input
@@ -825,7 +825,7 @@ const EventCreate = () => {
                               onChange={handleChange}
                               required
                             />
-                            <label className="form-check-label">No</label>
+                            <label className="form-check-label" style={{ color: "black" }}>No</label>
                           </div>
                         </div>
                       </div>

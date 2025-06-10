@@ -2,6 +2,7 @@
 // const baseURL = "https://dev-panchshil-super-app.lockated.com/";
 const baseURL = "https://api-connect.panchshil.com/"
 // const baseURL = "http://localhost:3000/";
+// const baseURL = "https://piramal-loyalty-dev.lockated.com/";
 
 
 const token = localStorage.getItem("access_token");

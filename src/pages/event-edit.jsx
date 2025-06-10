@@ -673,6 +673,7 @@ const EventEdit = () => {
                           className="form-control"
                           type="text"
                           name="event_type"
+                          placeholder="Enter Event Type"
                           value={formData.event_type || ""}
                           onChange={handleChange}
                         />
@@ -884,7 +885,7 @@ const EventEdit = () => {
                               checked={formData.is_important === true}
                               onChange={handleRadioChange}
                             />
-                            <label className="form-check-label">Yes</label>
+                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
                           </div>
                           <div className="form-check">
                             <input
@@ -895,7 +896,7 @@ const EventEdit = () => {
                               checked={formData.is_important === false}
                               onChange={handleRadioChange}
                             />
-                            <label className="form-check-label">No</label>
+                            <label className="form-check-label" style={{ color: "black" }}>No</label>
                           </div>
                         </div>
                       </div>
@@ -1060,7 +1061,7 @@ const EventEdit = () => {
                               }
                               required
                             />
-                            <label className="form-check-label">Yes</label>
+                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
                           </div>
 
                           {/* No Option */}
@@ -1080,7 +1081,7 @@ const EventEdit = () => {
                               }
                               required
                             />
-                            <label className="form-check-label">No</label>
+                            <label className="form-check-label" style={{ color: "black" }}>No</label>
                           </div>
                         </div>
                       </div>
@@ -1100,7 +1101,7 @@ const EventEdit = () => {
                               onChange={handleChange}
                               required
                             />
-                            <label className="form-check-label">Yes</label>
+                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
                           </div>
                           <div className="form-check">
                             <input
@@ -1112,7 +1113,7 @@ const EventEdit = () => {
                               onChange={handleChange}
                               required
                             />
-                            <label className="form-check-label">No</label>
+                            <label className="form-check-label" style={{ color: "black" }}>No</label>
                           </div>
                         </div>
                       </div>
