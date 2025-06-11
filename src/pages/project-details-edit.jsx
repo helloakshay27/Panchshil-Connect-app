@@ -310,8 +310,13 @@ const ProjectDetailsEdit = () => {
           project_exteriors: projectData.project_exteriors || [],
           project_emailer_templetes:
             projectData.project_emailer_templetes || [],
-          project_ppt: projectData.ProjectPPT?.document_url || [],
-          ppt_name: projectData.ProjectPPT?.document_file_name || [],
+          // ...inside setFormData in fetchProjectDetails...
+          project_ppt: Array.isArray(projectData.ProjectPPT)
+            ? projectData.ProjectPPT
+            : projectData.ProjectPPT
+            ? [projectData.ProjectPPT]
+            : [],
+          // Remove ppt_name from state, not needed if you always use array of objects
           project_sales_type: projectData.project_sales_type || "",
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
@@ -1077,6 +1082,43 @@ const ProjectDetailsEdit = () => {
 
       // console.log(`Image with ID ${Image.id} deleted successfully`);
       toast.success("Emailer Template deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting Templetes:", error);
+      alert("Failed to delete Templete. Please try again.");
+    }
+  };
+
+  const handleDiscardFilePpt = async (key, index) => {
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}projects/${id}/remove_ppt/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete Templetes");
+      }
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("PPT deleted successfully!");
     } catch (error) {
       console.error("Error deleting Templetes:", error);
       alert("Failed to delete Templete. Please try again.");
@@ -4176,50 +4218,31 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* Project PPT Files */}
-                      {formData.project_ppt ? (
-                        // (Array.isArray(formData.project_ppt) ? (
-                        // If it's an array of files
-                        // formData.project_ppt.map((file, index) => (
-                        <tr>
-                          <td>
-                            {formData.ppt_name ||
-                              formData.ppt_name ||
-                              "No File"}
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardFile("project_ppt", index)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
+                      {(formData.project_ppt ?? []).length > 0 ? (
+                        formData.project_ppt.map((file, index) => (
+                          <tr key={`ppt-${index}`}>
+                            <td>
+                              {file.name ||
+                                file.document_file_name ||
+                                file ||
+                                "No File"}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleDiscardFilePpt("project_ppt", index)
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))
                       ) : (
-                        // ))
-                        // )
-                        // If it's a single file (as an object)
                         <tr>
-                          <td>
-                            {formData.project_ppt?.name ||
-                              formData.project_ppt?.document_file_name ||
-                              "No File"}
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardFile("project_ppt", 0)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
+                          {/* <td colSpan={2}>No PPT files uploaded</td> */}
                         </tr>
                       )}
                     </tbody>
