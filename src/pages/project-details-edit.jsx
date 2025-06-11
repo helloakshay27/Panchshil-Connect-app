@@ -630,6 +630,8 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${image.id} deleted successfully`);
+            toast.success("Image removed successfully!");
+
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -1814,46 +1816,53 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleRemoveQRCodeImage = async (key, index, imageId) => {
-    if (!imageId) {
-      console.error("Error: No image ID found for deletion.");
-      toast.error("Failed to delete image. Image ID is missing.");
-      return;
-    }
+  // If no imageId, just remove locally (newly added, not yet saved)
+  if (!imageId) {
+    setFormData((prev) => {
+      const updatedImages = prev[key].filter((_, i) => i !== index);
+      return {
+        ...prev,
+        [key]: updatedImages,
+      };
+    });
+    toast.success("QR Code image removed!");
+    return;
+  }
 
-    try {
-      const response = await fetch(
-        `${baseURL}projects/${id}/remove_qr_code_images/${imageId}.json`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `Failed to delete image. Server response: ${errorText}`
-        );
+  try {
+    const response = await fetch(
+      `${baseURL}projects/${id}/remove_qr_code_images/${imageId}.json`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       }
+    );
 
-      // Remove the image from the state
-      setFormData((prev) => {
-        const updatedImages = prev[key].filter((_, i) => i !== index);
-        return {
-          ...prev,
-          [key]: updatedImages,
-        };
-      });
-
-      toast.success("QR Code image deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting image:", error.message);
-      toast.error("Failed to delete image. Please try again.");
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to delete image. Server response: ${errorText}`
+      );
     }
-  };
+
+    // Remove the image from the state
+    setFormData((prev) => {
+      const updatedImages = prev[key].filter((_, i) => i !== index);
+      return {
+        ...prev,
+        [key]: updatedImages,
+      };
+    });
+
+    toast.success("QR Code image deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting image:", error.message);
+    toast.error("Failed to delete image. Please try again.");
+  }
+};
 
   // const handleGalleryImageUpload = (event) => {
   //   const files = Array.from(event.target.files);
