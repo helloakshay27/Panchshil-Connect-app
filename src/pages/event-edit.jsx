@@ -885,7 +885,12 @@ const EventEdit = () => {
                               checked={formData.is_important === true}
                               onChange={handleRadioChange}
                             />
-                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              Yes
+                            </label>
                           </div>
                           <div className="form-check">
                             <input
@@ -896,7 +901,12 @@ const EventEdit = () => {
                               checked={formData.is_important === false}
                               onChange={handleRadioChange}
                             />
-                            <label className="form-check-label" style={{ color: "black" }}>No</label>
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              No
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -1061,7 +1071,12 @@ const EventEdit = () => {
                               }
                               required
                             />
-                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              Yes
+                            </label>
                           </div>
 
                           {/* No Option */}
@@ -1081,7 +1096,12 @@ const EventEdit = () => {
                               }
                               required
                             />
-                            <label className="form-check-label" style={{ color: "black" }}>No</label>
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              No
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -1101,7 +1121,12 @@ const EventEdit = () => {
                               onChange={handleChange}
                               required
                             />
-                            <label className="form-check-label" style={{ color: "black" }}>Yes</label>
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              Yes
+                            </label>
                           </div>
                           <div className="form-check">
                             <input
@@ -1113,7 +1138,12 @@ const EventEdit = () => {
                               onChange={handleChange}
                               required
                             />
-                            <label className="form-check-label" style={{ color: "black" }}>No</label>
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              No
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -1165,11 +1195,21 @@ const EventEdit = () => {
                       </div>
                     </div> */}
 
-                    <div className="col-md-12">
+                    <div className="col-md-6">
                       <label className="form-label">Set Reminders</label>
 
                       {/* Input fields for adding new reminders */}
                       <div className="row mb-2">
+                        <div className="col-md-4">
+                          <SelectBox
+                            options={timeOptions}
+                            value={reminderUnit || ""}
+                            onChange={(value) => {
+                              setReminderUnit(value);
+                              setReminderValue("");
+                            }}
+                          />
+                        </div>
                         <div className="col-md-4">
                           <input
                             type="number"
@@ -1197,18 +1237,10 @@ const EventEdit = () => {
                                 ? `Must be between ${timeConstraints[reminderUnit].min} to ${timeConstraints[reminderUnit].max} ${reminderUnit}`
                                 : "Please select a time unit first"
                             }
+                            disabled={!reminderUnit}
                           />
                         </div>
-                        <div className="col-md-4">
-                          <SelectBox
-                            options={timeOptions}
-                            value={reminderUnit || ""}
-                            onChange={(value) => {
-                              setReminderUnit(value);
-                              setReminderValue("");
-                            }}
-                          />
-                        </div>
+
                         <div className="col-md-4">
                           <button
                             type="button"
@@ -1233,15 +1265,6 @@ const EventEdit = () => {
                         .map((reminder, index) => (
                           <div className="row mb-2" key={index}>
                             <div className="col-md-4">
-                              <input
-                                type="number"
-                                className="form-control"
-                                value={reminder.value}
-                                readOnly
-                                style={{ backgroundColor: "#f8f9fa" }}
-                              />
-                            </div>
-                            <div className="col-md-4">
                               <select
                                 className="form-control"
                                 value={reminder.unit}
@@ -1258,6 +1281,16 @@ const EventEdit = () => {
                                 ))}
                               </select>
                             </div>
+                            <div className="col-md-4">
+                              <input
+                                type="number"
+                                className="form-control"
+                                value={reminder.value}
+                                readOnly
+                                style={{ backgroundColor: "#f8f9fa" }}
+                              />
+                            </div>
+
                             <div className="col-md-4">
                               <button
                                 type="button"
