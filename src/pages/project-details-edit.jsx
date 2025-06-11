@@ -753,6 +753,40 @@ const ProjectDetailsEdit = () => {
     }
   };
 
+  const handleDiscardBroucher = async (key) => {
+    const brochure = formData[key];
+
+    // If the brochure doesn't have an ID, just remove it locally
+    if (!brochure.id) {
+      setFormData({ ...formData, [key]: {} });
+      toast.success("Brochure removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}projects/${id}/remove_brochures/${brochure.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete brochure");
+      }
+
+      // Remove brochure from state
+      setFormData({ ...formData, [key]: {} });
+      toast.success("Brochure removed successfully!");
+    } catch (error) {
+      console.error("Error deleting brochure:", error);
+      alert("Failed to delete brochure. Please try again.");
+    }
+  };
+
   const handleFileDiscard = async (key, index) => {
     const videos = formData[key][index]; // Get the selected image
     if (!videos.id) {
@@ -783,6 +817,7 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${videos.id} deleted successfully`);
+      toast.success("Video deleted successfully!");
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -819,13 +854,14 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Image deleted successfully!");
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
     }
   };
 
-    const handleFileDiscardCoverImage = async (key, index) => {
+  const handleFileDiscardCoverImage = async (key, index) => {
     const Image = formData[key][index]; // Get the selected image
     if (!Image.id) {
       // If the image has no ID, it's a newly uploaded file. Just remove it locally.
@@ -862,7 +898,6 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-
   const handleFileDiscardCreativeGenerics = async (key, index) => {
     const Image = formData[key][index]; // Get the selected image
     if (!Image.id) {
@@ -893,6 +928,7 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Image deleted successfully!");
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -929,6 +965,7 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Image deleted successfully!");
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -965,6 +1002,7 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Image deleted successfully!");
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -1001,6 +1039,7 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Image deleted successfully!");
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -1037,6 +1076,7 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Emailer Template deleted successfully!");
     } catch (error) {
       console.error("Error deleting Templetes:", error);
       alert("Failed to delete Templete. Please try again.");
@@ -1073,6 +1113,7 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Image deleted successfully!");
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -1396,8 +1437,6 @@ const ProjectDetailsEdit = () => {
         newTitles.forEach((title) => {
           data.append("project[project_qrcode_image_titles][]", title);
         });
-
-
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
@@ -1456,7 +1495,6 @@ const ProjectDetailsEdit = () => {
       setLoading(false);
     }
   };
-
 
   const handleInputChange = (e) => {
     const { name, files } = e.target;
@@ -1633,16 +1671,16 @@ const ProjectDetailsEdit = () => {
     });
   };
 
- const handleDeleteVirtualTour = (index) => {
-  setFormData((prev) => ({
-    ...prev,
-    virtual_tour_url_multiple: prev.virtual_tour_url_multiple.filter((_, i) => i !== index),
-  }));
+  const handleDeleteVirtualTour = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      virtual_tour_url_multiple: prev.virtual_tour_url_multiple.filter(
+        (_, i) => i !== index
+      ),
+    }));
 
-  toast.success("Virtual tour removed!");
-};
-
-
+    toast.success("Virtual tour removed!");
+  };
 
   const amenityTypes = [
     ...new Set(amenities.map((ammit) => ammit.amenity_type)),
@@ -3187,7 +3225,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-                <div className="col-md-3 mt-2">
+              <div className="col-md-3 mt-2">
                 <label>Is Sold</label>
                 <div className="form-group">
                   <button
@@ -3746,7 +3784,10 @@ const ProjectDetailsEdit = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                handleFileDiscardCoverImage("cover_images", index)
+                                handleFileDiscardCoverImage(
+                                  "cover_images",
+                                  index
+                                )
                               }
                             >
                               x
@@ -4050,7 +4091,6 @@ const ProjectDetailsEdit = () => {
                     </thead>
 
                     <tbody>
-                      {/* Show brochure only if it's a valid object with a name or file */}
                       {formData.brochure &&
                         (formData.brochure.name ||
                           formData.brochure.document_file_name) && (
@@ -4063,7 +4103,9 @@ const ProjectDetailsEdit = () => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleDiscardFile("brochure")}
+                                onClick={() =>
+                                  handleDiscardBroucher("brochure")
+                                }
                               >
                                 x
                               </button>
