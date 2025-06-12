@@ -48,26 +48,26 @@ const Amenities = () => {
     }
 
     try {
-      await axios.post(
-        `${baseURL}amenity_setups.json`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+      await axios.post(`${baseURL}amenity_setups.json`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
 
       toast.success("Amenity added successfully");
       setName("");
-      setAmenityType(""); // ✅ Reset state
+      setAmenityType("");
       setIcon(null);
       setPreviewImage(null);
       navigate("/setup-member/amenities-list");
     } catch (err) {
-      toast.error(`Error adding amenity: ${err.message}`);
+      if (err.response?.status === 422) {
+        toast.error("Amenity with this name already exists.");
+      } else {
+        toast.error(`Error adding amenity: ${err.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -98,8 +98,7 @@ const Amenities = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Name{" "}
-                          <span className="otp-asterisk">{" "}*</span>
+                          Name <span className="otp-asterisk"> *</span>
                         </label>
                         <input
                           className="form-control"
@@ -128,7 +127,7 @@ const Amenities = () => {
                               </span>
                             )}
                           </span>
-                          <span className="otp-asterisk">{" "}*</span>
+                          <span className="otp-asterisk"> *</span>
                         </label>
                         <input
                           className="form-control"

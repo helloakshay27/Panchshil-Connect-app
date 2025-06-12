@@ -39,7 +39,7 @@ const ProjectDetailsEdit = () => {
     Number_Of_Units: "",
     no_of_floors: "",
     Rera_Number_multiple: [],
-    Amenities: [],
+    Amenities1: [],
     Specifications: [],
     Land_Area: "",
     land_uom: "",
@@ -94,7 +94,7 @@ const ProjectDetailsEdit = () => {
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const [virtualTourName, setVirtualTourName] = useState("");
   const [selectedType, setSelectedType] = useState(null);
-  const [filteredAmenities, setFilteredAmenities] = useState([]);
+  // const [filteredAmenities, setFilteredAmenities] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [projectCreatives, setProjectCreatives] = useState([]);
   const [coverImages, setCoverImages] = useState([]);
@@ -104,6 +104,7 @@ const ProjectDetailsEdit = () => {
   const [buildingTypes, setBuildingTypes] = useState([]);
   const [statusOptions, setStatusOptions] = useState([]);
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
+  const [nameSend, setNameSend] = useState([]);
   // console.log(statusOptions);
 
   useEffect(() => {
@@ -268,8 +269,11 @@ const ProjectDetailsEdit = () => {
           no_of_floors: projectData.no_of_floors || "",
           Number_Of_Units: projectData.no_of_apartments || "",
           Rera_Number_multiple: projectData.rera_number_multiple || [],
-          Amenities: Array.isArray(projectData.amenities)
-            ? projectData.amenities.map((ammit) => ammit.name)
+         Amenities1: Array.isArray(projectData.amenities)
+            ? projectData.amenities.map((ammit) => ({
+                id: ammit.id,
+                name: ammit.name,
+              }))
             : [],
           Specifications: Array.isArray(projectData.specifications)
             ? projectData.specifications.map((spac) => spac.name)
@@ -1313,6 +1317,8 @@ const ProjectDetailsEdit = () => {
     }
 
     const data = new FormData();
+
+    data.append("project[Amenities]", nameSend);
 
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
@@ -2427,6 +2433,41 @@ const ProjectDetailsEdit = () => {
     });
   };
 
+  const handleAmenitiesChange = async (selectedOptions) => {
+    const newAmenities = selectedOptions.map((option) => ({
+      id: option.value,
+      name: option.label,
+    }));
+
+      setNameSend(newAmenities.map((amenity) => amenity.name));
+
+    // Detect removed amenities
+    const removed = formData.Amenities1.filter(
+      (oldAmenity) =>
+        !newAmenities.some((newAmenity) => newAmenity.id === oldAmenity.id)
+    );
+
+  for (const amenity of removed) {
+      try {
+        await axios.delete(`${baseURL}amenities/${amenity.id}`);
+        console.log(`Deleted amenity with ID: ${amenity.id}`);
+      } catch (error) {
+        console.error("Error deleting amenity:", error);
+      }
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      Amenities1: newAmenities,
+    }));
+  };
+
+  const selectedAmenityNames = formData.Amenities1.map((a) => a.name);
+
+  const filteredAmenities = amenities.filter(
+    (ammit) => !selectedAmenityNames.includes(ammit.name)
+  );
+
   return (
     <>
       {/* <Header /> */}
@@ -3537,34 +3578,16 @@ const ProjectDetailsEdit = () => {
                       *
                     </span> */}
                   </label>
-                  <MultiSelectBox
-                    options={amenities.map((ammit) => ({
-                      value: ammit.name,
+                 <MultiSelectBox
+                    options={filteredAmenities.map((ammit) => ({
+                      value: ammit.id,
                       label: ammit.name,
                     }))}
-                    // value={formData?.Amenities
-                    //   ?.map((id) => {
-                    //     const ammit = amenities.find(
-                    //       (ammit) => ammit.id === id
-                    //     );
-                    //     return ammit
-                    //       ? { value: ammit.id, label: ammit.name }
-                    //       : null;
-                    //   })
-                    //   .filter(Boolean)}
-
-                    value={formData.Amenities.map((amenitie) => ({
-                      value: amenitie,
-                      label: amenitie,
+                    value={formData.Amenities1.map((amenitie) => ({
+                      value: amenitie.id,
+                      label: amenitie.name,
                     }))}
-                    onChange={(selectedOptions) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        Amenities: selectedOptions.map(
-                          (option) => option.value
-                        ),
-                      }))
-                    }
+                    onChange={handleAmenitiesChange}
                     placeholder="Select Amenities"
                   />
                   {/* {console.log("amenities", amenities)} */}

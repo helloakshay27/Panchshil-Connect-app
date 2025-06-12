@@ -49,10 +49,11 @@ const ReferralProgramList = () => {
 
       const data = await response.json();
       console.log("API Response:", data);
-      
+
       // Handle different possible response structures
-      const referralList = data.referrals || data.referral_configs || data || [];
-      
+      const referralList =
+        data.referrals || data.referral_configs || data || [];
+
       setReferrals(referralList);
       setPagination((prevState) => ({
         ...prevState,
@@ -77,9 +78,14 @@ const ReferralProgramList = () => {
     localStorage.setItem("referral_list_currentPage", pageNumber);
   };
 
-  const filteredReferrals = referrals.filter((referral) =>
-    (referral.title || referral.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (referral.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredReferrals = referrals.filter(
+    (referral) =>
+      (referral.title || referral.name || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      (referral.description || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
   );
 
   const totalFiltered = filteredReferrals.length;
@@ -94,7 +100,7 @@ const ReferralProgramList = () => {
     <div className="main-content">
       <div className="module-data-section container-fluid">
         {error && <div className="alert alert-danger">{error}</div>}
-        
+
         <div className="d-flex justify-content-end px-4 pt-2 mt-3">
           <div className="col-md-4 pe-2 pt-2">
             <div className="input-group">
@@ -130,26 +136,26 @@ const ReferralProgramList = () => {
               </div>
             </div>
           </div>
-          {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
-            <div className="card-tools mt-1">
-              <button
-                className="purple-btn2 rounded-3"
-                onClick={() => navigate("/referral-program-create")}
+          {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
+          <div className="card-tools mt-1">
+            <button
+              className="purple-btn2 rounded-3"
+              onClick={() => navigate("/referral-program-create")}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={26}
+                height={20}
+                fill="currentColor"
+                className="bi bi-plus"
+                viewBox="0 0 16 16"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={26}
-                  height={20}
-                  fill="currentColor"
-                  className="bi bi-plus"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                </svg>
-                <span>Add</span>
-              </button>
-            </div>
-          )}
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+              </svg>
+              <span>Add</span>
+            </button>
+          </div>
+          {/* )} */}
         </div>
 
         <div className="card mt-3 pb-4 mx-4">
@@ -173,7 +179,7 @@ const ReferralProgramList = () => {
                   <thead>
                     <tr>
                       {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
-                        <th>Action</th>
+                      <th>Action</th>
                       {/* )} */}
                       <th>Sr No</th>
                       <th>Title</th>
@@ -187,80 +193,93 @@ const ReferralProgramList = () => {
                       displayedReferrals.map((referral, index) => (
                         <tr key={referral.id || index}>
                           {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
-                            <td>
-                              <a
-                                href={`/referral-program-edit/${referral.id}`}
-                                className="me-2"
-                                title="Edit Referral Config"
+                          <td>
+                            <a
+                              href={`/referral-program-edit/${referral.id}`}
+                              className="me-2"
+                              title="Edit Referral Config"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="24"
-                                  height="24"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                >
-                                  <path
-                                    d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
-                                    fill="#667085"
-                                  />
-                                  <path
-                                    d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
-                                    fill="#667085"
-                                  />
-                                </svg>
-                              </a>
-                            </td>
+                                <path
+                                  d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
+                                  fill="#667085"
+                                />
+                                <path
+                                  d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
+                                  fill="#667085"
+                                />
+                              </svg>
+                            </a>
+                          </td>
                           {/* )} */}
                           <td>
-                            {(pagination.current_page - 1) * pageSize + index + 1}
+                            {(pagination.current_page - 1) * pageSize +
+                              index +
+                              1}
                           </td>
                           <td>{referral.title || "-"}</td>
                           <td>{referral.description || "-"}</td>
-                         <td className="text-center">
-  {referral.attachments && referral.attachments.length > 0 ? (
-    (() => {
-      const previewFile = referral.attachments.find(file =>
-        file.document_content_type?.startsWith("image/") ||
-        file.document_content_type?.startsWith("video/")
-      );
+                          <td className="text-center">
+                            {referral.attachments &&
+                            referral.attachments.length > 0
+                              ? (() => {
+                                  const previewFile = referral.attachments.find(
+                                    (file) =>
+                                      file.document_content_type?.startsWith(
+                                        "image/"
+                                      ) ||
+                                      file.document_content_type?.startsWith(
+                                        "video/"
+                                      )
+                                  );
 
-      if (!previewFile) return "Attachment available";
+                                  if (!previewFile)
+                                    return "Attachment available";
 
-      return previewFile.document_content_type.startsWith("video/") ? (
-        <video
-          width="100"
-          height="65"
-          autoPlay
-          muted
-          loop
-          playsInline
-          style={{
-            display: "block",
-            borderRadius: "8px",
-            objectFit: "cover",
-          }}
-        >
-          <source src={previewFile.document_url} type={previewFile.document_content_type} />
-          Your browser does not support the video tag.
-        </video>
-      ) : (
-        <img
-          src={previewFile.document_url}
-          alt="Attachment Preview"
-          className="img-fluid rounded"
-          style={{
-            maxWidth: "100px",
-            maxHeight: "100px",
-            display: "block",
-          }}
-        />
-      );
-    })()
-  ) : (
-    "No attachments"
-  )}
-</td>
+                                  return previewFile.document_content_type.startsWith(
+                                    "video/"
+                                  ) ? (
+                                    <video
+                                      width="100"
+                                      height="65"
+                                      autoPlay
+                                      muted
+                                      loop
+                                      playsInline
+                                      style={{
+                                        display: "block",
+                                        borderRadius: "8px",
+                                        objectFit: "cover",
+                                      }}
+                                    >
+                                      <source
+                                        src={previewFile.document_url}
+                                        type={previewFile.document_content_type}
+                                      />
+                                      Your browser does not support the video
+                                      tag.
+                                    </video>
+                                  ) : (
+                                    <img
+                                      src={previewFile.document_url}
+                                      alt="Attachment Preview"
+                                      className="img-fluid rounded"
+                                      style={{
+                                        maxWidth: "100px",
+                                        maxHeight: "100px",
+                                        display: "block",
+                                      }}
+                                    />
+                                  );
+                                })()
+                              : "No attachments"}
+                          </td>
 
                           {/* <td>
                             {referral.created_at 
