@@ -2449,7 +2449,7 @@ const ProjectDetailsEdit = () => {
 
   for (const amenity of removed) {
       try {
-        await axios.delete(`${baseURL}amenities/${amenity.id}`);
+        await axios.delete(`${baseURL}amenities/${amenity.id}.json`);
         console.log(`Deleted amenity with ID: ${amenity.id}`);
       } catch (error) {
         console.error("Error deleting amenity:", error);

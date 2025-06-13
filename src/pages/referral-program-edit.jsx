@@ -164,7 +164,7 @@ const ReferralProgramEdit = () => {
       
       // Make API call to remove image from server
       const response = await axios.delete(
-        `${baseURL}referrals/${id}/remove_images/${imageId}.json`,
+        `${baseURL}referral_configs/${id}/remove_images/${imageId}.json`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
