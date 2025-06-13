@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const ReferralProgramList = () => {
   const [referrals, setReferrals] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeToastId, setActiveToastId] = useState(null); // Add this state
 
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("referral_list_currentPage")) || 1;
@@ -95,6 +98,57 @@ const ReferralProgramList = () => {
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
+
+  const handleToggle = async (id, currentStatus) => {
+    toast.dismiss(); // Dismiss any existing toast first
+    const updatedStatus = !currentStatus; // toggle
+
+    // Dismiss any existing toast first (if using toast)
+    if (activeToastId) {
+      // toast.dismiss(activeToastId);
+    }
+
+    try {
+      await axios.put(
+        `${baseURL}referral_configs/${id}.json`,
+        { referral_config: { active: updatedStatus } }, // ✅ match key
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      // Update testimonials state instead of projects
+      setReferrals((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, active: updatedStatus } : item
+        )
+      );
+
+      // Show success message (uncomment if using toast)
+      // const newToastId = toast.success("Status updated successfully!", {
+      //   duration: 3000,
+      //   position: "top-center",
+      //   id: `toggle-${id}`,
+      // });
+      // setActiveToastId(newToastId);
+
+      console.log("Status updated successfully!");
+      toast.success("Status updated successfully!");
+    } catch (error) {
+      console.error("Error updating status:", error);
+
+      // Show error message (uncomment if using toast)
+      // const newToastId = toast.error("Failed to update status.", {
+      //   duration: 3000,
+      //   position: "top-center",
+      //   id: `toggle-error-${id}`,
+      // });
+      // setActiveToastId(newToastId);
+    }
+  };
 
   return (
     <div className="main-content">
@@ -216,6 +270,43 @@ const ReferralProgramList = () => {
                                 />
                               </svg>
                             </a>
+                            <button
+                              onClick={() =>
+                                handleToggle(referral.id, referral.active)
+                              }
+                              className="toggle-button"
+                              style={{
+                                border: "none",
+                                background: "none",
+                                cursor: "pointer",
+                                padding: 0,
+                                width: "35px",
+                              }}
+                            >
+                              {referral.active ? (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="25"
+                                  fill="#de7008"
+                                  className="bi bi-toggle-on"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                                </svg>
+                              ) : (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="25"
+                                  fill="#667085"
+                                  className="bi bi-toggle-off"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                                </svg>
+                              )}
+                            </button>
                           </td>
                           {/* )} */}
                           <td>

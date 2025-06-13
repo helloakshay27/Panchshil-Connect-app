@@ -1137,8 +1137,21 @@ const ProjectDetailsCreate = () => {
       toast.success("Project submitted successfully");
       Navigate("/project-list");
     } catch (error) {
+      // catch (error) {
+      //   console.error("Error submitting the form:", error);
+      //   toast.error("Failed to submit the form. Please try again.");
+      // }
       console.error("Error submitting the form:", error);
-      toast.error("Failed to submit the form. Please try again.");
+      if (
+        error.response &&
+        error.response.status === 422 &&
+        error.response.data &&
+        (error.response.data.project_name || error.response.data.Project_Name)
+      ) {
+        toast.error("Project name already exists.");
+      } else {
+        toast.error("Failed to submit the form. Please try again.");
+      }
     } finally {
       setLoading(false);
       setIsSubmitting(false);
@@ -2483,7 +2496,7 @@ const ProjectDetailsCreate = () => {
                   </button>
                 </div>
               </div>
-               <div className="col-md-3 mt-2">
+              <div className="col-md-3 mt-2">
                 <label>Is Sold</label>
                 <div className="form-group">
                   <button

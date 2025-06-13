@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import toast from "react-hot-toast";
 
 const CompanyList = () => {
   const [companyList, setCompanyList] = useState([]);
@@ -9,6 +10,8 @@ const CompanyList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
   const [companyPermission, setCompanyPermission] = useState({});
+  const [activeToastId, setActiveToastId] = useState(null); // Add this state
+
   const getPageFromStorage = () => {
     return parseInt(localStorage.getItem("company_list_currentPage")) || 1;
   };
@@ -19,24 +22,24 @@ const CompanyList = () => {
   });
   const pageSize = 10;
 
-   const getCompanyPermission = () => {
-              try {
-                const lockRolePermissions = localStorage.getItem("lock_role_permissions");
-                if (!lockRolePermissions) return {};
-            
-                const permissions = JSON.parse(lockRolePermissions);
-                return permissions.company || {}; // 👈 Fetching amenities-specific permissions
-              } catch (e) {
-                console.error("Error parsing lock_role_permissions:", e);
-                return {};
-              }
-            };
-          
-            useEffect(() => {
-              const permissions = getCompanyPermission();
-              console.log("Company permissions:", permissions);
-              setCompanyPermission(permissions);
-            }, []);
+  const getCompanyPermission = () => {
+    try {
+      const lockRolePermissions = localStorage.getItem("lock_role_permissions");
+      if (!lockRolePermissions) return {};
+
+      const permissions = JSON.parse(lockRolePermissions);
+      return permissions.company || {}; // 👈 Fetching amenities-specific permissions
+    } catch (e) {
+      console.error("Error parsing lock_role_permissions:", e);
+      return {};
+    }
+  };
+
+  useEffect(() => {
+    const permissions = getCompanyPermission();
+    console.log("Company permissions:", permissions);
+    setCompanyPermission(permissions);
+  }, []);
 
   useEffect(() => {
     const fetchCompanyList = async () => {
@@ -94,57 +97,87 @@ const CompanyList = () => {
     pagination.current_page * pageSize
   );
 
+  const handleToggle = async (id, currentStatus) => {
+    toast.dismiss();
+    const updatedStatus = !currentStatus;
+
+    try {
+      await axios.put(
+        `${baseURL}company_setups/${id}.json`,
+        { company_setup: { active: updatedStatus } }, // ✅ FIXED KEY
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      setCompanyList((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, active: updatedStatus } : item
+        )
+      );
+
+      toast.success("Status updated successfully!");
+      console.log("Status updated successfully!");
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status.");
+    }
+  };
+
   return (
     <div className="main-content">
       {/* <div className="website-content overflow-auto"> */}
-        <div className="module-data-section container-fluid">
-          <div className="d-flex justify-content-end px-4 pt-2 mt-3">
-            <div className="col-md-4 pe-2 pt-2">
-              <form
-                //   onSubmit={handleSearchSubmit}
-                action="/pms/departments"
-                acceptCharset="UTF-8"
-                method="get"
-              >
-                <div className="input-group">
-                  <input
-                    type="text"
-                    name="s[name_cont]"
-                    id="s_name_cont"
-                    className="form-control tbl-search table_search"
-                    placeholder="Search"
-                    fdprocessedid="u38fp"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                  />
-                  <div className="input-group-append">
-                    <button
-                      type="submit"
-                      className="btn btn-md btn-default"
-                      fdprocessedid="2wqzh"
+      <div className="module-data-section container-fluid">
+        <div className="d-flex justify-content-end px-4 pt-2 mt-3">
+          <div className="col-md-4 pe-2 pt-2">
+            <form
+              //   onSubmit={handleSearchSubmit}
+              action="/pms/departments"
+              acceptCharset="UTF-8"
+              method="get"
+            >
+              <div className="input-group">
+                <input
+                  type="text"
+                  name="s[name_cont]"
+                  id="s_name_cont"
+                  className="form-control tbl-search table_search"
+                  placeholder="Search"
+                  fdprocessedid="u38fp"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <div className="input-group-append">
+                  <button
+                    type="submit"
+                    className="btn btn-md btn-default"
+                    fdprocessedid="2wqzh"
+                  >
+                    <svg
+                      width={16}
+                      height={16}
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <svg
-                        width={16}
-                        height={16}
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"
-                          fill="#8B0203"
-                        />
-                        <path
-                          d="M14.6676 14.5644C14.5409 14.5644 14.4143 14.5206 14.3143 14.4269L12.9809 13.1769C12.7876 12.9956 12.7876 12.6956 12.9809 12.5144C13.1743 12.3331 13.4943 12.3331 13.6876 12.5144L15.0209 13.7644C15.2143 13.9456 15.2143 14.2456 15.0209 14.4269C14.9209 14.5206 14.7943 14.5644 14.6676 14.5644Z"
-                          fill="#8B0203"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+                      <path
+                        d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"
+                        fill="#8B0203"
+                      />
+                      <path
+                        d="M14.6676 14.5644C14.5409 14.5644 14.4143 14.5206 14.3143 14.4269L12.9809 13.1769C12.7876 12.9956 12.7876 12.6956 12.9809 12.5144C13.1743 12.3331 13.4943 12.3331 13.6876 12.5144L15.0209 13.7644C15.2143 13.9456 15.2143 14.2456 15.0209 14.4269C14.9209 14.5206 14.7943 14.5644 14.6676 14.5644Z"
+                        fill="#8B0203"
+                      />
+                    </svg>
+                  </button>
                 </div>
-              </form>
-            </div>
-            { companyPermission.create === "true" && (
+              </div>
+            </form>
+          </div>
+          {companyPermission.create === "true" && (
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
@@ -164,43 +197,43 @@ const CompanyList = () => {
                 <span>Add</span>
               </button>
             </div>
-            )}
+          )}
+        </div>
+
+        <div className="card mx-3 mt-4">
+          <div className="card-header">
+            <h3 className="card-title">Company List</h3>
           </div>
-
-          <div className="card mx-3 mt-4">
-            <div className="card-header">
-              <h3 className="card-title">Company List</h3>
-            </div>
-            <div className=" card-body mt-4 pb-4 pt-0">
-              {loading ? (
-                <div className="text-center">
-                  <div
-                    className="spinner-border"
-                    role="status"
-                    style={{ color: "var(--red)" }}
-                  >
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
+          <div className=" card-body mt-4 pb-4 pt-0">
+            {loading ? (
+              <div className="text-center">
+                <div
+                  className="spinner-border"
+                  role="status"
+                  style={{ color: "var(--red)" }}
+                >
+                  <span className="visually-hidden">Loading...</span>
                 </div>
-              ) : (
-                <>
-                  <div className="tbl-container mt-3">
-                    <table className="w-100">
-                      <thead>
-                        <tr>
-                          <th>Action</th>
+              </div>
+            ) : (
+              <>
+                <div className="tbl-container mt-3">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Action</th>
 
-                          <th>Sr No</th>
-                          <th>Company Name</th>
-                          <th>Logo</th>
-                          {/* <th>Organization Id</th> */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {displayedCompanies.map((company, index) => (
-                          <tr key={company.id}>
-                            <td>
-                            { companyPermission.update === "true" && (
+                        <th>Sr No</th>
+                        <th>Company Name</th>
+                        <th>Logo</th>
+                        {/* <th>Organization Id</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {displayedCompanies.map((company, index) => (
+                        <tr key={company.id}>
+                          <td>
+                            {companyPermission.update === "true" && (
                               <a href={`/company-edit/${company.id}`}>
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -220,138 +253,169 @@ const CompanyList = () => {
                                 </svg>
                               </a>
                             )}
-                            </td>
-                            <td>{startIndex + index + 1}</td>
-                            <td>{company.name || "-"}</td>
-                            <td
-                              className="text-center"
+                            <button
+                              onClick={() =>
+                                handleToggle(company.id, company.active)
+                              }
+                              className="toggle-button"
                               style={{
-                                border: "1px solid #ddd",
-                                padding: "5px",
-                                verticalAlign: "middle", // Aligns content properly
+                                border: "none",
+                                background: "none",
+                                cursor: "pointer",
+                                padding: 0,
+                                width: "35px",
                               }}
                             >
-                              <img
-                                src={company?.attachfile?.document_url || "-"}
-                                className="img-fluid rounded"
-                                alt={company.title || "Company Logo"}
-                                style={{
-                                  maxWidth: "100px", // Adjust for uniform size
-                                  maxHeight: "100px",
-                                  display: "block", // Prevents extra spacing
-                                }}
-                              />
-                            </td>
-                            {/* <td>{company.organization_name || "-"}</td> */}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* Pagination Controls */}
-                  <div className="d-flex justify-content-between align-items-center px-3 mt-2">
-                    <ul className="pagination justify-content-center d-flex">
-                      <li
-                        className={`page-item ${
-                          pagination.current_page === 1 ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() => handlePageChange(1)}
-                        >
-                          First
-                        </button>
-                      </li>
-                      <li
-                        className={`page-item ${
-                          pagination.current_page === 1 ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() =>
-                            handlePageChange(pagination.current_page - 1)
-                          }
-                        >
-                          Prev
-                        </button>
-                      </li>
-                      {Array.from(
-                        { length: totalPages },
-                        (_, index) => index + 1
-                      ).map((pageNumber) => (
-                        <li
-                          key={pageNumber}
-                          className={`page-item ${
-                            pagination.current_page === pageNumber
-                              ? "active"
-                              : ""
-                          }`}
-                        >
-                          <button
-                            className="page-link"
-                            onClick={() => handlePageChange(pageNumber)}
+                              {company.active ? (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="25"
+                                  fill="#de7008"
+                                  className="bi bi-toggle-on"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                                </svg>
+                              ) : (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="40"
+                                  height="25"
+                                  fill="#667085"
+                                  className="bi bi-toggle-off"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                                </svg>
+                              )}
+                            </button>
+                          </td>
+                          <td>{startIndex + index + 1}</td>
+                          <td>{company.name || "-"}</td>
+                          <td
+                            className="text-center"
+                            style={{
+                              border: "1px solid #ddd",
+                              padding: "5px",
+                              verticalAlign: "middle", // Aligns content properly
+                            }}
                           >
-                            {pageNumber}
-                          </button>
-                        </li>
+                            <img
+                              src={company?.attachfile?.document_url || "-"}
+                              className="img-fluid rounded"
+                              alt={company.title || "Company Logo"}
+                              style={{
+                                maxWidth: "100px", // Adjust for uniform size
+                                maxHeight: "100px",
+                                display: "block", // Prevents extra spacing
+                              }}
+                            />
+                          </td>
+                          {/* <td>{company.organization_name || "-"}</td> */}
+                        </tr>
                       ))}
-                      <li
-                        className={`page-item ${
-                          pagination.current_page === totalPages
-                            ? "disabled"
-                            : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() =>
-                            handlePageChange(pagination.current_page + 1)
-                          }
-                        >
-                          Next
-                        </button>
-                      </li>
-                      <li
-                        className={`page-item ${
-                          pagination.current_page === totalPages
-                            ? "disabled"
-                            : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() => handlePageChange(totalPages)}
-                        >
-                          Last
-                        </button>
-                      </li>
-                    </ul>
+                    </tbody>
+                  </table>
+                </div>
 
-                    {/* ✅ Corrected Pagination Count */}
-                    <p>
-                      {pagination.total_count > 0 ? (
-                        <>
-                          Showing{" "}
-                          {pagination.total_count === 0 ? 0 : startIndex + 1} to{" "}
-                          {Math.min(
-                            startIndex + displayedCompanies.length,
-                            pagination.total_count
-                          )}{" "}
-                          of {pagination.total_count} entries
-                        </>
-                      ) : (
-                        "No entries found"
-                      )}
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
+                {/* Pagination Controls */}
+                <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                  <ul className="pagination justify-content-center d-flex">
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(1)}
+                      >
+                        First
+                      </button>
+                    </li>
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() =>
+                          handlePageChange(pagination.current_page - 1)
+                        }
+                      >
+                        Prev
+                      </button>
+                    </li>
+                    {Array.from(
+                      { length: totalPages },
+                      (_, index) => index + 1
+                    ).map((pageNumber) => (
+                      <li
+                        key={pageNumber}
+                        className={`page-item ${
+                          pagination.current_page === pageNumber ? "active" : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      </li>
+                    ))}
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === totalPages ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() =>
+                          handlePageChange(pagination.current_page + 1)
+                        }
+                      >
+                        Next
+                      </button>
+                    </li>
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === totalPages ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(totalPages)}
+                      >
+                        Last
+                      </button>
+                    </li>
+                  </ul>
+
+                  {/* ✅ Corrected Pagination Count */}
+                  <p>
+                    {pagination.total_count > 0 ? (
+                      <>
+                        Showing{" "}
+                        {pagination.total_count === 0 ? 0 : startIndex + 1} to{" "}
+                        {Math.min(
+                          startIndex + displayedCompanies.length,
+                          pagination.total_count
+                        )}{" "}
+                        of {pagination.total_count} entries
+                      </>
+                    ) : (
+                      "No entries found"
+                    )}
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
+      </div>
       {/* </div> */}
     </div>
   );
