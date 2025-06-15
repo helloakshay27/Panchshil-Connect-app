@@ -100,6 +100,9 @@ import ReferralEdit from "./pages/referral-edit";
 import ReferralProgramCreate from "./pages/referral-program-create";
 import ReferralProgramList from "./pages/referral-program-list";
 import ReferralProgramEdit from "./pages/referral-program-edit";
+import TdsTutorialCreate from "./pages/tds-tutorials-create";
+import TdsTutorialList from "./pages/tds-tutorials-list";
+import TdsTutorialEdit from "./pages/tds-tutorials-edit";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -361,6 +364,20 @@ function App() {
             path="/setup-member/user-details/:id"
             element={<UserDetails />}
           />
+
+          <Route
+            path="/setup-member/tds-tutorials-create"
+            element={<TdsTutorialCreate />}
+          />
+          <Route
+            path="/setup-member/tds-tutorials-list"
+            element={<TdsTutorialList />}
+          />
+          <Route
+            path="/setup-member/tds-tutorials-edit/:id"
+            element={<TdsTutorialEdit />}
+          />
+
 
 
         </Route>

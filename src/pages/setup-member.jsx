@@ -64,6 +64,15 @@ const SetupMember = () => {
                   Lock Function List
                 </Link>
               </li>
+               <li>
+                <Link to="/setup-member/tds-tutorials-create">TDS Tutorials Create</Link>
+              </li>
+              <li>
+                <Link to="/setup-member/tds-tutorials-list">TDS Tutorials List</Link>
+              </li>
+               <li>
+                <Link to="/setup-member/tds-tutorials-edit/:id">TDS Tutorials Edit</Link>
+              </li>
 
               <li>
                 <Link to="category-types">Category Type</Link>
@@ -137,6 +146,7 @@ const SetupMember = () => {
               <li>
                 <Link to="siteslot-list">Site Visit Slot Config List</Link>
               </li>
+             
               <li>
                 <Link to="tag-add">Tag</Link>
               </li>
