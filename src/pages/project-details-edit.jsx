@@ -23,7 +23,7 @@ const ProjectDetailsEdit = () => {
     building_type: "",
     SFDC_Project_Id: "",
     Project_Construction_Status: "",
-    Configuration_Type: [],
+    Configuration_Type1: [],
     Project_Name: "",
     project_address: "",
     Project_Description: "",
@@ -105,6 +105,7 @@ const ProjectDetailsEdit = () => {
   const [statusOptions, setStatusOptions] = useState([]);
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
   const [nameSend, setNameSend] = useState([]);
+  const [nameSends, setNameSends] = useState([]);
   // console.log(statusOptions);
 
   useEffect(() => {
@@ -250,8 +251,14 @@ const ProjectDetailsEdit = () => {
           building_type: projectData.building_type || "",
           Project_Construction_Status:
             projectData.Project_Construction_Status || "",
-          Configuration_Type: Array.isArray(projectData.configurations)
-            ? projectData.configurations.map((config) => config.name)
+          // Configuration_Type: Array.isArray(projectData.configurations)
+          //   ? projectData.configurations.map((config) => config.name)
+          //   : [],
+           Configuration_Type1: Array.isArray(projectData.configurations)
+            ? projectData.configurations.map((config) => ({
+                id: config.id,
+                name: config.name,
+              }))
             : [],
           Project_Name: projectData.project_name || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
@@ -269,7 +276,7 @@ const ProjectDetailsEdit = () => {
           no_of_floors: projectData.no_of_floors || "",
           Number_Of_Units: projectData.no_of_apartments || "",
           Rera_Number_multiple: projectData.rera_number_multiple || [],
-         Amenities1: Array.isArray(projectData.amenities)
+          Amenities1: Array.isArray(projectData.amenities)
             ? projectData.amenities.map((ammit) => ({
                 id: ammit.id,
                 name: ammit.name,
@@ -634,8 +641,7 @@ const ProjectDetailsEdit = () => {
       setFormData({ ...formData, [key]: updatedFiles });
 
       // console.log(`Image with ID ${image.id} deleted successfully`);
-            toast.success("Image removed successfully!");
-
+      toast.success("Image removed successfully!");
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -1320,6 +1326,8 @@ const ProjectDetailsEdit = () => {
 
     data.append("project[Amenities]", nameSend);
 
+    data.append("project[Configuration_Type]", nameSends);
+
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
@@ -1736,6 +1744,9 @@ const ProjectDetailsEdit = () => {
     ...new Set(amenities.map((ammit) => ammit.amenity_type)),
   ].map((type) => ({ value: type, label: type }));
 
+  const configurationTypes = [
+    ...new Set(configurations.map((config) => config.configuration_type)),
+  ].map((type) => ({ value: type, label: type }));
   // const handleImageUpload = (event) => {
   //   const files = Array.from(event.target.files);
 
@@ -1822,53 +1833,53 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleRemoveQRCodeImage = async (key, index, imageId) => {
-  // If no imageId, just remove locally (newly added, not yet saved)
-  if (!imageId) {
-    setFormData((prev) => {
-      const updatedImages = prev[key].filter((_, i) => i !== index);
-      return {
-        ...prev,
-        [key]: updatedImages,
-      };
-    });
-    toast.success("QR Code image removed!");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      `${baseURL}projects/${id}/remove_qr_code_images/${imageId}.json`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Failed to delete image. Server response: ${errorText}`
-      );
+    // If no imageId, just remove locally (newly added, not yet saved)
+    if (!imageId) {
+      setFormData((prev) => {
+        const updatedImages = prev[key].filter((_, i) => i !== index);
+        return {
+          ...prev,
+          [key]: updatedImages,
+        };
+      });
+      toast.success("QR Code image removed!");
+      return;
     }
 
-    // Remove the image from the state
-    setFormData((prev) => {
-      const updatedImages = prev[key].filter((_, i) => i !== index);
-      return {
-        ...prev,
-        [key]: updatedImages,
-      };
-    });
+    try {
+      const response = await fetch(
+        `${baseURL}projects/${id}/remove_qr_code_images/${imageId}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
 
-    toast.success("QR Code image deleted successfully!");
-  } catch (error) {
-    console.error("Error deleting image:", error.message);
-    toast.error("Failed to delete image. Please try again.");
-  }
-};
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to delete image. Server response: ${errorText}`
+        );
+      }
+
+      // Remove the image from the state
+      setFormData((prev) => {
+        const updatedImages = prev[key].filter((_, i) => i !== index);
+        return {
+          ...prev,
+          [key]: updatedImages,
+        };
+      });
+
+      toast.success("QR Code image deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting image:", error.message);
+      toast.error("Failed to delete image. Please try again.");
+    }
+  };
 
   // const handleGalleryImageUpload = (event) => {
   //   const files = Array.from(event.target.files);
@@ -2439,7 +2450,7 @@ const ProjectDetailsEdit = () => {
       name: option.label,
     }));
 
-      setNameSend(newAmenities.map((amenity) => amenity.name));
+    setNameSend(newAmenities.map((amenity) => amenity.name));
 
     // Detect removed amenities
     const removed = formData.Amenities1.filter(
@@ -2447,7 +2458,7 @@ const ProjectDetailsEdit = () => {
         !newAmenities.some((newAmenity) => newAmenity.id === oldAmenity.id)
     );
 
-  for (const amenity of removed) {
+    for (const amenity of removed) {
       try {
         await axios.delete(`${baseURL}amenities/${amenity.id}.json`);
         console.log(`Deleted amenity with ID: ${amenity.id}`);
@@ -2467,6 +2478,52 @@ const ProjectDetailsEdit = () => {
   const filteredAmenities = amenities.filter(
     (ammit) => !selectedAmenityNames.includes(ammit.name)
   );
+  
+  
+
+   const handleConfigurationChange = async (selectedOptions) => {
+    const newConfigurations = selectedOptions.map((option) => ({
+      id: option.value,
+      name: option.label,
+    }));
+
+    setNameSends(newConfigurations.map((config) => config.name));
+
+    // Detect removed configurations
+    const removed = formData.Configuration_Type1.filter(
+      (oldConfig) =>
+        !newConfigurations.some((newConfig) => newConfig.id === oldConfig.id)
+    );
+
+   for (const config of removed) {
+  try {
+    await axios.delete(
+      `${baseURL}projects/${id}/configurations/${config.id}.json`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
+    console.log(`Deleted configuration with ID: ${config.id}`);
+  } catch (error) {
+    console.error("Error deleting configuration:", error);
+  }
+}
+
+    setFormData((prev) => ({
+      ...prev,
+      Configuration_Type1: newConfigurations,
+    }));
+  };
+  
+  const selectedConfigurationNames = formData.Configuration_Type1.map((c) => c.name);
+
+  const filteredConfigurations = configurations.filter(
+    (config) => !selectedConfigurationNames.includes(config.name)
+  );
+
+  
 
   return (
     <>
@@ -2639,14 +2696,11 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-3 mt-2">
+              {/* <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Configuration Type
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
+                    
                   </label>
                   <MultiSelectBox
                     options={configurations.map((config) => ({
@@ -2668,7 +2722,34 @@ const ProjectDetailsEdit = () => {
                     placeholder="Select Type"
                   />
                 </div>
+              </div> */}
+
+                <div className="col-md-3 mt-2">
+                <div className="form-group">
+                  <label>
+                    Configuration Type
+                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
+                      {" "}
+                      *
+                    </span> */}
+                  </label>
+                  <MultiSelectBox
+                    options={filteredConfigurations.map((config) => ({
+                      value: config.id,
+                      label: config.name,
+                    }))}
+                    value={formData.Configuration_Type1.map((type) => ({
+                      value: type.id,
+                      label: type.name,
+                    }))}
+                    onChange={handleConfigurationChange}
+                    placeholder="Select Configuration"
+                  />
+                  {/* {console.log("amenities", amenities)} */}
+                  {/* {console.log("project_amenities", formData.project_amenities)} */}
+                </div>
               </div>
+
               <div className="col-md-3 mt-1">
                 <div className="form-group">
                   <label>
@@ -3578,7 +3659,7 @@ const ProjectDetailsEdit = () => {
                       *
                     </span> */}
                   </label>
-                 <MultiSelectBox
+                  <MultiSelectBox
                     options={filteredAmenities.map((ammit) => ({
                       value: ammit.id,
                       label: ammit.name,
