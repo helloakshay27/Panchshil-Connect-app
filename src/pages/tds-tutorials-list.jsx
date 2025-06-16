@@ -193,22 +193,24 @@ const TdsTutorialList = () => {
             </div>
           </div>
           <div className="card-tools mt-1">
-            <button
-              className="purple-btn2 rounded-3"
-              onClick={() => navigate("/setup-member/tds-tutorials-create")}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={16}
-                height={16}
-                fill="currentColor"
-                className="bi bi-plus"
-                viewBox="0 0 16 16"
+            {tutorials.length < 2 && (
+              <button
+                className="purple-btn2 rounded-3"
+                onClick={() => navigate("/setup-member/tds-tutorials-create")}
               >
-                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-              </svg>
-              <span>Add</span>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={16}
+                  height={16}
+                  fill="currentColor"
+                  className="bi bi-plus"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                </svg>
+                <span>Add</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -235,7 +237,7 @@ const TdsTutorialList = () => {
                       <th>Action</th>
                       <th>Sr No</th>
                       <th>Name</th>
-                      <th>Description</th>
+                      {/* <th>Description</th> */}
                       <th>Attachment</th>
                       {/* <th>Status</th> */}
                     </tr>
@@ -267,7 +269,7 @@ const TdsTutorialList = () => {
                                 />
                               </svg>
                             </a>
-                            {/* <button
+                            <button
                               onClick={() => handleDelete(tutorial.id)}
                               className="me-2"
                               title="Delete Tutorial"
@@ -290,7 +292,7 @@ const TdsTutorialList = () => {
                                   fill="#dc3545"
                                 />
                               </svg>
-                            </button> */}
+                            </button>
                             <button
                               onClick={() =>
                                 handleToggle(tutorial.id, tutorial.active)
@@ -335,62 +337,97 @@ const TdsTutorialList = () => {
                               1}
                           </td>
                           <td>{tutorial.name || tutorial.title || "-"}</td>
-                          <td>{tutorial.description || "-"}</td>
+                          {/* <td>{tutorial.description || "-"}</td> */}
                           <td className="text-center">
-                            {tutorial.attachment ? (
-                              (() => {
-                                const attachment = tutorial.attachment;
-                                
-                                if (!attachment.document_url) {
-                                  return "Attachment available";
-                                }
+                            {tutorial.attachment
+                              ? (() => {
+                                  const attachment = tutorial.attachment;
 
-                                return attachment.document_content_type?.startsWith("video/") ? (
-                                  <video
-                                    width="100"
-                                    height="65"
-                                    autoPlay
-                                    muted
-                                    loop
-                                    playsInline
-                                    style={{
-                                      display: "block",
-                                      borderRadius: "8px",
-                                      objectFit: "cover",
-                                    }}
-                                  >
-                                    <source
+                                  if (!attachment.document_url) {
+                                    return "Attachment available";
+                                  }
+
+                                  return attachment.document_content_type?.startsWith(
+                                    "video/"
+                                  ) ? (
+                                    <video
+                                      width="100"
+                                      height="65"
+                                      autoPlay
+                                      muted
+                                      loop
+                                      playsInline
+                                      style={{
+                                        display: "block",
+                                        borderRadius: "8px",
+                                        objectFit: "cover",
+                                      }}
+                                    >
+                                      <source
+                                        src={attachment.document_url}
+                                        type={attachment.document_content_type}
+                                      />
+                                      Your browser does not support the video
+                                      tag.
+                                    </video>
+                                  ) : attachment.document_content_type?.startsWith(
+                                      "image/"
+                                    ) ? (
+                                    <img
                                       src={attachment.document_url}
-                                      type={attachment.document_content_type}
+                                      alt="Tutorial Attachment"
+                                      className="img-fluid rounded"
+                                      style={{
+                                        maxWidth: "100px",
+                                        maxHeight: "100px",
+                                        display: "block",
+                                      }}
                                     />
-                                    Your browser does not support the video tag.
-                                  </video>
-                                ) : attachment.document_content_type?.startsWith("image/") ? (
-                                  <img
-                                    src={attachment.document_url}
-                                    alt="Tutorial Attachment"
-                                    className="img-fluid rounded"
-                                    style={{
-                                      maxWidth: "100px",
-                                      maxHeight: "100px",
-                                      display: "block",
-                                    }}
-                                  />
-                                ) : (
-                                  <a
-                                    href={attachment.document_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="purple-btn2 rounded-3"
-                                  >
-                                    View PDF
-                                  </a>
-                                );
-                              })()
-                            ) : (
-                              "No attachment"
-                            )}
+                                  ) : (
+                                    <a
+                                      href={attachment.document_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{ display: "inline-block" }}
+                                    >
+                                      {/* Your SVG icon */}
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="25"
+                                        height="25"
+                                        viewBox="0 0 25 25"
+                                        fill="none"
+                                      >
+                                        <mask
+                                          id="mask0_12559_7239"
+                                          style={{ maskType: "alpha" }}
+                                          maskUnits="userSpaceOnUse"
+                                          x="0"
+                                          y="0"
+                                          width="25"
+                                          height="25"
+                                        >
+                                          <rect
+                                            x="0.341797"
+                                            y="0.0665283"
+                                            width="24"
+                                            height="24"
+                                            fill="#D9D9D9"
+                                          />
+                                        </mask>
+                                        <g mask="url(#mask0_12559_7239)">
+                                          <path
+                                            d="M9.3418 12.5665H10.3418V10.5665H11.3418C11.6251 10.5665 11.8626 10.4707 12.0543 10.279C12.246 10.0874 12.3418 9.84986 12.3418 9.56653V8.56653C12.3418 8.28319 12.246 8.04569 12.0543 7.85403C11.8626 7.66236 11.6251 7.56653 11.3418 7.56653H9.3418V12.5665ZM10.3418 9.56653V8.56653H11.3418V9.56653H10.3418ZM13.3418 12.5665H15.3418C15.6251 12.5665 15.8626 12.4707 16.0543 12.279C16.246 12.0874 16.3418 11.8499 16.3418 11.5665V8.56653C16.3418 8.28319 16.246 8.04569 16.0543 7.85403C15.8626 7.66236 15.6251 7.56653 15.3418 7.56653H13.3418V12.5665ZM14.3418 11.5665V8.56653H15.3418V11.5665H14.3418ZM17.3418 12.5665H18.3418V10.5665H19.3418V9.56653H18.3418V8.56653H19.3418V7.56653H17.3418V12.5665ZM8.3418 18.0665C7.7918 18.0665 7.32096 17.8707 6.9293 17.479C6.53763 17.0874 6.3418 16.6165 6.3418 16.0665V4.06653C6.3418 3.51653 6.53763 3.0457 6.9293 2.65403C7.32096 2.26236 7.7918 2.06653 8.3418 2.06653H20.3418C20.8918 2.06653 21.3626 2.26236 21.7543 2.65403C22.146 3.0457 22.3418 3.51653 22.3418 4.06653V16.0665C22.3418 16.6165 22.146 17.0874 21.7543 17.479C21.3626 17.8707 20.8918 18.0665 20.3418 18.0665H8.3418ZM8.3418 16.0665H20.3418V4.06653H8.3418V16.0665ZM4.3418 22.0665C3.7918 22.0665 3.32096 21.8707 2.9293 21.479C2.53763 21.0874 2.3418 20.6165 2.3418 20.0665V6.06653H4.3418V20.0665H18.3418V22.0665H4.3418Z"
+                                            fill="#1C1B1F"
+                                          />
+                                        </g>
+                                      </svg>
+                                    </a>
+                                  );
+                                })()
+                              : "No attachment"}
                           </td>
+
                           {/* <td>
                             <span
                               className={`badge ${
@@ -478,7 +515,10 @@ const TdsTutorialList = () => {
                       );
                       if (startPage > 2) {
                         pageNumbers.push(
-                          <li key="start-ellipsis" className="page-item disabled">
+                          <li
+                            key="start-ellipsis"
+                            className="page-item disabled"
+                          >
                             <span className="page-link">...</span>
                           </li>
                         );
@@ -529,7 +569,8 @@ const TdsTutorialList = () => {
                   {/* Next Button */}
                   <li
                     className={`page-item ${
-                      pagination.current_page === Math.ceil(totalFiltered / pageSize)
+                      pagination.current_page ===
+                      Math.ceil(totalFiltered / pageSize)
                         ? "disabled"
                         : ""
                     }`}
@@ -540,7 +581,8 @@ const TdsTutorialList = () => {
                         handlePageChange(pagination.current_page + 1)
                       }
                       disabled={
-                        pagination.current_page === Math.ceil(totalFiltered / pageSize)
+                        pagination.current_page ===
+                        Math.ceil(totalFiltered / pageSize)
                       }
                     >
                       Next
@@ -550,16 +592,20 @@ const TdsTutorialList = () => {
                   {/* Last Button */}
                   <li
                     className={`page-item ${
-                      pagination.current_page === Math.ceil(totalFiltered / pageSize)
+                      pagination.current_page ===
+                      Math.ceil(totalFiltered / pageSize)
                         ? "disabled"
                         : ""
                     }`}
                   >
                     <button
                       className="page-link"
-                      onClick={() => handlePageChange(Math.ceil(totalFiltered / pageSize))}
+                      onClick={() =>
+                        handlePageChange(Math.ceil(totalFiltered / pageSize))
+                      }
                       disabled={
-                        pagination.current_page === Math.ceil(totalFiltered / pageSize)
+                        pagination.current_page ===
+                        Math.ceil(totalFiltered / pageSize)
                       }
                     >
                       Last

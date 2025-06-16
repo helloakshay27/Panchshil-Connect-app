@@ -544,7 +544,7 @@ const SetupSidebar = () => {
                 </NavLink>
               </li>
               )}
-               {/* <li className="menu-item d-flex">
+               <li className="menu-item d-flex">
                 
                 <NavLink
                   to="/setup-member/tds-tutorials-list"
@@ -576,7 +576,7 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">TDS Tutorials </span>
                 </NavLink>
-              </li> */}
+              </li>
                          
             </ul>
           </div>

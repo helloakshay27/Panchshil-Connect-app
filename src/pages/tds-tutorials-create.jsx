@@ -14,7 +14,7 @@ const TdsTutorialCreate = () => {
   const [tutorialData, setTutorialData] = useState({
     name: "",
     description: "",
-    attachments: [],
+    attachment: null, // Changed from attachments array to single attachment
   });
 
   console.log("tutorialData", tutorialData);
@@ -52,77 +52,35 @@ const TdsTutorialCreate = () => {
   };
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
+    const file = e.target.files[0]; // Get only the first file
 
-    if (files.length === 0) {
-      setTutorialData((prev) => ({ ...prev, attachments: [] }));
+    if (!file) {
+      setTutorialData((prev) => ({ ...prev, attachment: null }));
       return;
     }
 
-    // Allow only 2 files
-    if (files.length > 2) {
-      toast.error("Maximum 2 files allowed.");
+    // Check if file is PDF
+    if (file.type !== "application/pdf") {
+      toast.error("Please select only PDF files.");
       e.target.value = "";
       return;
     }
 
-    // Valid file types: images, videos, and PDFs
-    const validTypes = [
-      // Images
-      "image/jpeg",
-      "image/jpg", 
-      "image/png",
-      "image/gif",
-      "image/webp",
-      // Videos
-      "video/mp4",
-      "video/avi",
-      "video/mov",
-      "video/wmv",
-      "video/flv",
-      "video/webm",
-      "video/mkv",
-      // PDFs
-      "application/pdf",
-    ];
-
-    const invalidFiles = files.filter(
-      (file) => !validTypes.includes(file.type)
-    );
-
-    if (invalidFiles.length > 0) {
-      toast.error("Please select only image, video, or PDF files.");
+    // File size validation (10MB for PDFs)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      toast.error("PDF file must be less than 10MB.");
       e.target.value = "";
       return;
     }
 
-    // File size validation (10MB for videos/PDFs, 3MB for images)
-    const oversizedFiles = files.filter((file) => {
-      const maxSize = file.type.startsWith('video/') || file.type === 'application/pdf' 
-        ? 10 * 1024 * 1024  // 10MB for videos and PDFs
-        : 3 * 1024 * 1024;  // 3MB for images
-      return file.size > maxSize;
-    });
-
-    if (oversizedFiles.length > 0) {
-      toast.error("Images must be less than 3MB, videos and PDFs must be less than 10MB.");
-      e.target.value = "";
-      return;
-    }
-
-    setTutorialData((prev) => ({ ...prev, attachments: files }));
+    setTutorialData((prev) => ({ ...prev, attachment: file }));
   };
 
-  const removeFile = (fileIndex) => {
-    const updatedFiles = tutorialData.attachments.filter(
-      (_, index) => index !== fileIndex
-    );
-    setTutorialData((prev) => ({ ...prev, attachments: updatedFiles }));
-
-    if (updatedFiles.length === 0) {
-      const fileInput = document.querySelector('input[type="file"]');
-      if (fileInput) fileInput.value = "";
-    }
+  const removeFile = () => {
+    setTutorialData((prev) => ({ ...prev, attachment: null }));
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = "";
   };
 
   const validateForm = () => {
@@ -130,22 +88,7 @@ const TdsTutorialCreate = () => {
       toast.error("Name is required");
       return false;
     }
-    if (!tutorialData.description.trim()) {
-      toast.error("Description is required");
-      return false;
-    }
     return true;
-  };
-
-  const getFileIcon = (fileType) => {
-    if (fileType.startsWith('image/')) {
-      return '🖼️';
-    } else if (fileType.startsWith('video/')) {
-      return '🎥';
-    } else if (fileType === 'application/pdf') {
-      return '📄';
-    }
-    return '📎';
   };
 
   const handleSubmit = async (e) => {
@@ -161,38 +104,25 @@ const TdsTutorialCreate = () => {
     try {
       const formData = new FormData();
 
-      // Add tds_tutorial data (matching the desired JSON structure)
+      // Add tds_tutorial data
       formData.append("tds_tutorial[name]", tutorialData.name);
       formData.append("tds_tutorial[description]", tutorialData.description);
 
-      // Add attachments - Multiple approaches to try:
-      
-      // Approach 1: Single attachment field (if backend expects one file)
-      if (tutorialData.attachments.length > 0) {
-        formData.append("tds_tutorial[attachment]", tutorialData.attachments[0]);
+      // Add single attachment if exists
+      if (tutorialData.attachment) {
+        formData.append("tds_tutorial[attachment]", tutorialData.attachment);
       }
-      
-      // Approach 2: Multiple attachments (uncomment if backend supports multiple)
-      // tutorialData.attachments.forEach((file) => {
-      //   formData.append("tds_tutorial[attachments][]", file);
-      // });
-      
-      // Approach 3: Numbered attachments (uncomment if needed)
-      // tutorialData.attachments.forEach((file, index) => {
-      //   formData.append(`tds_tutorial[attachment_${index}]`, file);
-      // });
-      
-      // Approach 4: Direct file append (uncomment if needed)
-      // tutorialData.attachments.forEach((file) => {
-      //   formData.append("attachment", file);
-      // });
 
       // API call to TDS tutorials endpoint
-      const response = await axios.post(`${baseURL}tds_tutorials.json`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
+      const response = await axios.post(
+        `${baseURL}tds_tutorials.json`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
 
       toast.success("TDS Tutorial created successfully!");
 
@@ -200,7 +130,7 @@ const TdsTutorialCreate = () => {
       setTutorialData({
         name: "",
         description: "",
-        attachments: [],
+        attachment: null,
       });
 
       // Clear file input
@@ -260,29 +190,11 @@ const TdsTutorialCreate = () => {
                   </div>
                 </div>
 
-                {/* Description Field */}
+                {/* Attachment Field - Single PDF only */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
-                      Description <span className="otp-asterisk"> *</span>
-                    </label>
-                    <textarea
-                      className="form-control"
-                      rows={1}
-                      placeholder="Enter Description"
-                      name="description"
-                      value={tutorialData.description}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Attachments Field */}
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Attachments{" "}
+                      PDF Attachment{" "}
                       <span
                         className="tooltip-container"
                         onMouseEnter={() => setShowTooltip(true)}
@@ -291,7 +203,7 @@ const TdsTutorialCreate = () => {
                         [i]
                         {showTooltip && (
                           <span className="tooltip-text">
-                            Max 2 files: Images (3MB), Videos/PDFs (10MB)
+                            Only 1 PDF file allowed (Max 10MB)
                           </span>
                         )}
                       </span>
@@ -299,79 +211,67 @@ const TdsTutorialCreate = () => {
                     <input
                       className="form-control"
                       type="file"
-                      name="attachments"
-                      accept="image/*,video/*,.pdf"
+                      name="attachment"
+                      accept=".pdf"
                       onChange={handleFileChange}
-                      multiple
                     />
 
                     {/* File Preview */}
-                    {tutorialData.attachments.length > 0 && (
+                    {tutorialData.attachment && (
                       <div className="mt-3">
-                        <div className="d-flex flex-wrap gap-2">
-                          {tutorialData.attachments.map((file, index) => (
-                            <div
-                              key={index}
-                              className="position-relative border rounded p-2"
-                              style={{ minWidth: "200px", maxWidth: "250px" }}
+                        <div
+                          className="border rounded p-2"
+                          style={{ maxWidth: "250px" }}
+                        >
+                          <div
+                            className="d-flex align-items-center justify-content-center bg-light"
+                            style={{ height: "100px" }}
+                          >
+                            <span style={{ fontSize: "2rem" }}>📄</span>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="btn btn-danger btn-sm position-absolute"
+                            title="Remove file"
+                            style={{
+                              top: "-5px",
+                              right: "-5px",
+                              fontSize: "10px",
+                              width: "20px",
+                              height: "20px",
+                              padding: "0px",
+                              borderRadius: "50%",
+                            }}
+                            onClick={removeFile}
+                          >
+                            ×
+                          </button>
+
+                          <div className="text-center mt-1">
+                            <small
+                              className="text-muted"
+                              style={{ fontSize: "11px" }}
                             >
-                              {/* File preview based on type */}
-                              {file.type.startsWith('image/') ? (
-                                <img
-                                  src={URL.createObjectURL(file)}
-                                  alt={`Preview ${index + 1}`}
-                                  className="img-thumbnail"
-                                  style={{
-                                    width: "100%",
-                                    height: "100px",
-                                    objectFit: "cover",
-                                  }}
-                                />
-                              ) : (
-                                <div 
-                                  className="d-flex align-items-center justify-content-center bg-light"
-                                  style={{ height: "100px" }}
-                                >
-                                  <span style={{ fontSize: "2rem" }}>
-                                    {getFileIcon(file.type)}
-                                  </span>
-                                </div>
-                              )}
-                              
-                              <button
-                                type="button"
-                                className="btn btn-danger btn-sm position-absolute"
-                                title="Remove file"
-                                style={{
-                                  top: "-5px",
-                                  right: "-5px",
-                                  fontSize: "10px",
-                                  width: "20px",
-                                  height: "20px",
-                                  padding: "0px",
-                                  borderRadius: "50%",
-                                }}
-                                onClick={() => removeFile(index)}
-                              >
-                                ×
-                              </button>
-                              
-                              <div className="text-center mt-1">
-                                <small
-                                  className="text-muted"
-                                  style={{ fontSize: "11px" }}
-                                >
-                                  {file.name.length > 20
-                                    ? `${file.name.substring(0, 20)}...`
-                                    : file.name}
-                                </small>
-                                <br />
-                                <small className="text-info" style={{ fontSize: "10px" }}>
-                                  {(file.size / (1024 * 1024)).toFixed(2)} MB
-                                </small>
-                              </div>
-                            </div>
-                          ))}
+                              {tutorialData.attachment.name.length > 20
+                                ? `${tutorialData.attachment.name.substring(
+                                    0,
+                                    20
+                                  )}...`
+                                : tutorialData.attachment.name}
+                            </small>
+                            <br />
+                            <small
+                              className="text-info"
+                              style={{ fontSize: "10px" }}
+                            >
+                              {(
+                                tutorialData.attachment.size /
+                                (1024 * 1024)
+                              ).toFixed(2)}{" "}
+                              MB
+                            </small>
+                          </div>
                         </div>
                       </div>
                     )}
