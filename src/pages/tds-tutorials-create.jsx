@@ -176,12 +176,12 @@ const TdsTutorialCreate = () => {
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
-                      Tutorial Name <span className="otp-asterisk"> *</span>
+                      Title <span className="otp-asterisk"> *</span>
                     </label>
                     <input
                       className="form-control"
                       type="text"
-                      placeholder="Enter Tutorial Name"
+                      placeholder="Enter Title"
                       name="name"
                       value={tutorialData.name}
                       onChange={handleInputChange}
@@ -191,10 +191,10 @@ const TdsTutorialCreate = () => {
                 </div>
 
                 {/* Attachment Field - Single PDF only */}
-                <div className="col-md-3">
+                <div className="col-md-3 mt-1">
                   <div className="form-group">
                     <label>
-                      PDF Attachment{" "}
+                      Attachment{" "}
                       <span
                         className="tooltip-container"
                         onMouseEnter={() => setShowTooltip(true)}

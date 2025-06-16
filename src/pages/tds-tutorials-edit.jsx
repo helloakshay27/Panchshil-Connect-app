@@ -357,15 +357,15 @@ const TdsTutorialEdit = () => {
             <div className="card-body">
               <div className="row">
                 {/* Name Field */}
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <div className="form-group">
                     <label>
-                      Tutorial Name <span className="otp-asterisk"> *</span>
+                      Title <span className="otp-asterisk"> *</span>
                     </label>
                     <input
                       className="form-control"
                       type="text"
-                      placeholder="Enter Tutorial Name"
+                      placeholder="Enter Title"
                       name="name"
                       value={tutorialData.name}
                       onChange={handleInputChange}
@@ -393,10 +393,10 @@ const TdsTutorialEdit = () => {
                 </div> */}
 
                 {/* Attachments Field */}
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <div className="form-group">
                     <label>
-                      Attachments{" "}
+                      Attachment{" "}
                       <span
                         className="tooltip-container"
                         onMouseEnter={() => setShowTooltip(true)}
