@@ -106,6 +106,8 @@ import TdsTutorialEdit from "./pages/tds-tutorials-edit";
 import PlusServicesList from "./pages/plus-service-list";
 import PlusServiceCreate from "./pages/plus-service-create";
 import PlusServiceEdit from "./pages/plus-service-edit";
+import SMTPSettingsList from "./pages/smtp-settings-list";
+import SMTPSettingsEdit from "./pages/smtp-settings-edit";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -392,6 +394,15 @@ function App() {
            <Route
             path="/setup-member/plus-services-edit/:id"
             element={<PlusServiceEdit />}
+          />
+
+          <Route
+            path="/setup-member/smtp-settings-list"
+            element={<SMTPSettingsList />}
+          />
+           <Route
+            path="/setup-member/smtp-settings-edit/:id"
+            element={<SMTPSettingsEdit />}
           />
 
         </Route>
