@@ -74,6 +74,16 @@ const SetupMember = () => {
                 <Link to="/setup-member/tds-tutorials-edit/:id">TDS Tutorials Edit</Link>
               </li>
 
+               <li>
+                <Link to="/setup-member/plus-services-list">Plus Services List</Link>
+              </li>
+               <li>
+                <Link to="/setup-member/plus-services-create">Plus Services Create</Link>
+              </li>
+               <li>
+                <Link to="/setup-member/plus-services-edit/:id">Plus Services Edit</Link>
+              </li>
+
               <li>
                 <Link to="category-types">Category Type</Link>
               </li>
