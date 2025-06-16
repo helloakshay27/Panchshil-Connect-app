@@ -1980,7 +1980,7 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-              {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+              {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
                 <div className="col-md-3 mt-1">
                   <div className="form-group">
                     <label>
@@ -1998,7 +1998,7 @@ const ProjectDetailsCreate = () => {
                     />
                   </div>
                 </div>
-              )}
+              {/* )} */}
 
               <div className="col-md-3 mt-1">
                 <div className="form-group">

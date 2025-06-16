@@ -374,6 +374,7 @@ if (oversizedImage) {
                       <input
                         className="form-control"
                         type="file"
+                        accept="image/*,video/*"
                         name="banner_video"
                         onChange={handleBannerVideoChange}
                       />

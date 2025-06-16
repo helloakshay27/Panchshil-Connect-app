@@ -108,6 +108,7 @@ import PlusServiceCreate from "./pages/plus-service-create";
 import PlusServiceEdit from "./pages/plus-service-edit";
 import SMTPSettingsList from "./pages/smtp-settings-list";
 import SMTPSettingsEdit from "./pages/smtp-settings-edit";
+import { useEffect } from "react";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -151,6 +152,25 @@ if (baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://
 }
 
 function App() {
+   useEffect(() => {
+    let faviconPath = "src/assets/Panchshil_logo.png"; // default
+
+    if (baseURL.startsWith("https://api-connect.panchshil.com/")) {
+      faviconPath = "src/assets/Panchshil_logo.png";
+    } else if (baseURL.startsWith("https://dev-panchshil-super-app.lockated.com/")) {
+      faviconPath = "src/assets/Rustomjee_icon.png";
+    }
+
+    const link = document.querySelector("link[rel~='icon']");
+    if (link) {
+      link.href = faviconPath;
+    } else {
+      const newLink = document.createElement("link");
+      newLink.rel = "icon";
+      newLink.href = faviconPath;
+      document.head.appendChild(newLink);
+    }
+  }, []);
   return (
     <BrowserRouter>
       <Toaster />
