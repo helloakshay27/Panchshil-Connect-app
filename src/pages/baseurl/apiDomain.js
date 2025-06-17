@@ -3,16 +3,15 @@ let baseURL = "";
 const hostname = window.location.hostname;
 
 switch (hostname) {
+  case "ui-loyalty-super.lockated.com":
+    baseURL = "https://dev-panchshil-super-app.lockated.com/";
+    break;
   case "ui-panchshil-super.lockated.com":
     baseURL = "https://api-connect.panchshil.com";
     break;
 
   case "uat-connect.panchshil.com":
     baseURL = "https://api-connect.panchshil.com";
-    break;
-
-  case "ui-loyalty-super.lockated.com":
-    baseURL = "https://dev-panchshil-super-app.lockated.com/";
     break;
 
   case "localhost":
