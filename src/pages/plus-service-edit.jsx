@@ -213,15 +213,15 @@ const PlusServiceEdit = () => {
   };
 
   // Show loading while fetching data
-  if (fetchLoading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
-        <div className="spinner-border" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
-      </div>
-    );
-  }
+  // if (fetchLoading) {
+  //   return (
+  //     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+  //       <div className="spinner-border" role="status">
+  //         <span className="sr-only">Loading...</span>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="">
@@ -310,7 +310,7 @@ const PlusServiceEdit = () => {
                               objectFit: "cover",
                             }}
                           />
-                          <button
+                          {/* <button
                             type="button"
                             className="btn btn-danger btn-sm position-absolute"
                             title="Remove new image"
@@ -326,16 +326,16 @@ const PlusServiceEdit = () => {
                             onClick={removeNewImage}
                           >
                             ×
-                          </button>
-                          <div className="text-center mt-2">
-                            <small className="text-success font-weight-bold">New Image</small>
+                          </button> */}
+                          {/* <div className="text-center mt-2">
+                            <small className="text-success font-weight-bold"></small>
                             <br />
                             <small className="text-muted">
                               {serviceData.attachment.name.length > 20
                                 ? `${serviceData.attachment.name.substring(0, 20)}...`
                                 : serviceData.attachment.name}
                             </small>
-                          </div>
+                          </div> */}
                         </div>
                       ) : (
                         /* Show existing image if no new image selected */
@@ -351,7 +351,7 @@ const PlusServiceEdit = () => {
                                 objectFit: "cover",
                               }}
                             />
-                            <button
+                            {/* <button
                               type="button"
                               className="btn btn-danger btn-sm position-absolute"
                               title="Remove existing image"
@@ -369,8 +369,8 @@ const PlusServiceEdit = () => {
                               ×
                             </button>
                             <div className="text-center mt-2">
-                              <small className="text-info font-weight-bold">Current Image</small>
-                            </div>
+                              <small className="text-info font-weight-bold"></small>
+                            </div> */}
                           </div>
                         )
                       )}

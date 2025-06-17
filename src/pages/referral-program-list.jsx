@@ -99,56 +99,111 @@ const ReferralProgramList = () => {
     pagination.current_page * pageSize
   );
 
+  // const handleToggle = async (id, currentStatus) => {
+  //   toast.dismiss(); // Dismiss any existing toast first
+  //   const updatedStatus = !currentStatus; // toggle
+
+  //   // Dismiss any existing toast first (if using toast)
+  //   if (activeToastId) {
+  //     // toast.dismiss(activeToastId);
+  //   }
+
+  //   try {
+  //     await axios.put(
+  //       `${baseURL}referral_configs/${id}.json`,
+  //       { referral_config: { active: updatedStatus } }, // ✅ match key
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //         },
+  //       }
+  //     );
+
+  //     // Update testimonials state instead of projects
+  //     setReferrals((prev) =>
+  //       prev.map((item) =>
+  //         item.id === id ? { ...item, active: updatedStatus } : item
+  //       )
+  //     );
+
+  //     // Show success message (uncomment if using toast)
+  //     // const newToastId = toast.success("Status updated successfully!", {
+  //     //   duration: 3000,
+  //     //   position: "top-center",
+  //     //   id: `toggle-${id}`,
+  //     // });
+  //     // setActiveToastId(newToastId);
+
+  //     console.log("Status updated successfully!");
+  //     toast.success("Status updated successfully!");
+  //   } catch (error) {
+  //     console.error("Error updating status:", error);
+
+  //     // Show error message (uncomment if using toast)
+  //     // const newToastId = toast.error("Failed to update status.", {
+  //     //   duration: 3000,
+  //     //   position: "top-center",
+  //     //   id: `toggle-error-${id}`,
+  //     // });
+  //     // setActiveToastId(newToastId);
+  //   }
+  // };
+
   const handleToggle = async (id, currentStatus) => {
-    toast.dismiss(); // Dismiss any existing toast first
-    const updatedStatus = !currentStatus; // toggle
+  toast.dismiss();
+  const updatedStatus = !currentStatus;
 
-    // Dismiss any existing toast first (if using toast)
-    if (activeToastId) {
-      // toast.dismiss(activeToastId);
+  try {
+    // If activating, deactivate all others first
+    if (updatedStatus) {
+      // Deactivate all others in backend
+      const deactivatePromises = referrals
+        .filter(item => item.active && item.id !== id)
+        .map(item =>
+          axios.put(
+            `${baseURL}referral_configs/${item.id}.json`,
+            { referral_config: { active: false } },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+            }
+          )
+        );
+      await Promise.all(deactivatePromises);
     }
 
-    try {
-      await axios.put(
-        `${baseURL}referral_configs/${id}.json`,
-        { referral_config: { active: updatedStatus } }, // ✅ match key
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+    // Toggle the clicked one
+    await axios.put(
+      `${baseURL}referral_configs/${id}.json`,
+      { referral_config: { active: updatedStatus } },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
 
-      // Update testimonials state instead of projects
-      setReferrals((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, active: updatedStatus } : item
-        )
-      );
+    // Update state: only one active if activating, or all inactive if deactivating
+    setReferrals(prev =>
+      prev.map(item =>
+        item.id === id
+          ? { ...item, active: updatedStatus }
+          : updatedStatus
+            ? { ...item, active: false }
+            : item
+      )
+    );
 
-      // Show success message (uncomment if using toast)
-      // const newToastId = toast.success("Status updated successfully!", {
-      //   duration: 3000,
-      //   position: "top-center",
-      //   id: `toggle-${id}`,
-      // });
-      // setActiveToastId(newToastId);
-
-      console.log("Status updated successfully!");
-      toast.success("Status updated successfully!");
-    } catch (error) {
-      console.error("Error updating status:", error);
-
-      // Show error message (uncomment if using toast)
-      // const newToastId = toast.error("Failed to update status.", {
-      //   duration: 3000,
-      //   position: "top-center",
-      //   id: `toggle-error-${id}`,
-      // });
-      // setActiveToastId(newToastId);
-    }
-  };
+    toast.success("Status updated successfully!");
+  } catch (error) {
+    console.error("Error updating status:", error);
+    toast.error("Failed to update status.");
+  }
+};
 
   return (
     <div className="main-content">

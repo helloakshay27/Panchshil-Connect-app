@@ -333,18 +333,18 @@ const TdsTutorialEdit = () => {
     }
   };
 
-  if (fetchLoading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "50vh" }}
-      >
-        <div className="spinner-border text-primary" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
-      </div>
-    );
-  }
+  // if (fetchLoading) {
+  //   return (
+  //     <div
+  //       className="d-flex justify-content-center align-items-center"
+  //       style={{ height: "50vh" }}
+  //     >
+  //       <div className="spinner-border text-primary" role="status">
+  //         <span className="sr-only">Loading...</span>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="">
@@ -428,7 +428,7 @@ const TdsTutorialEdit = () => {
                     {/* All Files Preview */}
                     {tutorialData.attachments.length > 0 && (
                       <div className="mt-3">
-                        <h6 className="text-muted">Attachment:</h6>
+                        <h6 className="text-muted"></h6>
                         <div className="d-flex flex-wrap gap-2">
                           {tutorialData.attachments.map((attachment, index) => (
                             <div
@@ -448,7 +448,7 @@ const TdsTutorialEdit = () => {
                                   {getFileIcon("application/pdf")}
                                 </span>
                               </div>
-                              <button
+                              {/* <button
                                 type="button"
                                 className="btn btn-danger btn-sm position-absolute"
                                 title="Remove file"
@@ -469,7 +469,7 @@ const TdsTutorialEdit = () => {
                                 }
                               >
                                 ×
-                              </button>
+                              </button> */}
                               <div className="text-center mt-1">
                                 <small
                                   className="text-muted"
@@ -481,7 +481,7 @@ const TdsTutorialEdit = () => {
                                     : attachment.name || "File"}
                                 </small>
                                 <br />
-                                <small
+                                {/* <small
                                   className={
                                     attachment.isExisting
                                       ? "text-success"
@@ -492,11 +492,11 @@ const TdsTutorialEdit = () => {
                                   {attachment.isExisting
                                     ? "Existing File"
                                     : "New File"}
-                                </small>
+                                </small> */}
                                 {attachment.size && (
                                   <>
                                     <br />
-                                    <small
+                                    {/* <small
                                       className="text-muted"
                                       style={{ fontSize: "10px" }}
                                     >
@@ -505,7 +505,7 @@ const TdsTutorialEdit = () => {
                                         (1024 * 1024)
                                       ).toFixed(2)}{" "}
                                       MB
-                                    </small>
+                                    </small> */}
                                   </>
                                 )}
                               </div>

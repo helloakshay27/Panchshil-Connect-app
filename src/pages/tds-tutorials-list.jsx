@@ -193,7 +193,7 @@ const TdsTutorialList = () => {
             </div>
           </div>
           <div className="card-tools mt-1">
-            {tutorials.length < 2 && (
+            {tutorials.length < 1 && (
               <button
                 className="purple-btn2 rounded-3"
                 onClick={() => navigate("/setup-member/tds-tutorials-create")}

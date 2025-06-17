@@ -258,7 +258,7 @@ const PlusServiceCreate = () => {
                               objectFit: "cover",
                             }}
                           />
-                          <button
+                          {/* <button
                             type="button"
                             className="btn btn-danger btn-sm position-absolute"
                             title="Remove image"
@@ -274,9 +274,9 @@ const PlusServiceCreate = () => {
                             onClick={removeImage}
                           >
                             ×
-                          </button>
+                          </button> */}
                         </div>
-                        <div className="text-center mt-2">
+                        {/* <div className="text-center mt-2">
                           <small className="text-muted">
                             {serviceData.attachment.name.length > 20
                               ? `${serviceData.attachment.name.substring(
@@ -285,7 +285,7 @@ const PlusServiceCreate = () => {
                                 )}...`
                               : serviceData.attachment.name}
                           </small>
-                        </div>
+                        </div> */}
                       </div>
                     )}
                   </div>

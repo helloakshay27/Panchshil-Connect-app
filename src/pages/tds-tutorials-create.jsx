@@ -230,7 +230,7 @@ const TdsTutorialCreate = () => {
                             <span style={{ fontSize: "2rem" }}>📄</span>
                           </div>
 
-                          <button
+                          {/* <button
                             type="button"
                             className="btn btn-danger btn-sm position-absolute"
                             title="Remove file"
@@ -246,7 +246,7 @@ const TdsTutorialCreate = () => {
                             onClick={removeFile}
                           >
                             ×
-                          </button>
+                          </button> */}
 
                           <div className="text-center mt-1">
                             <small
@@ -261,7 +261,7 @@ const TdsTutorialCreate = () => {
                                 : tutorialData.attachment.name}
                             </small>
                             <br />
-                            <small
+                            {/* <small
                               className="text-info"
                               style={{ fontSize: "10px" }}
                             >
@@ -270,7 +270,7 @@ const TdsTutorialCreate = () => {
                                 (1024 * 1024)
                               ).toFixed(2)}{" "}
                               MB
-                            </small>
+                            </small> */}
                           </div>
                         </div>
                       </div>
