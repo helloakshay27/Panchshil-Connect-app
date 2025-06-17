@@ -23,6 +23,8 @@ switch (hostname) {
     break;
 }
 
+console.log("Base URL:" , baseURL , " | Hostname:", hostname);
+
 const token = localStorage.getItem("access_token");
 
 const LOGO_URL =
