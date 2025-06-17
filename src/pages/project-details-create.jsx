@@ -1429,6 +1429,7 @@ const ProjectDetailsCreate = () => {
     // Clear input fields after adding
     setTowerName("");
     setReraNumber("");
+     setReraUrl(""); 
   };
 
   // Handle Deleting a RERA Entry
