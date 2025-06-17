@@ -6,7 +6,8 @@ switch (hostname) {
   case "ui-panchshil-super.lockated.com":
     baseURL = "https://api-connect.panchshil.com";
     break;
-  case "https://uat-connect.panchshil.com/":
+
+  case "uat-connect.panchshil.com":
     baseURL = "https://api-connect.panchshil.com";
     break;
 
@@ -23,14 +24,16 @@ switch (hostname) {
     break;
 }
 
-console.log("Base URL:" , baseURL , " | Hostname:", hostname);
+console.log("Base URL:", baseURL, " | Hostname:", hostname);
 
 const token = localStorage.getItem("access_token");
 
 const LOGO_URL =
   "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png";
+
 const Rustomji_URL =
   "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/116/original/Rustomjee_Logo-02_1.png";
+
 const Rustomji_URL_Black =
   "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/158/original/Rustomjee_Logo-01_2.png";
 
