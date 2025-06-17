@@ -64,7 +64,7 @@ const SignIn = () => {
     }
 
     try {
-      const response = await axios.post(`${config.baseURL}/users/signin.json`, {
+      const response = await axios.post(`${baseURL}/users/signin.json`, {
         user: {
           email,
           password,
@@ -168,7 +168,7 @@ const SignIn = () => {
         otp,
       });
 
-    console.log("Response: verify code", response);
+      console.log("Response: verify code", response);
       const { access_token, email, firstname } = response.data;
       if (access_token) {
         localStorage.setItem("access_token", access_token);
@@ -198,7 +198,7 @@ const SignIn = () => {
       console.error(err);
       setError(
         err.response?.data?.message ||
-          "An error occurred during login. Please try again."
+        "An error occurred during login. Please try again."
       );
     } finally {
       setLoading(false);
@@ -246,45 +246,45 @@ const SignIn = () => {
           />
         </div> */}
         <div className="form-group position-relative">
-      <label
-        className={`mb-1 text-white ${config.formTextColor}`}
-        htmlFor="password"
-      >
-        Password
-      </label>
-      <div className="position-relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          id="password"
-          className="form-control-panchshil pr-5" // add right padding for eye icon
-          placeholder="Enter password here..."
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ paddingRight: "40px" }} // ensures the eye doesn't overlap text
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="position-absolute"
-          style={{
-            top: "50%",
-            right: "12px",
-            transform: "translateY(-50%)",
-            background: "transparent",
-            border: "none",
-            padding: 0,
-            cursor: "pointer",
-          }}
-        >
-          {showPassword ? (
-            <EyeOff size={18} color="var(--red)" /> // orange-red color as per screenshot
-          ) : (
-            <Eye size={18} color="var(--red)" />
-          )}
-        </button>
-      </div>
-    </div>
+          <label
+            className={`mb-1 text-white ${config.formTextColor}`}
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <div className="position-relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              className="form-control-panchshil pr-5" // add right padding for eye icon
+              placeholder="Enter password here..."
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ paddingRight: "40px" }} // ensures the eye doesn't overlap text
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="position-absolute"
+              style={{
+                top: "50%",
+                right: "12px",
+                transform: "translateY(-50%)",
+                background: "transparent",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+              }}
+            >
+              {showPassword ? (
+                <EyeOff size={18} color="var(--red)" /> // orange-red color as per screenshot
+              ) : (
+                <Eye size={18} color="var(--red)" />
+              )}
+            </button>
+          </div>
+        </div>
         <div className="d-flex justify-content-end mt-2 mb-3 gap-2">
           <a className="rustomjee-forget-btn" href="/forgot-password">
             Forgot password?
