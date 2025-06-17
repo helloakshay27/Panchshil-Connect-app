@@ -4,22 +4,22 @@ const hostname = window.location.hostname;
 
 switch (hostname) {
   case "ui-loyalty-super.lockated.com":
-    baseURL = "https://dev-panchshil-super-app.lockated.com";
+    baseURL = "https://dev-panchshil-super-app.lockated.com/";
     break;
   case "ui-panchshil-super.lockated.com":
-    baseURL = "https://api-connect.panchshil.com";
+    baseURL = "https://api-connect.panchshil.com/";
     break;
 
   case "uat-connect.panchshil.com":
-    baseURL = "https://api-connect.panchshil.com";
+    baseURL = "https://api-connect.panchshil.com/";
     break;
 
   case "localhost":
-    baseURL = "http://localhost:3000/";
+    baseURL = "https://api-connect.panchshil.com/";
     break;
 
   default:
-    baseURL = "https://api-connect.panchshil.com"; // fallback
+    baseURL = "https://api-connect.panchshil.com/"; // fallback
     break;
 }
 

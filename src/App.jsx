@@ -124,6 +124,7 @@ import { useEffect } from "react";
 // const baseURL = process.env.REACT_APP_BASE_URL; // or your const
 
 if (baseURL === "https://api-connect.panchshil.com/") {
+  console.log("Base URL is set to Panchshil Connect");
   document.body.classList.add("theme-connect");
 } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
   document.body.classList.add("theme-dev");
@@ -136,7 +137,7 @@ let ForgotOtpComponent;
 let CreatePasswordComponent;
 let LoginWithOtpComponent;
 
-if (baseURL === "https://panchshil-super.lockated.com" || baseURL === "https://api-connect.panchshil.com") {
+if (baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://api-connect.panchshil.com/") {
   // if (baseURL === "https://api-connect.panchshil.com/") {
   // if (baseURL === "http://localhost:3000/") {
   LoginComponent = <SignIn />;
@@ -152,7 +153,7 @@ if (baseURL === "https://panchshil-super.lockated.com" || baseURL === "https://a
 }
 
 function App() {
-   useEffect(() => {
+  useEffect(() => {
     let faviconPath = "src/assets/Panchshil_logo.png"; // default
 
     if (baseURL.startsWith("https://api-connect.panchshil.com/")) {
@@ -185,7 +186,7 @@ function App() {
         {/* <Route path="/reset-password" element={<CreatePassword />} /> */}
         <Route path="/reset-password" element={CreatePasswordComponent} />
         <Route path="/verify-otp" element={<LoginWithOtpRustomjee />} />
-        
+
 
         <Route
           path="/"
@@ -373,7 +374,7 @@ function App() {
             path="/setup-member/lock-role-list"
             element={<LockRoleList />}
           />
-           <Route
+          <Route
             path="/setup-member/user-create"
             element={<UserCreate />}
           />
@@ -381,11 +382,11 @@ function App() {
             path="/setup-member/user-edit/:id"
             element={<UserEdit />}
           />
-           <Route
+          <Route
             path="/setup-member/user-list"
             element={<UserList />}
           />
-           <Route
+          <Route
             path="/setup-member/user-details/:id"
             element={<UserDetails />}
           />
@@ -403,15 +404,15 @@ function App() {
             element={<TdsTutorialEdit />}
           />
 
-            <Route
+          <Route
             path="/setup-member/plus-services-list"
             element={<PlusServicesList />}
           />
-           <Route
+          <Route
             path="/setup-member/plus-services-create"
             element={<PlusServiceCreate />}
           />
-           <Route
+          <Route
             path="/setup-member/plus-services-edit/:id"
             element={<PlusServiceEdit />}
           />
@@ -420,7 +421,7 @@ function App() {
             path="/setup-member/smtp-settings-list"
             element={<SMTPSettingsList />}
           />
-           <Route
+          <Route
             path="/setup-member/smtp-settings-edit/:id"
             element={<SMTPSettingsEdit />}
           />
