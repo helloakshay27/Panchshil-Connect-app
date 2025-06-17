@@ -610,7 +610,7 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">Plus Services </span>
                 </NavLink>
               </li>
-                {/* <li className="menu-item d-flex">
+                <li className="menu-item d-flex">
                 
                 <NavLink
                   to="/setup-member/smtp-settings-list"
@@ -642,7 +642,7 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">SMTP Settings </span>
                 </NavLink>
-              </li> */}
+              </li>
                          
             </ul>
           </div>

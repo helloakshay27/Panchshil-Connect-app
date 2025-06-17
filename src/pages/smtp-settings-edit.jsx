@@ -3,12 +3,14 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { Eye, EyeOff } from "lucide-react";
 
 const SMTPSettingsEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     address: "",
@@ -354,19 +356,42 @@ const SMTPSettingsEdit = () => {
                   </div>
                 </div>
                 <div className="col-md-3">
-                  <div className="form-group">
+                  <div className="form-group position-relative">
                     <label>
                       Password<span style={{ color: "#de7008" }}> *</span>
                     </label>
                     <input
                       className="form-control"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="Enter SMTP Password"
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="position-absolute mt-3"
+                      style={{
+                        top: "50%",
+                        right: "10px",
+                        transform: "translateY(-50%)",
+                        background: "transparent",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                      }}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showPassword ? (
+                        <EyeOff size={18} color="var(--red)" />
+                      ) : (
+                        <Eye size={18} color="var(--red)" />
+                      )}
+                    </button>
                   </div>
                 </div>
 
