@@ -149,6 +149,40 @@ const SetupSidebar = () => {
                 </NavLink>
               </li>
             )}
+             <li className="menu-item d-flex">
+                <NavLink
+                  to="/setup-member/user-groups-list"
+                  style={{ flexDirection: "column" }}
+                  className={({ isActive }) =>
+                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.0"
+                    width="72.000000pt"
+                    height="72.000000pt"
+                    viewBox="0 0 72.000000 72.000000"
+                    preserveAspectRatio="xMidYMid meet"
+                    fill="#de7008"
+                  >
+                    <metadata>
+                      Created by potrace 1.10, written by Peter Selinger
+                      2001-2011
+                    </metadata>
+                    <g
+                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                      fill="#de7008"
+                      stroke="none"
+                    >
+                      <path d="M293 639 c-46 -22 -83 -82 -83 -133 0 -69 79 -146 150 -146 73 0 150 76 150 146 0 51 -38 111 -84 133 -53 26 -80 26 -133 0z m112 -23 c78 -33 97 -133 36 -188 -54 -48 -104 -49 -160 -2 -59 49 -48 141 21 184 39 24 57 25 103 6z" />
+                      <path d="M174 280 c-74 -37 -111 -153 -64 -200 19 -19 33 -20 254 -20 231 0 235 0 250 22 39 56 2 164 -68 197 -37 18 -61 21 -187 21 -124 0 -150 -3 -185 -20z m357 -25 c55 -29 89 -121 57 -153 -17 -17 -439 -17 -456 0 -16 16 -15 66 1 98 7 13 28 35 46 47 31 21 45 23 178 23 110 0 151 -4 174 -15z" />
+                    </g>
+                  </svg>
+
+                  <span className="menu-link-text">User Groups</span>
+                </NavLink>
+              </li>
             {lockFunctionActive && (
               <li className="menu-item d-flex">
                 {/* <a

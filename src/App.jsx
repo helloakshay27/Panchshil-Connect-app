@@ -109,6 +109,8 @@ import PlusServiceEdit from "./pages/plus-service-edit";
 import SMTPSettingsList from "./pages/smtp-settings-list";
 import SMTPSettingsEdit from "./pages/smtp-settings-edit";
 import { useEffect } from "react";
+import UserGroupList from "./pages/user-groups-list";
+import UserGroupCreate from "./pages/user-groups-create";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -424,6 +426,15 @@ function App() {
           <Route
             path="/setup-member/smtp-settings-edit/:id"
             element={<SMTPSettingsEdit />}
+          />
+
+           <Route
+            path="/setup-member/user-groups-list"
+            element={<UserGroupList />}
+          />
+          <Route
+            path="/setup-member/user-groups-create"
+            element={<UserGroupCreate />}
           />
 
         </Route>
