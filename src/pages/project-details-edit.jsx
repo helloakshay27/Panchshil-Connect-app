@@ -1512,7 +1512,7 @@ const ProjectDetailsEdit = () => {
         });
       } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
-          if (item.tower_name && item.rera_number) {
+          if (item.tower_name && item.rera_number ) {
             data.append(
               `project[Rera_Number_multiple][${index}][tower_name]`,
               item.tower_name
@@ -1523,7 +1523,7 @@ const ProjectDetailsEdit = () => {
             );
             data.append(
               `project[Rera_Number_multiple][${index}][rera_url]`,
-              item.rera_number
+              item.rera_url
             );
           }
         });

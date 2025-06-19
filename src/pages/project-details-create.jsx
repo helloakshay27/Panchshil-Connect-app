@@ -2552,7 +2552,7 @@ const ProjectDetailsCreate = () => {
             <h3 className="card-title">RERA Number</h3>
           </div>
           <div className="card-body mt-0 pb-0">
-            {/* Input Fields */}
+            {/* Input Fields for New Entry */}
             <div className="row align-items-center">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
@@ -2578,15 +2578,14 @@ const ProjectDetailsCreate = () => {
                     placeholder="Enter RERA Number"
                     value={reraNumber}
                     onChange={handleReraNumberChange}
-                    onBlur={handleReraNumberBlur} // Validate on blur
-                    maxLength={12} // Restrict input to 12 characters
+                    maxLength={12}
                   />
                 </div>
               </div>
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>RERA URL</label>
+                  <label>RERA URL </label>
                   <input
                     className="form-control"
                     type="text"
@@ -2594,7 +2593,6 @@ const ProjectDetailsCreate = () => {
                     placeholder="Enter RERA URL"
                     value={reraUrl}
                     onChange={handleReraUrlChange}
-                    onBlur={handleReraNumberBlur} // Validate on blur
                   />
                 </div>
               </div>
@@ -2621,7 +2619,7 @@ const ProjectDetailsCreate = () => {
               </div>
             </div>
 
-            {/* RERA List Table */}
+            {/* Editable RERA List Table */}
             {formData.Rera_Number_multiple.length > 0 && (
               <div className="col-md-12 mt-2">
                 <div className="mt-4 tbl-container w-100">
@@ -2631,7 +2629,7 @@ const ProjectDetailsCreate = () => {
                         <th>Sr No</th>
                         <th>Tower Name</th>
                         <th>RERA Number</th>
-                        <th>RERA URL</th>
+                        <th>Rera URL</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -2639,9 +2637,48 @@ const ProjectDetailsCreate = () => {
                       {formData.Rera_Number_multiple.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
-                          <td>{item.tower_name}</td>
-                          <td>{item.rera_number}</td>
-                          <td>{item.rera_url}</td>
+                          <td>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={item.tower_name}
+                              onChange={(e) =>
+                                handleEditRera(
+                                  index,
+                                  "tower_name",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={item.rera_number}
+                              onChange={(e) =>
+                                handleEditRera(
+                                  index,
+                                  "rera_number",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={item.rera_url}
+                              onChange={(e) =>
+                                handleEditRera(
+                                  index,
+                                  "rera_url",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </td>
                           <td>
                             <button
                               type="button"
