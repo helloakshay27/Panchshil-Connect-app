@@ -130,6 +130,8 @@ const BannerList = () => {
     fetchBanners();
   }, []);
 
+  console.log(banners);
+
   const handlePageChange = (pageNumber) => {
     setPagination((prevState) => ({
       ...prevState,
