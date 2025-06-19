@@ -520,8 +520,8 @@ const BannerEdit = () => {
                           }
                           setDialogOpen(false);
                         }}
-                        requiredRatios={[16 / 9, 9 / 16]} // Accept either
-                        requiredRatioLabel="16:9 or 9:16"
+                        requiredRatios={[1, 9 / 16]} // Accept either
+                        requiredRatioLabel="1:1 or 9:16"
                         allowedRatios={[
                           { label: "16:9", ratio: 16 / 9 },
                           { label: "9:16", ratio: 9 / 16 },
