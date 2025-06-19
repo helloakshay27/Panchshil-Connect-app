@@ -156,12 +156,12 @@ if (baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://
 
 function App() {
   useEffect(() => {
-    let faviconPath = "src/assets/Panchshil_logo.png"; // default
+    let faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png"; // default
 
     if (baseURL.startsWith("https://api-connect.panchshil.com/")) {
-      faviconPath = "src/assets/Panchshil_Logo.png";
+      faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
     } else if (baseURL.startsWith("https://dev-panchshil-super-app.lockated.com/")) {
-      faviconPath = "src/assets/Rustomjee_Icon.png";
+      faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Rustomjee_icon.png";
     }
 
     const link = document.querySelector("link[rel~='icon']");
