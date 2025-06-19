@@ -265,7 +265,7 @@ const UserGroupCreate = () => {
                 <div className="card-body">
                   <div className="row">
                     {/* Group Name */}
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Group Name <span className="otp-asterisk">*</span>
@@ -287,7 +287,7 @@ const UserGroupCreate = () => {
                     </div>
 
                     {/* Company Dropdown */}
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Company <span className="otp-asterisk">*</span>
@@ -319,7 +319,7 @@ const UserGroupCreate = () => {
                     </div>
 
                     {/* Site Dropdown */}
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Site <span className="otp-asterisk">*</span>
@@ -383,7 +383,7 @@ const UserGroupCreate = () => {
                     </div> */}
 
                     {/* Members Multi-Select */}
-                    <div className="col-md-4">
+                    <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Members ID</label>
                         <MultiSelectBox
@@ -429,7 +429,7 @@ const UserGroupCreate = () => {
                     className="purple-btn2 w-100"
                     disabled={loading}
                   >
-                    {loading ? "Creating..." : "Create Group"}
+                    {loading ? "Creating..." : "Submit"}
                   </button>
                 </div>
                 <div className="col-md-2">

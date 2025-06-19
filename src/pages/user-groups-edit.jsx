@@ -289,30 +289,6 @@ const UserGroupEdit = () => {
     navigate(-1);
   };
 
-  // Show loading spinner while fetching data
-  if (dataLoading) {
-    return (
-      <div className="main-content">
-        <div className="website-content overflow-hidden">
-          <div className="module-data-section p-3">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header3">
-                <h3 className="card-title">Edit User Group</h3>
-              </div>
-              <div className="card-body">
-                <div className="text-center">
-                  <div className="spinner-border" role="status">
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                  <p className="mt-2">Loading user group data...</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="main-content">
@@ -327,7 +303,7 @@ const UserGroupEdit = () => {
                 <div className="card-body">
                   <div className="row">
                     {/* Group Name */}
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Group Name <span className="otp-asterisk">*</span>
@@ -349,7 +325,7 @@ const UserGroupEdit = () => {
                     </div>
 
                     {/* Company Dropdown */}
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Company <span className="otp-asterisk">*</span>
@@ -377,7 +353,7 @@ const UserGroupEdit = () => {
                     </div>
 
                     {/* Site Dropdown */}
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Site <span className="otp-asterisk">*</span>
@@ -410,7 +386,7 @@ const UserGroupEdit = () => {
                     </div>
 
                     {/* Members Multi-Select */}
-                    <div className="col-md-4">
+                    <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Members ID</label>
                         <MultiSelectBox
@@ -456,7 +432,7 @@ const UserGroupEdit = () => {
                     className="purple-btn2 w-100"
                     disabled={loading}
                   >
-                    {loading ? "Updating..." : "Update Group"}
+                    {loading ? "Updating..." : "Submit"}
                   </button>
                 </div>
                 <div className="col-md-2">
