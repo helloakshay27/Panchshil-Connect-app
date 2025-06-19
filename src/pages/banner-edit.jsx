@@ -4,190 +4,191 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
-import ImageUploading from "react-images-uploading";
-import Cropper from "react-easy-crop";
+import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
+import { ImageCropper } from "../components/reusable/ImageCropper";
 
-const ImageUploadingButton = ({ value, onChange }) => {
-  return (
-    <ImageUploading value={value} onChange={onChange} acceptType={["jpg", "png", "jpeg", "webp"]}>
-      {({ onImageUpload, onImageUpdate }) => (
-        <button
-          onClick={!value || value.length === 0 ? onImageUpload : () => onImageUpdate(0)}
-          className="form-control purple-btn2"
-        >
-          Upload Image
-        </button>
-      )}
-    </ImageUploading>
-  );
-};
 
-const ImageCropper = ({ open, image, formData, setFormData, onComplete, containerStyle, requiredRatio, requiredRatioLabel, ...props }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [aspect, setAspect] = useState(requiredRatio || 1);
-  const [aspectLabel, setAspectLabel] = useState(requiredRatioLabel || "1:1");
-  const [imageRatio, setImageRatio] = useState(null);
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+// const ImageUploadingButton = ({ value, onChange }) => {
+//   return (
+//     <ImageUploading value={value} onChange={onChange} acceptType={["jpg", "png", "jpeg", "webp"]}>
+//       {({ onImageUpload, onImageUpdate }) => (
+//         <button
+//           onClick={!value || value.length === 0 ? onImageUpload : () => onImageUpdate(0)}
+//           className="form-control purple-btn2"
+//         >
+//           Upload Image
+//         </button>
+//       )}
+//     </ImageUploading>
+//   );
+// };
 
-  useEffect(() => {
-    if (image) {
-      const img = new Image();
-      img.onload = () => {
-        const ratio = img.naturalWidth / img.naturalHeight;
-        setImageRatio(ratio);
-        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-        setCrop({ x: 0, y: 0 });
-        console.log(`Image dimensions: ${img.naturalWidth}x${img.naturalHeight}, Ratio: ${ratio}`);
-      };
-      img.src = image;
-    }
-  }, [image]);
+// const ImageCropper = ({ open, image, formData, setFormData, onComplete, containerStyle, requiredRatio, requiredRatioLabel, ...props }) => {
+//   const [crop, setCrop] = useState({ x: 0, y: 0 });
+//   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+//   const [aspect, setAspect] = useState(requiredRatio || 1);
+//   const [aspectLabel, setAspectLabel] = useState(requiredRatioLabel || "1:1");
+//   const [imageRatio, setImageRatio] = useState(null);
+//   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
-  const handleAspectChange = (targetAspect, label) => {
-    setAspect(targetAspect);
-    setAspectLabel(label);
-  };
+//   useEffect(() => {
+//     if (image) {
+//       const img = new Image();
+//       img.onload = () => {
+//         const ratio = img.naturalWidth / img.naturalHeight;
+//         setImageRatio(ratio);
+//         setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+//         setCrop({ x: 0, y: 0 });
+//         console.log(`Image dimensions: ${img.naturalWidth}x${img.naturalHeight}, Ratio: ${ratio}`);
+//       };
+//       img.src = image;
+//     }
+//   }, [image]);
 
-  const isRatioAcceptable = (actual, expected, tolerance = 0.2) => {
-    return Math.abs(actual - expected) <= tolerance;
-  };
+//   const handleAspectChange = (targetAspect, label) => {
+//     setAspect(targetAspect);
+//     setAspectLabel(label);
+//   };
 
-  const isGridSizeValid = () => {
-    if (requiredRatio === 16 / 9) {
-      const expectedWidth = 400;
-      const expectedHeight = 225;
-      return imageDimensions.width >= expectedWidth && imageDimensions.height >= expectedHeight;
-    }
-    return true;
-  };
+//   const isRatioAcceptable = (actual, expected, tolerance = 0.2) => {
+//     return Math.abs(actual - expected) <= tolerance;
+//   };
 
-  const getContainerDimensions = () => {
-    const baseSize = 300;
-    if (aspect === 16 / 9) return { width: baseSize * 1.2, height: baseSize };
-    if (aspect === 9 / 16) return { width: baseSize, height: baseSize * 1.2 };
-    if (aspect === 3 / 2) return { width: baseSize * 1.1, height: baseSize * (2 / 3) };
-    return { width: baseSize, height: baseSize };
-  };
+//   const isGridSizeValid = () => {
+//     if (requiredRatio === 16 / 9) {
+//       const expectedWidth = 400;
+//       const expectedHeight = 225;
+//       return imageDimensions.width >= expectedWidth && imageDimensions.height >= expectedHeight;
+//     }
+//     return true;
+//   };
 
-  if (!open || !image) return null;
+//   const getContainerDimensions = () => {
+//     const baseSize = 300;
+//     if (aspect === 16 / 9) return { width: baseSize * 1.2, height: baseSize };
+//     if (aspect === 9 / 16) return { width: baseSize, height: baseSize * 1.2 };
+//     if (aspect === 3 / 2) return { width: baseSize * 1.1, height: baseSize * (2 / 3) };
+//     return { width: baseSize, height: baseSize };
+//   };
 
-  const { width, height } = getContainerDimensions();
+//   if (!open || !image) return null;
 
-  // Convert base64 to File object
-  const base64ToFile = (base64, filename) => {
-    const arr = base64.split(",");
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-  };
+//   const { width, height } = getContainerDimensions();
 
-  return (
-    <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.8)" }}>
-      <div className="modal-dialog modal-dialog-centered" style={{ borderRadius: "12px" }}>
-        <div className="modal-content rounded-3 overflow-hidden">
-          <div className="modal-header border-0 justify-content-center pt-4 pb-2">
-            <h5 className="modal-title text-center text-orange-600 fs-5 fw-semibold">
-              Crop Image
-            </h5>
-          </div>
-          <div className="modal-body px-4">
-            <div className="d-flex justify-content-center mb-4 flex-wrap" style={{ gap: "8px" }}>
-              {[{ label: "16:9", ratio: 16 / 9 }, { label: "9:16", ratio: 9 / 16 }, { label: "1:1", ratio: 1 }, { label: "3:2", ratio: 3 / 2 }].map(({ label, ratio }) => (
-                <button
-                  key={label}
-                  onClick={() => handleAspectChange(ratio, label)}
-                  className={`px-3 py-2 rounded ${aspect === ratio ? "purple-btn2 text-white" : "border border-purple-500 text-purple-600 bg-white"}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <div
-              style={{
-                position: "relative",
-                height,
-                background: "#fff",
-                borderRadius: "8px",
-                overflow: "hidden",
-              }}
-            >
-              <Cropper
-                image={image}
-                crop={crop}
-                zoom={1}
-                aspect={aspect}
-                onCropChange={setCrop}
-                onCropComplete={(_, areaPixels) => setCroppedAreaPixels(areaPixels)}
-                {...props}
-              />
-            </div>
-          </div>
-          <div className="modal-footer border-0 px-4 pb-4 pt-2 d-flex justify-content-end" style={{ gap: "10px" }}>
-            <button
-              className="px-4 py-2 rounded border border-gray-400 text-gray-700 bg-white hover:bg-gray-100"
-              onClick={() => onComplete(null)}
-            >
-              Cancel
-            </button>
-            <button
-              className="px-4 py-2 rounded purple-btn2 text-white"
-              onClick={async () => {
-                if (croppedAreaPixels && image) {
-                  if (requiredRatio && !isRatioAcceptable(aspect, requiredRatio, 0.2)) {
-                    alert(`❌ Invalid crop ratio.\nSelected ratio (${aspectLabel}) does not match required ${requiredRatioLabel} ratio.`);
-                    return;
-                  }
-                  if (requiredRatio && !isRatioAcceptable(imageRatio, requiredRatio, 0.2)) {
-                    alert(`❌ Invalid image ratio.\nOriginal image ratio (${imageRatio?.toFixed(2)}) does not match required ${requiredRatioLabel} ratio.`);
-                    return;
-                  }
-                  if (requiredRatio === 16 / 9 && !isGridSizeValid()) {
-                    alert(`❌ Image dimensions too small.\nThe image does not fit the required 16:9 grid box (minimum 400x225 pixels).`);
-                    return;
-                  }
-                  const canvas = document.createElement("canvas");
-                  const img = new Image();
-                  img.crossOrigin = "anonymous";
-                  img.src = image;
-                  img.onload = () => {
-                    const ctx = canvas.getContext("2d");
-                    canvas.width = croppedAreaPixels.width;
-                    canvas.height = croppedAreaPixels.height;
-                    ctx.drawImage(
-                      img,
-                      croppedAreaPixels.x,
-                      croppedAreaPixels.y,
-                      croppedAreaPixels.width,
-                      croppedAreaPixels.height,
-                      0,
-                      0,
-                      croppedAreaPixels.width,
-                      croppedAreaPixels.height
-                    );
-                    const croppedBase64 = canvas.toDataURL("image/png");
-                    const croppedFile = base64ToFile(croppedBase64, "cropped_image.png");
-                    // Update formData directly
-                    onComplete({ base64: croppedBase64, file: croppedFile });
-                    setFormData({ ...formData, banner_video: croppedFile });
+//   // Convert base64 to File object
+//   const base64ToFile = (base64, filename) => {
+//     const arr = base64.split(",");
+//     const mime = arr[0].match(/:(.*?);/)[1];
+//     const bstr = atob(arr[1]);
+//     let n = bstr.length;
+//     const u8arr = new Uint8Array(n);
+//     while (n--) {
+//       u8arr[n] = bstr.charCodeAt(n);
+//     }
+//     return new File([u8arr], filename, { type: mime });
+//   };
 
-                  };
-                }
-              }}
-            >
-              Finish
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.8)" }}>
+//       <div className="modal-dialog modal-dialog-centered" style={{ borderRadius: "12px" }}>
+//         <div className="modal-content rounded-3 overflow-hidden">
+//           <div className="modal-header border-0 justify-content-center pt-4 pb-2">
+//             <h5 className="modal-title text-center text-orange-600 fs-5 fw-semibold">
+//               Crop Image
+//             </h5>
+//           </div>
+//           <div className="modal-body px-4">
+//             <div className="d-flex justify-content-center mb-4 flex-wrap" style={{ gap: "8px" }}>
+//               {[{ label: "16:9", ratio: 16 / 9 }, { label: "9:16", ratio: 9 / 16 }, { label: "1:1", ratio: 1 }, { label: "3:2", ratio: 3 / 2 }].map(({ label, ratio }) => (
+//                 <button
+//                   key={label}
+//                   onClick={() => handleAspectChange(ratio, label)}
+//                   className={`px-3 py-2 rounded ${aspect === ratio ? "purple-btn2 text-white" : "border border-purple-500 text-purple-600 bg-white"}`}
+//                 >
+//                   {label}
+//                 </button>
+//               ))}
+//             </div>
+//             <div
+//               style={{
+//                 position: "relative",
+//                 height,
+//                 background: "#fff",
+//                 borderRadius: "8px",
+//                 overflow: "hidden",
+//               }}
+//             >
+//               <Cropper
+//                 image={image}
+//                 crop={crop}
+//                 zoom={1}
+//                 aspect={aspect}
+//                 onCropChange={setCrop}
+//                 onCropComplete={(_, areaPixels) => setCroppedAreaPixels(areaPixels)}
+//                 {...props}
+//               />
+//             </div>
+//           </div>
+//           <div className="modal-footer border-0 px-4 pb-4 pt-2 d-flex justify-content-end" style={{ gap: "10px" }}>
+//             <button
+//               className="px-4 py-2 rounded border border-gray-400 text-gray-700 bg-white hover:bg-gray-100"
+//               onClick={() => onComplete(null)}
+//             >
+//               Cancel
+//             </button>
+//             <button
+//               className="px-4 py-2 rounded purple-btn2 text-white"
+//               onClick={async () => {
+//                 if (croppedAreaPixels && image) {
+//                   if (requiredRatio && !isRatioAcceptable(aspect, requiredRatio, 0.2)) {
+//                     alert(`❌ Invalid crop ratio.\nSelected ratio (${aspectLabel}) does not match required ${requiredRatioLabel} ratio.`);
+//                     return;
+//                   }
+//                   if (requiredRatio && !isRatioAcceptable(imageRatio, requiredRatio, 0.2)) {
+//                     alert(`❌ Invalid image ratio.\nOriginal image ratio (${imageRatio?.toFixed(2)}) does not match required ${requiredRatioLabel} ratio.`);
+//                     return;
+//                   }
+//                   if (requiredRatio === 16 / 9 && !isGridSizeValid()) {
+//                     alert(`❌ Image dimensions too small.\nThe image does not fit the required 16:9 grid box (minimum 400x225 pixels).`);
+//                     return;
+//                   }
+//                   const canvas = document.createElement("canvas");
+//                   const img = new Image();
+//                   img.crossOrigin = "anonymous";
+//                   img.src = image;
+//                   img.onload = () => {
+//                     const ctx = canvas.getContext("2d");
+//                     canvas.width = croppedAreaPixels.width;
+//                     canvas.height = croppedAreaPixels.height;
+//                     ctx.drawImage(
+//                       img,
+//                       croppedAreaPixels.x,
+//                       croppedAreaPixels.y,
+//                       croppedAreaPixels.width,
+//                       croppedAreaPixels.height,
+//                       0,
+//                       0,
+//                       croppedAreaPixels.width,
+//                       croppedAreaPixels.height
+//                     );
+//                     const croppedBase64 = canvas.toDataURL("image/png");
+//                     const croppedFile = base64ToFile(croppedBase64, "cropped_image.png");
+//                     // Update formData directly
+//                     onComplete({ base64: croppedBase64, file: croppedFile });
+//                     setFormData({ ...formData, banner_video: croppedFile });
+
+//                   };
+//                 }
+//               }}
+//             >
+//               Finish
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 const BannerEdit = () => {
   const navigate = useNavigate();
@@ -211,7 +212,7 @@ const BannerEdit = () => {
     active: true,
   });
   // console.log(image[0].file);
-  
+
   console.log("formData", formData);
 
   useEffect(() => {
@@ -338,62 +339,81 @@ const BannerEdit = () => {
 
     const allowedImageTypes = [
       "image/jpeg", "image/png", "image/gif", "image/webp",
-      "image/svg+xml", "image/bmp", "image/tiff"
+      "image/bmp", "image/tiff"
     ];
 
-    const isImage = allowedImageTypes.includes(file.type);
+    const allowedVideoTypes = [
+      "video/mp4", "video/webm", "video/ogg", "video/quicktime",
+      "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"
+    ];
+
+    const fileType = file.type;
     const sizeInMB = file.size / (1024 * 1024);
 
-    if (!isImage) {
-      toast.error("Please upload a valid image file.");
+    const isImage = allowedImageTypes.includes(fileType);
+    const isVideo = allowedVideoTypes.includes(fileType);
+
+    if (!isImage && !isVideo) {
+      toast.error("❌ Please upload a valid image or video file.");
       return;
     }
 
-    if (sizeInMB > 3) {
-      toast.error("Image size must be less than 3MB.");
+    if (isImage && sizeInMB > 3) {
+      toast.error("❌ Image size must be less than 3MB.");
+      return;
+    }
+
+    if (isVideo && sizeInMB > 20) {
+      toast.error("❌ Video size must be less than 20MB.");
       return;
     }
 
     setImage(newImageList);
-    setDialogOpen(true);
+
+    if (isImage) {
+      setDialogOpen(true); // Open cropper only for images
+    } else {
+      // Optional: Handle video preview or upload
+      const videoURL = URL.createObjectURL(file);
+      setPreviewVideo(videoURL);
+      setFormData((prev) => ({ ...prev, banner_video: file }));
+    }
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!validateForm()) return;
 
-  setLoading(true);
-  try {
-    const sendData = new FormData();
-    sendData.append("banner[title]", formData.title);
-    sendData.append("banner[project_id]", formData.project_id);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
-    // Always use the File object for image upload
-    if (image[0] && image[0].file instanceof File) {
-      sendData.append("banner[banner_video]", image[0].file);
-    } else if (formData.attachfile instanceof File) {
-      sendData.append("banner[banner_image]", formData.attachfile);
+    setLoading(true);
+    try {
+      const sendData = new FormData();
+      sendData.append("banner[title]", formData.title);
+      sendData.append("banner[project_id]", formData.project_id);
+
+      // Always use the File object for image upload
+      if (image[0] && image[0].file instanceof File) {
+        sendData.append("banner[banner_video]", image[0].file);
+      }
+      if (formData.banner_video instanceof File) {
+        sendData.append("banner[banner_video]", formData.banner_video);
+      }
+
+      const res = await axios.put(`${baseURL}banners/${id}.json`, sendData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success("Banner updated successfully");
+      navigate("/banner-list");
+    } catch (error) {
+      toast.error("Error updating banner");
+    } finally {
+      setLoading(false);
     }
-
-    if (formData.banner_video instanceof File) {
-      sendData.append("banner[banner_video]", formData.banner_video);
-    }
-
-    const res = await axios.put(`${baseURL}banners/${id}.json`, sendData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    toast.success("Banner updated successfully");
-    navigate("/banner-list");
-  } catch (error) {
-    toast.error("Error updating banner");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const isImageFile = (file) => {
     if (!file) return false;
@@ -491,7 +511,7 @@ const BannerEdit = () => {
                       />
                       <ImageCropper
                         open={dialogOpen}
-                        image={image.length > 0 && image[0].dataURL}
+                        image={image?.[0]?.dataURL || null}
                         onComplete={(cropped) => {
                           if (cropped) {
                             setCroppedImage(cropped.base64);
@@ -500,8 +520,13 @@ const BannerEdit = () => {
                           }
                           setDialogOpen(false);
                         }}
-                        requiredRatio={16 / 9}
-                        requiredRatioLabel="16:9"
+                        requiredRatios={[16 / 9, 9 / 16]} // Accept either
+                        requiredRatioLabel="16:9 or 9:16"
+                        allowedRatios={[
+                          { label: "16:9", ratio: 16 / 9 },
+                          { label: "9:16", ratio: 9 / 16 },
+                          { label: "1:1", ratio: 1 },
+                        ]}
                         containerStyle={{ position: "relative", width: "100%", height: 300, background: "#fff" }}
                         formData={formData}
                         setFormData={setFormData}
