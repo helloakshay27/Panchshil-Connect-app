@@ -36,4 +36,10 @@ const Rustomji_URL =
 const Rustomji_URL_Black =
   "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/158/original/Rustomjee_Logo-01_2.png";
 
-export { baseURL, token, LOGO_URL, Rustomji_URL, Rustomji_URL_Black };
+const Rustomji_Favicon_URL =
+  "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/412/original/Rustomjee_icon.png";
+
+const Panchshil_Favicon_URL =
+  "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/3123/original/Panchshil_logo.png";
+  
+export { baseURL, token, LOGO_URL, Rustomji_URL, Rustomji_URL_Black, Rustomji_Favicon_URL, Panchshil_Favicon_URL };

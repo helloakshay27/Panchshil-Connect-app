@@ -159,9 +159,9 @@ function App() {
     let faviconPath = "src/assets/Panchshil_logo.png"; // default
 
     if (baseURL.startsWith("https://api-connect.panchshil.com/")) {
-      faviconPath = "src/assets/Panchshil_logo.png";
+      faviconPath = "src/assets/Panchshil_Logo.png";
     } else if (baseURL.startsWith("https://dev-panchshil-super-app.lockated.com/")) {
-      faviconPath = "src/assets/Rustomjee_icon.png";
+      faviconPath = "src/assets/Rustomjee_Icon.png";
     }
 
     const link = document.querySelector("link[rel~='icon']");
