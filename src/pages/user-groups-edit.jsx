@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 
-const UserGroupCreate = () => {
+const UserGroupEdit = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // Get the user group ID from URL parameters
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [users, setUsers] = useState([]);
   const [sites, setSites] = useState([]);
@@ -28,12 +30,49 @@ const UserGroupCreate = () => {
 
   console.log("Form Data:", formData);
 
-  // Fetch users, companies, and sites when component mounts
+  // Fetch all data when component mounts
   useEffect(() => {
-    fetchUsers();
-    fetchCompanies();
-    fetchSites();
-  }, []);
+    if (id) {
+      fetchUserGroup();
+      fetchUsers();
+      fetchCompanies();
+      fetchSites();
+      fetchUsersForMembers();
+    }
+  }, [id]);
+
+  // Fetch user group data by ID
+  const fetchUserGroup = async () => {
+    setDataLoading(true);
+    try {
+      const response = await axios.get(`${baseURL}usergroups/${id}.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      if (response.data) {
+        const userGroupData = response.data.usergroup || response.data;
+        setFormData({
+          name: userGroupData.name || "",
+          company_id: response.data.company_id,
+          site_id: userGroupData.site_id || "",
+          user_id: userGroupData.user_id || "",
+          active:
+            userGroupData.active !== undefined ? userGroupData.active : true,
+          member_ids: Array.isArray(userGroupData.usergroup_members)
+            ? userGroupData.usergroup_members.map((member) => member.user_id)
+            : [],
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user group:", error);
+      toast.error("Failed to load user group data. Please try again.");
+      navigate("/setup-member/user-groups-list");
+    } finally {
+      setDataLoading(false);
+    }
+  };
 
   // Fetch users from API
   const fetchUsers = async () => {
@@ -110,6 +149,22 @@ const UserGroupCreate = () => {
       toast.error("Failed to load sites. Please try again later.");
     } finally {
       setSitesLoading(false);
+    }
+  };
+
+  // Fetch users for members dropdown
+  const fetchUsersForMembers = async () => {
+    try {
+      const response = await fetch(`${baseURL}users/get_users.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const data = await response.json();
+      setEventUserID(data.users || []);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      setEventUserID([]);
     }
   };
 
@@ -207,8 +262,8 @@ const UserGroupCreate = () => {
     };
 
     try {
-      const response = await axios.post(
-        `${baseURL}usergroups.json`,
+      const response = await axios.put(
+        `${baseURL}usergroups/${id}.json`,
         requestData,
         {
           headers: {
@@ -218,13 +273,13 @@ const UserGroupCreate = () => {
         }
       );
 
-      toast.success("User Group created successfully");
+      toast.success("User Group updated successfully");
       console.log("Response from API:", response.data);
-      navigate("/setup-member/user-groups-list"); // Adjust navigation path as needed
+      navigate("/setup-member/user-groups-list");
     } catch (error) {
-      console.error("Error creating user group:", error);
+      console.error("Error updating user group:", error);
       const errorMessage = error.response?.data?.message || error.message;
-      toast.error(`Error creating user group: ${errorMessage}`);
+      toast.error(`Error updating user group: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -234,23 +289,30 @@ const UserGroupCreate = () => {
     navigate(-1);
   };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(`${baseURL}/users/get_users.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        });
-        const data = await response.json();
-        setEventUserID(data.users || []);
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-        setEventUserID([]);
-      }
-    };
-    fetchUsers();
-  }, []);
+  // Show loading spinner while fetching data
+  if (dataLoading) {
+    return (
+      <div className="main-content">
+        <div className="website-content overflow-hidden">
+          <div className="module-data-section p-3">
+            <div className="card mt-4 pb-4 mx-4">
+              <div className="card-header3">
+                <h3 className="card-title">Edit User Group</h3>
+              </div>
+              <div className="card-body">
+                <div className="text-center">
+                  <div className="spinner-border" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                  <p className="mt-2">Loading user group data...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="main-content">
@@ -260,7 +322,7 @@ const UserGroupCreate = () => {
             <form onSubmit={handleSubmit} noValidate>
               <div className="card mt-4 pb-4 mx-4">
                 <div className="card-header3">
-                  <h3 className="card-title">Create User Group</h3>
+                  <h3 className="card-title">Edit User Group</h3>
                 </div>
                 <div className="card-body">
                   <div className="row">
@@ -293,21 +355,17 @@ const UserGroupCreate = () => {
                           Company <span className="otp-asterisk">*</span>
                         </label>
                         <SelectBox
-                          name="company_id"
-                          options={
-                            companiesLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : companies.length > 0
-                              ? companies.map((comp) => ({
-                                  value: comp.id,
-                                  label: comp.name,
-                                }))
-                              : [{ value: "", label: "No company found" }]
-                          }
-                          value={formData.company_id}
-                          onChange={(value) =>
-                            setFormData({ ...formData, company_id: value })
-                          }
+                          options={companies.map((comp) => ({
+                            label: comp.name,
+                            value: comp.id,
+                          }))}
+                          defaultValue={formData.company_id}
+                          onChange={(value) => {
+                            setFormData({
+                              ...formData,
+                              company_id: value,
+                            });
+                          }}
                           className={errors.company_id ? "is-invalid" : ""}
                         />
                         {errors.company_id && (
@@ -337,6 +395,7 @@ const UserGroupCreate = () => {
                               : [{ value: "", label: "No site found" }]
                           }
                           value={formData.site_id}
+                          defaultValue={formData.site_id}
                           onChange={(value) =>
                             setFormData({ ...formData, site_id: value })
                           }
@@ -349,38 +408,6 @@ const UserGroupCreate = () => {
                         )}
                       </div>
                     </div>
-
-                    {/* User Dropdown */}
-                    {/* <div className="col-md-4">
-                      <div className="form-group">
-                        <label>
-                          Assign User <span className="otp-asterisk">*</span>
-                        </label>
-                        <SelectBox
-                          name="user_id"
-                          options={
-                            usersLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : users.length > 0
-                              ? users.map((user) => ({
-                                  value: user.id,
-                                  label: `${user.firstname} ${user.lastname}` || `User ${user.id}`,
-                                }))
-                              : [{ value: "", label: "No users found" }]
-                          }
-                          value={formData.user_id}
-                          onChange={(value) =>
-                            setFormData({ ...formData, user_id: value })
-                          }
-                          className={errors.user_id ? "is-invalid" : ""}
-                        />
-                        {errors.user_id && (
-                          <div className="invalid-feedback">
-                            {errors.user_id}
-                          </div>
-                        )}
-                      </div>
-                    </div> */}
 
                     {/* Members Multi-Select */}
                     <div className="col-md-4">
@@ -429,7 +456,7 @@ const UserGroupCreate = () => {
                     className="purple-btn2 w-100"
                     disabled={loading}
                   >
-                    {loading ? "Creating..." : "Create Group"}
+                    {loading ? "Updating..." : "Update Group"}
                   </button>
                 </div>
                 <div className="col-md-2">
@@ -450,4 +477,4 @@ const UserGroupCreate = () => {
   );
 };
 
-export default UserGroupCreate;
+export default UserGroupEdit;

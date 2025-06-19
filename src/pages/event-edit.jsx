@@ -30,7 +30,7 @@ const EventEdit = () => {
     comment: "",
     shared: "",
     share_groups: "",
-    shareWith: "individual", // Default to individual
+    // shareWith: "", // Default to individual
     attachfile: [], // Changed to array to handle multiple files
     previewImage: [],
     is_important: "false",
@@ -205,7 +205,10 @@ const EventEdit = () => {
           : [];
 
         // Determine share type
-        const shareWith = data.share_groups ? "group" : "individual";
+        let shared = "all";
+        if (data.shared === 1) {
+          shared = data.share_groups ? "group" : "individual";
+        }
 
         // Prepare cover image preview (extract from object)
         const existingCoverImage =
@@ -230,7 +233,7 @@ const EventEdit = () => {
           ...prev,
           ...data,
           user_id: userIds,
-          shareWith: shareWith,
+          shared: shared,
           attachfile: [],
           newImages: [],
           existingImages: existingImages,
@@ -329,19 +332,26 @@ const EventEdit = () => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await axios.get(`${baseURL}groups`, {
+        const response = await axios.get(`${baseURL}usergroups.json`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
           },
         });
-        setGroups(response.data.groups || []);
+        const groupsData = Array.isArray(response.data)
+          ? response.data
+          : response.data.usergroups || [];
+        setGroups(groupsData);
       } catch (error) {
-        console.error("Error fetching groups:", error);
+        console.error("Error fetching Groups:", error);
+        setGroups([]);
       }
     };
-    fetchGroups();
-  }, []);
+
+    if (formData.shared === "group" && (!groups || groups.length === 0)) {
+      fetchGroups();
+    }
+  }, [formData.shared]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -488,6 +498,9 @@ const EventEdit = () => {
 
     const preparedReminders = prepareRemindersForSubmission();
 
+    const backendSharedValue = formData.shared === "all" ? 0 : 1;
+    data.append("event[shared]", backendSharedValue);
+
     // === COVER IMAGE ===
     // === COVER IMAGE ===
     if (formData.cover_image && formData.cover_image instanceof File) {
@@ -549,6 +562,16 @@ const EventEdit = () => {
       }
     }
 
+    // For groups
+    if (formData.share_groups) {
+      const groupIds = formData.share_groups.split(",").filter(Boolean);
+      if (groupIds.length > 0) {
+        groupIds.forEach((id) => data.append("event[share_groups][]", id));
+      } else {
+        data.append("event[share_groups][]", ""); // to clear groups
+      }
+    }
+
     // === RSVP FIELDS ===
     if (formData.rsvp_action === "yes") {
       data.append("event[rsvp_name]", formData.rsvp_name || "");
@@ -574,7 +597,7 @@ const EventEdit = () => {
           "existingImages",
           "newImages",
           "previewImage",
-          "shareWith",
+          "shared",
           "set_reminders_attributes",
           "user_id",
           "rsvp_name",
@@ -873,7 +896,7 @@ const EventEdit = () => {
                     </div>
 
                     <div className="col-md-3">
-                      <div className="form-group">
+                      <div className="form-group mt-3">
                         <label>Mark Important</label>
                         <div className="d-flex">
                           <div className="form-check me-3">
@@ -914,25 +937,51 @@ const EventEdit = () => {
 
                     {/* Share With Radio Buttons */}
                     <div className="col-md-3">
-                      <div className="form-group">
+                      <div className="form-group mt-3">
                         <label>Share With</label>
                         <div className="d-flex gap-3">
+                          {/* All */}
                           <div className="form-check">
                             <input
                               className="form-check-input"
                               type="radio"
-                              name="shareWith"
-                              value="individual"
-                              checked={formData.shareWith === "individual"}
+                              name="shared"
+                              value="all"
+                              checked={formData.shared === "all"}
                               onChange={() =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  shareWith: "individual",
+                                  shared: "all",
+                                  user_id: [],
+                                  share_groups: "",
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              All
+                            </label>
+                          </div>
+                          {/* Individuals */}
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shared"
+                              value="individual"
+                              checked={formData.shared === "individual"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shared: "individual",
+                                  share_groups: "",
                                 }))
                               }
                               disabled={
                                 !eventUserID || eventUserID.length === 0
-                              } // Disable if no users available
+                              }
                             />
                             <label
                               className="form-check-label"
@@ -946,27 +995,28 @@ const EventEdit = () => {
                               Individuals
                             </label>
                           </div>
+                          {/* Groups */}
                           <div className="form-check">
                             <input
                               className="form-check-input"
                               type="radio"
-                              name="shareWith"
+                              name="shared"
                               value="group"
-                              checked={formData.shareWith === "group"}
+                              checked={formData.shared === "group"}
                               onChange={() =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  shareWith: "group",
+                                  shared: "group",
+                                  user_id: [],
                                 }))
                               }
-                              disabled={!groups || groups.length === 0} // Disable if no groups available
                             />
                             <label
                               className="form-check-label"
                               style={{
                                 color:
                                   !groups || groups.length === 0
-                                    ? "gray"
+                                    ? "black"
                                     : "black",
                               }}
                             >
@@ -976,8 +1026,8 @@ const EventEdit = () => {
                         </div>
                       </div>
 
-                      {/* Conditional rendering based on selected option */}
-                      {formData.shareWith === "individual" && (
+                      {/* Individuals MultiSelect */}
+                      {formData.shared === "individual" && (
                         <div className="form-group">
                           <label>Event User ID</label>
                           <MultiSelectBox
@@ -999,24 +1049,24 @@ const EventEdit = () => {
                                       : {
                                           value: userId,
                                           label: `User ${userId}`,
-                                        }; // Fallback if user not found
+                                        };
                                   })
                                 : []
                             }
-                            onChange={(selectedOptions) => {
-                              console.log("Selected Users:", selectedOptions);
+                            onChange={(selectedOptions) =>
                               setFormData((prev) => ({
                                 ...prev,
                                 user_id: selectedOptions.map(
                                   (option) => option.value
                                 ),
-                              }));
-                            }}
+                              }))
+                            }
                           />
                         </div>
                       )}
 
-                      {formData.shareWith === "group" && (
+                      {/* Groups MultiSelect */}
+                      {formData.shared === "group" && (
                         <div className="form-group">
                           <label>Share with Groups</label>
                           <MultiSelectBox
@@ -1051,7 +1101,7 @@ const EventEdit = () => {
                     </div>
 
                     <div className="col-md-3">
-                      <div className="form-group">
+                      <div className="form-group mt-3">
                         <label>Send Email</label>
                         <div className="d-flex">
                           {/* Yes Option */}

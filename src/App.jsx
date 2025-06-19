@@ -111,6 +111,7 @@ import SMTPSettingsEdit from "./pages/smtp-settings-edit";
 import { useEffect } from "react";
 import UserGroupList from "./pages/user-groups-list";
 import UserGroupCreate from "./pages/user-groups-create";
+import UserGroupEdit from "./pages/user-groups-edit";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -435,6 +436,10 @@ function App() {
           <Route
             path="/setup-member/user-groups-create"
             element={<UserGroupCreate />}
+          />
+          <Route
+            path="/setup-member/user-groups-edit/:id"
+            element={<UserGroupEdit />}
           />
 
         </Route>
