@@ -29,7 +29,7 @@ const EventEdit = () => {
     user_id: [], // Initialize as empty array
     comment: "",
     shared: "",
-    share_groups: "",
+    group_id: "",
     // shareWith: "", // Default to individual
     attachfile: [], // Changed to array to handle multiple files
     previewImage: [],
@@ -207,7 +207,7 @@ const EventEdit = () => {
         // Determine share type
         let shared = "all";
         if (data.shared === 1) {
-          shared = data.share_groups ? "group" : "individual";
+          shared = data.group_id ? "group" : "individual";
         }
 
         // Prepare cover image preview (extract from object)
@@ -563,12 +563,12 @@ const EventEdit = () => {
     }
 
     // For groups
-    if (formData.share_groups) {
-      const groupIds = formData.share_groups.split(",").filter(Boolean);
+    if (formData.group_id) {
+      const groupIds = formData.group_id.split(",").filter(Boolean);
       if (groupIds.length > 0) {
-        groupIds.forEach((id) => data.append("event[share_groups][]", id));
+        groupIds.forEach((id) => data.append("event[group_id][]", id));
       } else {
-        data.append("event[share_groups][]", ""); // to clear groups
+        data.append("event[group_id][]", ""); // to clear groups
       }
     }
 
@@ -953,7 +953,7 @@ const EventEdit = () => {
                                   ...prev,
                                   shared: "all",
                                   user_id: [],
-                                  share_groups: "",
+                                  group_id: "",
                                 }))
                               }
                             />
@@ -976,7 +976,7 @@ const EventEdit = () => {
                                 setFormData((prev) => ({
                                   ...prev,
                                   shared: "individual",
-                                  share_groups: "",
+                                  group_id: "",
                                 }))
                               }
                               disabled={
@@ -1075,8 +1075,8 @@ const EventEdit = () => {
                               label: group.name,
                             }))}
                             value={
-                              formData.share_groups
-                                ? formData.share_groups
+                              formData.group_id
+                                ? formData.group_id
                                     .split(",")
                                     .map((id) => ({
                                       value: id,
@@ -1090,7 +1090,7 @@ const EventEdit = () => {
                             onChange={(selectedOptions) =>
                               setFormData((prev) => ({
                                 ...prev,
-                                share_groups: selectedOptions
+                                group_id: selectedOptions
                                   .map((option) => option.value)
                                   .join(","),
                               }))

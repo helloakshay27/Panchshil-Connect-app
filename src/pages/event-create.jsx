@@ -20,7 +20,7 @@ const EventCreate = () => {
     user_id: "",
     comment: "",
     shared: 1,
-    share_groups: "",
+    group_id: "",
     attachfile: [],
     cover_image: [],
     is_important: "",
@@ -248,7 +248,7 @@ const EventCreate = () => {
     data.append("event[user_ids]", formData.user_id);
     data.append("event[comment]", formData.comment);
     data.append("event[shared]", backendSharedValue); // <-- use backend value here
-    data.append("event[share_groups]", formData.share_groups);
+    data.append("event[group_id]", formData.group_id);
     data.append("event[is_important]", formData.is_important);
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
     data.append("event[project_id]", selectedProjectId);
@@ -332,7 +332,7 @@ const EventCreate = () => {
         user_id: "",
         comment: "",
         shared: "",
-        share_groups: "",
+        group_id: "",
         attachfile: [],
         cover_image: [],
         is_important: "",
@@ -727,7 +727,7 @@ const EventCreate = () => {
                                   ...prev,
                                   shared: "all",
                                   user_id: "",
-                                  share_groups: "",
+                                  group_id: "",
                                 }))
                               }
                             />
@@ -750,7 +750,7 @@ const EventCreate = () => {
                                 setFormData((prev) => ({
                                   ...prev,
                                   shared: "individual",
-                                  share_groups: "", // clear other
+                                  group_id: "", // clear other
                                 }))
                               }
                             />
@@ -829,8 +829,8 @@ const EventCreate = () => {
                               label: group.name,
                             }))}
                             value={
-                              formData.share_groups
-                                ? formData.share_groups.split(",").map((id) => {
+                              formData.group_id
+                                ? formData.group_id.split(",").map((id) => {
                                     const group = groups.find(
                                       (g) => g.id.toString() === id
                                     );
@@ -844,7 +844,7 @@ const EventCreate = () => {
                             onChange={(selectedOptions) =>
                               setFormData((prev) => ({
                                 ...prev,
-                                share_groups: selectedOptions
+                                group_id: selectedOptions
                                   .map((option) => option.value)
                                   .join(","),
                               }))
