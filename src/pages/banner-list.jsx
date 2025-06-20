@@ -25,7 +25,7 @@ const BannerList = () => {
       if (!lockRolePermissions) return {};
 
       const permissions = JSON.parse(lockRolePermissions);
-      return permissions.banner_list || {};
+      return permissions.banner || {};
     } catch (e) {
       console.error("Error parsing lock_role_permissions:", e);
       return {};
