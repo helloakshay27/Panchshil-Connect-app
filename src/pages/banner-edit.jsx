@@ -534,8 +534,7 @@ const BannerEdit = () => {
                           { label: "1:1", ratio: 1 },
                         ]}
                         containerStyle={{ position: "relative", width: "100%", height: 300, background: "#fff" }}
-                        formData={formData}
-                        setFormData={setFormData}
+
                       />
                       {errors.banner_video && <span className="text-danger">{errors.banner_video}</span>}
                       <div className="mt-2">

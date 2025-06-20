@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
+import toast from "react-hot-toast";
 
 export const ImageCropper = ({
     open,
     image,
-    formData,
-    setFormData,
     onComplete,
-    fieldKey = "image",
-    requiredRatios = [1],
-    requiredRatioLabel = "1:1",
-    allowedRatios = [{ label: "1:1", ratio: 1 }],
     originalFile,
-    ...props
+    requiredRatios = [1],
+    allowedRatios = [{ label: "1:1", ratio: 1 }],
 }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -33,7 +29,6 @@ export const ImageCropper = ({
             };
             img.src = image;
 
-            // Detect MIME type from originalFile or fallback to base64 data
             if (originalFile?.type) {
                 setImageMimeType(originalFile.type);
             } else if (image.startsWith("data:image")) {
@@ -64,15 +59,12 @@ export const ImageCropper = ({
 
     const base64ToFile = (base64, filename, mimeType) => {
         const arr = base64.split(",");
-        const mime = mimeType || arr[0].match(/:(.*?);/)[1];
         const bstr = atob(arr[1]);
         const u8arr = new Uint8Array(bstr.length);
         for (let i = 0; i < bstr.length; i++) {
             u8arr[i] = bstr.charCodeAt(i);
         }
-        // Map MIME type to file extension
-        const extension = mime === "image/jpeg" ? "jpg" : mime === "image/webp" ? "webp" : "png";
-        return new File([u8arr], filename, { type: mime });
+        return new File([u8arr], filename, { type: mimeType });
     };
 
     if (!open || !image) return null;
@@ -92,7 +84,9 @@ export const ImageCropper = ({
                                 <button
                                     key={label}
                                     onClick={() => handleAspectChange(ratio, label)}
-                                    className={`px-3 py-2 rounded ${aspect === ratio ? "purple-btn2 text-white" : "border border-purple-500 text-purple-600 bg-white"
+                                    className={`px-3 py-2 rounded ${aspect === ratio
+                                        ? "purple-btn2 text-white"
+                                        : "border border-purple-500 text-purple-600 bg-white"
                                         }`}
                                 >
                                     {label}
@@ -115,7 +109,6 @@ export const ImageCropper = ({
                                 aspect={aspect}
                                 onCropChange={setCrop}
                                 onCropComplete={(_, areaPixels) => setCroppedAreaPixels(areaPixels)}
-                                {...props}
                             />
                         </div>
                     </div>
@@ -128,31 +121,57 @@ export const ImageCropper = ({
                         </button>
                         <button
                             className="px-4 py-2 rounded purple-btn2 text-white"
-                            onClick={async () => {
+                            onClick={() => {
+                                toast.dismiss();
+
                                 if (!croppedAreaPixels || !image) return;
 
                                 const requiredLabels = requiredRatios
                                     .map((r) => allowedRatios.find((ar) => ar.ratio === r)?.label || r.toFixed(2))
                                     .join(" or ");
 
+                                // if (!isRatioAcceptable(imageRatio, requiredRatios, 0.1)) {
+                                //   alert(`❌ Image must match: ${requiredLabels} (Detected: ${imageRatio?.toFixed(2)})`);
+                                //   return;
+                                // }
+
+                                // if (!isRatioAcceptable(imageRatio, [aspect], 0.25)) {
+                                //   alert(`❌ Cropping not allowed for shape ${aspectLabel}.`);
+                                //   return;
+                                // }
+
+                                // if (!isGridSizeValid()) {
+                                //   alert("❌ Image too small. Minimum 400x225 required.");
+                                //   return;
+                                // }
+
+
+
                                 if (!isRatioAcceptable(imageRatio, requiredRatios, 0.1)) {
-                                    alert(
-                                        `❌ Invalid image.\nOriginal image ratio (${imageRatio?.toFixed(2)}) must match: ${requiredLabels}`
+                                    toast.error(
+                                        ` Invalid image.\nOriginal image ratio (${imageRatio?.toFixed(
+                                            2
+                                        )}) must match: ${requiredLabels}`
                                     );
                                     return;
                                 }
 
                                 if (!isRatioAcceptable(imageRatio, [aspect], 0.25)) {
-                                    alert(
-                                        `❌ Cannot crop this image as ${aspectLabel}.\nOriginal shape (${imageRatio?.toFixed(2)}) doesn't fit.`
+                                    toast.error(
+                                        ` Cannot crop this image as ${aspectLabel}.\nOriginal shape (${imageRatio?.toFixed(
+                                            2
+                                        )}) doesn't fit.`
                                     );
                                     return;
                                 }
 
                                 if (!isGridSizeValid()) {
-                                    alert("❌ Image too small. Must be at least 400x225 for 16:9.");
+                                    toast.error(
+                                        " Image too small. Must be at least 400x225 for 16:9."
+                                    );
                                     return;
                                 }
+
 
                                 const canvas = document.createElement("canvas");
                                 const img = new Image();
@@ -174,19 +193,17 @@ export const ImageCropper = ({
                                         croppedAreaPixels.height
                                     );
 
-                                    // Use quality parameter for JPEG
                                     const quality = imageMimeType === "image/jpeg" ? 0.8 : undefined;
                                     const base64 = canvas.toDataURL(imageMimeType, quality);
 
                                     const originalName = originalFile?.name?.split(".")[0] || "cropped_image";
-                                    const extension = imageMimeType === "image/jpeg" ? "jpg" : imageMimeType === "image/webp" ? "webp" : "png";
+                                    const extension =
+                                        imageMimeType === "image/jpeg" ? "jpg" :
+                                            imageMimeType === "image/webp" ? "webp" : "png";
+
                                     const croppedFile = base64ToFile(base64, `${originalName}.${extension}`, imageMimeType);
 
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        [fieldKey]: Array.isArray(prev[fieldKey]) ? [...prev[fieldKey], croppedFile] : [croppedFile],
-                                    }));
-
+                                    // ✅ Send to parent only
                                     onComplete({ base64, file: croppedFile });
                                 };
                             }}

@@ -111,12 +111,16 @@ const ProjectDetailsCreate = () => {
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
   // const [showTooltip, setShowTooltip] = useState(false);
   const [showQrTooltip, setShowQrTooltip] = useState(false);
-  const [image, setImage] = useState([]);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  console.log(propertyTypeOptions);
+  // const [image, setImage] = useState([]);
+  const [coverImageUpload, setCoverImageUpload] = useState([]);
+  const [mainImageUpload, setMainImageUpload] = useState([]);
+  const [galleryImageUpload, setGalleryImageUpload] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState({
+    image: false,
+    cover_images: false,
+    gallery_image: false,
+  }); console.log(propertyTypeOptions);
 
-  console.log(image)
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -212,42 +216,76 @@ const ProjectDetailsCreate = () => {
   //     }));
   //   }
   // };
-  const handleImageUploaded = (newImageList) => {
+  // const handleImageUploaded = (newImageList) => {
+  //   if (!newImageList || newImageList.length === 0) return;
+
+  //   const file = newImageList[0].file;
+  //   if (!file) return;
+
+  //   const allowedImageTypes = [
+  //     "image/jpeg", "image/png", "image/gif", "image/webp",
+  //     "image/bmp", "image/tiff",
+  //   ];
+
+
+
+  //   const fileType = file.type;
+  //   const sizeInMB = file.size / (1024 * 1024);
+
+  //   const isImage = allowedImageTypes.includes(fileType);
+
+  //   if (!isImage) {
+  //     toast.error("❌ Please upload a valid image or video file.");
+  //     return;
+  //   }
+
+  //   if (isImage && sizeInMB > 3) {
+  //     toast.error("❌ Image size must be less than 3MB.");
+  //     return;
+  //   }
+
+
+
+  //   setImage(newImageList);
+
+  //   if (isImage) {
+  //     setDialogOpen(true); // Open cropper only for images
+  //   }
+  // };
+
+  const handleImageUploaded = (newImageList, type) => {
     if (!newImageList || newImageList.length === 0) return;
 
     const file = newImageList[0].file;
     if (!file) return;
 
-    const allowedImageTypes = [
-      "image/jpeg", "image/png", "image/gif", "image/webp",
-      "image/bmp", "image/tiff",
-    ];
-
-
-
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     const fileType = file.type;
     const sizeInMB = file.size / (1024 * 1024);
 
-    const isImage = allowedImageTypes.includes(fileType);
-
-    if (!isImage) {
-      toast.error("❌ Please upload a valid image or video file.");
+    if (!allowedImageTypes.includes(fileType)) {
+      toast.error("❌ Please upload a valid image.");
       return;
     }
 
-    if (isImage && sizeInMB > 3) {
+    if (sizeInMB > 3) {
       toast.error("❌ Image size must be less than 3MB.");
       return;
     }
 
+    if (type === "cover_images") {
+      setCoverImageUpload(newImageList);
+      setDialogOpen(prev => ({ ...prev, cover_images: true }));
+    } else if (type === "image") {
+      setMainImageUpload(newImageList);
+      setDialogOpen(prev => ({ ...prev, image: true }));
+    } else if (type === "gallery_image") {
+      setGalleryImageUpload(newImageList);
+      setDialogOpen(prev => ({ ...prev, gallery_image: true }));
 
-
-    setImage(newImageList);
-
-    if (isImage) {
-      setDialogOpen(true); // Open cropper only for images
     }
   };
+
   const amenityTypes = [
     ...new Set(amenities.map((ammit) => ammit.amenity_type)),
   ].map((type) => ({ value: type, label: type }));
@@ -1855,7 +1893,6 @@ const ProjectDetailsCreate = () => {
     }));
   };
 
-  console.log("uploaded img", image[0]);
 
   return (
     <>
@@ -1896,34 +1933,32 @@ const ProjectDetailsCreate = () => {
                     onChange={(e) => handleFileChange(e, "image")}
                   /> */}
                   <ImageUploadingButton
-                    value={image}
-                    onChange={handleImageUploaded}
+                    value={mainImageUpload}
+                    onChange={(list) => handleImageUploaded(list, "image")}
                     variant="custom"
                   />
 
+
                   <ImageCropper
-                    open={dialogOpen}
-                    fieldKey="image" // or "banner_video", "profileImage", etc.
-                    originalFile={image?.[0]?.file} // pass original File here
+                    open={dialogOpen.image}
+                    image={mainImageUpload?.[0]?.dataURL}
+                    originalFile={mainImageUpload?.[0]?.file}
                     onComplete={(cropped) => {
                       if (cropped) {
-                        setCroppedImage(cropped.base64);
-                        setFormData((prev) => ({ ...prev, image: cropped.file }));
+                        setFormData(prev => ({
+                          ...prev,
+                          image: Array.isArray(prev.image)
+                            ? [...prev.image, cropped.file]
+                            : [cropped.file],
+                        }));
                       }
-                      setDialogOpen(false);
+                      setDialogOpen(prev => ({ ...prev, image: false }));
                     }}
-                    image={image?.[0]?.dataURL || null}
-                    requiredRatios={[ 9 / 16]}
-                    requiredRatioLabel="9:16"
-                    allowedRatios={[
-                      { label: "16:9", ratio: 16 / 9 },
-                      { label: "9:16", ratio: 9 / 16 },
-                      { label: "1:1", ratio: 1 },
-                    ]}
-                    containerStyle={{ position: "relative", width: "100%", height: 300, background: "#fff" }}
-                    formData={formData}
-                    setFormData={setFormData}
+                    requiredRatios={[16 / 9]}
+                    allowedRatios={[{ label: "16:9", ratio: 16 / 9 }, { label: "1:1", ratio: 1 }]}
+
                   />
+
                 </div>
               </div>
               <div className="col-md-3">
@@ -3032,36 +3067,35 @@ const ProjectDetailsCreate = () => {
                   multiple
                   style={{ display: "none" }}
                 /> */}
-                <ImageUploadingButton
-                    value={image}
-                    onChange={handleImageUploaded}
-                    variant="button"
-                    btntext="Add"
-                  />
 
-                  <ImageCropper
-                    open={dialogOpen}
-                    fieldKey="cover_images" // or "banner_video", "profileImage", etc.
-                    originalFile={image?.[0]?.file} // pass original File here
-                    onComplete={(cropped) => {
-                      if (cropped) {
-                        setCroppedImage(cropped.base64);
-                        setFormData((prev) => ({ ...prev, image: cropped.file }));
-                      }
-                      setDialogOpen(false);
-                    }}
-                    image={image?.[0]?.dataURL || null}
-                    requiredRatios={[16/9]}
-                    requiredRatioLabel="16:9"
-                    allowedRatios={[
-                      { label: "16:9", ratio: 16 / 9 },
-                      { label: "9:16", ratio: 9 / 16 },
-                      { label: "1:1", ratio: 1 },
-                    ]}
-                    containerStyle={{ position: "relative", width: "100%", height: 300, background: "#fff" }}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
+                <ImageUploadingButton
+                  value={coverImageUpload}
+                  onChange={(list) => handleImageUploaded(list, "cover_images")}
+                  variant="button"
+                  btntext="Add"
+                />
+
+                <ImageCropper
+                  open={dialogOpen.cover_images}
+                  image={coverImageUpload?.[0]?.dataURL}
+                  originalFile={coverImageUpload?.[0]?.file}
+                  onComplete={(cropped) => {
+                    if (cropped) {
+                      setFormData(prev => ({
+                        ...prev,
+                        cover_images: Array.isArray(prev.cover_images)
+                          ? [...prev.cover_images, cropped.file]
+                          : [cropped.file],
+                      }));
+                    }
+                    setDialogOpen(prev => ({ ...prev, cover_images: false }));
+                  }}
+                  requiredRatios={[9 / 16]}
+                  allowedRatios={[
+                    { label: "9:16", ratio: 9 / 16 },
+                    { label: "1:1", ratio: 1 },
+                  ]}
+                />
               </div>
 
               <div className="col-md-12 mt-2">
@@ -3139,27 +3173,38 @@ const ProjectDetailsCreate = () => {
                   </div> */}
 
                   {/* Add Button */}
-                  <button
-                    className="purple-btn2 rounded-3"
-                    onClick={() =>
-                      document.getElementById("gallery_image").click()
-                    }
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      fill="currentColor"
-                      className="bi bi-plus"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                    </svg>
-                    <span>Add</span>
-                  </button>
-                </div>
 
-                <input
+                </div>
+                <ImageUploadingButton
+                  value={galleryImageUpload}
+                  onChange={(list) => handleImageUploaded(list, "gallery_image")}
+                  variant="button"
+                  btntext="Add"
+                />
+
+                <ImageCropper
+                  open={dialogOpen.gallery_image}
+                  image={galleryImageUpload?.[0]?.dataURL}
+                  originalFile={galleryImageUpload?.[0]?.file}
+                  onComplete={(cropped) => {
+                    if (cropped) {
+                      setFormData(prev => ({
+                        ...prev,
+                        gallery_image: Array.isArray(prev.gallery_image)
+                          ? [...prev.gallery_image, cropped.file]
+                          : [cropped.file],
+                      }));
+                    }
+                    setDialogOpen(prev => ({ ...prev, gallery_image: false }));
+                  }}
+                  requiredRatios={[16 / 9]}
+                  allowedRatios={[
+                    { label: "9:16", ratio: 9 / 16 },
+                    { label: "1:1", ratio: 1 },
+                    { label: "16:9", ratio: 16 / 9 },
+                  ]}
+                />
+                {/* <input
                   id="gallery_image"
                   type="file"
                   accept="image/*"
@@ -3167,7 +3212,7 @@ const ProjectDetailsCreate = () => {
                   onChange={handleImageUpload}
                   multiple
                   style={{ display: "none" }}
-                />
+                /> */}
               </div>
 
               {/* Gallery Table */}
@@ -3191,9 +3236,10 @@ const ProjectDetailsCreate = () => {
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              src={URL.createObjectURL(file.gallery_image)}
+                              src={URL?.createObjectURL(file.gallery_image)}
                               alt={file.gallery_image_file_name}
                             />
+                            
                           </td>
                           <td>
                             <select

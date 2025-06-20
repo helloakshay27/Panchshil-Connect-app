@@ -422,8 +422,6 @@ const TestimonialEdit = () => {
                       height: 300,
                       background: "#fff",
                     }}
-                    formData={formData}
-                    setFormData={setFormData}
                   />
                   {errors.attachfile && (
                     <span className="error text-danger">
