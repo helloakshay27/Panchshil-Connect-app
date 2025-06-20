@@ -138,7 +138,8 @@ const TestimonialList = () => {
       toast.success("Status updated successfully!");
       console.log("Status updated successfully!");
     } catch (error) {
-      console.error("Error updating status:", error);
+      console.error("Error toggling banner status:", error);
+      toast.error("Limit reached: only 5 active banners allowed. Please deactivate one before activating another.");
 
       // Show error message (uncomment if using toast)
       // const newToastId = toast.error("Failed to update status.", {

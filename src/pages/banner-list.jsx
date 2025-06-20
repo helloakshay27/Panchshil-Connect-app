@@ -76,7 +76,7 @@ const BannerList = () => {
       }
     } catch (error) {
       console.error("Error toggling banner status:", error);
-      toast.error("Failed to update banner status.");
+      toast.error("Limit reached: only 5 active banners allowed. Please deactivate one before activating another.");
     } finally {
       setLoading(false);
     }
