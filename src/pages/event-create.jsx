@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
+import { ImageCropper } from "../components/reusable/ImageCropper";
 
 const EventCreate = () => {
   const navigate = useNavigate();
@@ -42,6 +44,9 @@ const EventCreate = () => {
   // Enhanced reminder state
   const [reminderValue, setReminderValue] = useState("");
   const [reminderUnit, setReminderUnit] = useState("");
+  const [image, setImage] = useState([]);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const timeOptions = [
     // { value: "", label: "Select Unit" },
@@ -460,6 +465,29 @@ const EventCreate = () => {
     }
   }, [formData.shared]);
 
+  const handleCoverImageUpload = (newImageList) => {
+    if (!newImageList || newImageList.length === 0) return;
+
+    const file = newImageList[0].file;
+    if (!file) return;
+
+    // Check if it's an image file
+    const isImage = file.type.startsWith("image/");
+    if (!isImage) {
+      toast.error("Please upload a valid image file");
+      return;
+    }
+
+    // Check file size (3MB limit)
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("Image size must be less than 3MB");
+      return;
+    }
+
+    setImage(newImageList);
+    setDialogOpen(true);
+  };
+
   return (
     <>
       <div className="main-content">
@@ -619,45 +647,125 @@ const EventCreate = () => {
                             [i]
                             {showTooltip && (
                               <span className="tooltip-text">
-                                Max Upload Size 10 MB
+                                Max Upload Size 3 MB
                               </span>
                             )}
                           </span>
                         </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="cover_image"
-                          accept="image/*"
-                          required
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
+                        <ImageUploadingButton
+                          value={image}
+                          onChange={handleCoverImageUpload}
+                          btntext="Upload Cover Image"
+                          variant="custom"
+                        />
 
-                            if (file && file.size > MAX_IMAGE_SIZE) {
-                              toast.error("Image size must be less than 3MB");
-                              e.target.value = ""; // Reset file input
-                              return;
+                        <ImageCropper
+                          open={dialogOpen}
+                          image={image?.[0]?.dataURL || null}
+                          onComplete={(cropped) => {
+                            if (cropped) {
+                              setCroppedImage(cropped.base64);
+                              setFormData((prev) => ({
+                                ...prev,
+                                cover_image: [cropped.file], // Store as array to match your existing structure
+                              }));
                             }
-
-                            setFormData((prevFormData) => ({
-                              ...prevFormData,
-                              cover_image: file ? [file] : [],
-                            }));
+                            setDialogOpen(false);
+                          }}
+                          requiredRatios={[16 / 9]}
+                          requiredRatioLabel="16:9"
+                          allowedRatios={[
+                            { label: "16:9", ratio: 16 / 9 },
+                            { label: "9:16", ratio: 9 / 16 },
+                            { label: "1:1", ratio: 1 },
+                          ]}
+                          containerStyle={{
+                            position: "relative",
+                            width: "100%",
+                            height: 300,
+                            background: "#fff",
                           }}
                         />
-                        {formData.cover_image && formData.cover_image[0] && (
-                          <img
-                            src={URL.createObjectURL(formData.cover_image[0])}
-                            alt="Cover Preview"
-                            className="img-fluid rounded mt-2"
-                            style={{
-                              maxWidth: "100px",
-                              maxHeight: "100px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        )}
+
+                        {/* Cover Image Preview */}
+                        <div className="mt-2">
+                          {croppedImage ? (
+                            <div className="position-relative">
+                              <img
+                                src={croppedImage}
+                                alt="Cover Preview"
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                              {/* <button
+                                type="button"
+                                className="btn btn-danger btn-sm position-absolute"
+                                style={{
+                                  top: "-5px",
+                                  right: "-5px",
+                                  fontSize: "10px",
+                                  width: "20px",
+                                  height: "20px",
+                                  padding: "0",
+                                  borderRadius: "50%",
+                                }}
+                                onClick={() => {
+                                  setCroppedImage(null);
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    cover_image: [],
+                                  }));
+                                }}
+                                title="Remove cover image"
+                              >
+                                ×
+                              </button> */}
+                            </div>
+                          ) : formData.cover_image &&
+                            formData.cover_image[0] &&
+                            typeof formData.cover_image[0] === "string" ? (
+                            <div className="position-relative">
+                              <img
+                                src={formData.cover_image[0]}
+                                alt="Existing Cover"
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                              {/* <button
+                                type="button"
+                                className="btn btn-danger btn-sm position-absolute"
+                                style={{
+                                  top: "-5px",
+                                  right: "-5px",
+                                  fontSize: "10px",
+                                  width: "20px",
+                                  height: "20px",
+                                  padding: "0",
+                                  borderRadius: "50%",
+                                }}
+                                onClick={() => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    cover_image: [],
+                                  }));
+                                }}
+                                title="Remove existing cover image"
+                              >
+                                ×
+                              </button> */}
+                            </div>
+                          ) : (
+                            <span>No cover image selected</span>
+                          )}
+                        </div>
                       </div>
                     </div>
 

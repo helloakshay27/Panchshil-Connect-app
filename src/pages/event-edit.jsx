@@ -5,6 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import MultiSelectBox from "../components/base/MultiSelectBox";
+import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
+import { ImageCropper } from "../components/reusable/ImageCropper";
 
 const EventEdit = () => {
   const { id } = useParams();
@@ -51,6 +53,9 @@ const EventEdit = () => {
 
   const [reminderValue, setReminderValue] = useState("");
   const [reminderUnit, setReminderUnit] = useState("");
+  const [image, setImage] = useState([]);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const timeOptions = [
     // { value: "", label: "Select Unit" },
@@ -657,6 +662,29 @@ const EventEdit = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
+  const handleCoverImageUpload = (newImageList) => {
+    if (!newImageList || newImageList.length === 0) return;
+
+    const file = newImageList[0].file;
+    if (!file) return;
+
+    // Check if it's an image file
+    const isImage = file.type.startsWith("image/");
+    if (!isImage) {
+      toast.error("Please upload a valid image file");
+      return;
+    }
+
+    // Check file size (3MB limit)
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("Image size must be less than 3MB");
+      return;
+    }
+
+    setImage(newImageList);
+    setDialogOpen(true);
+  };
+
   return (
     <>
       <div className="main-content">
@@ -864,34 +892,120 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group mt-3">
                         <label>Cover Image</label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="cover_image"
-                          accept="image/*"
-                          onChange={handleCoverImageChange}
+                        <ImageUploadingButton
+                          value={image}
+                          onChange={handleCoverImageUpload}
+                          btntext="Upload Cover Image"
+                          variant="custom"
                         />
+
+                        <ImageCropper
+                          open={dialogOpen}
+                          image={image?.[0]?.dataURL || null}
+                          onComplete={(cropped) => {
+                            if (cropped) {
+                              setCroppedImage(cropped.base64);
+                              setFormData((prev) => ({
+                                ...prev,
+                                cover_image: cropped.file,
+                                existingCoverImage: null, // Clear any existing cover image
+                              }));
+                            }
+                            setDialogOpen(false);
+                          }}
+                          requiredRatios={[16 / 9]}
+                          requiredRatioLabel="16:9"
+                          allowedRatios={[
+                            { label: "16:9", ratio: 16 / 9 },
+                            { label: "9:16", ratio: 9 / 16 },
+                            { label: "1:1", ratio: 1 },
+                          ]}
+                          containerStyle={{
+                            position: "relative",
+                            width: "100%",
+                            height: 300,
+                            background: "#fff",
+                          }}
+                        />
+
                         {/* Cover Image Preview */}
-                        {(formData.cover_image ||
-                          formData.existingCoverImage) && (
-                          <div className="position-relative mt-2">
-                            <img
-                              src={
-                                formData.cover_image
-                                  ? URL.createObjectURL(formData.cover_image)
-                                  : formData.existingCoverImage?.url
-                              }
-                              alt="Cover Preview"
-                              className="img-fluid rounded"
-                              style={{
-                                maxWidth: "100px",
-                                maxHeight: "100px",
-                                objectFit: "cover",
-                              }}
-                            />
-                            {/* ...remove button... */}
-                          </div>
-                        )}
+                        <div className="mt-2">
+                          {croppedImage ? (
+                            <div className="position-relative">
+                              <img
+                                src={croppedImage}
+                                alt="Cover Preview"
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                              {/* <button
+            type="button"
+            className="btn btn-danger btn-sm position-absolute"
+            style={{
+              top: "-5px",
+              right: "-5px",
+              fontSize: "10px",
+              width: "20px",
+              height: "20px",
+              padding: "0",
+              borderRadius: "50%",
+            }}
+            onClick={() => {
+              setCroppedImage(null);
+              setFormData(prev => ({
+                ...prev,
+                cover_image: null
+              }));
+            }}
+            title="Remove cover image"
+          >
+            ×
+          </button> */}
+                            </div>
+                          ) : formData.existingCoverImage ? (
+                            <div className="position-relative">
+                              <img
+                                src={formData.existingCoverImage.url}
+                                alt="Existing Cover"
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                              {/* <button
+            type="button"
+            className="btn btn-danger btn-sm position-absolute"
+            style={{
+              top: "-5px",
+              right: "-5px",
+              fontSize: "10px",
+              width: "20px",
+              height: "20px",
+              padding: "0",
+              borderRadius: "50%",
+            }}
+            onClick={() => {
+              setFormData(prev => ({
+                ...prev,
+                existingCoverImage: null,
+                cover_image: null
+              }));
+            }}
+            title="Remove existing cover image"
+          >
+            ×
+          </button> */}
+                            </div>
+                          ) : (
+                            <span>No cover image selected</span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -1076,15 +1190,13 @@ const EventEdit = () => {
                             }))}
                             value={
                               formData.group_id
-                                ? formData.group_id
-                                    .split(",")
-                                    .map((id) => ({
-                                      value: id,
-                                      label:
-                                        groups.find(
-                                          (group) => group.id.toString() === id
-                                        )?.name || `Group ${id}`,
-                                    }))
+                                ? formData.group_id.split(",").map((id) => ({
+                                    value: id,
+                                    label:
+                                      groups.find(
+                                        (group) => group.id.toString() === id
+                                      )?.name || `Group ${id}`,
+                                  }))
                                 : []
                             }
                             onChange={(selectedOptions) =>
