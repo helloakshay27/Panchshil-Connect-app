@@ -3231,15 +3231,20 @@ const ProjectDetailsCreate = () => {
                     <tbody>
                       {formData.gallery_image.map((file, index) => (
                         <tr key={index}>
-                          <td>{file.gallery_image_file_name}</td>
+                          {/* <td>{file.gallery_image_file_name}</td> */}
+                          <td>{file.name}</td>
+
                           <td>
-                            <img
+                            {/* <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
                               src={URL?.createObjectURL(file.gallery_image)}
                               alt={file.gallery_image_file_name}
-                            />
-                            
+                            /> */}
+                            <img style={{ maxWidth: 100, maxHeight: 100 }} className="img-fluid rounded"
+                              src={URL.createObjectURL(file)} />
+
+
                           </td>
                           <td>
                             <select
