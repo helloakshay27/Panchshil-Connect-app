@@ -25,7 +25,7 @@ const BannerList = () => {
       if (!lockRolePermissions) return {};
 
       const permissions = JSON.parse(lockRolePermissions);
-      return permissions.banner || {};
+      return permissions.banner_list || {};
     } catch (e) {
       console.error("Error parsing lock_role_permissions:", e);
       return {};
@@ -55,7 +55,7 @@ const BannerList = () => {
     try {
       const response = await axios.put(
         `${baseURL}banners/${bannerId}.json`,
-        { banner: { active: !currentStatus } },
+        { banner_list: { active: !currentStatus } },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -66,10 +66,10 @@ const BannerList = () => {
 
       if (response.status === 200) {
         setBanners((prevBanners) =>
-          prevBanners.map((banner) =>
-            banner.id === bannerId
-              ? { ...banner, active: !currentStatus }
-              : banner
+          prevBanners.map((banner_list) =>
+            banner_list.id === bannerId
+              ? { ...banner_list, active: !currentStatus }
+              : banner_list
           )
         );
         toast.success("Banner status updated successfully!");
@@ -84,9 +84,9 @@ const BannerList = () => {
 
   // Filter banners based on search query
   const filteredBanners = banners
-    .filter((banner) =>
+    .filter((banner_list) =>
       searchQuery
-        ? (banner.title?.toLowerCase() || "").includes(
+        ? (banner_list.title?.toLowerCase() || "").includes(
             searchQuery.toLowerCase()
           )
         : true
@@ -262,13 +262,13 @@ const BannerList = () => {
                       </thead>
                       <tbody>
                         {displayedBanners.length > 0 ? (
-                          displayedBanners.map((banner, index) => (
-                            <tr key={banner.id}>
+                          displayedBanners.map((banner_list, index) => (
+                            <tr key={banner_list.id}>
                               <td>
                                 {/* Edit Icon */}
                                 {bannerPermissions.update === "true" && (
                                   <a
-                                    href={`/banner-edit/${banner.id}`}
+                                    href={`/banner-edit/${banner_list.id}`}
                                     className="me-2"
                                   >
                                     <svg
@@ -297,7 +297,7 @@ const BannerList = () => {
                               </td>
                               {/* <td>Lockated, Pune</td>
                               <td>{banner.company_name || "No Name"}</td> */}
-                              <td>{banner.title || "-"}</td>
+                              <td>{banner_list.title || "-"}</td>
                               <td
                                 className="text-center"
                                 style={{
@@ -306,7 +306,7 @@ const BannerList = () => {
                                   verticalAlign: "middle",
                                 }}
                               >
-                                {banner?.banner_video?.document_content_type?.startsWith(
+                                {banner_list?.banner_video?.document_content_type?.startsWith(
                                   "video/"
                                 ) ? (
                                   <video
@@ -323,9 +323,9 @@ const BannerList = () => {
                                     }}
                                   >
                                     <source
-                                      src={banner?.banner_video?.document_url}
+                                      src={banner_list?.banner_video?.document_url}
                                       type={
-                                        banner?.banner_video
+                                        banner_list?.banner_video
                                           ?.document_content_type
                                       }
                                     />
@@ -334,10 +334,10 @@ const BannerList = () => {
                                 ) : (
                                   <img
                                     src={
-                                      banner?.banner_video?.document_url || "-"
+                                      banner_list?.banner_video?.document_url || "-"
                                     }
                                     className="img-fluid rounded"
-                                    alt={banner?.title || "Banner Image"}
+                                    alt={banner_list?.title || "Banner Image"}
                                     style={{
                                       maxWidth: "100px",
                                       maxHeight: "100px",
@@ -350,7 +350,7 @@ const BannerList = () => {
                               <td>
                                 <button
                                   onClick={() =>
-                                    onToggle(banner.id, banner.active)
+                                    onToggle(banner_list.id, banner_list.active)
                                   }
                                   className="toggle-button"
                                   style={{
@@ -361,7 +361,7 @@ const BannerList = () => {
                                     width: "70px",
                                   }}
                                 >
-                                  {banner.active ? (
+                                  {banner_list.active ? (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       width="40"
