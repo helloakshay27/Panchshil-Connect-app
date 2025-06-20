@@ -368,6 +368,7 @@ const BannerEdit = () => {
       return;
     }
 
+
     setImage(newImageList);
 
     if (isImage) {
@@ -395,9 +396,12 @@ const BannerEdit = () => {
       if (image[0] && image[0].file instanceof File) {
         sendData.append("banner[banner_video]", image[0].file);
       }
-      if (formData.banner_video instanceof File) {
+      else{
         sendData.append("banner[banner_video]", formData.banner_video);
       }
+      // if (formData.banner_video instanceof File) {
+      //   sendData.append("banner[banner_video]", formData.banner_video);
+      // }
 
       const res = await axios.put(`${baseURL}banners/${id}.json`, sendData, {
         headers: {
