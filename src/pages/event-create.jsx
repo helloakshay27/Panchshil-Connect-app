@@ -22,7 +22,7 @@ const EventCreate = () => {
     user_id: "",
     comment: "",
     shared: 1,
-    group_id: "",
+    group_id: [],
     attachfile: [],
     cover_image: [],
     is_important: "",
@@ -253,7 +253,7 @@ const EventCreate = () => {
     data.append("event[user_ids]", formData.user_id);
     data.append("event[comment]", formData.comment);
     data.append("event[shared]", backendSharedValue); // <-- use backend value here
-    data.append("event[group_id]", formData.group_id);
+    // data.append("event[group_id]", formData.group_id);
     data.append("event[is_important]", formData.is_important);
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
     data.append("event[project_id]", selectedProjectId);
@@ -316,6 +316,14 @@ const EventCreate = () => {
       setLoading(false);
       return;
     }
+
+    if (Array.isArray(formData.group_id)) {
+  formData.group_id.forEach((id) => {
+    data.append("event[group_id][]", id);
+  });
+} else if (formData.group_id) {
+  data.append("event[group_id][]", formData.group_id);
+}
 
     try {
       const response = await axios.post(`${baseURL}events.json`, data, {
@@ -931,33 +939,26 @@ const EventCreate = () => {
                       {formData.shared === "group" && (
                         <div className="form-group">
                           <label>Share with Groups</label>
-                          <MultiSelectBox
-                            options={groups.map((group) => ({
-                              value: group.id,
-                              label: group.name,
-                            }))}
-                            value={
-                              formData.group_id
-                                ? formData.group_id.split(",").map((id) => {
-                                    const group = groups.find(
-                                      (g) => g.id.toString() === id
-                                    );
-                                    return {
-                                      value: id,
-                                      label: group?.name,
-                                    };
-                                  })
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                group_id: selectedOptions
-                                  .map((option) => option.value)
-                                  .join(","),
-                              }))
-                            }
-                          />
+                         <MultiSelectBox
+  options={groups.map((group) => ({
+    value: group.id,
+    label: group.name,
+  }))}
+  value={
+    Array.isArray(formData.group_id)
+      ? formData.group_id.map((id) => {
+          const group = groups.find((g) => g.id === id || g.id.toString() === id.toString());
+          return group ? { value: group.id, label: group.name } : null;
+        }).filter(Boolean)
+      : []
+  }
+  onChange={(selectedOptions) =>
+    setFormData((prev) => ({
+      ...prev,
+      group_id: selectedOptions.map((option) => option.value),
+    }))
+  }
+/>
                         </div>
                       )}
                     </div>

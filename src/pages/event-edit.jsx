@@ -31,7 +31,7 @@ const EventEdit = () => {
     user_id: [], // Initialize as empty array
     comment: "",
     shared: "",
-    group_id: "",
+    group_id: [],
     // shareWith: "", // Default to individual
     attachfile: [], // Changed to array to handle multiple files
     previewImage: [],
