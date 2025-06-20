@@ -5,6 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
+import { ImageCropper } from "../components/reusable/ImageCropper";
 
 const PressReleasesEdit = () => {
   const [company, setCompany] = useState([]);
@@ -13,6 +15,9 @@ const PressReleasesEdit = () => {
   const [errors, setErrors] = useState({});
   const { id } = useParams();
   const navigate = useNavigate();
+  const [image, setImage] = useState([]);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -28,15 +33,12 @@ const PressReleasesEdit = () => {
   useEffect(() => {
     const fetchCompany = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}company_setups.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}company_setups.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
         setCompany(response.data.company_setups);
       } catch (error) {
         console.error("Error fetching companies:", error);
@@ -48,15 +50,12 @@ const PressReleasesEdit = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}projects.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}projects.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
         setProjects(response.data.projects || []);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -85,7 +84,9 @@ const PressReleasesEdit = () => {
             description: data.description || "",
             company_id: data.company_id || "",
             project_id: data.project_id || "",
-            release_date: data.release_date ? formatDateForInput(data.release_date) : "",
+            release_date: data.release_date
+              ? formatDateForInput(data.release_date)
+              : "",
             pr_image: data.attachfile?.document_url || [],
             attachment_url: data.attachment_url || "",
             press_source: data.press_source || "",
@@ -104,7 +105,7 @@ const PressReleasesEdit = () => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
     const day = String(date.getDate()).padStart(2, "0");
-  
+
     return `${year}-${month}-${day}`; // Format as yyyy-MM-dd
   };
 
@@ -118,67 +119,72 @@ const PressReleasesEdit = () => {
     });
   };
 
-const handleFileChange = (e) => {
-  const file = e.target.files[0]; // Since only one image is allowed
-  const fieldName = e.target.name;
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]; // Since only one image is allowed
+    const fieldName = e.target.name;
 
-  if (fieldName === "pr_image") {
-    const allowedImageTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-    ];
-    
-    // Maximum file size: 3MB (3 * 1024 * 1024 bytes)
-    const maxFileSize = 3 * 1024 * 1024;
+    if (fieldName === "pr_image") {
+      const allowedImageTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
 
-    // Validate file type
-    if (file && !allowedImageTypes.includes(file.type)) {
-      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = "";
-      return;
+      // Maximum file size: 3MB (3 * 1024 * 1024 bytes)
+      const maxFileSize = 3 * 1024 * 1024;
+
+      // Validate file type
+      if (file && !allowedImageTypes.includes(file.type)) {
+        toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+        e.target.value = "";
+        return;
+      }
+
+      // Validate file size
+      if (file && file.size > maxFileSize) {
+        toast.error("Image size must be less than 3MB.");
+        e.target.value = "";
+        return;
+      }
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        pr_image: file,
+      }));
     }
 
-    // Validate file size
-    if (file && file.size > maxFileSize) {
-      toast.error("Image size must be less than 3MB.");
-      e.target.value = "";
-      return;
+    if (fieldName === "attachment_url") {
+      const allowedPdfTypes = ["application/pdf"];
+
+      // Maximum file size: 3MB (3 * 1024 * 1024 bytes) - if you want to apply same limit to PDFs
+      const maxFileSize = 3 * 1024 * 1024;
+
+      // Validate file type
+      if (file && !allowedPdfTypes.includes(file.type)) {
+        toast.error("Only PDF files are allowed.");
+        e.target.value = "";
+        return;
+      }
+
+      // Validate file size for PDFs (optional - remove if not needed)
+      if (file && file.size > maxFileSize) {
+        toast.error(
+          `PDF file size must be 3MB or less. Current file size: ${(
+            file.size /
+            (1024 * 1024)
+          ).toFixed(2)}MB`
+        );
+        e.target.value = "";
+        return;
+      }
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        attachment_url: file,
+      }));
     }
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      pr_image: file,
-    }));
-  }
-
-  if (fieldName === "attachment_url") {
-    const allowedPdfTypes = ["application/pdf"];
-    
-    // Maximum file size: 3MB (3 * 1024 * 1024 bytes) - if you want to apply same limit to PDFs
-    const maxFileSize = 3 * 1024 * 1024;
-
-    // Validate file type
-    if (file && !allowedPdfTypes.includes(file.type)) {
-      toast.error("Only PDF files are allowed.");
-      e.target.value = "";
-      return;
-    }
-
-    // Validate file size for PDFs (optional - remove if not needed)
-    if (file && file.size > maxFileSize) {
-      toast.error(`PDF file size must be 3MB or less. Current file size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
-      e.target.value = "";
-      return;
-    }
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      attachment_url: file,
-    }));
-  }
-};
+  };
 
   const validateForm = () => {
     let newErrors = {};
@@ -189,7 +195,6 @@ const handleFileChange = (e) => {
       !formData.description.trim() ||
       formData.pr_image.length === 0 ||
       !formData.attachment_url.trim()
-      
     ) {
       toast.dismiss();
       toast.error("Please fill in all the required fields.");
@@ -234,16 +239,12 @@ const handleFileChange = (e) => {
         );
       }
 
-      await axios.put(
-        `${baseURL}press_releases/${id}.json`,
-        sendData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.put(`${baseURL}press_releases/${id}.json`, sendData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Press release updated successfully!");
       navigate("/pressreleases-list");
@@ -257,6 +258,66 @@ const handleFileChange = (e) => {
 
   const handleCancel = () => {
     navigate(-1);
+  };
+
+  const handleImageUpload = (newImageList) => {
+    if (!newImageList || newImageList.length === 0) return;
+
+    const file = newImageList[0].file;
+    if (!file) return;
+
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/bmp",
+      "image/tiff",
+    ];
+
+    const fileType = file.type;
+    const sizeInMB = file.size / (1024 * 1024);
+
+    if (!allowedImageTypes.includes(fileType)) {
+      toast.error("❌ Please upload a valid image file.");
+      return;
+    }
+
+    if (sizeInMB > 3) {
+      toast.error("❌ Image size must be less than 3MB.");
+      return;
+    }
+
+    setImage(newImageList);
+    setDialogOpen(true); // Open cropper for images
+  };
+
+  const isImageFile = (file) => {
+    if (!file) return false;
+    const imageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/svg+xml",
+      "image/bmp",
+      "image/tiff",
+    ];
+    if (typeof file === "string") {
+      if (file.startsWith("data:image")) return true;
+      const extension = file.split(".").pop().toLowerCase();
+      return [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "webp",
+        "svg",
+        "bmp",
+        "tiff",
+      ].includes(extension);
+    }
+    return file.type && imageTypes.includes(file.type);
   };
 
   return (
@@ -274,7 +335,7 @@ const handleFileChange = (e) => {
                     <div className="form-group">
                       <label>
                         Title
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -290,7 +351,7 @@ const handleFileChange = (e) => {
                     <div className="form-group">
                       <label>
                         Press Release Date
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -307,7 +368,7 @@ const handleFileChange = (e) => {
                     <div className="form-group">
                       <label>
                         Description
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <textarea
                         className="form-control"
@@ -324,7 +385,7 @@ const handleFileChange = (e) => {
                     <div className="form-group">
                       <label>
                         Source Details
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <textarea
                         className="form-control"
@@ -336,45 +397,87 @@ const handleFileChange = (e) => {
                       />
                     </div>
                   </div>
-
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Attachment (Image)
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        name="pr_image"
-                        accept="image/*"
-                        onChange={handleFileChange}
+                      <ImageUploadingButton
+                        value={image}
+                        onChange={handleImageUpload}
+                        // btntext="Upload Image"
+                        variant="custom"
+                        // buttonStyle={{ width: "120px", padding: "4px 10px", fontSize: "14px" }}
                       />
-                      {formData.pr_image && (
-                        <div className="mt-2">
+                      <ImageCropper
+                        open={dialogOpen}
+                        image={image?.[0]?.dataURL || null}
+                        onComplete={(cropped) => {
+                          if (cropped) {
+                            setCroppedImage(cropped.base64);
+                            setFormData((prev) => ({
+                              ...prev,
+                              pr_image: cropped.file,
+                            }));
+                          }
+                          setDialogOpen(false);
+                        }}
+                        requiredRatios={[16 / 9]}
+                        requiredRatioLabel="16:9"
+                        allowedRatios={[
+                          { label: "16:9", ratio: 16 / 9 },
+                          { label: "9:16", ratio: 9 / 16 },
+                          { label: "1:1", ratio: 1 },
+                        ]}
+                        containerStyle={{
+                          position: "relative",
+                          width: "100%",
+                          height: 300,
+                          background: "#fff",
+                        }}
+                        formData={formData}
+                        setFormData={setFormData}
+                      />
+                      {errors.pr_image && (
+                        <span className="text-danger">{errors.pr_image}</span>
+                      )}
+                      <div className="mt-2">
+                        {croppedImage ? (
                           <img
-                            src={
-                              formData.pr_image &&
-                              typeof formData.pr_image === "string"
-                                ? formData.pr_image
-                                : URL.createObjectURL(formData.pr_image)
-                            }
-                            alt="Uploaded Image"
-                            className="img-fluid rounded"
+                            src={croppedImage}
+                            className="img-fluid rounded mt-2"
+                            alt="Image Preview"
                             style={{
                               maxWidth: "100px",
                               maxHeight: "100px",
                               objectFit: "cover",
                             }}
                           />
-                        </div>
-                      )}
+                        ) : formData.pr_image &&
+                          typeof formData.pr_image === "string" ? (
+                          <img
+                            src={formData.pr_image}
+                            className="img-fluid rounded mt-2"
+                            alt="Image Preview"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <span>No file selected</span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Attachment URL <span className="otp-asterisk">{" "}*</span></label>
+                      <label>
+                        Attachment URL <span className="otp-asterisk"> *</span>
+                      </label>
                       <input
                         className="form-control"
                         type="url"

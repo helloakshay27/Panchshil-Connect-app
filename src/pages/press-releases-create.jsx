@@ -4,11 +4,16 @@ import "../mor.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
+import { ImageCropper } from "../components/reusable/ImageCropper";
 
 const PressReleasesCreate = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [image, setImage] = useState([]);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -20,15 +25,12 @@ const PressReleasesCreate = () => {
 
   const fetchCompany = async () => {
     try {
-      const response = await axios.get(
-        `${baseURL}company_setups.json`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${baseURL}company_setups.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
       const data = response.data.company_setups;
       console.log("Data", data);
     } catch (error) {
@@ -44,49 +46,53 @@ const PressReleasesCreate = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleFileChange = (e) => {
-  const files = Array.from(e.target.files);
-  const fieldName = e.target.name;
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const fieldName = e.target.name;
 
-  if (fieldName === "pr_image") {
-    const allowedImageTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-    ];
-    
-    // Maximum file size: 3MB (3 * 1024 * 1024 bytes)
-    const maxFileSize = 3 * 1024 * 1024;
-    
-    // Validate file types
-    const validImages = files.filter((file) =>
-      allowedImageTypes.includes(file.type)
-    );
+    if (fieldName === "pr_image") {
+      const allowedImageTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
 
-    if (validImages.length !== files.length) {
-      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      e.target.value = "";
-      return;
+      // Maximum file size: 3MB (3 * 1024 * 1024 bytes)
+      const maxFileSize = 3 * 1024 * 1024;
+
+      // Validate file types
+      const validImages = files.filter((file) =>
+        allowedImageTypes.includes(file.type)
+      );
+
+      if (validImages.length !== files.length) {
+        toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+        e.target.value = "";
+        return;
+      }
+
+      // Validate file sizes
+      const oversizedFiles = validImages.filter(
+        (file) => file.size > maxFileSize
+      );
+
+      if (oversizedFiles.length > 0) {
+        const oversizedFileNames = oversizedFiles
+          .map((file) => file.name)
+          .join(", ");
+        toast.error("Image size must be less than 3MB.");
+        e.target.value = "";
+        return;
+      }
+
+      // All validations passed
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        pr_image: validImages,
+      }));
     }
-
-    // Validate file sizes
-    const oversizedFiles = validImages.filter((file) => file.size > maxFileSize);
-    
-    if (oversizedFiles.length > 0) {
-      const oversizedFileNames = oversizedFiles.map(file => file.name).join(", ");
-      toast.error("Image size must be less than 3MB.");
-      e.target.value = "";
-      return;
-    }
-
-    // All validations passed
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      pr_image: validImages,
-    }));
-  }
-};
+  };
 
   const validateForm = () => {
     let newErrors = {};
@@ -147,7 +153,7 @@ const PressReleasesCreate = () => {
     return true;
   };
 
-  console.log(formData.release_date)
+  console.log(formData.release_date);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -178,19 +184,18 @@ const PressReleasesCreate = () => {
       }
 
       if (formData.attachment_url) {
-        sendData.append("press_release[attachment_url]", formData.attachment_url);
+        sendData.append(
+          "press_release[attachment_url]",
+          formData.attachment_url
+        );
       }
 
-      await axios.post(
-        `${baseURL}press_releases.json`,
-        sendData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post(`${baseURL}press_releases.json`, sendData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success("Press release created successfully!");
       navigate("/pressreleases-list");
     } catch (error) {
@@ -202,6 +207,66 @@ const PressReleasesCreate = () => {
   };
   const handleCancel = () => {
     navigate(-1);
+  };
+
+  const handleImageUpload = (newImageList) => {
+    if (!newImageList || newImageList.length === 0) return;
+
+    const file = newImageList[0].file;
+    if (!file) return;
+
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/bmp",
+      "image/tiff",
+    ];
+
+    const fileType = file.type;
+    const sizeInMB = file.size / (1024 * 1024);
+
+    if (!allowedImageTypes.includes(fileType)) {
+      toast.error("❌ Please upload a valid image file.");
+      return;
+    }
+
+    if (sizeInMB > 3) {
+      toast.error("❌ Image size must be less than 3MB.");
+      return;
+    }
+
+    setImage(newImageList);
+    setDialogOpen(true); // Open cropper for images
+  };
+
+  const isImageFile = (file) => {
+    if (!file) return false;
+    const imageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/svg+xml",
+      "image/bmp",
+      "image/tiff",
+    ];
+    if (typeof file === "string") {
+      if (file.startsWith("data:image")) return true;
+      const extension = file.split(".").pop().toLowerCase();
+      return [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "webp",
+        "svg",
+        "bmp",
+        "tiff",
+      ].includes(extension);
+    }
+    return file.type && imageTypes.includes(file.type);
   };
   return (
     <>
@@ -218,7 +283,7 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Title
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -234,7 +299,7 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Press Releases Date
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
@@ -247,13 +312,11 @@ const PressReleasesCreate = () => {
                     </div>
                   </div>
 
-        
-
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Description
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <textarea
                         className="form-control"
@@ -269,7 +332,7 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Source Details
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <textarea
                         className="form-control"
@@ -285,28 +348,70 @@ const PressReleasesCreate = () => {
                     <div className="form-group">
                       <label>
                         Attachment (Image)
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        name="pr_image"
-                        accept="image/*"
-                        multiple
-                        onChange={handleFileChange}
+                      <ImageUploadingButton
+                        value={image}
+                        onChange={handleImageUpload}
+                        variant="custom"
+                      />
+                      <ImageCropper
+                        open={dialogOpen}
+                        image={image?.[0]?.dataURL || null}
+                        onComplete={(cropped) => {
+                          if (cropped) {
+                            setCroppedImage(cropped.base64);
+                            setFormData((prev) => ({
+                              ...prev,
+                              pr_image: [cropped.file],
+                            }));
+                          }
+                          setDialogOpen(false);
+                        }}
+                        requiredRatios={[16 / 9]}
+                        requiredRatioLabel="16:9"
+                        allowedRatios={[
+                          { label: "16:9", ratio: 16 / 9 },
+                          { label: "9:16", ratio: 9 / 16 },
+                          { label: "1:1", ratio: 1 },
+                        ]}
+                        containerStyle={{
+                          position: "relative",
+                          width: "100%",
+                          height: 300,
+                          background: "#fff",
+                        }}
+                        formData={formData}
+                        setFormData={setFormData}
                       />
                       {errors.pr_image && (
                         <span className="error text-danger">
                           {errors.pr_image}
                         </span>
                       )}
+                      <div className="mt-2">
+                        {croppedImage ? (
+                          <img
+                            src={croppedImage}
+                            className="img-fluid rounded mt-2"
+                            alt="Image Preview"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <span>No file selected</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Attachment URL
-                        <span className="otp-asterisk">{" "}*</span>
+                        <span className="otp-asterisk"> *</span>
                       </label>
                       <input
                         className="form-control"
