@@ -1898,6 +1898,7 @@ const ProjectDetailsCreate = () => {
                   <ImageUploadingButton
                     value={image}
                     onChange={handleImageUploaded}
+                    variant="custom"
                   />
 
                   <ImageCropper
@@ -3000,7 +3001,7 @@ const ProjectDetailsCreate = () => {
                   {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
-                <button
+                {/* <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
                   onClick={() =>
@@ -3030,7 +3031,37 @@ const ProjectDetailsCreate = () => {
                   }
                   multiple
                   style={{ display: "none" }}
-                />
+                /> */}
+                <ImageUploadingButton
+                    value={image}
+                    onChange={handleImageUploaded}
+                    variant="button"
+                    btntext="Add"
+                  />
+
+                  <ImageCropper
+                    open={dialogOpen}
+                    fieldKey="cover_images" // or "banner_video", "profileImage", etc.
+                    originalFile={image?.[0]?.file} // pass original File here
+                    onComplete={(cropped) => {
+                      if (cropped) {
+                        setCroppedImage(cropped.base64);
+                        setFormData((prev) => ({ ...prev, image: cropped.file }));
+                      }
+                      setDialogOpen(false);
+                    }}
+                    image={image?.[0]?.dataURL || null}
+                    requiredRatios={[16/9]}
+                    requiredRatioLabel="16:9"
+                    allowedRatios={[
+                      { label: "16:9", ratio: 16 / 9 },
+                      { label: "9:16", ratio: 9 / 16 },
+                      { label: "1:1", ratio: 1 },
+                    ]}
+                    containerStyle={{ position: "relative", width: "100%", height: 300, background: "#fff" }}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
               </div>
 
               <div className="col-md-12 mt-2">

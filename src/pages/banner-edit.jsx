@@ -396,7 +396,7 @@ const BannerEdit = () => {
       if (image[0] && image[0].file instanceof File) {
         sendData.append("banner[banner_video]", image[0].file);
       }
-      else{
+      else {
         sendData.append("banner[banner_video]", formData.banner_video);
       }
       // if (formData.banner_video instanceof File) {
@@ -512,6 +512,8 @@ const BannerEdit = () => {
                       <ImageUploadingButton
                         value={image}
                         onChange={handleImageUpload}
+                        variant="custom"
+                        btntext="Add"
                       />
                       <ImageCropper
                         open={dialogOpen}
