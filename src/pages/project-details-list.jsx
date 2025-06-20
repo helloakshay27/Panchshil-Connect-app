@@ -191,6 +191,54 @@ const ProjectDetailsList = () => {
         }));
       }, [filteredProjects.length, pageSize, searchQuery]);
 
+      const handleToggleShow = async (id, currentStatus) => {
+  const updatedStatus = !currentStatus;
+
+  // Dismiss any existing toast first
+  if (activeToastId) {
+    toast.dismiss(activeToastId);
+  }
+
+  try {
+    await axios.put(
+      `${baseURL}projects/${id}.json`,
+      { project: { show_on_home: updatedStatus } }, // <-- update this line
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
+
+    setProjects((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, show_on_home: updatedStatus } : item
+      )
+    );
+
+    // Show new toast and store its ID
+    const newToastId = toast.success("Status updated successfully!", {
+      duration: 3000,
+      position: "top-center",
+      id: `toggle-${id}`,
+    });
+
+    setActiveToastId(newToastId);
+  } catch (error) {
+    console.error("Error updating status:", error);
+
+    // Show error toast and store its ID
+    const newToastId = toast.error("Failed to update status.", {
+      duration: 3000,
+      position: "top-center",
+      id: `toggle-error-${id}`,
+    });
+
+    setActiveToastId(newToastId);
+  }
+};
+
   return (
     <>
       <div className="main-content">
@@ -302,6 +350,7 @@ const ProjectDetailsList = () => {
                           <th>Number Of Units</th>
                           <th>Rera Number</th>
                           <th>Amenities</th> */}
+                          <th>Show On Home</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -436,6 +485,45 @@ const ProjectDetailsList = () => {
                                 : "-"}
                             </td>
                             <td>{project?.project_tag || "-"}</td>
+                            <td>
+                               <button
+                                    onClick={() =>
+                                      handleToggleShow(project.id, project.show_on_home)
+                                    }
+                                    className="toggle-button"
+                                    style={{
+                                      border: "none",
+                                      background: "none",
+                                      cursor: "pointer",
+                                      padding: 0,
+                                      width: "35px",
+                                    }}
+                                  >
+                                    {project.show_on_home ? (
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="40"
+                                        height="25"
+                                        fill="#de7008"
+                                        className="bi bi-toggle-on"
+                                        viewBox="0 0 16 16"
+                                      >
+                                        <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                                      </svg>
+                                    ) : (
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="40"
+                                        height="25"
+                                        fill="#667085"
+                                        className="bi bi-toggle-off"
+                                        viewBox="0 0 16 16"
+                                      >
+                                        <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                                      </svg>
+                                    )}
+                                  </button>
+                            </td>
 
                             {/* <td>{project?.price || "-"}</td>
                             <td>{project?.project_size_sq_mtr || "-"}</td>
