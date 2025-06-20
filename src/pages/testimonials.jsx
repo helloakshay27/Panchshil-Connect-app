@@ -6,6 +6,8 @@ import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import "../mor.css";
 import { baseURL } from "./baseurl/apiDomain";
+import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
+import { ImageCropper } from "../components/reusable/ImageCropper";
 
 const Testimonials = () => {
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
@@ -27,6 +29,10 @@ const Testimonials = () => {
   const [showVideoTooltip, setShowVideoTooltip] = useState(false);
   const [previewImg, setPreviewImg] = useState(null);
   const [previewFiles, setPreviewFiles] = useState([]);
+  const [image, setImage] = useState([]);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [existingImageUrl, setExistingImageUrl] = useState(null);
 
   const [formData, setFormData] = useState({
     testimonial_video: null,
@@ -34,30 +40,31 @@ const Testimonials = () => {
     video_preview_image_url: "",
   });
 
- const handleBannerVideoChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const maxSize = 10 * 1024 * 1024; // 10MB
+  console.log("Form Data:", formData);
 
-    if (file.size > maxSize) {
-      setErrors((prev) => ({
+  const handleBannerVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const maxSize = 10 * 1024 * 1024; // 10MB
+
+      if (file.size > maxSize) {
+        setErrors((prev) => ({
+          ...prev,
+          testimonial_video: "",
+        }));
+        toast.error("Video size must be less than 10MB.");
+        return;
+      }
+
+      setErrors((prev) => ({ ...prev, testimonial_video: "" }));
+      setPreviewVideo(URL.createObjectURL(file));
+
+      setFormData((prev) => ({
         ...prev,
-        testimonial_video: "",
+        testimonial_video: file,
       }));
-      toast.error("Video size must be less than 10MB.");
-      return;
     }
-
-    setErrors((prev) => ({ ...prev, testimonial_video: "" }));
-    setPreviewVideo(URL.createObjectURL(file));
-
-    setFormData((prev) => ({
-      ...prev,
-      testimonial_video: file,
-    }));
-  }
-};
-
+  };
 
   useEffect(() => {
     const fetchCompanySetups = async () => {
@@ -111,54 +118,78 @@ const Testimonials = () => {
     fetchBuildingTypes();
   }, []);
 
- const handleFileChange = (e) => {
-  const files = Array.from(e.target.files);
-  const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  const handleImageUpload = (newImageList) => {
+    if (!newImageList || newImageList.length === 0) return;
 
-  if (files.length === 0) return;
+    const file = newImageList[0].file;
+    if (!file) return;
 
-  const file = files[0];
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/bmp",
+      "image/tiff",
+    ];
 
-  if (!allowedTypes.includes(file.type)) {
-    toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-    e.target.value = "";
-    return;
-  }
+    const fileType = file.type;
+    const sizeInMB = file.size / (1024 * 1024);
 
-  const maxSize = 3 * 1024 * 1024; // 3MB
-  if (file.size > maxSize) {
-    setErrors((prev) => ({
-      ...prev,
-      attachfile: "",
-    }));
-    toast.error("Image size must be less than 3MB.");
-    return;
-  }
+    if (!allowedImageTypes.includes(fileType)) {
+      toast.error(" Please upload a valid image file.");
+      return;
+    }
 
-  const previewUrl = URL.createObjectURL(file);
-  setPreviewImg(previewUrl);
+    if (sizeInMB > 3) {
+      toast.error(" Image size must be less than 3MB.");
+      return;
+    }
 
-  setFormData((prev) => ({
-    ...prev,
-    attachfile: file,
-    video_preview_image_url: previewUrl,
-  }));
+    setImage(newImageList);
+    setDialogOpen(true); // Open cropper for images
+  };
 
-  setVideoUrl(previewUrl);
-};
+  const isImageFile = (file) => {
+    if (!file) return false;
+    const imageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/svg+xml",
+      "image/bmp",
+      "image/tiff",
+    ];
+    if (typeof file === "string") {
+      if (file.startsWith("data:image")) return true;
+      const extension = file.split(".").pop().toLowerCase();
+      return [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "webp",
+        "svg",
+        "bmp",
+        "tiff",
+      ].includes(extension);
+    }
 
+    return imageTypes.includes(file.type);
+  };
 
-    const validateForm = (formData) => {
+  const validateForm = (formData) => {
     const errors = [];
 
-    if (!formData.testimonial_video) {
-      errors.push("Testimonial video is required.");
-      return errors; // Return the first error immediately
-    }
-    if (!formData.attachfile) {
-      errors.push("Preview image is required.");
-      return errors; // Return the first error immediately
-    }
+    // if (!formData.testimonial_video) {
+    //   errors.push("Testimonial video is required.");
+    //   return errors; // Return the first error immediately
+    // }
+    // if (!formData?.attachfile) {
+    //   errors.push("Preview image is required.");
+    //   return errors; // Return the first error immediately
+    // }
 
     return errors;
   };
@@ -168,39 +199,37 @@ const Testimonials = () => {
     setLoading(true);
     toast.dismiss();
 
-      const validationErrors = validateForm(formData);
-        if (validationErrors.length > 0) {
-          validationErrors.forEach((error) => toast.error(error));
-          setLoading(false);
-          return;
-        }
-  
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      validationErrors.forEach((error) => toast.error(error));
+      setLoading(false);
+      return;
+    }
+
     const form = new FormData();
     form.append("testimonial[user_name]", userName.trim());
     form.append("testimonial[content]", content.trim());
-    
-    // Use the previewImg URL for video_preview_image_url if available
-    if (previewImg) {
-      form.append("testimonial[video_preview_image_url]", previewImg);
-    } else {
-      form.append("testimonial[video_preview_image_url]", videoUrl.trim());
-    }
-    
     form.append("testimonial[building_id]", buildingTypeId?.toString() || "");
     form.append(
       "testimonial[building_type]",
-      buildingTypeOptions.find((option) => option.id === buildingTypeId)?.building_type || ""
+      buildingTypeOptions.find((option) => option.id === buildingTypeId)
+        ?.building_type || ""
     );
-    
+
     if (formData.testimonial_video) {
       form.append("testimonial[testimonial_video]", formData.testimonial_video);
     }
-    
-    // Append the preview image file if it exists
-    if (formData.attachfile) {
+
+    // ✅ Only use File for preview_image
+    if (formData.attachfile instanceof File) {
       form.append("testimonial[preview_image]", formData.attachfile);
     }
-  
+
+    // ✅ Use actual URL if you have one
+    if (videoUrl) {
+      form.append("testimonial[video_preview_image_url]", videoUrl.trim());
+    }
+
     try {
       const response = await axios.post(`${baseURL}testimonials.json`, form, {
         headers: {
@@ -208,10 +237,9 @@ const Testimonials = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
       toast.success("Data saved successfully!");
-  
-      // Reset form
+      // reset all
       setUserName("");
       setVideoUrl("");
       setImagePreview("");
@@ -220,10 +248,10 @@ const Testimonials = () => {
       setContent("");
       setPreviewVideo(null);
       setPreviewImg(null);
-      setFormData({ 
+      setFormData({
         testimonial_video: null,
         attachfile: null,
-        video_preview_image_url: ""
+        video_preview_image_url: "",
       });
       navigate("/testimonial-list");
     } catch (error) {
@@ -241,187 +269,225 @@ const Testimonials = () => {
 
   return (
     <>
-      <div className="main-content">
-        <div className="website-content overflow-auto">
+      <div className="">
+        <div className="">
           <div className="module-data-section p-3">
-            <form onSubmit={handleSubmit}>
-              <div className="card mt-4 pb-4 mx-4">
-                <div className="card-header">
-                  <h3 className="card-title">Create Testimonials</h3>
-                </div>
-                <div className="card-body">
-                  <div className="row">
-                    {/* User Name */}
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          User Name
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="userName"
-                          placeholder="Enter user name"
-                          value={userName}
-                          onChange={(e) => setUserName(e.target.value)}
-                        />
-                      </div>
+            {/* <form onSubmit={handleSubmit}> */}
+            <div className="card mt-4 pb-4 mx-4">
+              <div className="card-header">
+                <h3 className="card-title">Create Testimonials</h3>
+              </div>
+              <div className="card-body">
+                <div className="row">
+                  {/* User Name */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>User Name</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="userName"
+                        placeholder="Enter user name"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                      />
                     </div>
+                  </div>
 
-                    {/* Building Type */}
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Building Type
-                        </label>
-                        <SelectBox
-                          options={buildingTypeOptions.map((option) => ({
-                            label: option.building_type, // Display Name
-                            value: option.id, // ID
-                          }))}
-                          value={buildingTypeId}
-                          onChange={(value) => setBuildingTypeId(value)}
-                        />
-                      </div>
+                  {/* Building Type */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Building Type</label>
+                      <SelectBox
+                        options={buildingTypeOptions.map((option) => ({
+                          label: option.building_type, // Display Name
+                          value: option.id, // ID
+                        }))}
+                        value={buildingTypeId}
+                        onChange={(value) => setBuildingTypeId(value)}
+                      />
                     </div>
-                   
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Description
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="content"
-                          placeholder="Enter Description"
-                          value={content}
-                          onChange={(e) => setContent(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Testimonial Video{" "}
-                          <span
-                            className="tooltip-container"
-                            onMouseEnter={() => setShowVideoTooltip(true)}
-                            onMouseLeave={() => setShowVideoTooltip(false)}
-                          >
-                            [i]
-                            {showVideoTooltip && (
-                              <span className="tooltip-text">
-                                Max Upload Size 10 MB
-                              </span>
-                            )}
-                          </span>
-                          <span className="otp-asterisk"> *</span>
+                  </div>
 
-                        </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="testimonial_video"
-                          accept="video/*"
-                          onChange={handleBannerVideoChange}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Description</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="content"
+                        placeholder="Enter Description"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Testimonial Video{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowVideoTooltip(true)}
+                          onMouseLeave={() => setShowVideoTooltip(false)}
+                        >
+                          [i]
+                          {showVideoTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 10 MB
+                            </span>
+                          )}
+                        </span>
+                        <span className="otp-asterisk"> *</span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="testimonial_video"
+                        accept="video/*"
+                        onChange={handleBannerVideoChange}
+                      />
+                      {errors.testimonial_video && (
+                        <span className="error text-danger">
+                          {errors.testimonial_video}
+                        </span>
+                      )}
+
+                      {previewVideo && (
+                        <video
+                          src={previewVideo}
+                          controls
+                          className="img-fluid rounded mt-2"
+                          style={{
+                            maxWidth: "200px",
+                            maxHeight: "150px",
+                            objectFit: "cover",
+                          }}
                         />
-                        {errors.testimonial_video && (
-                          <span className="error text-danger">
-                            {errors.testimonial_video}
-                          </span>
-                        )}
-                        
-                        {previewVideo && (
-                          <video
-                            src={previewVideo}
-                            controls
-                            className="img-fluid rounded mt-2"
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Preview Image{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB
+                            </span>
+                          )}
+                        </span>
+                        <span className="otp-asterisk"> *</span>
+                      </label>
+                      <ImageUploadingButton
+                        value={image}
+                        onChange={handleImageUpload}
+                      />
+                      <ImageCropper
+                        open={dialogOpen}
+                        image={image?.[0]?.dataURL || null}
+                        onComplete={(cropped) => {
+                          if (cropped) {
+                            setCroppedImage(cropped.base64);
+                            setPreviewImg(cropped.base64);
+                            setFormData((prev) => ({
+                              ...prev,
+                              attachfile: cropped.file,
+                              video_preview_image_url: cropped.base64,
+                            }));
+                          }
+                          setDialogOpen(false);
+                        }}
+                        requiredRatios={[16 / 9]}
+                        requiredRatioLabel="16:9"
+                        allowedRatios={[
+                          { label: "16:9", ratio: 16 / 9 },
+                          { label: "9:16", ratio: 9 / 16 },
+                          { label: "1:1", ratio: 1 },
+                        ]}
+                        containerStyle={{
+                          position: "relative",
+                          width: "100%",
+                          height: 300,
+                          background: "#fff",
+                        }}
+                        formData={formData}
+                        setFormData={setFormData}
+                      />
+                      {errors.attachfile && (
+                        <span className="error text-danger">
+                          {errors.attachfile}
+                        </span>
+                      )}
+
+                      {/* Show new preview image if selected */}
+                      {previewImg && (
+                        <div className="mt-2">
+                          <img
+                            src={croppedImage || previewImg}
+                            className="img-fluid rounded"
+                            alt="Preview"
                             style={{
-                              maxWidth: "200px",
-                              maxHeight: "150px",
+                              maxWidth: "100px",
+                              maxHeight: "100px",
                               objectFit: "cover",
                             }}
                           />
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Preview Image{" "}
-                          <span
-                            className="tooltip-container"
-                            onMouseEnter={() => setShowTooltip(true)}
-                            onMouseLeave={() => setShowTooltip(false)}
-                          >
-                            [i]
-                            {showTooltip && (
-                              <span className="tooltip-text">
-                                Max Upload Size 3 MB
-                              </span>
-                            )}
-                          </span>
-                          <span className="otp-asterisk"> *</span>
+                        </div>
+                      )}
 
-                        </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          name="video_preview_image_url"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                        {errors.video_preview_image_url && (
-                          <span className="error text-danger">
-                            {errors.video_preview_image_url}
-                          </span>
-                        )}
-                        
-                        {previewImg && (
-                          <div className="mt-2">
-                            <img
-                              src={previewImg}
-                              className="img-fluid rounded"
-                              alt="Preview"
-                              style={{
-                                maxWidth: "100px",
-                                maxHeight: "100px",
-                                objectFit: "cover",
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
+                      {/* Show existing image if no new image is selected */}
+                      {!previewImg && existingImageUrl && (
+                        <div className="mt-2">
+                          <img
+                            src={existingImageUrl}
+                            className="img-fluid rounded"
+                            alt="Current Preview"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Submit and Cancel Buttons */}
-              <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    Submit
-                  </button>
-                </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
+            {/* Submit and Cancel Buttons */}
+            <div className="row mt-2 justify-content-center">
+              <div className="col-md-2">
+                <button
+                  type="submit"
+                  className="purple-btn2 w-100"
+                  disabled={loading}
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </button>
               </div>
-            </form>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 w-100"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            {/* </form> */}
           </div>
         </div>
       </div>
