@@ -7,9 +7,11 @@ export const ImageCropper = ({
     formData,
     setFormData,
     onComplete,
-    requiredRatios = [1], // e.g., [16/9, 9/16]
+    fieldKey = "image",
+    requiredRatios = [1],
     requiredRatioLabel = "1:1",
     allowedRatios = [{ label: "1:1", ratio: 1 }],
+    originalFile,
     ...props
 }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -18,6 +20,7 @@ export const ImageCropper = ({
     const [aspectLabel, setAspectLabel] = useState(allowedRatios[0].label);
     const [imageRatio, setImageRatio] = useState(null);
     const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+    const [imageMimeType, setImageMimeType] = useState("image/png");
 
     useEffect(() => {
         if (image) {
@@ -27,27 +30,29 @@ export const ImageCropper = ({
                 setImageRatio(ratio);
                 setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
                 setCrop({ x: 0, y: 0 });
-                console.log(`Image dimensions: ${img.naturalWidth}x${img.naturalHeight}, Ratio: ${ratio}`);
             };
             img.src = image;
+
+            // Detect MIME type from originalFile or fallback to base64 data
+            if (originalFile?.type) {
+                setImageMimeType(originalFile.type);
+            } else if (image.startsWith("data:image")) {
+                const mime = image.match(/data:(.*?);base64,/)[1];
+                setImageMimeType(mime);
+            }
         }
-    }, [image]);
+    }, [image, originalFile]);
 
     const handleAspectChange = (targetAspect, label) => {
         setAspect(targetAspect);
         setAspectLabel(label);
     };
 
-    const isRatioAcceptable = (actual, expectedList, tolerance = 0.1) => {
-        return expectedList.some(expected => Math.abs(actual - expected) <= tolerance);
-    };
+    const isRatioAcceptable = (actual, expectedList, tolerance = 0.1) =>
+        expectedList.some((expected) => Math.abs(actual - expected) <= tolerance);
 
-    const isGridSizeValid = () => {
-        if (aspect === 16 / 9) {
-            return imageDimensions.width >= 400 && imageDimensions.height >= 225;
-        }
-        return true;
-    };
+    const isGridSizeValid = () =>
+        aspect === 16 / 9 ? imageDimensions.width >= 400 && imageDimensions.height >= 225 : true;
 
     const getContainerDimensions = () => {
         const baseSize = 300;
@@ -57,19 +62,22 @@ export const ImageCropper = ({
         return { width: baseSize, height: baseSize };
     };
 
+    const base64ToFile = (base64, filename, mimeType) => {
+        const arr = base64.split(",");
+        const mime = mimeType || arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        const u8arr = new Uint8Array(bstr.length);
+        for (let i = 0; i < bstr.length; i++) {
+            u8arr[i] = bstr.charCodeAt(i);
+        }
+        // Map MIME type to file extension
+        const extension = mime === "image/jpeg" ? "jpg" : mime === "image/webp" ? "webp" : "png";
+        return new File([u8arr], filename, { type: mime });
+    };
+
     if (!open || !image) return null;
 
     const { width, height } = getContainerDimensions();
-
-    const base64ToFile = (base64, filename) => {
-        const arr = base64.split(",");
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) u8arr[n] = bstr.charCodeAt(n);
-        return new File([u8arr], filename, { type: mime });
-    };
 
     return (
         <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.8)" }}>
@@ -84,9 +92,7 @@ export const ImageCropper = ({
                                 <button
                                     key={label}
                                     onClick={() => handleAspectChange(ratio, label)}
-                                    className={`px-3 py-2 rounded ${aspect === ratio
-                                            ? "purple-btn2 text-white"
-                                            : "border border-purple-500 text-purple-600 bg-white"
+                                    className={`px-3 py-2 rounded ${aspect === ratio ? "purple-btn2 text-white" : "border border-purple-500 text-purple-600 bg-white"
                                         }`}
                                 >
                                     {label}
@@ -123,52 +129,66 @@ export const ImageCropper = ({
                         <button
                             className="px-4 py-2 rounded purple-btn2 text-white"
                             onClick={async () => {
-                                if (croppedAreaPixels && image) {
-                                    const requiredLabels = requiredRatios.map(r => {
-                                        const match = allowedRatios.find(ar => ar.ratio === r);
-                                        return match?.label || r.toFixed(2);
-                                    }).join(" or ");
+                                if (!croppedAreaPixels || !image) return;
 
-                                    if (!isRatioAcceptable(imageRatio, requiredRatios, 0.1)) {
-                                        alert(`❌ Invalid image.\nOriginal image ratio (${imageRatio?.toFixed(2)}) must match one of the allowed ratios: ${requiredLabels}`);
-                                        return;
-                                    }
+                                const requiredLabels = requiredRatios
+                                    .map((r) => allowedRatios.find((ar) => ar.ratio === r)?.label || r.toFixed(2))
+                                    .join(" or ");
 
-                                    if (!isRatioAcceptable(imageRatio, [aspect], 0.25)) {
-                                        alert(`❌ Cannot crop this image as ${aspectLabel}.\nThe original image shape (${imageRatio.toFixed(2)}) does not fit the selected aspect.`);
-                                        return;
-                                    }
-
-                                    if (aspect === 16 / 9 && !isGridSizeValid()) {
-                                        alert("❌ Image too small. Must be at least 400x225 for 16:9.");
-                                        return;
-                                    }
-
-                                    const canvas = document.createElement("canvas");
-                                    const img = new Image();
-                                    img.crossOrigin = "anonymous";
-                                    img.src = image;
-                                    img.onload = () => {
-                                        const ctx = canvas.getContext("2d");
-                                        canvas.width = croppedAreaPixels.width;
-                                        canvas.height = croppedAreaPixels.height;
-                                        ctx.drawImage(
-                                            img,
-                                            croppedAreaPixels.x,
-                                            croppedAreaPixels.y,
-                                            croppedAreaPixels.width,
-                                            croppedAreaPixels.height,
-                                            0,
-                                            0,
-                                            croppedAreaPixels.width,
-                                            croppedAreaPixels.height
-                                        );
-                                        const croppedBase64 = canvas.toDataURL("image/png");
-                                        const croppedFile = base64ToFile(croppedBase64, "cropped_image.png");
-                                        onComplete({ base64: croppedBase64, file: croppedFile });
-                                        setFormData({ ...formData, banner_video: croppedFile });
-                                    };
+                                if (!isRatioAcceptable(imageRatio, requiredRatios, 0.1)) {
+                                    alert(
+                                        `❌ Invalid image.\nOriginal image ratio (${imageRatio?.toFixed(2)}) must match: ${requiredLabels}`
+                                    );
+                                    return;
                                 }
+
+                                if (!isRatioAcceptable(imageRatio, [aspect], 0.25)) {
+                                    alert(
+                                        `❌ Cannot crop this image as ${aspectLabel}.\nOriginal shape (${imageRatio?.toFixed(2)}) doesn't fit.`
+                                    );
+                                    return;
+                                }
+
+                                if (!isGridSizeValid()) {
+                                    alert("❌ Image too small. Must be at least 400x225 for 16:9.");
+                                    return;
+                                }
+
+                                const canvas = document.createElement("canvas");
+                                const img = new Image();
+                                img.crossOrigin = "anonymous";
+                                img.src = image;
+                                img.onload = () => {
+                                    const ctx = canvas.getContext("2d");
+                                    canvas.width = croppedAreaPixels.width;
+                                    canvas.height = croppedAreaPixels.height;
+                                    ctx.drawImage(
+                                        img,
+                                        croppedAreaPixels.x,
+                                        croppedAreaPixels.y,
+                                        croppedAreaPixels.width,
+                                        croppedAreaPixels.height,
+                                        0,
+                                        0,
+                                        croppedAreaPixels.width,
+                                        croppedAreaPixels.height
+                                    );
+
+                                    // Use quality parameter for JPEG
+                                    const quality = imageMimeType === "image/jpeg" ? 0.8 : undefined;
+                                    const base64 = canvas.toDataURL(imageMimeType, quality);
+
+                                    const originalName = originalFile?.name?.split(".")[0] || "cropped_image";
+                                    const extension = imageMimeType === "image/jpeg" ? "jpg" : imageMimeType === "image/webp" ? "webp" : "png";
+                                    const croppedFile = base64ToFile(base64, `${originalName}.${extension}`, imageMimeType);
+
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        [fieldKey]: Array.isArray(prev[fieldKey]) ? [...prev[fieldKey], croppedFile] : [croppedFile],
+                                    }));
+
+                                    onComplete({ base64, file: croppedFile });
+                                };
                             }}
                         >
                             Finish

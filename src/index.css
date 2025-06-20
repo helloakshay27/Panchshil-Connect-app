@@ -1,23 +1,51 @@
  /* Style for table header (titles) */
-.header-title {
-    background-color: #de7008; /* Change this to your preferred color */
-    color: white;
-    font-weight: bold;
-    text-align: center;
-  }
-  
-  /* Style for table rows */
-  .table-row {
-    border-bottom: 1px solid #ddd; /* Add border between rows */
-  }
-  
-  table th, table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-right: 1px solid #ddd; /* Add borders between columns */
-  }
-  
-  table td:last-child {
-    border-right: none; /* Remove the right border for the last column */
-  }
-  
+ .header-title {
+   background-color: #de7008;
+   /* Change this to your preferred color */
+   color: white;
+   font-weight: bold;
+   text-align: center;
+ }
+
+ /* Style for table rows */
+ .table-row {
+   border-bottom: 1px solid #ddd;
+   /* Add border between rows */
+ }
+
+ table th,
+ table td {
+   padding: 12px 15px;
+   text-align: left;
+   border-right: 1px solid #ddd;
+   /* Add borders between columns */
+ }
+
+ table td:last-child {
+   border-right: none;
+   /* Remove the right border for the last column */
+ }
+
+ .custom-upload-wrapper {
+   display: inline-flex;
+   align-items: center;
+   border: 1px solid #ccc;
+   border-radius: 6px;
+   overflow: hidden;
+   font-family: system-ui, sans-serif;
+   font-size: 14px;
+   background-color: white;
+   cursor: pointer;
+ }
+
+ .choose-btn {
+   padding: 5px 12px;
+   background-color: #f0f0f0;
+   border-right: 1px solid #ccc;
+   white-space: nowrap;
+ }
+
+ .file-label {
+   padding: 5px 12px;
+   white-space: nowrap;
+ }

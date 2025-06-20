@@ -12,6 +12,8 @@ import PropertySelect from "../components/base/PropertySelect";
 
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { ImageCropper } from "../components/reusable/ImageCropper";
+import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
@@ -83,6 +85,8 @@ const ProjectDetailsCreate = () => {
 
   console.log("formD", formData);
 
+
+
   const [projectsType, setprojectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
   const [specifications, setSpecifications] = useState([]);
@@ -107,7 +111,12 @@ const ProjectDetailsCreate = () => {
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
   // const [showTooltip, setShowTooltip] = useState(false);
   const [showQrTooltip, setShowQrTooltip] = useState(false);
+  const [image, setImage] = useState([]);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   console.log(propertyTypeOptions);
+
+  console.log(image)
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -139,41 +148,41 @@ const ProjectDetailsCreate = () => {
     return { valid: true };
   };
 
-  const handleFileChange = (e, fieldName) => {
-    if (fieldName === "image") {
-      const files = Array.from(e.target.files);
-      const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ];
+  // const handleFileChange = (e, fieldName) => {
+  //   if (fieldName === "image") {
+  //     const files = Array.from(e.target.files);
+  //     const allowedTypes = [
+  //       "image/jpeg",
+  //       "image/png",
+  //       "image/gif",
+  //       "image/webp",
+  //     ];
 
-      const validTypeFiles = files.filter((file) =>
-        allowedTypes.includes(file.type)
-      );
+  //     const validTypeFiles = files.filter((file) =>
+  //       allowedTypes.includes(file.type)
+  //     );
 
-      if (validTypeFiles.length !== files.length) {
-        toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-        e.target.value = "";
-        return;
-      }
+  //     if (validTypeFiles.length !== files.length) {
+  //       toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
+  //       e.target.value = "";
+  //       return;
+  //     }
 
-      const file = validTypeFiles[0];
-      const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
+  //     const file = validTypeFiles[0];
+  //     const sizeCheck = isFileSizeValid(file, MAX_IMAGE_SIZE);
 
-      if (!sizeCheck.valid) {
-        toast.error("Image size must be less than 3MB.");
-        e.target.value = ""; // Reset input
-        return;
-      }
+  //     if (!sizeCheck.valid) {
+  //       toast.error("Image size must be less than 3MB.");
+  //       e.target.value = ""; // Reset input
+  //       return;
+  //     }
 
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        image: file,
-      }));
-    }
-  };
+  //     setFormData((prevFormData) => ({
+  //       ...prevFormData,
+  //       image: file,
+  //     }));
+  //   }
+  // };
   // const handleLayoutFileChange = (e, fieldName) => {
   //   if (fieldName === "Layoutimage") {
   //     const file = e.target.files[0]; // Only take the first file
@@ -203,7 +212,42 @@ const ProjectDetailsCreate = () => {
   //     }));
   //   }
   // };
+  const handleImageUploaded = (newImageList) => {
+    if (!newImageList || newImageList.length === 0) return;
 
+    const file = newImageList[0].file;
+    if (!file) return;
+
+    const allowedImageTypes = [
+      "image/jpeg", "image/png", "image/gif", "image/webp",
+      "image/bmp", "image/tiff",
+    ];
+
+
+
+    const fileType = file.type;
+    const sizeInMB = file.size / (1024 * 1024);
+
+    const isImage = allowedImageTypes.includes(fileType);
+
+    if (!isImage) {
+      toast.error("❌ Please upload a valid image or video file.");
+      return;
+    }
+
+    if (isImage && sizeInMB > 3) {
+      toast.error("❌ Image size must be less than 3MB.");
+      return;
+    }
+
+
+
+    setImage(newImageList);
+
+    if (isImage) {
+      setDialogOpen(true); // Open cropper only for images
+    }
+  };
   const amenityTypes = [
     ...new Set(amenities.map((ammit) => ammit.amenity_type)),
   ].map((type) => ({ value: type, label: type }));
@@ -703,8 +747,7 @@ const ProjectDetailsCreate = () => {
       const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.image)}`
         );
         return;
@@ -725,8 +768,7 @@ const ProjectDetailsCreate = () => {
       );
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
         );
         return;
@@ -743,8 +785,7 @@ const ProjectDetailsCreate = () => {
         tooLargeFiles.push(sizeCheck);
       } else {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(maxSize)}`
         );
       }
@@ -1040,8 +1081,8 @@ const ProjectDetailsCreate = () => {
             );
           }
         });
-      } else if (key === "image" && value instanceof File) {
-        data.append("project[image]", value);
+      } else if (key === "image" && image[0]?.file instanceof File) {
+        data.append("project[image]", image[0]?.file);
       } else if (key === "video_preview_image_url" && value instanceof File) {
         data.append("project[video_preview_image_url]", value);
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
@@ -1429,7 +1470,7 @@ const ProjectDetailsCreate = () => {
     // Clear input fields after adding
     setTowerName("");
     setReraNumber("");
-     setReraUrl(""); 
+    setReraUrl("");
   };
 
   // Handle Deleting a RERA Entry
@@ -1814,6 +1855,8 @@ const ProjectDetailsCreate = () => {
     }));
   };
 
+  console.log("uploaded img", image[0]);
+
   return (
     <>
       {/* <Header /> */}
@@ -1843,7 +1886,7 @@ const ProjectDetailsCreate = () => {
                     <span className="otp-asterisk"> *</span>
                   </label>
 
-                  <input
+                  {/* <input
                     className="form-control"
                     type="file"
                     name="image"
@@ -1851,6 +1894,34 @@ const ProjectDetailsCreate = () => {
                     multiple
                     required
                     onChange={(e) => handleFileChange(e, "image")}
+                  /> */}
+                  <ImageUploadingButton
+                    value={image}
+                    onChange={handleImageUploaded}
+                  />
+
+                  <ImageCropper
+                    open={dialogOpen}
+                    fieldKey="image" // or "banner_video", "profileImage", etc.
+                    originalFile={image?.[0]?.file} // pass original File here
+                    onComplete={(cropped) => {
+                      if (cropped) {
+                        setCroppedImage(cropped.base64);
+                        setFormData((prev) => ({ ...prev, image: cropped.file }));
+                      }
+                      setDialogOpen(false);
+                    }}
+                    image={image?.[0]?.dataURL || null}
+                    requiredRatios={[ 9 / 16]}
+                    requiredRatioLabel="9:16"
+                    allowedRatios={[
+                      { label: "16:9", ratio: 16 / 9 },
+                      { label: "9:16", ratio: 9 / 16 },
+                      { label: "1:1", ratio: 1 },
+                    ]}
+                    containerStyle={{ position: "relative", width: "100%", height: 300, background: "#fff" }}
+                    formData={formData}
+                    setFormData={setFormData}
                   />
                 </div>
               </div>
@@ -1982,23 +2053,23 @@ const ProjectDetailsCreate = () => {
               </div>
 
               {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
-                <div className="col-md-3 mt-1">
-                  <div className="form-group">
-                    <label>
-                      SFDC Project ID
-                      <span className="otp-asterisk"> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="SFDC_Project_Id"
-                      placeholder="Enter SFDC Project ID"
-                      maxLength={18}
-                      value={formData.SFDC_Project_Id}
-                      onChange={handleChange}
-                    />
-                  </div>
+              <div className="col-md-3 mt-1">
+                <div className="form-group">
+                  <label>
+                    SFDC Project ID
+                    <span className="otp-asterisk"> *</span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="SFDC_Project_Id"
+                    placeholder="Enter SFDC Project ID"
+                    maxLength={18}
+                    value={formData.SFDC_Project_Id}
+                    onChange={handleChange}
+                  />
                 </div>
+              </div>
               {/* )} */}
 
               <div className="col-md-3 mt-1">
@@ -2034,7 +2105,7 @@ const ProjectDetailsCreate = () => {
                         project_tag: value,
                       }))
                     }
-                    //isDisableFirstOption={true}
+                  //isDisableFirstOption={true}
                   />
                 </div>
               </div>
