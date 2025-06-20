@@ -115,10 +115,12 @@ const ProjectDetailsCreate = () => {
   const [coverImageUpload, setCoverImageUpload] = useState([]);
   const [mainImageUpload, setMainImageUpload] = useState([]);
   const [galleryImageUpload, setGalleryImageUpload] = useState([]);
+  const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
   const [dialogOpen, setDialogOpen] = useState({
     image: false,
     cover_images: false,
     gallery_image: false,
+    two_d_images: false,
   }); console.log(propertyTypeOptions);
 
 
@@ -282,7 +284,9 @@ const ProjectDetailsCreate = () => {
     } else if (type === "gallery_image") {
       setGalleryImageUpload(newImageList);
       setDialogOpen(prev => ({ ...prev, gallery_image: true }));
-
+    } else if (type === "two_d_images") {
+      setFloorPlanImageUpload(newImageList);
+      setDialogOpen(prev => ({ ...prev, two_d_images: true }));
     }
   };
 
@@ -3459,7 +3463,7 @@ const ProjectDetailsCreate = () => {
                   </span>
                 </h5>
 
-                <button
+                {/* <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
                   onClick={() =>
@@ -3477,8 +3481,8 @@ const ProjectDetailsCreate = () => {
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
                   </svg>
                   <span>Add</span>
-                </button>
-                <input
+                </button> */}
+                {/* <input
                   id="two_d_images"
                   className="form-control"
                   type="file"
@@ -3489,6 +3493,33 @@ const ProjectDetailsCreate = () => {
                   }
                   multiple
                   style={{ display: "none" }}
+                /> */}
+
+                <ImageUploadingButton
+                  value={floorPlanImageUpload}
+                  onChange={(list) => handleImageUploaded(list, "two_d_images")}
+                  variant="button"
+                  btntext="Add"
+                />
+
+                <ImageCropper
+                  open={dialogOpen.two_d_images}
+                  image={floorPlanImageUpload?.[0]?.dataURL}
+                  originalFile={floorPlanImageUpload?.[0]?.file}
+                  onComplete={(cropped) => {
+                    if (cropped) {
+                      setFormData(prev => ({
+                        ...prev,
+                        two_d_images: Array.isArray(prev.two_d_images)
+                          ? [...prev.two_d_images, cropped.file]
+                          : [cropped.file],
+                      }));
+                    }
+                    setDialogOpen(prev => ({ ...prev, two_d_images: false }));
+                  }}
+                  requiredRatios={[16 / 9]}
+                  allowedRatios={[{ label: "16:9", ratio: 16 / 9 }, { label: "1:1", ratio: 1 }, { label: "3:2", ratio: 3 / 2 }]}
+
                 />
               </div>
 
