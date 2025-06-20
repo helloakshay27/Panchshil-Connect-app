@@ -77,6 +77,7 @@ const ProjectDetailsCreate = () => {
     project_qrcode_image: [],
     cover_images: [],
     is_sold: false,
+    plans: [],
   });
 
   useEffect(() => {
@@ -84,8 +85,6 @@ const ProjectDetailsCreate = () => {
   }, [formData]);
 
   console.log("formD", formData);
-
-
 
   const [projectsType, setprojectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
@@ -116,13 +115,16 @@ const ProjectDetailsCreate = () => {
   const [mainImageUpload, setMainImageUpload] = useState([]);
   const [galleryImageUpload, setGalleryImageUpload] = useState([]);
   const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
+  const [planName, setPlanName] = useState("");
+  const [planImages, setPlanImages] = useState([]);
+  const [plans, setPlans] = useState([]);
   const [dialogOpen, setDialogOpen] = useState({
     image: false,
     cover_images: false,
     gallery_image: false,
     two_d_images: false,
-  }); console.log(propertyTypeOptions);
-
+  });
+  console.log(propertyTypeOptions);
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -229,8 +231,6 @@ const ProjectDetailsCreate = () => {
   //     "image/bmp", "image/tiff",
   //   ];
 
-
-
   //   const fileType = file.type;
   //   const sizeInMB = file.size / (1024 * 1024);
 
@@ -246,8 +246,6 @@ const ProjectDetailsCreate = () => {
   //     return;
   //   }
 
-
-
   //   setImage(newImageList);
 
   //   if (isImage) {
@@ -261,7 +259,12 @@ const ProjectDetailsCreate = () => {
     const file = newImageList[0].file;
     if (!file) return;
 
-    const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
     const fileType = file.type;
     const sizeInMB = file.size / (1024 * 1024);
 
@@ -277,16 +280,16 @@ const ProjectDetailsCreate = () => {
 
     if (type === "cover_images") {
       setCoverImageUpload(newImageList);
-      setDialogOpen(prev => ({ ...prev, cover_images: true }));
+      setDialogOpen((prev) => ({ ...prev, cover_images: true }));
     } else if (type === "image") {
       setMainImageUpload(newImageList);
-      setDialogOpen(prev => ({ ...prev, image: true }));
+      setDialogOpen((prev) => ({ ...prev, image: true }));
     } else if (type === "gallery_image") {
       setGalleryImageUpload(newImageList);
-      setDialogOpen(prev => ({ ...prev, gallery_image: true }));
+      setDialogOpen((prev) => ({ ...prev, gallery_image: true }));
     } else if (type === "two_d_images") {
       setFloorPlanImageUpload(newImageList);
-      setDialogOpen(prev => ({ ...prev, two_d_images: true }));
+      setDialogOpen((prev) => ({ ...prev, two_d_images: true }));
     }
   };
 
@@ -406,6 +409,7 @@ const ProjectDetailsCreate = () => {
       project_emailer_templetes: MAX_BROCHURE_SIZE,
       project_layout: MAX_IMAGE_SIZE,
       project_qrcode_image: MAX_IMAGE_SIZE,
+      plans: MAX_IMAGE_SIZE, // 3MB
     };
 
     const allowedTypes = {
@@ -419,6 +423,7 @@ const ProjectDetailsCreate = () => {
       two_d_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       gallery_image: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       videos: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"],
+      plans: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       project_qrcode_image: [
         "image/jpeg",
         "image/png",
@@ -489,6 +494,27 @@ const ProjectDetailsCreate = () => {
       }
     } else {
       // toast.error("⚠️ Invalid upload category.");
+    }
+
+    if (name === "plans") {
+      // const newFiles = Array.from(files);
+      // const validFiles = [];
+      // newFiles.forEach((file) => {
+      //   if (!allowedTypes.plans.includes(file.type)) {
+      //     toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+      //     return;
+      //   }
+      //   if (file.size > MAX_SIZES.plans) {
+      //     toast.error("Image size must be less than 3MB.");
+      //     return;
+      //   }
+      //   validFiles.push(file);
+      // });
+      // if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        plans: [...(prev.plans || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+      }));
     }
 
     if (name === "project_emailer_templetes") {
@@ -789,7 +815,8 @@ const ProjectDetailsCreate = () => {
       const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${sizeCheck.size
+          `File too large: ${sizeCheck.name} (${
+            sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.image)}`
         );
         return;
@@ -810,7 +837,8 @@ const ProjectDetailsCreate = () => {
       );
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${sizeCheck.size
+          `File too large: ${sizeCheck.name} (${
+            sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
         );
         return;
@@ -827,7 +855,8 @@ const ProjectDetailsCreate = () => {
         tooLargeFiles.push(sizeCheck);
       } else {
         toast.error(
-          `File too large: ${sizeCheck.name} (${sizeCheck.size
+          `File too large: ${sizeCheck.name} (${
+            sizeCheck.size
           }). Max size: ${formatFileSize(maxSize)}`
         );
       }
@@ -892,6 +921,42 @@ const ProjectDetailsCreate = () => {
       const updatedGallery = [...formData.gallery_image];
       updatedGallery.splice(index, 1);
       setFormData({ ...formData, gallery_image: updatedGallery });
+    } else if (fileType === "plans") {
+      const updatedFiles = [...formData.plans];
+      updatedFiles.splice(index, 1);
+      setFormData({ ...formData, plans: updatedFiles });
+    }
+  };
+
+  const handlePlanDelete = async (planId, index) => {
+    if (!planId) {
+      // Unsaved plan → just remove locally
+      setPlans(plans.filter((_, idx) => idx !== index));
+      toast.success("Plan removed locally!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}plans/${planId}.json`, // ✅ Correct endpoint for entire plan
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete plan");
+      }
+
+      // ✅ Remove from local state
+      setPlans(plans.filter((_, idx) => idx !== index));
+      toast.success("Plan and all images deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting plan:", error);
+      toast.error("Failed to delete plan. Please try again.");
     }
   };
 
@@ -1049,6 +1114,17 @@ const ProjectDetailsCreate = () => {
     }
 
     const data = new FormData();
+
+    if (plans.length > 0) {
+      plans.forEach((plan, idx) => {
+        data.append(`project[plans][${idx}][name]`, plan.name);
+        if (Array.isArray(plan.images)) {
+          plan.images.forEach((img) => {
+            data.append(`project[plans][${idx}][images][]`, img);
+          });
+        }
+      });
+    }
 
     Object.entries(formData).forEach(([key, value]) => {
       // if (key === "order_no") {
@@ -1897,7 +1973,6 @@ const ProjectDetailsCreate = () => {
     }));
   };
 
-
   return (
     <>
       {/* <Header /> */}
@@ -1942,27 +2017,27 @@ const ProjectDetailsCreate = () => {
                     variant="custom"
                   />
 
-
                   <ImageCropper
                     open={dialogOpen.image}
                     image={mainImageUpload?.[0]?.dataURL}
                     originalFile={mainImageUpload?.[0]?.file}
                     onComplete={(cropped) => {
                       if (cropped) {
-                        setFormData(prev => ({
+                        setFormData((prev) => ({
                           ...prev,
                           image: Array.isArray(prev.image)
                             ? [...prev.image, cropped.file]
                             : [cropped.file],
                         }));
                       }
-                      setDialogOpen(prev => ({ ...prev, image: false }));
+                      setDialogOpen((prev) => ({ ...prev, image: false }));
                     }}
                     requiredRatios={[16 / 9]}
-                    allowedRatios={[{ label: "16:9", ratio: 16 / 9 }, { label: "1:1", ratio: 1 }]}
-
+                    allowedRatios={[
+                      { label: "16:9", ratio: 16 / 9 },
+                      { label: "1:1", ratio: 1 },
+                    ]}
                   />
-
                 </div>
               </div>
               <div className="col-md-3">
@@ -2145,7 +2220,7 @@ const ProjectDetailsCreate = () => {
                         project_tag: value,
                       }))
                     }
-                  //isDisableFirstOption={true}
+                    //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -3013,6 +3088,125 @@ const ProjectDetailsCreate = () => {
             </div>
           </div>
         </div>
+
+        <div className="card mt-3 pb-4 mx-4">
+          <div className="card-header3">
+            <h3 className="card-title">Plans</h3>
+          </div>
+          <div className="card-body mt-0 pb-0">
+            <div className="row">
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Project Plans{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 10 MB per image
+                      </span>
+                    )}
+                  </span>
+                </h5>
+              </div>
+              <div className="row align-items-end">
+                <div className="col-md-3">
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Plan Name (e.g. Ground Floor)"
+                    value={planName}
+                    onChange={(e) => setPlanName(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-5">
+                  <input
+                    className="form-control"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
+                  />
+                </div>
+                <div className="col-md-2">
+                  <button
+                    className="purple-btn2"
+                    type="button"
+                    onClick={() => {
+                      if (!planName || planImages.length === 0) {
+                        toast.error(
+                          "Please enter plan name and select images."
+                        );
+                        return;
+                      }
+                      setPlans((prev) => [
+                        ...prev,
+                        { name: planName, images: planImages },
+                      ]);
+                      setPlanName("");
+                      setPlanImages([]);
+                    }}
+                  >
+                    Add Plan
+                  </button>
+                </div>
+              </div>
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Plan Name</th>
+                        <th>Images</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {plans.map((plan, pIdx) => (
+                        <tr key={pIdx}>
+                          <td>{plan.name}</td>
+                          <td>
+                            {plan.images.map((img, iIdx) => (
+                              <img
+                                key={iIdx}
+                                src={
+                                  img instanceof File || img instanceof Blob
+                                    ? URL.createObjectURL(img)
+                                    : typeof img === "string"
+                                    ? img
+                                    : img?.document_url || "" // fallback if img is an object like { url: "..." }
+                                }
+                                alt="Plan"
+                                style={{
+                                  maxWidth: 60,
+                                  maxHeight: 60,
+                                  marginRight: 5,
+                                }}
+                              />
+                            ))}
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => handlePlanDelete(plan.id, pIdx)}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* file Upload */}
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
@@ -3085,14 +3279,14 @@ const ProjectDetailsCreate = () => {
                   originalFile={coverImageUpload?.[0]?.file}
                   onComplete={(cropped) => {
                     if (cropped) {
-                      setFormData(prev => ({
+                      setFormData((prev) => ({
                         ...prev,
                         cover_images: Array.isArray(prev.cover_images)
                           ? [...prev.cover_images, cropped.file]
                           : [cropped.file],
                       }));
                     }
-                    setDialogOpen(prev => ({ ...prev, cover_images: false }));
+                    setDialogOpen((prev) => ({ ...prev, cover_images: false }));
                   }}
                   requiredRatios={[9 / 16]}
                   allowedRatios={[
@@ -3177,11 +3371,12 @@ const ProjectDetailsCreate = () => {
                   </div> */}
 
                   {/* Add Button */}
-
                 </div>
                 <ImageUploadingButton
                   value={galleryImageUpload}
-                  onChange={(list) => handleImageUploaded(list, "gallery_image")}
+                  onChange={(list) =>
+                    handleImageUploaded(list, "gallery_image")
+                  }
                   variant="button"
                   btntext="Add"
                 />
@@ -3192,14 +3387,17 @@ const ProjectDetailsCreate = () => {
                   originalFile={galleryImageUpload?.[0]?.file}
                   onComplete={(cropped) => {
                     if (cropped) {
-                      setFormData(prev => ({
+                      setFormData((prev) => ({
                         ...prev,
                         gallery_image: Array.isArray(prev.gallery_image)
                           ? [...prev.gallery_image, cropped.file]
                           : [cropped.file],
                       }));
                     }
-                    setDialogOpen(prev => ({ ...prev, gallery_image: false }));
+                    setDialogOpen((prev) => ({
+                      ...prev,
+                      gallery_image: false,
+                    }));
                   }}
                   requiredRatios={[16 / 9]}
                   allowedRatios={[
@@ -3245,10 +3443,11 @@ const ProjectDetailsCreate = () => {
                               src={URL?.createObjectURL(file.gallery_image)}
                               alt={file.gallery_image_file_name}
                             /> */}
-                            <img style={{ maxWidth: 100, maxHeight: 100 }} className="img-fluid rounded"
-                              src={URL.createObjectURL(file)} />
-
-
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={URL.createObjectURL(file)}
+                            />
                           </td>
                           <td>
                             <select
@@ -3508,18 +3707,21 @@ const ProjectDetailsCreate = () => {
                   originalFile={floorPlanImageUpload?.[0]?.file}
                   onComplete={(cropped) => {
                     if (cropped) {
-                      setFormData(prev => ({
+                      setFormData((prev) => ({
                         ...prev,
                         two_d_images: Array.isArray(prev.two_d_images)
                           ? [...prev.two_d_images, cropped.file]
                           : [cropped.file],
                       }));
                     }
-                    setDialogOpen(prev => ({ ...prev, two_d_images: false }));
+                    setDialogOpen((prev) => ({ ...prev, two_d_images: false }));
                   }}
                   requiredRatios={[16 / 9]}
-                  allowedRatios={[{ label: "16:9", ratio: 16 / 9 }, { label: "1:1", ratio: 1 }, { label: "3:2", ratio: 3 / 2 }]}
-
+                  allowedRatios={[
+                    { label: "16:9", ratio: 16 / 9 },
+                    { label: "1:1", ratio: 1 },
+                    { label: "3:2", ratio: 3 / 2 },
+                  ]}
                 />
               </div>
 

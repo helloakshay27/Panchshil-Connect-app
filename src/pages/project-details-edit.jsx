@@ -63,6 +63,7 @@ const ProjectDetailsEdit = () => {
     project_ppt: [],
     fetched_Project_PPT: [],
     project_creatives: [],
+    plans: [],
     project_creative_generics: [],
     project_creative_offers: [],
     project_interiors: [],
@@ -97,6 +98,7 @@ const ProjectDetailsEdit = () => {
   // const [filteredAmenities, setFilteredAmenities] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [projectCreatives, setProjectCreatives] = useState([]);
+  const [plan, setPlan] = useState([]);
   const [coverImages, setCoverImages] = useState([]);
 
   const [categoryTypes, setCategoryTypes] = useState([]);
@@ -106,6 +108,9 @@ const ProjectDetailsEdit = () => {
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
   const [nameSend, setNameSend] = useState([]);
   const [nameSends, setNameSends] = useState([]);
+  const [planName, setPlanName] = useState("");
+  const [planImages, setPlanImages] = useState([]);
+  const [plans, setPlans] = useState([]);
   // console.log(statusOptions);
 
   useEffect(() => {
@@ -243,6 +248,14 @@ const ProjectDetailsEdit = () => {
 
         const projectData = response.data;
         // console.log("projectData", projectData);
+        setPlans(
+          (projectData.plans || []).map((plan) => ({
+            name: plan.name,
+            images: (plan.images || []).map((img) =>
+              img.document_url ? { ...img, isApi: true } : img
+            ),
+          }))
+        );
 
         setFormData({
           Property_Type: projectData.property_type || "",
@@ -254,7 +267,7 @@ const ProjectDetailsEdit = () => {
           // Configuration_Type: Array.isArray(projectData.configurations)
           //   ? projectData.configurations.map((config) => config.name)
           //   : [],
-           Configuration_Type1: Array.isArray(projectData.configurations)
+          Configuration_Type1: Array.isArray(projectData.configurations)
             ? projectData.configurations.map((config) => ({
                 id: config.id,
                 name: config.name,
@@ -313,6 +326,7 @@ const ProjectDetailsEdit = () => {
           //   : [],
           project_layout: projectData.project_layout || [],
           project_creatives: projectData.project_creatives || [],
+          // plans: projectData.plans || [],
           cover_images: projectData.cover_images || [],
           project_creative_generics:
             projectData.project_creative_generics || [],
@@ -335,6 +349,17 @@ const ProjectDetailsEdit = () => {
           disclaimer: projectData.project_disclaimer || "",
           project_qrcode_image: projectData.project_qrcode_images || [],
         });
+
+        //       setPlans(
+        //   (projectData.plans || []).map(plan => ({
+        //     name: plan.name,
+        //     images: (plan.images || []).map(img =>
+        //       img.document_url
+        //         ? { ...img, isApi: true } // Mark as API image
+        //         : img
+        //     ),
+        //   }))
+        // );
 
         setProject(response.data);
       } catch (err) {
@@ -703,6 +728,10 @@ const ProjectDetailsEdit = () => {
       const updatedGallery = [...formData.gallery_image];
       updatedGallery.splice(index, 1);
       setFormData({ ...formData, gallery_image: updatedGallery });
+    } else if (fileType === "plans") {
+      const updatedFiles = [...formData.plans];
+      updatedFiles.splice(index, 1);
+      setFormData({ ...formData, plans: updatedFiles });
     }
   };
 
@@ -875,6 +904,38 @@ const ProjectDetailsEdit = () => {
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
+    }
+  };
+
+  const handlePlanDelete = async (planId, index) => {
+    if (!planId) {
+      // Unsaved plan → just remove locally
+      setPlans(plans.filter((_, idx) => idx !== index));
+      toast.success("Plan removed locally!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}plans/${planId}.json`, // ✅ Correct endpoint for entire plan
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete plan");
+      }
+
+      // ✅ Remove from local state
+      setPlans(plans.filter((_, idx) => idx !== index));
+      toast.success("Plan and all images deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting plan:", error);
+      toast.error("Failed to delete plan. Please try again.");
     }
   };
 
@@ -1328,6 +1389,17 @@ const ProjectDetailsEdit = () => {
 
     data.append("project[Configuration_Type]", nameSends);
 
+    if (plans.length > 0) {
+      plans.forEach((plan, idx) => {
+        data.append(`project[plans][${idx}][name]`, plan.name);
+        if (Array.isArray(plan.images)) {
+          plan.images.forEach((img) => {
+            data.append(`project[plans][${idx}][images][]`, img);
+          });
+        }
+      });
+    }
+
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
@@ -1382,11 +1454,16 @@ const ProjectDetailsEdit = () => {
             data.append("project[ProjectCreatives][]", file);
           }
         });
-      } else if (
-        key === "cover_images" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      }
+      //       else if (plans.length > 0) {
+      //   plans.forEach((plan) => {
+      //     data.append(`project[plans][name]`, plan.name);
+      //     plan.images.forEach((img) => {
+      //       data.append(`project[plans][images][]`, img);
+      //     });
+      //   });
+      // }
+      else if (key === "cover_images" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -1512,7 +1589,7 @@ const ProjectDetailsEdit = () => {
         });
       } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
-          if (item.tower_name && item.rera_number ) {
+          if (item.tower_name && item.rera_number) {
             data.append(
               `project[Rera_Number_multiple][${index}][tower_name]`,
               item.tower_name
@@ -1932,6 +2009,7 @@ const ProjectDetailsEdit = () => {
       project_qrcode_image: MAX_IMAGE_SIZE, // 3MB
       project_ppt: MAX_PPT_SIZE, // 10MB
       project_creatives: MAX_IMAGE_SIZE, // 3MB
+      plans: MAX_IMAGE_SIZE, // 3MB
       cover_images: MAX_IMAGE_SIZE, // 3MB
       project_creative_generics: MAX_IMAGE_SIZE, // 3MB
       project_creative_offers: MAX_IMAGE_SIZE, // 3MB
@@ -1971,6 +2049,7 @@ const ProjectDetailsEdit = () => {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ],
       project_creatives: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      plans: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       cover_images: ["image/jpeg", "image/png", "image/gif", "image/webp"],
       project_creative_generics: [
         "image/jpeg",
@@ -2198,6 +2277,27 @@ const ProjectDetailsEdit = () => {
           project_creatives: [...(prev.project_creatives || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
         }));
       }
+    }
+
+    if (name === "plans") {
+      // const newFiles = Array.from(files);
+      // const validFiles = [];
+      // newFiles.forEach((file) => {
+      //   if (!allowedTypes.plans.includes(file.type)) {
+      //     toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+      //     return;
+      //   }
+      //   if (file.size > MAX_SIZES.plans) {
+      //     toast.error("Image size must be less than 3MB.");
+      //     return;
+      //   }
+      //   validFiles.push(file);
+      // });
+      // if (validFiles.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        plans: [...(prev.plans || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
+      }));
     }
 
     if (name === "cover_images") {
@@ -2478,10 +2578,8 @@ const ProjectDetailsEdit = () => {
   const filteredAmenities = amenities.filter(
     (ammit) => !selectedAmenityNames.includes(ammit.name)
   );
-  
-  
 
-   const handleConfigurationChange = async (selectedOptions) => {
+  const handleConfigurationChange = async (selectedOptions) => {
     const newConfigurations = selectedOptions.map((option) => ({
       id: option.value,
       name: option.label,
@@ -2495,35 +2593,35 @@ const ProjectDetailsEdit = () => {
         !newConfigurations.some((newConfig) => newConfig.id === oldConfig.id)
     );
 
-   for (const config of removed) {
-  try {
-    await axios.delete(
-      `${baseURL}projects/${id}/configurations/${config.id}.json`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+    for (const config of removed) {
+      try {
+        await axios.delete(
+          `${baseURL}projects/${id}/configurations/${config.id}.json`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+        console.log(`Deleted configuration with ID: ${config.id}`);
+      } catch (error) {
+        console.error("Error deleting configuration:", error);
       }
-    );
-    console.log(`Deleted configuration with ID: ${config.id}`);
-  } catch (error) {
-    console.error("Error deleting configuration:", error);
-  }
-}
+    }
 
     setFormData((prev) => ({
       ...prev,
       Configuration_Type1: newConfigurations,
     }));
   };
-  
-  const selectedConfigurationNames = formData.Configuration_Type1.map((c) => c.name);
+
+  const selectedConfigurationNames = formData.Configuration_Type1.map(
+    (c) => c.name
+  );
 
   const filteredConfigurations = configurations.filter(
     (config) => !selectedConfigurationNames.includes(config.name)
   );
-
-  
 
   return (
     <>
@@ -2724,7 +2822,7 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div> */}
 
-                <div className="col-md-3 mt-2">
+              <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>
                     Configuration Type
@@ -2767,23 +2865,23 @@ const ProjectDetailsEdit = () => {
               </div>
 
               {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
-                <div className="col-md-3 mt-1">
-                  <div className="form-group">
-                    <label>
-                      SFDC Project ID
-                      <span className="otp-asterisk"> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="SFDC_Project_Id"
-                      placeholder="Enter SFDC Project ID"
-                      maxLength={18}
-                      value={formData.SFDC_Project_Id}
-                      onChange={handleChange}
-                    />
-                  </div>
+              <div className="col-md-3 mt-1">
+                <div className="form-group">
+                  <label>
+                    SFDC Project ID
+                    <span className="otp-asterisk"> *</span>
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="SFDC_Project_Id"
+                    placeholder="Enter SFDC Project ID"
+                    maxLength={18}
+                    value={formData.SFDC_Project_Id}
+                    onChange={handleChange}
+                  />
                 </div>
+              </div>
               {/* )} */}
 
               <div className="col-md-3 mt-1">
@@ -3836,6 +3934,124 @@ const ProjectDetailsEdit = () => {
                     value={formData.map_url}
                     onChange={handleChange}
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card mt-3 pb-4 mx-4">
+          <div className="card-header3">
+            <h3 className="card-title">Plans</h3>
+          </div>
+          <div className="card-body mt-0 pb-0">
+            <div className="row">
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Project Plans{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 10 MB per image
+                      </span>
+                    )}
+                  </span>
+                </h5>
+              </div>
+              <div className="row align-items-end">
+                <div className="col-md-3">
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Plan Name (e.g. Ground Floor)"
+                    value={planName}
+                    onChange={(e) => setPlanName(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-5">
+                  <input
+                    className="form-control"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
+                  />
+                </div>
+                <div className="col-md-2">
+                  <button
+                    className="purple-btn2"
+                    type="button"
+                    onClick={() => {
+                      if (!planName || planImages.length === 0) {
+                        toast.error(
+                          "Please enter plan name and select images."
+                        );
+                        return;
+                      }
+                      setPlans((prev) => [
+                        ...prev,
+                        { name: planName, images: planImages },
+                      ]);
+                      setPlanName("");
+                      setPlanImages([]);
+                    }}
+                  >
+                    Add Plan
+                  </button>
+                </div>
+              </div>
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Plan Name</th>
+                        <th>Images</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {plans.map((plan, pIdx) => (
+                        <tr key={pIdx}>
+                          <td>{plan.name}</td>
+                          <td>
+                            {plan.images.map((img, iIdx) => (
+                              <img
+                                key={iIdx}
+                                src={
+                                  img instanceof File || img instanceof Blob
+                                    ? URL.createObjectURL(img)
+                                    : typeof img === "string"
+                                    ? img
+                                    : img?.document_url || "" // fallback if img is an object like { url: "..." }
+                                }
+                                alt="Plan"
+                                style={{
+                                  maxWidth: 60,
+                                  maxHeight: 60,
+                                  marginRight: 5,
+                                }}
+                              />
+                            ))}
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => handlePlanDelete(plan.id, pIdx)}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
