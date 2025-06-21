@@ -27,17 +27,22 @@ export const ImageUploadingButton = ({
           return (
             <div
               onClick={handleClick}
-              className="custom-upload-wrapper"
+              className="form-control"
+              type="File"
               role="button"
-              style={{
-                cursor: "pointer",
-                display: "inline-flex",
-                gap: "10px",
-                alignItems: "center",
-              }}
+              // style={{
+              //   width: "20%",
+              //   borderRadius: "8px",
+              //   display: "flex",
+              //   alignItems: "center",
+              //   justifyContent: "center",
+              //   cursor: "pointer",
+              //   backgroundColor: "#f0f0f0",
+              //   padding: "10px",
+              // }}
             >
-              <span className="choose-btn" style={{ fontWeight: 600 }}>Choose files</span>
-              <span className="file-label" style={{ color: "#666" }}>
+              <span className="choose-btn" style={{ fontWeight: 600,  }}>Choose files</span>
+              <span className="file-label" style={{  color: "#9b9b9b" }}>
                 {value && value.length > 0
                   ? value[0]?.file?.name || extractFilename(value[0]?.data_url)
                   : "No file chosen"}
@@ -51,7 +56,7 @@ export const ImageUploadingButton = ({
             onClick={handleClick}
             className="form-control purple-btn2"
             type="button"
-            style={{ width: "8%" }}
+            style={{ width: "8.5%", borderRadius:"8px"}}
           >
             {btntext}
           </button>

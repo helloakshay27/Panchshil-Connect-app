@@ -3123,11 +3123,13 @@ const ProjectDetailsCreate = () => {
                     onChange={(e) => setPlanName(e.target.value)}
                   />
                 </div>
-                <ImageUploadingButton
-                  value={planImageUpload}
-                  onChange={(list) => handleImageUploaded(list, "plan_images")}
-                  variant="custom"
-                />
+                <div className="col-md-3">
+                  <ImageUploadingButton
+                    value={planImageUpload}
+                    onChange={(list) => handleImageUploaded(list, "plan_images")}
+                    variant="custom"
+                  />
+                </div>
                 <ImageCropper
                   open={dialogOpen.plan_images}
                   image={planImageUpload?.[0]?.dataURL}
@@ -3154,7 +3156,7 @@ const ProjectDetailsCreate = () => {
                     { label: "1:1", ratio: 1 },
                   ]}
                 />
-                <div className="col-md-2">
+                <div className="col-md-3">
                   <button
                     className="purple-btn2"
                     type="button"
@@ -3293,7 +3295,7 @@ const ProjectDetailsCreate = () => {
                   value={coverImageUpload}
                   onChange={(list) => handleImageUploaded(list, "cover_images")}
                   variant="button"
-                  btntext="Add"
+                  btntext="+ Add"
                 />
 
                 <ImageCropper
@@ -3401,7 +3403,7 @@ const ProjectDetailsCreate = () => {
                     handleImageUploaded(list, "gallery_image")
                   }
                   variant="button"
-                  btntext="Add"
+                  btntext="+ Add"
                 />
 
                 <ImageCropper
@@ -3732,7 +3734,7 @@ const ProjectDetailsCreate = () => {
                   value={floorPlanImageUpload}
                   onChange={(list) => handleImageUploaded(list, "two_d_images")}
                   variant="button"
-                  btntext="Add"
+                  btntext="+ Add"
                 />
 
                 <ImageCropper

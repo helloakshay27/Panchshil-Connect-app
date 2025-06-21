@@ -393,6 +393,7 @@ const TestimonialEdit = () => {
                   <ImageUploadingButton
                     value={image}
                     onChange={handleImageUpload}
+                    variant="custom"
                   />
                   <ImageCropper
                     open={dialogOpen}

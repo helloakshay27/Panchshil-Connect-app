@@ -4261,7 +4261,7 @@ const ProjectDetailsEdit = () => {
                   value={coverImageUpload}
                   onChange={(list) => handleImageUploaded(list, "cover_images")}
                   variant="button"
-                  btntext="Add"
+                  btntext="+ Add"
                 />
 
                 <ImageCropper
@@ -4407,7 +4407,7 @@ const ProjectDetailsEdit = () => {
                   value={galleryImageUpload}
                   onChange={(list) => handleImageUploaded(list, "gallery_image")}
                   variant="button"
-                  btntext="Add"
+                  btntext="+ Add"
                 />
 
                 <ImageCropper
@@ -4846,7 +4846,7 @@ const ProjectDetailsEdit = () => {
                   value={floorPlanImageUpload}
                   onChange={(list) => handleImageUploaded(list, "two_d_images")}
                   variant="button"
-                  btntext="Add"
+                  btntext="+ Add"
                 />
 
                 <ImageCropper
