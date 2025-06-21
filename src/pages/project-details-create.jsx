@@ -115,6 +115,7 @@ const ProjectDetailsCreate = () => {
   const [coverImageUpload, setCoverImageUpload] = useState([]);
   const [galleryImageUpload, setGalleryImageUpload] = useState([]);
   const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
+  const [planImageUpload, setPlanImageUpload] = useState([]);
   const [planName, setPlanName] = useState("");
   const [planImages, setPlanImages] = useState([]);
   const [plans, setPlans] = useState([]);
@@ -123,6 +124,7 @@ const ProjectDetailsCreate = () => {
     cover_images: false,
     gallery_image: false,
     two_d_images: false,
+    plan_images: false,
   });
 
   const errorToastRef = useRef(null);
@@ -289,6 +291,9 @@ const ProjectDetailsCreate = () => {
     } else if (type === "two_d_images") {
       setFloorPlanImageUpload(newImageList);
       setDialogOpen((prev) => ({ ...prev, two_d_images: true }));
+    } else if (type === "plan_images") {
+      setPlanImageUpload(newImageList);
+      setDialogOpen((prev) => ({ ...prev, plan_images: true }));
     }
   };
 
@@ -3118,15 +3123,37 @@ const ProjectDetailsCreate = () => {
                     onChange={(e) => setPlanName(e.target.value)}
                   />
                 </div>
-                <div className="col-md-5">
-                  <input
-                    className="form-control"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
-                  />
-                </div>
+                <ImageUploadingButton
+                  value={planImageUpload}
+                  onChange={(list) => handleImageUploaded(list, "plan_images")}
+                  variant="custom"
+                />
+                <ImageCropper
+                  open={dialogOpen.plan_images}
+                  image={planImageUpload?.[0]?.dataURL}
+                  originalFile={planImageUpload?.[0]?.file}
+                  onComplete={(cropped) => {
+                    if (cropped && cropped.file) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        plans: Array.isArray(prev.plans)
+                          ? [...prev.plans, cropped.file]
+                          : [cropped.file],
+                      }));
+                      setPlanImages((prev) =>
+                        Array.isArray(prev) ? [...prev, cropped.file] : [cropped.file]
+                      );
+                    }
+
+                    setDialogOpen((prev) => ({ ...prev, plan_images: false }));
+                  }}
+
+                  requiredRatios={[9 / 16]}
+                  allowedRatios={[
+                    { label: "9:16", ratio: 9 / 16 },
+                    { label: "1:1", ratio: 1 },
+                  ]}
+                />
                 <div className="col-md-2">
                   <button
                     className="purple-btn2"
