@@ -11,6 +11,8 @@ import MultiSelectBox from "../components/base/MultiSelectBox";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import PropertySelect from "../components/base/PropertySelect";
+import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
+import { ImageCropper } from "../components/reusable/ImageCropper";
 
 const ProjectDetailsEdit = () => {
   const { id } = useParams();
@@ -111,6 +113,19 @@ const ProjectDetailsEdit = () => {
   const [planName, setPlanName] = useState("");
   const [planImages, setPlanImages] = useState([]);
   const [plans, setPlans] = useState([]);
+  const [mainImageUpload, setMainImageUpload] = useState([]);
+  const [coverImageUpload, setCoverImageUpload] = useState([]);
+  const [galleryImageUpload, setGalleryImageUpload] = useState([]);
+  const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
+  const [projectPlan, setProjectPlan] = useState([]);
+
+  const [dialogOpen, setDialogOpen] = useState({
+    image: false,
+    cover_images: false,
+    gallery_image: false,
+    two_d_images: false,
+
+  });
   // console.log(statusOptions);
 
   useEffect(() => {
@@ -269,9 +284,9 @@ const ProjectDetailsEdit = () => {
           //   : [],
           Configuration_Type1: Array.isArray(projectData.configurations)
             ? projectData.configurations.map((config) => ({
-                id: config.id,
-                name: config.name,
-              }))
+              id: config.id,
+              name: config.name,
+            }))
             : [],
           Project_Name: projectData.project_name || "",
           SFDC_Project_Id: projectData.SFDC_Project_Id || "",
@@ -291,9 +306,9 @@ const ProjectDetailsEdit = () => {
           Rera_Number_multiple: projectData.rera_number_multiple || [],
           Amenities1: Array.isArray(projectData.amenities)
             ? projectData.amenities.map((ammit) => ({
-                id: ammit.id,
-                name: ammit.name,
-              }))
+              id: ammit.id,
+              name: ammit.name,
+            }))
             : [],
           Specifications: Array.isArray(projectData.specifications)
             ? projectData.specifications.map((spac) => spac.name)
@@ -304,8 +319,14 @@ const ProjectDetailsEdit = () => {
           virtual_tour_url_multiple:
             projectData.virtual_tour_url_multiple || [],
           map_url: projectData.map_url || "",
-          image: projectData.image_url || [],
-          video_preview_image_url: projectData.video_preview_image_url || [],
+          image: Array.isArray(projectData.image_url)
+            ? projectData.image_url.map(url => ({ document_url: url }))
+            : projectData.image_url
+              ? [{ document_url: projectData.image_url }]
+              : [],
+          previewImage: Array.isArray(projectData.image_url)
+            ? projectData.image_url[0] || ""
+            : projectData.image_url || "",
           Address: {
             address_line_1: projectData.location?.address || "",
             address_line_2: projectData.location?.address_line_two || "",
@@ -339,8 +360,8 @@ const ProjectDetailsEdit = () => {
           project_ppt: Array.isArray(projectData.ProjectPPT)
             ? projectData.ProjectPPT
             : projectData.ProjectPPT
-            ? [projectData.ProjectPPT]
-            : [],
+              ? [projectData.ProjectPPT]
+              : [],
           // Remove ppt_name from state, not needed if you always use array of objects
           project_sales_type: projectData.project_sales_type || "",
           order_no: projectData.order_no || "",
@@ -411,8 +432,7 @@ const ProjectDetailsEdit = () => {
 
         if (!sizeCheck.valid) {
           toast.error(
-            `Brochure file too large: ${sizeCheck.name} (${
-              sizeCheck.size
+            `Brochure file too large: ${sizeCheck.name} (${sizeCheck.size
             }). Maximum allowed size is ${formatFileSize(MAX_BROCHURE_SIZE)}.`
           );
           e.target.value = ""; // Reset input
@@ -517,8 +537,7 @@ const ProjectDetailsEdit = () => {
 
         if (!sizeCheck.valid) {
           toast.error(
-            `Image file too large: ${sizeCheck.name} (${
-              sizeCheck.size
+            `Image file too large: ${sizeCheck.name} (${sizeCheck.size
             }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
           );
           e.target.value = ""; // Reset input
@@ -556,8 +575,7 @@ const ProjectDetailsEdit = () => {
 
       if (!sizeCheck.valid) {
         toast.error(
-          `Image file too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `Image file too large: ${sizeCheck.name} (${sizeCheck.size
           }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
         );
         e.target.value = ""; // Reset input
@@ -621,8 +639,7 @@ const ProjectDetailsEdit = () => {
 
       if (!sizeCheck.valid) {
         toast.error(
-          `Image file too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `Image file too large: ${sizeCheck.name} (${sizeCheck.size
           }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
         );
         e.target.value = ""; // Reset input
@@ -1372,6 +1389,8 @@ const ProjectDetailsEdit = () => {
     return true;
   };
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1389,6 +1408,8 @@ const ProjectDetailsEdit = () => {
 
     data.append("project[Configuration_Type]", nameSends);
 
+
+
     if (plans.length > 0) {
       plans.forEach((plan, idx) => {
         data.append(`project[plans][${idx}][name]`, plan.name);
@@ -1401,6 +1422,14 @@ const ProjectDetailsEdit = () => {
     }
 
     Object.entries(formData).forEach(([key, value]) => {
+
+      for (let [key, value] of data.entries()) {
+        console.log(`${key}:`, value);
+      }
+      // ...inside handleSubmit...
+      if (key === "image" && Array.isArray(value) && value[0] instanceof File) {
+        data.append("project[image]", value[0]);
+      }
       if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
           data.append(`project[Address][${addressKey}]`, addressValue);
@@ -1604,7 +1633,9 @@ const ProjectDetailsEdit = () => {
             );
           }
         });
-      } else {
+        // } 
+      } else if (key !== "image" && key !== "previewImage") {
+        // Skip previewImage and image (already handled)
         data.append(`project[${key}]`, value);
       }
     });
@@ -1631,7 +1662,7 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e, newImageList, type) => {
     const { name, files } = e.target;
 
     if (files && files[0]) {
@@ -1643,6 +1674,7 @@ const ProjectDetailsEdit = () => {
         return;
       }
 
+
       const imageURL = URL.createObjectURL(file);
 
       setFormData((prevData) => ({
@@ -1652,6 +1684,59 @@ const ProjectDetailsEdit = () => {
       }));
     }
   };
+
+  const handleImageUploaded = (newImageList, type) => {
+    if (!newImageList || newImageList.length === 0) return;
+    const file = newImageList[0].file;
+    if (!file) return;
+
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    const fileType = file.type;
+    const sizeInMB = file.size / (1024 * 1024);
+
+    if (!allowedImageTypes.includes(fileType)) {
+      toast.error("❌ Please upload a valid image.");
+      return;
+    }
+    if (sizeInMB > 3) {
+      toast.error("❌ Image size must be less than 3MB.");
+      return;
+    }
+
+    const imageURL = URL.createObjectURL(file);
+
+    if (type === "image") {
+      setMainImageUpload(newImageList);
+      setFormData((prevData) => ({
+        ...prevData,
+        previewImage: imageURL,
+      }));
+      setDialogOpen((prev) => ({ ...prev, image: true }));
+    } else if (type === "cover_images") {
+      setCoverImageUpload(newImageList);
+      setFormData((prevData) => ({
+        ...prevData,
+        previewImage: imageURL,
+      }));
+      setDialogOpen((prev) => ({ ...prev, cover_images: true }));
+    } else if (type === "gallery_image") {
+      setGalleryImageUpload(newImageList);
+      setFormData((prevData) => ({
+        ...prevData,
+        previewImage: imageURL,
+      }));
+      setDialogOpen((prev) => ({ ...prev, gallery_image: true }));
+    } else if (type === "two_d_images") {
+      setFloorPlanImageUpload(newImageList);
+      setFormData((prevData) => ({
+        ...prevData,
+        previewImage: imageURL,
+      }));
+      setDialogOpen((prev) => ({ ...prev, two_d_images: true }));
+    }
+  };
+
+
 
   // const statusOptions = {
   //   "Office Parks": [
@@ -2416,8 +2501,7 @@ const ProjectDetailsEdit = () => {
       if (tooLargeFiles.length > 0) {
         tooLargeFiles.forEach((file) => {
           toast.error(
-            `File too large: ${file.name} (${
-              file.size
+            `File too large: ${file.name} (${file.size
             }). Max size: ${formatFileSize(MAX_SIZES[name])}`
           );
         });
@@ -2440,8 +2524,7 @@ const ProjectDetailsEdit = () => {
       const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.image)}`
         );
         return;
@@ -2462,8 +2545,7 @@ const ProjectDetailsEdit = () => {
       );
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
         );
         return;
@@ -2652,20 +2734,49 @@ const ProjectDetailsEdit = () => {
                     </span>
                     <span className="otp-asterisk"> *</span>
                   </label>
-                  <input
+                  {/* <input
                     className="form-control"
                     type="file"
                     name="image"
                     accept="image/*"
                     required
                     onChange={handleInputChange}
+                  /> */}
+
+                  <ImageUploadingButton
+                    value={mainImageUpload}
+                    onChange={(list) => handleImageUploaded(list, "image")}
+                    variant="custom"
+                  />
+
+                  <ImageCropper
+                    open={dialogOpen.image}
+                    image={mainImageUpload?.[0]?.dataURL}
+                    originalFile={mainImageUpload?.[0]?.file}
+                    onComplete={(cropped) => {
+                      if (cropped) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          image: [cropped.file], // Single image
+                          previewImage: URL.createObjectURL(cropped.file),
+                        }));
+                      }
+                      setDialogOpen((prev) => ({ ...prev, image: false }));
+                      setMainImageUpload([]); // Clear temporary upload
+                    }}
+                    requiredRatios={[9 / 16]}
+                    allowedRatios={[
+                      { label: "16:9", ratio: 16 / 9 },
+                      { label: "1:1", ratio: 1 },
+                      { label: "9:16", ratio: 9 / 16 },
+                    ]}
                   />
                 </div>
 
                 {/* Show selected or previously uploaded image */}
-                {formData.previewImage || formData.image ? (
+                {formData.previewImage ? (
                   <img
-                    src={formData.previewImage || formData.image} // Show updated image first
+                    src={formData.previewImage}
                     alt="Uploaded Preview"
                     className="img-fluid rounded mt-2"
                     style={{
@@ -2675,9 +2786,37 @@ const ProjectDetailsEdit = () => {
                       marginBottom: "15px",
                     }}
                   />
+                ) : Array.isArray(formData.image) && formData.image.length > 0 ? (
+                  formData.image.map((img, index) => {
+                    let src = "";
+                    if (img instanceof File) {
+                      src = URL.createObjectURL(img);
+                    } else if (typeof img === "string") {
+                      src = img;
+                    } else if (img.document_url) {
+                      src = img.document_url;
+                    }
+                    return (
+                      <img
+                        key={index}
+                        src={src}
+                        alt={`Uploaded ${index}`}
+                        className="img-fluid rounded mt-2"
+                        style={{
+                          maxWidth: "100px",
+                          maxHeight: "100px",
+                          objectFit: "cover",
+                          marginBottom: "15px",
+                          marginRight: "10px",
+                        }}
+                      />
+                    );
+                  })
                 ) : (
                   <span>No image selected</span>
                 )}
+
+
               </div>
               {/* <div className="col-md-3">
   <div className="form-group">
@@ -2916,7 +3055,7 @@ const ProjectDetailsEdit = () => {
                         project_tag: value,
                       }))
                     }
-                    // isDisableFirstOption={true}
+                  // isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -4027,8 +4166,8 @@ const ProjectDetailsEdit = () => {
                                   img instanceof File || img instanceof Blob
                                     ? URL.createObjectURL(img)
                                     : typeof img === "string"
-                                    ? img
-                                    : img?.document_url || "" // fallback if img is an object like { url: "..." }
+                                      ? img
+                                      : img?.document_url || "" // fallback if img is an object like { url: "..." }
                                 }
                                 alt="Plan"
                                 style={{
@@ -4085,7 +4224,7 @@ const ProjectDetailsEdit = () => {
                   {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
-                <button
+                {/* <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
                   onClick={() =>
@@ -4114,7 +4253,40 @@ const ProjectDetailsEdit = () => {
                     handleFileUpload("cover_images", e.target.files)
                   }
                   multiple
-                  style={{ display: "none" }}
+                  style={{ 
+                  display: "none" }}
+                /> */}
+
+                <ImageUploadingButton
+                  value={coverImageUpload}
+                  onChange={(list) => handleImageUploaded(list, "cover_images")}
+                  variant="button"
+                  btntext="Add"
+                />
+
+                <ImageCropper
+                  open={dialogOpen.cover_images}
+                  image={coverImageUpload?.[0]?.dataURL}
+                  originalFile={coverImageUpload?.[0]?.file}
+                  onComplete={(cropped) => {
+                    if (cropped) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        cover_images: Array.isArray(prev.cover_images)
+                          ? [...prev.cover_images, cropped.file]
+                          : [cropped.file],
+                        previewImage: URL.createObjectURL(cropped.file),
+                      }));
+                    }
+                    setDialogOpen((prev) => ({ ...prev, cover_images: false }));
+                    setCoverImageUpload([]); // Reset ImageUploadingButton
+                  }}
+                  requiredRatios={[16 / 9]}
+                  allowedRatios={[
+                    { label: "16:9", ratio: 16 / 9 },
+                    { label: "9:16", ratio: 9 / 16 },
+                    { label: "1:1", ratio: 1 },
+                  ]}
                 />
               </div>
 
@@ -4142,8 +4314,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -4197,10 +4369,11 @@ const ProjectDetailsEdit = () => {
                       defaultValue={selectedCategory}
                       onChange={(value) => setSelectedCategory(value)}
                     />
-                  </div> */}
+                    */}
+                </div>
 
-                  {/* Add Button */}
-                  <button
+                {/* Add Button */}
+                {/* <button
                     className="purple-btn2 rounded-3"
                     onClick={() =>
                       document.getElementById("gallery_image").click()
@@ -4228,6 +4401,55 @@ const ProjectDetailsEdit = () => {
                   onChange={handleImageUpload}
                   multiple
                   style={{ display: "none" }}
+                /> */}
+
+                <ImageUploadingButton
+                  value={galleryImageUpload}
+                  onChange={(list) => handleImageUploaded(list, "gallery_image")}
+                  variant="button"
+                  btntext="Add"
+                />
+
+                <ImageCropper
+                  open={dialogOpen.gallery_image}
+                  image={galleryImageUpload?.[0]?.dataURL}
+                  originalFile={galleryImageUpload?.[0]?.file}
+                  onComplete={(cropped) => {
+                    if (cropped) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        gallery_image: Array.isArray(prev.gallery_image)
+                          ? [
+                            ...prev.gallery_image,
+                            {
+                              gallery_image: cropped.file,
+                              gallery_image_file_name: cropped.file.name,
+                              gallery_image_file_type: selectedCategory || "Gallery",
+                              isDay: true,
+                              attachfile: { document_url: URL.createObjectURL(cropped.file) },
+                            },
+                          ]
+                          : [
+                            {
+                              gallery_image: cropped.file,
+                              gallery_image_file_name: cropped.file.name,
+                              gallery_image_file_type: selectedCategory || "Gallery",
+                              isDay: true,
+                              attachfile: { document_url: URL.createObjectURL(cropped.file) },
+                            },
+                          ],
+                        previewImage: URL.createObjectURL(cropped.file),
+                      }));
+                    }
+                    setDialogOpen((prev) => ({ ...prev, gallery_image: false }));
+                    setGalleryImageUpload([]);
+                  }}
+                  requiredRatios={[16 / 9]}
+                  allowedRatios={[
+                    { label: "9:16", ratio: 9 / 16 },
+                    { label: "1:1", ratio: 1 },
+                    { label: "16:9", ratio: 16 / 9 },
+                  ]}
                 />
               </div>
 
@@ -4288,35 +4510,28 @@ const ProjectDetailsEdit = () => {
                           </tr>
                         ))
                       )}
-                      {/* Then render newly added images */}
                       {(formData.gallery_image ?? []).map((file, index) => (
                         <tr key={`new-${index}`}>
-                          {/* <td>{file.gallery_image_file_type || "N/A"}</td> */}
                           <td>{file.gallery_image_file_name || "N/A"}</td>
                           <td>
-                            {file.gallery_image && (
-                              <img
-                                style={{ maxWidth: 100, maxHeight: 100 }}
-                                className="img-fluid rounded"
-                                src={
-                                  file.attachfile?.document_url ||
-                                  URL.createObjectURL(file.gallery_image)
-                                }
-                                alt="Preview"
-                              />
-                            )}
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={
+                                file.attachfile?.document_url ||
+                                (file.gallery_image instanceof File
+                                  ? URL.createObjectURL(file.gallery_image)
+                                  : null)
+                              }
+                              alt={file.gallery_image_file_name || "Preview"}
+                            />
                           </td>
                           <td>
                             <select
                               className="form-control"
-                              value={
-                                file.isDay === undefined || file.isDay ? 1 : 0
-                              }
+                              value={file.isDay === undefined || file.isDay ? 1 : 0}
                               onChange={(e) =>
-                                handleDayNightChange(
-                                  index,
-                                  e.target.value === "1" ? true : false
-                                )
+                                handleDayNightChange(index, e.target.value === "1" ? true : false)
                               }
                             >
                               <option value={1}>Day</option>
@@ -4598,7 +4813,7 @@ const ProjectDetailsEdit = () => {
                   {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
-                <button
+                {/* <button
                   className="purple-btn2 rounded-3"
                   onClick={() =>
                     document.getElementById("two_d_images").click()
@@ -4625,6 +4840,38 @@ const ProjectDetailsEdit = () => {
                   onChange={handleChange}
                   multiple
                   style={{ display: "none" }}
+                /> */}
+
+                <ImageUploadingButton
+                  value={floorPlanImageUpload}
+                  onChange={(list) => handleImageUploaded(list, "two_d_images")}
+                  variant="button"
+                  btntext="Add"
+                />
+
+                <ImageCropper
+                  open={dialogOpen.two_d_images}
+                  image={floorPlanImageUpload?.[0]?.dataURL}
+                  originalFile={floorPlanImageUpload?.[0]?.file}
+                  onComplete={(cropped) => {
+                    if (cropped) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        two_d_images: Array.isArray(prev.two_d_images)
+                          ? [...prev.two_d_images, cropped.file]
+                          : [cropped.file],
+                        previewImage: URL.createObjectURL(cropped.file),
+                      }));
+                    }
+                    setDialogOpen((prev) => ({ ...prev, two_d_images: false }));
+                    setFloorPlanImageUpload([]); // Reset ImageUploadingButton
+                  }}
+                  requiredRatios={[16 / 9]}
+                  allowedRatios={[
+                    { label: "16:9", ratio: 16 / 9 },
+                    { label: "9:16", ratio: 9 / 16 },
+                    { label: "1:1", ratio: 1 },
+                  ]}
                 />
               </div>
 
@@ -4656,8 +4903,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -4757,8 +5004,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -4858,8 +5105,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -4965,8 +5212,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5069,8 +5316,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5173,8 +5420,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5277,8 +5524,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5499,8 +5746,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response video
                                   ? file.document_url
                                   : file instanceof File // Uploaded video file
-                                  ? URL.createObjectURL(file)
-                                  : ""
+                                    ? URL.createObjectURL(file)
+                                    : ""
                               }
                               autoPlay
                               muted

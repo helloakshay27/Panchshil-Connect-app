@@ -111,8 +111,8 @@ const ProjectDetailsCreate = () => {
   // const [showTooltip, setShowTooltip] = useState(false);
   const [showQrTooltip, setShowQrTooltip] = useState(false);
   // const [image, setImage] = useState([]);
-  const [coverImageUpload, setCoverImageUpload] = useState([]);
   const [mainImageUpload, setMainImageUpload] = useState([]);
+  const [coverImageUpload, setCoverImageUpload] = useState([]);
   const [galleryImageUpload, setGalleryImageUpload] = useState([]);
   const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
   const [planName, setPlanName] = useState("");
@@ -124,7 +124,6 @@ const ProjectDetailsCreate = () => {
     gallery_image: false,
     two_d_images: false,
   });
-  console.log(propertyTypeOptions);
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -815,8 +814,7 @@ const ProjectDetailsCreate = () => {
       const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.image)}`
         );
         return;
@@ -837,8 +835,7 @@ const ProjectDetailsCreate = () => {
       );
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
         );
         return;
@@ -855,8 +852,7 @@ const ProjectDetailsCreate = () => {
         tooLargeFiles.push(sizeCheck);
       } else {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(maxSize)}`
         );
       }
@@ -1199,8 +1195,8 @@ const ProjectDetailsCreate = () => {
             );
           }
         });
-      } else if (key === "image" && image[0]?.file instanceof File) {
-        data.append("project[image]", image[0]?.file);
+      } else if (key === "image" && mainImageUpload[0]?.file instanceof File) {
+        data.append("project[image]", mainImageUpload[0]?.file);
       } else if (key === "video_preview_image_url" && value instanceof File) {
         data.append("project[video_preview_image_url]", value);
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
@@ -2220,7 +2216,7 @@ const ProjectDetailsCreate = () => {
                         project_tag: value,
                       }))
                     }
-                    //isDisableFirstOption={true}
+                  //isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -3176,8 +3172,8 @@ const ProjectDetailsCreate = () => {
                                   img instanceof File || img instanceof Blob
                                     ? URL.createObjectURL(img)
                                     : typeof img === "string"
-                                    ? img
-                                    : img?.document_url || "" // fallback if img is an object like { url: "..." }
+                                      ? img
+                                      : img?.document_url || "" // fallback if img is an object like { url: "..." }
                                 }
                                 alt="Plan"
                                 style={{
@@ -3386,19 +3382,30 @@ const ProjectDetailsCreate = () => {
                   image={galleryImageUpload?.[0]?.dataURL}
                   originalFile={galleryImageUpload?.[0]?.file}
                   onComplete={(cropped) => {
-                    if (cropped) {
+                    if (cropped && cropped.file instanceof File) {
+                      const newImage = {
+                        gallery_image: cropped.file,
+                        gallery_image_file_name: cropped.file.name,
+                        gallery_image_file_type: selectedCategory || "Gallery",
+                        isDay: true,
+                      };
+
                       setFormData((prev) => ({
                         ...prev,
                         gallery_image: Array.isArray(prev.gallery_image)
-                          ? [...prev.gallery_image, cropped.file]
-                          : [cropped.file],
+                          ? [...prev.gallery_image, newImage]
+                          : [newImage],
                       }));
+                    } else {
+                      console.warn("No valid cropped file returned");
                     }
+
                     setDialogOpen((prev) => ({
                       ...prev,
                       gallery_image: false,
                     }));
                   }}
+
                   requiredRatios={[16 / 9]}
                   allowedRatios={[
                     { label: "9:16", ratio: 9 / 16 },
@@ -3434,7 +3441,7 @@ const ProjectDetailsCreate = () => {
                       {formData.gallery_image.map((file, index) => (
                         <tr key={index}>
                           {/* <td>{file.gallery_image_file_name}</td> */}
-                          <td>{file.name}</td>
+                          <td>{file.gallery_image_file_name}</td>
 
                           <td>
                             {/* <img
@@ -3446,7 +3453,7 @@ const ProjectDetailsCreate = () => {
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              src={URL.createObjectURL(file)}
+                              src={URL.createObjectURL(file.gallery_image)}
                             />
                           </td>
                           <td>
