@@ -181,7 +181,6 @@ const BannerAdd = () => {
     const allowedImageTypes = [
       "image/jpeg", "image/png", "image/webp", "image/bmp", "image/tiff", "image/gif"
     ];
-
     const allowedVideoTypes = [
       "video/mp4", "video/webm", "video/ogg", "video/quicktime",
       "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"
@@ -218,7 +217,6 @@ const BannerAdd = () => {
     setImage(newImageList);
 
     if (isVideo) {
-      setPreviewVideo(null); 
       const previewURL = URL.createObjectURL(file);
       console.log("Generated preview URL for video:", previewURL);
       setPreviewVideo(previewURL);
@@ -228,14 +226,14 @@ const BannerAdd = () => {
       setPreviewImg(null);
     } else if (isImage) {
       setPreviewVideo(null);
-      const previewURL = URL.createObjectURL(file);
-      console.log("Generated preview URL for image/GIF:", previewURL);
-      setPreviewImg(previewURL);
-      setFormData((prev) => ({ ...prev, banner_video: file }));
       setBannerImageSelected(true);
       setBannerVideoSelected(false);
-      console.log("State after image upload:", { previewImg: previewURL, previewVideo: null, bannerImageSelected: true, bannerVideoSelected: false });
-      if (file.type !== "image/gif") setDialogOpen(true);
+      if (file.type !== "image/gif") {
+        setDialogOpen(true);
+      } else {
+        setPreviewImg(URL.createObjectURL(file));
+        setFormData((prev) => ({ ...prev, banner_video: file }));
+      }
     }
   };
   const validateForm = () => {
@@ -462,6 +460,8 @@ const BannerAdd = () => {
                       <ImageUploadingButton
                         value={image}
                         onChange={handleImageUpload}
+                        btntext="Add"
+                        variant="custom"
                       />
                       <ImageCropper
                         open={dialogOpen}
@@ -469,11 +469,15 @@ const BannerAdd = () => {
                         onComplete={(cropped) => {
                           if (cropped) {
                             setCroppedImage(cropped.base64);
-                            // Only set previewImg for images, not previewVideo
                             setPreviewImg(cropped.base64);
                             setFormData((prev) => ({ ...prev, banner_video: cropped.file }));
                           }
                           setDialogOpen(false);
+                          if (!cropped) {
+                            setImage([]);
+                            setPreviewImg(null);
+                            setFormData((prev) => ({ ...prev, banner_video: null }));
+                          }
                         }}
                         requiredRatios={[1, 9 / 16]}
                         requiredRatioLabel="1:1 or 9:16"
@@ -483,7 +487,6 @@ const BannerAdd = () => {
                           { label: "1:1", ratio: 1 },
                         ]}
                         containerStyle={{ position: "relative", width: "100%", height: 300, background: "#fff" }}
-                        
                       />
                       {errors.banner_video && (
                         <span className="error text-danger">
