@@ -55,7 +55,7 @@ const BannerList = () => {
     try {
       const response = await axios.put(
         `${baseURL}banners/${bannerId}.json`,
-        { banner_list: { active: !currentStatus } },
+        { banner: { active: !currentStatus } },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -66,10 +66,10 @@ const BannerList = () => {
 
       if (response.status === 200) {
         setBanners((prevBanners) =>
-          prevBanners.map((banner_list) =>
-            banner_list.id === bannerId
-              ? { ...banner_list, active: !currentStatus }
-              : banner_list
+          prevBanners.map((banner) =>
+            banner.id === bannerId
+              ? { ...banner, active: !currentStatus }
+              : banner
           )
         );
         toast.success("Banner status updated successfully!");
@@ -262,13 +262,13 @@ const BannerList = () => {
                       </thead>
                       <tbody>
                         {displayedBanners.length > 0 ? (
-                          displayedBanners.map((banner_list, index) => (
-                            <tr key={banner_list.id}>
+                          displayedBanners.map((banner, index) => (
+                            <tr key={banner.id}>
                               <td>
                                 {/* Edit Icon */}
                                 {bannerPermissions.update === "true" && (
                                   <a
-                                    href={`/banner-edit/${banner_list.id}`}
+                                    href={`/banner-edit/${banner.id}`}
                                     className="me-2"
                                   >
                                     <svg
@@ -297,7 +297,7 @@ const BannerList = () => {
                               </td>
                               {/* <td>Lockated, Pune</td>
                               <td>{banner.company_name || "No Name"}</td> */}
-                              <td>{banner_list.title || "-"}</td>
+                              <td>{banner.title || "-"}</td>
                               <td
                                 className="text-center"
                                 style={{
@@ -306,7 +306,7 @@ const BannerList = () => {
                                   verticalAlign: "middle",
                                 }}
                               >
-                                {banner_list?.banner_video?.document_content_type?.startsWith(
+                                {banner?.banner_video?.document_content_type?.startsWith(
                                   "video/"
                                 ) ? (
                                   <video
@@ -323,9 +323,9 @@ const BannerList = () => {
                                     }}
                                   >
                                     <source
-                                      src={banner_list?.banner_video?.document_url}
+                                      src={banner?.banner_video?.document_url}
                                       type={
-                                        banner_list?.banner_video
+                                        banner?.banner_video
                                           ?.document_content_type
                                       }
                                     />
@@ -334,10 +334,10 @@ const BannerList = () => {
                                 ) : (
                                   <img
                                     src={
-                                      banner_list?.banner_video?.document_url || "-"
+                                      banner?.banner_video?.document_url || "-"
                                     }
                                     className="img-fluid rounded"
-                                    alt={banner_list?.title || "Banner Image"}
+                                    alt={banner?.title || "Banner Image"}
                                     style={{
                                       maxWidth: "100px",
                                       maxHeight: "100px",
@@ -350,7 +350,7 @@ const BannerList = () => {
                               <td>
                                 <button
                                   onClick={() =>
-                                    onToggle(banner_list.id, banner_list.active)
+                                    onToggle(banner.id, banner.active)
                                   }
                                   className="toggle-button"
                                   style={{
@@ -361,7 +361,7 @@ const BannerList = () => {
                                     width: "70px",
                                   }}
                                 >
-                                  {banner_list.active ? (
+                                  {banner.active ? (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       width="40"
