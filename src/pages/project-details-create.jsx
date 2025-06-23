@@ -1116,21 +1116,21 @@ const ProjectDetailsCreate = () => {
 
     const data = new FormData();
 
-    if (plans.length > 0) {
-      plans.forEach((plan, idx) => {
-        data.append(`project[plans][${idx}][name]`, plan.name);
-        if (Array.isArray(plan.images)) {
-          plan.images.forEach((img) => {
-            data.append(`project[plans][${idx}][images][]`, img);
-          });
-        }
-      });
-    }
-
     Object.entries(formData).forEach(([key, value]) => {
       // if (key === "order_no") {
       //   data.append("project[order_no]", parseInt(value) || null); // Append order_no as null if not provided
       // }
+
+      if (key === "plans") {
+        for (const planKey in value) {
+          data.append(`project[plans][${planKey}][name]`, value[planKey].name);
+          if (Array.isArray(value[planKey].images)) {
+            value[planKey].images.forEach((img) => {
+              data.append(`project[plans][${planKey}][images][]`, img);
+            });
+          }
+        }
+      }
       if (key === "Address") {
         for (const addressKey in value) {
           data.append(`project[Address][${addressKey}]`, value[addressKey]);
@@ -2026,12 +2026,11 @@ const ProjectDetailsCreate = () => {
                       if (cropped) {
                         setFormData((prev) => ({
                           ...prev,
-                          image: Array.isArray(prev.image)
-                            ? [...prev.image, cropped.file]
-                            : [cropped.file],
+                          image: [cropped.file], // ✅ Always replace with new image
                         }));
                       }
                       setDialogOpen((prev) => ({ ...prev, image: false }));
+                      setMainImageUpload([]); // ✅ Clear temp image
                     }}
                     requiredRatios={[16 / 9]}
                     allowedRatios={[
@@ -2039,6 +2038,7 @@ const ProjectDetailsCreate = () => {
                       { label: "1:1", ratio: 1 },
                     ]}
                   />
+
                 </div>
               </div>
               <div className="col-md-3">
@@ -3106,13 +3106,12 @@ const ProjectDetailsCreate = () => {
                   >
                     [i]
                     {showTooltip && (
-                      <span className="tooltip-text">
-                        Max Upload Size 10 MB per image
-                      </span>
+                      <span className="tooltip-text">Max Upload Size 10 MB per image</span>
                     )}
                   </span>
                 </h5>
               </div>
+
               <div className="row align-items-end">
                 <div className="col-md-3">
                   <input
@@ -3123,6 +3122,7 @@ const ProjectDetailsCreate = () => {
                     onChange={(e) => setPlanName(e.target.value)}
                   />
                 </div>
+
                 <div className="col-md-3">
                   <ImageUploadingButton
                     value={planImageUpload}
@@ -3130,47 +3130,49 @@ const ProjectDetailsCreate = () => {
                     variant="custom"
                   />
                 </div>
+
                 <ImageCropper
                   open={dialogOpen.plan_images}
                   image={planImageUpload?.[0]?.dataURL}
                   originalFile={planImageUpload?.[0]?.file}
                   onComplete={(cropped) => {
                     if (cropped && cropped.file) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        plans: Array.isArray(prev.plans)
-                          ? [...prev.plans, cropped.file]
-                          : [cropped.file],
-                      }));
                       setPlanImages((prev) =>
                         Array.isArray(prev) ? [...prev, cropped.file] : [cropped.file]
                       );
                     }
-
                     setDialogOpen((prev) => ({ ...prev, plan_images: false }));
+                    setPlanImageUpload([]);
                   }}
-
                   requiredRatios={[9 / 16]}
                   allowedRatios={[
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
                   ]}
                 />
+
                 <div className="col-md-3">
                   <button
                     className="purple-btn2"
                     type="button"
                     onClick={() => {
                       if (!planName || planImages.length === 0) {
-                        toast.error(
-                          "Please enter plan name and select images."
-                        );
+                        toast.error("Please enter plan name and select images.");
                         return;
                       }
-                      setPlans((prev) => [
+
+                      const newPlan = { name: planName, images: planImages };
+
+                      setPlans((prev) => [...prev, newPlan]);
+
+                      // ✅ Add to formData.plans
+                      setFormData((prev) => ({
                         ...prev,
-                        { name: planName, images: planImages },
-                      ]);
+                        plans: Array.isArray(prev.plans)
+                          ? [...prev.plans, newPlan]
+                          : [newPlan],
+                      }));
+
                       setPlanName("");
                       setPlanImages([]);
                     }}
@@ -3179,6 +3181,7 @@ const ProjectDetailsCreate = () => {
                   </button>
                 </div>
               </div>
+
               <div className="col-md-12 mt-2">
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
@@ -3194,24 +3197,29 @@ const ProjectDetailsCreate = () => {
                         <tr key={pIdx}>
                           <td>{plan.name}</td>
                           <td>
-                            {plan.images.map((img, iIdx) => (
-                              <img
-                                key={iIdx}
-                                src={
-                                  img instanceof File || img instanceof Blob
-                                    ? URL.createObjectURL(img)
-                                    : typeof img === "string"
-                                      ? img
-                                      : img?.document_url || "" // fallback if img is an object like { url: "..." }
-                                }
-                                alt="Plan"
-                                style={{
-                                  maxWidth: 60,
-                                  maxHeight: 60,
-                                  marginRight: 5,
-                                }}
-                              />
-                            ))}
+                            {plan.images.map((img, iIdx) => {
+                              let src = "";
+                              if (img instanceof File || img instanceof Blob) {
+                                src = URL.createObjectURL(img);
+                              } else if (typeof img === "string") {
+                                src = img;
+                              } else if (img?.document_url) {
+                                src = img.document_url;
+                              }
+
+                              return (
+                                <img
+                                  key={iIdx}
+                                  src={src}
+                                  alt="Plan"
+                                  style={{
+                                    maxWidth: 60,
+                                    maxHeight: 60,
+                                    marginRight: 5,
+                                  }}
+                                />
+                              );
+                            })}
                           </td>
                           <td>
                             <button
@@ -3229,6 +3237,7 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 

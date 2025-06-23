@@ -1707,10 +1707,10 @@ const ProjectDetailsEdit = () => {
 
     if (type === "image") {
       setMainImageUpload(newImageList);
-      setFormData((prevData) => ({
-        ...prevData,
-        previewImage: imageURL,
-      }));
+      // setFormData((prevData) => ({
+      //   ...prevData,
+      //   previewImage: imageURL,
+      // }));
       setDialogOpen((prev) => ({ ...prev, image: true }));
     } else if (type === "cover_images") {
       setCoverImageUpload(newImageList);
@@ -2764,7 +2764,7 @@ const ProjectDetailsEdit = () => {
                       setDialogOpen((prev) => ({ ...prev, image: false }));
                       setMainImageUpload([]); // Clear temporary upload
                     }}
-                    requiredRatios={[9 / 16]}
+                    requiredRatios={[9 / 16, 1, 16 / 9]}
                     allowedRatios={[
                       { label: "16:9", ratio: 16 / 9 },
                       { label: "1:1", ratio: 1 },
