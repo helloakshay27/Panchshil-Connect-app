@@ -142,9 +142,15 @@ const BannerAdd = () => {
       setPreviewImg(cropped.base64);
       setFormData((prev) => ({ ...prev, banner_video: cropped.file }));
     } else {
+      // Reset image state and clear the input on cancel
       setImage(null);
       setPreviewImg(null);
       setFormData((prev) => ({ ...prev, banner_video: null }));
+      // Optionally reset the file input value (though this is tricky due to security restrictions)
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) {
+        fileInput.value = ''; // This may not work in all browsers due to security
+      }
     }
     setDialogOpen(false);
   };
@@ -273,10 +279,10 @@ const BannerAdd = () => {
 
                     {/* Always show input field */}
                     <input
+                      key={dialogOpen ? "cropper-open" : "cropper-closed"} // Forces re-render on dialog state change
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff,image/gif,video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-flv"
                       onChange={handleFileUpload}
-
                     />
 
                     {/* Preview for video */}

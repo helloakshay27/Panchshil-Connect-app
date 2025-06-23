@@ -7,7 +7,6 @@ import { baseURL } from "./baseurl/apiDomain";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import "../root-mor.css";
 
-
 const BannerEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -17,11 +16,12 @@ const BannerEdit = () => {
   const [previewImg, setPreviewImg] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
   const [showVideoTooltip, setShowVideoTooltip] = useState(false);
-  const [image, setImage] = useState(null); // Single file object
+  const [image, setImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [videoKey, setVideoKey] = useState(Date.now());
-  const [fileType, setFileType] = useState(null); // Tracks if file is image or video
+  const [fileType, setFileType] = useState(null);
+  const [originalBannerVideo, setOriginalBannerVideo] = useState(null); // Store original preview
 
   const [formData, setFormData] = useState({
     title: "",
@@ -29,8 +29,6 @@ const BannerEdit = () => {
     banner_video: null,
     active: true,
   });
-
-  console.log("formData", formData);
 
   useEffect(() => {
     fetchBanner();
@@ -46,20 +44,26 @@ const BannerEdit = () => {
     try {
       const response = await axios.get(`${baseURL}banners/${id}.json`);
       if (response.data) {
+        const bannerData = response.data;
         setFormData({
-          title: response.data.title,
-          project_id: response.data.project_id,
-          banner_video: response.data.banner_video?.document_url || null,
+          title: bannerData.title,
+          project_id: bannerData.project_id,
+          banner_video: bannerData.banner_video?.document_url || null,
           active: true,
         });
-        if (response.data.banner_video?.document_url) {
-          const isImage = isImageFile(response.data.banner_video.document_url);
+        setOriginalBannerVideo(bannerData.banner_video?.document_url || null); // Store original
+        if (bannerData.banner_video?.document_url) {
+          const isImage = isImageFile(bannerData.banner_video.document_url);
           setFileType(isImage ? "image" : "video");
           if (isImage) {
-            setPreviewImg(response.data.banner_video.document_url); // Set preview for existing image
+            setPreviewImg(bannerData.banner_video.document_url);
           } else {
-            setPreviewVideo(response.data.banner_video.document_url); // Set preview for existing video
+            setPreviewVideo(bannerData.banner_video.document_url);
           }
+        } else {
+          setPreviewImg(null);
+          setPreviewVideo(null);
+          setFileType(null);
         }
       }
     } catch (error) {
@@ -92,7 +96,6 @@ const BannerEdit = () => {
 
     const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/bmp", "image/tiff", "image/gif"];
     const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"];
-
     const sizeInMB = file.size / (1024 * 1024);
 
     const isImage = allowedImageTypes.includes(file.type);
@@ -100,42 +103,51 @@ const BannerEdit = () => {
 
     if (!isImage && !isVideo) {
       toast.error("❌ Please upload a valid image or video file.");
-      setImage(null);
-      setFileType(null);
-      return;
+      return resetFileState();
     }
 
     if (isImage && sizeInMB > 3) {
       toast.error("❌ Image size must be less than 3MB.");
-      setImage(null);
-      setFileType(null);
-      return;
+      return resetFileState();
     }
 
     if (isVideo && sizeInMB > 20) {
       toast.error("❌ Video size must be less than 20MB.");
-      setImage(null);
-      setFileType(null);
-      return;
+      return resetFileState();
     }
 
-    // Revoke previous ObjectURLs
     if (previewVideo) URL.revokeObjectURL(previewVideo);
     if (previewImg) URL.revokeObjectURL(previewImg);
     if (image?.data_url) URL.revokeObjectURL(image.data_url);
 
     setFileType(isVideo ? "video" : "image");
-    setImage({ file, data_url: URL.createObjectURL(file) });
+    const newDataURL = URL.createObjectURL(file);
+    setImage({ file, data_url: newDataURL });
 
     if (isVideo) {
-      setPreviewVideo(URL.createObjectURL(file));
+      setPreviewVideo(newDataURL);
       setFormData((prev) => ({ ...prev, banner_video: file }));
       setPreviewImg(null);
       setVideoKey(Date.now());
-    } else if (isImage) {
-      setDialogOpen(true); // Open ImageCropper for images
+    } else {
+      setDialogOpen(true);
       setPreviewVideo(null);
-      setPreviewImg(null); // Clear preview until cropping is done
+      setCroppedImage(null);
+    }
+  };
+
+  const resetFileState = () => {
+    setImage(null);
+    setPreviewImg(null);
+    setPreviewVideo(null);
+    setFormData((prev) => ({ ...prev, banner_video: originalBannerVideo }));
+    setFileType(originalBannerVideo ? (isImageFile(originalBannerVideo) ? "image" : "video") : null);
+    if (originalBannerVideo) {
+      if (isImageFile(originalBannerVideo)) {
+        setPreviewImg(originalBannerVideo);
+      } else {
+        setPreviewVideo(originalBannerVideo);
+      }
     }
   };
 
@@ -145,9 +157,22 @@ const BannerEdit = () => {
       setPreviewImg(cropped.base64);
       setFormData((prev) => ({ ...prev, banner_video: cropped.file }));
     } else {
+      if (image?.data_url) URL.revokeObjectURL(image.data_url);
       setImage(null);
       setPreviewImg(null);
-      setFormData((prev) => ({ ...prev, banner_video: null }));
+      setFormData((prev) => ({ ...prev, banner_video: originalBannerVideo }));
+      setFileType(originalBannerVideo ? (isImageFile(originalBannerVideo) ? "image" : "video") : null);
+      if (originalBannerVideo) {
+        if (isImageFile(originalBannerVideo)) {
+          setPreviewImg(originalBannerVideo);
+        } else {
+          setPreviewVideo(originalBannerVideo);
+        }
+      }
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) {
+        fileInput.value = '';
+      }
     }
     setDialogOpen(false);
   };
@@ -170,13 +195,11 @@ const BannerEdit = () => {
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
 
-      if (image?.file instanceof File) {
-        sendData.append("banner[banner_video]", image.file);
-      } else if (formData.banner_video instanceof File) {
+      if (formData.banner_video instanceof File) {
         sendData.append("banner[banner_video]", formData.banner_video);
       }
 
-      const res = await axios.put(`${baseURL}banners/${id}.json`, sendData, {
+      await axios.put(`${baseURL}banners/${id}.json`, sendData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "multipart/form-data",
@@ -194,12 +217,11 @@ const BannerEdit = () => {
 
   const isImageFile = (file) => {
     if (!file) return false;
-    const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp", "image/tiff"];
     if (typeof file === "string") {
-      const extension = file.split(".").pop()?.toLowerCase();
-      return ["jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff"].includes(extension);
+      const ext = file.split(".").pop()?.toLowerCase();
+      return ["jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff"].includes(ext);
     }
-    return file.type && imageTypes.includes(file.type);
+    return file.type?.startsWith("image/");
   };
 
   const handleCancel = () => navigate(-1);
@@ -219,10 +241,7 @@ const BannerEdit = () => {
                 <div className="row">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Title
-                        <span className="text-danger"> *</span>
-                      </label>
+                      <label>Title <span className="text-danger">*</span></label>
                       <input
                         className="form-control"
                         type="text"
@@ -235,15 +254,9 @@ const BannerEdit = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Project
-                        <span className="text-danger"> *</span>
-                      </label>
+                      <label>Project <span className="text-danger">*</span></label>
                       <SelectBox
-                        options={projects.map((p) => ({
-                          label: p.project_name,
-                          value: p.id,
-                        }))}
+                        options={projects.map((p) => ({ label: p.project_name, value: p.id }))}
                         defaultValue={formData.project_id}
                         onChange={(value) => setFormData({ ...formData, project_id: value })}
                       />
@@ -260,35 +273,27 @@ const BannerEdit = () => {
                           onMouseLeave={() => setShowVideoTooltip(false)}
                         >
                           [i]
-                          {showVideoTooltip && (
-                            <span className="tooltip-text">16:9 Format Should Only Be Allowed</span>
-                          )}
+                          {showVideoTooltip && <span className="tooltip-text">16:9 Format Should Only Be Allowed</span>}
                         </span>
                       </label>
                       <input
+                        key={dialogOpen ? "cropper-open" : "cropper-closed"}
                         type="file"
-                        accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff,image/gif,video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-flv"
+                        accept="image/*,video/*"
                         onChange={handleFileUpload}
                       />
+
                       {fileType === "video" && previewVideo && (
-                        <div className="mt-2">
-                          <video
-                            key={videoKey}
-                            autoPlay
-                            muted
-                            controls
-                            src={previewVideo}
-                            style={{
-                              maxWidth: "100px",
-                              maxHeight: "100px",
-                              objectFit: "cover",
-                              borderRadius: "5px",
-                            }}
-                          >
-                            Your browser does not support the video tag.
-                          </video>
-                        </div>
+                        <video
+                          key={videoKey}
+                          autoPlay
+                          muted
+                          controls
+                          src={previewVideo}
+                          style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover", borderRadius: "5px" }}
+                        />
                       )}
+
                       {fileType === "image" && image && (
                         <ImageCropper
                           open={dialogOpen}
@@ -309,46 +314,38 @@ const BannerEdit = () => {
                           }}
                         />
                       )}
-                      {previewImg && (
-                        <div className="mt-2">
-                          <img
-                            src={previewImg}
-                            className="img-fluid rounded"
-                            alt="Preview"
-                            style={{
-                              maxWidth: "100px",
-                              maxHeight: "100px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                      )}
-                      {!previewImg && !previewVideo && formData.banner_video && (
-                        <div className="mt-2">
+
+                      {(!previewImg && !previewVideo && formData.banner_video) && (
+                        <>
                           {isImageFile(formData.banner_video) ? (
                             <img
                               src={formData.banner_video}
-                              className="img-fluid rounded"
-                              alt="Image Preview"
-                              style={{
-                                maxWidth: "100px",
-                                maxHeight: "100px",
-                                objectFit: "cover",
-                              }}
+                              className="img-fluid rounded mt-2"
+                              alt="Initial Preview"
+                              style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
                             />
                           ) : (
                             <video
                               src={formData.banner_video}
                               controls
-                              className="img-fluid rounded"
-                              style={{
-                                maxWidth: "100px",
-                                maxHeight: "100px",
-                                objectFit: "cover",
-                              }}
+                              className="img-fluid rounded mt-2"
+                              style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
                             />
                           )}
-                        </div>
+                        </>
+                      )}
+
+                      {previewImg && (
+                        <img
+                          src={previewImg}
+                          style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover", marginTop: "7px" }}
+                        />
+                      )}
+                      {previewVideo && (
+                        <video
+                          src={previewVideo}
+                          style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover", marginTop: "7px" }}
+                        />
                       )}
                     </div>
                   </div>
