@@ -4,191 +4,7 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
-import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
-
-
-// const ImageUploadingButton = ({ value, onChange }) => {
-//   return (
-//     <ImageUploading value={value} onChange={onChange} acceptType={["jpg", "png", "jpeg", "webp"]}>
-//       {({ onImageUpload, onImageUpdate }) => (
-//         <button
-//           onClick={!value || value.length === 0 ? onImageUpload : () => onImageUpdate(0)}
-//           className="form-control purple-btn2"
-//         >
-//           Upload Image
-//         </button>
-//       )}
-//     </ImageUploading>
-//   );
-// };
-
-// const ImageCropper = ({ open, image, formData, setFormData, onComplete, containerStyle, requiredRatio, requiredRatioLabel, ...props }) => {
-//   const [crop, setCrop] = useState({ x: 0, y: 0 });
-//   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-//   const [aspect, setAspect] = useState(requiredRatio || 1);
-//   const [aspectLabel, setAspectLabel] = useState(requiredRatioLabel || "1:1");
-//   const [imageRatio, setImageRatio] = useState(null);
-//   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
-
-//   useEffect(() => {
-//     if (image) {
-//       const img = new Image();
-//       img.onload = () => {
-//         const ratio = img.naturalWidth / img.naturalHeight;
-//         setImageRatio(ratio);
-//         setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-//         setCrop({ x: 0, y: 0 });
-//         console.log(`Image dimensions: ${img.naturalWidth}x${img.naturalHeight}, Ratio: ${ratio}`);
-//       };
-//       img.src = image;
-//     }
-//   }, [image]);
-
-//   const handleAspectChange = (targetAspect, label) => {
-//     setAspect(targetAspect);
-//     setAspectLabel(label);
-//   };
-
-//   const isRatioAcceptable = (actual, expected, tolerance = 0.2) => {
-//     return Math.abs(actual - expected) <= tolerance;
-//   };
-
-//   const isGridSizeValid = () => {
-//     if (requiredRatio === 16 / 9) {
-//       const expectedWidth = 400;
-//       const expectedHeight = 225;
-//       return imageDimensions.width >= expectedWidth && imageDimensions.height >= expectedHeight;
-//     }
-//     return true;
-//   };
-
-//   const getContainerDimensions = () => {
-//     const baseSize = 300;
-//     if (aspect === 16 / 9) return { width: baseSize * 1.2, height: baseSize };
-//     if (aspect === 9 / 16) return { width: baseSize, height: baseSize * 1.2 };
-//     if (aspect === 3 / 2) return { width: baseSize * 1.1, height: baseSize * (2 / 3) };
-//     return { width: baseSize, height: baseSize };
-//   };
-
-//   if (!open || !image) return null;
-
-//   const { width, height } = getContainerDimensions();
-
-//   // Convert base64 to File object
-//   const base64ToFile = (base64, filename) => {
-//     const arr = base64.split(",");
-//     const mime = arr[0].match(/:(.*?);/)[1];
-//     const bstr = atob(arr[1]);
-//     let n = bstr.length;
-//     const u8arr = new Uint8Array(n);
-//     while (n--) {
-//       u8arr[n] = bstr.charCodeAt(n);
-//     }
-//     return new File([u8arr], filename, { type: mime });
-//   };
-
-//   return (
-//     <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.8)" }}>
-//       <div className="modal-dialog modal-dialog-centered" style={{ borderRadius: "12px" }}>
-//         <div className="modal-content rounded-3 overflow-hidden">
-//           <div className="modal-header border-0 justify-content-center pt-4 pb-2">
-//             <h5 className="modal-title text-center text-orange-600 fs-5 fw-semibold">
-//               Crop Image
-//             </h5>
-//           </div>
-//           <div className="modal-body px-4">
-//             <div className="d-flex justify-content-center mb-4 flex-wrap" style={{ gap: "8px" }}>
-//               {[{ label: "16:9", ratio: 16 / 9 }, { label: "9:16", ratio: 9 / 16 }, { label: "1:1", ratio: 1 }, { label: "3:2", ratio: 3 / 2 }].map(({ label, ratio }) => (
-//                 <button
-//                   key={label}
-//                   onClick={() => handleAspectChange(ratio, label)}
-//                   className={`px-3 py-2 rounded ${aspect === ratio ? "purple-btn2 text-white" : "border border-purple-500 text-purple-600 bg-white"}`}
-//                 >
-//                   {label}
-//                 </button>
-//               ))}
-//             </div>
-//             <div
-//               style={{
-//                 position: "relative",
-//                 height,
-//                 background: "#fff",
-//                 borderRadius: "8px",
-//                 overflow: "hidden",
-//               }}
-//             >
-//               <Cropper
-//                 image={image}
-//                 crop={crop}
-//                 zoom={1}
-//                 aspect={aspect}
-//                 onCropChange={setCrop}
-//                 onCropComplete={(_, areaPixels) => setCroppedAreaPixels(areaPixels)}
-//                 {...props}
-//               />
-//             </div>
-//           </div>
-//           <div className="modal-footer border-0 px-4 pb-4 pt-2 d-flex justify-content-end" style={{ gap: "10px" }}>
-//             <button
-//               className="px-4 py-2 rounded border border-gray-400 text-gray-700 bg-white hover:bg-gray-100"
-//               onClick={() => onComplete(null)}
-//             >
-//               Cancel
-//             </button>
-//             <button
-//               className="px-4 py-2 rounded purple-btn2 text-white"
-//               onClick={async () => {
-//                 if (croppedAreaPixels && image) {
-//                   if (requiredRatio && !isRatioAcceptable(aspect, requiredRatio, 0.2)) {
-//                     alert(`❌ Invalid crop ratio.\nSelected ratio (${aspectLabel}) does not match required ${requiredRatioLabel} ratio.`);
-//                     return;
-//                   }
-//                   if (requiredRatio && !isRatioAcceptable(imageRatio, requiredRatio, 0.2)) {
-//                     alert(`❌ Invalid image ratio.\nOriginal image ratio (${imageRatio?.toFixed(2)}) does not match required ${requiredRatioLabel} ratio.`);
-//                     return;
-//                   }
-//                   if (requiredRatio === 16 / 9 && !isGridSizeValid()) {
-//                     alert(`❌ Image dimensions too small.\nThe image does not fit the required 16:9 grid box (minimum 400x225 pixels).`);
-//                     return;
-//                   }
-//                   const canvas = document.createElement("canvas");
-//                   const img = new Image();
-//                   img.crossOrigin = "anonymous";
-//                   img.src = image;
-//                   img.onload = () => {
-//                     const ctx = canvas.getContext("2d");
-//                     canvas.width = croppedAreaPixels.width;
-//                     canvas.height = croppedAreaPixels.height;
-//                     ctx.drawImage(
-//                       img,
-//                       croppedAreaPixels.x,
-//                       croppedAreaPixels.y,
-//                       croppedAreaPixels.width,
-//                       croppedAreaPixels.height,
-//                       0,
-//                       0,
-//                       croppedAreaPixels.width,
-//                       croppedAreaPixels.height
-//                     );
-//                     const croppedBase64 = canvas.toDataURL("image/png");
-//                     const croppedFile = base64ToFile(croppedBase64, "cropped_image.png");
-//                     // Update formData directly
-//                     onComplete({ base64: croppedBase64, file: croppedFile });
-//                     setFormData({ ...formData, banner_video: croppedFile });
-
-//                   };
-//                 }
-//               }}
-//             >
-//               Finish
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
 
 const BannerEdit = () => {
   const navigate = useNavigate();
@@ -199,19 +15,18 @@ const BannerEdit = () => {
   const [previewImg, setPreviewImg] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
   const [showVideoTooltip, setShowVideoTooltip] = useState(false);
-  const [image, setImage] = useState([]);
+  const [image, setImage] = useState(null); // Single file object
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  const [videoKey, setVideoKey] = useState(Date.now());
+  const [fileType, setFileType] = useState(null); // Tracks if file is image or video
 
   const [formData, setFormData] = useState({
     title: "",
     project_id: "",
-    attachfile: null,
     banner_video: null,
     active: true,
   });
-  // console.log(image[0].file);
 
   console.log("formData", formData);
 
@@ -220,9 +35,10 @@ const BannerEdit = () => {
     fetchProjects();
     return () => {
       if (previewImg) URL.revokeObjectURL(previewImg);
-      if (previewVideo && previewVideo.startsWith("blob:")) URL.revokeObjectURL(previewVideo);
+      if (previewVideo) URL.revokeObjectURL(previewVideo);
+      if (image?.data_url) URL.revokeObjectURL(image.data_url);
     };
-  }, [previewImg, previewVideo]);
+  }, []);
 
   const fetchBanner = async () => {
     try {
@@ -231,12 +47,17 @@ const BannerEdit = () => {
         setFormData({
           title: response.data.title,
           project_id: response.data.project_id,
-          attachfile: response.data?.attachfile?.document_url || null,
           banner_video: response.data.banner_video?.document_url || null,
           active: true,
         });
         if (response.data.banner_video?.document_url) {
-          setPreviewVideo(response.data.banner_video.document_url);
+          const isImage = isImageFile(response.data.banner_video.document_url);
+          setFileType(isImage ? "image" : "video");
+          if (isImage) {
+            setPreviewImg(response.data.banner_video.document_url); // Set preview for existing image
+          } else {
+            setPreviewVideo(response.data.banner_video.document_url); // Set preview for existing video
+          }
         }
       }
     } catch (error) {
@@ -263,64 +84,70 @@ const BannerEdit = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
-    if (validFiles.length !== files.length) {
-      toast.error("Only image files (JPG, PNG, GIF, WebP) are allowed.");
-      return;
-    }
-    if (previewImg) URL.revokeObjectURL(previewImg);
-    const newPreviewImg = URL.createObjectURL(validFiles[0]);
-    setPreviewImg(newPreviewImg);
-    setFormData({ ...formData, attachfile: validFiles[0] });
-  };
-
-  const handleVideoChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
     if (!file) return;
 
-    const allowedImageTypes = [
-      "image/jpeg", "image/png", "image/gif", "image/webp",
-      "image/svg+xml", "image/bmp", "image/tiff"
-    ];
-    const allowedVideoTypes = [
-      "video/mp4", "video/webm", "video/ogg", "video/quicktime",
-      "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"
-    ];
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/bmp", "image/tiff", "image/gif"];
+    const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"];
+
+    const sizeInMB = file.size / (1024 * 1024);
 
     const isImage = allowedImageTypes.includes(file.type);
     const isVideo = allowedVideoTypes.includes(file.type);
 
     if (!isImage && !isVideo) {
-      toast.error("Please upload a valid image or video file.");
+      toast.error("❌ Please upload a valid image or video file.");
+      setImage(null);
+      setFileType(null);
       return;
     }
 
-    const sizeInMB = file.size / (1024 * 1024);
     if (isImage && sizeInMB > 3) {
-      toast.error("Image size must be less than 3MB.");
+      toast.error("❌ Image size must be less than 3MB.");
+      setImage(null);
+      setFileType(null);
       return;
     }
-    if (isVideo && sizeInMB > 10) {
-      toast.error("Video size must be less than 10MB.");
+
+    if (isVideo && sizeInMB > 20) {
+      toast.error("❌ Video size must be less than 20MB.");
+      setImage(null);
+      setFileType(null);
       return;
     }
 
-    if (previewVideo && previewVideo.startsWith("blob:")) {
-      URL.revokeObjectURL(previewVideo);
-    }
+    // Revoke previous ObjectURLs
+    if (previewVideo) URL.revokeObjectURL(previewVideo);
+    if (previewImg) URL.revokeObjectURL(previewImg);
+    if (image?.data_url) URL.revokeObjectURL(image.data_url);
 
-    const previewUrl = URL.createObjectURL(file);
-    setPreviewVideo(previewUrl);
-    setFormData((prev) => ({ ...prev, banner_video: file }));
+    setFileType(isVideo ? "video" : "image");
+    setImage({ file, data_url: URL.createObjectURL(file) });
 
-    if (isImage) {
-      const newImage = [{ file, dataURL: previewUrl }];
-      setImage(newImage);
-      setDialogOpen(true);
+    if (isVideo) {
+      setPreviewVideo(URL.createObjectURL(file));
+      setFormData((prev) => ({ ...prev, banner_video: file }));
+      setPreviewImg(null);
+      setVideoKey(Date.now());
+    } else if (isImage) {
+      setDialogOpen(true); // Open ImageCropper for images
+      setPreviewVideo(null);
+      setPreviewImg(null); // Clear preview until cropping is done
     }
+  };
+
+  const handleCropComplete = (cropped) => {
+    if (cropped) {
+      setCroppedImage(cropped.base64);
+      setPreviewImg(cropped.base64);
+      setFormData((prev) => ({ ...prev, banner_video: cropped.file }));
+    } else {
+      setImage(null);
+      setPreviewImg(null);
+      setFormData((prev) => ({ ...prev, banner_video: null }));
+    }
+    setDialogOpen(false);
   };
 
   const validateForm = () => {
@@ -330,57 +157,6 @@ const BannerEdit = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  const handleImageUpload = (newImageList) => {
-    if (!newImageList || newImageList.length === 0) return;
-
-    const file = newImageList[0].file;
-    if (!file) return;
-
-    const allowedImageTypes = [
-      "image/jpeg", "image/png", "image/gif", "image/webp",
-      "image/bmp", "image/tiff"
-    ];
-
-    const allowedVideoTypes = [
-      "video/mp4", "video/webm", "video/ogg", "video/quicktime",
-      "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"
-    ];
-
-    const fileType = file.type;
-    const sizeInMB = file.size / (1024 * 1024);
-
-    const isImage = allowedImageTypes.includes(fileType);
-    const isVideo = allowedVideoTypes.includes(fileType);
-
-    if (!isImage && !isVideo) {
-      toast.error("❌ Please upload a valid image or video file.");
-      return;
-    }
-
-    if (isImage && sizeInMB > 3) {
-      toast.error("❌ Image size must be less than 3MB.");
-      return;
-    }
-
-    if (isVideo && sizeInMB > 20) {
-      toast.error("❌ Video size must be less than 20MB.");
-      return;
-    }
-
-
-    setImage(newImageList);
-
-    if (isImage) {
-      setDialogOpen(true); // Open cropper only for images
-    } else {
-      // Optional: Handle video preview or upload
-      const videoURL = URL.createObjectURL(file);
-      setPreviewVideo(videoURL);
-      setFormData((prev) => ({ ...prev, banner_video: file }));
-    }
-  };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -392,16 +168,11 @@ const BannerEdit = () => {
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
 
-      // Always use the File object for image upload
-      if (image[0] && image[0].file instanceof File) {
-        sendData.append("banner[banner_video]", image[0].file);
-      }
-      else {
+      if (image?.file instanceof File) {
+        sendData.append("banner[banner_video]", image.file);
+      } else if (formData.banner_video instanceof File) {
         sendData.append("banner[banner_video]", formData.banner_video);
       }
-      // if (formData.banner_video instanceof File) {
-      //   sendData.append("banner[banner_video]", formData.banner_video);
-      // }
 
       const res = await axios.put(`${baseURL}banners/${id}.json`, sendData, {
         headers: {
@@ -421,11 +192,10 @@ const BannerEdit = () => {
 
   const isImageFile = (file) => {
     if (!file) return false;
-    const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/bmp", "image/tiff"];
+    const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp", "image/tiff"];
     if (typeof file === "string") {
-      if (file.startsWith("data:image")) return true;
-      const extension = file.split(".").pop().toLowerCase();
-      return ["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp", "tiff"].includes(extension);
+      const extension = file.split(".").pop()?.toLowerCase();
+      return ["jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff"].includes(extension);
     }
     return file.type && imageTypes.includes(file.type);
   };
@@ -478,110 +248,107 @@ const BannerEdit = () => {
                       {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
                     </div>
                   </div>
-                  <div className="col-md-3">
+                  <div className="col-md-3 mt-1">
                     <div className="form-group">
                       <label>
-                        Banner Attachment
+                        Banner Attachment{" "}
                         <span
-                          className="position-relative"
+                          className="tooltip-container"
                           onMouseEnter={() => setShowVideoTooltip(true)}
                           onMouseLeave={() => setShowVideoTooltip(false)}
                         >
                           [i]
                           {showVideoTooltip && (
-                            <span
-                              className="tooltip bs-tooltip-top"
-                              style={{
-                                position: "absolute",
-                                top: "-30px",
-                                left: "50%",
-                                transform: "translateX(-50%)",
-                                backgroundColor: "#000",
-                                color: "#fff",
-                                padding: "5px",
-                                borderRadius: "4px",
-                                fontSize: "12px",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              16:9 Format Should Only Be Allowed
-                            </span>
+                            <span className="tooltip-text">16:9 Format Should Only Be Allowed</span>
                           )}
                         </span>
                       </label>
-                      <ImageUploadingButton
-                        value={image}
-                        onChange={handleImageUpload}
-                        variant="custom"
-                        btntext="Add"
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff,image/gif,video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-flv"
+                        onChange={handleFileUpload}
+                        style={{ marginTop: "10px" }}
                       />
-                      <ImageCropper
-                        open={dialogOpen}
-                        image={image?.[0]?.dataURL || null}
-                        onComplete={(cropped) => {
-                          if (cropped) {
-                            setCroppedImage(cropped.base64);
-                            setPreviewVideo(cropped.base64);
-                            setFormData((prev) => ({ ...prev, banner_video: cropped.file }));
-                          }
-                          setDialogOpen(false);
-                        }}
-                        requiredRatios={[1, 9 / 16]} // Accept either
-                        requiredRatioLabel="1:1 or 9:16"
-                        allowedRatios={[
-                          { label: "16:9", ratio: 16 / 9 },
-                          { label: "9:16", ratio: 9 / 16 },
-                          { label: "1:1", ratio: 1 },
-                        ]}
-                        containerStyle={{ position: "relative", width: "100%", height: 300, background: "#fff" }}
-
-                      />
-                      {errors.banner_video && <span className="text-danger">{errors.banner_video}</span>}
-                      <div className="mt-2">
-                        {previewVideo ? (
-                          isImageFile(previewVideo) ? (
+                      {fileType === "video" && previewVideo && (
+                        <div className="mt-2">
+                          <video
+                            key={videoKey}
+                            autoPlay
+                            muted
+                            controls
+                            src={previewVideo}
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                              borderRadius: "5px",
+                            }}
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
+                      )}
+                      {fileType === "image" && image && (
+                        <ImageCropper
+                          open={dialogOpen}
+                          image={image.data_url}
+                          onComplete={handleCropComplete}
+                          requiredRatios={[1, 9 / 16]}
+                          requiredRatioLabel="1:1 or 9:16"
+                          allowedRatios={[
+                            { label: "16:9", ratio: 16 / 9 },
+                            { label: "9:16", ratio: 9 / 16 },
+                            { label: "1:1", ratio: 1 },
+                          ]}
+                          containerStyle={{
+                            position: "relative",
+                            width: "100%",
+                            height: 300,
+                            background: "#fff",
+                          }}
+                        />
+                      )}
+                      {previewImg && (
+                        <div className="mt-2">
+                          <img
+                            src={previewImg}
+                            className="img-fluid rounded"
+                            alt="Preview"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
+                      {!previewImg && !previewVideo && formData.banner_video && (
+                        <div className="mt-2">
+                          {isImageFile(formData.banner_video) ? (
                             <img
-                              src={croppedImage || previewVideo}
-                              className="img-fluid rounded mt-2"
-                              alt="Image Preview"
-                              style={{ maxWidth: "100px", maxHeight: "150px", objectFit: "cover" }}
-                            />
-                          ) : (
-                            <video
-                              src={previewVideo}
-                              controls
-                              className="img-fluid rounded mt-2"
-                              style={{ maxWidth: "100px", maxHeight: "150px", objectFit: "cover" }}
-                            />
-                          )
-                        ) : formData.banner_video && formData.banner_video.document_url ? (
-                          isImageFile(formData.banner_video.document_url) ? (
-                            <img
-                              src={formData.banner_video.document_url}
-                              className="img-fluid rounded mt-2"
+                              src={formData.banner_video}
+                              className="img-fluid rounded"
                               alt="Image Preview"
                               style={{
                                 maxWidth: "100px",
-                                maxHeight: "150px",
+                                maxHeight: "100px",
                                 objectFit: "cover",
                               }}
                             />
                           ) : (
                             <video
-                              src={formData.banner_video.document_url}
+                              src={formData.banner_video}
                               controls
-                              className="img-fluid rounded mt-2"
+                              className="img-fluid rounded"
                               style={{
-                                maxWidth: "200px",
-                                maxHeight: "150px",
+                                maxWidth: "100px",
+                                maxHeight: "100px",
                                 objectFit: "cover",
                               }}
                             />
-                          )
-                        ) : (
-                          <span>No file selected</span>
-                        )}
-                      </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
