@@ -215,16 +215,16 @@ const UserGroupEdit = () => {
     }
 
     // Sequential validation - check one field at a time
-    for (const { field, label } of requiredFields) {
-      if (field === "user_id") continue; // Skip validation for user
-      if (!formData[field] || String(formData[field]).trim() === "") {
-        newErrors[field] = `${label} is mandatory`;
-        setErrors(newErrors);
-        toast.dismiss();
-        toast.error(`${label} is mandatory`);
-        return false;
-      }
-    }
+    // for (const { field, label } of requiredFields) {
+    //   if (field === "user_id") continue; // Skip validation for user
+    //   if (!formData[field] || String(formData[field]).trim() === "") {
+    //     newErrors[field] = `${label} is mandatory`;
+    //     setErrors(newErrors);
+    //     toast.dismiss();
+    //     toast.error(`${label} is mandatory`);
+    //     return false;
+    //   }
+    // }
 
     // Validate member_ids array
     if (formData.member_ids.length === 0) {
@@ -325,7 +325,7 @@ const UserGroupEdit = () => {
                     </div>
 
                     {/* Company Dropdown */}
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Company <span className="otp-asterisk">*</span>
@@ -350,10 +350,10 @@ const UserGroupEdit = () => {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Site Dropdown */}
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Site <span className="otp-asterisk">*</span>
@@ -383,7 +383,7 @@ const UserGroupEdit = () => {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Members Multi-Select */}
                     <div className="col-md-3 mt-1">
