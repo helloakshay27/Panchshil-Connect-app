@@ -318,12 +318,12 @@ const EventCreate = () => {
     }
 
     if (Array.isArray(formData.group_id)) {
-  formData.group_id.forEach((id) => {
-    data.append("event[group_id][]", id);
-  });
-} else if (formData.group_id) {
-  data.append("event[group_id][]", formData.group_id);
-}
+      formData.group_id.forEach((id) => {
+        data.append("event[group_id][]", id);
+      });
+    } else if (formData.group_id) {
+      data.append("event[group_id][]", formData.group_id);
+    }
 
     try {
       const response = await axios.post(`${baseURL}events.json`, data, {
@@ -625,7 +625,7 @@ const EventCreate = () => {
                             [i]
                             {showTooltip && (
                               <span className="tooltip-text">
-                                Max Upload Size 10 MB
+                                Max Upload Size for video 10 MB and for image 3 MB
                               </span>
                             )}
                           </span>
@@ -655,7 +655,7 @@ const EventCreate = () => {
                             [i]
                             {showTooltip && (
                               <span className="tooltip-text">
-                                Max Upload Size 3 MB
+                                Max Upload Size 3 MB and Required ratio is 16:9
                               </span>
                             )}
                           </span>
@@ -666,7 +666,9 @@ const EventCreate = () => {
                           btntext="Upload Cover Image"
                           variant="custom"
                         />
-
+                        <small className="form-text text-muted">
+                          Required ratio must be 16:9
+                        </small>
                         <ImageCropper
                           open={dialogOpen}
                           image={image?.[0]?.dataURL || null}
@@ -680,7 +682,7 @@ const EventCreate = () => {
                             }
                             setDialogOpen(false);
                           }}
-                          requiredRatios={[16 / 9]}
+                          requiredRatios={[16 / 9, 9 / 16, 1]}
                           requiredRatioLabel="16:9"
                           allowedRatios={[
                             { label: "16:9", ratio: 16 / 9 },
@@ -939,26 +941,36 @@ const EventCreate = () => {
                       {formData.shared === "group" && (
                         <div className="form-group">
                           <label>Share with Groups</label>
-                         <MultiSelectBox
-  options={groups.map((group) => ({
-    value: group.id,
-    label: group.name,
-  }))}
-  value={
-    Array.isArray(formData.group_id)
-      ? formData.group_id.map((id) => {
-          const group = groups.find((g) => g.id === id || g.id.toString() === id.toString());
-          return group ? { value: group.id, label: group.name } : null;
-        }).filter(Boolean)
-      : []
-  }
-  onChange={(selectedOptions) =>
-    setFormData((prev) => ({
-      ...prev,
-      group_id: selectedOptions.map((option) => option.value),
-    }))
-  }
-/>
+                          <MultiSelectBox
+                            options={groups.map((group) => ({
+                              value: group.id,
+                              label: group.name,
+                            }))}
+                            value={
+                              Array.isArray(formData.group_id)
+                                ? formData.group_id
+                                    .map((id) => {
+                                      const group = groups.find(
+                                        (g) =>
+                                          g.id === id ||
+                                          g.id.toString() === id.toString()
+                                      );
+                                      return group
+                                        ? { value: group.id, label: group.name }
+                                        : null;
+                                    })
+                                    .filter(Boolean)
+                                : []
+                            }
+                            onChange={(selectedOptions) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                group_id: selectedOptions.map(
+                                  (option) => option.value
+                                ),
+                              }))
+                            }
+                          />
                         </div>
                       )}
                     </div>

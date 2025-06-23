@@ -56,6 +56,7 @@ const EventEdit = () => {
   const [image, setImage] = useState([]);
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const timeOptions = [
     // { value: "", label: "Select Unit" },
@@ -804,7 +805,22 @@ const EventEdit = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Attachment</label>
+                        <label>
+                          Attachment
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            [i]
+                            {showTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size for video 10 MB and for image 3
+                                MB
+                              </span>
+                            )}
+                          </span>
+                        </label>
                         <input
                           className="form-control"
                           type="file"
@@ -891,13 +907,30 @@ const EventEdit = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group mt-3">
-                        <label>Cover Image</label>
+                        <label>
+                          Cover Image
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            [i]
+                            {showTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 3 MB and Required ratio is 16:9
+                              </span>
+                            )}
+                          </span>
+                        </label>
                         <ImageUploadingButton
                           value={image}
                           onChange={handleCoverImageUpload}
                           btntext="Upload Cover Image"
                           variant="custom"
                         />
+                        <small className="form-text text-muted">
+                          Required ratio must be 16:9
+                        </small>
 
                         <ImageCropper
                           open={dialogOpen}
@@ -913,7 +946,7 @@ const EventEdit = () => {
                             }
                             setDialogOpen(false);
                           }}
-                          requiredRatios={[16 / 9]}
+                          requiredRatios={[16 / 9, 9 / 16, 1]}
                           requiredRatioLabel="16:9"
                           allowedRatios={[
                             { label: "16:9", ratio: 16 / 9 },

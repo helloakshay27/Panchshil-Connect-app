@@ -384,7 +384,7 @@ const TestimonialEdit = () => {
                       [i]
                       {showTooltip && (
                         <span className="tooltip-text">
-                          Max Upload Size 3 MB
+                          Max Upload Size 3 MB and Required ratio is 16:9
                         </span>
                       )}
                     </span>
@@ -395,6 +395,9 @@ const TestimonialEdit = () => {
                     onChange={handleImageUpload}
                     variant="custom"
                   />
+                  <small className="form-text text-muted">
+                    Required ratio must be 16:9
+                  </small>
                   <ImageCropper
                     open={dialogOpen}
                     image={image?.[0]?.dataURL || null}
@@ -410,7 +413,7 @@ const TestimonialEdit = () => {
                       }
                       setDialogOpen(false);
                     }}
-                    requiredRatios={[16 / 9]}
+                    requiredRatios={[16 / 9, 1, 9 / 16]}
                     requiredRatioLabel="16:9"
                     allowedRatios={[
                       { label: "16:9", ratio: 16 / 9 },

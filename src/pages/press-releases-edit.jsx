@@ -18,6 +18,7 @@ const PressReleasesEdit = () => {
   const [image, setImage] = useState([]);
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -400,7 +401,19 @@ const PressReleasesEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Attachment (Image)
+                        Attachment
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB and Required ratio is 16:9
+                            </span>
+                          )}
+                        </span>
                         <span className="otp-asterisk"> *</span>
                       </label>
                       <ImageUploadingButton
@@ -410,6 +423,9 @@ const PressReleasesEdit = () => {
                         variant="custom"
                         // buttonStyle={{ width: "120px", padding: "4px 10px", fontSize: "14px" }}
                       />
+                      <small className="form-text text-muted">
+                        Required ratio must be 16:9
+                      </small>
                       <ImageCropper
                         open={dialogOpen}
                         image={image?.[0]?.dataURL || null}
@@ -423,7 +439,7 @@ const PressReleasesEdit = () => {
                           }
                           setDialogOpen(false);
                         }}
-                        requiredRatios={[16 / 9]}
+                        requiredRatios={[16 / 9, 1, 9 / 16]}
                         requiredRatioLabel="16:9"
                         allowedRatios={[
                           { label: "16:9", ratio: 16 / 9 },
