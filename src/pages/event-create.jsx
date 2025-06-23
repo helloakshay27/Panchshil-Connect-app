@@ -773,7 +773,7 @@ const EventCreate = () => {
                               </button> */}
                             </div>
                           ) : (
-                            <span>No cover image selected</span>
+                            <span></span>
                           )}
                         </div>
                       </div>
@@ -829,7 +829,7 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <div className="form-group">
                         <label>Share With</label>
                         <div className="d-flex gap-3">

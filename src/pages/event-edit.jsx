@@ -1036,7 +1036,7 @@ const EventEdit = () => {
           </button> */}
                             </div>
                           ) : (
-                            <span>No cover image selected</span>
+                            <span></span>
                           )}
                         </div>
                       </div>
@@ -1083,7 +1083,7 @@ const EventEdit = () => {
                     </div>
 
                     {/* Share With Radio Buttons */}
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <div className="form-group mt-3">
                         <label>Share With</label>
                         <div className="d-flex gap-3">

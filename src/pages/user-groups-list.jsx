@@ -259,10 +259,10 @@ const UserGroupList = () => {
                           <th>Action</th>
                           <th>Sr No</th>
                           <th>Name</th>
-                          <th>Company ID</th>
-                          <th>Site ID</th>
+                          {/* <th>Company ID</th>
+                          <th>Site ID</th> */}
                           <th>User ID</th>
-                          <th>Members Count</th>
+                          {/* <th>Members Count</th> */}
                           <th>Status</th>
                         </tr>
                       </thead>
@@ -334,14 +334,14 @@ const UserGroupList = () => {
                                   1}
                               </td>
                               <td>{usergroup.name || "-"}</td>
-                              <td>{usergroup.company_id || "-"}</td>
-                              <td>{usergroup.site_id || "-"}</td>
+                              {/* <td>{usergroup.company_id || "-"}</td>
+                              <td>{usergroup.site_id || "-"}</td> */}
                               <td>{usergroup.user_id || "-"}</td>
-                              <td>
+                              {/* <td>
                                 {usergroup.usergroup_members
                                   ? usergroup.usergroup_members.length
                                   : 0}
-                              </td>
+                              </td> */}
                               <td>
                                 {/* {userPermission.destroy === "true" && ( */}
                                 <button
