@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-import "../mor.css";
+import "../root-mor.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -255,7 +255,7 @@ const BannerAdd = () => {
                 </div>
 
                 {/* Banner Attachment Upload */}
-                <div className="col-md-3 mt-1">
+                <div className="col-md-3">
                   <div className="form-group">
                     <label>
                       Banner Attachment{" "}
@@ -276,7 +276,7 @@ const BannerAdd = () => {
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff,image/gif,video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-flv"
                       onChange={handleFileUpload}
-                      style={{ marginTop: "10px" }}
+
                     />
 
                     {/* Preview for video */}

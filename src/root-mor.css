@@ -1,0 +1,21 @@
+input[type="file"]::-webkit-file-upload-button {
+    background: #f1f5f9;              /* light gray background */
+    color: #1f2937;                   /* dark gray text */
+    padding: 8px 16px;                /* slightly smaller padding */
+    margin: 0;                        /* remove margin */
+    border: none;
+    border-right: 1px solid #cbd5e0;  /* border between button and text */
+    border-radius: 5px 0 0 5px;       /* rounded only on left */
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  input[type="file"] {
+    border: 1px solid #cbd5e0;       
+    border-radius: 6px;               
+    padding: 0;                       
+    font-family: sans-serif;
+    color: #374151;
+    height: 38px;
+    margin-left: 10px;
+  }

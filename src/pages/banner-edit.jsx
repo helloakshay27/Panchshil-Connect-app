@@ -5,6 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import "../root-mor.css";
+
 
 const BannerEdit = () => {
   const navigate = useNavigate();
@@ -248,7 +250,7 @@ const BannerEdit = () => {
                       {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
                     </div>
                   </div>
-                  <div className="col-md-3 mt-1">
+                  <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Banner Attachment{" "}
@@ -267,7 +269,6 @@ const BannerEdit = () => {
                         type="file"
                         accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff,image/gif,video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-flv"
                         onChange={handleFileUpload}
-                        style={{ marginTop: "10px" }}
                       />
                       {fileType === "video" && previewVideo && (
                         <div className="mt-2">
