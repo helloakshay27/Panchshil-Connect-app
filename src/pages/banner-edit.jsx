@@ -229,28 +229,30 @@ const BannerEdit = () => {
     <div className="container-fluid">
       <style>
         {`
-          input[type="file"]::-webkit-file-upload-button {
-            background: #f1f5f9;
-            color: #1f2937;
-            padding: 8px 16px;
-            margin: 0;
-            border: none;
-            border-right: 1px solid #cbd5e0;
-            border-radius: 5px 0 0 5px;
-            cursor: pointer;
-            font-weight: 500;
-          }
+  input[type="file"]::-webkit-file-upload-button {
+    background: #f1f5f9;
+    color: #1f2937;
+    padding: 8px 16px;
+    margin: 0;
+    margin-right: 12px; /* ← added space between button and label */
+    border: none;
+    border-right: 1px solid #cbd5e0;
+    border-radius: 5px 0 0 5px;
+    cursor: pointer;
+    font-weight: 500;
+  }
 
-          input[type="file"] {
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            padding: 0;
-            font-family: sans-serif;
-            color: #374151;
-            height: 35px;
-            margin-left: 10px;
-          }
-        `}
+  input[type="file"] {
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 0;
+    font-family: sans-serif;
+    color: #374151;
+    height: 38px;
+    margin-left: 10px;
+  }
+`}
+
       </style>
       <div className="row">
         <div className="col-12">
