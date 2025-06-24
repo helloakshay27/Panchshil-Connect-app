@@ -82,6 +82,8 @@ const ProjectDetailsEdit = () => {
     project_qrcode_image: [],
     cover_images: [],
     is_sold: false,
+    bannerPreviewImage: "",
+    coverPreviewImage: "",
   });
 
   const [projectsType, setProjectsType] = useState([]);
@@ -117,7 +119,8 @@ const ProjectDetailsEdit = () => {
   const [coverImageUpload, setCoverImageUpload] = useState([]);
   const [galleryImageUpload, setGalleryImageUpload] = useState([]);
   const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
-  const [projectPlan, setProjectPlan] = useState([]);
+  const [pendingImageUpload, setPendingImageUpload] = useState([]);
+
 
   const [dialogOpen, setDialogOpen] = useState({
     image: false,
@@ -227,6 +230,7 @@ const ProjectDetailsEdit = () => {
 
     fetchConstructionStatuses();
   }, []);
+
 
   useEffect(() => {
     const fetchCategoryTypes = async () => {
@@ -1706,20 +1710,21 @@ const ProjectDetailsEdit = () => {
     const imageURL = URL.createObjectURL(file);
 
     if (type === "image") {
-      setMainImageUpload(newImageList);
-      // setFormData((prevData) => ({
-      //   ...prevData,
-      //   previewImage: imageURL,
-      // }));
+      setPendingImageUpload(newImageList);
+      setFormData((prevData) => ({
+        ...prevData,
+        bannerPreviewImage: imageURL,
+      }));
       setDialogOpen((prev) => ({ ...prev, image: true }));
     } else if (type === "cover_images") {
       setCoverImageUpload(newImageList);
       setFormData((prevData) => ({
         ...prevData,
-        previewImage: imageURL,
+        coverPreviewImage: imageURL,
       }));
       setDialogOpen((prev) => ({ ...prev, cover_images: true }));
-    } else if (type === "gallery_image") {
+    }
+    else if (type === "gallery_image") {
       setGalleryImageUpload(newImageList);
       setFormData((prevData) => ({
         ...prevData,
@@ -2751,19 +2756,27 @@ const ProjectDetailsEdit = () => {
 
                   <ImageCropper
                     open={dialogOpen.image}
-                    image={mainImageUpload?.[0]?.dataURL}
-                    originalFile={mainImageUpload?.[0]?.file}
+                    image={pendingImageUpload?.[0]?.dataURL}
+                    originalFile={pendingImageUpload?.[0]?.file}
                     onComplete={(cropped) => {
                       if (cropped) {
                         setFormData((prev) => ({
                           ...prev,
-                          image: [cropped.file], // Single image
-                          previewImage: URL.createObjectURL(cropped.file),
+                          image: [cropped.file],
+                          bannerPreviewImage: URL.createObjectURL(cropped.file),
                         }));
+
+                        setMainImageUpload([
+                          {
+                            file: cropped.file,
+                            dataURL: URL.createObjectURL(cropped.file),
+                          },
+                        ]);
                       }
                       setDialogOpen((prev) => ({ ...prev, image: false }));
-                      setMainImageUpload([]); // Clear temporary upload
+                      setPendingImageUpload([]);
                     }}
+
                     requiredRatios={[9 / 16, 1, 16 / 9]}
                     allowedRatios={[
                       { label: "16:9", ratio: 16 / 9 },
@@ -2774,28 +2787,24 @@ const ProjectDetailsEdit = () => {
                 </div>
 
                 {/* Show selected or previously uploaded image */}
-                {formData.previewImage ? (
+                {formData.bannerPreviewImage ? (
                   <img
-                    src={formData.previewImage}
-                    alt="Uploaded Preview"
+                    src={formData.bannerPreviewImage}
+                    alt="Banner Preview"
                     className="img-fluid rounded mt-2"
-                    style={{
-                      maxWidth: "100px",
-                      maxHeight: "100px",
-                      objectFit: "cover",
-                      marginBottom: "15px",
-                    }}
+                    style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
                   />
                 ) : Array.isArray(formData.image) && formData.image.length > 0 ? (
                   formData.image.map((img, index) => {
                     let src = "";
-                    if (img instanceof File) {
-                      src = URL.createObjectURL(img);
-                    } else if (typeof img === "string") {
-                      src = img;
-                    } else if (img.document_url) {
+                    if (img.document_url) {
                       src = img.document_url;
                     }
+                    // } else if (typeof img === "string") {
+                    //   src = img;
+                    // } else if (img.document_url) {
+                    //   src = img.document_url;
+                    // }
                     return (
                       <img
                         key={index}
@@ -4275,7 +4284,7 @@ const ProjectDetailsEdit = () => {
                         cover_images: Array.isArray(prev.cover_images)
                           ? [...prev.cover_images, cropped.file]
                           : [cropped.file],
-                        previewImage: URL.createObjectURL(cropped.file),
+                        coverPreviewImage: URL.createObjectURL(cropped.file),
                       }));
                     }
                     setDialogOpen((prev) => ({ ...prev, cover_images: false }));

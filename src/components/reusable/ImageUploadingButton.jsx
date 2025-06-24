@@ -8,6 +8,19 @@ const extractFilename = (dataURL = "") => {
   return dataURL.split("/").pop()?.split("?")[0] || "image-preview";
 };
 
+const truncateFileName = (name = "", maxLength = 20) => {
+  if (!name || name.length <= maxLength) return name;
+
+  const dotIndex = name.lastIndexOf(".");
+  const base = name.slice(0, dotIndex);
+  const ext = name.slice(dotIndex);
+
+  const visibleChars = maxLength - ext.length - 3; // leave space for "..."
+  return base.slice(0, visibleChars) + "..." + ext;
+};
+
+
+
 export const ImageUploadingButton = ({
   value,
   onChange,
@@ -26,28 +39,29 @@ export const ImageUploadingButton = ({
         if (variant === "custom") {
           return (
             <div
-              onClick={handleClick}
-              className="form-control"
-              type="File"
-              role="button"
-              // style={{
-              //   width: "20%",
-              //   borderRadius: "8px",
-              //   display: "flex",
-              //   alignItems: "center",
-              //   justifyContent: "center",
-              //   cursor: "pointer",
-              //   backgroundColor: "#f0f0f0",
-              //   padding: "10px",
-              // }}
-            >
-              <span className="choose-btn" style={{ fontWeight: 600,  }}>Choose files</span>
-              <span className="file-label" style={{  color: "#9b9b9b" }}>
-                {value && value.length > 0
+            onClick={handleClick}
+            className="form-control flex items-center gap-3 cursor-pointer"
+            type="File"
+            role="button"
+          >
+            <span className="choose-btn font-semibold shrink-0 bg-gray-100 px-2 py-1 rounded">
+              Choose files
+            </span>
+            <span
+              className="file-label text-gray-700 text-sm truncate max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis"
+              title={
+                value && value.length > 0
                   ? value[0]?.file?.name || extractFilename(value[0]?.data_url)
-                  : "No file chosen"}
-              </span>
-            </div>
+                  : "No file chosen"
+              }
+            >
+              {value && value.length > 0
+                ? truncateFileName(value[0]?.file?.name || extractFilename(value[0]?.data_url))
+                : "No file chosen"}
+            </span>
+          </div>
+          
+
           );
         }
 
@@ -56,7 +70,7 @@ export const ImageUploadingButton = ({
             onClick={handleClick}
             className="form-control purple-btn2"
             type="button"
-            style={{ width: "8.5%", borderRadius:"8px"}}
+            style={{ width: "8.5%", borderRadius: "8px" }}
           >
             {btntext}
           </button>

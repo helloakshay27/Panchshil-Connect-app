@@ -119,6 +119,8 @@ const ProjectDetailsCreate = () => {
   const [planName, setPlanName] = useState("");
   const [planImages, setPlanImages] = useState([]);
   const [plans, setPlans] = useState([]);
+  const [pendingImageUpload, setPendingImageUpload] = useState([]);
+
   const [dialogOpen, setDialogOpen] = useState({
     image: false,
     cover_images: false,
@@ -126,6 +128,7 @@ const ProjectDetailsCreate = () => {
     two_d_images: false,
     plan_images: false,
   });
+
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -283,7 +286,7 @@ const ProjectDetailsCreate = () => {
       setCoverImageUpload(newImageList);
       setDialogOpen((prev) => ({ ...prev, cover_images: true }));
     } else if (type === "image") {
-      setMainImageUpload(newImageList);
+      setPendingImageUpload(newImageList); // 🕒 store temporarily
       setDialogOpen((prev) => ({ ...prev, image: true }));
     } else if (type === "gallery_image") {
       setGalleryImageUpload(newImageList);
@@ -2020,17 +2023,23 @@ const ProjectDetailsCreate = () => {
 
                   <ImageCropper
                     open={dialogOpen.image}
-                    image={mainImageUpload?.[0]?.dataURL}
-                    originalFile={mainImageUpload?.[0]?.file}
+                    image={pendingImageUpload?.[0]?.dataURL}
+                    originalFile={pendingImageUpload?.[0]?.file}
                     onComplete={(cropped) => {
                       if (cropped) {
                         setFormData((prev) => ({
                           ...prev,
-                          image: [cropped.file], // ✅ Always replace with new image
+                          image: [cropped.file],
                         }));
+                        setMainImageUpload([
+                          {
+                            file: cropped.file,
+                            dataURL: URL.createObjectURL(cropped.file),
+                          },
+                        ]);
                       }
                       setDialogOpen((prev) => ({ ...prev, image: false }));
-                      setMainImageUpload([]); // ✅ Clear temp image
+                      setPendingImageUpload([]);
                     }}
                     requiredRatios={[16 / 9]}
                     allowedRatios={[
@@ -2039,7 +2048,19 @@ const ProjectDetailsCreate = () => {
                     ]}
                   />
 
+
                 </div>
+                {formData.image?.[0] && (
+                  <div className="mt-2 flex items-center gap-3">
+                    <img
+                      src={URL.createObjectURL(formData.image[0])}
+                      alt="Preview"
+                      className="object-cover rounded border"
+                      style={{ width: "200px", height: "100px" }}
+                    />
+                  </div>
+                )}
+
               </div>
               <div className="col-md-3">
                 <div className="form-group">
