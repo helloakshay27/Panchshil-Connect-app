@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-import "../root-mor.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -216,6 +215,31 @@ const BannerAdd = () => {
 
   return (
     <div className="main-content">
+      <style>
+        {`
+          input[type="file"]::-webkit-file-upload-button {
+            background: #f1f5f9;
+            color: #1f2937;
+            padding: 8px 16px;
+            margin: 0;
+            border: none;
+            border-right: 1px solid #cbd5e0;
+            border-radius: 5px 0 0 5px;
+            cursor: pointer;
+            font-weight: 500;
+          }
+
+          input[type="file"] {
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            padding: 0;
+            font-family: sans-serif;
+            color: #374151;
+            height: 35px;
+            margin-left: 10px;
+          }
+        `}
+      </style>
       <div className="website-content overflow-hidden">
         <div className="module-data-section">
           <div className="card mt-4 pb-4 mx-4">
