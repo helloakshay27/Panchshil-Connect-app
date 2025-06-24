@@ -115,7 +115,6 @@ const ProjectDetailsCreate = () => {
   const [coverImageUpload, setCoverImageUpload] = useState([]);
   const [galleryImageUpload, setGalleryImageUpload] = useState([]);
   const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
-  const [planImageUpload, setPlanImageUpload] = useState([]);
   const [planName, setPlanName] = useState("");
   const [planImages, setPlanImages] = useState([]);
   const [plans, setPlans] = useState([]);
@@ -286,7 +285,7 @@ const ProjectDetailsCreate = () => {
       setCoverImageUpload(newImageList);
       setDialogOpen((prev) => ({ ...prev, cover_images: true }));
     } else if (type === "image") {
-      setPendingImageUpload(newImageList); // 🕒 store temporarily
+      setPendingImageUpload(newImageList);
       setDialogOpen((prev) => ({ ...prev, image: true }));
     } else if (type === "gallery_image") {
       setGalleryImageUpload(newImageList);
@@ -294,9 +293,6 @@ const ProjectDetailsCreate = () => {
     } else if (type === "two_d_images") {
       setFloorPlanImageUpload(newImageList);
       setDialogOpen((prev) => ({ ...prev, two_d_images: true }));
-    } else if (type === "plan_images") {
-      setPlanImageUpload(newImageList);
-      setDialogOpen((prev) => ({ ...prev, plan_images: true }));
     }
   };
 
@@ -504,20 +500,7 @@ const ProjectDetailsCreate = () => {
     }
 
     if (name === "plans") {
-      // const newFiles = Array.from(files);
-      // const validFiles = [];
-      // newFiles.forEach((file) => {
-      //   if (!allowedTypes.plans.includes(file.type)) {
-      //     toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-      //     return;
-      //   }
-      //   if (file.size > MAX_SIZES.plans) {
-      //     toast.error("Image size must be less than 3MB.");
-      //     return;
-      //   }
-      //   validFiles.push(file);
-      // });
-      // if (validFiles.length > 0) {
+     
       setFormData((prev) => ({
         ...prev,
         plans: [...(prev.plans || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
@@ -2041,10 +2024,12 @@ const ProjectDetailsCreate = () => {
                       setDialogOpen((prev) => ({ ...prev, image: false }));
                       setPendingImageUpload([]);
                     }}
-                    requiredRatios={[16 / 9]}
+                    requiredRatios={[16 / 9, 1, 9 / 16]}
                     allowedRatios={[
                       { label: "16:9", ratio: 16 / 9 },
                       { label: "1:1", ratio: 1 },
+                      { label: "9:16", ratio: 9 / 16 },
+
                     ]}
                   />
 
@@ -3145,32 +3130,16 @@ const ProjectDetailsCreate = () => {
                 </div>
 
                 <div className="col-md-3">
-                  <ImageUploadingButton
-                    value={planImageUpload}
-                    onChange={(list) => handleImageUploaded(list, "plan_images")}
-                    variant="custom"
+                  <input
+                    className="form-control"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
                   />
                 </div>
 
-                <ImageCropper
-                  open={dialogOpen.plan_images}
-                  image={planImageUpload?.[0]?.dataURL}
-                  originalFile={planImageUpload?.[0]?.file}
-                  onComplete={(cropped) => {
-                    if (cropped && cropped.file) {
-                      setPlanImages((prev) =>
-                        Array.isArray(prev) ? [...prev, cropped.file] : [cropped.file]
-                      );
-                    }
-                    setDialogOpen((prev) => ({ ...prev, plan_images: false }));
-                    setPlanImageUpload([]);
-                  }}
-                  requiredRatios={[9 / 16]}
-                  allowedRatios={[
-                    { label: "9:16", ratio: 9 / 16 },
-                    { label: "1:1", ratio: 1 },
-                  ]}
-                />
+
 
                 <div className="col-md-3">
                   <button

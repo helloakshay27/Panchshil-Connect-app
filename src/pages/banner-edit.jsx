@@ -325,7 +325,7 @@ const BannerEdit = () => {
                           open={dialogOpen}
                           image={image.data_url}
                           onComplete={handleCropComplete}
-                          requiredRatios={[1, 9 / 16]}
+                          requiredRatios={[1, 9 / 16, 16 / 9]}
                           requiredRatioLabel="1:1 or 9:16"
                           allowedRatios={[
                             { label: "16:9", ratio: 16 / 9 },
