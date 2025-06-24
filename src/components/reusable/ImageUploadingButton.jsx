@@ -40,26 +40,54 @@ export const ImageUploadingButton = ({
           return (
             <div
             onClick={handleClick}
-            className="form-control flex items-center gap-3 cursor-pointer"
-            type="File"
             role="button"
+            className="d-flex align-items-center rounded border"
+            style={{
+              width: 'fit-content',
+              borderColor: '#c4c4c4',
+              fontSize: '14px',
+              fontFamily: 'system-ui, sans-serif',
+              padding: '0',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              height: '35px',
+            }}
           >
-            <span className="choose-btn font-semibold shrink-0 bg-gray-100 px-2 py-1 rounded">
-              Choose files
+            <span
+              className="px-3 py-1"
+              style={{
+                backgroundColor: '#f8f9fa', // very light gray
+                borderRight: '1px solid #c4c4c4',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#212529',
+              }}
+            >
+              Choose file
             </span>
             <span
-              className="file-label text-gray-700 text-sm truncate max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis"
+              className="px-3 py-1 text-nowrap text-truncate"
               title={
                 value && value.length > 0
                   ? value[0]?.file?.name || extractFilename(value[0]?.data_url)
-                  : "No file chosen"
+                  : 'No file chosen'
               }
+              style={{
+                maxWidth: '200px',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                color: '#212529',
+                backgroundColor: '#fff',
+              }}
             >
               {value && value.length > 0
                 ? truncateFileName(value[0]?.file?.name || extractFilename(value[0]?.data_url))
-                : "No file chosen"}
+                : 'No file chosen'}
             </span>
           </div>
+          
           
 
           );
