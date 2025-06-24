@@ -14,6 +14,7 @@ import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
@@ -3244,6 +3245,9 @@ const ProjectDetailsCreate = () => {
 
           <div className="card-body">
             <div className="row">
+               <div className="col-12 mb-4">
+      <ProjectBannerUpload />
+    </div>
               {/* Gallery Section */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -3301,6 +3305,7 @@ const ProjectDetailsCreate = () => {
                   variant="button"
                   btntext="+ Add"
                 />
+                
 
                 <ImageCropper
                   open={dialogOpen.cover_images}
