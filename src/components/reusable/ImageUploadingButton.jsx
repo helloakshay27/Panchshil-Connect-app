@@ -43,7 +43,7 @@ export const ImageUploadingButton = ({
             role="button"
             className="d-flex align-items-center rounded border"
             style={{
-              width: 'fit-content',
+              // width: 'fit-content',
               borderColor: '#c4c4c4',
               fontSize: '14px',
               fontFamily: 'system-ui, sans-serif',
@@ -54,7 +54,7 @@ export const ImageUploadingButton = ({
             }}
           >
             <span
-              className="px-3 py-1"
+              className="px-3 py-1 text-nowrap text-truncate"
               style={{
                 backgroundColor: '#f8f9fa', // very light gray
                 borderRight: '1px solid #c4c4c4',
@@ -96,9 +96,9 @@ export const ImageUploadingButton = ({
         return (
           <button
             onClick={handleClick}
-            className="form-control purple-btn2"
+            className="px-3 py-1 purple-btn2 text-nowrap text-truncate"
             type="button"
-            style={{ width: "8.5%", borderRadius: "8px" }}
+            style={{ width: "94px", height: "35px", borderRadius: "8px" }}
           >
             {btntext}
           </button>

@@ -372,7 +372,7 @@ const Testimonials = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Preview Image (Required ratio 16:9){" "}
+                        Preview Image{" "}
                         <span
                           className="tooltip-container"
                           onMouseEnter={() => setShowTooltip(true)}

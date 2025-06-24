@@ -1982,7 +1982,7 @@ const ProjectDetailsCreate = () => {
                       [i]
                       {showTooltip && (
                         <span className="tooltip-text">
-                          Max Upload Size 50 MB
+                          Max Upload Size 3 MB
                         </span>
                       )}
                     </span>
@@ -2003,6 +2003,9 @@ const ProjectDetailsCreate = () => {
                     onChange={(list) => handleImageUploaded(list, "image")}
                     variant="custom"
                   />
+                   <small className="form-text text-muted">
+                        Required ratio must be 9:16
+                      </small>
 
                   <ImageCropper
                     open={dialogOpen.image}
@@ -2024,12 +2027,12 @@ const ProjectDetailsCreate = () => {
                       setDialogOpen((prev) => ({ ...prev, image: false }));
                       setPendingImageUpload([]);
                     }}
-                    requiredRatios={[16 / 9, 1, 9 / 16]}
+                      requiredRatios={[16 / 9, 1, 9 / 16]}
+                    requiredRatioLabel="9:16"
                     allowedRatios={[
                       { label: "16:9", ratio: 16 / 9 },
-                      { label: "1:1", ratio: 1 },
                       { label: "9:16", ratio: 9 / 16 },
-
+                      { label: "1:1", ratio: 1 },
                     ]}
                   />
 
@@ -2040,8 +2043,8 @@ const ProjectDetailsCreate = () => {
                     <img
                       src={URL.createObjectURL(formData.image[0])}
                       alt="Preview"
-                      className="object-cover rounded border"
-                      style={{ width: "200px", height: "100px" }}
+                      className="img-fluid rounded"
+                      style={{ maxWidth: "100px", maxHeight: "100px",  objectFit: "cover" }}
                     />
                   </div>
                 )}
@@ -3096,6 +3099,7 @@ const ProjectDetailsCreate = () => {
           </div>
         </div>
 
+          {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
             <h3 className="card-title">Plans</h3>
@@ -3230,6 +3234,7 @@ const ProjectDetailsCreate = () => {
 
           </div>
         </div>
+         )}
 
         {/* file Upload */}
         <div className="card mt-3 pb-4 mx-4">
@@ -3251,7 +3256,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                        Max Upload Size 3 MB and Required ratio is 16:9
                       </span>
                     )}
                   </span>
@@ -3312,8 +3317,10 @@ const ProjectDetailsCreate = () => {
                     }
                     setDialogOpen((prev) => ({ ...prev, cover_images: false }));
                   }}
-                  requiredRatios={[9 / 16]}
+                  requiredRatios={[9 / 16, 1, 16 / 9]}
+                  requiredRatioLabel="16:9"
                   allowedRatios={[
+                    { label: "16:9", ratio: 16 / 9 },
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
                   ]}
@@ -3376,7 +3383,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                         Max Upload Size 3 MB and Required ratio is 16:9
                       </span>
                     )}
                   </span>
@@ -3434,11 +3441,13 @@ const ProjectDetailsCreate = () => {
                     }));
                   }}
 
-                  requiredRatios={[16 / 9]}
+                 requiredRatios={[16 / 9, 1, 9 / 16]}
+                  requiredRatioLabel="16:9"
                   allowedRatios={[
+                    { label: "16:9", ratio: 16 / 9 },
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
-                    { label: "16:9", ratio: 16 / 9 },
+                    
                   ]}
                 />
                 {/* <input
@@ -3526,7 +3535,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 50 MB
+                        Max Upload Size 5 MB
                       </span>
                     )}
                   </span>
@@ -3610,7 +3619,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 50 MB
+                        Max Upload Size 5 MB
                       </span>
                     )}
                   </span>
@@ -3691,7 +3700,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                        Max Upload Size 3 MB and Required ratio is 16:9
                       </span>
                     )}
                   </span>
@@ -3751,11 +3760,13 @@ const ProjectDetailsCreate = () => {
                     }
                     setDialogOpen((prev) => ({ ...prev, two_d_images: false }));
                   }}
-                  requiredRatios={[16 / 9]}
+                  requiredRatios={[16 / 9, 1, 9 / 16]}
+                   requiredRatioLabel="16:9"
                   allowedRatios={[
                     { label: "16:9", ratio: 16 / 9 },
+                    { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
-                    { label: "3:2", ratio: 3 / 2 },
+                    
                   ]}
                 />
               </div>
@@ -3817,7 +3828,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                        Max Upload Size 3 MB
                       </span>
                     )}
                   </span>
@@ -3914,7 +3925,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                        Max Upload Size 3 MB
                       </span>
                     )}
                   </span>
@@ -4011,7 +4022,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                        Max Upload Size 3 MB
                       </span>
                     )}
                   </span>
@@ -4114,7 +4125,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                        Max Upload Size 3 MB
                       </span>
                     )}
                   </span>
@@ -4214,7 +4225,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                        Max Upload Size 3 MB
                       </span>
                     )}
                   </span>
@@ -4311,7 +4322,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                        Max Upload Size 3 MB
                       </span>
                     )}
                   </span>
@@ -4408,7 +4419,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 50 MB
+                        Max Upload Size 5 MB
                       </span>
                     )}
                   </span>
@@ -4504,7 +4515,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 100 MB
+                        Max Upload Size 10 MB
                       </span>
                     )}
                   </span>
