@@ -16,8 +16,9 @@ const ProjectBannerUpload = ({
   enableCropping = true,
   initialImages = [],
   onContinue = null,
-  showAsModal = false, // New prop to control modal behavior
-  onClose = () => { } // New prop for closing the modal
+  showAsModal = false,
+  onClose = () => { },
+  includeInvalidRatios = false // New prop to control whether invalid ratio images are included
 }) => {
   const [uploadedImages, setUploadedImages] = useState(initialImages);
   const [selectedRatio, setSelectedRatio] = useState(null);
@@ -192,9 +193,14 @@ const ProjectBannerUpload = ({
             <div className="continue-section">
               <button
                 className="continue-btn"
-                onClick={() => onContinue?.(uploadedImages)}
+                onClick={() => {
+                  const imagesToContinue = includeInvalidRatios
+                    ? uploadedImages
+                    : uploadedImages.filter(img => img.isValidRatio);
+                  onContinue?.(imagesToContinue);
+                }}
               >
-                Continue ({uploadedImages.length} image{uploadedImages.length !== 1 ? 's' : ''} uploaded)
+                Continue ({(includeInvalidRatios ? uploadedImages : uploadedImages.filter(img => img.isValidRatio)).length} image{(includeInvalidRatios ? uploadedImages : uploadedImages.filter(img => img.isValidRatio)).length !== 1 ? 's' : ''} uploaded)
               </button>
             </div>
           </div>
@@ -208,7 +214,7 @@ const ProjectBannerUpload = ({
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close-btn" onClick={onClose}>
-          &times;
+          ×
         </button>
         {modalContent}
         <style jsx>{`
@@ -255,7 +261,6 @@ const ProjectBannerUpload = ({
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           }
 
-          /* Existing styles from your component */
           .upload-header {
             margin-bottom: 30px;
           }
@@ -293,9 +298,7 @@ const ProjectBannerUpload = ({
           }
 
           .ratio-upload-area {
-            border: 2px dashed
-
- #d1d5db;
+            border: 2px dashed #d1d5db;
             border-radius: 8px;
             background: white;
             cursor: pointer;
@@ -500,13 +503,10 @@ const ProjectBannerUpload = ({
         .project-banner-upload {
           max-width: 1200px;
           margin: 0 auto;
-         padding: 20px 0;
-
-
+          padding: 20px 0;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* Existing styles repeated for non-modal view */
         .upload-header {
           margin-bottom: 30px;
         }

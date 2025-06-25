@@ -3377,7 +3377,8 @@ const ProjectDetailsCreate = () => {
 
                 {showUploader && (
                   <ProjectBannerUpload
-                  onClose={() => setShowUploader(false)}
+                    onClose={() => setShowUploader(false)}
+                    includeInvalidRatios={false}
                     showAsModal={true}
                     label="Project Cover Image"
                     description="Supports 16:9, 9:16, 1:1, 3:2 ratios"
