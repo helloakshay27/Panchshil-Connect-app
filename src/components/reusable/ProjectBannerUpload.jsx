@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Trash2 } from 'lucide-react';
+import { Upload, Trash2, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ImageCropperr from './import ImageCropper from \'./ImageCropper\'; /ImageCropperr';
 
@@ -18,7 +18,7 @@ const ProjectBannerUpload = ({
   onContinue = null,
   showAsModal = false,
   onClose = () => { },
-  includeInvalidRatios = false // New prop to control whether invalid ratio images are included
+  includeInvalidRatios = false 
 }) => {
   const [uploadedImages, setUploadedImages] = useState(initialImages);
   const [selectedRatio, setSelectedRatio] = useState(null);
@@ -103,7 +103,6 @@ const ProjectBannerUpload = ({
     onImagesChange(updated);
   };
 
-  // Modal content
   const modalContent = (
     <div className="project-banner-upload">
       <div className="upload-header">
@@ -111,7 +110,6 @@ const ProjectBannerUpload = ({
         <p>{description}</p>
       </div>
 
-      {/* Ratio Grid */}
       <div className="ratio-grid">
         {ratios.map((ratio) => (
           <div key={ratio.label} className="ratio-card">
@@ -133,16 +131,14 @@ const ProjectBannerUpload = ({
         ))}
       </div>
 
-      {/* Hidden File Input */}
       <input
-        ref={fileInputRef}
         type="file"
+        ref={fileInputRef}
         accept="image/*"
         onChange={handleFileSelect}
         style={{ display: 'none' }}
       />
 
-      {/* Image Cropper */}
       {showCropper && cropperImage && (
         <ImageCropperr
           open={showCropper}
@@ -153,7 +149,6 @@ const ProjectBannerUpload = ({
         />
       )}
 
-      {/* Uploaded Images */}
       {uploadedImages.length > 0 && (
         <>
           <div className="section-divider" />
@@ -169,7 +164,10 @@ const ProjectBannerUpload = ({
                     <img src={image.preview} alt={image.name} />
                   </div>
                   <div className="image-info">
-                    <div className="image-name">{image.name}</div>
+                    <div className="image-name">
+                      {image.name}
+                      {image.isValidRatio && <CheckCircle size={16} className="valid-tick" />}
+                    </div>
                     <div className="image-details">
                       <span className="image-ratio">{image.ratio}</span>
                       <span className="image-size">{image.size.toFixed(2)} MB</span>
@@ -209,7 +207,6 @@ const ProjectBannerUpload = ({
     </div>
   );
 
-  // Render as modal or regular component
   return showAsModal ? (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -311,7 +308,7 @@ const ProjectBannerUpload = ({
           }
 
           .ratio-upload-area:hover {
-            border-color: #6366f1;
+            border-color: #de7007;
             background: #f8faff;
           }
 
@@ -325,7 +322,7 @@ const ProjectBannerUpload = ({
           }
 
           .ratio-upload-area:hover .upload-placeholder {
-            color: #6366f1;
+            color: #de7007;
           }
 
           .ratio-label {
@@ -401,6 +398,13 @@ const ProjectBannerUpload = ({
             color: #374151;
             margin-bottom: 4px;
             word-break: break-word;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+
+          .valid-tick {
+            color: #22c55e;
           }
 
           .image-details {
@@ -459,7 +463,7 @@ const ProjectBannerUpload = ({
           }
 
           .continue-btn {
-            background: #6366f1;
+            background: #de7007;
             color: white;
             border: none;
             padding: 12px 24px;
@@ -470,7 +474,7 @@ const ProjectBannerUpload = ({
           }
 
           .continue-btn:hover {
-            background: #5048e5;
+            background: #de7007;
           }
 
           @media (max-width: 768px) {
@@ -647,6 +651,13 @@ const ProjectBannerUpload = ({
           color: #374151;
           margin-bottom: 4px;
           word-break: break-word;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .valid-tick {
+          color: #22c55e;
         }
 
         .image-details {
@@ -705,7 +716,7 @@ const ProjectBannerUpload = ({
         }
 
         .continue-btn {
-          background: #6366f1;
+          background: #de7007;
           color: white;
           border: none;
           padding: 12px 24px;
@@ -716,7 +727,7 @@ const ProjectBannerUpload = ({
         }
 
         .continue-btn:hover {
-          background: #5048e5;
+          background: #de7007;
         }
 
         @media (max-width: 768px) {
