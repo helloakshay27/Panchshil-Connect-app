@@ -311,7 +311,7 @@ const BannerList = () => {
                               {/* <td>Lockated, Pune</td>
                               <td>{banner.company_name || "No Name"}</td> */}
                               <td>{banners_list.title || "-"}</td>
-                              <td
+                              {/* <td
                                 className="text-center"
                                 style={{
                                   border: "1px solid #ddd",
@@ -358,7 +358,63 @@ const BannerList = () => {
                                     }}
                                   />
                                 )}
-                              </td>
+                              </td> */}<td
+  className="text-center"
+  style={{
+    border: "1px solid #ddd",
+    padding: "5px",
+    verticalAlign: "middle",
+  }}
+>
+  {[
+    { key: "banner_video_16_by_9", ratio: "16:9"},
+    { key: "banner_video_9_by_16", ratio: "9:16"},
+    { key: "banner_video_1_by_1", ratio: "1:1"},
+    { key: "banner_video_3_by_2", ratio: "3:2"},
+  ]
+    .filter(item => banners_list?.[item.key]) // Filter out null fields
+    .map((item) => {
+      const media = banners_list[item.key];
+      const isVideo = media?.document_content_type?.startsWith("video/");
+      const url = media?.document_url || "-";
+
+      return (
+        <div key={item.key} style={{ marginBottom: "10px" }}>
+          {isVideo ? (
+            <video
+              width="100"
+                                    height="65"
+              autoPlay
+              muted
+              loop
+              playsInline
+              style={{
+                display: "block",
+                borderRadius: "8px",
+                objectFit: "cover",
+              }}
+            >
+              <source src={url} type={media?.document_content_type} />
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <img
+              src={url}
+              className="img-fluid rounded"
+              alt={banners_list?.title || `Banner ${item.ratio}`}
+              style={{
+                maxWidth: "100px",
+                maxHeight: "100px",
+                display: "block",
+                objectFit: "cover",
+              }}
+            />
+          )}
+          
+        </div>
+      );
+    })}
+</td>
 
                               <td>
                                 <button

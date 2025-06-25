@@ -3311,11 +3311,8 @@ const ProjectDetailsCreate = () => {
                   variant="button"
                   btntext="+ Add"
                 />
-<<<<<<< HEAD
-=======
 
 
->>>>>>> cropperModel
                 <ImageCropper
                   open={dialogOpen.cover_images}
                   image={coverImageUpload?.[0]?.dataURL}
@@ -3384,6 +3381,7 @@ const ProjectDetailsCreate = () => {
                   <ProjectBannerUpload
                     onClose={() => setShowUploader(false)}
                     includeInvalidRatios={false}
+                    selectedRatioProp={['3:2']}
                     showAsModal={true}
                     label="Project Cover Image"
                     description="Supports 16:9, 9:16, 1:1, 3:2 ratios"

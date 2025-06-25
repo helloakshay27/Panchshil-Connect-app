@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Trash2, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import ImageCropperr from './import ImageCropper from \'./ImageCropper\'; /ImageCropperr';
+import ImageCropperr from './ImageCropperr';
 
 const ProjectBannerUpload = ({
   label = 'Upload Images',
@@ -12,13 +12,14 @@ const ProjectBannerUpload = ({
     { label: '1:1', ratio: 1, width: 150, height: 150 },
     { label: '3:2', ratio: 3 / 2, width: 180, height: 120 }
   ],
-  onImagesChange = () => { },
+  onImagesChange = () => {},
   enableCropping = true,
   initialImages = [],
   onContinue = null,
   showAsModal = false,
-  onClose = () => { },
-  includeInvalidRatios = false 
+  onClose = () => {},
+  includeInvalidRatios = false,
+  selectedRatioProp = []
 }) => {
   const [uploadedImages, setUploadedImages] = useState(initialImages);
   const [selectedRatio, setSelectedRatio] = useState(null);
@@ -26,7 +27,7 @@ const ProjectBannerUpload = ({
   const [showCropper, setShowCropper] = useState(false);
   const fileInputRef = useRef(null);
 
-  console.log(uploadedImages);
+  console.log('Uploaded images:', uploadedImages);
 
   const handleRatioClick = (ratio) => {
     setSelectedRatio(ratio);
@@ -103,6 +104,28 @@ const ProjectBannerUpload = ({
     onImagesChange(updated);
   };
 
+  // Filter ratios to display based on selectedRatioProp
+  const displayedRatios = selectedRatioProp.length > 0
+    ? ratios.filter(ratio => selectedRatioProp.includes(ratio.label))
+    : ratios;
+
+  // Filter images to display based on selectedRatioProp
+  const displayedImages = selectedRatioProp.length > 0
+    ? uploadedImages.filter(img => selectedRatioProp.includes(img.ratio))
+    : uploadedImages;
+
+  // Determine which ratios have valid uploaded images
+  const uploadedRatios = new Set(
+    uploadedImages.filter(img => img.isValidRatio).map(img => img.ratio)
+  );
+
+  // Check if all required ratios have valid images
+  const areAllRatiosUploaded = selectedRatioProp.length > 0 &&
+    selectedRatioProp.every(ratio => uploadedRatios.has(ratio));
+
+  // Find missing ratios
+  const missingRatios = selectedRatioProp.filter(ratio => !uploadedRatios.has(ratio));
+
   const modalContent = (
     <div className="project-banner-upload">
       <div className="upload-header">
@@ -111,24 +134,40 @@ const ProjectBannerUpload = ({
       </div>
 
       <div className="ratio-grid">
-        {ratios.map((ratio) => (
-          <div key={ratio.label} className="ratio-card">
-            <div
-              className="ratio-upload-area"
-              style={{
-                width: ratio.width,
-                height: ratio.height,
-                aspectRatio: ratio.ratio
-              }}
-              onClick={() => handleRatioClick(ratio)}
-            >
-              <div className="upload-placeholder">
-                <Upload size={24} />
+        {displayedRatios.map((ratio) => {
+          const isValidUploaded = uploadedRatios.has(ratio.label);
+          return (
+            <div key={ratio.label} className="ratio-card">
+              <div
+                className={`ratio-upload-area ${isValidUploaded ? 'disabled' : ''}`}
+                style={{
+                  width: ratio.width,
+                  height: ratio.height,
+                  aspectRatio: ratio.ratio,
+                  position: 'relative'
+                }}
+                onClick={() => !isValidUploaded && handleRatioClick(ratio)}
+              >
+                <div className="upload-placeholder">
+                  <Upload size={24} />
+                </div>
+                {isValidUploaded && (
+                  <CheckCircle
+                    size={24}
+                    className="ratio-tick"
+                    style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '10px',
+                      color: 'green'
+                    }}
+                  />
+                )}
               </div>
+              <div className="ratio-label">{ratio.label}</div>
             </div>
-            <div className="ratio-label">{ratio.label}</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <input
@@ -149,13 +188,13 @@ const ProjectBannerUpload = ({
         />
       )}
 
-      {uploadedImages.length > 0 && (
+      {displayedImages.length > 0 && (
         <>
           <div className="section-divider" />
           <div className="uploaded-section">
             <h3>Uploaded Images</h3>
             <div className="uploaded-images">
-              {uploadedImages.map((image) => (
+              {displayedImages.map((image) => (
                 <div
                   key={image.id}
                   className={`uploaded-image-card ${!image.isValidRatio ? 'invalid' : 'valid'}`}
@@ -192,13 +231,31 @@ const ProjectBannerUpload = ({
               <button
                 className="continue-btn"
                 onClick={() => {
-                  const imagesToContinue = includeInvalidRatios
-                    ? uploadedImages
-                    : uploadedImages.filter(img => img.isValidRatio);
-                  onContinue?.(imagesToContinue);
+                  if (onContinue) {
+                    if (!areAllRatiosUploaded && missingRatios.length > 0) {
+                      const message = missingRatios.length === 1
+                        ? `Missing required ratio: ${missingRatios[0]}`
+                        : `Missing required ratios: ${missingRatios.join(', ')}`;
+                      toast.error(message);
+                      return;
+                    }
+                    if (areAllRatiosUploaded) {
+                      const imagesToContinue = selectedRatioProp.length > 0
+                        ? uploadedImages.filter(img => selectedRatioProp.includes(img.ratio) && img.isValidRatio)
+                        : (includeInvalidRatios
+                          ? uploadedImages
+                          : uploadedImages.filter(img => img.isValidRatio));
+                      onContinue(imagesToContinue);
+                    }
+                  }
                 }}
+                disabled={!areAllRatiosUploaded}
               >
-                Continue ({(includeInvalidRatios ? uploadedImages : uploadedImages.filter(img => img.isValidRatio)).length} image{(includeInvalidRatios ? uploadedImages : uploadedImages.filter(img => img.isValidRatio)).length !== 1 ? 's' : ''} uploaded)
+                Continue ({(selectedRatioProp.length > 0
+                  ? uploadedImages.filter(img => selectedRatioProp.includes(img.ratio) && img.isValidRatio)
+                  : (includeInvalidRatios ? uploadedImages : uploadedImages.filter(img => img.isValidRatio))).length} image{(selectedRatioProp.length > 0
+                    ? uploadedImages.filter(img => selectedRatioProp.includes(img.ratio) && img.isValidRatio)
+                    : (includeInvalidRatios ? uploadedImages : uploadedImages.filter(img => img.isValidRatio))).length !== 1 ? 's' : ''} uploaded)
               </button>
             </div>
           </div>
@@ -323,6 +380,20 @@ const ProjectBannerUpload = ({
 
           .ratio-upload-area:hover .upload-placeholder {
             color: #de7007;
+          }
+
+          .ratio-upload-area.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f0f0f0;
+          }
+
+          .ratio-upload-area.disabled .upload-placeholder {
+            pointer-events: none;
+          }
+
+          .ratio-tick {
+            z-index: 10;
           }
 
           .ratio-label {
@@ -561,7 +632,7 @@ const ProjectBannerUpload = ({
         }
 
         .ratio-upload-area:hover {
-          border-color: #6366f1;
+          border-color: #de7007;
           background: #f8faff;
         }
 
@@ -575,7 +646,21 @@ const ProjectBannerUpload = ({
         }
 
         .ratio-upload-area:hover .upload-placeholder {
-          color: #6366f1;
+          color: #de7007;
+        }
+
+        .ratio-upload-area.disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          background-color: #f0f0f0;
+        }
+
+        .ratio-upload-area.disabled .upload-placeholder {
+          pointer-events: none;
+        }
+
+        .ratio-tick {
+          z-index: 10;
         }
 
         .ratio-label {

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
-import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const BannerAdd = () => {
   const navigate = useNavigate();
@@ -16,24 +16,23 @@ const BannerAdd = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [previewImg, setPreviewImg] = useState(null);
-  const [previewVideo, setPreviewVideo] = useState(null);
   const [showVideoTooltip, setShowVideoTooltip] = useState(false);
-  const [image, setImage] = useState(null); // Changed to single file object
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [videoKey, setVideoKey] = useState(Date.now());
-  const [fileType, setFileType] = useState(null); // Tracks if the file is image or video
+  const [image, setImage] = useState(null);
+  const [showUploader, setShowUploader] = useState(false);
+  const [selectedRatio, setSelectedRatio] = useState(null);
 
   const [formData, setFormData] = useState({
-    banner_type: "",
-    banner_redirect: "",
-    project_id: "",
+    banner_type: null,
+    banner_redirect: null,
+    project_id: null,
     title: "",
-    banner_video: [],
-    active: true,
+    banner_video: null,
+    banner_video_1_by_1: null,
+    banner_video_9_by_16: null,
+    banner_video_16_by_9: null,
+    banner_video_3_by_2: null,
+    active: null,
   });
-
-  console.log("formData", formData);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -54,17 +53,8 @@ const BannerAdd = () => {
 
     fetchProjects();
 
-    // Cleanup ObjectURLs on component unmount
     return () => {
-      if (previewVideo) {
-        URL.revokeObjectURL(previewVideo);
-      }
-      if (previewImg) {
-        URL.revokeObjectURL(previewImg);
-      }
-      if (image?.data_url) {
-        URL.revokeObjectURL(image.data_url);
-      }
+      if (previewImg) URL.revokeObjectURL(previewImg);
     };
   }, []);
 
@@ -72,90 +62,43 @@ const BannerAdd = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const handleCropComplete = (croppedList) => {
+    const cropped = croppedList?.[0];
+    if (cropped && cropped.file) {
+      const file = cropped.file;
+      const objectURL = URL.createObjectURL(file);
 
-    const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/bmp", "image/tiff", "image/gif"];
-    const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"];
+      setPreviewImg(objectURL);
 
-    const sizeInMB = file.size / (1024 * 1024);
+      const ratioString = cropped.ratio; // expected to be "9:16", etc.
+      setSelectedRatio(ratioString);
 
-    const isImage = allowedImageTypes.includes(file.type);
-    const isVideo = allowedVideoTypes.includes(file.type);
-
-    if (!isImage && !isVideo) {
-      toast.error("❌ Please upload a valid image or video file.");
-      setImage(null);
-      setFileType(null);
-      return;
-    }
-
-    if (isImage && sizeInMB > 3) {
-      toast.error("❌ Image size must be less than 3MB.");
-      setImage(null);
-      setFileType(null);
-      return;
-    }
-
-    if (isVideo && sizeInMB > 20) {
-      toast.error("❌ Video size must be less than 20MB.");
-      setImage(null);
-      setFileType(null);
-      return;
-    }
-
-    // Revoke previous ObjectURLs
-    if (previewVideo) {
-      URL.revokeObjectURL(previewVideo);
-    }
-    if (previewImg) {
-      URL.revokeObjectURL(previewImg);
-    }
-    if (image?.data_url) {
-      URL.revokeObjectURL(image.data_url);
-    }
-
-    setFileType(isVideo ? "video" : "image");
-    setImage({ file, data_url: URL.createObjectURL(file) });
-
-    if (isVideo) {
-      setPreviewVideo(URL.createObjectURL(file));
-      setFormData((prev) => ({ ...prev, banner_video: file }));
-      setPreviewImg(null);
-      setVideoKey(Date.now());
-    } else if (isImage) {
-      setDialogOpen(true); // Open ImageCropper for all images
-      setPreviewVideo(null);
-      setPreviewImg(null); // Clear preview until cropping is done
-    }
-
-    console.log("File:", file);
-    console.log("Is Video:", isVideo);
-    console.log("File Type:", fileType);
-  };
-
-  const handleCropComplete = (cropped) => {
-    if (cropped) {
-      setCroppedImage(cropped.base64);
-      setPreviewImg(cropped.base64);
-      setFormData((prev) => ({ ...prev, banner_video: cropped.file }));
+      setFormData((prev) => ({
+        ...prev,
+        banner_video: file,
+        banner_video_1_by_1: ratioString === "1:1" ? file : null,
+        banner_video_9_by_16: ratioString === "9:16" ? file : null,
+        banner_video_16_by_9: ratioString === "16:9" ? file : null,
+        banner_video_3_by_2: ratioString === "3:2" ? file : null,
+      }));
     } else {
-      // Reset image state and clear the input on cancel
       setImage(null);
       setPreviewImg(null);
-      setFormData((prev) => ({ ...prev, banner_video: null }));
-      // Optionally reset the file input value (though this is tricky due to security restrictions)
-      const fileInput = document.querySelector('input[type="file"]');
-      if (fileInput) {
-        fileInput.value = ''; // This may not work in all browsers due to security
-      }
+      setSelectedRatio(null);
+      setFormData((prev) => ({
+        ...prev,
+        banner_video: null,
+        banner_video_1_by_1: null,
+        banner_video_9_by_16: null,
+        banner_video_16_by_9: null,
+        banner_video_3_by_2: null,
+      }));
     }
-    setDialogOpen(false);
+
+    setShowUploader(false);
   };
 
   const validateForm = () => {
-    const newErrors = {};
     if (!formData.title.trim()) {
       toast.error("Title is mandatory");
       setErrors({ title: "Title is required" });
@@ -172,6 +115,39 @@ const BannerAdd = () => {
     return true;
   };
 
+  const getFileInfo = (file) => {
+    if (!file || !(file instanceof File)) return null;
+    return {
+      id: Math.floor(Math.random() * 10000),
+      document_file_name: file.name,
+      document_content_type: file.type,
+      size: file.size,
+    };
+  };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (!validateForm()) return;
+
+  //   const finalMockData = {
+  //     id: "",
+  //     title: formData.title,
+  //     project_id: formData.project_id,
+  //     banner_type: formData.banner_type,
+  //     banner_redirect: formData.banner_redirect,
+  //     active: formData.active,
+  //     company_id: null,
+  //     company_name: null,
+  //     video_url: null,
+  //     video_preview_image_url: null,
+  //     banner_video_1_by_1: getFileInfo(formData.banner_video_1_by_1),
+  //     banner_video_9_by_16: getFileInfo(formData.banner_video_9_by_16),
+  //     banner_video_16_by_9: getFileInfo(formData.banner_video_16_by_9),
+  //     banner_video_3_by_2: getFileInfo(formData.banner_video_3_by_2),
+  //   };
+
+  //   console.log("🟢 Mock Submission Data:", finalMockData);
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -186,10 +162,29 @@ const BannerAdd = () => {
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
 
-      if (image?.file instanceof File) {
-        sendData.append("banner[banner_video]", image.file);
+      const ratioToFileMap = {
+        "1:1": formData.banner_video_1_by_1,
+        "9:16": formData.banner_video_9_by_16,
+        "16:9": formData.banner_video_16_by_9,
+        "3:2": formData.banner_video_3_by_2,
+      };
+
+      const ratioToFieldMap = {
+        "1:1": "banner[banner_video_1_by_1]",
+        "9:16": "banner[banner_video_9_by_16]",
+        "16:9": "banner[banner_video_16_by_9]",
+        "3:2": "banner[banner_video_3_by_2]",
+      };
+
+      const selectedFile = ratioToFileMap[selectedRatio];
+      const backendKey = ratioToFieldMap[selectedRatio];
+
+      if (selectedFile instanceof File && backendKey) {
+        sendData.append(backendKey, selectedFile);
       } else {
-        sendData.append("banner[banner_video]", formData.banner_video);
+        toast.error("No valid banner image selected.");
+        setLoading(false);
+        return;
       }
 
       await axios.post(`${baseURL}banners.json`, sendData, {
@@ -202,7 +197,7 @@ const BannerAdd = () => {
       toast.success("Banner created successfully");
       navigate("/banner-list");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error(`Error creating banner: ${error.message}`);
     } finally {
       setLoading(false);
@@ -215,39 +210,32 @@ const BannerAdd = () => {
 
   return (
     <div className="main-content">
-      <style>
-        {`
-  input[type="file"]::-webkit-file-upload-button {
-    background: #f1f5f9;
-    color: #1f2937;
-    padding: 8px 16px;
-    margin: 0;
-    margin-right: 12px; /* ← added space between button and label */
-    border: none;
-    border-right: 1px solid #cbd5e0;
-    border-radius: 5px 0 0 5px;
-    cursor: pointer;
-    font-weight: 500;
-  }
+      <style jsx>{`
+        .btn-primary {
+          background: #f1f5f9;
+          color: #1f2937;
+          padding: 8px 16px;
+          border: 1px solid #cbd5e0;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: 500;
+          margin-left: 10px;
+          height: 38px;
+          display: inline-flex;
+          align-items: center;
+        }
+        .btn-primary:hover {
+          background: #e2e8f0;
+        }
+      `}</style>
 
-  input[type="file"] {
-    border: 1px solid #cbd5e0;
-    border-radius: 6px;
-    padding: 0;
-    font-family: sans-serif;
-    color: #374151;
-    height: 38px;
-    margin-left: 10px;
-  }
-`}
-
-      </style>
       <div className="website-content overflow-hidden">
         <div className="module-data-section">
           <div className="card mt-4 pb-4 mx-4">
             <div className="card-header">
               <h3 className="card-title">Create Banner</h3>
             </div>
+
             <div className="card-body">
               <div className="row">
                 {/* Title */}
@@ -286,7 +274,7 @@ const BannerAdd = () => {
                   </div>
                 </div>
 
-                {/* Banner Attachment Upload */}
+                {/* Banner Upload */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -298,63 +286,32 @@ const BannerAdd = () => {
                       >
                         [i]
                         {showVideoTooltip && (
-                          <span className="tooltip-text">9:16 or 1:1 Format Should Only Be Allowed</span>
+                          <span className="tooltip-text">1:1 or 9:16 Format Should Be Used</span>
                         )}
                       </span>
                     </label>
 
-                    {/* Always show input field */}
-                    <input
-                      key={dialogOpen ? "cropper-open" : "cropper-closed"} // Forces re-render on dialog state change
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff,image/gif,video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-flv"
-                      onChange={handleFileUpload}
-                    />
+                    <span
+                      className="d-inline-block btn btn-primary mt-2"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setShowUploader(true)}
+                    >
+                      Choose Banner Image
+                    </span>
 
-                    {/* Preview for video */}
-                    {fileType === "video" && previewVideo && (
-                      <div className="mt-2">
-                        <video
-                          key={videoKey}
-                          autoPlay
-                          muted
-                          controls
-                          src={previewVideo}
-                          style={{
-                            maxWidth: "100px",
-                            maxHeight: "100px",
-                            objectFit: "cover",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          Your browser does not support the video tag.
-                        </video>
-                      </div>
-                    )}
-
-                    {/* Image cropper will show if dialogOpen is true */}
-                    {fileType === "image" && image && (
-                      <ImageCropper
-                        open={dialogOpen}
-                        image={image.data_url}
-                        onComplete={handleCropComplete}
-                        requiredRatios={[1, 9 / 16, 16 / 9]}
-                        requiredRatioLabel="1:1 or 9:16"
-                        allowedRatios={[
-                          { label: "16:9", ratio: 16 / 9 },
-                          { label: "9:16", ratio: 9 / 16 },
-                          { label: "1:1", ratio: 1 },
-                        ]}
-                        containerStyle={{
-                          position: "relative",
-                          width: "100%",
-                          height: 300,
-                          background: "#fff",
-                        }}
+                    {showUploader && (
+                      <ProjectBannerUpload
+                        onClose={() => setShowUploader(false)}
+                        includeInvalidRatios={false}
+                        selectedRatioProp={["1:1"]}
+                        showAsModal={true}
+                        label="Banner Image"
+                        description="Supports 1:1 and 9:16 ratios"
+                        onContinue={handleCropComplete}
                       />
                     )}
 
-                    {/* Preview for image */}
                     {previewImg && (
                       <div className="mt-2">
                         <img
@@ -365,18 +322,18 @@ const BannerAdd = () => {
                             maxWidth: "100px",
                             maxHeight: "100px",
                             objectFit: "cover",
+                            border: "1px solid #ddd",
                           }}
                         />
                       </div>
                     )}
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
 
-          {/* Buttons */}
+          {/* Submit/Cancel Buttons */}
           <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
               <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
