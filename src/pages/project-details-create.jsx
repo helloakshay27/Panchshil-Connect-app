@@ -131,6 +131,64 @@ const ProjectDetailsCreate = () => {
     plan_images: false,
   });
 
+  const bannerUploadConfig = {
+    'cover image': ['1:1'],
+    'gallery image': ['16:9'],
+    'square image': ['1:1'],
+  };
+
+
+  const currentUploadType = 'cover image'; // Can be dynamic
+  const currentUploadType1 = 'gallery image'; // Can be dynamic
+  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
+  const selectedRatios1 = bannerUploadConfig[currentUploadType1] || [];
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const dynamicLabel1 = currentUploadType1.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
+  const dynamicDescription1 = `Supports ${selectedRatios1.join(', ')} aspect ratios`;
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCropComplete = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid images selected.");
+      setShowUploader(false);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(':', 'by'); // e.g., "16:9" -> "16by9"
+      const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
+
+      updateFormData(key, [img]); // send as array to preserve consistency
+    });
+
+    // setPreviewImg(validImages[0].preview); // preview first image only
+    setShowUploader(false);
+  };
+
+  const handleCropGallery = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid gallery image selected.");
+      setShowGalleryModal(false);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const ratioKey = img.ratio.replace(":", "by");
+      const key = `gallery_image_${ratioKey}`;
+      updateFormData(key, [img]);
+    });
+
+    setShowGalleryModal(false);
+  };
+
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -949,6 +1007,28 @@ const ProjectDetailsCreate = () => {
       toast.error("Failed to delete plan. Please try again.");
     }
   };
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
 
   const validateForm = (formData) => {
     // Clear previous toasts
@@ -1110,6 +1190,8 @@ const ProjectDetailsCreate = () => {
       //   data.append("project[order_no]", parseInt(value) || null); // Append order_no as null if not provided
       // }
 
+
+
       if (key === "plans") {
         for (const planKey in value) {
           data.append(`project[plans][${planKey}][name]`, value[planKey].name);
@@ -1270,43 +1352,62 @@ const ProjectDetailsCreate = () => {
         data.append("project[project_sales_type][]", value); // Upload file
         // data.append(`project[project_sales_type][]`, type); // Store selected type
         // }
+      }
+      else if (key.startsWith("cover_image_") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField = key.replace("cover image", "cover[cover_image") + "]";
+          // e.g., banner[banner_image_1by1]
+
+          if (img.file instanceof File) {
+            sendData.append(backendField, img.file);
+          }
+        });
+      } else if (key.startsWith("gallery_image_") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField = key.replace("gallery image_", "gallery_image[gallery_image") + "]";
+          // e.g., banner[banner_image_1by1]
+
+          if (img.file instanceof File) {
+            sendData.append(backendField, img.file);
+          }
+        });
       } else {
         data.append(`project[${key}]`, value);
       }
     });
 
-    try {
-      const response = await axios.post(`${baseURL}projects.json`, data, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
+    // try {
+    //   const response = await axios.post(`${baseURL}projects.json`, data, {
+    //     headers: {
+    //       Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    //     },
+    //   });
 
-      console.log(response.data);
-      toast.success("Project submitted successfully");
-      sessionStorage.removeItem("cached_projects");
+    //   console.log(response.data);
+    //   toast.success("Project submitted successfully");
+    //   sessionStorage.removeItem("cached_projects");
 
-      Navigate("/project-list");
-    } catch (error) {
-      // catch (error) {
-      //   console.error("Error submitting the form:", error);
-      //   toast.error("Failed to submit the form. Please try again.");
-      // }
-      console.error("Error submitting the form:", error);
-      if (
-        error.response &&
-        error.response.status === 422 &&
-        error.response.data &&
-        (error.response.data.project_name || error.response.data.Project_Name)
-      ) {
-        toast.error("Project name already exists.");
-      } else {
-        toast.error("Failed to submit the form. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-      setIsSubmitting(false);
-    }
+    //   Navigate("/project-list");
+    // } catch (error) {
+    //   // catch (error) {
+    //   //   console.error("Error submitting the form:", error);
+    //   //   toast.error("Failed to submit the form. Please try again.");
+    //   // }
+    //   console.error("Error submitting the form:", error);
+    //   if (
+    //     error.response &&
+    //     error.response.status === 422 &&
+    //     error.response.data &&
+    //     (error.response.data.project_name || error.response.data.Project_Name)
+    //   ) {
+    //     toast.error("Project name already exists.");
+    //   } else {
+    //     toast.error("Failed to submit the form. Please try again.");
+    //   }
+    // } finally {
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    // }
   };
 
   useEffect(() => {
@@ -3347,11 +3448,13 @@ const ProjectDetailsCreate = () => {
                       <tr>
                         <th>File Name</th>
                         <th>Preview</th>
+                        <th>Ratio</th>
+
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.cover_images?.map((file, index) => (
+                      {formData.cover_image_1by1?.map((file, index) => (
                         <tr key={index}>
                           <td>{file.name}</td>
                           <td>
@@ -3362,11 +3465,13 @@ const ProjectDetailsCreate = () => {
                               alt={file.name}
                             />
                           </td>
+                          <td>{file.ratio}</td>
+
                           <td>
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() => handleDiscardFile("cover_images", index)}
+                              onClick={() => discardImage("cover_image_1by1", file)}
                             >
                               x
                             </button>
@@ -3381,23 +3486,11 @@ const ProjectDetailsCreate = () => {
                   <ProjectBannerUpload
                     onClose={() => setShowUploader(false)}
                     includeInvalidRatios={false}
-                    selectedRatioProp={['3:2']}
+                    selectedRatioProp={selectedRatios}
                     showAsModal={true}
-                    label="Project Cover Image"
-                    description="Supports 16:9, 9:16, 1:1, 3:2 ratios"
-                    onContinue={(cropped) => {
-                      if (cropped) {
-                        const newImages = Array.isArray(cropped) ? cropped : [cropped];
-                        setFormData((prev) => ({
-                          ...prev,
-                          cover_images: Array.isArray(prev.cover_images)
-                            ? [...prev.cover_images, ...newImages]
-                            : [...newImages],
-                        }));
-                      }
-                      setShowUploader(false);
-                    }}
-
+                    label={dynamicLabel}
+                    description={dynamicDescription}
+                    onContinue={handleCropComplete}
                   />
                 )}
               </div>
@@ -3432,53 +3525,36 @@ const ProjectDetailsCreate = () => {
 
                   {/* Add Button */}
                 </div>
-                <ImageUploadingButton
-                  value={galleryImageUpload}
-                  onChange={(list) =>
-                    handleImageUploaded(list, "gallery_image")
-                  }
-                  variant="button"
-                  btntext="+ Add"
-                />
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  type="button"
+                  onClick={() => setShowGalleryModal(true)}
 
-                <ImageCropper
-                  open={dialogOpen.gallery_image}
-                  image={galleryImageUpload?.[0]?.dataURL}
-                  originalFile={galleryImageUpload?.[0]?.file}
-                  onComplete={(cropped) => {
-                    if (cropped && cropped.file instanceof File) {
-                      const newImage = {
-                        gallery_image: cropped.file,
-                        gallery_image_file_name: cropped.file.name,
-                        gallery_image_file_type: selectedCategory || "Gallery",
-                        isDay: true,
-                      };
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
 
-                      setFormData((prev) => ({
-                        ...prev,
-                        gallery_image: Array.isArray(prev.gallery_image)
-                          ? [...prev.gallery_image, newImage]
-                          : [newImage],
-                      }));
-                    } else {
-                      console.warn("No valid cropped file returned");
-                    }
-
-                    setDialogOpen((prev) => ({
-                      ...prev,
-                      gallery_image: false,
-                    }));
-                  }}
-
-                  requiredRatios={[16 / 9, 1, 9 / 16]}
-                  requiredRatioLabel="16:9"
-                  allowedRatios={[
-                    { label: "16:9", ratio: 16 / 9 },
-                    { label: "9:16", ratio: 9 / 16 },
-                    { label: "1:1", ratio: 1 },
-
-                  ]}
-                />
+                {showGalleryModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowGalleryModal(false)}
+                    selectedRatioProp={bannerUploadConfig["gallery image"]}
+                    showAsModal={true}
+                    label="Gallery Image"
+                    description="Supports 16:9 aspect ratio"
+                    onContinue={handleCropGallery}
+                  />
+                )}
                 {/* <input
                   id="gallery_image"
                   type="file"
