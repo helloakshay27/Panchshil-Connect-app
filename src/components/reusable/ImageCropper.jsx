@@ -124,54 +124,6 @@ export const ImageCropper = ({
                             onClick={() => {
                                 toast.dismiss();
 
-                                if (!croppedAreaPixels || !image) return;
-
-                                const requiredLabels = requiredRatios
-                                    .map((r) => allowedRatios.find((ar) => ar.ratio === r)?.label || r.toFixed(2))
-                                    .join(" or ");
-
-                                // if (!isRatioAcceptable(imageRatio, requiredRatios, 0.1)) {
-                                //   alert(`❌ Image must match: ${requiredLabels} (Detected: ${imageRatio?.toFixed(2)})`);
-                                //   return;
-                                // }
-
-                                // if (!isRatioAcceptable(imageRatio, [aspect], 0.25)) {
-                                //   alert(`❌ Cropping not allowed for shape ${aspectLabel}.`);
-                                //   return;
-                                // }
-
-                                // if (!isGridSizeValid()) {
-                                //   alert("❌ Image too small. Minimum 400x225 required.");
-                                //   return;
-                                // }
-
-
-
-                                if (!isRatioAcceptable(imageRatio, requiredRatios, 0.1)) {
-                                    toast.error(
-                                        ` Invalid image.\nOriginal image ratio (${imageRatio?.toFixed(
-                                            2
-                                        )}) must match: ${requiredLabels}`
-                                    );
-                                    return;
-                                }
-
-                                if (!isRatioAcceptable(imageRatio, [aspect], 0.25)) {
-                                    toast.error(
-                                        ` Cannot crop this image as ${aspectLabel}.\nOriginal shape (${imageRatio?.toFixed(
-                                            2
-                                        )}) doesn't fit.`
-                                    );
-                                    return;
-                                }
-
-                                if (!isGridSizeValid()) {
-                                    toast.error(
-                                        " Image too small. Must be at least 400x225 for 16:9."
-                                    );
-                                    return;
-                                }
-
 
                                 const canvas = document.createElement("canvas");
                                 const img = new Image();
