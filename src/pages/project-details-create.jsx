@@ -120,6 +120,8 @@ const ProjectDetailsCreate = () => {
   const [planImages, setPlanImages] = useState([]);
   const [plans, setPlans] = useState([]);
   const [pendingImageUpload, setPendingImageUpload] = useState([]);
+  const [showUploader, setShowUploader] = useState(false);
+
 
   const [dialogOpen, setDialogOpen] = useState({
     image: false,
@@ -501,7 +503,7 @@ const ProjectDetailsCreate = () => {
     }
 
     if (name === "plans") {
-     
+
       setFormData((prev) => ({
         ...prev,
         plans: [...(prev.plans || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
@@ -2004,9 +2006,9 @@ const ProjectDetailsCreate = () => {
                     onChange={(list) => handleImageUploaded(list, "image")}
                     variant="custom"
                   />
-                   <small className="form-text text-muted">
-                        Required ratio must be 9:16
-                      </small>
+                  <small className="form-text text-muted">
+                    Required ratio must be 9:16
+                  </small>
 
                   <ImageCropper
                     open={dialogOpen.image}
@@ -2028,7 +2030,7 @@ const ProjectDetailsCreate = () => {
                       setDialogOpen((prev) => ({ ...prev, image: false }));
                       setPendingImageUpload([]);
                     }}
-                      requiredRatios={[16 / 9, 1, 9 / 16]}
+                    requiredRatios={[16 / 9, 1, 9 / 16]}
                     requiredRatioLabel="9:16"
                     allowedRatios={[
                       { label: "16:9", ratio: 16 / 9 },
@@ -2045,7 +2047,7 @@ const ProjectDetailsCreate = () => {
                       src={URL.createObjectURL(formData.image[0])}
                       alt="Preview"
                       className="img-fluid rounded"
-                      style={{ maxWidth: "100px", maxHeight: "100px",  objectFit: "cover" }}
+                      style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
                     />
                   </div>
                 )}
@@ -3100,142 +3102,142 @@ const ProjectDetailsCreate = () => {
           </div>
         </div>
 
-          {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Plans</h3>
-          </div>
-          <div className="card-body mt-0 pb-0">
-            <div className="row">
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Plans{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 10 MB per image</span>
-                    )}
-                  </span>
-                </h5>
-              </div>
-
-              <div className="row align-items-end">
-                <div className="col-md-3">
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Plan Name (e.g. Ground Floor)"
-                    value={planName}
-                    onChange={(e) => setPlanName(e.target.value)}
-                  />
-                </div>
-
-                <div className="col-md-3">
-                  <input
-                    className="form-control"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
-                  />
-                </div>
-
-
-
-                <div className="col-md-3">
-                  <button
-                    className="purple-btn2"
-                    type="button"
-                    onClick={() => {
-                      if (!planName || planImages.length === 0) {
-                        toast.error("Please enter plan name and select images.");
-                        return;
-                      }
-
-                      const newPlan = { name: planName, images: planImages };
-
-                      setPlans((prev) => [...prev, newPlan]);
-
-                      // ✅ Add to formData.plans
-                      setFormData((prev) => ({
-                        ...prev,
-                        plans: Array.isArray(prev.plans)
-                          ? [...prev.plans, newPlan]
-                          : [newPlan],
-                      }));
-
-                      setPlanName("");
-                      setPlanImages([]);
-                    }}
-                  >
-                    Add Plan
-                  </button>
-                </div>
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>Plan Name</th>
-                        <th>Images</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {plans.map((plan, pIdx) => (
-                        <tr key={pIdx}>
-                          <td>{plan.name}</td>
-                          <td>
-                            {plan.images.map((img, iIdx) => {
-                              let src = "";
-                              if (img instanceof File || img instanceof Blob) {
-                                src = URL.createObjectURL(img);
-                              } else if (typeof img === "string") {
-                                src = img;
-                              } else if (img?.document_url) {
-                                src = img.document_url;
-                              }
-
-                              return (
-                                <img
-                                  key={iIdx}
-                                  src={src}
-                                  alt="Plan"
-                                  style={{
-                                    maxWidth: 60,
-                                    maxHeight: 60,
-                                    marginRight: 5,
-                                  }}
-                                />
-                              );
-                            })}
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handlePlanDelete(plan.id, pIdx)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+        {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+          <div className="card mt-3 pb-4 mx-4">
+            <div className="card-header3">
+              <h3 className="card-title">Plans</h3>
             </div>
+            <div className="card-body mt-0 pb-0">
+              <div className="row">
+                <div className="d-flex justify-content-between align-items-end mx-1">
+                  <h5 className="mt-3">
+                    Project Plans{" "}
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">Max Upload Size 10 MB per image</span>
+                      )}
+                    </span>
+                  </h5>
+                </div>
 
+                <div className="row align-items-end">
+                  <div className="col-md-3">
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Plan Name (e.g. Ground Floor)"
+                      value={planName}
+                      onChange={(e) => setPlanName(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="col-md-3">
+                    <input
+                      className="form-control"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => setPlanImages(Array.from(e.target.files))}
+                    />
+                  </div>
+
+
+
+                  <div className="col-md-3">
+                    <button
+                      className="purple-btn2"
+                      type="button"
+                      onClick={() => {
+                        if (!planName || planImages.length === 0) {
+                          toast.error("Please enter plan name and select images.");
+                          return;
+                        }
+
+                        const newPlan = { name: planName, images: planImages };
+
+                        setPlans((prev) => [...prev, newPlan]);
+
+                        // ✅ Add to formData.plans
+                        setFormData((prev) => ({
+                          ...prev,
+                          plans: Array.isArray(prev.plans)
+                            ? [...prev.plans, newPlan]
+                            : [newPlan],
+                        }));
+
+                        setPlanName("");
+                        setPlanImages([]);
+                      }}
+                    >
+                      Add Plan
+                    </button>
+                  </div>
+                </div>
+
+                <div className="col-md-12 mt-2">
+                  <div className="mt-4 tbl-container">
+                    <table className="w-100">
+                      <thead>
+                        <tr>
+                          <th>Plan Name</th>
+                          <th>Images</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {plans.map((plan, pIdx) => (
+                          <tr key={pIdx}>
+                            <td>{plan.name}</td>
+                            <td>
+                              {plan.images.map((img, iIdx) => {
+                                let src = "";
+                                if (img instanceof File || img instanceof Blob) {
+                                  src = URL.createObjectURL(img);
+                                } else if (typeof img === "string") {
+                                  src = img;
+                                } else if (img?.document_url) {
+                                  src = img.document_url;
+                                }
+
+                                return (
+                                  <img
+                                    key={iIdx}
+                                    src={src}
+                                    alt="Plan"
+                                    style={{
+                                      maxWidth: 60,
+                                      maxHeight: 60,
+                                      marginRight: 5,
+                                    }}
+                                  />
+                                );
+                              })}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handlePlanDelete(plan.id, pIdx)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
-        </div>
-         )}
+        )}
 
         {/* file Upload */}
         <div className="card mt-3 pb-4 mx-4">
@@ -3245,10 +3247,8 @@ const ProjectDetailsCreate = () => {
 
           <div className="card-body">
             <div className="row">
-               <div className="col-12 mb-4">
-      <ProjectBannerUpload />
-    </div>
-              {/* Gallery Section */}
+              <div className="col-12 mb-4">
+              </div>
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Project Cover Image{" "}
@@ -3267,12 +3267,12 @@ const ProjectDetailsCreate = () => {
                   {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
-                {/* <button
+                <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("cover_images").click()
-                  }
+                  type="button"
+                  onClick={() => setShowUploader(true)}
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -3286,7 +3286,11 @@ const ProjectDetailsCreate = () => {
                   </svg>
                   <span>Add</span>
                 </button>
-                <input
+
+
+
+
+                {/* <input
                   id="cover_images"
                   className="form-control"
                   type="file"
@@ -3297,15 +3301,15 @@ const ProjectDetailsCreate = () => {
                   }
                   multiple
                   style={{ display: "none" }}
-                /> */}
+                />  */}
 
-                <ImageUploadingButton
+                {/* <ImageUploadingButton
                   value={coverImageUpload}
                   onChange={(list) => handleImageUploaded(list, "cover_images")}
                   variant="button"
                   btntext="+ Add"
                 />
-                
+
 
                 <ImageCropper
                   open={dialogOpen.cover_images}
@@ -3329,7 +3333,9 @@ const ProjectDetailsCreate = () => {
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
                   ]}
-                />
+                /> */}
+
+
               </div>
 
               <div className="col-md-12 mt-2">
@@ -3343,30 +3349,22 @@ const ProjectDetailsCreate = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* 2D Images */}
-                      {formData.cover_images.map((file, index) => (
+                      {formData.cover_images?.map((file, index) => (
                         <tr key={index}>
-                          <td> {file.name}</td>
+                          <td>{file.name}</td>
                           <td>
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              src={
-                                file.type.startsWith("image")
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt=""
+                              src={file.preview}
+                              alt={file.name}
                             />
                           </td>
-
                           <td>
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardFile("cover_images", index)
-                              }
+                              onClick={() => handleDiscardFile("cover_images", index)}
                             >
                               x
                             </button>
@@ -3376,6 +3374,28 @@ const ProjectDetailsCreate = () => {
                     </tbody>
                   </table>
                 </div>
+
+                {showUploader && (
+                  <ProjectBannerUpload
+                  onClose={() => setShowUploader(false)}
+                    showAsModal={true}
+                    label="Project Cover Image"
+                    description="Supports 16:9, 9:16, 1:1, 3:2 ratios"
+                    onContinue={(cropped) => {
+                      if (cropped) {
+                        const newImages = Array.isArray(cropped) ? cropped : [cropped];
+                        setFormData((prev) => ({
+                          ...prev,
+                          cover_images: Array.isArray(prev.cover_images)
+                            ? [...prev.cover_images, ...newImages]
+                            : [...newImages],
+                        }));
+                      }
+                      setShowUploader(false);
+                    }}
+
+                  />
+                )}
               </div>
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -3388,7 +3408,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                         Max Upload Size 3 MB and Required ratio is 16:9
+                        Max Upload Size 3 MB and Required ratio is 16:9
                       </span>
                     )}
                   </span>
@@ -3446,13 +3466,13 @@ const ProjectDetailsCreate = () => {
                     }));
                   }}
 
-                 requiredRatios={[16 / 9, 1, 9 / 16]}
+                  requiredRatios={[16 / 9, 1, 9 / 16]}
                   requiredRatioLabel="16:9"
                   allowedRatios={[
                     { label: "16:9", ratio: 16 / 9 },
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
-                    
+
                   ]}
                 />
                 {/* <input
@@ -3766,12 +3786,12 @@ const ProjectDetailsCreate = () => {
                     setDialogOpen((prev) => ({ ...prev, two_d_images: false }));
                   }}
                   requiredRatios={[16 / 9, 1, 9 / 16]}
-                   requiredRatioLabel="16:9"
+                  requiredRatioLabel="16:9"
                   allowedRatios={[
                     { label: "16:9", ratio: 16 / 9 },
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
-                    
+
                   ]}
                 />
               </div>
