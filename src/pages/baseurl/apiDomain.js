@@ -15,7 +15,7 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://api-connect.panchshil.com/";
+    baseURL = "https://dev-panchshil-super-app.lockated.com/";
     break;
 
   default:
