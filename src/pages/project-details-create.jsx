@@ -189,6 +189,29 @@ const ProjectDetailsCreate = () => {
     setShowGalleryModal(false);
   };
 
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
+
 
   const errorToastRef = useRef(null);
   const Navigate = useNavigate();
@@ -1007,28 +1030,7 @@ const ProjectDetailsCreate = () => {
       toast.error("Failed to delete plan. Please try again.");
     }
   };
-  const discardImage = (key, imageToRemove) => {
-    setFormData((prev) => {
-      const updatedArray = (prev[key] || []).filter(
-        (img) => img.id !== imageToRemove.id
-      );
 
-      // Remove the key if the array becomes empty
-      const newFormData = { ...prev };
-      if (updatedArray.length === 0) {
-        delete newFormData[key];
-      } else {
-        newFormData[key] = updatedArray;
-      }
-
-      return newFormData;
-    });
-
-    // If the removed image is being previewed, reset previewImg
-    if (previewImg === imageToRemove.preview) {
-      setPreviewImg(null);
-    }
-  };
 
   const validateForm = (formData) => {
     // Clear previous toasts
