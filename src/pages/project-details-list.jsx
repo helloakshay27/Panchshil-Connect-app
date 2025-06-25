@@ -246,7 +246,7 @@ const ProjectDetailsList = () => {
     console.error("Error updating status:", error);
 
     // Show error toast and store its ID
-    const newToastId = toast.error("Project is disabled.", {
+    const newToastId = toast.error("Project is not active or published.", {
       duration: 3000,
       position: "top-center",
       id: `toggle-error-${id}`,
