@@ -1282,6 +1282,8 @@ const ProjectDetailsCreate = () => {
 
       console.log(response.data);
       toast.success("Project submitted successfully");
+      sessionStorage.removeItem("cached_projects");
+
       Navigate("/project-list");
     } catch (error) {
       // catch (error) {

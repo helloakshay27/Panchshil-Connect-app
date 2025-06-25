@@ -65,22 +65,27 @@ const ProjectDetailsList = () => {
   const fetchProjects = async () => {
     setLoading(true);
     const url = `${baseURL}get_projects_all.json`;
+
     try {
       const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
+
       const projectsData = response.data?.projects || [];
       setProjects(projectsData);
+
+      // Optional: save to sessionStorage
+      sessionStorage.setItem("cached_projects", JSON.stringify(projectsData));
 
       setPagination({
         current_page: getPageFromStorage(),
         total_count: projectsData.length,
         total_pages: Math.ceil(projectsData.length / pageSize),
       });
-    } catch (error) {
-      console.error("Error fetching projects:", error);
+    } catch (err) {
+      console.error("Error fetching projects:", err);
       setError("Unable to fetch project data");
     } finally {
       setLoading(false);
@@ -88,7 +93,19 @@ const ProjectDetailsList = () => {
   };
 
   useEffect(() => {
-    fetchProjects();
+    const cached = sessionStorage.getItem("cached_projects");
+
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      setProjects(parsed);
+      setPagination({
+        current_page: getPageFromStorage(),
+        total_count: parsed.length,
+        total_pages: Math.ceil(parsed.length / pageSize),
+      });
+    } else {
+      fetchProjects();
+    }
   }, []);
 
   const handleSearchChange = (e) => {
