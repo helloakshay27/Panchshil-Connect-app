@@ -26,11 +26,7 @@ const BannerAdd = () => {
     banner_redirect: null,
     project_id: null,
     title: "",
-    banner_video: null,
-    banner_video_1_by_1: null,
-    banner_video_9_by_16: null,
-    banner_video_16_by_9: null,
-    banner_video_3_by_2: null,
+
     active: null,
   });
 
@@ -62,41 +58,7 @@ const BannerAdd = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleCropComplete = (croppedList) => {
-    const cropped = croppedList?.[0];
-    if (cropped && cropped.file) {
-      const file = cropped.file;
-      const objectURL = URL.createObjectURL(file);
 
-      setPreviewImg(objectURL);
-
-      const ratioString = cropped.ratio; // expected to be "9:16", etc.
-      setSelectedRatio(ratioString);
-
-      setFormData((prev) => ({
-        ...prev,
-        banner_video: file,
-        banner_video_1_by_1: ratioString === "1:1" ? file : null,
-        banner_video_9_by_16: ratioString === "9:16" ? file : null,
-        banner_video_16_by_9: ratioString === "16:9" ? file : null,
-        banner_video_3_by_2: ratioString === "3:2" ? file : null,
-      }));
-    } else {
-      setImage(null);
-      setPreviewImg(null);
-      setSelectedRatio(null);
-      setFormData((prev) => ({
-        ...prev,
-        banner_video: null,
-        banner_video_1_by_1: null,
-        banner_video_9_by_16: null,
-        banner_video_16_by_9: null,
-        banner_video_3_by_2: null,
-      }));
-    }
-
-    setShowUploader(false);
-  };
 
   const validateForm = () => {
     if (!formData.title.trim()) {
@@ -124,6 +86,69 @@ const BannerAdd = () => {
       size: file.size,
     };
   };
+  const bannerUploadConfig = {
+    'banner image': ['1:1', '9:16'],
+    'gallery image': ['4:3', '3:2'],
+    'square image': ['1:1'],
+  };
+
+
+  const currentUploadType = 'banner image'; // Can be dynamic
+  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCropComplete = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid images selected.");
+      setShowUploader(false);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(':', 'by'); // e.g., "16:9" -> "16by9"
+      const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
+
+      updateFormData(key, [img]); // send as array to preserve consistency
+    });
+
+    setPreviewImg(validImages[0].preview); // preview first image only
+    setShowUploader(false);
+  };
+
+
+  console.log('formData', formData);
+
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
+
 
   // const handleSubmit = (e) => {
   //   e.preventDefault();
@@ -162,30 +187,23 @@ const BannerAdd = () => {
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
 
-      const ratioToFileMap = {
-        "1:1": formData.banner_video_1_by_1,
-        "9:16": formData.banner_video_9_by_16,
-        "16:9": formData.banner_video_16_by_9,
-        "3:2": formData.banner_video_3_by_2,
-      };
+      // Append all image files from formData
+      Object.entries(formData).forEach(([key, images]) => {
+        if (key.startsWith("banner_image_") && Array.isArray(images)) {
+          images.forEach((img) => {
+            const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
+            // e.g., banner[banner_image_1by1]
 
-      const ratioToFieldMap = {
-        "1:1": "banner[banner_video_1_by_1]",
-        "9:16": "banner[banner_video_9_by_16]",
-        "16:9": "banner[banner_video_16_by_9]",
-        "3:2": "banner[banner_video_3_by_2]",
-      };
+            if (img.file instanceof File) {
+              sendData.append(backendField, img.file);
+            }
+          });
+        }
 
-      const selectedFile = ratioToFileMap[selectedRatio];
-      const backendKey = ratioToFieldMap[selectedRatio];
+      });
 
-      if (selectedFile instanceof File && backendKey) {
-        sendData.append(backendKey, selectedFile);
-      } else {
-        toast.error("No valid banner image selected.");
-        setLoading(false);
-        return;
-      }
+
+      console.log("dta to be sent:", Array.from(sendData.entries()));
 
       await axios.post(`${baseURL}banners.json`, sendData, {
         headers: {
@@ -195,7 +213,7 @@ const BannerAdd = () => {
       });
 
       toast.success("Banner created successfully");
-      navigate("/banner-list");
+      // navigate("/banner-list");
     } catch (error) {
       console.error(error);
       toast.error(`Error creating banner: ${error.message}`);
@@ -203,6 +221,7 @@ const BannerAdd = () => {
       setLoading(false);
     }
   };
+
 
   const handleCancel = () => {
     navigate(-1);
@@ -304,29 +323,37 @@ const BannerAdd = () => {
                       <ProjectBannerUpload
                         onClose={() => setShowUploader(false)}
                         includeInvalidRatios={false}
-                        selectedRatioProp={["1:1"]}
+                        selectedRatioProp={selectedRatios}
                         showAsModal={true}
-                        label="Banner Image"
-                        description="Supports 1:1 and 9:16 ratios"
+                        label={dynamicLabel}
+                        description={dynamicDescription}
                         onContinue={handleCropComplete}
                       />
                     )}
 
-                    {previewImg && (
-                      <div className="mt-2">
-                        <img
-                          src={previewImg}
-                          className="img-fluid rounded"
-                          alt="Preview"
-                          style={{
-                            maxWidth: "100px",
-                            maxHeight: "100px",
-                            objectFit: "cover",
-                            border: "1px solid #ddd",
-                          }}
-                        />
-                      </div>
-                    )}
+                    {Object.entries(formData).map(([key, images]) => (
+                      Array.isArray(images) && images.length > 0 && (
+                        <div key={key} className="mt-4">
+                          <h4 className="text-sm font-semibold mb-1 capitalize">{key.replace(/_/g, ' ')}</h4>
+                          <div className="flex gap-2 flex-wrap">
+                            {images.map((img) => (
+                              <div key={img.id} className="relative group" style={{ width: "100px" }}>
+
+                                <button
+                                  className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 py-0.5 rounded"
+                                  onClick={() => discardImage(key, img)}
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    ))}
+
+
+
                   </div>
                 </div>
               </div>

@@ -12,12 +12,12 @@ const ProjectBannerUpload = ({
     { label: '1:1', ratio: 1, width: 150, height: 150 },
     { label: '3:2', ratio: 3 / 2, width: 180, height: 120 }
   ],
-  onImagesChange = () => {},
+  onImagesChange = () => { },
   enableCropping = true,
   initialImages = [],
   onContinue = null,
   showAsModal = false,
-  onClose = () => {},
+  onClose = () => { },
   includeInvalidRatios = false,
   selectedRatioProp = []
 }) => {
@@ -125,7 +125,17 @@ const ProjectBannerUpload = ({
 
   // Find missing ratios
   const missingRatios = selectedRatioProp.filter(ratio => !uploadedRatios.has(ratio));
+  const validUploadedImages = selectedRatioProp.length > 0
+    ? uploadedImages.filter(
+      (img) => selectedRatioProp.includes(img.ratio) && img.isValidRatio
+    )
+    : includeInvalidRatios
+      ? uploadedImages
+      : uploadedImages.filter((img) => img.isValidRatio);
 
+  // Count and plural label
+  const imageCount = validUploadedImages.length;
+  const pluralSuffix = imageCount !== 1 ? 's' : '';
   const modalContent = (
     <div className="project-banner-upload">
       <div className="upload-header">
@@ -233,36 +243,33 @@ const ProjectBannerUpload = ({
                 onClick={() => {
                   if (onContinue) {
                     if (!areAllRatiosUploaded && missingRatios.length > 0) {
-                      const message = missingRatios.length === 1
-                        ? `Missing required ratio: ${missingRatios[0]}`
-                        : `Missing required ratios: ${missingRatios.join(', ')}`;
+                      const message =
+                        missingRatios.length === 1
+                          ? `Missing required ratio: ${missingRatios[0]}`
+                          : `Missing required ratios: ${missingRatios.join(', ')}`;
                       toast.error(message);
                       return;
                     }
-                    if (areAllRatiosUploaded) {
-                      const imagesToContinue = selectedRatioProp.length > 0
-                        ? uploadedImages.filter(img => selectedRatioProp.includes(img.ratio) && img.isValidRatio)
-                        : (includeInvalidRatios
-                          ? uploadedImages
-                          : uploadedImages.filter(img => img.isValidRatio));
-                      onContinue(imagesToContinue);
-                    }
+
+                    onContinue(validUploadedImages);
                   }
                 }}
                 disabled={!areAllRatiosUploaded}
               >
-                Continue ({(selectedRatioProp.length > 0
-                  ? uploadedImages.filter(img => selectedRatioProp.includes(img.ratio) && img.isValidRatio)
-                  : (includeInvalidRatios ? uploadedImages : uploadedImages.filter(img => img.isValidRatio))).length} image{(selectedRatioProp.length > 0
-                    ? uploadedImages.filter(img => selectedRatioProp.includes(img.ratio) && img.isValidRatio)
-                    : (includeInvalidRatios ? uploadedImages : uploadedImages.filter(img => img.isValidRatio))).length !== 1 ? 's' : ''} uploaded)
+                Continue ({imageCount} image{pluralSuffix} uploaded)
               </button>
+
             </div>
           </div>
         </>
       )}
     </div>
   );
+
+  console.log('validUploadedImages:', validUploadedImages)
+  // Extract only valid uploaded images based on the selected ratio prop
+
+
 
   return showAsModal ? (
     <div className="modal-overlay" onClick={onClose}>
