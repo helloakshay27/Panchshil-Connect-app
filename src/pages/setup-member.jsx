@@ -98,6 +98,15 @@ const SetupMember = () => {
               <li>
                 <Link to="/setup-member/user-groups-edit/:id">User Groups Edit</Link>
               </li>
+               <li>
+                <Link to="/setup-member/faq-create">FAQ Create</Link>
+              </li>
+              <li>
+                <Link to="/setup-member/faq-list">FAQ List</Link>
+              </li>
+              <li>
+                <Link to="/setup-member/faq-edit/:id">FAQ Edit</Link>
+              </li>
 
               <li>
                 <Link to="category-types">Category Type</Link>

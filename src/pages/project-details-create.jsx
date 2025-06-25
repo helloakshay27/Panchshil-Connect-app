@@ -1284,6 +1284,8 @@ const ProjectDetailsCreate = () => {
 
       console.log(response.data);
       toast.success("Project submitted successfully");
+      sessionStorage.removeItem("cached_projects");
+
       Navigate("/project-list");
     } catch (error) {
       // catch (error) {
@@ -3309,8 +3311,11 @@ const ProjectDetailsCreate = () => {
                   variant="button"
                   btntext="+ Add"
                 />
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> cropperModel
                 <ImageCropper
                   open={dialogOpen.cover_images}
                   image={coverImageUpload?.[0]?.dataURL}

@@ -15,7 +15,7 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://api-connect.panchshil.com/";
+    baseURL = "https://api-connect.panchshil.com/"; // fallback
     break;
 
   default:
@@ -41,5 +41,13 @@ const Rustomji_Favicon_URL =
 
 const Panchshil_Favicon_URL =
   "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
-  
-export { baseURL, token, LOGO_URL, Rustomji_URL, Rustomji_URL_Black, Rustomji_Favicon_URL, Panchshil_Favicon_URL };
+
+export {
+  baseURL,
+  token,
+  LOGO_URL,
+  Rustomji_URL,
+  Rustomji_URL_Black,
+  Rustomji_Favicon_URL,
+  Panchshil_Favicon_URL,
+};

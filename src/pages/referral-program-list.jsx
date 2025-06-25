@@ -246,7 +246,7 @@ const ReferralProgramList = () => {
             </div>
           </div>
           {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
-          <div className="card-tools mt-1">
+          {/* <div className="card-tools mt-1">
             <button
               className="purple-btn2 rounded-3"
               onClick={() => navigate("/referral-program-create")}
@@ -263,7 +263,7 @@ const ReferralProgramList = () => {
               </svg>
               <span>Add</span>
             </button>
-          </div>
+          </div> */}
           {/* )} */}
         </div>
 

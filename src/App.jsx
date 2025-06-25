@@ -112,6 +112,9 @@ import { useEffect } from "react";
 import UserGroupList from "./pages/user-groups-list";
 import UserGroupCreate from "./pages/user-groups-create";
 import UserGroupEdit from "./pages/user-groups-edit";
+import FaqCreate from "./pages/faq-create";
+import FaqList from "./pages/faq-list";
+import FaqEdit from "./pages/faq-edit";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -441,6 +444,20 @@ function App() {
             path="/setup-member/user-groups-edit/:id"
             element={<UserGroupEdit />}
           />
+
+           <Route
+            path="/setup-member/faq-create"
+            element={<FaqCreate />}
+          />
+           <Route
+            path="/setup-member/faq-list"
+            element={<FaqList />}
+          />
+          <Route
+            path="/setup-member/faq-edit/:id"
+            element={<FaqEdit />}
+          />
+
 
         </Route>
       </Routes>
