@@ -3305,8 +3305,6 @@ const ProjectDetailsCreate = () => {
                   variant="button"
                   btntext="+ Add"
                 />
-                
-
                 <ImageCropper
                   open={dialogOpen.cover_images}
                   image={coverImageUpload?.[0]?.dataURL}
