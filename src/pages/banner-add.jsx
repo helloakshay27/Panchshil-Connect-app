@@ -298,7 +298,7 @@ const BannerAdd = () => {
                       >
                         [i]
                         {showVideoTooltip && (
-                          <span className="tooltip-text">16:9 Format Should Only Be Allowed</span>
+                          <span className="tooltip-text">9:16 or 1:1 Format Should Only Be Allowed</span>
                         )}
                       </span>
                     </label>
