@@ -58,7 +58,7 @@ const ProjectDetailsList = () => {
 
   useEffect(() => {
     const permissions = getProjectPermission();
-    console.log("Project permissions:", permissions);
+    // console.log("Project permissions:", permissions);
     setProjectPermission(permissions);
   }, []);
 
