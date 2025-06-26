@@ -8,6 +8,7 @@ import "../mor.css";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const Testimonials = () => {
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
@@ -33,6 +34,7 @@ const Testimonials = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [existingImageUrl, setExistingImageUrl] = useState(null);
+  const [showUploader, setShowUploader] = useState(false);
 
   const [formData, setFormData] = useState({
     testimonial_video: null,
@@ -150,6 +152,71 @@ const Testimonials = () => {
     setDialogOpen(true); // Open cropper for images
   };
 
+  const bannerUploadConfig = {
+    "preview image": ["16:9"],
+  };
+
+  const currentUploadType = "preview image"; // Can be dynamic
+  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const dynamicDescription = `Supports ${selectedRatios.join(
+    ", "
+  )} aspect ratios`;
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCropComplete = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid images selected.");
+      setShowUploader(false);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(":", "by"); // e.g., "16:9" -> "16by9"
+      const key = `${currentUploadType}_${formattedRatio}`
+        .replace(/\s+/g, "_")
+        .toLowerCase(); // e.g., banner_image_16by9
+
+      updateFormData(key, [img]); // send as array to preserve consistency
+    });
+
+    setPreviewImg(validImages[0].preview); // preview first image only
+    setShowUploader(false);
+  };
+
+  console.log("formData", formData);
+
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
+
   const isImageFile = (file) => {
     if (!file) return false;
     const imageTypes = [
@@ -221,9 +288,23 @@ const Testimonials = () => {
     }
 
     // ✅ Only use File for preview_image
-    if (formData.attachfile instanceof File) {
-      form.append("testimonial[preview_image]", formData.attachfile);
-    }
+    // if (formData.attachfile instanceof File) {
+    //   form.append("testimonial[preview_image]", formData.attachfile);
+    // }
+
+    Object.entries(formData).forEach(([key, images]) => {
+      if (key.startsWith("preview_image_") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField =
+            key.replace("preview_image_", "preview[preview_image_") + "]";
+          // e.g., preview[preview_image_1by1]
+
+          if (img.file instanceof File) {
+            sendData.append(backendField, img.file);
+          }
+        });
+      }
+    });
 
     // ✅ Use actual URL if you have one
     if (videoUrl) {
@@ -369,6 +450,103 @@ const Testimonials = () => {
                     </div>
                   </div>
 
+                  {/* <div className="col-md-3">
+                <div className="form-group">
+                  <label>
+                    Preview Image{" "}
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 3 MB and Required ratio is 16:9
+                        </span>
+                      )}
+                    </span>
+                    <span className="otp-asterisk"> *</span>
+                  </label>
+                  <ImageUploadingButton
+                    value={image}
+                    onChange={handleImageUpload}
+                    variant="custom"
+                  />
+                  <small className="form-text text-muted">
+                    Required ratio must be 16:9
+                  </small>
+                  <ImageCropper
+                    open={dialogOpen}
+                    image={image?.[0]?.dataURL || null}
+                    onComplete={(cropped) => {
+                      if (cropped) {
+                        setCroppedImage(cropped.base64);
+                        setPreviewImg(cropped.base64);
+                        setFormData((prev) => ({
+                          ...prev,
+                          attachfile: cropped.file,
+                          video_preview_image_url: cropped.base64,
+                        }));
+                      }
+                      setDialogOpen(false);
+                    }}
+                    requiredRatios={[16 / 9, 1, 9 / 16]}
+                    requiredRatioLabel="16:9"
+                    allowedRatios={[
+                      { label: "16:9", ratio: 16 / 9 },
+                      { label: "9:16", ratio: 9 / 16 },
+                      { label: "1:1", ratio: 1 },
+                    ]}
+                    containerStyle={{
+                      position: "relative",
+                      width: "100%",
+                      height: 300,
+                      background: "#fff",
+                    }}
+                  />
+                  {errors.attachfile && (
+                    <span className="error text-danger">
+                      {errors.attachfile}
+                    </span>
+                  )}
+
+                 
+                  {previewImg && (
+                    <div className="mt-2">
+                      <img
+                        src={croppedImage || previewImg}
+                        className="img-fluid rounded"
+                        alt="Preview"
+                        style={{
+                          maxWidth: "100px",
+                          maxHeight: "100px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  )}
+
+                 
+                  {!previewImg && existingImageUrl && (
+                    <div className="mt-2">
+                      <img
+                        src={existingImageUrl}
+                        className="img-fluid rounded"
+                        alt="Current Preview"
+                        style={{
+                          maxWidth: "100px",
+                          maxHeight: "100px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div> */}
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
@@ -387,82 +565,95 @@ const Testimonials = () => {
                         </span>
                         <span className="otp-asterisk"> *</span>
                       </label>
-                      <ImageUploadingButton
-                        value={image}
-                        onChange={handleImageUpload}
-                        variant="custom"
-                      />
-                      <small className="form-text text-muted">
-                        Required ratio must be 16:9
-                      </small>
-                      <ImageCropper
-                        open={dialogOpen}
-                        image={image?.[0]?.dataURL || null}
-                        onComplete={(cropped) => {
-                          if (cropped) {
-                            setCroppedImage(cropped.base64);
-                            setPreviewImg(cropped.base64);
-                            setFormData((prev) => ({
-                              ...prev,
-                              attachfile: cropped.file,
-                              video_preview_image_url: cropped.base64,
-                            }));
-                          }
-                          setDialogOpen(false);
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setShowUploader(true)}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          border: "1px solid #ccc",
+                          borderRadius: "6px",
+                          overflow: "hidden",
+                          fontSize: "14px",
+                          cursor: "pointer",
                         }}
-                        requiredRatios={[16 / 9, 1, 9 / 16]}
-                        requiredRatioLabel="16:9"
-                        allowedRatios={[
-                          { label: "16:9", ratio: 16 / 9 },
-                          { label: "9:16", ratio: 9 / 16 },
-                          { label: "1:1", ratio: 1 },
-                        ]}
-                        containerStyle={{
-                          position: "relative",
-                          width: "100%",
-                          height: 300,
-                          background: "#fff",
-                        }}
-                        formData={formData}
-                        setFormData={setFormData}
-                      />
-                      {errors.attachfile && (
-                        <span className="error text-danger">
-                          {errors.attachfile}
+                      >
+                        <span
+                          style={{
+                            backgroundColor: "#f8f9fa",
+                            padding: "8px 16px",
+                            borderRight: "1px solid #ccc",
+                          }}
+                        >
+                          Choose file
                         </span>
+                        <span
+                          style={{ padding: "8px 12px", whiteSpace: "nowrap" }}
+                        >
+                          No file chosen
+                        </span>
+                      </span>
+
+                      {showUploader && (
+                        <ProjectBannerUpload
+                          onClose={() => setShowUploader(false)}
+                          includeInvalidRatios={false}
+                          selectedRatioProp={selectedRatios}
+                          showAsModal={true}
+                          label={dynamicLabel}
+                          description={dynamicDescription}
+                          onContinue={handleCropComplete}
+                        />
                       )}
 
-                      {/* Show new preview image if selected */}
-                      {previewImg && (
-                        <div className="mt-2">
-                          <img
-                            src={croppedImage || previewImg}
-                            className="img-fluid rounded"
-                            alt="Preview"
-                            style={{
-                              maxWidth: "100px",
-                              maxHeight: "100px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                      )}
-
-                      {/* Show existing image if no new image is selected */}
-                      {!previewImg && existingImageUrl && (
-                        <div className="mt-2">
-                          <img
-                            src={existingImageUrl}
-                            className="img-fluid rounded"
-                            alt="Current Preview"
-                            style={{
-                              maxWidth: "100px",
-                              maxHeight: "100px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                      )}
+                      {/* Table to display uploaded images */}
+                    </div>
+                  </div>
+                  <div className="col-md-12 ">
+                    <div className=" tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            ...(formData.preview_image_16by9 || []).map(
+                              (file) => ({
+                                ...file,
+                                type: "preview_image_16by9",
+                              })
+                            ),
+                          ].map((file, index) => (
+                            <tr key={index}>
+                              <td>{file.name}</td>
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={file.preview}
+                                  alt={file.name}
+                                />
+                              </td>
+                              <td>{file.ratio}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() => discardImage(file.type, file)}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>

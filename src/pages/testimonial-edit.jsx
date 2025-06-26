@@ -6,6 +6,7 @@ import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const TestimonialEdit = () => {
   const { state } = useLocation();
@@ -34,6 +35,7 @@ const TestimonialEdit = () => {
   const [image, setImage] = useState([]);
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
 
   useEffect(() => {
     const fetchTestimonialData = async () => {
@@ -198,6 +200,71 @@ const TestimonialEdit = () => {
     return imageTypes.includes(file.type);
   };
 
+  const bannerUploadConfig = {
+    "preview image": ["16:9"],
+  };
+
+  const currentUploadType = "preview image"; // Can be dynamic
+  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const dynamicDescription = `Supports ${selectedRatios.join(
+    ", "
+  )} aspect ratios`;
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCropComplete = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid images selected.");
+      setShowUploader(false);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(":", "by"); // e.g., "16:9" -> "16by9"
+      const key = `${currentUploadType}_${formattedRatio}`
+        .replace(/\s+/g, "_")
+        .toLowerCase(); // e.g., banner_image_16by9
+
+      updateFormData(key, [img]); // send as array to preserve consistency
+    });
+
+    setPreviewImg(validImages[0].preview); // preview first image only
+    setShowUploader(false);
+  };
+
+  console.log("formData", formData);
+
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -212,9 +279,25 @@ const TestimonialEdit = () => {
       sendData.append("testimonial[content]", formData.content);
 
       // Always use the cropped image file if present
-      if (image[0] && image[0].file instanceof File) {
-        sendData.append("testimonial[preview_image]", image[0].file);
-      } else if (formData.attachfile) {
+      // if (image[0] && image[0].file instanceof File) {
+      //   sendData.append("testimonial[preview_image]", image[0].file);
+      // } else
+
+      Object.entries(formData).forEach(([key, images]) => {
+        if (key.startsWith("preview_image_") && Array.isArray(images)) {
+          images.forEach((img) => {
+            const backendField =
+              key.replace("preview_image_", "preview[preview_image_") + "]";
+            // e.g., preview[preview_image_1by1]
+
+            if (img.file instanceof File) {
+              sendData.append(backendField, img.file);
+            }
+          });
+        }
+      });
+
+      if (formData.attachfile) {
         sendData.append("testimonial[preview_image]", formData.attachfile);
       } else if (formData.video_url) {
         sendData.append(
@@ -372,7 +455,8 @@ const TestimonialEdit = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-3">
+
+              {/* <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     Preview Image{" "}
@@ -433,7 +517,7 @@ const TestimonialEdit = () => {
                     </span>
                   )}
 
-                  {/* Show new preview image if selected */}
+                 
                   {previewImg && (
                     <div className="mt-2">
                       <img
@@ -449,7 +533,6 @@ const TestimonialEdit = () => {
                     </div>
                   )}
 
-                  {/* Show existing image if no new image is selected */}
                   {!previewImg && existingImageUrl && (
                     <div className="mt-2">
                       <img
@@ -465,6 +548,173 @@ const TestimonialEdit = () => {
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          </div> */}
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <label>
+                    Preview Image{" "}
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 3 MB and Required ratio is 16:9
+                        </span>
+                      )}
+                    </span>
+                    <span className="otp-asterisk"> *</span>
+                  </label>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setShowUploader(true)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      border: "1px solid #ccc",
+                      borderRadius: "6px",
+                      overflow: "hidden",
+                      fontSize: "14px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <span
+                      style={{
+                        backgroundColor: "#f8f9fa",
+                        padding: "8px 16px",
+                        borderRight: "1px solid #ccc",
+                      }}
+                    >
+                      Choose file
+                    </span>
+                    <span style={{ padding: "8px 12px", whiteSpace: "nowrap" }}>
+                      No file chosen
+                    </span>
+                  </span>
+
+                  {showUploader && (
+                    <ProjectBannerUpload
+                      onClose={() => setShowUploader(false)}
+                      includeInvalidRatios={false}
+                      selectedRatioProp={selectedRatios}
+                      showAsModal={true}
+                      label={dynamicLabel}
+                      description={dynamicDescription}
+                      onContinue={handleCropComplete}
+                    />
+                  )}
+
+                  {/* Conditional rendering: Table for multiple images OR single image preview */}
+                </div>
+              </div>
+
+              <div className="col-md-12 mt-2">
+                {Array.isArray(formData.preview_image_16by9) &&
+                formData.preview_image_16by9.length > 0 ? (
+                  // ✅ Uploaded image table view
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.preview_image_16by9.map((file, index) => (
+                            <tr key={index}>
+                              <td>{file.name}</td>
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={file.preview}
+                                  alt={file.name}
+                                />
+                              </td>
+                              <td>{file.ratio || "16:9"}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    discardImage("preview_image_16by9", file)
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : previewImg || existingImageUrl ? (
+                  // ✅ Fallback table for single preview/cropped/existing image
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>preview_image_16by9.jpg</td>
+                            <td>
+                              <img
+                                src={
+                                  croppedImage || previewImg || existingImageUrl
+                                }
+                                className="img-fluid rounded"
+                                alt="Preview"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            </td>
+                            <td>16:9</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  discardImage("preview_image_16by9", {
+                                    preview: previewImg || existingImageUrl,
+                                    name: "preview_image_16by9.jpg",
+                                    ratio: "16:9",
+                                  })
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-2">
+                    <span>No image selected</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

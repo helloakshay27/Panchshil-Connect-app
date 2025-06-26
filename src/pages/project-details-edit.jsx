@@ -13,6 +13,7 @@ import { baseURL } from "./baseurl/apiDomain";
 import PropertySelect from "../components/base/PropertySelect";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const ProjectDetailsEdit = () => {
   const { id } = useParams();
@@ -120,6 +121,8 @@ const ProjectDetailsEdit = () => {
   const [galleryImageUpload, setGalleryImageUpload] = useState([]);
   const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
   const [pendingImageUpload, setPendingImageUpload] = useState([]);
+  const [showUploader, setShowUploader] = useState(false);
+
 
 
   const [dialogOpen, setDialogOpen] = useState({
@@ -129,6 +132,127 @@ const ProjectDetailsEdit = () => {
     two_d_images: false,
 
   });
+  const bannerUploadConfig = {
+    'banner image': ['9:16'],
+    'cover image': ['1:1'],
+    'gallery image': ['16:9'],
+    'floor plan': ['16:9'],
+  };
+
+
+  const currentUploadType = 'cover image'; // Can be dynamic
+  const currentUploadType1 = 'gallery image'; // Can be dynamic
+  const currentUploadType2 = 'floor plan'; // Can be dynamic
+  const currentUploadType3 = 'banner image'; // Can be dynamic
+
+
+
+  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
+  const selectedRatios1 = bannerUploadConfig[currentUploadType1] || [];
+  const selectedRatios2 = bannerUploadConfig[currentUploadType2] || [];
+  const selectedRatios3 = bannerUploadConfig[currentUploadType3] || [];
+
+
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const dynamicLabel1 = currentUploadType1.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const dynamicLabel2 = currentUploadType2.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const dynamicLabel3 = currentUploadType3.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+
+  const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
+  const dynamicDescription1 = `Supports ${selectedRatios1.join(', ')} aspect ratios`;
+  const dynamicDescription2 = `Supports ${selectedRatios2.join(', ')} aspect ratios`;
+  const dynamicDescription3 = `Supports ${selectedRatios3.join(', ')} aspect ratios`;
+
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
+  const [showBannerModal, setShowBannerModal] = useState(false);
+
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCroppedImages = (validImages, type = "cover") => {
+    if (!validImages || validImages.length === 0) {
+      toast.error(`No valid ${type} image${["cover", "banner"].includes(type) ? "" : "s"} selected.`);
+      closeModal(type);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(":", "by");
+      let prefix = "";
+
+      switch (type) {
+        case "gallery":
+          prefix = currentUploadType1; // "gallery image"
+          break;
+        case "floor":
+          prefix = currentUploadType2; // "floor plan"
+          break;
+        case "banner":
+          prefix = currentUploadType3; // explicitly use string for banner
+          break;
+        case "cover":
+        default:
+          prefix = currentUploadType; // "cover image"
+          break;
+      }
+
+      const key = `${prefix}_${formattedRatio}`.replace(/\s+/g, "_").toLowerCase();
+      updateFormData(key, [img]);
+    });
+
+    closeModal(type);
+  };
+
+  const closeModal = (type) => {
+    switch (type) {
+      case "gallery":
+        setShowGalleryModal(false);
+        break;
+      case "floor":
+        setShowFloorPlanModal(false);
+        break;
+
+      case "banner":
+        setShowBannerModal(false);
+        break;
+      case "cover":
+      default:
+        setShowUploader(false);
+        break;
+    }
+  };
+
+
+
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
+
   // console.log(statusOptions);
 
   useEffect(() => {
@@ -1638,7 +1762,37 @@ const ProjectDetailsEdit = () => {
           }
         });
         // } 
-      } else if (key !== "image" && key !== "previewImage") {
+      }
+      else if (key.startsWith("banner_image_") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
+          if (img.file instanceof File) {
+            sendData.append(backendField, img.file);
+          }
+        });
+      } else if (key.startsWith("cover_image_") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField = key.replace("cover_image_", "cover[cover_image_") + "]";
+          if (img.file instanceof File) {
+            sendData.append(backendField, img.file);
+          }
+        });
+      } else if (key.startsWith("gallery_image_") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField = key.replace("gallery_image_", "gallery_image[gallery_image_") + "]";
+          if (img.file instanceof File) {
+            sendData.append(backendField, img.file);
+          }
+        });
+      } else if (key.startsWith("floor_plan_image_") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField = key.replace("floor_plan_image_", "floor_plan[floor_plan_image_") + "]";
+          if (img.file instanceof File) {
+            sendData.append(backendField, img.file);
+          }
+        });
+      }
+      else if (key !== "image" && key !== "previewImage") {
         // Skip previewImage and image (already handled)
         data.append(`project[${key}]`, value);
       }
@@ -2721,7 +2875,7 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body">
             <div className="row">
-              <div className="col-md-3">
+              {/* <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     Project Banner Image
@@ -2739,14 +2893,6 @@ const ProjectDetailsEdit = () => {
                     </span>
                     <span className="otp-asterisk"> *</span>
                   </label>
-                  {/* <input
-                    className="form-control"
-                    type="file"
-                    name="image"
-                    accept="image/*"
-                    required
-                    onChange={handleInputChange}
-                  /> */}
 
                   <ImageUploadingButton
                     value={mainImageUpload}
@@ -2754,8 +2900,8 @@ const ProjectDetailsEdit = () => {
                     variant="custom"
                   />
                   <small className="form-text text-muted">
-                        Required ratio must be 9:16
-                      </small>
+                    Required ratio must be 9:16
+                  </small>
                   <ImageCropper
                     open={dialogOpen.image}
                     image={pendingImageUpload?.[0]?.dataURL}
@@ -2780,17 +2926,16 @@ const ProjectDetailsEdit = () => {
                     }}
 
                     requiredRatios={[9 / 16, 1, 16 / 9]}
-                     requiredRatioLabel="9:16"
+                    requiredRatioLabel="9:16"
                     allowedRatios={[
                       { label: "16:9", ratio: 16 / 9 },
                       { label: "9:16", ratio: 9 / 16 },
                       { label: "1:1", ratio: 1 },
-                      
+
                     ]}
                   />
                 </div>
 
-                {/* Show selected or previously uploaded image */}
                 {formData.bannerPreviewImage ? (
                   <img
                     src={formData.bannerPreviewImage}
@@ -2804,11 +2949,6 @@ const ProjectDetailsEdit = () => {
                     if (img.document_url) {
                       src = img.document_url;
                     }
-                    // } else if (typeof img === "string") {
-                    //   src = img;
-                    // } else if (img.document_url) {
-                    //   src = img.document_url;
-                    // }
                     return (
                       <img
                         key={index}
@@ -2830,7 +2970,7 @@ const ProjectDetailsEdit = () => {
                 )}
 
 
-              </div>
+              </div> */}
               {/* <div className="col-md-3">
   <div className="form-group">
     <label>
@@ -4093,124 +4233,124 @@ const ProjectDetailsEdit = () => {
         </div>
 
         {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Plans</h3>
-          </div>
-          <div className="card-body mt-0 pb-0">
-            <div className="row">
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Plans{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">
-                        Max Upload Size 10 MB per image
-                      </span>
-                    )}
-                  </span>
-                </h5>
-              </div>
-              <div className="row align-items-end">
-                <div className="col-md-3">
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Plan Name (e.g. Ground Floor)"
-                    value={planName}
-                    onChange={(e) => setPlanName(e.target.value)}
-                  />
+          <div className="card mt-3 pb-4 mx-4">
+            <div className="card-header3">
+              <h3 className="card-title">Plans</h3>
+            </div>
+            <div className="card-body mt-0 pb-0">
+              <div className="row">
+                <div className="d-flex justify-content-between align-items-end mx-1">
+                  <h5 className="mt-3">
+                    Project Plans{" "}
+                    <span
+                      className="tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 10 MB per image
+                        </span>
+                      )}
+                    </span>
+                  </h5>
                 </div>
-                <div className="col-md-5">
-                  <input
-                    className="form-control"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
-                  />
+                <div className="row align-items-end">
+                  <div className="col-md-3">
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Plan Name (e.g. Ground Floor)"
+                      value={planName}
+                      onChange={(e) => setPlanName(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-5">
+                    <input
+                      className="form-control"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => setPlanImages(Array.from(e.target.files))}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <button
+                      className="purple-btn2"
+                      type="button"
+                      onClick={() => {
+                        if (!planName || planImages.length === 0) {
+                          toast.error(
+                            "Please enter plan name and select images."
+                          );
+                          return;
+                        }
+                        setPlans((prev) => [
+                          ...prev,
+                          { name: planName, images: planImages },
+                        ]);
+                        setPlanName("");
+                        setPlanImages([]);
+                      }}
+                    >
+                      Add Plan
+                    </button>
+                  </div>
                 </div>
-                <div className="col-md-2">
-                  <button
-                    className="purple-btn2"
-                    type="button"
-                    onClick={() => {
-                      if (!planName || planImages.length === 0) {
-                        toast.error(
-                          "Please enter plan name and select images."
-                        );
-                        return;
-                      }
-                      setPlans((prev) => [
-                        ...prev,
-                        { name: planName, images: planImages },
-                      ]);
-                      setPlanName("");
-                      setPlanImages([]);
-                    }}
-                  >
-                    Add Plan
-                  </button>
-                </div>
-              </div>
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>Plan Name</th>
-                        <th>Images</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {plans.map((plan, pIdx) => (
-                        <tr key={pIdx}>
-                          <td>{plan.name}</td>
-                          <td>
-                            {plan.images.map((img, iIdx) => (
-                              <img
-                                key={iIdx}
-                                src={
-                                  img instanceof File || img instanceof Blob
-                                    ? URL.createObjectURL(img)
-                                    : typeof img === "string"
-                                      ? img
-                                      : img?.document_url || "" // fallback if img is an object like { url: "..." }
-                                }
-                                alt="Plan"
-                                style={{
-                                  maxWidth: 60,
-                                  maxHeight: 60,
-                                  marginRight: 5,
-                                }}
-                              />
-                            ))}
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handlePlanDelete(plan.id, pIdx)}
-                            >
-                              x
-                            </button>
-                          </td>
+                <div className="col-md-12 mt-2">
+                  <div className="mt-4 tbl-container">
+                    <table className="w-100">
+                      <thead>
+                        <tr>
+                          <th>Plan Name</th>
+                          <th>Images</th>
+                          <th>Action</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {plans.map((plan, pIdx) => (
+                          <tr key={pIdx}>
+                            <td>{plan.name}</td>
+                            <td>
+                              {plan.images.map((img, iIdx) => (
+                                <img
+                                  key={iIdx}
+                                  src={
+                                    img instanceof File || img instanceof Blob
+                                      ? URL.createObjectURL(img)
+                                      : typeof img === "string"
+                                        ? img
+                                        : img?.document_url || "" // fallback if img is an object like { url: "..." }
+                                  }
+                                  alt="Plan"
+                                  style={{
+                                    maxWidth: 60,
+                                    maxHeight: 60,
+                                    marginRight: 5,
+                                  }}
+                                />
+                              ))}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handlePlanDelete(plan.id, pIdx)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-         )}
+        )}
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
             <h3 className="card-title">
@@ -4220,6 +4360,153 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body">
             <div className="row">
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Project Banner{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 3 MB and Required ratio is 16:9
+                      </span>
+                    )}
+                  </span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                </h5>
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  type="button"
+                  onClick={() => setShowBannerModal(true)}
+
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+              </div>
+
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* ✅ Show newly uploaded images from banner_image_9by16 */}
+                      {formData.banner_image_9by16 && formData.banner_image_9by16.length > 0
+                        ? formData.banner_image_9by16.map((file, index) => (
+                          <tr key={`uploaded-${index}`}>
+                            <td>{file.name}</td>
+                            <td>
+                              <img
+                                src={file.preview}
+                                alt={file.name}
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            </td>
+                            <td>{file.ratio}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage("banner_image_9by16", file)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                        : // ✅ If no new upload, show edit preview from bannerPreviewImage or image[]
+                        formData.bannerPreviewImage ? (
+                          <tr>
+                            <td>Banner Preview</td>
+                            <td>
+                              <img
+                                src={formData.bannerPreviewImage}
+                                alt="Banner Preview"
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            </td>
+                            <td>-</td>
+                            <td>-</td>
+                          </tr>
+                        ) : Array.isArray(formData.image) && formData.image.length > 0 ? (
+                          formData.image.map((img, index) => {
+                            const src = img.document_url || "";
+                            return (
+                              <tr key={`api-${index}`}>
+                                <td>{img.document_file_name || `Image ${index + 1}`}</td>
+                                <td>
+                                  <img
+                                    src={src}
+                                    alt={`Uploaded ${index}`}
+                                    className="img-fluid rounded"
+                                    style={{
+                                      maxWidth: "100px",
+                                      maxHeight: "100px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                </td>
+                                <td>-</td>
+                                <td>-</td>
+                              </tr>
+                            );
+                          })
+                        ) : (
+                          <tr>
+                            <td colSpan={4}>No image selected</td>
+                          </tr>
+                        )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* ✅ Upload modal */}
+                {showBannerModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowBannerModal(false)}
+                    includeInvalidRatios={false}
+                    selectedRatioProp={selectedRatios3}
+                    showAsModal={true}
+                    label={"Project Banner"}
+                    description={dynamicDescription3}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "banner")}
+                  />
+                )}
+              </div>
+
+
               {/* Gallery Section */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -4272,7 +4559,7 @@ const ProjectDetailsEdit = () => {
                   display: "none" }}
                 /> */}
 
-                <ImageUploadingButton
+                {/* <ImageUploadingButton
                   value={coverImageUpload}
                   onChange={(list) => handleImageUploaded(list, "cover_images")}
                   variant="button"
@@ -4303,61 +4590,130 @@ const ProjectDetailsEdit = () => {
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
                   ]}
-                />
+                /> */
+
+                  <button
+                    className="purple-btn2 rounded-3"
+                    fdprocessedid="xn3e6n"
+                    type="button"
+                    onClick={() => setShowUploader(true)}
+
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={16}
+                      height={16}
+                      fill="currentColor"
+                      className="bi bi-plus"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                    </svg>
+                    <span>Add</span>
+                  </button>
+                }
+
+                {showUploader && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowUploader(false)}
+                    includeInvalidRatios={false}
+                    selectedRatioProp={selectedRatios}
+                    showAsModal={true}
+                    label={dynamicLabel}
+                    description={dynamicDescription}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
+                  />
+                )}
               </div>
 
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* 2D Images */}
-                      {formData.cover_images?.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFileDiscardCoverImage(
-                                  "cover_images",
-                                  index
-                                )
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
+              {formData.cover_images?.length > 0 ? (
+                // 🔁 EXISTING IMAGES (Edit Mode)
+                <div className="col-md-12 mt-2">
+                  <div className="mt-4 tbl-container">
+                    <table className="w-100">
+                      <thead>
+                        <tr>
+                          <th>File Name</th>
+                          <th>Preview</th>
+                          <th>Action</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {formData.cover_images.map((file, index) => (
+                          <tr key={index}>
+                            <td>{file.document_file_name || file.name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={
+                                  file.document_url
+                                    ? file.document_url
+                                    : file.type?.startsWith("image")
+                                      ? URL.createObjectURL(file)
+                                      : null
+                                }
+                                alt={file.document_file_name || file.name || "Image"}
+                              />
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handleFileDiscardCoverImage("cover_images", index)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                // 🆕 UPLOADED IMAGES WITH RATIO
+                <div className="col-md-12 mt-2">
+                  <div className="mt-4 tbl-container">
+                    <table className="w-100">
+                      <thead>
+                        <tr>
+                          <th>File Name</th>
+                          <th>Preview</th>
+                          <th>Ratio</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {formData.cover_image_1by1?.map((file, index) => (
+                          <tr key={index}>
+                            <td>{file.name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.preview}
+                                alt={file.name}
+                              />
+                            </td>
+                            <td>{file.ratio}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage("cover_image_1by1", file)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -4419,7 +4775,7 @@ const ProjectDetailsEdit = () => {
                   style={{ display: "none" }}
                 /> */}
 
-                <ImageUploadingButton
+                {/* <ImageUploadingButton
                   value={galleryImageUpload}
                   onChange={(list) => handleImageUploaded(list, "gallery_image")}
                   variant="button"
@@ -4461,14 +4817,46 @@ const ProjectDetailsEdit = () => {
                     setGalleryImageUpload([]);
                   }}
                   requiredRatios={[16 / 9, 9 / 16, 1]} // Required ratios for cropping
-                   requiredRatioLabel="16:9"
+                  requiredRatioLabel="16:9"
                   allowedRatios={[
-                     { label: "16:9", ratio: 16 / 9 },
+                    { label: "16:9", ratio: 16 / 9 },
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
-                   
+
                   ]}
-                />
+                /> */}
+
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  type="button"
+                  onClick={() => setShowGalleryModal(true)}
+
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+                {showGalleryModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowGalleryModal(false)}
+                    selectedRatioProp={bannerUploadConfig["gallery image"]}
+                    showAsModal={true}
+                    label="Gallery Image"
+                    description={dynamicDescription1}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "gallery")}
+                  />
+                )}
               </div>
 
               {/* Main Section */}
@@ -4480,7 +4868,6 @@ const ProjectDetailsEdit = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                        {/* <th>Image Category</th> */}
                         <th>Image Name</th>
                         <th>Image</th>
                         <th>Day/Night</th>
@@ -4488,49 +4875,46 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* First render API fetched images */}
-                      {formData.fetched_gallery_image?.map((file, index) =>
-                        file.attachfiles?.map((attachment, idx) => (
-                          <tr key={`fetched-${index}-${idx}`}>
-                            {/* <td>{file.gallery_type || "N/A"}</td> */}
-                            <td>{attachment.document_file_name || "N/A"}</td>
-                            <td>
-                              {attachment.document_url && (
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={attachment.document_url}
-                                  alt={
-                                    attachment.document_file_name ||
-                                    "Fetched Image"
+                      {/* ✅ 1. Show fetched images only if no new uploads */}
+                      {(!formData.gallery_image_16by9 || formData.gallery_image_16by9.length === 0) &&
+                        formData.fetched_gallery_image?.map((file, index) =>
+                          file.attachfiles?.map((attachment, idx) => (
+                            <tr key={`fetched-${index}-${idx}`}>
+                              <td>{attachment.document_file_name || "N/A"}</td>
+                              <td>
+                                {attachment.document_url && (
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={attachment.document_url}
+                                    alt={attachment.document_file_name || "Fetched Image"}
+                                  />
+                                )}
+                              </td>
+                              <td>{file.day_night ? "Day" : "Night"}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFetchedDiscardGallery(
+                                      "fetched_gallery_image",
+                                      index,
+                                      attachment.id
+                                    )
                                   }
-                                />
-                              )}
-                            </td>
-                            <td>
-                              <div>{file.day_night ? "Day" : "Night"}</div>
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() =>
-                                  handleFetchedDiscardGallery(
-                                    "fetched_gallery_image",
-                                    index,
-                                    attachment.id
-                                  )
-                                }
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                      {(formData.gallery_image ?? []).map((file, index) => (
-                        <tr key={`new-${index}`}>
-                          <td>{file.gallery_image_file_name || "N/A"}</td>
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+
+                      {/* ✅ 2. Show newly uploaded images from gallery_image_16by9 */}
+                      {(formData.gallery_image_16by9 ?? []).map((file, index) => (
+                        <tr key={`new-16by9-${index}`}>
+                          <td>{file.gallery_image_file_name || file.name || "N/A"}</td>
                           <td>
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
@@ -4539,9 +4923,9 @@ const ProjectDetailsEdit = () => {
                                 file.attachfile?.document_url ||
                                 (file.gallery_image instanceof File
                                   ? URL.createObjectURL(file.gallery_image)
-                                  : null)
+                                  : file.preview)
                               }
-                              alt={file.gallery_image_file_name || "Preview"}
+                              alt={file.gallery_image_file_name || file.name || "Preview"}
                             />
                           </td>
                           <td>
@@ -4549,7 +4933,7 @@ const ProjectDetailsEdit = () => {
                               className="form-control"
                               value={file.isDay === undefined || file.isDay ? 1 : 0}
                               onChange={(e) =>
-                                handleDayNightChange(index, e.target.value === "1" ? true : false)
+                                handleDayNightChange(index, e.target.value === "1")
                               }
                             >
                               <option value={1}>Day</option>
@@ -4571,6 +4955,7 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
+
 
               {/* <div className="col-md-12 mt-2">
                 <h6 className="mt-3">Previous Gallery Images</h6>
@@ -4860,7 +5245,7 @@ const ProjectDetailsEdit = () => {
                   style={{ display: "none" }}
                 /> */}
 
-                <ImageUploadingButton
+                {/* <ImageUploadingButton
                   value={floorPlanImageUpload}
                   onChange={(list) => handleImageUploaded(list, "two_d_images")}
                   variant="button"
@@ -4891,7 +5276,38 @@ const ProjectDetailsEdit = () => {
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
                   ]}
-                />
+                /> */}
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  type="button"
+                  onClick={() => setShowFloorPlanModal(true)}
+
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+                {showFloorPlanModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowFloorPlanModal(false)}
+                    selectedRatioProp={bannerUploadConfig["floor plan"]}
+                    showAsModal={true}
+                    label="Floor Plan"
+                    description={dynamicDescription2}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "floor")}
+                  />
+                )}
               </div>
 
               {/* Table to Display Images */}
@@ -4905,38 +5321,62 @@ const ProjectDetailsEdit = () => {
                       <tr>
                         <th>File Name</th>
                         <th>Image</th>
+                        {/* Only show Ratio column if uploading new */}
+                        {formData.floor_plan_16by9?.length > 0 && <th>Ratio</th>}
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* 2D Images */}
-                      {formData.two_d_images.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
+                      {/* ✅ Show `two_d_images` (edit mode) if no new uploads */}
+                      {(!formData.floor_plan_16by9 || formData.floor_plan_16by9.length === 0) &&
+                        formData.two_d_images?.map((file, index) => (
+                          <tr key={`2d-${index}`}>
+                            <td>{file.document_file_name || file.name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={
+                                  file.document_url
+                                    ? file.document_url
+                                    : file.type?.startsWith("image")
+                                      ? URL.createObjectURL(file)
+                                      : null
+                                }
+                                alt={file.document_file_name || file.name || "Image"}
+                              />
+                            </td>
+                            {formData.floor_plan_16by9?.length > 0 && <td>-</td>}
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handleDiscardTwoDImage("two_d_images", index)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {/* ✅ Show uploaded `floor_plan_16by9` images when available */}
+                      {(formData.floor_plan_16by9 ?? []).map((file, index) => (
+                        <tr key={`upload-${index}`}>
+                          <td>{file.name}</td>
                           <td>
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
+                              src={file.preview}
+                              alt={file.name}
                             />
                           </td>
+                          <td>{file.ratio}</td>
                           <td>
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardTwoDImage("two_d_images", index)
-                              }
+                              onClick={() => discardImage("floor_plan_16by9", file)}
                             >
                               x
                             </button>
@@ -4947,6 +5387,7 @@ const ProjectDetailsEdit = () => {
                   </table>
                 </div>
               </div>
+
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">

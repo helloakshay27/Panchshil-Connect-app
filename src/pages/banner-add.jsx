@@ -26,7 +26,6 @@ const BannerAdd = () => {
     banner_redirect: null,
     project_id: null,
     title: "",
-
     active: null,
   });
 
@@ -86,10 +85,9 @@ const BannerAdd = () => {
       size: file.size,
     };
   };
+
   const bannerUploadConfig = {
-    'banner image': ['1:1', '9:16'],
-    'gallery image': ['4:3', '3:2'],
-    'square image': ['1:1'],
+    'banner image': ['1:1', '9:16']
   };
 
 
@@ -193,7 +191,6 @@ const BannerAdd = () => {
           images.forEach((img) => {
             const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
             // e.g., banner[banner_image_1by1]
-
             if (img.file instanceof File) {
               sendData.append(backendField, img.file);
             }
@@ -205,12 +202,12 @@ const BannerAdd = () => {
 
       console.log("dta to be sent:", Array.from(sendData.entries()));
 
-      await axios.post(`${baseURL}banners.json`, sendData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      // await axios.post(`${baseURL}banners.json`, sendData, {
+      //   headers: {
+      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
 
       toast.success("Banner created successfully");
       // navigate("/banner-list");
@@ -311,13 +308,33 @@ const BannerAdd = () => {
                     </label>
 
                     <span
-                      className="d-inline-block btn btn-primary mt-2"
                       role="button"
                       tabIndex={0}
                       onClick={() => setShowUploader(true)}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        border: "1px solid #ccc",
+                        borderRadius: "6px",
+                        overflow: "hidden",
+                        fontSize: "14px",
+                        cursor: "pointer"
+                      }}
                     >
-                      Choose Banner Image
+                      <span
+                        style={{
+                          backgroundColor: "#f8f9fa",
+                          padding: "8px 16px",
+                          borderRight: "1px solid #ccc"
+                        }}
+                      >
+                        Choose file
+                      </span>
+                      <span style={{ padding: "8px 12px", whiteSpace: "nowrap" }}>
+                        No file chosen
+                      </span>
                     </span>
+
 
                     {showUploader && (
                       <ProjectBannerUpload
@@ -330,35 +347,62 @@ const BannerAdd = () => {
                         onContinue={handleCropComplete}
                       />
                     )}
-
-                    {Object.entries(formData).map(([key, images]) => (
-                      Array.isArray(images) && images.length > 0 && (
-                        <div key={key} className="mt-4">
-                          <h4 className="text-sm font-semibold mb-1 capitalize">{key.replace(/_/g, ' ')}</h4>
-                          <div className="flex gap-2 flex-wrap">
-                            {images.map((img) => (
-                              <div key={img.id} className="relative group" style={{ width: "100px" }}>
-
-                                <button
-                                  className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 py-0.5 rounded"
-                                  onClick={() => discardImage(key, img)}
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )
-                    ))}
-
-
-
                   </div>
                 </div>
               </div>
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...(formData.banner_image_1by1 || []).map((file) => ({
+                        ...file,
+                        type: "banner_image_1by1",
+                      })),
+                      ...(formData.banner_image_9by16 || []).map((file) => ({
+                        ...file,
+                        type: "banner_image_9by16",
+                      }))].map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.name}</td>
+                          <td>
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={file.preview}
+                              alt={file.name}
+                            />
+                          </td>
+                          <td>{file.ratio}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => discardImage(file.type, file)}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+
+                  </table>
+                </div>
+              </div>
             </div>
+
+
           </div>
+
+
 
           {/* Submit/Cancel Buttons */}
           <div className="row mt-2 justify-content-center">

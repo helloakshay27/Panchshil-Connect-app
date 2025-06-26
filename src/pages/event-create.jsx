@@ -7,6 +7,7 @@ import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const EventCreate = () => {
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ const EventCreate = () => {
   const [image, setImage] = useState([]);
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
 
   const timeOptions = [
     // { value: "", label: "Select Unit" },
@@ -62,6 +64,70 @@ const EventCreate = () => {
     days: { min: 0, max: 28 },
     weeks: { min: 0, max: 4 },
   };
+
+
+
+  const eventUploadConfig = {
+    'event image': ['16:9']
+  };
+
+
+  const currentUploadType = 'event image'; // Can be dynamic
+  const selectedRatios = eventUploadConfig[currentUploadType] || [];
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCropComplete = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid images selected.");
+      setShowUploader(false);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(':', 'by'); // e.g., "16:9" -> "16by9"
+      const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
+
+      updateFormData(key, [img]); // send as array to preserve consistency
+    });
+
+    // setPreviewImg(validImages[0].preview); // preview first image only
+    setShowUploader(false);
+  };
+
+
+  console.log('formData', formData);
+
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
+
 
   // Set Reminders
   const [day, setDay] = useState("");
@@ -660,7 +726,7 @@ const EventCreate = () => {
                             )}
                           </span>
                         </label>
-                        <ImageUploadingButton
+                        {/* <ImageUploadingButton
                           value={image}
                           onChange={handleCoverImageUpload}
                           btntext="Upload Cover Image"
@@ -695,10 +761,51 @@ const EventCreate = () => {
                             height: 300,
                             background: "#fff",
                           }}
-                        />
+                        /> */}
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setShowUploader(true)}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            border: "1px solid #ccc",
+                            borderRadius: "6px",
+                            overflow: "hidden",
+                            fontSize: "14px",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <span
+                            style={{
+                              backgroundColor: "#f8f9fa",
+                              padding: "8px 16px",
+                              borderRight: "1px solid #ccc"
+                            }}
+                          >
+                            Choose file
+                          </span>
+                          <span style={{ padding: "8px 12px", whiteSpace: "nowrap" }}>
+                            No file chosen
+                          </span>
+                        </span>
+
+
+                        {showUploader && (
+                          <ProjectBannerUpload
+                            onClose={() => setShowUploader(false)}
+                            includeInvalidRatios={false}
+                            selectedRatioProp={selectedRatios}
+                            showAsModal={true}
+                            label={dynamicLabel}
+                            description={dynamicDescription}
+                            onContinue={handleCropComplete}
+                          />
+                        )}
+
 
                         {/* Cover Image Preview */}
-                        <div className="mt-2">
+                        {/* <div className="mt-2">
                           {croppedImage ? (
                             <div className="position-relative">
                               <img
@@ -711,29 +818,6 @@ const EventCreate = () => {
                                   objectFit: "cover",
                                 }}
                               />
-                              {/* <button
-                                type="button"
-                                className="btn btn-danger btn-sm position-absolute"
-                                style={{
-                                  top: "-5px",
-                                  right: "-5px",
-                                  fontSize: "10px",
-                                  width: "20px",
-                                  height: "20px",
-                                  padding: "0",
-                                  borderRadius: "50%",
-                                }}
-                                onClick={() => {
-                                  setCroppedImage(null);
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    cover_image: [],
-                                  }));
-                                }}
-                                title="Remove cover image"
-                              >
-                                ×
-                              </button> */}
                             </div>
                           ) : formData.cover_image &&
                             formData.cover_image[0] &&
@@ -749,31 +833,34 @@ const EventCreate = () => {
                                   objectFit: "cover",
                                 }}
                               />
-                              {/* <button
-                                type="button"
-                                className="btn btn-danger btn-sm position-absolute"
-                                style={{
-                                  top: "-5px",
-                                  right: "-5px",
-                                  fontSize: "10px",
-                                  width: "20px",
-                                  height: "20px",
-                                  padding: "0",
-                                  borderRadius: "50%",
-                                }}
-                                onClick={() => {
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    cover_image: [],
-                                  }));
-                                }}
-                                title="Remove existing cover image"
-                              >
-                                ×
-                              </button> */}
                             </div>
                           ) : (
                             <span></span>
+                          )}
+                        </div> */}
+
+                        <div className="mt-2">
+                          {Array.isArray(formData.event_image_16by9) && formData.event_image_16by9.length > 0 ? (
+                            formData.event_image_16by9.map((file, index) => (
+                              <div
+                                key={index}
+                                className="position-relative"
+                                style={{ marginRight: "10px", marginBottom: "10px" }}
+                              >
+                                <img
+                                  src={file.preview}
+                                  alt={file.name}
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </div>
+                            ))
+                          ) : (
+                            <span>No image selected</span>
                           )}
                         </div>
                       </div>
@@ -916,14 +1003,14 @@ const EventCreate = () => {
                             value={
                               formData.user_id
                                 ? formData.user_id.split(",").map((id) => {
-                                    const user = eventUserID.find(
-                                      (u) => u.id.toString() === id
-                                    );
-                                    return {
-                                      value: id,
-                                      label: `${user?.firstname} ${user?.lastname}`,
-                                    };
-                                  })
+                                  const user = eventUserID.find(
+                                    (u) => u.id.toString() === id
+                                  );
+                                  return {
+                                    value: id,
+                                    label: `${user?.firstname} ${user?.lastname}`,
+                                  };
+                                })
                                 : []
                             }
                             onChange={(selectedOptions) =>
@@ -949,17 +1036,17 @@ const EventCreate = () => {
                             value={
                               Array.isArray(formData.group_id)
                                 ? formData.group_id
-                                    .map((id) => {
-                                      const group = groups.find(
-                                        (g) =>
-                                          g.id === id ||
-                                          g.id.toString() === id.toString()
-                                      );
-                                      return group
-                                        ? { value: group.id, label: group.name }
-                                        : null;
-                                    })
-                                    .filter(Boolean)
+                                  .map((id) => {
+                                    const group = groups.find(
+                                      (g) =>
+                                        g.id === id ||
+                                        g.id.toString() === id.toString()
+                                    );
+                                    return group
+                                      ? { value: group.id, label: group.name }
+                                      : null;
+                                  })
+                                  .filter(Boolean)
                                 : []
                             }
                             onChange={(selectedOptions) =>

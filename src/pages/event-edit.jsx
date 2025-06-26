@@ -7,6 +7,7 @@ import { baseURL } from "./baseurl/apiDomain";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const EventEdit = () => {
   const { id } = useParams();
@@ -57,6 +58,7 @@ const EventEdit = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
 
   const timeOptions = [
     // { value: "", label: "Select Unit" },
@@ -140,6 +142,42 @@ const EventEdit = () => {
       .filter((r) => !r._destroy || r.id);
   };
 
+  const eventUploadConfig = {
+    'event image': ['16:9']
+  };
+
+
+  const currentUploadType = 'event image'; // Can be dynamic
+  const selectedRatios = eventUploadConfig[currentUploadType] || [];
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCropComplete = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid images selected.");
+      setShowUploader(false);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(':', 'by'); // e.g., "16:9" -> "16by9"
+      const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
+
+      updateFormData(key, [img]); // send as array to preserve consistency
+    });
+
+    // setPreviewImg(validImages[0].preview); // preview first image only
+    setShowUploader(false);
+  };
+
+
   useEffect(() => {
     const fetchEvent = async () => {
       try {
@@ -207,8 +245,8 @@ const EventEdit = () => {
         const userIds = Array.isArray(data.user_id)
           ? data.user_id
           : data.user_id
-          ? [data.user_id]
-          : [];
+            ? [data.user_id]
+            : [];
 
         // Determine share type
         let shared = "all";
@@ -220,10 +258,10 @@ const EventEdit = () => {
         const existingCoverImage =
           data.cover_image && data.cover_image.document_url
             ? {
-                url: data.cover_image.document_url,
-                id: data.cover_image.id,
-                isExisting: true,
-              }
+              url: data.cover_image.document_url,
+              id: data.cover_image.id,
+              isExisting: true,
+            }
             : null;
 
         // Prepare existing event image previews
@@ -888,9 +926,8 @@ const EventEdit = () => {
                                   </button>
                                   {/* Badge to show if image is existing or new */}
                                   <small
-                                    className={`badge ${
-                                      isExisting ? "bg-info" : "bg-success"
-                                    } position-absolute`}
+                                    className={`badge ${isExisting ? "bg-info" : "bg-success"
+                                      } position-absolute`}
                                     style={{
                                       bottom: "-5px",
                                       left: "5px",
@@ -922,7 +959,7 @@ const EventEdit = () => {
                             )}
                           </span>
                         </label>
-                        <ImageUploadingButton
+                        {/* <ImageUploadingButton
                           value={image}
                           onChange={handleCoverImageUpload}
                           btntext="Upload Cover Image"
@@ -941,7 +978,7 @@ const EventEdit = () => {
                               setFormData((prev) => ({
                                 ...prev,
                                 cover_image: cropped.file,
-                                existingCoverImage: null, // Clear any existing cover image
+                                existingCoverImage: null, 
                               }));
                             }
                             setDialogOpen(false);
@@ -959,11 +996,68 @@ const EventEdit = () => {
                             height: 300,
                             background: "#fff",
                           }}
-                        />
+                        /> */}
 
-                        {/* Cover Image Preview */}
-                        <div className="mt-2">
-                          {croppedImage ? (
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setShowUploader(true)}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            border: "1px solid #ccc",
+                            borderRadius: "6px",
+                            overflow: "hidden",
+                            fontSize: "14px",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <span
+                            style={{
+                              backgroundColor: "#f8f9fa",
+                              padding: "8px 16px",
+                              borderRight: "1px solid #ccc"
+                            }}
+                          >
+                            Choose file
+                          </span>
+                          <span style={{ padding: "8px 12px", whiteSpace: "nowrap" }}>
+                            No file chosen
+                          </span>
+                        </span>
+                        {showUploader && (
+                          <ProjectBannerUpload
+                            onClose={() => setShowUploader(false)}
+                            includeInvalidRatios={false}
+                            selectedRatioProp={selectedRatios}
+                            showAsModal={true}
+                            label={dynamicLabel}
+                            description={dynamicDescription}
+                            onContinue={handleCropComplete}
+                          />
+                        )}
+
+                        <div className="mt-2 d-flex flex-wrap">
+                          {Array.isArray(formData.event_image_16by9) && formData.event_image_16by9.length > 0 ? (
+                            formData.event_image_16by9.map((file, index) => (
+                              <div
+                                key={index}
+                                className="position-relative"
+                                style={{ marginRight: "10px", marginBottom: "10px" }}
+                              >
+                                <img
+                                  src={file.preview}
+                                  alt={file.name}
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </div>
+                            ))
+                          ) : croppedImage ? (
                             <div className="position-relative">
                               <img
                                 src={croppedImage}
@@ -975,29 +1069,6 @@ const EventEdit = () => {
                                   objectFit: "cover",
                                 }}
                               />
-                              {/* <button
-            type="button"
-            className="btn btn-danger btn-sm position-absolute"
-            style={{
-              top: "-5px",
-              right: "-5px",
-              fontSize: "10px",
-              width: "20px",
-              height: "20px",
-              padding: "0",
-              borderRadius: "50%",
-            }}
-            onClick={() => {
-              setCroppedImage(null);
-              setFormData(prev => ({
-                ...prev,
-                cover_image: null
-              }));
-            }}
-            title="Remove cover image"
-          >
-            ×
-          </button> */}
                             </div>
                           ) : formData.existingCoverImage ? (
                             <div className="position-relative">
@@ -1011,34 +1082,12 @@ const EventEdit = () => {
                                   objectFit: "cover",
                                 }}
                               />
-                              {/* <button
-            type="button"
-            className="btn btn-danger btn-sm position-absolute"
-            style={{
-              top: "-5px",
-              right: "-5px",
-              fontSize: "10px",
-              width: "20px",
-              height: "20px",
-              padding: "0",
-              borderRadius: "50%",
-            }}
-            onClick={() => {
-              setFormData(prev => ({
-                ...prev,
-                existingCoverImage: null,
-                cover_image: null
-              }));
-            }}
-            title="Remove existing cover image"
-          >
-            ×
-          </button> */}
                             </div>
                           ) : (
-                            <span></span>
+                            <span>No image selected</span>
                           )}
                         </div>
+
                       </div>
                     </div>
 
@@ -1185,19 +1234,19 @@ const EventEdit = () => {
                             value={
                               Array.isArray(formData.user_id)
                                 ? formData.user_id.map((userId) => {
-                                    const user = eventUserID.find(
-                                      (u) => u.id === userId
-                                    );
-                                    return user
-                                      ? {
-                                          value: userId,
-                                          label: `${user.firstname} ${user.lastname}`,
-                                        }
-                                      : {
-                                          value: userId,
-                                          label: `User ${userId}`,
-                                        };
-                                  })
+                                  const user = eventUserID.find(
+                                    (u) => u.id === userId
+                                  );
+                                  return user
+                                    ? {
+                                      value: userId,
+                                      label: `${user.firstname} ${user.lastname}`,
+                                    }
+                                    : {
+                                      value: userId,
+                                      label: `User ${userId}`,
+                                    };
+                                })
                                 : []
                             }
                             onChange={(selectedOptions) =>
@@ -1224,12 +1273,12 @@ const EventEdit = () => {
                             value={
                               formData.group_id
                                 ? formData.group_id.split(",").map((id) => ({
-                                    value: id,
-                                    label:
-                                      groups.find(
-                                        (group) => group.id.toString() === id
-                                      )?.name || `Group ${id}`,
-                                  }))
+                                  value: id,
+                                  label:
+                                    groups.find(
+                                      (group) => group.id.toString() === id
+                                    )?.name || `Group ${id}`,
+                                }))
                                 : []
                             }
                             onChange={(selectedOptions) =>
