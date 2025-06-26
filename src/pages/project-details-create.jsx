@@ -920,7 +920,7 @@ const ProjectDetailsCreate = () => {
     if (!planId) {
       // Unsaved plan → just remove locally
       setPlans(plans.filter((_, idx) => idx !== index));
-      toast.success("Plan removed locally!");
+      toast.success("Plan removed successfully!");
       return;
     }
 

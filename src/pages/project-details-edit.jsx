@@ -955,7 +955,7 @@ const ProjectDetailsEdit = () => {
 
       // Remove from local state
       setPlans((prev) => prev.filter((_, idx) => idx !== index));
-      toast.success("Plan deleted from backend!");
+      toast.success("Plan deleted successfully!");
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to delete plan from backend.");
