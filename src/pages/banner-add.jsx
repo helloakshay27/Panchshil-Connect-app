@@ -29,6 +29,8 @@ const BannerAdd = () => {
     active: null,
   });
 
+  console.log("formData", formData);
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -56,8 +58,6 @@ const BannerAdd = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-
 
   const validateForm = () => {
     if (!formData.title.trim()) {
@@ -87,11 +87,10 @@ const BannerAdd = () => {
   };
 
   const bannerUploadConfig = {
-    'banner image': ['1:1', '9:16']
+    'banner video': ['1:1', '9:16']
   };
 
-
-  const currentUploadType = 'banner image'; // Can be dynamic
+  const currentUploadType = 'banner video';
   const selectedRatios = bannerUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
   const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
@@ -111,18 +110,15 @@ const BannerAdd = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(':', 'by'); // e.g., "16:9" -> "16by9"
-      const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
+      const formattedRatio = img.ratio.replace(':', '_by_'); // e.g., "1:1" -> "1_by_1", "9:16" -> "9_by_16"
+      const key = `banner_video_${formattedRatio}`; // e.g., banner_video_1_by_1, banner_video_9_by_16
 
-      updateFormData(key, [img]); // send as array to preserve consistency
+      updateFormData(key, [img]);
     });
 
-    setPreviewImg(validImages[0].preview); // preview first image only
+    setPreviewImg(validImages[0].preview);
     setShowUploader(false);
   };
-
-
-  console.log('formData', formData);
 
   const discardImage = (key, imageToRemove) => {
     setFormData((prev) => {
@@ -130,7 +126,6 @@ const BannerAdd = () => {
         (img) => img.id !== imageToRemove.id
       );
 
-      // Remove the key if the array becomes empty
       const newFormData = { ...prev };
       if (updatedArray.length === 0) {
         delete newFormData[key];
@@ -141,36 +136,11 @@ const BannerAdd = () => {
       return newFormData;
     });
 
-    // If the removed image is being previewed, reset previewImg
     if (previewImg === imageToRemove.preview) {
       setPreviewImg(null);
     }
   };
 
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (!validateForm()) return;
-
-  //   const finalMockData = {
-  //     id: "",
-  //     title: formData.title,
-  //     project_id: formData.project_id,
-  //     banner_type: formData.banner_type,
-  //     banner_redirect: formData.banner_redirect,
-  //     active: formData.active,
-  //     company_id: null,
-  //     company_name: null,
-  //     video_url: null,
-  //     video_preview_image_url: null,
-  //     banner_video_1_by_1: getFileInfo(formData.banner_video_1_by_1),
-  //     banner_video_9_by_16: getFileInfo(formData.banner_video_9_by_16),
-  //     banner_video_16_by_9: getFileInfo(formData.banner_video_16_by_9),
-  //     banner_video_3_by_2: getFileInfo(formData.banner_video_3_by_2),
-  //   };
-
-  //   console.log("🟢 Mock Submission Data:", finalMockData);
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -185,32 +155,28 @@ const BannerAdd = () => {
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
 
-      // Append all image files from formData
       Object.entries(formData).forEach(([key, images]) => {
-        if (key.startsWith("banner_image_") && Array.isArray(images)) {
+        if (key.startsWith("banner_video_") && Array.isArray(images)) {
           images.forEach((img) => {
-            const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
-            // e.g., banner[banner_image_1by1]
+            const backendField = key.replace("banner_video_", "banner[banner_video_") + "]";
             if (img.file instanceof File) {
               sendData.append(backendField, img.file);
             }
           });
         }
-
       });
 
+      console.log("data to be sent:", Array.from(sendData.entries()));
 
-      console.log("dta to be sent:", Array.from(sendData.entries()));
-
-      // await axios.post(`${baseURL}banners.json`, sendData, {
-      //   headers: {
-      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
+      await axios.post(`${baseURL}banners.json`, sendData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Banner created successfully");
-      // navigate("/banner-list");
+      navigate("/banner-list");
     } catch (error) {
       console.error(error);
       toast.error(`Error creating banner: ${error.message}`);
@@ -218,7 +184,6 @@ const BannerAdd = () => {
       setLoading(false);
     }
   };
-
 
   const handleCancel = () => {
     navigate(-1);
@@ -254,7 +219,6 @@ const BannerAdd = () => {
 
             <div className="card-body">
               <div className="row">
-                {/* Title */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -272,7 +236,6 @@ const BannerAdd = () => {
                   </div>
                 </div>
 
-                {/* Project */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -290,7 +253,6 @@ const BannerAdd = () => {
                   </div>
                 </div>
 
-                {/* Banner Upload */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -335,7 +297,6 @@ const BannerAdd = () => {
                       </span>
                     </span>
 
-
                     {showUploader && (
                       <ProjectBannerUpload
                         onClose={() => setShowUploader(false)}
@@ -362,13 +323,13 @@ const BannerAdd = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {[...(formData.banner_image_1by1 || []).map((file) => ({
+                      {[...(formData.banner_video_1_by_1 || []).map((file) => ({
                         ...file,
-                        type: "banner_image_1by1",
+                        type: "banner_video_1_by_1",
                       })),
-                      ...(formData.banner_image_9by16 || []).map((file) => ({
+                      ...(formData.banner_video_9_by_16 || []).map((file) => ({
                         ...file,
-                        type: "banner_image_9by16",
+                        type: "banner_video_9_by_16",
                       }))].map((file, index) => (
                         <tr key={index}>
                           <td>{file.name}</td>
@@ -393,18 +354,12 @@ const BannerAdd = () => {
                         </tr>
                       ))}
                     </tbody>
-
                   </table>
                 </div>
               </div>
             </div>
-
-
           </div>
 
-
-
-          {/* Submit/Cancel Buttons */}
           <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
               <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>

@@ -57,8 +57,8 @@ const BannerEdit = () => {
           title: bannerData.title,
           project_id: bannerData.project_id,
           banner_video: bannerData.banner_video?.document_url || null,
-          banner_video_1_by_1: bannerData.banner_video_1_by_1?.document_url || null,
-          banner_video_9_by_16: bannerData.banner_video_9_by_16?.document_url || null,
+          banner_video_1_by_1: bannerData.banner_video_1_by_1 || null,
+          banner_video_9_by_16: bannerData.banner_video_9_by_16 || null,
           active: true,
         });
         setOriginalBannerVideo(bannerData.banner_video?.document_url || null); // Store original
@@ -205,10 +205,18 @@ const BannerEdit = () => {
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
   const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
 
+  // const updateFormData = (key, files) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [key]: [...(prev[key] || []), ...files],
+  //   }));
+  // };
+
+
   const updateFormData = (key, files) => {
     setFormData((prev) => ({
       ...prev,
-      [key]: [...(prev[key] || []), ...files],
+      [key]: files, // replace the existing entry with the new file(s)
     }));
   };
 
@@ -220,18 +228,14 @@ const BannerEdit = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(':', 'by'); // e.g., "16:9" -> "16by9"
-      const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
-
+      const formattedRatio = img.ratio.replace(':', '_by_'); // e.g., "1:1" -> "1_by_1", "9:16" -> "9_by_16"
+      const key = `banner_video_${formattedRatio}`; // e.g., banner_video_1_by_1, banner_video_9_by_16
       updateFormData(key, [img]); // send as array to preserve consistency
     });
 
-    setPreviewImg(validImages[0].preview); // preview first image only
+    // setPreviewImg(validImages[0].preview); // preview first image only
     setShowUploader(false);
   };
-
-
-
   const discardImage = (key, imageToRemove) => {
     setFormData((prev) => {
       const updatedArray = (prev[key] || []).filter(
@@ -262,28 +266,33 @@ const BannerEdit = () => {
     setLoading(true);
     try {
       const sendData = new FormData();
+
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
 
+      // Append the main video if it's a File
       if (formData.banner_video instanceof File) {
         sendData.append("banner[banner_video]", formData.banner_video);
       }
 
+
+      // Handle banner video/image fields like banner_video_1_by_1, banner_video_9_by_16, etc.
       Object.entries(formData).forEach(([key, images]) => {
-        if (key.startsWith("banner_image_") && Array.isArray(images)) {
+        if (
+          (key.startsWith("banner_video_") || key.startsWith("banner_image_")) &&
+          Array.isArray(images)
+        ) {
           images.forEach((img) => {
             const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
-            // e.g., banner[banner_image_1by1]
             if (img.file instanceof File) {
               sendData.append(backendField, img.file);
+              // sendData.append(`banner[${key}]`, img.file);
             }
           });
         }
-
       });
 
       console.log("dta to be sent:", Array.from(sendData.entries()));
-
 
       // await axios.put(`${baseURL}banners/${id}.json`, sendData, {
       //   headers: {
@@ -295,7 +304,7 @@ const BannerEdit = () => {
 
 
       toast.success("Banner updated successfully");
-      navigate("/banner-list");
+      // navigate("/banner-list");
     } catch (error) {
       toast.error("Error updating banner");
     } finally {
@@ -315,7 +324,7 @@ const BannerEdit = () => {
   const handleCancel = () => navigate(-1);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid" style={{ height: '100vh', overflowY: 'auto' }}>
       <style>
         {`
   input[type="file"]::-webkit-file-upload-button {
@@ -505,51 +514,40 @@ const BannerEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {[
-                        ...(Array.isArray(formData.banner_video_1_by_1)
-                          ? formData.banner_video_1_by_1
-                          : typeof formData.banner_video_1_by_1 === "string"
-                            ? [
-                              {
-                                preview: formData.banner_video_1_by_1,
-                                name: "banner_video_1_by_1.jpg",
-                                ratio: "1:1",
-                                type: "banner_video_1_by_1",
-                              },
-                            ]
-                            : []),
-                        ...(Array.isArray(formData.banner_image_9by16)
-                          ? formData.banner_image_9by16.map((file) => ({
-                            ...file,
-                            type: "banner_image_9by16",
-                          }))
-                          : []),
-                      ].map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.name}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={file.preview}
-                              alt={file.name}
-                            />
-                          </td>
-                          <td>{file.ratio}</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => discardImage(file.type, file)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {['banner_video_1_by_1', 'banner_video_9_by_16'].map((key) => {
+                        const file = formData[key];
+                        if (!file) return null;
+
+                        const normalizedFile = Array.isArray(file) ? file[0] : file;
+                        const preview = normalizedFile.preview || normalizedFile.document_url || "";
+                        const name = normalizedFile.name || normalizedFile.document_file_name || "Unnamed";
+                        const ratio = key.replace("banner_video_", "").replace("_by_", ":");
+
+                        return (
+                          <tr key={key}>
+                            <td>{name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={preview}
+                                alt={name}
+                              />
+                            </td>
+                            <td>{ratio}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage(key, normalizedFile)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
-
-
                   </table>
                 </div>
               </div>
