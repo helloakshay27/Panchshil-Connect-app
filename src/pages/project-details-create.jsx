@@ -926,7 +926,7 @@ const ProjectDetailsCreate = () => {
 
     try {
       const response = await fetch(
-        `${baseURL}plans/${planId}.json`, // ✅ Correct endpoint for entire plan
+        `${baseURL}plans/${planId}.json`, 
         {
           method: "DELETE",
           headers: {
@@ -3122,18 +3122,18 @@ const ProjectDetailsCreate = () => {
                 </h5>
               </div>
 
-              <div className="row align-items-end">
-                <div className="col-md-3">
+              {/* <div className="row align-items-end"> */}
+                <div className="col-md-3 mt-2">
                   <input
                     className="form-control"
                     type="text"
-                    placeholder="Plan Name (e.g. Ground Floor)"
+                    placeholder="Enter Plan Name"
                     value={planName}
                     onChange={(e) => setPlanName(e.target.value)}
                   />
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-3 mt-2">
                   <input
                     className="form-control"
                     type="file"
@@ -3145,7 +3145,7 @@ const ProjectDetailsCreate = () => {
 
 
 
-                <div className="col-md-3">
+                <div className="col-md-3 ">
                   <button
                     className="purple-btn2"
                     type="button"
@@ -3171,12 +3171,12 @@ const ProjectDetailsCreate = () => {
                       setPlanImages([]);
                     }}
                   >
-                    Add Plan
+                    + Add
                   </button>
                 </div>
-              </div>
+              {/* </div> */}
 
-              <div className="col-md-12 mt-2">
+              <div className="col-md-12">
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
