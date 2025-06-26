@@ -1234,17 +1234,16 @@ const ProjectDetailsCreate = () => {
 
 
 
-      if (key === "plans") {
-        for (const planKey in value) {
-          data.append(`project[plans][${planKey}][name]`, value[planKey].name);
-          if (Array.isArray(value[planKey].images)) {
-            value[planKey].images.forEach((img) => {
-              data.append(`project[plans][${planKey}][images][]`, img);
+      if (key === "plans" && Array.isArray(value)) {
+        value.forEach((plan, index) => {
+          data.append(`project[plans][${index}][name]`, plan.name);
+          if (Array.isArray(plan.images)) {
+            plan.images.forEach((img) => {
+              data.append(`project[plans][${index}][images][]`, img);
             });
           }
-        }
-      }
-      if (key === "Address") {
+        });
+      }else if (key === "Address") {
         for (const addressKey in value) {
           data.append(`project[Address][${addressKey}]`, value[addressKey]);
         }
