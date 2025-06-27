@@ -14,7 +14,6 @@ import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
-import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
