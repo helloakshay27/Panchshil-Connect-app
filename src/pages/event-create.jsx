@@ -68,11 +68,11 @@ const EventCreate = () => {
 
 
   const eventUploadConfig = {
-    'event image': ['16:9']
+    'cover image': ['16:9']
   };
 
 
-  const currentUploadType = 'event image'; // Can be dynamic
+  const currentUploadType = 'cover image'; 
   const selectedRatios = eventUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
   const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
@@ -92,10 +92,10 @@ const EventCreate = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(':', 'by'); // e.g., "16:9" -> "16by9"
+      const formattedRatio = img.ratio.replace(':', '_by_'); // e.g., "16:9" -> "16by9"
       const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
 
-      updateFormData(key, [img]); // send as array to preserve consistency
+      updateFormData(key, [img]); 
     });
 
     // setPreviewImg(validImages[0].preview); // preview first image only
@@ -336,6 +336,19 @@ const EventCreate = () => {
       data.append("event[rsvp_number]", formData.rsvp_number);
     }
 
+
+    Object.entries(formData).forEach(([key, images]) => {
+      if (key.startsWith("cover_image") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField =
+            key.replace("cover_image", "event[cover_image") + "]";
+          if (img.file instanceof File) {
+            data.append(backendField, img.file);
+          }
+        });
+      }
+    });
+
     // Updated reminder data appending
     preparedReminders.forEach((reminder, index) => {
       if (reminder.id)
@@ -391,13 +404,19 @@ const EventCreate = () => {
       data.append("event[group_id][]", formData.group_id);
     }
 
+    console.log("dta to be sent:", Array.from(data.entries()));
+
+
+
     try {
-      const response = await axios.post(`${baseURL}events.json`, data, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      console.log("dta to be sent:", Array.from(data.entries()));
+
+      // const response = await axios.post(`${baseURL}events.json`, data, {
+      //   headers: {
+      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
       toast.success("Event created successfully!");
       setFormData({
         event_type: "",
@@ -419,7 +438,7 @@ const EventCreate = () => {
         set_reminders_attributes: [],
       });
 
-      navigate("/event-list");
+      // navigate("/event-list");
     } catch (error) {
       console.error("Error submitting the form:", error);
       if (error.response && error.response.data) {
@@ -840,8 +859,8 @@ const EventCreate = () => {
                         </div> */}
 
                         <div className="mt-2">
-                          {Array.isArray(formData.event_image_16by9) && formData.event_image_16by9.length > 0 ? (
-                            formData.event_image_16by9.map((file, index) => (
+                          {Array.isArray(formData.cover_image_16_by_9) && formData.cover_image_16_by_9.length > 0 ? (
+                            formData.cover_image_16_by_9.map((file, index) => (
                               <div
                                 key={index}
                                 className="position-relative"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import "../mor.css";
@@ -39,7 +39,7 @@ const Testimonials = () => {
   const [formData, setFormData] = useState({
     testimonial_video: null,
     attachfile: null,
-    video_preview_image_url: "",
+    video_preview_image_url_16_by_9: "",
   });
 
   console.log("Form Data:", formData);
@@ -153,10 +153,10 @@ const Testimonials = () => {
   };
 
   const bannerUploadConfig = {
-    "preview image": ["16:9"],
+    "video preview image url": ["16:9"],
   };
 
-  const currentUploadType = "preview image"; // Can be dynamic
+  const currentUploadType = "video preview image url"; // Can be dynamic
   const selectedRatios = bannerUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
     m.toUpperCase()
@@ -180,7 +180,7 @@ const Testimonials = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(":", "by"); // e.g., "16:9" -> "16by9"
+      const formattedRatio = img.ratio.replace(":", "_by_"); // e.g., "16:9" -> "16by9"
       const key = `${currentUploadType}_${formattedRatio}`
         .replace(/\s+/g, "_")
         .toLowerCase(); // e.g., banner_image_16by9
@@ -293,14 +293,13 @@ const Testimonials = () => {
     // }
 
     Object.entries(formData).forEach(([key, images]) => {
-      if (key.startsWith("preview_image_") && Array.isArray(images)) {
+      if (key.startsWith("video_preview_image_url") && Array.isArray(images)) {
         images.forEach((img) => {
           const backendField =
-            key.replace("preview_image_", "preview[preview_image_") + "]";
+            key.replace("video_preview_image_url", "testimonial[video_preview_image_url") + "]";
           // e.g., preview[preview_image_1by1]
-
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            form.append(backendField, img.file);
           }
         });
       }
@@ -311,13 +310,16 @@ const Testimonials = () => {
       form.append("testimonial[video_preview_image_url]", videoUrl.trim());
     }
 
+    console.log("data to be sent:", Array.from(form.entries()));
     try {
-      const response = await axios.post(`${baseURL}testimonials.json`, form, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      console.log("data to be sent:", Array.from(form.entries()));
+
+      // const response = await axios.post(`${baseURL}testimonials.json`, form, {
+      //   headers: {
+      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
 
       toast.success("Data saved successfully!");
       // reset all
@@ -334,7 +336,7 @@ const Testimonials = () => {
         attachfile: null,
         video_preview_image_url: "",
       });
-      navigate("/testimonial-list");
+      // navigate("/testimonial-list");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
       toast.error("Failed to submit. Please check your input.");
@@ -623,10 +625,10 @@ const Testimonials = () => {
                         </thead>
                         <tbody>
                           {[
-                            ...(formData.preview_image_16by9 || []).map(
+                            ...(formData.video_preview_image_url_16_by_9 || []).map(
                               (file) => ({
                                 ...file,
-                                type: "preview_image_16by9",
+                                type: "video_preview_image_url_16_by_9",
                               })
                             ),
                           ].map((file, index) => (

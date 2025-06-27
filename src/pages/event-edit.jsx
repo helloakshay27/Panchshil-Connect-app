@@ -143,11 +143,11 @@ const EventEdit = () => {
   };
 
   const eventUploadConfig = {
-    'event image': ['16:9']
+    'cover image': ['16:9']
   };
 
 
-  const currentUploadType = 'event image'; // Can be dynamic
+  const currentUploadType = 'cover image';
   const selectedRatios = eventUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
   const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
@@ -155,7 +155,7 @@ const EventEdit = () => {
   const updateFormData = (key, files) => {
     setFormData((prev) => ({
       ...prev,
-      [key]: [...(prev[key] || []), ...files],
+      [key]: files,
     }));
   };
 
@@ -563,6 +563,18 @@ const EventEdit = () => {
       });
     }
 
+    Object.entries(formData).forEach(([key, images]) => {
+      if (key.startsWith("cover_image") && Array.isArray(images)) {
+        images.forEach((img) => {
+          const backendField =
+            key.replace("cover_image", "event[cover_image") + "]";
+          if (img.file instanceof File) {
+            data.append(backendField, img.file);
+          }
+        });
+      }
+    });
+
     // === REMINDERS ===
 
     preparedReminders.forEach((reminder, index) => {
@@ -655,6 +667,8 @@ const EventEdit = () => {
         data.append(`event[${key}]`, value);
       }
     });
+
+
 
     // === SEND REQUEST ===
     try {

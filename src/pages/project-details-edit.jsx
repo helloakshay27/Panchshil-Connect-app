@@ -122,6 +122,9 @@ const ProjectDetailsEdit = () => {
   const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
   const [pendingImageUpload, setPendingImageUpload] = useState([]);
   const [showUploader, setShowUploader] = useState(false);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
+  const [showBannerModal, setShowBannerModal] = useState(false);
 
 
 
@@ -132,40 +135,34 @@ const ProjectDetailsEdit = () => {
     two_d_images: false,
 
   });
-  const bannerUploadConfig = {
-    'banner image': ['9:16'],
-    'cover image': ['1:1'],
+
+  const projectUploadConfig = {
+    'image': ['9:16'],
+    'cover images': ['1:1'],
     'gallery image': ['16:9'],
-    'floor plan': ['16:9'],
+    'two d images': ['16:9'],
   };
+  const coverImageType = 'cover images';
+  const galleryImageType = 'gallery image';
+  const floorImageType = 'two d images';
+  const bannerImageType = 'image';
+
+  const selectedCoverRatios = projectUploadConfig[coverImageType] || [];
+  const selectedGalleryRatios = projectUploadConfig[galleryImageType] || [];
+  const selectedFloorRatios = projectUploadConfig[floorImageType] || [];
+  const selectedBannerRatios = projectUploadConfig[bannerImageType] || [];
+
+  const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const galleryImageLabel = galleryImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const floorImageLabel = floorImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const bannerImageLabel = bannerImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+
+  const dynamicDescription = `Supports ${selectedCoverRatios.join(', ')} aspect ratios`;
+  const dynamicDescription1 = `Supports ${selectedGalleryRatios.join(', ')} aspect ratios`;
+  const dynamicDescription2 = `Supports ${selectedFloorRatios.join(', ')} aspect ratios`;
+  const dynamicDescription3 = `Supports ${selectedBannerRatios.join(', ')} aspect ratios`;
 
 
-  const currentUploadType = 'cover image'; // Can be dynamic
-  const currentUploadType1 = 'gallery image'; // Can be dynamic
-  const currentUploadType2 = 'floor plan'; // Can be dynamic
-  const currentUploadType3 = 'banner image'; // Can be dynamic
-
-
-
-  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
-  const selectedRatios1 = bannerUploadConfig[currentUploadType1] || [];
-  const selectedRatios2 = bannerUploadConfig[currentUploadType2] || [];
-  const selectedRatios3 = bannerUploadConfig[currentUploadType3] || [];
-
-
-  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const dynamicLabel1 = currentUploadType1.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const dynamicLabel2 = currentUploadType2.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const dynamicLabel3 = currentUploadType3.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-
-  const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
-  const dynamicDescription1 = `Supports ${selectedRatios1.join(', ')} aspect ratios`;
-  const dynamicDescription2 = `Supports ${selectedRatios2.join(', ')} aspect ratios`;
-  const dynamicDescription3 = `Supports ${selectedRatios3.join(', ')} aspect ratios`;
-
-  const [showGalleryModal, setShowGalleryModal] = useState(false);
-  const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
-  const [showBannerModal, setShowBannerModal] = useState(false);
 
 
   const updateFormData = (key, files) => {
@@ -188,17 +185,17 @@ const ProjectDetailsEdit = () => {
 
       switch (type) {
         case "gallery":
-          prefix = currentUploadType1; // "gallery image"
+          prefix = galleryImageType; // "gallery image"
           break;
         case "floor":
-          prefix = currentUploadType2; // "floor plan"
+          prefix = floorImageType; // "floor plan"
           break;
         case "banner":
-          prefix = currentUploadType3; // explicitly use string for banner
+          prefix = bannerImageType; // explicitly use string for banner
           break;
         case "cover":
         default:
-          prefix = currentUploadType; // "cover image"
+          prefix = coverImageType; // "cover image"
           break;
       }
 
@@ -1763,30 +1760,30 @@ const ProjectDetailsEdit = () => {
         });
         // } 
       }
-      else if (key.startsWith("banner_image_") && Array.isArray(value)) {
+      else if (key.startsWith("image") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
+          const backendField = key.replace("image", "project[image") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("cover_image_") && Array.isArray(value)) {
+      } else if (key.startsWith("cover_images_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("cover_image_", "cover[cover_image_") + "]";
+          const backendField = key.replace("cover_images_", "project[cover_images_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("gallery_image_", "gallery_image[gallery_image_") + "]";
+          const backendField = key.replace("gallery_image_", "project[gallery_image_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("floor_plan_") && Array.isArray(value)) {
+      } else if (key.startsWith("two_d_images_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("floor_plan_image_", "floor_plan[floor_plan_image_") + "]";
+          const backendField = key.replace("two_d_images_", "project[two_d_images_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
@@ -4498,9 +4495,9 @@ const ProjectDetailsEdit = () => {
                   <ProjectBannerUpload
                     onClose={() => setShowBannerModal(false)}
                     includeInvalidRatios={false}
-                    selectedRatioProp={selectedRatios3}
+                    selectedRatioProp={selectedBannerRatios}
                     showAsModal={true}
-                    label={"Project Banner"}
+                    label={bannerImageLabel}
                     description={dynamicDescription3}
                     onContinue={(validImages) => handleCroppedImages(validImages, "banner")}
                   />
@@ -4618,9 +4615,9 @@ const ProjectDetailsEdit = () => {
                   <ProjectBannerUpload
                     onClose={() => setShowUploader(false)}
                     includeInvalidRatios={false}
-                    selectedRatioProp={selectedRatios}
+                    selectedRatioProp={selectedCoverRatios}
                     showAsModal={true}
-                    label={dynamicLabel}
+                    label={coverImageLabel}
                     description={dynamicDescription}
                     onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
                   />
@@ -4851,9 +4848,9 @@ const ProjectDetailsEdit = () => {
                 {showGalleryModal && (
                   <ProjectBannerUpload
                     onClose={() => setShowGalleryModal(false)}
-                    selectedRatioProp={bannerUploadConfig["gallery image"]}
+                    selectedRatioProp={selectedGalleryRatios}
                     showAsModal={true}
-                    label="Gallery Image"
+                    label={galleryImageLabel}
                     description={dynamicDescription1}
                     onContinue={(validImages) => handleCroppedImages(validImages, "gallery")}
                   />
@@ -5302,9 +5299,9 @@ const ProjectDetailsEdit = () => {
                 {showFloorPlanModal && (
                   <ProjectBannerUpload
                     onClose={() => setShowFloorPlanModal(false)}
-                    selectedRatioProp={bannerUploadConfig["floor plan"]}
+                    selectedRatioProp={selectedFloorRatios}
                     showAsModal={true}
-                    label="Floor Plan"
+                    label={floorImageLabel}
                     description={dynamicDescription2}
                     onContinue={(validImages) => handleCroppedImages(validImages, "floor")}
                   />

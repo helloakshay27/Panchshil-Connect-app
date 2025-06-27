@@ -285,8 +285,8 @@ const BannerEdit = () => {
           images.forEach((img) => {
             const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
             if (img.file instanceof File) {
-              sendData.append(backendField, img.file);
-              // sendData.append(`banner[${key}]`, img.file);
+              // sendData.append(backendField, img.file);
+              sendData.append(`banner[${key}]`, img.file);
             }
           });
         }
@@ -294,17 +294,17 @@ const BannerEdit = () => {
 
       console.log("dta to be sent:", Array.from(sendData.entries()));
 
-      // await axios.put(`${baseURL}banners/${id}.json`, sendData, {
-      //   headers: {
-      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
+      await axios.put(`${baseURL}banners/${id}.json`, sendData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
 
 
       toast.success("Banner updated successfully");
-      // navigate("/banner-list");
+      navigate("/banner-list");
     } catch (error) {
       toast.error("Error updating banner");
     } finally {

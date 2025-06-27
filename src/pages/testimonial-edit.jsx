@@ -216,7 +216,7 @@ const TestimonialEdit = () => {
   const updateFormData = (key, files) => {
     setFormData((prev) => ({
       ...prev,
-      [key]: [...(prev[key] || []), ...files],
+      [key]: files,
     }));
   };
 
@@ -287,7 +287,7 @@ const TestimonialEdit = () => {
         if (key.startsWith("preview_image_") && Array.isArray(images)) {
           images.forEach((img) => {
             const backendField =
-              key.replace("preview_image_", "preview[preview_image_") + "]";
+              key.replace("video_preview_image_url", "testimonial[video_preview_image_url") + "]";
             // e.g., preview[preview_image_1by1]
 
             if (img.file instanceof File) {
@@ -297,6 +297,7 @@ const TestimonialEdit = () => {
         }
       });
 
+      
       if (formData.attachfile) {
         sendData.append("testimonial[preview_image]", formData.attachfile);
       } else if (formData.video_url) {

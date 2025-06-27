@@ -209,12 +209,12 @@ const PressReleasesEdit = () => {
     return true;
   };
 
-  const bannerUploadConfig = {
+  const pressUploadConfig = {
     "pr image": ["16:9"],
   };
 
   const currentUploadType = "pr image"; // Can be dynamic
-  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
+  const selectedRatios = pressUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
     m.toUpperCase()
   );
@@ -225,7 +225,7 @@ const PressReleasesEdit = () => {
   const updateFormData = (key, files) => {
     setFormData((prev) => ({
       ...prev,
-      [key]: [...(prev[key] || []), ...files],
+      [key]: files,
     }));
   };
 
@@ -237,7 +237,7 @@ const PressReleasesEdit = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(":", "by"); // e.g., "16:9" -> "16by9"
+      const formattedRatio = img.ratio.replace(":", "_by_"); // e.g., "16:9" -> "16by9"
       const key = `${currentUploadType}_${formattedRatio}`
         .replace(/\s+/g, "_")
         .toLowerCase(); // e.g., banner_image_16by9
@@ -245,7 +245,7 @@ const PressReleasesEdit = () => {
       updateFormData(key, [img]); // send as array to preserve consistency
     });
 
-    setPreviewImg(validImages[0].preview); // preview first image only
+    // setPreviewImg(validImages[0].preview); // preview first image only
     setShowUploader(false);
   };
 
@@ -305,9 +305,7 @@ const PressReleasesEdit = () => {
         if (key.startsWith("pr_image_") && Array.isArray(images)) {
           images.forEach((img) => {
             const backendField =
-              key.replace("pr_image_", "preview[pr_image_") + "]";
-            // e.g., preview[pr_image_1by1]
-
+              key.replace("pr_image_", "press_release[pr_image_") + "]";
             if (img.file instanceof File) {
               sendData.append(backendField, img.file);
             }
@@ -372,7 +370,7 @@ const PressReleasesEdit = () => {
     }
 
     setImage(newImageList);
-    setDialogOpen(true); // Open cropper for images
+    setDialogOpen(true); 
   };
 
   const isImageFile = (file) => {

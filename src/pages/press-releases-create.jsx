@@ -23,7 +23,7 @@ const PressReleasesCreate = () => {
     title: "",
     description: "",
     release_date: "",
-    // pr_image: [],
+    pr_image_16_by_9: [],
     attachment_url: "",
     press_source: "",
   });
@@ -138,7 +138,7 @@ const PressReleasesCreate = () => {
       return false;
     }
 
-    if (!formData.pr_image || formData.pr_image.length === 0) {
+    if (!formData.pr_image_16_by_9 || formData.pr_image_16_by_9.length === 0) {
       newErrors.pr_image = "Attachment (Image) is mandatory";
       setErrors(newErrors);
       toast.dismiss();
@@ -158,14 +158,14 @@ const PressReleasesCreate = () => {
     return true;
   };
 
-  console.log(formData.release_date);
+  console.log(formData);
 
-  const bannerUploadConfig = {
+  const pressUploadConfig = {
     "pr image": ["16:9"],
   };
 
   const currentUploadType = "pr image"; // Can be dynamic
-  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
+  const selectedRatios = pressUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
     m.toUpperCase()
   );
@@ -188,7 +188,7 @@ const PressReleasesCreate = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(":", "by"); // e.g., "16:9" -> "16by9"
+      const formattedRatio = img.ratio.replace(":", "_by_"); // e.g., "16:9" -> "16by9"
       const key = `${currentUploadType}_${formattedRatio}`
         .replace(/\s+/g, "_")
         .toLowerCase(); // e.g., banner_image_16by9
@@ -196,7 +196,7 @@ const PressReleasesCreate = () => {
       updateFormData(key, [img]); // send as array to preserve consistency
     });
 
-    setPreviewImg(validImages[0].preview); // preview first image only
+    // setPreviewImg(validImages[0].preview); // preview first image only
     setShowUploader(false);
   };
 
@@ -225,70 +225,7 @@ const PressReleasesCreate = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
-    setLoading(true);
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      toast.error("Authentication error: Please log in again.");
-      setLoading(false);
-      return;
-    }
-    try {
-      const sendData = new FormData();
-      sendData.append("press_release[title]", formData.title);
-      sendData.append("press_release[release_date]", formData.release_date);
-      sendData.append("press_release[release_date]", formData.release_date);
-      sendData.append("press_release[press_source]", formData.press_source);
-      sendData.append("press_release[description]", formData.description);
-
-      // Append multiple images
-      // if (formData.pr_image?.length) {
-      //   formData.pr_image.forEach((file) => {
-      //     sendData.append("press_release[pr_image]", file);
-      //   });
-      // }
-
-      Object.entries(formData).forEach(([key, images]) => {
-        if (key.startsWith("pr_image_") && Array.isArray(images)) {
-          images.forEach((img) => {
-            const backendField =
-              key.replace("pr_image_", "preview[pr_image_") + "]";
-            // e.g., preview[pr_image_1by1]
-
-            if (img.file instanceof File) {
-              sendData.append(backendField, img.file);
-            }
-          });
-        }
-      });
-
-      if (formData.attachment_url) {
-        sendData.append(
-          "press_release[attachment_url]",
-          formData.attachment_url
-        );
-      }
-
-      await axios.post(`${baseURL}press_releases.json`, sendData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      toast.success("Press release created successfully!");
-      navigate("/pressreleases-list");
-    } catch (error) {
-      console.error("Error response:", error.response);
-      toast.error(`Error: ${error.response?.data?.message || error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
   const handleCancel = () => {
     navigate(-1);
   };
@@ -351,6 +288,75 @@ const PressReleasesCreate = () => {
       ].includes(extension);
     }
     return file.type && imageTypes.includes(file.type);
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+    setLoading(true);
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      toast.error("Authentication error: Please log in again.");
+      setLoading(false);
+      return;
+    }
+    try {
+      const sendData = new FormData();
+      sendData.append("press_release[title]", formData.title);
+      sendData.append("press_release[release_date]", formData.release_date);
+      sendData.append("press_release[release_date]", formData.release_date);
+      sendData.append("press_release[press_source]", formData.press_source);
+      sendData.append("press_release[description]", formData.description);
+
+      // Append multiple images
+      // if (formData.pr_image?.length) {
+      //   formData.pr_image.forEach((file) => {
+      //     sendData.append("press_release[pr_image]", file);
+      //   });
+      // }
+
+      if (formData.attachment_url) {
+        sendData.append(
+          "press_release[attachment_url]",
+          formData.attachment_url
+        );
+      }
+
+      Object.entries(formData).forEach(([key, images]) => {
+        if (key.startsWith("pr_image_") && Array.isArray(images)) {
+          images.forEach((img) => {
+            const backendField =
+              key.replace("pr_image_", "press_release[pr_image_") + "]";
+            if (img.file instanceof File) {
+              sendData.append(backendField, img.file);
+            }
+          });
+        }
+      });
+      console.log("dta to be sent:", Array.from(sendData.entries()));
+
+      // await axios.post(`${baseURL}press_releases.json`, sendData, {
+      //   headers: {
+      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
+
+
+
+
+      toast.success("Press release created successfully!");
+      // navigate("/pressreleases-list");
+    } catch (error) {
+      console.error("Error response:", error.response);
+      toast.error(`Error: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -607,10 +613,11 @@ const PressReleasesCreate = () => {
                         </thead>
                         <tbody>
                           {[
-                            ...(formData.pr_image_16by9 || []).map((file) => ({
-                              ...file,
-                              type: "pr_image_16by9",
-                            })),
+                            ...(formData.pr_image_16_by_9
+                              || []).map((file) => ({
+                                ...file,
+                                type: "pr_image_16_by_9",
+                              })),
                           ].map((file, index) => (
                             <tr key={index}>
                               <td>{file.name}</td>

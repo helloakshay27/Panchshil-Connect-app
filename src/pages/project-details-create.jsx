@@ -133,25 +133,25 @@ const ProjectDetailsCreate = () => {
     plan_images: false,
   });
 
-  const bannerUploadConfig = {
-    'banner image': ['9:16'],
-    'cover image': ['1:1'],
+  const projectUploadConfig = {
+    'image': ['9:16'],
+    'cover images': ['1:1'],
     'gallery image': ['16:9'],
-    'floor plan': ['16:9'],
+    'two d images': ['16:9'],
   };
 
 
-  const coverImageType = 'cover image';
+  
+  
+  const coverImageType = 'cover images';
   const galleryImageType = 'gallery image';
-  const floorImageType = 'floor plan';
-  const bannerImageType = 'banner image';
+  const floorImageType = 'two d images';
+  const bannerImageType = 'image';
 
-
-
-  const selectedCoverRatios = bannerUploadConfig[coverImageType] || [];
-  const selectedGalleryRatios = bannerUploadConfig[galleryImageType] || [];
-  const selectedFloorRatios = bannerUploadConfig[floorImageType] || [];
-  const selectedBannerRatios = bannerUploadConfig[bannerImageType] || [];
+  const selectedCoverRatios = projectUploadConfig[coverImageType] || [];
+  const selectedGalleryRatios = projectUploadConfig[galleryImageType] || [];
+  const selectedFloorRatios = projectUploadConfig[floorImageType] || [];
+  const selectedBannerRatios = projectUploadConfig[bannerImageType] || [];
 
 
   const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
@@ -163,9 +163,6 @@ const ProjectDetailsCreate = () => {
   const dynamicDescription1 = `Supports ${selectedGalleryRatios.join(', ')} aspect ratios`;
   const dynamicDescription2 = `Supports ${selectedFloorRatios.join(', ')} aspect ratios`;
   const dynamicDescription3 = `Supports ${selectedBannerRatios.join(', ')} aspect ratios`;
-
-
-
 
   const updateFormData = (key, files) => {
     setFormData((prev) => ({
@@ -182,7 +179,7 @@ const ProjectDetailsCreate = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(":", "by");
+      const formattedRatio = img.ratio.replace(":", "_by_");
       let prefix = "";
 
       switch (type) {
@@ -1394,30 +1391,30 @@ const ProjectDetailsCreate = () => {
         // data.append(`project[project_sales_type][]`, type); // Store selected type
         // }
       }
-      else if (key.startsWith("banner_image_") && Array.isArray(value)) {
+      else if (key.startsWith("image") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
+          const backendField = key.replace("image", "project[image") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("cover_image_") && Array.isArray(value)) {
+      } else if (key.startsWith("cover_images_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("cover_image_", "cover[cover_image_") + "]";
+          const backendField = key.replace("cover_images_", "project[cover_images_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("gallery_image_", "gallery_image[gallery_image_") + "]";
+          const backendField = key.replace("gallery_image_", "project[gallery_image_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("floor_plan_") && Array.isArray(value)) {
+      } else if (key.startsWith("two_d_images_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("floor_plan_", "floor_plan[floor_plan_image_") + "]";
+          const backendField = key.replace("two_d_images_", "project[two_d_images_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
@@ -1425,9 +1422,6 @@ const ProjectDetailsCreate = () => {
       } else {
         data.append(`project[${key}]`, value);
       }
-
-
-
     });
 
     console.log("data to be sent:", Array.from(data.entries()));

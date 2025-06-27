@@ -168,15 +168,15 @@ const BannerAdd = () => {
 
       console.log("data to be sent:", Array.from(sendData.entries()));
 
-      await axios.post(`${baseURL}banners.json`, sendData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      // await axios.post(`${baseURL}banners.json`, sendData, {
+      //   headers: {
+      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
 
       toast.success("Banner created successfully");
-      navigate("/banner-list");
+      // navigate("/banner-list");
     } catch (error) {
       console.error(error);
       toast.error(`Error creating banner: ${error.message}`);
