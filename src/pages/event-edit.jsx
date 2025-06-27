@@ -28,20 +28,19 @@ const EventEdit = () => {
     rsvp_number: "",
     description: "",
     publish: "",
-    user_id: [], // Initialize as empty array
+    user_id: [],
     comment: "",
     shared: "",
-    group_id: [],
-    // shareWith: "", // Default to individual
-    attachfile: [], // Changed to array to handle multiple files
+    group_id: [], // Changed to array
+    attachfile: [],
     previewImage: [],
     is_important: "false",
     email_trigger_enabled: "false",
     set_reminders_attributes: [],
-    existingImages: [], // for previously uploaded images
-    newImages: [], // for newly selected images
-    cover_image: null, // Changed from array to single value
-    existingCoverImage: null, // Add this to track existing cover image
+    existingImages: [],
+    newImages: [],
+    cover_image: null,
+    existingCoverImage: null,
   });
 
   console.log("Data", formData);
@@ -153,7 +152,6 @@ const EventEdit = () => {
         const data = response.data;
 
         // Format reminders
-        // ...existing code...
         const formattedReminders = (data.reminders || []).map((reminder) => {
           if (typeof reminder.days !== "undefined" && reminder.days !== null) {
             return {
@@ -195,13 +193,6 @@ const EventEdit = () => {
           }
           return reminder;
         });
-        // ...existing code...
-
-        setFormData((prev) => ({
-          ...prev,
-          ...data,
-          set_reminders_attributes: formattedReminders,
-        }));
 
         // Normalize user_id
         const userIds = Array.isArray(data.user_id)
@@ -210,13 +201,26 @@ const EventEdit = () => {
           ? [data.user_id]
           : [];
 
+        // Normalize group_id
+        const groupIds = Array.isArray(data.group_id)
+          ? data.group_id
+          : data.group_id
+          ? [data.group_id]
+          : [];
+
         // Determine share type
-        let shared = "all";
-        if (data.shared === 1) {
-          shared = data.group_id ? "group" : "individual";
+        let shared = "";
+        if (data.shared === 0) {
+          shared = "all";
+        } else if (data.shared === 1) {
+          if (data.group_id && data.group_id.length > 0) {
+            shared = "group";
+          } else if (data.user_id && data.user_id.length > 0) {
+            shared = "individual";
+          }
         }
 
-        // Prepare cover image preview (extract from object)
+        // Prepare cover image preview
         const existingCoverImage =
           data.cover_image && data.cover_image.document_url
             ? {
@@ -239,12 +243,13 @@ const EventEdit = () => {
           ...prev,
           ...data,
           user_id: userIds,
+          group_id: groupIds, // Store as array
           shared: shared,
           attachfile: [],
           newImages: [],
           existingImages: existingImages,
           previewImage: existingImages,
-          existingCoverImage: existingCoverImage, // <-- use the correct object
+          existingCoverImage: existingCoverImage,
           cover_image: null,
           set_reminders_attributes: formattedReminders,
         }));
@@ -508,11 +513,9 @@ const EventEdit = () => {
     data.append("event[shared]", backendSharedValue);
 
     // === COVER IMAGE ===
-    // === COVER IMAGE ===
     if (formData.cover_image && formData.cover_image instanceof File) {
       data.append("event[cover_image]", formData.cover_image);
     } else if (!formData.cover_image && !formData.existingCoverImage) {
-      // Only send remove if both are null (user removed cover image)
       data.append("event[remove_cover_image]", "1");
     }
 
@@ -526,7 +529,6 @@ const EventEdit = () => {
     }
 
     // === REMINDERS ===
-
     preparedReminders.forEach((reminder, index) => {
       if (reminder.id)
         data.append(
@@ -564,17 +566,16 @@ const EventEdit = () => {
       if (formData.user_id.length > 0) {
         formData.user_id.forEach((id) => data.append("event[user_ids][]", id));
       } else {
-        data.append("event[user_ids][]", ""); // to clear users
+        data.append("event[user_ids][]", "");
       }
     }
 
-    // For groups
-    if (formData.group_id) {
-      const groupIds = formData.group_id.split(",").filter(Boolean);
-      if (groupIds.length > 0) {
-        groupIds.forEach((id) => data.append("event[group_id][]", id));
+    // === GROUPS ===
+    if (Array.isArray(formData.group_id)) {
+      if (formData.group_id.length > 0) {
+        formData.group_id.forEach((id) => data.append("event[group_id][]", id));
       } else {
-        data.append("event[group_id][]", ""); // to clear groups
+        data.append("event[group_id][]", ""); // Clear groups if none selected
       }
     }
 
@@ -606,6 +607,7 @@ const EventEdit = () => {
           "shared",
           "set_reminders_attributes",
           "user_id",
+          "group_id", // Add group_id to skipped keys
           "rsvp_name",
           "rsvp_number",
         ].includes(key)
@@ -1155,6 +1157,7 @@ const EventEdit = () => {
                                   ...prev,
                                   shared: "group",
                                   user_id: [],
+                                  group_id: [], // Reset to empty array
                                 }))
                               }
                             />
@@ -1222,12 +1225,13 @@ const EventEdit = () => {
                               label: group.name,
                             }))}
                             value={
-                              formData.group_id
-                                ? formData.group_id.split(",").map((id) => ({
+                              Array.isArray(formData.group_id)
+                                ? formData.group_id.map((id) => ({
                                     value: id,
                                     label:
                                       groups.find(
-                                        (group) => group.id.toString() === id
+                                        (group) =>
+                                          group.id.toString() === id.toString()
                                       )?.name || `Group ${id}`,
                                   }))
                                 : []
@@ -1235,9 +1239,9 @@ const EventEdit = () => {
                             onChange={(selectedOptions) =>
                               setFormData((prev) => ({
                                 ...prev,
-                                group_id: selectedOptions
-                                  .map((option) => option.value)
-                                  .join(","),
+                                group_id: selectedOptions.map(
+                                  (option) => option.value
+                                ),
                               }))
                             }
                           />
