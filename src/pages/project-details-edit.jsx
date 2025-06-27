@@ -1763,32 +1763,32 @@ const ProjectDetailsEdit = () => {
         });
         // } 
       }
-      else if (key.startsWith("banner_image_") && Array.isArray(images)) {
-        images.forEach((img) => {
+      else if (key.startsWith("banner_image_") && Array.isArray(value)) {
+        value.forEach((img) => {
           const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("cover_image_") && Array.isArray(images)) {
-        images.forEach((img) => {
+      } else if (key.startsWith("cover_image_") && Array.isArray(value)) {
+        value.forEach((img) => {
           const backendField = key.replace("cover_image_", "cover[cover_image_") + "]";
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("gallery_image_") && Array.isArray(images)) {
-        images.forEach((img) => {
+      } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
+        value.forEach((img) => {
           const backendField = key.replace("gallery_image_", "gallery_image[gallery_image_") + "]";
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("floor_plan_image_") && Array.isArray(images)) {
-        images.forEach((img) => {
+      } else if (key.startsWith("floor_plan_") && Array.isArray(value)) {
+        value.forEach((img) => {
           const backendField = key.replace("floor_plan_image_", "floor_plan[floor_plan_image_") + "]";
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            data.append(backendField, img.file);
           }
         });
       }
@@ -4490,6 +4490,7 @@ const ProjectDetailsEdit = () => {
                         )}
                     </tbody>
                   </table>
+
                 </div>
 
                 {/* ✅ Upload modal */}

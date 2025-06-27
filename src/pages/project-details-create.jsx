@@ -85,7 +85,6 @@ const ProjectDetailsCreate = () => {
     console.log("formData updated:", formData);
   }, [formData]);
 
-  console.log("formD", formData);
 
   const [projectsType, setprojectsType] = useState([]);
   const [configurations, setConfigurations] = useState([]);
@@ -121,6 +120,9 @@ const ProjectDetailsCreate = () => {
   const [plans, setPlans] = useState([]);
   const [pendingImageUpload, setPendingImageUpload] = useState([]);
   const [showUploader, setShowUploader] = useState(false);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
+  const [showBannerModal, setShowBannerModal] = useState(false);
 
 
   const [dialogOpen, setDialogOpen] = useState({
@@ -139,32 +141,30 @@ const ProjectDetailsCreate = () => {
   };
 
 
-  const currentUploadType = 'cover image'; // Can be dynamic
-  const currentUploadType1 = 'gallery image'; // Can be dynamic
-  const currentUploadType2 = 'floor plan'; // Can be dynamic
-  const currentUploadType3 = 'banner image'; // Can be dynamic
+  const coverImageType = 'cover image';
+  const galleryImageType = 'gallery image';
+  const floorImageType = 'floor plan';
+  const bannerImageType = 'banner image';
 
 
 
-  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
-  const selectedRatios1 = bannerUploadConfig[currentUploadType1] || [];
-  const selectedRatios2 = bannerUploadConfig[currentUploadType2] || [];
-  const selectedRatios3 = bannerUploadConfig[currentUploadType3] || [];
+  const selectedCoverRatios = bannerUploadConfig[coverImageType] || [];
+  const selectedGalleryRatios = bannerUploadConfig[galleryImageType] || [];
+  const selectedFloorRatios = bannerUploadConfig[floorImageType] || [];
+  const selectedBannerRatios = bannerUploadConfig[bannerImageType] || [];
 
 
-  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const dynamicLabel1 = currentUploadType1.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const dynamicLabel2 = currentUploadType2.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const dynamicLabel3 = currentUploadType3.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const galleryImageLabel = galleryImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const floorImageLabel = floorImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const bannerImageLabel = bannerImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
 
-  const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
-  const dynamicDescription1 = `Supports ${selectedRatios1.join(', ')} aspect ratios`;
-  const dynamicDescription2 = `Supports ${selectedRatios2.join(', ')} aspect ratios`;
-  const dynamicDescription3 = `Supports ${selectedRatios3.join(', ')} aspect ratios`;
+  const dynamicDescription = `Supports ${selectedCoverRatios.join(', ')} aspect ratios`;
+  const dynamicDescription1 = `Supports ${selectedGalleryRatios.join(', ')} aspect ratios`;
+  const dynamicDescription2 = `Supports ${selectedFloorRatios.join(', ')} aspect ratios`;
+  const dynamicDescription3 = `Supports ${selectedBannerRatios.join(', ')} aspect ratios`;
 
-  const [showGalleryModal, setShowGalleryModal] = useState(false);
-  const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
-  const [showBannerModal, setShowBannerModal] = useState(false);
+
 
 
   const updateFormData = (key, files) => {
@@ -187,17 +187,17 @@ const ProjectDetailsCreate = () => {
 
       switch (type) {
         case "gallery":
-          prefix = currentUploadType1; // "gallery image"
+          prefix = galleryImageType; // "gallery image"
           break;
         case "floor":
-          prefix = currentUploadType2; // "floor plan"
+          prefix = floorImageType; // "floor plan"
           break;
         case "banner":
-          prefix = currentUploadType3; // explicitly use string for banner
+          prefix = bannerImageType; // "banner image" for banner
           break;
         case "cover":
         default:
-          prefix = currentUploadType; // "cover image"
+          prefix = coverImageType; // "cover image"
           break;
       }
 
@@ -1076,10 +1076,10 @@ const ProjectDetailsCreate = () => {
     // Clear previous toasts
     toast.dismiss();
 
-    if (formData.image.length === 0) {
-      toast.error("Project Logo is required.");
-      return false;
-    }
+    // if (formData.image.length === 0) {
+    //   toast.error("Project Logo is required.");
+    //   return false;
+    // }
     if (!formData.Property_Type.length === 0) {
       toast.error("Property Type is required.");
       return false;
@@ -1243,7 +1243,7 @@ const ProjectDetailsCreate = () => {
             });
           }
         });
-      }else if (key === "Address") {
+      } else if (key === "Address") {
         for (const addressKey in value) {
           data.append(`project[Address][${addressKey}]`, value[addressKey]);
         }
@@ -1394,41 +1394,43 @@ const ProjectDetailsCreate = () => {
         // data.append(`project[project_sales_type][]`, type); // Store selected type
         // }
       }
-      else if (key.startsWith("banner_image_") && Array.isArray(images)) {
-        images.forEach((img) => {
+      else if (key.startsWith("banner_image_") && Array.isArray(value)) {
+        value.forEach((img) => {
           const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("cover_image_") && Array.isArray(images)) {
-        images.forEach((img) => {
+      } else if (key.startsWith("cover_image_") && Array.isArray(value)) {
+        value.forEach((img) => {
           const backendField = key.replace("cover_image_", "cover[cover_image_") + "]";
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("gallery_image_") && Array.isArray(images)) {
-        images.forEach((img) => {
+      } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
+        value.forEach((img) => {
           const backendField = key.replace("gallery_image_", "gallery_image[gallery_image_") + "]";
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("floor_plan_image_") && Array.isArray(images)) {
-        images.forEach((img) => {
-          const backendField = key.replace("floor_plan_image_", "floor_plan[floor_plan_image_") + "]";
+      } else if (key.startsWith("floor_plan_") && Array.isArray(value)) {
+        value.forEach((img) => {
+          const backendField = key.replace("floor_plan_", "floor_plan[floor_plan_image_") + "]";
           if (img.file instanceof File) {
-            sendData.append(backendField, img.file);
+            data.append(backendField, img.file);
           }
         });
       } else {
-        sendData.append(`project[${key}]`, value);
+        data.append(`project[${key}]`, value);
       }
 
 
 
     });
+
+    console.log("data to be sent:", Array.from(data.entries()));
 
     // try {
     //   const response = await axios.post(`${baseURL}projects.json`, data, {
@@ -1478,7 +1480,6 @@ const ProjectDetailsCreate = () => {
         });
 
         setprojectsType(response.data?.property_types);
-        console.log("projectsType", projectsType);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
@@ -1494,7 +1495,6 @@ const ProjectDetailsCreate = () => {
       try {
         const response = await axios.get(url);
         setConfigurations(response.data);
-        console.log("configurations", response.data);
       } catch (error) {
         console.error("Error fetching configurations:", error);
       }
@@ -1583,7 +1583,6 @@ const ProjectDetailsCreate = () => {
         });
 
         setAmenities(response.data?.amenities_setups);
-        console.log("amenities_setups", amenities);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
@@ -1672,8 +1671,6 @@ const ProjectDetailsCreate = () => {
   //   ],
   // };
 
-  console.log("formData", formData);
-  console.log("specification", specifications);
 
   const handleTowerChange = (e) => {
     setTowerName(e.target.value);
@@ -3438,14 +3435,18 @@ const ProjectDetailsCreate = () => {
                   </svg>
                   <span>Add</span>
                 </button>
-
-
-
-
-
-
               </div>
-
+              {showBannerModal && (
+                <ProjectBannerUpload
+                  onClose={() => setShowBannerModal(false)}
+                  includeInvalidRatios={false}
+                  selectedRatioProp={selectedBannerRatios}
+                  showAsModal={true}
+                  label={bannerImageLabel}
+                  description={dynamicDescription3}
+                  onContinue={(validImages) => handleCroppedImages(validImages, "banner")}
+                />
+              )}
               <div className="col-md-12 mt-2">
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
@@ -3487,17 +3488,7 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
 
-                {showBannerModal && (
-                  <ProjectBannerUpload
-                    onClose={() => setShowBannerModal(false)}
-                    includeInvalidRatios={false}
-                    selectedRatioProp={selectedRatios3}
-                    showAsModal={true}
-                    label={"Project Banner"}
-                    description={dynamicDescription3}
-                    onContinue={(validImages) => handleCroppedImages(validImages, "banner")}
-                  />
-                )}
+
               </div>
 
 
@@ -3587,9 +3578,9 @@ const ProjectDetailsCreate = () => {
                   <ProjectBannerUpload
                     onClose={() => setShowUploader(false)}
                     includeInvalidRatios={false}
-                    selectedRatioProp={selectedRatios}
+                    selectedRatioProp={selectedCoverRatios}
                     showAsModal={true}
-                    label={dynamicLabel}
+                    label={coverImageLabel}
                     description={dynamicDescription}
                     onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
                   />
@@ -3651,9 +3642,9 @@ const ProjectDetailsCreate = () => {
                 {showGalleryModal && (
                   <ProjectBannerUpload
                     onClose={() => setShowGalleryModal(false)}
-                    selectedRatioProp={bannerUploadConfig["gallery image"]}
+                    selectedRatioProp={selectedGalleryRatios}
                     showAsModal={true}
-                    label="Gallery Image"
+                    label={galleryImageLabel}
                     description={dynamicDescription1}
                     onContinue={(validImages) => handleCroppedImages(validImages, "gallery")}
                   />
@@ -3726,18 +3717,16 @@ const ProjectDetailsCreate = () => {
                           </tr>
                         ))
                       )}
-                      {(formData.gallery_image ?? []).map((file, index) => (
+                      {(formData.gallery_image_16by9 ?? []).map((file, index) => (
                         <tr key={`new-${index}`}>
-                          <td>{file.gallery_image_file_name || "N/A"}</td>
+                          <td>{file.name || "N/A"}</td>
                           <td>
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
                               src={
-                                file.attachfile?.document_url ||
-                                (file.gallery_image instanceof File
-                                  ? URL.createObjectURL(file.gallery_image)
-                                  : null)
+                                file.preview ||
+                                URL.createObjectURL(file.file)
                               }
                               alt={file.gallery_image_file_name || "Preview"}
                             />
@@ -4007,9 +3996,9 @@ const ProjectDetailsCreate = () => {
                 {showFloorPlanModal && (
                   <ProjectBannerUpload
                     onClose={() => setShowFloorPlanModal(false)}
-                    selectedRatioProp={bannerUploadConfig["floor plan"]}
+                    selectedRatioProp={selectedFloorRatios}
                     showAsModal={true}
-                    label="Floor Plan"
+                    label={floorImageLabel}
                     description={dynamicDescription2}
                     onContinue={(validImages) => handleCroppedImages(validImages, "floor")}
                   />
