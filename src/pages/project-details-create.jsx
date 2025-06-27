@@ -3243,8 +3243,7 @@ const ProjectDetailsCreate = () => {
           </div>
 
           <div className="card-body">
-            <div className="row">
-              
+            <div className="row">    
               {/* Gallery Section */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
