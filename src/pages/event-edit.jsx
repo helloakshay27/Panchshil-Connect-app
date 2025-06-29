@@ -1145,7 +1145,7 @@ const EventEdit = () => {
                             </label>
                           </div>
                           {/* Groups */}
-                          <div className="form-check">
+                          {/* <div className="form-check">
                             <input
                               className="form-check-input"
                               type="radio"
@@ -1172,7 +1172,7 @@ const EventEdit = () => {
                             >
                               Groups
                             </label>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
 
@@ -1216,7 +1216,7 @@ const EventEdit = () => {
                       )}
 
                       {/* Groups MultiSelect */}
-                      {formData.shared === "group" && (
+                      {/* {formData.shared === "group" && (
                         <div className="form-group">
                           <label>Share with Groups</label>
                           <MultiSelectBox
@@ -1246,7 +1246,7 @@ const EventEdit = () => {
                             }
                           />
                         </div>
-                      )}
+                      )} */}
                     </div>
 
                     <div className="col-md-3">
@@ -1306,7 +1306,7 @@ const EventEdit = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-3 mt-3">
                       <div className="form-group">
                         <label>RSVP Action</label>
                         <div className="d-flex">

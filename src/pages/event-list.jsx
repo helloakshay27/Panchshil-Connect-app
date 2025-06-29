@@ -140,6 +140,19 @@ const Eventlist = () => {
     }
   };
 
+  function formatDateTimeManual(datetime) {
+  if (!datetime) return "-";
+  const date = new Date(datetime);
+  return date.toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
   return (
     <div className="main-content">
       {/* <div className="website-content overflow-auto"> */}
@@ -320,9 +333,8 @@ const Eventlist = () => {
                                 <td>{event.event_name || "-"}</td>
                                 <td>{event.event_at || "-"}</td>
 
-                                <td>{event.from_time || "-"}</td>
-
-                                <td>{event.to_time || "-"}</td>
+                              <td>{formatDateTimeManual(event.from_time)}</td>
+<td>{formatDateTimeManual(event.to_time)}</td>
                                 <td>
                                   {eventPermission.destroy === "true" && (
                                     <button

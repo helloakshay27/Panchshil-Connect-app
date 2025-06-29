@@ -115,6 +115,10 @@ import UserGroupEdit from "./pages/user-groups-edit";
 import FaqCreate from "./pages/faq-create";
 import FaqList from "./pages/faq-list";
 import FaqEdit from "./pages/faq-edit";
+import FaqCategoryForm from "./pages/faq-category-form";
+import FaqCategoryList from "./pages/faq-category-list";
+import FaqSubCategory from "./pages/faq-subcategory";
+import FaqSubCategoryList from "./pages/faq-subcategory-list";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -457,6 +461,14 @@ function App() {
             path="/setup-member/faq-edit/:id"
             element={<FaqEdit />}
           />
+
+          <Route path="/setup-member/faq-category/create" element={<FaqCategoryForm />} />
+         <Route path="/setup-member/faq-category/:faqId/edit" element={<FaqCategoryForm />} />
+          <Route path="/setup-member/faq-category-list" element={<FaqCategoryList />} />
+
+          <Route path="/setup-member/faq-subcategory-list" element={<FaqSubCategoryList />} />
+          <Route path="/setup-member/faq-subcategory/create" element={<FaqSubCategory />} />
+          <Route path="/setup-member/faq-subcategory/:faqSubId/edit" element={<FaqSubCategory />} />
 
 
         </Route>

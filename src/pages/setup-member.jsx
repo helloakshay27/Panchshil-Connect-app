@@ -107,6 +107,25 @@ const SetupMember = () => {
               <li>
                 <Link to="/setup-member/faq-edit/:id">FAQ Edit</Link>
               </li>
+               <li>
+                <Link to="/setup-member/faq-category-list">Faq Category List</Link>
+              </li>
+               <li>
+                <Link to="/setup-member/faq-category/create">Faq Category Create</Link>
+              </li>
+              <li>
+                <Link to="/setup-member/faq-category/:faqId/edit">Faq Category Edit</Link>
+              </li>
+
+               <li>
+                <Link to="/setup-member/faq-subcategory-list">FAQ Subcategory List</Link>
+              </li>
+              <li>
+                <Link to="/setup-member/faq-subcategory/create">FAQ Subcategory Create</Link>
+              </li>
+               <li>
+                <Link to="/setup-member/faq-subcategory/:faqSubId/edit">Faq Subcategory Edit</Link>
+              </li>
 
               <li>
                 <Link to="category-types">Category Type</Link>
@@ -180,6 +199,7 @@ const SetupMember = () => {
               <li>
                 <Link to="siteslot-list">Site Visit Slot Config List</Link>
               </li>
+
              
               <li>
                 <Link to="tag-add">Tag</Link>
