@@ -159,6 +159,15 @@ const Members = () => {
               <li>
                 <Link to="/pressreleases-edit/:id">Press Releases Edit</Link>
               </li>
+               <li>
+                <Link to="/faq-create">FAQ Create</Link>
+              </li>
+              <li>
+                <Link to="/faq-list">FAQ List</Link>
+              </li>
+              <li>
+                <Link to="/faq-edit/:id">FAQ Edit</Link>
+              </li>
               {/* <li>
                 <Link to="/project-configuration">Project Configuraion</Link>
               </li>

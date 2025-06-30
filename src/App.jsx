@@ -133,7 +133,7 @@ import FaqSubCategoryList from "./pages/faq-subcategory-list";
 
 // const baseURL = process.env.REACT_APP_BASE_URL; // or your const
 
-if (baseURL === "https://api-connect.panchshil.com/") {
+if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/") {
   console.log("Base URL is set to Panchshil Connect");
   document.body.classList.add("theme-connect");
 } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -450,15 +450,15 @@ function App() {
           />
 
            <Route
-            path="/setup-member/faq-create"
+            path="/faq-create"
             element={<FaqCreate />}
           />
            <Route
-            path="/setup-member/faq-list"
+            path="/faq-list"
             element={<FaqList />}
           />
           <Route
-            path="/setup-member/faq-edit/:id"
+            path="/faq-edit/:id"
             element={<FaqEdit />}
           />
 
