@@ -297,7 +297,7 @@ const TestimonialEdit = () => {
         }
       });
 
-      
+
       if (formData.attachfile) {
         sendData.append("testimonial[preview_image]", formData.attachfile);
       } else if (formData.video_url) {
@@ -553,48 +553,52 @@ const TestimonialEdit = () => {
             </div>
           </div> */}
 
-              <div className="col-md-3">
+              <div className="col-md-3 col-sm-6 col-12">
                 <div className="form-group">
-                  <label>
-                    Preview Image{" "}
+                  <label className="d-flex align-items-center gap-1 mb-2">
+                    <span>Preview Image</span>
+
                     <span
                       className="tooltip-container"
                       onMouseEnter={() => setShowTooltip(true)}
                       onMouseLeave={() => setShowTooltip(false)}
+                      style={{ cursor: 'pointer' }}
                     >
                       [i]
                       {showTooltip && (
-                        <span className="tooltip-text">
+                        <span className="tooltip-text" style={{
+                          marginLeft: '6px',
+                          background: '#f9f9f9',
+                          border: '1px solid #ccc',
+                          padding: '6px 8px',
+                          borderRadius: '4px',
+                          position: 'absolute',
+                          zIndex: 1000,
+                          fontSize: '13px',
+                          whiteSpace: 'nowrap',
+                        }}>
                           Max Upload Size 3 MB and Required ratio is 16:9
                         </span>
                       )}
                     </span>
-                    <span className="otp-asterisk"> *</span>
+
+                    <span className="otp-asterisk text-danger">*</span>
                   </label>
+
                   <span
                     role="button"
                     tabIndex={0}
                     onClick={() => setShowUploader(true)}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      border: "1px solid #ccc",
-                      borderRadius: "6px",
-                      overflow: "hidden",
-                      fontSize: "14px",
-                      cursor: "pointer",
-                    }}
+                    className="custom-upload-button input-upload-button"
                   >
                     <span
-                      style={{
-                        backgroundColor: "#f8f9fa",
-                        padding: "8px 16px",
-                        borderRight: "1px solid #ccc",
-                      }}
+                      className="upload-button-label"
                     >
                       Choose file
                     </span>
-                    <span style={{ padding: "8px 12px", whiteSpace: "nowrap" }}>
+                    <span
+                      className="upload-button-value"
+                    >
                       No file chosen
                     </span>
                   </span>
@@ -610,14 +614,12 @@ const TestimonialEdit = () => {
                       onContinue={handleCropComplete}
                     />
                   )}
-
-                  {/* Conditional rendering: Table for multiple images OR single image preview */}
                 </div>
               </div>
 
               <div className="col-md-12 mt-2">
                 {Array.isArray(formData.preview_image_16by9) &&
-                formData.preview_image_16by9.length > 0 ? (
+                  formData.preview_image_16by9.length > 0 ? (
                   // ✅ Uploaded image table view
                   <div className="col-md-12 mt-2">
                     <div className="mt-4 tbl-container">

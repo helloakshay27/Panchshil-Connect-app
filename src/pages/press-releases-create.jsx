@@ -535,55 +535,62 @@ const PressReleasesCreate = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3">
+                  <div className="col-md-3 col-sm-6 col-12">
                     <div className="form-group">
-                      <label>
-                        Attachment
+                      {/* Label + Tooltip + Asterisk in one line */}
+                      <label className="d-flex align-items-center gap-1 mb-2">
+                        <span>Attachment</span>
+
                         <span
                           className="tooltip-container"
                           onMouseEnter={() => setShowTooltip(true)}
                           onMouseLeave={() => setShowTooltip(false)}
+                          style={{ cursor: 'pointer', fontWeight: 'bold' }}
                         >
                           [i]
                           {showTooltip && (
-                            <span className="tooltip-text">
+                            <span
+                              className="tooltip-text"
+                              style={{
+                                marginLeft: '6px',
+                                background: '#f9f9f9',
+                                border: '1px solid #ccc',
+                                padding: '6px 8px',
+                                borderRadius: '4px',
+                                position: 'absolute',
+                                zIndex: 1000,
+                                fontSize: '13px',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
                               Max Upload Size 3 MB and Required ratio is 16:9
                             </span>
                           )}
                         </span>
-                        <span className="otp-asterisk"> *</span>
+
+                        <span className="otp-asterisk text-danger">*</span>
                       </label>
 
+                      {/* Upload Button */}
                       <span
                         role="button"
                         tabIndex={0}
                         onClick={() => setShowUploader(true)}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          border: "1px solid #ccc",
-                          borderRadius: "6px",
-                          overflow: "hidden",
-                          fontSize: "14px",
-                          cursor: "pointer",
-                        }}
+                        className="custom-upload-button input-upload-button"
                       >
                         <span
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                            padding: "8px 16px",
-                            borderRight: "1px solid #ccc",
-                          }}
+                         className="upload-button-label"
                         >
                           Choose file
                         </span>
                         <span
-                          style={{ padding: "8px 12px", whiteSpace: "nowrap" }}
+                         className="upload-button-value"
                         >
                           No file chosen
                         </span>
                       </span>
 
+                      {/* Upload Modal */}
                       {showUploader && (
                         <ProjectBannerUpload
                           onClose={() => setShowUploader(false)}
@@ -595,10 +602,9 @@ const PressReleasesCreate = () => {
                           onContinue={handleCropComplete}
                         />
                       )}
-
-                      {/* Table to display uploaded images */}
                     </div>
                   </div>
+
 
                   <div className="col-md-12 mt-2">
                     <div className="mt-4 tbl-container">

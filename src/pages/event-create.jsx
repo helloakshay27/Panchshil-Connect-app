@@ -72,7 +72,7 @@ const EventCreate = () => {
   };
 
 
-  const currentUploadType = 'cover image'; 
+  const currentUploadType = 'cover image';
   const selectedRatios = eventUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
   const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
@@ -95,7 +95,7 @@ const EventCreate = () => {
       const formattedRatio = img.ratio.replace(':', '_by_'); // e.g., "16:9" -> "16by9"
       const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
 
-      updateFormData(key, [img]); 
+      updateFormData(key, [img]);
     });
 
     // setPreviewImg(validImages[0].preview); // preview first image only
@@ -728,88 +728,60 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-3 col-sm-6 col-12">
                       <div className="form-group">
-                        <label>
-                          Cover Image
+                        {/* Cover Image Label + Tooltip inline */}
+                        <label className="d-flex align-items-center gap-1 mb-2">
+                          <span>Cover Image</span>
+
                           <span
                             className="tooltip-container"
                             onMouseEnter={() => setShowTooltip(true)}
                             onMouseLeave={() => setShowTooltip(false)}
+                            style={{ cursor: 'pointer', fontWeight: 'bold' }}
                           >
                             [i]
                             {showTooltip && (
-                              <span className="tooltip-text">
+                              <span
+                                className="tooltip-text"
+                                style={{
+                                  marginLeft: '6px',
+                                  background: '#f9f9f9',
+                                  border: '1px solid #ccc',
+                                  padding: '6px 8px',
+                                  borderRadius: '4px',
+                                  position: 'absolute',
+                                  zIndex: 1000,
+                                  fontSize: '13px',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
                                 Max Upload Size 3 MB and Required ratio is 16:9
                               </span>
                             )}
                           </span>
                         </label>
-                        {/* <ImageUploadingButton
-                          value={image}
-                          onChange={handleCoverImageUpload}
-                          btntext="Upload Cover Image"
-                          variant="custom"
-                        />
-                        <small className="form-text text-muted">
-                          Required ratio must be 16:9
-                        </small>
-                        <ImageCropper
-                          open={dialogOpen}
-                          image={image?.[0]?.dataURL || null}
-                          onComplete={(cropped) => {
-                            if (cropped) {
-                              setCroppedImage(cropped.base64);
-                              setFormData((prev) => ({
-                                ...prev,
-                                cover_image: [cropped.file], // Store as array to match your existing structure
-                              }));
-                            }
-                            setDialogOpen(false);
-                          }}
-                          requiredRatios={[16 / 9, 9 / 16, 1]}
-                          requiredRatioLabel="16:9"
-                          allowedRatios={[
-                            { label: "16:9", ratio: 16 / 9 },
-                            { label: "9:16", ratio: 9 / 16 },
-                            { label: "1:1", ratio: 1 },
-                          ]}
-                          containerStyle={{
-                            position: "relative",
-                            width: "100%",
-                            height: 300,
-                            background: "#fff",
-                          }}
-                        /> */}
+
+                        {/* Upload Button */}
                         <span
                           role="button"
                           tabIndex={0}
                           onClick={() => setShowUploader(true)}
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            border: "1px solid #ccc",
-                            borderRadius: "6px",
-                            overflow: "hidden",
-                            fontSize: "14px",
-                            cursor: "pointer"
-                          }}
+                          className="custom-upload-button input-upload-button"
                         >
                           <span
-                            style={{
-                              backgroundColor: "#f8f9fa",
-                              padding: "8px 16px",
-                              borderRight: "1px solid #ccc"
-                            }}
+                            className="upload-button-label"
                           >
                             Choose file
                           </span>
-                          <span style={{ padding: "8px 12px", whiteSpace: "nowrap" }}>
+                          <span
+                            className="upload-button-value"
+                          >
                             No file chosen
                           </span>
                         </span>
 
-
+                        {/* Modal for cropping/upload */}
                         {showUploader && (
                           <ProjectBannerUpload
                             onClose={() => setShowUploader(false)}
@@ -822,44 +794,10 @@ const EventCreate = () => {
                           />
                         )}
 
-
-                        {/* Cover Image Preview */}
-                        {/* <div className="mt-2">
-                          {croppedImage ? (
-                            <div className="position-relative">
-                              <img
-                                src={croppedImage}
-                                alt="Cover Preview"
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            </div>
-                          ) : formData.cover_image &&
-                            formData.cover_image[0] &&
-                            typeof formData.cover_image[0] === "string" ? (
-                            <div className="position-relative">
-                              <img
-                                src={formData.cover_image[0]}
-                                alt="Existing Cover"
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            <span></span>
-                          )}
-                        </div> */}
-
+                        {/* Preview section */}
                         <div className="mt-2">
-                          {Array.isArray(formData.cover_image_16_by_9) && formData.cover_image_16_by_9.length > 0 ? (
+                          {Array.isArray(formData.cover_image_16_by_9) &&
+                            formData.cover_image_16_by_9.length > 0 ? (
                             formData.cover_image_16_by_9.map((file, index) => (
                               <div
                                 key={index}
@@ -873,7 +811,7 @@ const EventCreate = () => {
                                   style={{
                                     maxWidth: "100px",
                                     maxHeight: "100px",
-                                    objectFit: "cover",
+                                    objectFit: "cover"
                                   }}
                                 />
                               </div>
@@ -884,6 +822,7 @@ const EventCreate = () => {
                         </div>
                       </div>
                     </div>
+
 
                     <div className="col-md-3">
                       <div className="form-group">

@@ -387,9 +387,9 @@ const BannerEdit = () => {
                       {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
                     </div>
                   </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
+                  <div className="col-md-3 col-sm-6 col-12">
+                    <div className="form-group d-flex flex-column">
+                      <label className="mb-2">
                         Banner Attachment{" "}
                         <span
                           className="tooltip-container"
@@ -397,55 +397,31 @@ const BannerEdit = () => {
                           onMouseLeave={() => setShowVideoTooltip(false)}
                         >
                           [i]
-                          {showVideoTooltip && <span className="tooltip-text">9:16 or 1:1 Format Should Only Be Allowed</span>}
+                          {showVideoTooltip && (
+                            <span className="tooltip-text">
+                              9:16 or 1:1 Format Should Only Be Allowed
+                            </span>
+                          )}
                         </span>
                       </label>
-                      {/* <input
-                        key={dialogOpen ? "cropper-open" : "cropper-closed"}
-                        type="file"
-                        accept="image/*,video/*"
-                        onChange={handleFileUpload}
-                      /> */}
 
                       <span
                         role="button"
                         tabIndex={0}
                         onClick={() => setShowUploader(true)}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          border: "1px solid #ccc",
-                          borderRadius: "6px",
-                          overflow: "hidden",
-                          fontSize: "14px",
-                          cursor: "pointer"
-                        }}
+                        className="custom-upload-button input-upload-button"                       
                       >
                         <span
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                            padding: "8px 16px",
-                            borderRight: "1px solid #ccc"
-                          }}
+                          className="upload-button-label"
                         >
                           Choose file
                         </span>
-                        <span style={{ padding: "8px 12px", whiteSpace: "nowrap" }}>
+                        <span
+                          className="upload-button-value"
+                        >
                           No file chosen
                         </span>
                       </span>
-
-                      {/* {fileType === "video" && previewVideo && (
-                        <video
-                          key={videoKey}
-                          autoPlay
-                          muted
-                          controls
-                          src={previewVideo}
-                          style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover", borderRadius: "5px" }}
-                        />
-                      )} */}
-
 
 
                       {showUploader && (
@@ -458,47 +434,10 @@ const BannerEdit = () => {
                           description={dynamicDescription}
                           onContinue={handleCropComplete}
                         />
-                      )
-                      }
-
-
-
-                      {/* {(!previewImg && !previewVideo && formData.banner_video) && (
-                        <>
-                          {isImageFile(formData.banner_video) ? (
-                            <img
-                              src={formData.banner_video}
-                              className="img-fluid rounded mt-2"
-                              alt="Initial Preview"
-                              style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
-                            />
-                          ) : (
-                            <video
-                              src={formData.banner_video}
-                              controls
-                              className="img-fluid rounded mt-2"
-                              style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover" }}
-                            />
-                          )}
-                        </>
                       )}
-
-                      {previewImg && (
-                        <img
-                          src={previewImg}
-                          style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover", marginTop: "7px" }}
-                        />
-                      )}
-                      {previewVideo && (
-                        <video
-                          src={previewVideo}
-                          style={{ maxWidth: "100px", maxHeight: "100px", objectFit: "cover", marginTop: "7px" }}
-                        />
-                      )} */}
                     </div>
-
-
                   </div>
+
                 </div>
               )}
 

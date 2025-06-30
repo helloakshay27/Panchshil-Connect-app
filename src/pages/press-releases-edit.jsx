@@ -370,7 +370,7 @@ const PressReleasesEdit = () => {
     }
 
     setImage(newImageList);
-    setDialogOpen(true); 
+    setDialogOpen(true);
   };
 
   const isImageFile = (file) => {
@@ -585,54 +585,62 @@ const PressReleasesEdit = () => {
                       </div>
                     </div>
                   </div> */}
-                  <div className="col-md-3">
+                  <div className="col-md-3 col-sm-6 col-12">
                     <div className="form-group">
-                      <label>
-                        Attachment
+                      {/* Label + Tooltip + Asterisk in one line */}
+                      <label className="d-flex align-items-center gap-1 mb-2">
+                        <span>Attachment</span>
+
                         <span
                           className="tooltip-container"
                           onMouseEnter={() => setShowTooltip(true)}
                           onMouseLeave={() => setShowTooltip(false)}
+                          style={{ cursor: 'pointer', fontWeight: 'bold' }}
                         >
                           [i]
                           {showTooltip && (
-                            <span className="tooltip-text">
+                            <span
+                              className="tooltip-text"
+                              style={{
+                                marginLeft: '6px',
+                                background: '#f9f9f9',
+                                border: '1px solid #ccc',
+                                padding: '6px 8px',
+                                borderRadius: '4px',
+                                position: 'absolute',
+                                zIndex: 1000,
+                                fontSize: '13px',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
                               Max Upload Size 3 MB and Required ratio is 16:9
                             </span>
                           )}
                         </span>
-                        <span className="otp-asterisk"> *</span>
+
+                        <span className="otp-asterisk text-danger">*</span>
                       </label>
+
+                      {/* Upload Button */}
                       <span
                         role="button"
                         tabIndex={0}
                         onClick={() => setShowUploader(true)}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          border: "1px solid #ccc",
-                          borderRadius: "6px",
-                          overflow: "hidden",
-                          fontSize: "14px",
-                          cursor: "pointer",
-                        }}
+                        className="custom-upload-button input-upload-button"
                       >
                         <span
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                            padding: "8px 16px",
-                            borderRight: "1px solid #ccc",
-                          }}
+                         className="upload-button-label"
                         >
                           Choose file
                         </span>
                         <span
-                          style={{ padding: "8px 12px", whiteSpace: "nowrap" }}
+                         className="upload-button-value"
                         >
                           No file chosen
                         </span>
                       </span>
 
+                      {/* Upload Modal */}
                       {showUploader && (
                         <ProjectBannerUpload
                           onClose={() => setShowUploader(false)}
@@ -644,61 +652,9 @@ const PressReleasesEdit = () => {
                           onContinue={handleCropComplete}
                         />
                       )}
-
-                      {/* Table to display uploaded images */}
-                      {/* {(croppedImage || (formData.pr_image && typeof formData.pr_image === "string")) && (
-      <div className="mt-4">
-        <div className="col-md-12 mt-2">
-          <div className="tbl-container">
-            <table className="w-100">
-              <thead>
-                <tr>
-                  <th>File Name</th>
-                  <th>Preview</th>
-                  <th>Ratio</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{formData.pr_image?.name || "Project Image"}</td>
-                  <td>
-                    <img
-                      src={croppedImage || formData.pr_image}
-                      className="img-fluid rounded"
-                      alt="Preview"
-                      style={{
-                        maxWidth: "100px",
-                        maxHeight: "100px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </td>
-                  <td>16:9</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="purple-btn2 btn-sm"
-                      onClick={() => {
-                        setCroppedImage(null);
-                        setFormData((prev) => ({
-                          ...prev,
-                          pr_image: null,
-                        }));
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    )} */}
                     </div>
                   </div>
+
                   <div className="col-md-12 mt-2">
                     {Array.isArray(formData.pr_image_16by9) &&
                       formData.pr_image_16by9.length > 0 ? (

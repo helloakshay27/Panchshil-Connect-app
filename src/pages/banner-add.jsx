@@ -253,9 +253,9 @@ const BannerAdd = () => {
                   </div>
                 </div>
 
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
+                <div className="col-md-3 col-sm-6 col-12">
+                  <div className="form-group d-flex flex-column">
+                    <label className="mb-2">
                       Banner Attachment{" "}
                       <span
                         className="tooltip-container"
@@ -264,7 +264,9 @@ const BannerAdd = () => {
                       >
                         [i]
                         {showVideoTooltip && (
-                          <span className="tooltip-text">1:1 or 9:16 Format Should Be Used</span>
+                          <span className="tooltip-text">
+                            9:16 or 1:1 Format Should Only Be Allowed
+                          </span>
                         )}
                       </span>
                     </label>
@@ -273,30 +275,19 @@ const BannerAdd = () => {
                       role="button"
                       tabIndex={0}
                       onClick={() => setShowUploader(true)}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        border: "1px solid #ccc",
-                        borderRadius: "6px",
-                        overflow: "hidden",
-                        fontSize: "14px",
-                        cursor: "pointer"
-                      }}
+                      className="custom-upload-button input-upload-button"
                     >
                       <span
-                        style={{
-                          backgroundColor: "#f8f9fa",
-                          padding: "8px 16px",
-                          borderRight: "1px solid #ccc"
-                        }}
+                        className="upload-button-label"
                       >
                         Choose file
                       </span>
-                      <span style={{ padding: "8px 12px", whiteSpace: "nowrap" }}>
+                      <span
+                        className="upload-button-value"
+                      >
                         No file chosen
                       </span>
                     </span>
-
                     {showUploader && (
                       <ProjectBannerUpload
                         onClose={() => setShowUploader(false)}
