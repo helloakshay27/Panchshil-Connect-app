@@ -10,12 +10,12 @@ const Footer = () => {
     domain === "https://api-connect.panchshil.com/" || domain === "http://localhost:3000/"
   ) {
     logoUrl =
-      "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png";
+      "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
     // Optional: style for Panchshil logo (if needed)
     logoStyle = { height: "35px", width: "30px" };
   } else {
     logoUrl =
-      "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/158/original/Rustomjee_Logo-01_2.png";
+      "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/logo.png";
     // Conditional style for Rustomjee logo
     logoStyle = { height: "40px", width: "90px" , filter: "grayscale(1)", background: "#fff", borderRadius: "4px" };
   }
