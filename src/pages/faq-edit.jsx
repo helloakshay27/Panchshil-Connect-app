@@ -126,48 +126,95 @@ const FaqEdit = () => {
   }, []);
 
   // Fetch existing FAQ data
+  // useEffect(() => {
+  //   if (faqId && !hasFetched) {
+  //     const fetchFaqData = async () => {
+  //       try {
+  //         setLoading(true);
+  //         const res = await axios.get(`${baseURL}faqs/${faqId}.json`, {
+  //           headers: getAuthHeaders(),
+  //         });
+
+  //         const faqData = res.data?.faq || res.data;
+
+  //         if (faqData) {
+  //           setFormData({
+  //             faq_category_id: faqData.faq_category_id || "",
+  //             faq_sub_category_id: faqData.faq_sub_category_id || "",
+  //             faqs: [
+  //               {
+  //                 id: faqData.id,
+  //                 faq_category_id: faqData.faq_category_id || "",
+  //                 faq_sub_category_id: faqData.faq_sub_category_id || "",
+  //                 question: faqData.question || "",
+  //                 answer: faqData.answer || "",
+  //                 site_id: faqData.site_id || "",
+  //                 active: faqData.active !== undefined ? faqData.active : true,
+  //                 faq_tag: faqData.faq_tag || "",
+  //                 isExisting: true,
+  //               },
+  //             ],
+  //           });
+
+  //           setHasFetched(true);
+  //         }
+  //       } catch (err) {
+  //         console.error("Failed to fetch FAQ:", err);
+  //         toast.error("Failed to load FAQ data");
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+  //     fetchFaqData();
+  //   }
+  // }, [faqId, hasFetched]);
+
   useEffect(() => {
-    if (faqId && !hasFetched) {
-      const fetchFaqData = async () => {
-        try {
-          setLoading(true);
-          const res = await axios.get(`${baseURL}faqs/${faqId}.json`, {
-            headers: getAuthHeaders(),
+  if (faqId && !hasFetched) {
+    const fetchFaqData = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${baseURL}faqs/${faqId}.json`, {
+          headers: getAuthHeaders(),
+        });
+
+        const faqData = res.data?.faq || res.data;
+
+        if (faqData) {
+          setFormData({
+            faq_category_id: faqData.faq_category_id || "",
+            faq_sub_category_id: faqData.faq_sub_category_id || "",
+            faqs: [
+              {
+                id: faqData.id,
+                faq_category_id: faqData.faq_category_id || "",
+                faq_sub_category_id: faqData.faq_sub_category_id || "",
+                question: faqData.question || "",
+                answer: faqData.answer || "",
+                site_id: faqData.site_id || "",
+                active: faqData.active !== undefined ? faqData.active : true,
+                faq_tag: faqData.faq_tag || "",
+                isExisting: true,
+              },
+            ],
           });
 
-          const faqData = res.data?.faq || res.data;
+          // Set question and answer input fields
+          setQuestion(faqData.question || "");
+          setAnswer(faqData.answer || "");
 
-          if (faqData) {
-            setFormData({
-              faq_category_id: faqData.faq_category_id || "",
-              faq_sub_category_id: faqData.faq_sub_category_id || "",
-              faqs: [
-                {
-                  id: faqData.id,
-                  faq_category_id: faqData.faq_category_id || "",
-                  faq_sub_category_id: faqData.faq_sub_category_id || "",
-                  question: faqData.question || "",
-                  answer: faqData.answer || "",
-                  site_id: faqData.site_id || "",
-                  active: faqData.active !== undefined ? faqData.active : true,
-                  faq_tag: faqData.faq_tag || "",
-                  isExisting: true,
-                },
-              ],
-            });
-
-            setHasFetched(true);
-          }
-        } catch (err) {
-          console.error("Failed to fetch FAQ:", err);
-          toast.error("Failed to load FAQ data");
-        } finally {
-          setLoading(false);
+          setHasFetched(true);
         }
-      };
-      fetchFaqData();
-    }
-  }, [faqId, hasFetched]);
+      } catch (err) {
+        console.error("Failed to fetch FAQ:", err);
+        toast.error("Failed to load FAQ data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFaqData();
+  }
+}, [faqId, hasFetched]);
 
   const handleCategoryChange = (value) => {
     setFormData((prev) => ({
@@ -235,53 +282,117 @@ const FaqEdit = () => {
     }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!formData.faq_category_id) {
+  //     toast.error("FAQ Category is required");
+  //     return;
+  //   }
+
+  //   if (formData.faqs.length === 0) {
+  //     toast.error("At least one FAQ is required");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   try {
+  //     // Update existing FAQ - only PUT method used
+  //     const existingFaq = formData.faqs.find((faq) => faq.isExisting);
+  //     if (existingFaq) {
+  //       const payload = {
+  //         faq: {
+  //           faq_category_id: parseInt(formData.faq_category_id),
+  //           faq_sub_category_id: parseInt(formData.faq_sub_category_id),
+  //           question: existingFaq.question,
+  //           answer: existingFaq.answer,
+  //           site_id: parseInt(existingFaq.site_id),
+  //           active: existingFaq.active,
+  //           faq_tag: existingFaq.faq_tag,
+  //         },
+  //       };
+
+  //       await axios.put(`${baseURL}faqs/${faqId}.json`, payload, {
+  //         headers: getAuthHeaders(),
+  //       });
+  //     }
+
+  //     toast.success("FAQ updated successfully!");
+  //     navigate("/faq-list");
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     const errorMessage =
+  //       error.response?.data?.message || "Failed to update FAQ";
+  //     toast.error(errorMessage);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!formData.faq_category_id) {
-      toast.error("FAQ Category is required");
-      return;
-    }
+  // Sync question and answer state to formData.faqs[0]
+  setFormData((prev) => ({
+    ...prev,
+    faqs: prev.faqs.map((faq, i) =>
+      i === 0
+        ? { ...faq, question: question.trim(), answer: answer.trim() }
+        : faq
+    ),
+  }));
 
-    if (formData.faqs.length === 0) {
-      toast.error("At least one FAQ is required");
-      return;
-    }
+  if (!formData.faq_category_id) {
+    toast.error("FAQ Category is required");
+    return;
+  }
 
-    setLoading(true);
+  if (question.trim() === "" || answer.trim() === "") {
+    toast.error("Question and Answer are required");
+    return;
+  }
 
-    try {
-      // Update existing FAQ - only PUT method used
-      const existingFaq = formData.faqs.find((faq) => faq.isExisting);
-      if (existingFaq) {
-        const payload = {
-          faq: {
-            faq_category_id: parseInt(formData.faq_category_id),
-            faq_sub_category_id: parseInt(formData.faq_sub_category_id),
-            question: existingFaq.question,
-            answer: existingFaq.answer,
-            site_id: parseInt(existingFaq.site_id),
-            active: existingFaq.active,
-            faq_tag: existingFaq.faq_tag,
-          },
-        };
+  if (formData.faqs.length === 0) {
+    toast.error("At least one FAQ is required");
+    return;
+  }
 
-        await axios.put(`${baseURL}faqs/${faqId}.json`, payload, {
-          headers: getAuthHeaders(),
-        });
-      }
+  setLoading(true);
 
-      toast.success("FAQ updated successfully!");
-      navigate("/faq-list");
-    } catch (error) {
-      console.error("Error:", error);
-      const errorMessage =
-        error.response?.data?.message || "Failed to update FAQ";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const existingFaq = {
+      ...formData.faqs[0],
+      question: question.trim(),
+      answer: answer.trim(),
+    };
+    const payload = {
+      faq: {
+        faq_category_id: parseInt(formData.faq_category_id),
+        faq_sub_category_id: parseInt(formData.faq_sub_category_id),
+        question: existingFaq.question,
+        answer: existingFaq.answer,
+        site_id: parseInt(existingFaq.site_id),
+        active: existingFaq.active,
+        faq_tag: existingFaq.faq_tag,
+      },
+    };
+
+    await axios.put(`${baseURL}faqs/${faqId}.json`, payload, {
+      headers: getAuthHeaders(),
+    });
+
+    toast.success("FAQ updated successfully!");
+    navigate("/faq-list");
+  } catch (error) {
+    console.error("Error:", error);
+    const errorMessage =
+      error.response?.data?.message || "Failed to update FAQ";
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="main-content">
@@ -320,7 +431,7 @@ const FaqEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3">
+                  <div className="col-md-3 mt-1">
                     <div className="form-group">
                       <label>
                         FAQ Sub Category 
@@ -349,12 +460,11 @@ const FaqEdit = () => {
                       />
                     </div>
                   </div>
-                </div>
-
-                {/* FAQ Entry Section */}
-                <div className="row align-items-center">
-                  {/* Question */}
-                  <div className="col-md-3 mt-2">
+              
+             
+                {/* <div className="row align-items-center"> */}
+                 
+                  <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Question <span className="otp-asterisk">*</span>
@@ -371,8 +481,8 @@ const FaqEdit = () => {
                     </div>
                   </div>
 
-                  {/* Answer */}
-                  <div className="col-md-3 mt-2">
+                 
+                  <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Answer <span className="otp-asterisk">*</span>
@@ -388,9 +498,11 @@ const FaqEdit = () => {
                       />
                     </div>
                   </div>
+                    </div>
 
-                  {/* Add Button */}
-                  <div className="col-md-2 mt-2">
+
+                 
+                  {/* <div className="col-md-2 mt-2">
                     <button
                       type="button"
                       className="purple-btn2 rounded-3"
@@ -411,10 +523,10 @@ const FaqEdit = () => {
                       <span> Add</span>
                     </button>
                   </div>
-                </div>
+                </div> */}
 
-                {/* FAQ List Table */}
-                {formData.faqs.length > 0 && (
+               
+                {/* {formData.faqs.length > 0 && (
                   <div className="col-md-12 mt-4">
                     <div className="mt-4 tbl-container w-100">
                       <table className="w-100">
@@ -483,7 +595,7 @@ const FaqEdit = () => {
                       </table>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
 

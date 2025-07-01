@@ -277,8 +277,10 @@ useEffect(() => {
                       <tr>
                         <th>Action</th>
                         <th>Sr No</th>
+                         <th>FAQ Category</th>
                         <th>Question</th>
                         <th>Answer</th>
+                       
                         {/* <th>Site ID</th> */}
                         {/* <th>Tags</th> */}
                         {/* <th>Status</th> */}
@@ -354,6 +356,7 @@ useEffect(() => {
                               </div>
                             </td>
                             <td>{startIndex + index + 1}</td>
+                            <td>{faq.faq_category_name || "-"}</td>
                             <td>{faq.question || "-"}</td>
                             <td>
                               <div 
@@ -366,6 +369,7 @@ useEffect(() => {
                                 {faq.answer || "-"}
                               </div>
                             </td>
+                           
                             {/* <td>{faq.site_id || "-"}</td>
                             <td>{faq.faq_tag || "-"}</td> */}
                             {/* <td>

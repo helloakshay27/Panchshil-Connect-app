@@ -15,11 +15,11 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://panchshil-super.lockated.com/"; // fallback
+    baseURL = "https://panchshil-super.lockated.com/"; 
     break;
 
   default:
-    baseURL = "https://api-connect.panchshil.com/"; // fallback
+    baseURL = "https://api-connect.panchshil.com/"; 
     break;
 }
 
@@ -28,13 +28,13 @@ console.log("Base URL:", baseURL, " | Hostname:", hostname);
 const token = localStorage.getItem("access_token");
 
 const LOGO_URL =
-  "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png";
+  "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
 
 const Rustomji_URL =
-  "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/116/original/Rustomjee_Logo-02_1.png";
+  "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Rustomjee_Logo-02_1.png";
 
 const Rustomji_URL_Black =
-  "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/158/original/Rustomjee_Logo-01_2.png";
+  "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/logo.png";
 
 const Rustomji_Favicon_URL =
   "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Rustomjee_icon.png";
