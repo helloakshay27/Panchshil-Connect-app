@@ -1717,14 +1717,37 @@ const ProjectDetailsEdit = () => {
         bannerPreviewImage: imageURL,
       }));
       setDialogOpen((prev) => ({ ...prev, image: true }));
-    } else if (type === "cover_images") {
-      setCoverImageUpload(newImageList);
+    } 
+    // else if (type === "cover_images") {
+    //   setCoverImageUpload(newImageList);
+    //   setFormData((prevData) => ({
+    //     ...prevData,
+    //     coverPreviewImage: imageURL,
+    //   }));
+    //   setDialogOpen((prev) => ({ ...prev, cover_images: true }));
+    // } 
+    else if (type === "cover_images") {
+    // Skip cropper for GIFs
+    if (fileType === "image/gif") {
       setFormData((prevData) => ({
         ...prevData,
+        cover_images: Array.isArray(prevData.cover_images)
+          ? [...prevData.cover_images, file]
+          : [file],
         coverPreviewImage: imageURL,
       }));
-      setDialogOpen((prev) => ({ ...prev, cover_images: true }));
-    } else if (type === "gallery_image") {
+      setCoverImageUpload([]); // Reset ImageUploadingButton
+      setDialogOpen((prev) => ({ ...prev, cover_images: false }));
+      return;
+    }
+    setCoverImageUpload(newImageList);
+    setFormData((prevData) => ({
+      ...prevData,
+      coverPreviewImage: imageURL,
+    }));
+    setDialogOpen((prev) => ({ ...prev, cover_images: true }));
+  }
+    else if (type === "gallery_image") {
       setGalleryImageUpload(newImageList);
       setFormData((prevData) => ({
         ...prevData,

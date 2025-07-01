@@ -281,10 +281,27 @@ const ProjectDetailsCreate = () => {
       return;
     }
 
+    // if (type === "cover_images") {
+    //   setCoverImageUpload(newImageList);
+    //   setDialogOpen((prev) => ({ ...prev, cover_images: true }));
+    // } 
     if (type === "cover_images") {
-      setCoverImageUpload(newImageList);
-      setDialogOpen((prev) => ({ ...prev, cover_images: true }));
-    } else if (type === "image") {
+    // Skip cropper for GIFs
+    if (fileType === "image/gif") {
+      setFormData((prev) => ({
+        ...prev,
+        cover_images: Array.isArray(prev.cover_images)
+          ? [...prev.cover_images, file]
+          : [file],
+      }));
+      setCoverImageUpload([]); 
+      setDialogOpen((prev) => ({ ...prev, cover_images: false }));
+      return;
+    }
+    setCoverImageUpload(newImageList);
+    setDialogOpen((prev) => ({ ...prev, cover_images: true }));
+  }
+    else if (type === "image") {
       setPendingImageUpload(newImageList);
       setDialogOpen((prev) => ({ ...prev, image: true }));
     } else if (type === "gallery_image") {
