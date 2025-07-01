@@ -458,7 +458,7 @@ function App() {
             element={<FaqList />}
           />
           <Route
-            path="/faq-edit/:id"
+            path="/faq-edit/:faqId"
             element={<FaqEdit />}
           />
 

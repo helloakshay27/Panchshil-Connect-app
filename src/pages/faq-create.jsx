@@ -9,18 +9,18 @@ const FaqCreate = () => {
   const [formData, setFormData] = useState({
     faq_category_id: "",
     faq_sub_category_id: "",
-    faqs: []
+    faqs: [],
   });
-  
+
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [sites, setSites] = useState([]);
-  
+
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [selectedSiteId, setSelectedSiteId] = useState("");
   const [faqTag, setFaqTag] = useState("");
-  
+
   const [loading, setLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [subCategoriesLoading, setSubCategoriesLoading] = useState(false);
@@ -40,15 +40,15 @@ const FaqCreate = () => {
       try {
         setCategoriesLoading(true);
         const res = await axios.get(`${baseURL}faq_categories.json`, {
-          headers: getAuthHeaders()
+          headers: getAuthHeaders(),
         });
-        
+
         const categoriesData = res.data?.faq_categories || res.data || [];
-        const formattedCategories = categoriesData.map(category => ({
-          id: category?.id || '',
-          name: category?.name || 'Unnamed Category'
+        const formattedCategories = categoriesData.map((category) => ({
+          id: category?.id || "",
+          name: category?.name || "Unnamed Category",
         }));
-        
+
         setCategories(formattedCategories);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
@@ -67,20 +67,23 @@ const FaqCreate = () => {
         try {
           setSubCategoriesLoading(true);
           const res = await axios.get(`${baseURL}faq_sub_categories.json`, {
-            headers: getAuthHeaders()
+            headers: getAuthHeaders(),
           });
-          
-          const subCategoriesData = res.data?.faq_sub_categories || res.data || [];
+
+          const subCategoriesData =
+            res.data?.faq_sub_categories || res.data || [];
           // Filter subcategories by selected category
           const filteredSubCategories = subCategoriesData.filter(
-            subCat => subCat.faq_category_id == formData.faq_category_id
+            (subCat) => subCat.faq_category_id == formData.faq_category_id
           );
-          
-          const formattedSubCategories = filteredSubCategories.map(subCategory => ({
-            id: subCategory?.id || '',
-            name: subCategory?.name || 'Unnamed Sub Category'
-          }));
-          
+
+          const formattedSubCategories = filteredSubCategories.map(
+            (subCategory) => ({
+              id: subCategory?.id || "",
+              name: subCategory?.name || "Unnamed Sub Category",
+            })
+          );
+
           setSubCategories(formattedSubCategories);
         } catch (err) {
           console.error("Failed to fetch subcategories:", err);
@@ -92,7 +95,7 @@ const FaqCreate = () => {
       fetchSubCategories();
     } else {
       setSubCategories([]);
-      setFormData(prev => ({ ...prev, faq_sub_category_id: "" }));
+      setFormData((prev) => ({ ...prev, faq_sub_category_id: "" }));
     }
   }, [formData.faq_category_id]);
 
@@ -102,15 +105,15 @@ const FaqCreate = () => {
       try {
         setSitesLoading(true);
         const res = await axios.get(`${baseURL}sites.json`, {
-          headers: getAuthHeaders()
+          headers: getAuthHeaders(),
         });
-        
+
         const sitesData = res.data?.sites || res.data || [];
-        const formattedSites = sitesData.map(site => ({
-          id: site?.id || '',
-          name: site?.name || 'Unnamed Site'
+        const formattedSites = sitesData.map((site) => ({
+          id: site?.id || "",
+          name: site?.name || "Unnamed Site",
         }));
-        
+
         setSites(formattedSites);
       } catch (err) {
         console.error("Failed to fetch sites:", err);
@@ -123,17 +126,17 @@ const FaqCreate = () => {
   }, []);
 
   const handleCategoryChange = (value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       faq_category_id: value,
-      faq_sub_category_id: ""
+      faq_sub_category_id: "",
     }));
   };
 
   const handleSubCategoryChange = (value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      faq_sub_category_id: value
+      faq_sub_category_id: value,
     }));
   };
 
@@ -148,22 +151,22 @@ const FaqCreate = () => {
       return;
     }
 
-    if (!selectedSiteId) {
-      toast.error("Site is required");
-      return;
-    }
+    // if (!selectedSiteId) {
+    //   toast.error("Site is required");
+    //   return;
+    // }
 
     const newFaq = {
       question: question.trim(),
       answer: answer.trim(),
       site_id: parseInt(selectedSiteId),
       active: true,
-      faq_tag: faqTag.trim()
+      faq_tag: faqTag.trim(),
     };
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      faqs: [...prev.faqs, newFaq]
+      faqs: [...prev.faqs, newFaq],
     }));
 
     // Clear input fields
@@ -176,9 +179,9 @@ const FaqCreate = () => {
   };
 
   const handleDeleteFaq = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      faqs: prev.faqs.filter((_, i) => i !== index)
+      faqs: prev.faqs.filter((_, i) => i !== index),
     }));
     toast.success("FAQ removed from list");
   };
@@ -191,10 +194,10 @@ const FaqCreate = () => {
       return;
     }
 
-    if (!formData.faq_sub_category_id) {
-      toast.error("FAQ Sub Category is required");
-      return;
-    }
+    // if (!formData.faq_sub_category_id) {
+    //   toast.error("FAQ Sub Category is required");
+    //   return;
+    // }
 
     if (formData.faqs.length === 0) {
       toast.error("At least one FAQ is required");
@@ -207,20 +210,19 @@ const FaqCreate = () => {
       const payload = {
         faq_category_id: parseInt(formData.faq_category_id),
         faq_sub_category_id: parseInt(formData.faq_sub_category_id),
-        faqs: formData.faqs
+        faqs: formData.faqs,
       };
-      
-      await axios.post(
-        `${baseURL}faqs.json`,
-        payload,
-        { headers: getAuthHeaders() }
-      );
-      
+
+      await axios.post(`${baseURL}faqs.json`, payload, {
+        headers: getAuthHeaders(),
+      });
+
       toast.success("FAQs created successfully!");
       navigate("/faq-list"); // Adjust navigation path as needed
     } catch (error) {
       console.error("Error:", error);
-      const errorMessage = error.response?.data?.message || "Failed to create FAQs";
+      const errorMessage =
+        error.response?.data?.message || "Failed to create FAQs";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -246,7 +248,12 @@ const FaqCreate = () => {
                       </label>
                       <SelectBox
                         options={[
-                          { value: "", label: categoriesLoading ? "Loading categories..." : "Select Category" },
+                          {
+                            value: "",
+                            label: categoriesLoading
+                              ? "Loading categories..."
+                              : "Select Category",
+                          },
                           ...categories.map((category) => ({
                             value: category.id,
                             label: category.name,
@@ -259,14 +266,20 @@ const FaqCreate = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3">
+                  <div className="col-md-3 mt-1">
                     <div className="form-group">
                       <label>
-                        FAQ Sub Category <span className="otp-asterisk">*</span>
+                        FAQ Sub Category
+                        {/* <span className="otp-asterisk">*</span> */}
                       </label>
                       <SelectBox
                         options={[
-                          { value: "", label: subCategoriesLoading ? "Loading subcategories..." : "Select Sub Category" },
+                          {
+                            value: "",
+                            label: subCategoriesLoading
+                              ? "Loading subcategories..."
+                              : "Select Sub Category",
+                          },
                           ...subCategories.map((subCategory) => ({
                             value: subCategory.id,
                             label: subCategory.name,
@@ -274,7 +287,11 @@ const FaqCreate = () => {
                         ]}
                         defaultValue={formData.faq_sub_category_id}
                         onChange={handleSubCategoryChange}
-                        disabled={loading || subCategoriesLoading || !formData.faq_category_id}
+                        disabled={
+                          loading ||
+                          subCategoriesLoading ||
+                          !formData.faq_category_id
+                        }
                       />
                     </div>
                   </div>
@@ -285,7 +302,9 @@ const FaqCreate = () => {
                   {/* Question */}
                   <div className="col-md-3 mt-2">
                     <div className="form-group">
-                      <label>Question <span className="otp-asterisk">*</span></label>
+                      <label>
+                        Question <span className="otp-asterisk">*</span>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -301,7 +320,9 @@ const FaqCreate = () => {
                   {/* Answer */}
                   <div className="col-md-3 mt-2">
                     <div className="form-group">
-                      <label>Answer <span className="otp-asterisk">*</span></label>
+                      <label>
+                        Answer <span className="otp-asterisk">*</span>
+                      </label>
                       <textarea
                         className="form-control"
                         name="answer"
@@ -315,7 +336,7 @@ const FaqCreate = () => {
                   </div>
 
                   {/* Site Selection */}
-                  <div className="col-md-2 mt-2">
+                  {/* <div className="col-md-2 mt-2">
                     <div className="form-group">
                       <label>Site <span className="otp-asterisk">*</span></label>
                       <SelectBox
@@ -331,10 +352,10 @@ const FaqCreate = () => {
                         disabled={loading || sitesLoading}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* FAQ Tag */}
-                  <div className="col-md-2 mt-2">
+                  {/* <div className="col-md-2 mt-2">
                     <div className="form-group">
                       <label>FAQ Tag</label>
                       <input
@@ -347,7 +368,7 @@ const FaqCreate = () => {
                         disabled={loading}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Add Button */}
                   <div className="col-md-2 mt-2">
@@ -383,25 +404,37 @@ const FaqCreate = () => {
                             <th>Sr No</th>
                             <th>Question</th>
                             <th>Answer</th>
-                            <th>Site</th>
-                            <th>FAQ Tag</th>
+                            {/* <th>Site</th> */}
+                            {/* <th>FAQ Tag</th> */}
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
                           {formData.faqs.map((faq, index) => {
-                            const siteName = sites.find(site => site.id == faq.site_id)?.name || 'Unknown Site';
+                            const siteName =
+                              sites.find((site) => site.id == faq.site_id)
+                                ?.name || "Unknown Site";
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
+                                <td
+                                  style={{
+                                    maxWidth: "200px",
+                                    wordWrap: "break-word",
+                                  }}
+                                >
                                   {faq.question}
                                 </td>
-                                <td style={{ maxWidth: '250px', wordWrap: 'break-word' }}>
+                                <td
+                                  style={{
+                                    maxWidth: "250px",
+                                    wordWrap: "break-word",
+                                  }}
+                                >
                                   {faq.answer}
                                 </td>
-                                <td>{siteName}</td>
-                                <td>{faq.faq_tag || '-'}</td>
+                                {/* <td>{siteName}</td>
+                                <td>{faq.faq_tag || '-'}</td> */}
                                 <td>
                                   <button
                                     type="button"
@@ -422,11 +455,11 @@ const FaqCreate = () => {
                 )}
               </div>
             </div>
-            
+
             {/* Hidden submit button for form submission */}
             <button type="submit" style={{ display: "none" }} />
           </form>
-          
+
           {/* Visible buttons positioned below the card */}
           <div className="row mt-3 justify-content-center mx-4">
             <div className="col-md-2">
@@ -436,7 +469,7 @@ const FaqCreate = () => {
                 className="purple-btn2 w-100"
                 disabled={loading || formData.faqs.length === 0}
               >
-                {loading ? "Creating..." : "Create FAQs"}
+                {loading ? "Submiting..." : "Submit"}
               </button>
             </div>
             <div className="col-md-2">

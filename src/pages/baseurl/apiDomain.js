@@ -7,7 +7,7 @@ switch (hostname) {
     baseURL = "https://dev-panchshil-super-app.lockated.com/";
     break;
   case "ui-panchshil-super.lockated.com":
-    baseURL = "https://api-connect.panchshil.com/";
+    baseURL = "https://panchshil-super.lockated.com/";
     break;
 
   case "uat-connect.panchshil.com":
@@ -15,7 +15,7 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://api-connect.panchshil.com/"; // fallback
+    baseURL = "https://panchshil-super.lockated.com/"; // fallback
     break;
 
   default:

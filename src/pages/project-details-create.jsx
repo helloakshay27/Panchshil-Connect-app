@@ -276,8 +276,8 @@ const ProjectDetailsCreate = () => {
       return;
     }
 
-    if (sizeInMB > 3) {
-      toast.error("❌ Image size must be less than 3MB.");
+    if (sizeInMB > 5) {
+      toast.error("❌ Image size must be less than 5MB.");
       return;
     }
 
@@ -3255,7 +3255,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 3 MB and Required ratio is 16:9
+                        Max Upload Size 5 MB and Required ratio is 16:9
                       </span>
                     )}
                   </span>
