@@ -272,7 +272,7 @@ const FaqEdit = () => {
       }
 
       toast.success("FAQ updated successfully!");
-      navigate("/setup-member/faq-list");
+      navigate("/faq-list");
     } catch (error) {
       console.error("Error:", error);
       const errorMessage =
@@ -323,7 +323,8 @@ const FaqEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        FAQ Sub Category <span className="otp-asterisk">*</span>
+                        FAQ Sub Category 
+                        {/* <span className="otp-asterisk">*</span> */}
                       </label>
                       <SelectBox
                         options={[
@@ -506,7 +507,7 @@ const FaqEdit = () => {
               <button
                 type="button"
                 className="purple-btn2 w-100"
-                onClick={() => navigate("/setup-member/faq-list")}
+                onClick={() => navigate("/faq-list")}
                 disabled={loading}
               >
                 Cancel

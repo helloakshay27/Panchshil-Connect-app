@@ -15,7 +15,7 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://api-connect.panchshil.com/"; // fallback
+    baseURL = "https://panchshil-super.lockated.com/"; // fallback
     break;
 
   default:
