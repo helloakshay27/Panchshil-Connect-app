@@ -343,10 +343,18 @@ const FaqEdit = () => {
     ),
   }));
 
-  if (!formData.faq_category_id) {
-    toast.error("FAQ Category is required");
-    return;
-  }
+  // if (!formData.faq_category_id) {
+  //   toast.error("FAQ Category is required");
+  //   return;
+  // }
+
+  if (
+  baseURL === "https://dev-panchshil-super-app.lockated.com/" &&
+  !formData.faq_category_id
+) {
+  toast.error("FAQ Category is required");
+  return;
+}
 
   if (question.trim() === "" || answer.trim() === "") {
     toast.error("Question and Answer are required");
@@ -409,7 +417,10 @@ const FaqEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        FAQ Category <span className="otp-asterisk">*</span>
+                        FAQ Category 
+                         {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+                        <span className="otp-asterisk">*</span>
+                         )}
                       </label>
                       <SelectBox
                         options={[

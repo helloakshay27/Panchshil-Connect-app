@@ -188,11 +188,18 @@ const FaqCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!formData.faq_category_id) {
-      toast.error("FAQ Category is required");
-      return;
-    }
+    
+    // if (!formData.faq_category_id) {
+    //   toast.error("FAQ Category is required");
+    //   return;
+    // }
+    if (
+  baseURL === "https://dev-panchshil-super-app.lockated.com/" &&
+  !formData.faq_category_id
+) {
+  toast.error("FAQ Category is required");
+  return;
+}
 
     // if (!formData.faq_sub_category_id) {
     //   toast.error("FAQ Sub Category is required");
@@ -244,7 +251,10 @@ const FaqCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        FAQ Category <span className="otp-asterisk">*</span>
+                        FAQ Category 
+                         {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+                        <span className="otp-asterisk">*</span>
+                        )}
                       </label>
                       <SelectBox
                         options={[
@@ -266,7 +276,7 @@ const FaqCreate = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-1">
+                  <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         FAQ Sub Category
