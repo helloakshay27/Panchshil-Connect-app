@@ -1,0 +1,392 @@
+  * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            line-height: 18px;
+            color: #374151;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 375px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            /* margin-bottom: 3rem; */
+            min-height: 120px;
+            gap: 1rem;
+        }
+
+        /* Alternate layout for even steps */
+        .step:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .step-content {
+            flex: 1;
+            padding: 0 0.5rem;
+        }
+
+        .step-number {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #141415;
+            margin-bottom: 0.5rem;
+            /* text-transform: uppercase; */
+            letter-spacing: 0.5px;
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #b8860b;
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+
+        .step-description {
+            font-size: 0.875rem;
+            color: #141415;
+            line-height: 20px;
+        }
+
+        .step-image {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+            height: 120px;
+        }
+
+        /* Custom illustrations using CSS */
+        .megaphone {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .megaphone-base {
+            position: absolute;
+            top: 20px;
+            left: 15px;
+            width: 50px;
+            height: 30px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #ffb6b6 100%);
+            border-radius: 8px;
+            transform: rotate(15deg);
+        }
+
+        .megaphone-handle {
+            position: absolute;
+            top: 35px;
+            left: 8px;
+            width: 12px;
+            height: 12px;
+            background-color: #4a4a4a;
+            border-radius: 3px;
+            transform: rotate(15deg);
+        }
+
+        .megaphone-mouth {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            width: 25px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff4757 0%, #c44569 100%);
+            border-radius: 50%;
+            transform: rotate(15deg);
+        }
+
+        .sound-waves {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+        }
+
+        .sound-wave {
+            width: 8px;
+            height: 2px;
+            background-color: #fbbf24;
+            border-radius: 1px;
+            margin-bottom: 2px;
+            transform: rotate(15deg);
+        }
+
+        .sound-wave:nth-child(2) {
+            width: 12px;
+        }
+
+        .sound-wave:nth-child(3) {
+            width: 10px;
+        }
+
+        /* Process Flow */
+        .process-flow {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .central-gear {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            background-color: #fbbf24;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gear-center {
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .process-card {
+            position: absolute;
+            width: 20px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .process-card-1 {
+            top: 15px;
+            right: 15px;
+            background-color: #10b981;
+        }
+
+        .process-card-2 {
+            top: 35px;
+            right: 20px;
+            background-color: #fde047;
+        }
+
+        .process-card-3 {
+            bottom: 35px;
+            left: 15px;
+            background-color: #f87171;
+        }
+
+        .process-card-4 {
+            bottom: 15px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            background-color: #60a5fa;
+            border-radius: 50%;
+        }
+
+        /* Checkmark */
+        .checkmark-container {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkmark-circle {
+            width: 60px;
+            height: 60px;
+            background-color: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .checkmark {
+            width: 24px;
+            height: 18px;
+            border: 3px solid white;
+            border-top: none;
+            border-right: none;
+            transform: rotate(-45deg);
+            margin-top: -3px;
+        }
+
+        /* Handshake */
+        .handshake {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .celebration-rays {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 3px;
+        }
+
+        .ray {
+            background-color: #fbbf24;
+            border-radius: 1px;
+        }
+
+        .ray:nth-child(1) {
+            width: 2px;
+            height: 12px;
+            transform: rotate(-15deg);
+        }
+
+        .ray:nth-child(2) {
+            width: 2px;
+            height: 10px;
+        }
+
+        .ray:nth-child(3) {
+            width: 2px;
+            height: 12px;
+            transform: rotate(15deg);
+        }
+
+        .handshake-hands {
+            position: relative;
+        }
+
+        .hand-left {
+            width: 30px;
+            height: 25px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            border-radius: 6px;
+            transform: rotate(-15deg);
+        }
+
+        .hand-right {
+            position: absolute;
+            top: 3px;
+            left: 18px;
+            width: 30px;
+            height: 25px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            border-radius: 6px;
+            transform: rotate(15deg);
+        }
+
+        .handshake-area {
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            width: 18px;
+            height: 12px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 3px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 320px) {
+            .container {
+                padding: 1.5rem 0.75rem;
+            }
+            
+            .step {
+                margin-bottom: 2.5rem;
+                min-height: 100px;
+            }
+            
+            .step-title {
+                font-size: 1.125rem;
+            }
+            
+            .step-description {
+                font-size: 0.8125rem;
+            }
+            
+            .step-image {
+                min-width: 100px;
+                height: 100px;
+            }
+        }
+
+        @media (min-width: 376px) and (max-width: 768px) {
+            .container {
+                max-width: 500px;
+                padding: 2.5rem 1.5rem;
+            }
+            
+            .step {
+                /* margin-bottom: 3.5rem; */
+                min-height: 140px;
+                gap: 1.5rem;
+            }
+            
+            .step-title {
+                font-size: 17px;
+            }
+            
+            .step-description {
+                font-size: 0.9375rem;
+            }
+            
+            .step-image {
+                min-width: 140px;
+                height: 140px;
+            }
+            
+            .megaphone,
+            .process-flow,
+            .checkmark-container,
+            .handshake {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .container {
+                max-width: 600px;
+                padding: 3rem 2rem;
+            }
+            
+            .step {
+                /* margin-bottom: 4rem; */
+                min-height: 160px;
+                gap: 2rem;
+            }
+            
+            .step-title {
+                font-size: 18px;
+            }
+            
+            .step-description {
+                font-size: 1rem;
+            }
+            
+            .step-image {
+                min-width: 160px;
+                height: 160px;
+            }
+            
+            .megaphone,
+            .process-flow,
+            .checkmark-container,
+            .handshake {
+                width: 120px;
+                height: 120px;
+            }
+        }

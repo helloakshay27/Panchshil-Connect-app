@@ -119,6 +119,7 @@ import FaqCategoryForm from "./pages/faq-category-form";
 import FaqCategoryList from "./pages/faq-category-list";
 import FaqSubCategory from "./pages/faq-subcategory";
 import FaqSubCategoryList from "./pages/faq-subcategory-list";
+import ReferralProcess from "./components/Referralcomponent/referral-page";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -196,6 +197,9 @@ function App() {
         {/* <Route path="/reset-password" element={<CreatePassword />} /> */}
         <Route path="/reset-password" element={CreatePasswordComponent} />
         <Route path="/verify-otp" element={<LoginWithOtpRustomjee />} />
+
+        <Route path="/referral-page" element={<ReferralProcess />} />
+
 
 
         <Route
@@ -469,6 +473,7 @@ function App() {
           <Route path="/setup-member/faq-subcategory-list" element={<FaqSubCategoryList />} />
           <Route path="/setup-member/faq-subcategory/create" element={<FaqSubCategory />} />
           <Route path="/setup-member/faq-subcategory/:faqSubId/edit" element={<FaqSubCategory />} />
+
 
 
         </Route>
