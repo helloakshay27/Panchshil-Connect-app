@@ -137,7 +137,7 @@ const ProjectDetailsCreate = () => {
     'image': ['9:16'],
     'cover images': ['1:1'],
     'gallery image': ['16:9'],
-    'two d images': ['16:9'],
+    'project 2d image': ['16:9'],
   };
 
 
@@ -145,7 +145,7 @@ const ProjectDetailsCreate = () => {
 
   const coverImageType = 'cover images';
   const galleryImageType = 'gallery image';
-  const floorImageType = 'two d images';
+  const floorImageType = 'project 2d image';
   const bannerImageType = 'image';
 
   const selectedCoverRatios = projectUploadConfig[coverImageType] || [];
@@ -1412,9 +1412,9 @@ const ProjectDetailsCreate = () => {
             data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("two_d_images_") && Array.isArray(value)) {
+      } else if (key.startsWith("project_2d_image") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("two_d_images_", "project[two_d_images_") + "]";
+          const backendField = key.replace("project_2d_image", "project[project_2d_image_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
