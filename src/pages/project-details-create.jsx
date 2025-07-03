@@ -141,8 +141,8 @@ const ProjectDetailsCreate = () => {
   };
 
 
-  
-  
+
+
   const coverImageType = 'cover images';
   const galleryImageType = 'gallery image';
   const floorImageType = 'two d images';
@@ -3454,7 +3454,7 @@ const ProjectDetailsCreate = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.banner_image_9by16?.map((file, index) => (
+                      {formData.image_9_by_16?.map((file, index) => (
                         <tr key={index}>
                           <td>{file.name}</td>
                           <td>
@@ -3471,7 +3471,7 @@ const ProjectDetailsCreate = () => {
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() => discardImage("banner_image_9by16", file)}
+                              onClick={() => discardImage("image_9_by_16", file)}
                             >
                               x
                             </button>
@@ -3540,7 +3540,7 @@ const ProjectDetailsCreate = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.cover_image_1by1?.map((file, index) => (
+                      {formData.cover_images_1_by_1?.map((file, index) => (
                         <tr key={index}>
                           <td>{file.name}</td>
                           <td>
@@ -3557,7 +3557,7 @@ const ProjectDetailsCreate = () => {
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() => discardImage("cover_image_1by1", file)}
+                              onClick={() => discardImage("cover_images_1_by_1", file)}
                             >
                               x
                             </button>
@@ -3672,76 +3672,24 @@ const ProjectDetailsCreate = () => {
                     </thead>
                     <tbody>
                       {/* First render API fetched images */}
-                      {formData.fetched_gallery_image?.map((file, index) =>
-                        file.attachfiles?.map((attachment, idx) => (
-                          <tr key={`fetched-${index}-${idx}`}>
-                            {/* <td>{file.gallery_type || "N/A"}</td> */}
-                            <td>{attachment.document_file_name || "N/A"}</td>
-                            <td>
-                              {attachment.document_url && (
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={attachment.document_url}
-                                  alt={
-                                    attachment.document_file_name ||
-                                    "Fetched Image"
-                                  }
-                                />
-                              )}
-                            </td>
-                            <td>
-                              <div>{file.day_night ? "Day" : "Night"}</div>
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() =>
-                                  handleFetchedDiscardGallery(
-                                    "fetched_gallery_image",
-                                    index,
-                                    attachment.id
-                                  )
-                                }
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                      {(formData.gallery_image_16by9 ?? []).map((file, index) => (
-                        <tr key={`new-${index}`}>
-                          <td>{file.name || "N/A"}</td>
+                      {formData.gallery_image_16_by_9?.map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.name}</td>
                           <td>
                             <img
                               style={{ maxWidth: 100, maxHeight: 100 }}
                               className="img-fluid rounded"
-                              src={
-                                file.preview ||
-                                URL.createObjectURL(file.file)
-                              }
-                              alt={file.gallery_image_file_name || "Preview"}
+                              src={file.preview}
+                              alt={file.name}
                             />
                           </td>
-                          <td>
-                            <select
-                              className="form-control"
-                              value={file.isDay === undefined || file.isDay ? 1 : 0}
-                              onChange={(e) =>
-                                handleDayNightChange(index, e.target.value === "1" ? true : false)
-                              }
-                            >
-                              <option value={1}>Day</option>
-                              <option value={0}>Night</option>
-                            </select>
-                          </td>
+                          <td>{file.ratio}</td>
+
                           <td>
                             <button
                               type="button"
                               className="purple-btn2"
-                              onClick={() => handleDiscardGallery(index)}
+                              onClick={() => discardImage("gallery_image_16_by_9", file)}
                             >
                               x
                             </button>
@@ -4012,7 +3960,7 @@ const ProjectDetailsCreate = () => {
                     </thead>
                     <tbody>
                       {/* 2D Images */}
-                      {formData?.floor_plan_16by9?.map((file, index) => (
+                      {formData.two_d_images_16_by_9?.map((file, index) => (
                         <tr key={index}>
                           <td> {file.name}</td>
                           <td>
@@ -4030,7 +3978,7 @@ const ProjectDetailsCreate = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                discardImage("floor_plan_16by9", file)
+                                discardImage("two_d_images_16_by_9", file)
                               }
                             >
                               x
