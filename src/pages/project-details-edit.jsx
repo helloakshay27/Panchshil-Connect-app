@@ -140,11 +140,11 @@ const ProjectDetailsEdit = () => {
     'image': ['9:16'],
     'cover images': ['1:1'],
     'gallery image': ['16:9'],
-    'two d images': ['16:9'],
+    'project 2d image': ['16:9'],
   };
   const coverImageType = 'cover images';
   const galleryImageType = 'gallery image';
-  const floorImageType = 'two d images';
+  const floorImageType = 'project 2d image';
   const bannerImageType = 'image';
 
   const selectedCoverRatios = projectUploadConfig[coverImageType] || [];
@@ -165,12 +165,13 @@ const ProjectDetailsEdit = () => {
 
 
 
-  const updateFormData = (key, files) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: [...(prev[key] || []), ...files],
-    }));
-  };
+const updateFormData = (key, files) => {
+  setFormData((prev) => ({
+    ...prev,
+    [key]: [...(prev[key] || []), ...Array.from(files)], // Ensure real File objects
+  }));
+};
+
 
   const handleCroppedImages = (validImages, type = "cover") => {
     if (!validImages || validImages.length === 0) {
@@ -180,7 +181,7 @@ const ProjectDetailsEdit = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(":", "by");
+      const formattedRatio = img.ratio.replace(":", "_by_");
       let prefix = "";
 
       switch (type) {
@@ -494,6 +495,31 @@ const ProjectDetailsEdit = () => {
           is_sold: projectData.is_sold || false,
           disclaimer: projectData.project_disclaimer || "",
           project_qrcode_image: projectData.project_qrcode_images || [],
+          rera_url: projectData.rera_url || "",
+          image_9_by_16: Array.isArray(projectData.image_9_by_16)
+            ? projectData.image_9_by_16
+            : projectData.image_9_by_16
+              ? [projectData.image_9_by_16]
+              : [],
+
+          cover_images_1_by_1: Array.isArray(projectData.cover_images_1_by_1)
+            ? projectData.cover_images_1_by_1
+            : projectData.cover_images_1_by_1
+              ? [projectData.cover_images_1_by_1]
+              : [],
+
+          project_2d_image_1_by_1: Array.isArray(projectData.project_2d_image_1_by_1)
+            ? projectData.project_2d_image_1_by_1
+            : projectData.project_2d_image_1_by_1
+              ? [projectData.project_2d_image_1_by_1]
+              : [],
+
+          gallery_image_9by16: Array.isArray(projectData.gallery_image_9by16)
+            ? projectData.gallery_image_9by16
+            : projectData.gallery_image_9by16
+              ? [projectData.gallery_image_9by16]
+              : [],
+
         });
 
         //       setPlans(
@@ -1795,9 +1821,9 @@ const ProjectDetailsEdit = () => {
       }
     });
 
-    for (let [key, value] of data.entries()) {
-      console.log(`${key}:`, value);
-    }
+    // for (let [key, value] of data.entries()) {
+    //   console.log(`${key}:`, value);
+    // }
 
     try {
       const response = await axios.put(`${baseURL}projects/${id}.json`, data, {
@@ -4395,6 +4421,18 @@ const ProjectDetailsEdit = () => {
                   <span>Add</span>
                 </button>
 
+                {showBannerModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowBannerModal(false)}
+                    includeInvalidRatios={false}
+                    selectedRatioProp={selectedBannerRatios}
+                    showAsModal={true}
+                    label={bannerImageLabel}
+                    description={dynamicDescription3}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "banner")}
+                  />
+                )}
+
               </div>
 
               <div className="col-md-12 mt-2">
@@ -4409,100 +4447,44 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* ✅ Show newly uploaded images from banner_image_9by16 */}
-                      {formData.banner_image_9by16 && formData.banner_image_9by16.length > 0
-                        ? formData.banner_image_9by16.map((file, index) => (
-                          <tr key={`uploaded-${index}`}>
-                            <td>{file.name}</td>
+                      {/* ✅ Normalize image_9_by_16 into an array */}
+                      {(() => {
+                        const image9by16List = Array.isArray(formData.image_9_by_16)
+                          ? formData.image_9_by_16
+                          : formData.image_9_by_16
+                            ? [formData.image_9_by_16]
+                            : [];
+
+                        return image9by16List.map((file, index) => (
+                          <tr key={index}>
+                            <td>{file.name || file.document_file_name}</td>
                             <td>
                               <img
-                                src={file.preview}
-                                alt={file.name}
+                                style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                }}
+                                src={file.preview || file.document_url}
+                                alt={file.name || file.document_file_name}
                               />
                             </td>
-                            <td>{file.ratio}</td>
+                            <td>{file.ratio || '-'}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage("banner_image_9by16", file)}
+                                onClick={() => discardImage("image_9_by_16", file)}
                               >
                                 x
                               </button>
                             </td>
                           </tr>
-                        ))
-                        : // ✅ If no new upload, show edit preview from bannerPreviewImage or image[]
-                        formData.bannerPreviewImage ? (
-                          <tr>
-                            <td>Banner Preview</td>
-                            <td>
-                              <img
-                                src={formData.bannerPreviewImage}
-                                alt="Banner Preview"
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            </td>
-                            <td>-</td>
-                            <td>-</td>
-                          </tr>
-                        ) : Array.isArray(formData.image) && formData.image.length > 0 ? (
-                          formData.image.map((img, index) => {
-                            const src = img.document_url || "";
-                            return (
-                              <tr key={`api-${index}`}>
-                                <td>{img.document_file_name || `Image ${index + 1}`}</td>
-                                <td>
-                                  <img
-                                    src={src}
-                                    alt={`Uploaded ${index}`}
-                                    className="img-fluid rounded"
-                                    style={{
-                                      maxWidth: "100px",
-                                      maxHeight: "100px",
-                                      objectFit: "cover",
-                                    }}
-                                  />
-                                </td>
-                                <td>-</td>
-                                <td>-</td>
-                              </tr>
-                            );
-                          })
-                        ) : (
-                          <tr>
-                            <td colSpan={4}>No image selected</td>
-                          </tr>
-                        )}
+                        ));
+                      })()}
+
                     </tbody>
                   </table>
-
                 </div>
-
-                {/* ✅ Upload modal */}
-                {showBannerModal && (
-                  <ProjectBannerUpload
-                    onClose={() => setShowBannerModal(false)}
-                    includeInvalidRatios={false}
-                    selectedRatioProp={selectedBannerRatios}
-                    showAsModal={true}
-                    label={bannerImageLabel}
-                    description={dynamicDescription3}
-                    onContinue={(validImages) => handleCroppedImages(validImages, "banner")}
-                  />
-                )}
               </div>
+
 
 
               {/* Gallery Section */}
@@ -4624,93 +4606,55 @@ const ProjectDetailsEdit = () => {
                 )}
               </div>
 
-              {formData.cover_images?.length > 0 ? (
-                // 🔁 EXISTING IMAGES (Edit Mode)
-                <div className="col-md-12 mt-2">
-                  <div className="mt-4 tbl-container">
-                    <table className="w-100">
-                      <thead>
-                        <tr>
-                          <th>File Name</th>
-                          <th>Preview</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {formData.cover_images.map((file, index) => (
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* ✅ Normalize image_9_by_16 into an array */}
+                      {(() => {
+                        const cover_images_1_by_1 = Array.isArray(formData.cover_images_1_by_1)
+                          ? formData.cover_images_1_by_1
+                          : formData.cover_images_1_by_1
+                            ? [formData.cover_images_1_by_1]
+                            : [];
+
+                        return cover_images_1_by_1.map((file, index) => (
                           <tr key={index}>
-                            <td>{file.document_file_name || file.name}</td>
+                            <td>{file.name || file.document_file_name}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={
-                                  file.document_url
-                                    ? file.document_url
-                                    : file.type?.startsWith("image")
-                                      ? URL.createObjectURL(file)
-                                      : null
-                                }
-                                alt={file.document_file_name || file.name || "Image"}
+                                src={file.preview || file.document_url}
+                                alt={file.name || file.document_file_name}
                               />
                             </td>
+                            <td>{file.ratio || '-'}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleFileDiscardCoverImage("cover_images", index)}
+                                onClick={() => discardImage("cover_images_1_by_1", file)}
                               >
                                 x
                               </button>
                             </td>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        ));
+                      })()}
+
+                    </tbody>
+                  </table>
                 </div>
-              ) : (
-                // 🆕 UPLOADED IMAGES WITH RATIO
-                <div className="col-md-12 mt-2">
-                  <div className="mt-4 tbl-container">
-                    <table className="w-100">
-                      <thead>
-                        <tr>
-                          <th>File Name</th>
-                          <th>Preview</th>
-                          <th>Ratio</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {formData.cover_image_1by1?.map((file, index) => (
-                          <tr key={index}>
-                            <td>{file.name}</td>
-                            <td>
-                              <img
-                                style={{ maxWidth: 100, maxHeight: 100 }}
-                                className="img-fluid rounded"
-                                src={file.preview}
-                                alt={file.name}
-                              />
-                            </td>
-                            <td>{file.ratio}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() => discardImage("cover_image_1by1", file)}
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
+              </div>
 
 
               <div className="d-flex justify-content-between align-items-end mx-1">
@@ -4859,100 +4803,55 @@ const ProjectDetailsEdit = () => {
 
               {/* Main Section */}
               <div className="col-md-12 mt-2">
-                <div
-                  className="mt-4 tbl-container"
-                  style={{ maxHeight: "300px", overflowY: "auto" }}
-                >
+                <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
                       <tr>
-                        <th>Image Name</th>
-                        <th>Image</th>
-                        <th>Day/Night</th>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* ✅ 1. Show fetched images only if no new uploads */}
-                      {(!formData.gallery_image_16by9 || formData.gallery_image_16by9.length === 0) &&
-                        formData.fetched_gallery_image?.map((file, index) =>
-                          file.attachfiles?.map((attachment, idx) => (
-                            <tr key={`fetched-${index}-${idx}`}>
-                              <td>{attachment.document_file_name || "N/A"}</td>
-                              <td>
-                                {attachment.document_url && (
-                                  <img
-                                    style={{ maxWidth: 100, maxHeight: 100 }}
-                                    className="img-fluid rounded"
-                                    src={attachment.document_url}
-                                    alt={attachment.document_file_name || "Fetched Image"}
-                                  />
-                                )}
-                              </td>
-                              <td>{file.day_night ? "Day" : "Night"}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleFetchedDiscardGallery(
-                                      "fetched_gallery_image",
-                                      index,
-                                      attachment.id
-                                    )
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
+                      {/* ✅ Normalize image_9_by_16 into an array */}
+                      {(() => {
+                        const gallery_image_9by16 = Array.isArray(formData.gallery_image_9by16)
+                          ? formData.gallery_image_9by16
+                          : formData.gallery_image_9by16
+                            ? [formData.gallery_image_9by16]
+                            : [];
 
-                      {/* ✅ 2. Show newly uploaded images from gallery_image_16by9 */}
-                      {(formData.gallery_image_16by9 ?? []).map((file, index) => (
-                        <tr key={`new-16by9-${index}`}>
-                          <td>{file.gallery_image_file_name || file.name || "N/A"}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.attachfile?.document_url ||
-                                (file.gallery_image instanceof File
-                                  ? URL.createObjectURL(file.gallery_image)
-                                  : file.preview)
-                              }
-                              alt={file.gallery_image_file_name || file.name || "Preview"}
-                            />
-                          </td>
-                          <td>
-                            <select
-                              className="form-control"
-                              value={file.isDay === undefined || file.isDay ? 1 : 0}
-                              onChange={(e) =>
-                                handleDayNightChange(index, e.target.value === "1")
-                              }
-                            >
-                              <option value={1}>Day</option>
-                              <option value={0}>Night</option>
-                            </select>
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handleDiscardGallery(index)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                        return gallery_image_9by16.map((file, index) => (
+                          <tr key={index}>
+                            <td>{file.name || file.document_file_name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.preview || file.document_url}
+                                alt={file.name || file.document_file_name}
+                              />
+                            </td>
+                            <td>{file.ratio || '-'}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage("gallery_image_9by16", file)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })()}
+
                     </tbody>
                   </table>
                 </div>
               </div>
+
 
 
               {/* <div className="col-md-12 mt-2">
@@ -5309,78 +5208,51 @@ const ProjectDetailsEdit = () => {
               </div>
 
               {/* Table to Display Images */}
-              <div className="col-md-12 mt-2">
-                <div
-                  className="mt-4 tbl-container"
-                  style={{ maxHeight: "300px", overflowY: "auto" }}
-                >
+         <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
                       <tr>
                         <th>File Name</th>
-                        <th>Image</th>
-                        {/* Only show Ratio column if uploading new */}
-                        {formData.floor_plan_16by9?.length > 0 && <th>Ratio</th>}
+                        <th>Preview</th>
+                        <th>Ratio</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* ✅ Show `two_d_images` (edit mode) if no new uploads */}
-                      {(!formData.floor_plan_16by9 || formData.floor_plan_16by9.length === 0) &&
-                        formData.two_d_images?.map((file, index) => (
-                          <tr key={`2d-${index}`}>
-                            <td>{file.document_file_name || file.name}</td>
+                      {/* ✅ Normalize image_9_by_16 into an array */}
+                      {(() => {
+                        const project_2d_image_16_by_9 = Array.isArray(formData.project_2d_image_16_by_9)
+                          ? formData.project_2d_image_16_by_9
+                          : formData.project_2d_image_16_by_9
+                            ? [formData.project_2d_image_16_by_9]
+                            : [];
+
+                        return project_2d_image_16_by_9.map((file, index) => (
+                          <tr key={index}>
+                            <td>{file.name || file.document_file_name}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={
-                                  file.document_url
-                                    ? file.document_url
-                                    : file.type?.startsWith("image")
-                                      ? URL.createObjectURL(file)
-                                      : null
-                                }
-                                alt={file.document_file_name || file.name || "Image"}
+                                src={file.preview || file.document_url}
+                                alt={file.name || file.document_file_name}
                               />
                             </td>
-                            {formData.floor_plan_16by9?.length > 0 && <td>-</td>}
+                            <td>{file.ratio || '-'}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleDiscardTwoDImage("two_d_images", index)}
+                                onClick={() => discardImage("image_9_by_16", file)}
                               >
                                 x
                               </button>
                             </td>
                           </tr>
-                        ))}
+                        ));
+                      })()}
 
-                      {/* ✅ Show uploaded `floor_plan_16by9` images when available */}
-                      {(formData.floor_plan_16by9 ?? []).map((file, index) => (
-                        <tr key={`upload-${index}`}>
-                          <td>{file.name}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={file.preview}
-                              alt={file.name}
-                            />
-                          </td>
-                          <td>{file.ratio}</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => discardImage("floor_plan_16by9", file)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
                     </tbody>
                   </table>
                 </div>

@@ -3960,7 +3960,7 @@ const ProjectDetailsCreate = () => {
                     </thead>
                     <tbody>
                       {/* 2D Images */}
-                      {formData.two_d_images_16_by_9?.map((file, index) => (
+                      {formData.project_2d_image?.map((file, index) => (
                         <tr key={index}>
                           <td> {file.name}</td>
                           <td>
@@ -3978,7 +3978,7 @@ const ProjectDetailsCreate = () => {
                               type="button"
                               className="purple-btn2"
                               onClick={() =>
-                                discardImage("two_d_images_16_by_9", file)
+                                discardImage("project_2d_image", file)
                               }
                             >
                               x
