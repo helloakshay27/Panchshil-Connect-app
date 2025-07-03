@@ -1426,38 +1426,38 @@ const ProjectDetailsCreate = () => {
 
     console.log("data to be sent:", Array.from(data.entries()));
 
-    // try {
-    //   const response = await axios.post(`${baseURL}projects.json`, data, {
-    //     headers: {
-    //       Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-    //     },
-    //   });
+    try {
+      const response = await axios.post(`${baseURL}projects.json`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
 
-    //   console.log(response.data);
-    //   toast.success("Project submitted successfully");
-    //   sessionStorage.removeItem("cached_projects");
+      console.log(response.data);
+      toast.success("Project submitted successfully");
+      sessionStorage.removeItem("cached_projects");
 
-    //   Navigate("/project-list");
-    // } catch (error) {
-    //   // catch (error) {
-    //   //   console.error("Error submitting the form:", error);
-    //   //   toast.error("Failed to submit the form. Please try again.");
-    //   // }
-    //   console.error("Error submitting the form:", error);
-    //   if (
-    //     error.response &&
-    //     error.response.status === 422 &&
-    //     error.response.data &&
-    //     (error.response.data.project_name || error.response.data.Project_Name)
-    //   ) {
-    //     toast.error("Project name already exists.");
-    //   } else {
-    //     toast.error("Failed to submit the form. Please try again.");
-    //   }
-    // } finally {
-    //   setLoading(false);
-    //   setIsSubmitting(false);
-    // }
+      Navigate("/project-list");
+    } catch (error) {
+      // catch (error) {
+      //   console.error("Error submitting the form:", error);
+      //   toast.error("Failed to submit the form. Please try again.");
+      // }
+      console.error("Error submitting the form:", error);
+      if (
+        error.response &&
+        error.response.status === 422 &&
+        error.response.data &&
+        (error.response.data.project_name || error.response.data.Project_Name)
+      ) {
+        toast.error("Project name already exists.");
+      } else {
+        toast.error("Failed to submit the form. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
