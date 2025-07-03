@@ -474,7 +474,7 @@ const updateFormData = (key, files) => {
           project_layout: projectData.project_layout || [],
           project_creatives: projectData.project_creatives || [],
           // plans: projectData.plans || [],
-          cover_images: projectData.cover_images || [],
+          cover_images_1_by_1: projectData.cover_images_1_by_1 || [],
           project_creative_generics:
             projectData.project_creative_generics || [],
           project_creative_offers: projectData.project_creative_offers || [],
@@ -508,16 +508,16 @@ const updateFormData = (key, files) => {
               ? [projectData.cover_images_1_by_1]
               : [],
 
-          project_2d_image_1_by_1: Array.isArray(projectData.project_2d_image_1_by_1)
-            ? projectData.project_2d_image_1_by_1
-            : projectData.project_2d_image_1_by_1
-              ? [projectData.project_2d_image_1_by_1]
+          project_2d_image_16_by_9: Array.isArray(projectData.project_2d_image_16_by_9)
+            ? projectData.project_2d_image_16_by_9
+            : projectData.project_2d_image_16_by_9
+              ? [projectData.project_2d_image_16_by_9]
               : [],
 
-          gallery_image_9by16: Array.isArray(projectData.gallery_image_9by16)
-            ? projectData.gallery_image_9by16
-            : projectData.gallery_image_9by16
-              ? [projectData.gallery_image_9by16]
+          gallery_image_16_by_9: Array.isArray(projectData.gallery_image_16_by_9)
+            ? projectData.gallery_image_16_by_9
+            : projectData.gallery_image_16_by_9
+              ? [projectData.gallery_image_16_by_9]
               : [],
 
         });
@@ -1119,7 +1119,7 @@ const updateFormData = (key, files) => {
 
     try {
       const response = await fetch(
-        `${baseURL}projects/${id}/remove_cover_image/${Image.id}.json`,
+        `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -1712,11 +1712,11 @@ const updateFormData = (key, files) => {
             data.append("project[ProjectVideo][]", file);
           }
         });
-      } else if (key === "gallery_image" && Array.isArray(value)) {
+      } else if (key === "gallery_image_" && Array.isArray(value)) {
         value.forEach((fileObj, index) => {
-          if (fileObj.gallery_image instanceof File) {
+          if (fileObj.gallery_image_ instanceof File) {
             // ✅ Check for actual File
-            data.append("project[gallery_image][]", fileObj.gallery_image); // ✅ Send actual File
+            data.append("project[gallery_image_][]", fileObj.gallery_image_); // ✅ Send actual File
             data.append(
               `project[gallery_image_file_name]`,
               fileObj.gallery_image_file_name
@@ -1807,9 +1807,9 @@ const updateFormData = (key, files) => {
             data.append(backendField, img.file);
           }
         });
-      } else if (key.startsWith("two_d_images_") && Array.isArray(value)) {
+      } else if (key.startsWith("project_2d_image_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("two_d_images_", "project[two_d_images_") + "]";
+          const backendField = key.replace("project_2d_image_", "project[project_2d_image_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
@@ -4471,7 +4471,7 @@ const updateFormData = (key, files) => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage("image_9_by_16", file)}
+                                onClick={() => handleFileDiscardCoverImage("image_9_by_16", index)}
                               >
                                 x
                               </button>
@@ -4642,7 +4642,7 @@ const updateFormData = (key, files) => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage("cover_images_1_by_1", file)}
+                                onClick={() => handleFileDiscardCoverImage("cover_images_1_by_1", index)}
                               >
                                 x
                               </button>
@@ -4816,13 +4816,13 @@ const updateFormData = (key, files) => {
                     <tbody>
                       {/* ✅ Normalize image_9_by_16 into an array */}
                       {(() => {
-                        const gallery_image_9by16 = Array.isArray(formData.gallery_image_9by16)
-                          ? formData.gallery_image_9by16
-                          : formData.gallery_image_9by16
-                            ? [formData.gallery_image_9by16]
+                        const gallery_image_16_by_9 = Array.isArray(formData.gallery_image_16_by_9)
+                          ? formData.gallery_image_16_by_9
+                          : formData.gallery_image_16_by_9
+                            ? [formData.gallery_image_16_by_9]
                             : [];
 
-                        return gallery_image_9by16.map((file, index) => (
+                        return gallery_image_16_by_9.map((file, index) => (
                           <tr key={index}>
                             <td>{file.name || file.document_file_name}</td>
                             <td>
@@ -4838,7 +4838,7 @@ const updateFormData = (key, files) => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage("gallery_image_9by16", file)}
+                                onClick={() => handleFetchedDiscardGallery("gallery_image_16_by_9", file)}
                               >
                                 x
                               </button>
@@ -5244,7 +5244,7 @@ const updateFormData = (key, files) => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage("image_9_by_16", file)}
+                                onClick={() => handleDiscardTwoDImage("image_9_by_16", index)}
                               >
                                 x
                               </button>
