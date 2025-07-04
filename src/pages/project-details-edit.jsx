@@ -419,10 +419,17 @@ const ProjectDetailsEdit = () => {
         // Step 1: Combine all image ratio keys
         const allImageKeys = [
           ...project_banner,
-          ...gallery_images,
           ...floorPlanRatios,
           ...coverImageRatios,
         ];
+
+
+        const galleryImages = {
+          gallery_image_1_by_1: [],
+          gallery_image_9_by_16: [],
+          gallery_image_16_by_9: [],
+          gallery_image_3_by_2: [],
+        };
 
         // Step 2: Dynamically extract image arrays
         const dynamicImageData = {};
@@ -433,6 +440,14 @@ const ProjectDetailsEdit = () => {
             : value
               ? [value]
               : [];
+        });
+
+        (projectData.gallery_image || []).forEach((item) => {
+          Object.keys(galleryImages).forEach((key) => {
+            if (Array.isArray(item[key])) {
+              galleryImages[key] = galleryImages[key].concat(item[key]);
+            }
+          });
         });
 
         // Step 3: Set static + dynamic formData
@@ -522,6 +537,8 @@ const ProjectDetailsEdit = () => {
 
           // ✅ Dynamically spread image ratios
           ...dynamicImageData,
+          ...galleryImages,    // <- this will set all gallery_image_* keys correctly
+
         });
 
         // Set floor plans
