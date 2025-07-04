@@ -55,10 +55,10 @@ const BannerList = () => {
     try {
       const response = await axios.put(
         `${baseURL}banners/${bannerId}.json`,
-        { 
-          banner: { 
-            active: !currentStatus 
-          } 
+        {
+          banner: {
+            active: !currentStatus
+          }
         },
         {
           headers: {
@@ -91,8 +91,8 @@ const BannerList = () => {
     .filter((banners_list) =>
       searchQuery
         ? (banners_list.title?.toLowerCase() || "").includes(
-            searchQuery.toLowerCase()
-          )
+          searchQuery.toLowerCase()
+        )
         : true
     )
     .sort((a, b) => (b.id || 0) - (a.id || 0)); // Sort in descending order by ID
@@ -129,7 +129,7 @@ const BannerList = () => {
             banners_list: true
           }
         });
-        
+
         // Update to use banners_list from the response
         setBanners(response.data.banners_list || []);
         setLoading(false);
@@ -358,63 +358,64 @@ const BannerList = () => {
                                     }}
                                   />
                                 )}
-                              </td> */}<td
-  className="text-center"
-  style={{
-    border: "1px solid #ddd",
-    padding: "5px",
-    verticalAlign: "middle",
-  }}
->
-  {[
-    { key: "banner_video_16_by_9", ratio: "16:9"},
-    { key: "banner_video_9_by_16", ratio: "9:16"},
-    { key: "banner_video_1_by_1", ratio: "1:1"},
-    { key: "banner_video_3_by_2", ratio: "3:2"},
-  ]
-    .filter(item => banners_list?.[item.key]) // Filter out null fields
-    .map((item) => {
-      const media = banners_list[item.key];
-      const isVideo = media?.document_content_type?.startsWith("video/");
-      const url = media?.document_url || "-";
+                              </td> */}
+                              <td
+                                className="text-center"
+                                style={{
+                                  border: "1px solid #ddd",
+                                  padding: "5px",
+                                  verticalAlign: "middle",
+                                }}
+                              >
+                                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                                  {[
+                                    { key: "banner_video_9_by_16", ratio: "9:16" },
+                                    { key: "banner_video_1_by_1", ratio: "1:1" },
+                                  ]
+                                    .filter((item) => banners_list?.[item.key])
+                                    .map((item) => {
+                                      const media = banners_list[item.key];
+                                      const isVideo = media?.document_content_type?.startsWith("video/");
+                                      const url = media?.document_url || "-";
 
-      return (
-        <div key={item.key} style={{ marginBottom: "10px" }}>
-          {isVideo ? (
-            <video
-              width="100"
-                                    height="65"
-              autoPlay
-              muted
-              loop
-              playsInline
-              style={{
-                display: "block",
-                borderRadius: "8px",
-                objectFit: "cover",
-              }}
-            >
-              <source src={url} type={media?.document_content_type} />
-              Your browser does not support the video tag.
-            </video>
-          ) : (
-            <img
-              src={url}
-              className="img-fluid rounded"
-              alt={banners_list?.title || `Banner ${item.ratio}`}
-              style={{
-                maxWidth: "100px",
-                maxHeight: "100px",
-                display: "block",
-                objectFit: "cover",
-              }}
-            />
-          )}
-          
-        </div>
-      );
-    })}
-</td>
+                                      return (
+                                        <div key={item.key} style={{ flex: "0 0 auto" }}>
+                                          {isVideo ? (
+                                            <video
+                                              width="100"
+                                              height="65"
+                                              autoPlay
+                                              muted
+                                              loop
+                                              playsInline
+                                              style={{
+                                                borderRadius: "8px",
+                                                objectFit: "cover",
+                                                display: "block",
+                                              }}
+                                            >
+                                              <source src={url} type={media?.document_content_type} />
+                                              Your browser does not support the video tag.
+                                            </video>
+                                          ) : (
+                                            <img
+                                              src={url}
+                                              className="img-fluid rounded"
+                                              alt={banners_list?.title || `Banner ${item.ratio}`}
+                                              style={{
+                                                width: "100px",
+                                                height: "100px",
+                                                // objectFit: "cover",
+                                                display: "block",
+                                              }}
+                                            />
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                </div>
+                              </td>
+
 
                               <td>
                                 <button
@@ -478,9 +479,8 @@ const BannerList = () => {
                     >
                       {/* First Button */}
                       <li
-                        className={`page-item ${
-                          pagination.current_page === 1 ? "disabled" : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -493,9 +493,8 @@ const BannerList = () => {
 
                       {/* Previous Button */}
                       <li
-                        className={`page-item ${
-                          pagination.current_page === 1 ? "disabled" : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === 1 ? "disabled" : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -515,11 +514,10 @@ const BannerList = () => {
                       ).map((pageNumber) => (
                         <li
                           key={pageNumber}
-                          className={`page-item ${
-                            pagination.current_page === pageNumber
-                              ? "active"
-                              : ""
-                          }`}
+                          className={`page-item ${pagination.current_page === pageNumber
+                            ? "active"
+                            : ""
+                            }`}
                         >
                           <button
                             className="page-link"
@@ -532,11 +530,10 @@ const BannerList = () => {
 
                       {/* Next Button */}
                       <li
-                        className={`page-item ${
-                          pagination.current_page === pagination.total_pages
-                            ? "disabled"
-                            : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === pagination.total_pages
+                          ? "disabled"
+                          : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -553,11 +550,10 @@ const BannerList = () => {
 
                       {/* Last Button */}
                       <li
-                        className={`page-item ${
-                          pagination.current_page === pagination.total_pages
-                            ? "disabled"
-                            : ""
-                        }`}
+                        className={`page-item ${pagination.current_page === pagination.total_pages
+                          ? "disabled"
+                          : ""
+                          }`}
                       >
                         <button
                           className="page-link"

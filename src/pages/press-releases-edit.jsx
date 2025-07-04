@@ -7,6 +7,7 @@ import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const PressReleasesEdit = () => {
   const [company, setCompany] = useState([]);
@@ -19,6 +20,8 @@ const PressReleasesEdit = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
+  const [previewImg, setPreviewImg] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -26,7 +29,7 @@ const PressReleasesEdit = () => {
     company_id: "",
     project_id: "",
     release_date: "",
-    pr_image: null,
+    // pr_image: [],
     press_source: "",
     attachment_url: "",
   });
@@ -206,6 +209,71 @@ const PressReleasesEdit = () => {
     return true;
   };
 
+  const pressUploadConfig = {
+    "pr image": ["16:9"],
+  };
+
+  const currentUploadType = "pr image"; // Can be dynamic
+  const selectedRatios = pressUploadConfig[currentUploadType] || [];
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const dynamicDescription = `Supports ${selectedRatios.join(
+    ", "
+  )} aspect ratios`;
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: files,
+    }));
+  };
+
+  const handleCropComplete = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid images selected.");
+      setShowUploader(false);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(":", "_by_"); // e.g., "16:9" -> "16by9"
+      const key = `${currentUploadType}_${formattedRatio}`
+        .replace(/\s+/g, "_")
+        .toLowerCase(); // e.g., banner_image_16by9
+
+      updateFormData(key, [img]); // send as array to preserve consistency
+    });
+
+    // setPreviewImg(validImages[0].preview); // preview first image only
+    setShowUploader(false);
+  };
+
+  console.log("formData", formData);
+
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -231,7 +299,19 @@ const PressReleasesEdit = () => {
       sendData.append("press_release[press_source]", formData.press_source);
 
       // Append images
-      sendData.append("press_release[pr_image]", formData.pr_image);
+      // sendData.append("press_release[pr_image]", formData.pr_image);
+
+      Object.entries(formData).forEach(([key, images]) => {
+        if (key.startsWith("pr_image_") && Array.isArray(images)) {
+          images.forEach((img) => {
+            const backendField =
+              key.replace("pr_image_", "press_release[pr_image_") + "]";
+            if (img.file instanceof File) {
+              sendData.append(backendField, img.file);
+            }
+          });
+        }
+      });
 
       if (formData.attachment_url) {
         sendData.append(
@@ -290,7 +370,7 @@ const PressReleasesEdit = () => {
     }
 
     setImage(newImageList);
-    setDialogOpen(true); // Open cropper for images
+    setDialogOpen(true);
   };
 
   const isImageFile = (file) => {
@@ -323,8 +403,8 @@ const PressReleasesEdit = () => {
 
   return (
     <>
-      <div className="main-content">
-        <div className="website-content overflow-auto">
+      <div className="">
+        <div className="">
           <div className="module-data-section container-fluid">
             <div className="card mt-4 pb-4 mx-4">
               <div className="card-header">
@@ -398,7 +478,24 @@ const PressReleasesEdit = () => {
                       />
                     </div>
                   </div>
+
                   <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Attachment URL <span className="otp-asterisk"> *</span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="url"
+                        name="attachment_url"
+                        placeholder="Enter URL"
+                        value={formData.attachment_url}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* <div className="col-md-3">
                     <div className="form-group">
                       <label>
                         Attachment
@@ -487,22 +584,177 @@ const PressReleasesEdit = () => {
                         )}
                       </div>
                     </div>
+                  </div> */}
+                  <div className="col-md-3 col-sm-6 col-12">
+                    <div className="form-group">
+                      {/* Label + Tooltip + Asterisk in one line */}
+                      <label className="d-flex align-items-center gap-1 mb-2">
+                        <span>Attachment</span>
+
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                          style={{ cursor: 'pointer', fontWeight: 'bold' }}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span
+                              className="tooltip-text"
+                              style={{
+                                marginLeft: '6px',
+                                background: '#f9f9f9',
+                                border: '1px solid #ccc',
+                                padding: '6px 8px',
+                                borderRadius: '4px',
+                                position: 'absolute',
+                                zIndex: 1000,
+                                fontSize: '13px',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              Max Upload Size 3 MB and Required ratio is 16:9
+                            </span>
+                          )}
+                        </span>
+
+                        <span className="otp-asterisk text-danger">*</span>
+                      </label>
+
+                      {/* Upload Button */}
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setShowUploader(true)}
+                        className="custom-upload-button input-upload-button"
+                      >
+                        <span
+                         className="upload-button-label"
+                        >
+                          Choose file
+                        </span>
+                        <span
+                         className="upload-button-value"
+                        >
+                          No file chosen
+                        </span>
+                      </span>
+
+                      {/* Upload Modal */}
+                      {showUploader && (
+                        <ProjectBannerUpload
+                          onClose={() => setShowUploader(false)}
+                          includeInvalidRatios={false}
+                          selectedRatioProp={selectedRatios}
+                          showAsModal={true}
+                          label={dynamicLabel}
+                          description={dynamicDescription}
+                          onContinue={handleCropComplete}
+                        />
+                      )}
+                    </div>
                   </div>
 
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Attachment URL <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="url"
-                        name="attachment_url"
-                        placeholder="Enter URL"
-                        value={formData.attachment_url}
-                        onChange={handleChange}
-                      />
-                    </div>
+                  <div className="col-md-12 mt-2">
+                    {Array.isArray(formData.pr_image_16by9) &&
+                      formData.pr_image_16by9.length > 0 ? (
+                      // ✅ Uploaded table view
+                      <div className="col-md-12 mt-2">
+                        <div className="mt-4 tbl-container">
+                          <table className="w-100">
+                            <thead>
+                              <tr>
+                                <th>File Name</th>
+                                <th>Preview</th>
+                                <th>Ratio</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {formData.pr_image_16by9.map((file, index) => (
+                                <tr key={index}>
+                                  <td>{file.name}</td>
+                                  <td>
+                                    <img
+                                      style={{ maxWidth: 100, maxHeight: 100 }}
+                                      className="img-fluid rounded"
+                                      src={file.preview}
+                                      alt={file.name}
+                                    />
+                                  </td>
+                                  <td>{file.ratio || "16:9"}</td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        discardImage("pr_image_16by9", file)
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ) : (
+                      // ✅ Fallback preview from croppedImage or formData.pr_image (existing)
+                      <div className="col-md-12 mt-2">
+                        <div className="mt-4 tbl-container">
+                          <table className="w-100">
+                            <thead>
+                              <tr>
+                                <th>File Name</th>
+                                <th>Preview</th>
+                                <th>Ratio</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  {croppedImage
+                                    ? "Cropped Image"
+                                    : "pr_image_16by9.jpg"}
+                                </td>
+                                <td>
+                                  <img
+                                    src={croppedImage || formData.pr_image}
+                                    className="img-fluid rounded mt-2"
+                                    alt="Image Preview"
+                                    style={{
+                                      maxWidth: "100px",
+                                      maxHeight: "100px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                </td>
+                                <td>16:9</td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      discardImage("pr_image_16by9", {
+                                        preview:
+                                          croppedImage || formData.pr_image,
+                                        name: "pr_image_16by9.jpg",
+                                        ratio: "16:9",
+                                      })
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

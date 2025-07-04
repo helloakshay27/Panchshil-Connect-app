@@ -686,7 +686,7 @@ const ProjectDetails = () => {
                   <label className="text">
                     <span className="me-3">
                       <span className="text-dark">
-                        : {formData.location.address}
+                        : {formData?.location?.address}
                       </span>
                     </span>
                   </label>
@@ -700,7 +700,7 @@ const ProjectDetails = () => {
                   <label className="text">
                     <span className="me-3">
                       <span className="text-dark">
-                        : {formData.location.city}
+                        : {formData.location?.city}
                       </span>
                     </span>
                   </label>
@@ -714,7 +714,7 @@ const ProjectDetails = () => {
                   <label className="text">
                     <span className="me-3">
                       <span className="text-dark">
-                        : {formData.location.state}
+                        : {formData.location?.state}
                       </span>
                     </span>
                   </label>
@@ -728,7 +728,7 @@ const ProjectDetails = () => {
                   <label className="text">
                     <span className="me-3">
                       <span className="text-dark">
-                        : {formData.location.pin_code}
+                        : {formData.location?.pin_code}
                       </span>
                     </span>
                   </label>
@@ -742,7 +742,7 @@ const ProjectDetails = () => {
                   <label className="text">
                     <span className="me-3">
                       <span className="text-dark">
-                        : {formData.location.country}
+                        : {formData.location?.country}
                       </span>
                     </span>
                   </label>

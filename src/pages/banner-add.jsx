@@ -20,15 +20,17 @@ const BannerAdd = () => {
   const [image, setImage] = useState(null);
   const [showUploader, setShowUploader] = useState(false);
   const [selectedRatio, setSelectedRatio] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     banner_type: null,
     banner_redirect: null,
     project_id: null,
     title: "",
-
     active: null,
   });
+
+  console.log("formData", formData);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -58,8 +60,6 @@ const BannerAdd = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-
-
   const validateForm = () => {
     if (!formData.title.trim()) {
       toast.error("Title is mandatory");
@@ -86,14 +86,12 @@ const BannerAdd = () => {
       size: file.size,
     };
   };
+
   const bannerUploadConfig = {
-    'banner image': ['1:1', '9:16'],
-    'gallery image': ['4:3', '3:2'],
-    'square image': ['1:1'],
+    'banner video': ['1:1', '9:16', '16:9', '3:2'],
   };
 
-
-  const currentUploadType = 'banner image'; // Can be dynamic
+  const currentUploadType = 'banner video';
   const selectedRatios = bannerUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
   const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
@@ -113,18 +111,15 @@ const BannerAdd = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(':', 'by'); // e.g., "16:9" -> "16by9"
-      const key = `${currentUploadType}_${formattedRatio}`.replace(/\s+/g, '_').toLowerCase(); // e.g., banner_image_16by9
+      const formattedRatio = img.ratio.replace(':', '_by_'); // e.g., "1:1" -> "1_by_1", "9:16" -> "9_by_16"
+      const key = `banner_video_${formattedRatio}`; // e.g., banner_video_1_by_1, banner_video_9_by_16
 
-      updateFormData(key, [img]); // send as array to preserve consistency
+      updateFormData(key, [img]);
     });
 
-    setPreviewImg(validImages[0].preview); // preview first image only
+    setPreviewImg(validImages[0].preview);
     setShowUploader(false);
   };
-
-
-  console.log('formData', formData);
 
   const discardImage = (key, imageToRemove) => {
     setFormData((prev) => {
@@ -132,7 +127,6 @@ const BannerAdd = () => {
         (img) => img.id !== imageToRemove.id
       );
 
-      // Remove the key if the array becomes empty
       const newFormData = { ...prev };
       if (updatedArray.length === 0) {
         delete newFormData[key];
@@ -143,39 +137,27 @@ const BannerAdd = () => {
       return newFormData;
     });
 
-    // If the removed image is being previewed, reset previewImg
     if (previewImg === imageToRemove.preview) {
       setPreviewImg(null);
     }
   };
 
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (!validateForm()) return;
-
-  //   const finalMockData = {
-  //     id: "",
-  //     title: formData.title,
-  //     project_id: formData.project_id,
-  //     banner_type: formData.banner_type,
-  //     banner_redirect: formData.banner_redirect,
-  //     active: formData.active,
-  //     company_id: null,
-  //     company_name: null,
-  //     video_url: null,
-  //     video_preview_image_url: null,
-  //     banner_video_1_by_1: getFileInfo(formData.banner_video_1_by_1),
-  //     banner_video_9_by_16: getFileInfo(formData.banner_video_9_by_16),
-  //     banner_video_16_by_9: getFileInfo(formData.banner_video_16_by_9),
-  //     banner_video_3_by_2: getFileInfo(formData.banner_video_3_by_2),
-  //   };
-
-  //   console.log("🟢 Mock Submission Data:", finalMockData);
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if (isSubmitting) return; // Prevent multiple submissions 
+
+
+    const hasProjectBanner1by1 = formData.banner_video_1_by_1
+      && formData.banner_video_1_by_1.some(img => img.file instanceof File);
+
+
+    if (!hasProjectBanner1by1) {
+      toast.error("Banner Image with 1:1 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
 
     if (!validateForm()) {
       setLoading(false);
@@ -187,23 +169,18 @@ const BannerAdd = () => {
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
 
-      // Append all image files from formData
       Object.entries(formData).forEach(([key, images]) => {
-        if (key.startsWith("banner_image_") && Array.isArray(images)) {
+        if (key.startsWith("banner_video_") && Array.isArray(images)) {
           images.forEach((img) => {
-            const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
-            // e.g., banner[banner_image_1by1]
-
+            const backendField = key.replace("banner_video_", "banner[banner_video_") + "]";
             if (img.file instanceof File) {
               sendData.append(backendField, img.file);
             }
           });
         }
-
       });
 
-
-      console.log("dta to be sent:", Array.from(sendData.entries()));
+      console.log("data to be sent:", Array.from(sendData.entries()));
 
       await axios.post(`${baseURL}banners.json`, sendData, {
         headers: {
@@ -213,7 +190,7 @@ const BannerAdd = () => {
       });
 
       toast.success("Banner created successfully");
-      // navigate("/banner-list");
+      navigate("/banner-list");
     } catch (error) {
       console.error(error);
       toast.error(`Error creating banner: ${error.message}`);
@@ -221,7 +198,6 @@ const BannerAdd = () => {
       setLoading(false);
     }
   };
-
 
   const handleCancel = () => {
     navigate(-1);
@@ -257,7 +233,6 @@ const BannerAdd = () => {
 
             <div className="card-body">
               <div className="row">
-                {/* Title */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -275,7 +250,6 @@ const BannerAdd = () => {
                   </div>
                 </div>
 
-                {/* Project */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -293,10 +267,9 @@ const BannerAdd = () => {
                   </div>
                 </div>
 
-                {/* Banner Upload */}
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
+                <div className="col-md-3 col-sm-6 col-12">
+                  <div className="form-group d-flex flex-column">
+                    <label className="mb-2">
                       Banner Attachment{" "}
                       <span
                         className="tooltip-container"
@@ -305,20 +278,30 @@ const BannerAdd = () => {
                       >
                         [i]
                         {showVideoTooltip && (
-                          <span className="tooltip-text">1:1 or 9:16 Format Should Be Used</span>
+                          <span className="tooltip-text">
+                            9:16 or 1:1 Format Should Only Be Allowed
+                          </span>
                         )}
                       </span>
                     </label>
 
                     <span
-                      className="d-inline-block btn btn-primary mt-2"
                       role="button"
                       tabIndex={0}
                       onClick={() => setShowUploader(true)}
+                      className="custom-upload-button input-upload-button"
                     >
-                      Choose Banner Image
+                      <span
+                        className="upload-button-label"
+                      >
+                        Choose file
+                      </span>
+                      <span
+                        className="upload-button-value"
+                      >
+                        No file chosen
+                      </span>
                     </span>
-
                     {showUploader && (
                       <ProjectBannerUpload
                         onClose={() => setShowUploader(false)}
@@ -330,37 +313,58 @@ const BannerAdd = () => {
                         onContinue={handleCropComplete}
                       />
                     )}
-
-                    {Object.entries(formData).map(([key, images]) => (
-                      Array.isArray(images) && images.length > 0 && (
-                        <div key={key} className="mt-4">
-                          <h4 className="text-sm font-semibold mb-1 capitalize">{key.replace(/_/g, ' ')}</h4>
-                          <div className="flex gap-2 flex-wrap">
-                            {images.map((img) => (
-                              <div key={img.id} className="relative group" style={{ width: "100px" }}>
-
-                                <button
-                                  className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 py-0.5 rounded"
-                                  onClick={() => discardImage(key, img)}
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )
-                    ))}
-
-
-
                   </div>
+                </div>
+              </div>
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...(formData.banner_video_1_by_1 || []).map((file) => ({
+                        ...file,
+                        type: "banner_video_1_by_1",
+                      })),
+                      ...(formData.banner_video_9_by_16 || []).map((file) => ({
+                        ...file,
+                        type: "banner_video_9_by_16",
+                      }))].map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.name}</td>
+                          <td>
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={file.preview}
+                              alt={file.name}
+                            />
+                          </td>
+                          <td>{file.ratio}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() => discardImage(file.type, file)}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Submit/Cancel Buttons */}
           <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
               <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>

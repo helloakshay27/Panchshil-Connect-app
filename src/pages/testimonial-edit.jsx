@@ -6,6 +6,7 @@ import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const TestimonialEdit = () => {
   const { state } = useLocation();
@@ -19,6 +20,12 @@ const TestimonialEdit = () => {
     building_id: testimonial?.building_id ?? null,
     content: testimonial?.content || "",
     video_url: testimonial?.video_preview_image_url || "",
+    preview_image: testimonial?.preview_image || "",
+    preview_image_16_by_9: testimonial?.preview_image_16_by_9 || [],
+    preview_image_3_by_2: testimonial?.preview_image_3_by_2 || [],
+    preview_image_1_by_1: testimonial?.preview_image_1_by_1 || [],
+    preview_image_9_by_16: testimonial?.preview_image_9_by_16 || [],
+    testimonial_video: null, // Initialize with null, will be set on file upload
   });
 
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
@@ -34,6 +41,8 @@ const TestimonialEdit = () => {
   const [image, setImage] = useState([]);
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchTestimonialData = async () => {
@@ -53,6 +62,12 @@ const TestimonialEdit = () => {
           building_id: response.data.building_id ?? null,
           content: response.data.content || "",
           video_url: response.data.video_preview_image_url || "",
+          preview_image: response.data.preview_image || "",
+          preview_image_16_by_9: response.data.preview_image_16_by_9 || [],
+          preview_image_3_by_2: response.data.preview_image_3_by_2 || [],
+          preview_image_1_by_1: response.data.preview_image_1_by_1 || [],
+          preview_image_9_by_16: response.data.preview_image_9_by_16 || [],
+
         });
 
         // Set existing video URL if available
@@ -62,7 +77,7 @@ const TestimonialEdit = () => {
         }
 
         // Set existing preview image if available
-        const imageUrl = response.data?.video_preview_image_url;
+        const imageUrl = response.data?.preview_image_16_by_9?.document_url;
         if (imageUrl) {
           setExistingImageUrl(imageUrl);
         }
@@ -108,6 +123,13 @@ const TestimonialEdit = () => {
       [name]: value || "",
     }));
   };
+
+  const TestimonialImageRatios = [
+    { key: "preview_image_1_by_1", label: "1:1" },
+    { key: "preview_image_16_by_9", label: "16:9" },
+    { key: "preview_image_9_by_16", label: "9:16" },
+    { key: "preview_image_3_by_2", label: "3:2" },
+  ];
 
   const handleBannerVideoChange = (e) => {
     const file = e.target.files[0];
@@ -198,10 +220,119 @@ const TestimonialEdit = () => {
     return imageTypes.includes(file.type);
   };
 
+  const bannerUploadConfig = {
+    "preview image": ["16:9", "1:1", "9:16", "3:2"],
+  };
+
+  const currentUploadType = "preview image"; // Can be dynamic
+  const selectedRatios = bannerUploadConfig[currentUploadType] || [];
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const dynamicDescription = `Supports ${selectedRatios.join(
+    ", "
+  )} aspect ratios`;
+
+  // const updateFormData = (key, files) => {
+  //   setFormData((prev) => {
+  //     // Normalize previous entries: ensure it's always an array
+  //     const existing = Array.isArray(prev[key])
+  //       ? prev[key]
+  //       : prev[key]
+  //       ? [prev[key]]
+  //       : [];
+
+  //     // Append new files without overwriting
+  //     const merged = [...existing, ...files];
+
+  //     console.log(`✅ Merged formData[${key}]:`, merged);
+
+  //     return {
+  //       ...prev,
+  //       [key]: merged,
+  //     };
+  //   });
+  // };
+  const updateFormData = (key, files) => {
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [key]: files,
+      };
+      console.log(`✅ Replaced formData[${key}]:`, newData[key]);
+      return newData;
+    });
+  };
+
+
+  const handleCropComplete = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid images selected.");
+      setShowUploader(false);
+      return;
+    }
+
+    const ratioKeyMap = {
+      "1:1": "preview_image_1_by_1",
+      "16:9": "preview_image_16_by_9",
+      "9:16": "preview_image_9_by_16",
+      "3:2": "preview_image_3_by_2",
+    };
+
+    validImages.forEach((img) => {
+      const key = ratioKeyMap[img.ratio];
+      if (key) {
+        updateFormData(key, [img]); // Append new image to existing ones
+      }
+    });
+
+    // Only update preview if needed (e.g., for UI display of the latest image)
+    setPreviewImg(validImages[0].preview);
+    setShowUploader(false);
+  };
+
+  console.log("formData", formData);
+
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (isSubmitting) return;
     // Optional: Add validation here if needed
+
+    const testimonial16by9 = formData.preview_image_16_by_9;;
+    const hasTestimonial16by9 = Array.isArray(testimonial16by9)
+      ? testimonial16by9.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
+      : !!(testimonial16by9?.file instanceof File || testimonial16by9?.id || testimonial16by9?.document_file_name);
+
+    if (!hasTestimonial16by9) {
+      toast.error("Please upload at least one 16:9 preview image.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
 
     setLoading(true);
     try {
@@ -211,17 +342,47 @@ const TestimonialEdit = () => {
       sendData.append("testimonial[building_id]", formData.building_id);
       sendData.append("testimonial[content]", formData.content);
 
+
       // Always use the cropped image file if present
-      if (image[0] && image[0].file instanceof File) {
-        sendData.append("testimonial[preview_image]", image[0].file);
-      } else if (formData.attachfile) {
-        sendData.append("testimonial[preview_image]", formData.attachfile);
-      } else if (formData.video_url) {
-        sendData.append(
-          "testimonial[video_preview_image_url]",
-          formData.video_url.trim()
-        );
+      // if (image[0] && image[0].file instanceof File) {
+      //   sendData.append("testimonial[preview_image]", image[0].file);
+      // } else
+
+      // Object.entries(formData).forEach(([key, images]) => {
+      //   if (key.startsWith("preview_image_") && Array.isArray(images)) {
+      //     images.forEach((img) => {
+      //       const backendField =
+      //         key.replace("video_preview_image_url", "testimonial[video_preview_image_url") + "]";
+      //       // e.g., preview[preview_image_1by1]
+
+      //       if (img.file instanceof File) {
+      //         sendData.append(backendField, img.file);
+      //       }
+      //     });
+      //   }
+      // });
+      // Append all preview image files
+      TestimonialImageRatios.forEach(({ key }) => {
+        const images = formData[key];
+        if (Array.isArray(images) && images.length > 0) {
+          const img = images[0];
+          if (img?.file instanceof File) {
+            sendData.append(`testimonial[${key}]`, img.file);
+          }
+        }
+      });
+
+
+
+      // Handle 16:9 preview image from new structure
+      if (Array.isArray(formData.preview_image_16_by_9)) {
+        formData.preview_image_16_by_9.forEach((img) => {
+          if (img.file instanceof File) {
+            sendData.append("testimonial[preview_image_16_by_9]", img.file);
+          }
+        });
       }
+
 
       // Append video file if present
       if (formData.testimonial_video) {
@@ -256,6 +417,90 @@ const TestimonialEdit = () => {
     navigate(-1);
   };
 
+  // const handleFileDiscardCoverImage = async (key, index) => {
+  //   const Image = formData[key][index]; // Get the selected image
+  //   if (!Image.id) {
+  //     // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+  //     const updatedFiles = formData[key].filter((_, i) => i !== index);
+  //     setFormData({ ...formData, [key]: updatedFiles });
+  //     toast.success("Image removed successfully!");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch(
+  //       `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to delete videos");
+  //     }
+
+  //     // Remove the deleted image from the state
+  //     const updatedFiles = formData[key].filter((_, i) => i !== index);
+  //     setFormData({ ...formData, [key]: updatedFiles });
+
+  //     // console.log(`Image with ID ${Image.id} deleted successfully`);
+  //     toast.success("Image deleted successfully!");
+  //   } catch (error) {
+  //     console.error("Error deleting image:", error);
+  //     alert("Failed to delete image. Please try again.");
+  //   }
+  // };
+  const handleFetchedDiscardGallery = async (key, index, imageId) => {
+    // If no imageId, it's a new image, just remove locally
+    if (!imageId) {
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    // Existing image: delete from server, then remove locally
+    try {
+      const response = await fetch(
+        `${baseURL}banners/${id}/remove_creative_image/${imageId}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        // Optionally, handle 404 as a successful local delete
+        if (response.status === 404) {
+          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          setFormData({ ...formData, [key]: updatedFiles });
+          toast.success("Image removed from UI (already deleted on server).");
+          return;
+        }
+        throw new Error("Failed to delete image");
+      }
+
+
+      // Remove from UI after successful delete
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
+
+      toast.success("Image deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting image:", error.message);
+      toast.error("Failed to delete image. Please try again.");
+    }
+  };
   return (
     <div className="">
       <div className="">
@@ -372,100 +617,126 @@ const TestimonialEdit = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-3">
+              <div className="col-md-3 col-sm-6 col-12">
                 <div className="form-group">
-                  <label>
-                    Preview Image{" "}
+                  <label className="d-flex align-items-center gap-1 mb-2">
+                    <span>Preview Image</span>
+
                     <span
                       className="tooltip-container"
                       onMouseEnter={() => setShowTooltip(true)}
                       onMouseLeave={() => setShowTooltip(false)}
+                      style={{ cursor: 'pointer' }}
                     >
                       [i]
                       {showTooltip && (
-                        <span className="tooltip-text">
+                        <span className="tooltip-text" style={{
+                          marginLeft: '6px',
+                          background: '#f9f9f9',
+                          border: '1px solid #ccc',
+                          padding: '6px 8px',
+                          borderRadius: '4px',
+                          position: 'absolute',
+                          zIndex: 1000,
+                          fontSize: '13px',
+                          whiteSpace: 'nowrap',
+                        }}>
                           Max Upload Size 3 MB and Required ratio is 16:9
                         </span>
                       )}
                     </span>
-                    <span className="otp-asterisk"> *</span>
+
+                    <span className="otp-asterisk text-danger">*</span>
                   </label>
-                  <ImageUploadingButton
-                    value={image}
-                    onChange={handleImageUpload}
-                    variant="custom"
-                  />
-                  <small className="form-text text-muted">
-                    Required ratio must be 16:9
-                  </small>
-                  <ImageCropper
-                    open={dialogOpen}
-                    image={image?.[0]?.dataURL || null}
-                    onComplete={(cropped) => {
-                      if (cropped) {
-                        setCroppedImage(cropped.base64);
-                        setPreviewImg(cropped.base64);
-                        setFormData((prev) => ({
-                          ...prev,
-                          attachfile: cropped.file,
-                          video_preview_image_url: cropped.base64,
-                        }));
-                      }
-                      setDialogOpen(false);
-                    }}
-                    requiredRatios={[16 / 9, 1, 9 / 16]}
-                    requiredRatioLabel="16:9"
-                    allowedRatios={[
-                      { label: "16:9", ratio: 16 / 9 },
-                      { label: "9:16", ratio: 9 / 16 },
-                      { label: "1:1", ratio: 1 },
-                    ]}
-                    containerStyle={{
-                      position: "relative",
-                      width: "100%",
-                      height: 300,
-                      background: "#fff",
-                    }}
-                  />
-                  {errors.attachfile && (
-                    <span className="error text-danger">
-                      {errors.attachfile}
+
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setShowUploader(true)}
+                    className="custom-upload-button input-upload-button"
+                  >
+                    <span
+                      className="upload-button-label"
+                    >
+                      Choose file
                     </span>
-                  )}
+                    <span
+                      className="upload-button-value"
+                    >
+                      No file chosen
+                    </span>
+                  </span>
 
-                  {/* Show new preview image if selected */}
-                  {previewImg && (
-                    <div className="mt-2">
-                      <img
-                        src={croppedImage || previewImg}
-                        className="img-fluid rounded"
-                        alt="Preview"
-                        style={{
-                          maxWidth: "100px",
-                          maxHeight: "100px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  {/* Show existing image if no new image is selected */}
-                  {!previewImg && existingImageUrl && (
-                    <div className="mt-2">
-                      <img
-                        src={existingImageUrl}
-                        className="img-fluid rounded"
-                        alt="Current Preview"
-                        style={{
-                          maxWidth: "100px",
-                          maxHeight: "100px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
+                  {showUploader && (
+                    <ProjectBannerUpload
+                      onClose={() => setShowUploader(false)}
+                      includeInvalidRatios={false}
+                      selectedRatioProp={selectedRatios}
+                      showAsModal={true}
+                      label={dynamicLabel}
+                      description={dynamicDescription}
+                      onContinue={handleCropComplete}
+                    />
                   )}
                 </div>
               </div>
+
+              <div className="col-md-12 mt-4">
+                <div className="tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {TestimonialImageRatios.flatMap(({ key, label }) => {
+                        const files = Array.isArray(formData[key])
+                          ? formData[key]
+                          : formData[key]
+                            ? [formData[key]]
+                            : [];
+
+                        return files.map((file, index) => {
+                          const preview = file.preview || file.document_url || '';
+                          const name = file.name || file.document_file_name || `Image ${index + 1}`;
+                          const ratio = file.ratio || label;
+
+                          return (
+                            <tr key={`${key}-${index}`}>
+                              <td>{name}</td>
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+                                  className="img-fluid rounded"
+                                  src={preview}
+                                  alt={name}
+                                />
+                              </td>
+                              <td>{ratio}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() => handleFetchedDiscardGallery(key, index, file.id)}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        });
+                      })}
+                    </tbody>
+
+                  </table>
+                </div>
+              </div>
+
+
             </div>
           </div>
 

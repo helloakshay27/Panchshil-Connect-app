@@ -241,23 +241,26 @@ const ProjectBannerUpload = ({
               <button
                 className="continue-btn"
                 onClick={() => {
-                  if (onContinue) {
-                    if (!areAllRatiosUploaded && missingRatios.length > 0) {
-                      const message =
-                        missingRatios.length === 1
-                          ? `Missing required ratio: ${missingRatios[0]}`
-                          : `Missing required ratios: ${missingRatios.join(', ')}`;
-                      toast.error(message);
-                      return;
-                    }
+                  // if (!areAllRatiosUploaded) {
+                  //   if (validUploadedImages.length > 0 && missingRatios.length > 0) {
+                  //     const message =
+                  //       missingRatios.length === 1
+                  //         ? `Please upload the remaining required ratio: ${missingRatios[0]}`
+                  //         : `Please upload all required ratios. Missing: ${missingRatios.join(', ')}`;
+                  //     toast.error(message);
+                  //   } else {
+                  //     toast.error('Please upload images for all required ratios.');
+                  //   }
+                  //   return;
+                  // }
 
-                    onContinue(validUploadedImages);
-                  }
-                }}
-                disabled={!areAllRatiosUploaded}
+                  onContinue(validUploadedImages);
+                }
+              }
               >
                 Continue ({imageCount} image{pluralSuffix} uploaded)
               </button>
+
 
             </div>
           </div>

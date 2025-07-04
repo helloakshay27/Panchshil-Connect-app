@@ -13,6 +13,7 @@ import { baseURL } from "./baseurl/apiDomain";
 import PropertySelect from "../components/base/PropertySelect";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const ProjectDetailsEdit = () => {
   const { id } = useParams();
@@ -120,6 +121,12 @@ const ProjectDetailsEdit = () => {
   const [galleryImageUpload, setGalleryImageUpload] = useState([]);
   const [floorPlanImageUpload, setFloorPlanImageUpload] = useState([]);
   const [pendingImageUpload, setPendingImageUpload] = useState([]);
+  const [showUploader, setShowUploader] = useState(false);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
+  const [showBannerModal, setShowBannerModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const [dialogOpen, setDialogOpen] = useState({
     image: false,
@@ -127,6 +134,99 @@ const ProjectDetailsEdit = () => {
     gallery_image: false,
     two_d_images: false,
   });
+
+  const projectUploadConfig = {
+    'image': ['9:16', '16:9', '1:1', '3:2'],
+    'cover images': ['1:1', '9:16', '16:9', '3:2'],
+    'gallery image': ['16:9', '1:1', '9:16', '3:2'],
+    'project 2d image': ['16:9', '1:1', '3:2', '9:16'],
+  };
+  const coverImageType = 'cover images';
+  const galleryImageType = 'gallery image';
+  const floorImageType = 'project 2d image';
+  const bannerImageType = 'image';
+
+  const selectedCoverRatios = projectUploadConfig[coverImageType] || [];
+  const selectedGalleryRatios = projectUploadConfig[galleryImageType] || [];
+  const selectedFloorRatios = projectUploadConfig[floorImageType] || [];
+  const selectedBannerRatios = projectUploadConfig[bannerImageType] || [];
+
+  const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const galleryImageLabel = galleryImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const floorImageLabel = floorImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const bannerImageLabel = bannerImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+
+  const dynamicDescription = `Supports ${selectedCoverRatios.join(', ')} aspect ratios`;
+  const dynamicDescription1 = `Supports ${selectedGalleryRatios.join(', ')} aspect ratios`;
+  const dynamicDescription2 = `Supports ${selectedFloorRatios.join(', ')} aspect ratios`;
+  const dynamicDescription3 = `Supports ${selectedBannerRatios.join(', ')} aspect ratios`;
+
+
+
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCroppedImages = (validImages, type = "cover") => {
+    if (!validImages || validImages.length === 0) {
+      toast.error(`No valid ${type} image${["cover", "banner"].includes(type) ? "" : "s"} selected.`);
+      closeModal(type);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(":", "_by_");
+      let prefix = "";
+
+      switch (type) {
+        case "gallery":
+          prefix = galleryImageType;
+          break;
+        case "floor":
+          prefix = floorImageType;
+          break;
+        case "banner":
+          prefix = bannerImageType;
+          break;
+        case "cover":
+        default:
+          prefix = coverImageType;
+          break;
+      }
+
+      const key = `${prefix}_${formattedRatio}`.replace(/\s+/g, "_").toLowerCase();
+      updateFormData(key, [img]); // Append the new image
+    });
+
+    closeModal(type);
+  };
+  const closeModal = (type) => {
+    switch (type) {
+      case "gallery":
+        setShowGalleryModal(false);
+        break;
+      case "floor":
+        setShowFloorPlanModal(false);
+        break;
+
+      case "banner":
+        setShowBannerModal(false);
+        break;
+      case "cover":
+      default:
+        setShowUploader(false);
+        break;
+    }
+  };
+
+
+
+
+
   // console.log(statusOptions);
 
   useEffect(() => {
@@ -253,6 +353,33 @@ const ProjectDetailsEdit = () => {
 
   // console.log("data", projectsType);
 
+  const project_banner = [
+    { key: 'image_1_by_1', label: '1:1' },
+    { key: 'image_16_by_9', label: '16:9' },
+    { key: 'image_9_by_16', label: '9:16' },
+    { key: 'image_3_by_2', label: '3:2' },
+  ];
+  const gallery_images = [
+    { key: "gallery_image_16_by_9", label: "16:9" },
+    { key: "gallery_image_1_by_1", label: "1:1" },
+    { key: "gallery_image_9_by_16", label: "9:16" },
+    { key: "gallery_image_3_by_2", label: "3:2" },
+  ];
+  const floorPlanRatios = [
+    { key: "project_2d_image_16_by_9", label: "16:9" },
+    { key: "project_2d_image_1_by_1", label: "1:1" },
+    { key: "project_2d_image_3_by_2", label: "3:2" },
+    { key: "project_2d_image_9_by_16", label: "9:16" },
+  ];
+
+  const coverImageRatios = [
+    { key: "cover_images_1_by_1", label: "1:1" },
+    { key: "cover_images_16_by_9", label: "16:9" },
+    { key: "cover_images_9_by_16", label: "9:16" },
+    { key: "cover_images_3_by_2", label: "3:2" },
+  ];
+
+
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
@@ -274,6 +401,41 @@ const ProjectDetailsEdit = () => {
           }))
         );
 
+        // Step 1: Combine all image ratio keys
+        const allImageKeys = [
+          ...project_banner,
+          ...floorPlanRatios,
+          ...coverImageRatios,
+        ];
+
+
+        const galleryImages = {
+          gallery_image_1_by_1: [],
+          gallery_image_9_by_16: [],
+          gallery_image_16_by_9: [],
+          gallery_image_3_by_2: [],
+        };
+
+        // Step 2: Dynamically extract image arrays
+        const dynamicImageData = {};
+        allImageKeys.forEach(({ key }) => {
+          const value = projectData[key];
+          dynamicImageData[key] = Array.isArray(value)
+            ? value
+            : value
+              ? [value]
+              : [];
+        });
+
+        (projectData.gallery_image || []).forEach((item) => {
+          Object.keys(galleryImages).forEach((key) => {
+            if (Array.isArray(item[key])) {
+              galleryImages[key] = galleryImages[key].concat(item[key]);
+            }
+          });
+        });
+
+        // Step 3: Set static + dynamic formData
         setFormData({
           Property_Type: projectData.property_type || "",
           Property_type_id: projectData.property_type_id || "",
@@ -281,9 +443,6 @@ const ProjectDetailsEdit = () => {
           building_type: projectData.building_type || "",
           Project_Construction_Status:
             projectData.Project_Construction_Status || "",
-          // Configuration_Type: Array.isArray(projectData.configurations)
-          //   ? projectData.configurations.map((config) => config.name)
-          //   : [],
           Configuration_Type1: Array.isArray(projectData.configurations)
             ? projectData.configurations.map((config) => ({
                 id: config.id,
@@ -291,7 +450,6 @@ const ProjectDetailsEdit = () => {
               }))
             : [],
           Project_Name: projectData.project_name || "",
-          SFDC_Project_Id: projectData.SFDC_Project_Id || "",
           project_address: projectData.project_address || "",
           Project_Description: projectData.project_description || "",
           Price_Onward: projectData.price || "",
@@ -313,13 +471,12 @@ const ProjectDetailsEdit = () => {
               }))
             : [],
           Specifications: Array.isArray(projectData.specifications)
-            ? projectData.specifications.map((spac) => spac.name)
+            ? projectData.specifications.map((s) => s.name)
             : [],
           Land_Area: projectData.land_area || "",
           land_uom: projectData.land_uom || "",
           project_tag: projectData.project_tag || "",
-          virtual_tour_url_multiple:
-            projectData.virtual_tour_url_multiple || [],
+          virtual_tour_url_multiple: projectData.virtual_tour_url_multiple || [],
           map_url: projectData.map_url || "",
           image: Array.isArray(projectData.image_url)
             ? projectData.image_url.map((url) => ({ document_url: url }))
@@ -341,16 +498,8 @@ const ProjectDetailsEdit = () => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
           fetched_gallery_image: projectData.gallery_image || [],
-          // video_preview_image_url:
-          //   projectData?.video_list[0]?.video_preview_image_url || "",
-          // project_ppt: [],
-          // fetched_Project_PPT: projectData.project_ppt
-          //   ? [projectData.project_ppt]
-          //   : [],
           project_layout: projectData.project_layout || [],
           project_creatives: projectData.project_creatives || [],
-          // plans: projectData.plans || [],
-          cover_images: projectData.cover_images || [],
           project_creative_generics:
             projectData.project_creative_generics || [],
           project_creative_offers: projectData.project_creative_offers || [],
@@ -358,7 +507,6 @@ const ProjectDetailsEdit = () => {
           project_exteriors: projectData.project_exteriors || [],
           project_emailer_templetes:
             projectData.project_emailer_templetes || [],
-          // ...inside setFormData in fetchProjectDetails...
           project_ppt: Array.isArray(projectData.ProjectPPT)
             ? projectData.ProjectPPT
             : projectData.ProjectPPT
@@ -371,20 +519,25 @@ const ProjectDetailsEdit = () => {
           is_sold: projectData.is_sold || false,
           disclaimer: projectData.project_disclaimer || "",
           project_qrcode_image: projectData.project_qrcode_images || [],
+          rera_url: projectData.rera_url || "",
+
+          // ✅ Dynamically spread image ratios
+          ...dynamicImageData,
+          ...galleryImages,    // <- this will set all gallery_image_* keys correctly
+
         });
 
-        //       setPlans(
-        //   (projectData.plans || []).map(plan => ({
-        //     name: plan.name,
-        //     images: (plan.images || []).map(img =>
-        //       img.document_url
-        //         ? { ...img, isApi: true } // Mark as API image
-        //         : img
-        //     ),
-        //   }))
-        // );
+        // Set floor plans
+        setPlans(
+          (projectData.plans || []).map((plan) => ({
+            name: plan.name,
+            images: (plan.images || []).map((img) =>
+              img.document_url ? { ...img, isApi: true } : img
+            ),
+          }))
+        );
 
-        setProject(response.data);
+        setProject(projectData);
       } catch (err) {
         setError("Failed to fetch project details.");
         console.log(err);
@@ -392,8 +545,10 @@ const ProjectDetailsEdit = () => {
         setLoading(false);
       }
     };
+
     fetchProjectDetails();
   }, []);
+
 
   // console.log(formData);
 
@@ -768,12 +923,17 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleFetchedDiscardGallery = async (key, index, imageId) => {
+    // If no imageId, it's a new image, just remove locally
     if (!imageId) {
-      console.error("Error: No image ID found for deletion.");
-      toast.error("Failed to delete image. Image ID is missing.");
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
+      toast.success("Image removed successfully!");
       return;
     }
 
+    // Existing image: delete from server, then remove locally
     try {
       const response = await fetch(
         `${baseURL}projects/${id}/remove_gallery_image/${imageId}.json`,
@@ -787,40 +947,45 @@ const ProjectDetailsEdit = () => {
       );
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to delete image. Server response:`);
+        // Optionally, handle 404 as a successful local delete
+        if (response.status === 404) {
+          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          setFormData({ ...formData, [key]: updatedFiles });
+          toast.success("Image removed from UI (already deleted on server).");
+          return;
+        }
+        throw new Error("Failed to delete image");
       }
 
-      // Update state to remove the deleted image
+
+      // Remove from UI after successful delete
       setFormData((prev) => {
-        const updatedFetchedGallery = prev[key]
-          .map((fileGroup, i) => {
-            if (i !== index) return fileGroup;
-
-            const updatedAttachments = (fileGroup.attachfiles || []).filter(
-              (a) => a.id !== imageId
-            );
-
-            return {
-              ...fileGroup,
-              attachfiles: updatedAttachments,
-            };
-          })
-          .filter((group) => group.attachfiles && group.attachfiles.length > 0);
-
-        return {
-          ...prev,
-          [key]: updatedFetchedGallery,
-        };
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
       });
 
       toast.success("Image deleted successfully!");
-      // console.log(`Image with ID ${imageId} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error.message);
       toast.error("Failed to delete image. Please try again.");
     }
   };
+
+  const discardImage = (key, fileToRemove) => {
+    setFormData((prev) => {
+      const updatedFiles = prev[key].filter(
+        (file) => file !== fileToRemove
+      );
+
+      return {
+        ...prev,
+        [key]: updatedFiles,
+      };
+    });
+
+    toast.success("Image removed successfully!");
+  };
+
 
   const handleDiscardBroucher = async (key) => {
     const brochure = formData[key];
@@ -974,7 +1139,7 @@ const ProjectDetailsEdit = () => {
 
     try {
       const response = await fetch(
-        `${baseURL}projects/${id}/remove_cover_image/${Image.id}.json`,
+        `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
         {
           method: "DELETE",
           headers: {
@@ -984,7 +1149,14 @@ const ProjectDetailsEdit = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete videos");
+        // Optionally, handle 404 as a successful local delete
+        if (response.status === 404) {
+          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          setFormData({ ...formData, [key]: updatedFiles });
+          toast.success("Image removed from UI (already deleted on server).");
+          return;
+        }
+        throw new Error("Failed to delete image");
       }
 
       // Remove the deleted image from the state
@@ -1397,8 +1569,10 @@ const ProjectDetailsEdit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
     setLoading(true);
 
+    // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
       toast.error(validationErrors[0]);
@@ -1406,10 +1580,58 @@ const ProjectDetailsEdit = () => {
       return;
     }
 
+    // Check for required images
+    const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+      ? formData.gallery_image_16_by_9.filter(
+        (img) =>
+          img.file instanceof File ||
+          !!img.id ||
+          !!img.document_file_name
+      )
+      : [];
+    const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+    const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File || img.id || img.document_file_name);
+    const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
+      img => img?.file instanceof File || img?.id || img?.document_file_name
+    );
+    const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+
+    // Check if all required images are present
+    const allImagesPresent = gallery16By9Files.length >= 3 && hasFloorPlan16by9 && hasProjectBanner9by16 && hasProjectCover16by9;
+
+    console.log("allImagesPresent:", allImagesPresent);
+
+    // Perform individual validation checks only if not all images are present
+    if (!allImagesPresent) {
+      if (gallery16By9Files.length < 3) {
+        toast.error("At least 3 gallery images with 16:9 ratio are required.");
+        setLoading(false);
+        setIsSubmitting(false);
+        return;
+      }
+      if (!hasFloorPlan16by9) {
+        toast.error("Floor plans with 16:9 ratio are required.");
+        setLoading(false);
+        setIsSubmitting(false);
+        return;
+      }
+      if (!hasProjectBanner9by16 && !hasProjectBanner1by1) {
+        toast.error("Project banner one of them or both(9:16) and (1:1) is required.");
+        setLoading(false);
+        setIsSubmitting(false);
+        return;
+      }
+      if (!hasProjectCover16by9) {
+        toast.error("Project cover (16:9) is required.");
+        setLoading(false);
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     const data = new FormData();
 
     data.append("project[Amenities]", nameSend);
-
     data.append("project[Configuration_Type]", nameSends);
 
     if (plans.length > 0) {
@@ -1424,14 +1646,9 @@ const ProjectDetailsEdit = () => {
     }
 
     Object.entries(formData).forEach(([key, value]) => {
-      for (let [key, value] of data.entries()) {
-        console.log(`${key}:`, value);
-      }
-      // ...inside handleSubmit...
       if (key === "image" && Array.isArray(value) && value[0] instanceof File) {
         data.append("project[image]", value[0]);
-      }
-      if (key === "Address") {
+      } else if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
           data.append(`project[Address][${addressKey}]`, addressValue);
         });
@@ -1440,115 +1657,70 @@ const ProjectDetailsEdit = () => {
         if (file) {
           data.append("project[ProjectBrochure][]", file);
         }
-      } else if (
-        key === "project_emailer_templetes" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_emailer_templetes" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectEmailerTempletes][]", file);
           }
         });
-      } else if (
-        key === "project_ppt" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_ppt" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectPPT][]", file);
           }
         });
-      } else if (
-        key === "two_d_images" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "two_d_images" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[Project2DImage][]", file);
           }
         });
-      } else if (
-        key === "project_creatives" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_creatives" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreatives][]", file);
           }
         });
-      }
-      //       else if (plans.length > 0) {
-      //   plans.forEach((plan) => {
-      //     data.append(`project[plans][name]`, plan.name);
-      //     plan.images.forEach((img) => {
-      //       data.append(`project[plans][images][]`, img);
-      //     });
-      //   });
-      // }
-      else if (key === "cover_images" && Array.isArray(value) && value.length) {
+      } else if (key === "cover_images" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[cover_images][]", file);
           }
         });
-      } else if (
-        key === "project_creative_generics" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_creative_generics" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreativeGenerics][]", file);
           }
         });
-      } else if (
-        key === "project_creative_offers" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_creative_offers" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreativeOffers][]", file);
           }
         });
-      } else if (
-        key === "project_interiors" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_interiors" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectInteriors][]", file);
           }
         });
-      } else if (
-        key === "project_exteriors" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_exteriors" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectExteriors][]", file);
           }
         });
-      } else if (
-        key === "project_layout" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_layout" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -1562,57 +1734,33 @@ const ProjectDetailsEdit = () => {
             data.append("project[ProjectVideo][]", file);
           }
         });
-      } else if (key === "gallery_image" && Array.isArray(value)) {
+      } else if (key === "gallery_image_" && Array.isArray(value)) {
         value.forEach((fileObj, index) => {
-          if (fileObj.gallery_image instanceof File) {
-            // ✅ Check for actual File
-            data.append("project[gallery_image][]", fileObj.gallery_image); // ✅ Send actual File
-            data.append(
-              `project[gallery_image_file_name]`,
-              fileObj.gallery_image_file_name
-            );
-            data.append(
-              `project[gallery_type]`,
-              fileObj.gallery_image_file_type
-            );
-            data.append(
-              `project[gallery_image_is_day][${index}]`,
-              fileObj.isDay
-            );
+          if (fileObj.gallery_image_ instanceof File) {
+            data.append("project[gallery_image_][]", fileObj.gallery_image_);
+            data.append(`project[gallery_image_file_name]`, fileObj.gallery_image_file_name);
+            data.append(`project[gallery_type]`, fileObj.gallery_image_file_type);
+            data.append(`project[gallery_image_is_day][${index}]`, fileObj.isDay);
           }
         });
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
-        const newTitles = []; // Array to store titles of new images
-
+        const newTitles = [];
         value.forEach((fileObj) => {
           if (fileObj.project_qrcode_image instanceof File) {
-            // Append the image file
-            data.append(
-              "project[project_qrcode_image][]",
-              fileObj.project_qrcode_image
-            );
+            data.append("project[project_qrcode_image][]", fileObj.project_qrcode_image);
           }
           if (fileObj.isNew) {
-            // Collect titles of new images
             newTitles.push(fileObj.title || "");
           }
         });
-
-        // Append only the titles of new images
         newTitles.forEach((title) => {
           data.append("project[project_qrcode_image_titles][]", title);
         });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
-            data.append(
-              `project[virtual_tour_url_multiple][${index}][virtual_tour_url]`,
-              item.virtual_tour_url
-            );
-            data.append(
-              `project[virtual_tour_url_multiple][${index}][virtual_tour_name]`,
-              item.virtual_tour_name
-            );
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_url]`, item.virtual_tour_url);
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name);
             console.log("Virtual Tour URL:", item.virtual_tour_url);
             console.log("Virtual Tour Name:", item.virtual_tour_name);
           }
@@ -1620,30 +1768,46 @@ const ProjectDetailsEdit = () => {
       } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.tower_name && item.rera_number) {
-            data.append(
-              `project[Rera_Number_multiple][${index}][tower_name]`,
-              item.tower_name
-            );
-            data.append(
-              `project[Rera_Number_multiple][${index}][rera_number]`,
-              item.rera_number
-            );
-            data.append(
-              `project[Rera_Number_multiple][${index}][rera_url]`,
-              item.rera_url
-            );
+            data.append(`project[Rera_Number_multiple][${index}][tower_name]`, item.tower_name);
+            data.append(`project[Rera_Number_multiple][${index}][rera_number]`, item.rera_number);
+            data.append(`project[Rera_Number_multiple][${index}][rera_url]`, item.rera_url);
           }
         });
-        // }
+      } else if (key.startsWith("image") && Array.isArray(value)) {
+        value.forEach((img) => {
+          const backendField = key.replace("image", "project[image") + "]";
+          if (img.file instanceof File) {
+            data.append(backendField, img.file);
+          }
+        });
+      } else if (key.startsWith("cover_images_") && Array.isArray(value)) {
+        value.forEach((img) => {
+          const backendField = key.replace("cover_images_", "project[cover_images_") + "]";
+          if (img.file instanceof File) {
+            data.append(backendField, img.file);
+          }
+        });
+      } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
+        value.forEach((img) => {
+          const backendField = key.replace("gallery_image_", "project[gallery_image_") + "]";
+          if (img.file instanceof File) {
+            data.append(backendField, img.file);
+          }
+        });
+      } else if (key.startsWith("project_2d_image_") && Array.isArray(value)) {
+        value.forEach((img) => {
+          const backendField = key.replace("project_2d_image_", "project[project_2d_image_") + "]";
+          if (img.file instanceof File) {
+            data.append(backendField, img.file);
+          }
+        });
       } else if (key !== "image" && key !== "previewImage") {
-        // Skip previewImage and image (already handled)
         data.append(`project[${key}]`, value);
       }
     });
 
-    for (let [key, value] of data.entries()) {
-      console.log(`${key}:`, value);
-    }
+    // Debug FormData entries
+    console.log("FormData entries:", Array.from(data.entries()));
 
     try {
       const response = await axios.put(`${baseURL}projects/${id}.json`, data, {
@@ -1652,7 +1816,6 @@ const ProjectDetailsEdit = () => {
         },
       });
 
-      // console.log(response.data);
       toast.success("Project updated successfully");
       navigate("/project-list");
     } catch (error) {
@@ -1797,39 +1960,6 @@ const ProjectDetailsEdit = () => {
     setReraUrl(e.target.value);
   };
 
-  // Handle Adding a RERA Entry
-  // const handleAddRera = () => {
-  //   if (!towerName.trim() || !reraNumber.trim()) {
-  //     toast.error("Both Tower and RERA Number are required.");
-  //     return;
-  //   }
-
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     Rera_Number_multiple: [
-  //       ...prev.Rera_Number_multiple,
-  //       {
-  //         tower_name: towerName,
-  //         rera_number: reraNumber,
-  //       },
-  //     ],
-  //   }));
-
-  //   // Clear input fields after adding
-  //   setTowerName("");
-  //   setReraNumber("");
-  // };
-
-  // // Handle Deleting a RERA Entry
-  // const handleDeleteRera = (index) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     Rera_Number_multiple: prev.Rera_Number_multiple.filter(
-  //       (_, i) => i !== index
-  //     ),
-  //   }));
-  // };
-
   // Handles adding a new RERA entry
   const handleAddRera = () => {
     if (!towerName || !reraNumber) {
@@ -1935,27 +2065,7 @@ const ProjectDetailsEdit = () => {
   const configurationTypes = [
     ...new Set(configurations.map((config) => config.configuration_type)),
   ].map((type) => ({ value: type, label: type }));
-  // const handleImageUpload = (event) => {
-  //   const files = Array.from(event.target.files);
 
-  //   if (!selectedCategory) {
-  //     alert("Please select an image category first.");
-  //     return;
-  //   }
-
-  //   const updatedImages = files.map((file) => ({
-  //     gallery_image: file, // ✅ Store actual File
-  //     gallery_image_file_name: file.name,
-  //     gallery_image_file_type: selectedCategory,
-  //   }));
-
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gallery_image: [...(prev.gallery_image || []), ...updatedImages], // ✅ Ensure existing images are not overwritten
-  //   }));
-
-  //   event.target.value = ""; // Reset file input
-  // };
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
@@ -2069,28 +2179,6 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-  // const handleGalleryImageUpload = (event) => {
-  //   const files = Array.from(event.target.files);
-  //   if (!files.length) return;
-
-  //   const newFiles = files.map((file) => ({
-  //     id: null, // No ID for new uploads
-  //     document_file_name: file.name,
-  //     document_content_type: file.type,
-  //     document_url: URL.createObjectURL(file),
-  //     file,
-  //   }));
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gallery_image: [...prev.gallery_image, ...files],
-  //   }));
-  // };
-  // const handleDiscardGallery = (index) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gallery_image: prev.gallery_image.filter((_, i) => i !== index),
-  //   }));
-  // };
   const handleDiscardPpt = (key, index) => {
     setFormData((prev) => {
       if (!prev[key] || !Array.isArray(prev[key])) return prev;
@@ -2391,20 +2479,7 @@ const ProjectDetailsEdit = () => {
     }
 
     if (name === "plans") {
-      // const newFiles = Array.from(files);
-      // const validFiles = [];
-      // newFiles.forEach((file) => {
-      //   if (!allowedTypes.plans.includes(file.type)) {
-      //     toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-      //     return;
-      //   }
-      //   if (file.size > MAX_SIZES.plans) {
-      //     toast.error("Image size must be less than 3MB.");
-      //     return;
-      //   }
-      //   validFiles.push(file);
-      // });
-      // if (validFiles.length > 0) {
+
       setFormData((prev) => ({
         ...prev,
         plans: [...(prev.plans || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
@@ -2734,6 +2809,7 @@ const ProjectDetailsEdit = () => {
     (config) => !selectedConfigurationNames.includes(config.name)
   );
 
+
   return (
     <>
       {/* <Header /> */}
@@ -2745,7 +2821,7 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body">
             <div className="row">
-              <div className="col-md-3">
+              {/* <div className="col-md-3">
                 <div className="form-group">
                   <label>
                     Project Banner Image
@@ -2763,14 +2839,6 @@ const ProjectDetailsEdit = () => {
                     </span>
                     <span className="otp-asterisk"> *</span>
                   </label>
-                  {/* <input
-                    className="form-control"
-                    type="file"
-                    name="image"
-                    accept="image/*"
-                    required
-                    onChange={handleInputChange}
-                  /> */}
 
                   <ImageUploadingButton
                     value={mainImageUpload}
@@ -2812,7 +2880,6 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
 
-                {/* Show selected or previously uploaded image */}
                 {formData.bannerPreviewImage ? (
                   <img
                     src={formData.bannerPreviewImage}
@@ -2831,11 +2898,6 @@ const ProjectDetailsEdit = () => {
                     if (img.document_url) {
                       src = img.document_url;
                     }
-                    // } else if (typeof img === "string") {
-                    //   src = img;
-                    // } else if (img.document_url) {
-                    //   src = img.document_url;
-                    // }
                     return (
                       <img
                         key={index}
@@ -2855,7 +2917,9 @@ const ProjectDetailsEdit = () => {
                 ) : (
                   <span>No image selected</span>
                 )}
-              </div>
+
+
+              </div> */}
               {/* <div className="col-md-3">
   <div className="form-group">
     <label>
@@ -4245,6 +4309,105 @@ const ProjectDetailsEdit = () => {
           </div>
           <div className="card-body">
             <div className="row">
+              <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Project Banner{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 3 MB and Required ratio is 16:9
+                      </span>
+                    )}
+                  </span>
+                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                </h5>
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  type="button"
+                  onClick={() => setShowBannerModal(true)}
+
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+                {showBannerModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowBannerModal(false)}
+                    includeInvalidRatios={false}
+                    selectedRatioProp={selectedBannerRatios}
+                    showAsModal={true}
+                    label={bannerImageLabel}
+                    description={dynamicDescription3}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "banner")}
+                  />
+                )}
+
+              </div>
+
+              <div className="col-md-12 mt-2">
+
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {project_banner.map(({ key, label }) => {
+                        const files = formData[key] || [];
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.document_url || file.preview}
+                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
+                              />
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handleFileDiscardCoverImage(key, index)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })}
+                    </tbody>
+
+                  </table>
+                </div>
+              </div>
+
+
+
               {/* Gallery Section */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -4297,7 +4460,7 @@ const ProjectDetailsEdit = () => {
                   display: "none" }}
                 /> */}
 
-                <ImageUploadingButton
+                {/* <ImageUploadingButton
                   value={coverImageUpload}
                   onChange={(list) => handleImageUploaded(list, "cover_images")}
                   variant="button"
@@ -4328,7 +4491,40 @@ const ProjectDetailsEdit = () => {
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
                   ]}
-                />
+                /> */
+
+                  <button
+                    className="purple-btn2 rounded-3"
+                    fdprocessedid="xn3e6n"
+                    type="button"
+                    onClick={() => setShowUploader(true)}
+
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={16}
+                      height={16}
+                      fill="currentColor"
+                      className="bi bi-plus"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                    </svg>
+                    <span>Add</span>
+                  </button>
+                }
+
+                {showUploader && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowUploader(false)}
+                    includeInvalidRatios={false}
+                    selectedRatioProp={selectedCoverRatios}
+                    showAsModal={true}
+                    label={coverImageLabel}
+                    description={dynamicDescription}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
+                  />
+                )}
               </div>
 
               <div className="col-md-12 mt-2">
@@ -4338,51 +4534,57 @@ const ProjectDetailsEdit = () => {
                       <tr>
                         <th>File Name</th>
                         <th>Preview</th>
+                        <th>Ratio</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* 2D Images */}
-                      {formData.cover_images?.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFileDiscardCoverImage(
-                                  "cover_images",
-                                  index
-                                )
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {coverImageRatios.map(({ key, label }) => {
+                        const files = formData[key] || [];
+
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.document_url || file.preview}
+                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
+                              />
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handleFileDiscardCoverImage(key, index)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })}
                     </tbody>
+
                   </table>
                 </div>
+
+                {/* Uploader Component */}
+                {showUploader && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowUploader(false)}
+                    includeInvalidRatios={false}
+                    selectedRatioProp={selectedCoverRatios}
+                    showAsModal={true}
+                    label={coverImageLabel}
+                    description={dynamicDescription}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
+                  />
+                )}
               </div>
+
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -4444,7 +4646,7 @@ const ProjectDetailsEdit = () => {
                   style={{ display: "none" }}
                 /> */}
 
-                <ImageUploadingButton
+                {/* <ImageUploadingButton
                   value={galleryImageUpload}
                   onChange={(list) =>
                     handleImageUploaded(list, "gallery_image")
@@ -4507,7 +4709,39 @@ const ProjectDetailsEdit = () => {
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
                   ]}
-                />
+                /> */}
+
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  type="button"
+                  onClick={() => setShowGalleryModal(true)}
+
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+                {showGalleryModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowGalleryModal(false)}
+                    selectedRatioProp={selectedGalleryRatios}
+                    showAsModal={true}
+                    label={galleryImageLabel}
+                    description={dynamicDescription1}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "gallery")}
+                  />
+                )}
               </div>
 
               {/* Main Section */}
@@ -4527,94 +4761,43 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* First render API fetched images */}
-                      {formData.fetched_gallery_image?.map((file, index) =>
-                        file.attachfiles?.map((attachment, idx) => (
-                          <tr key={`fetched-${index}-${idx}`}>
-                            {/* <td>{file.gallery_type || "N/A"}</td> */}
-                            <td>{attachment.document_file_name || "N/A"}</td>
+                      {gallery_images.map(({ key, label }) => {
+                        const files = formData[key] || [];
+
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
                             <td>
-                              {attachment.document_url && (
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={attachment.document_url}
-                                  alt={
-                                    attachment.document_file_name ||
-                                    "Fetched Image"
-                                  }
-                                />
-                              )}
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.document_url || file.preview}
+                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
+                              />
                             </td>
-                            <td>
-                              <div>{file.day_night ? "Day" : "Night"}</div>
-                            </td>
+                            <td>{file.ratio || label}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() =>
-                                  handleFetchedDiscardGallery(
-                                    "fetched_gallery_image",
-                                    index,
-                                    attachment.id
-                                  )
-                                }
+                                onClick={() => {
+                                  handleFetchedDiscardGallery(key, index, file.id);
+                                }}
                               >
                                 x
                               </button>
+
                             </td>
                           </tr>
-                        ))
-                      )}
-                      {(formData.gallery_image ?? []).map((file, index) => (
-                        <tr key={`new-${index}`}>
-                          <td>{file.gallery_image_file_name || "N/A"}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.attachfile?.document_url ||
-                                (file.gallery_image instanceof File
-                                  ? URL.createObjectURL(file.gallery_image)
-                                  : null)
-                              }
-                              alt={file.gallery_image_file_name || "Preview"}
-                            />
-                          </td>
-                          <td>
-                            <select
-                              className="form-control"
-                              value={
-                                file.isDay === undefined || file.isDay ? 1 : 0
-                              }
-                              onChange={(e) =>
-                                handleDayNightChange(
-                                  index,
-                                  e.target.value === "1" ? true : false
-                                )
-                              }
-                            >
-                              <option value={1}>Day</option>
-                              <option value={0}>Night</option>
-                            </select>
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handleDiscardGallery(index)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                        ));
+                      })}
                     </tbody>
+
                   </table>
                 </div>
               </div>
+
+
 
               {/* <div className="col-md-12 mt-2">
                 <h6 className="mt-3">Previous Gallery Images</h6>
@@ -4900,7 +5083,7 @@ const ProjectDetailsEdit = () => {
                   style={{ display: "none" }}
                 /> */}
 
-                <ImageUploadingButton
+                {/* <ImageUploadingButton
                   value={floorPlanImageUpload}
                   onChange={(list) => handleImageUploaded(list, "two_d_images")}
                   variant="button"
@@ -4931,62 +5114,86 @@ const ProjectDetailsEdit = () => {
                     { label: "9:16", ratio: 9 / 16 },
                     { label: "1:1", ratio: 1 },
                   ]}
-                />
+                /> */}
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  type="button"
+                  onClick={() => setShowFloorPlanModal(true)}
+
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+                {showFloorPlanModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowFloorPlanModal(false)}
+                    selectedRatioProp={selectedFloorRatios}
+                    showAsModal={true}
+                    label={floorImageLabel}
+                    description={dynamicDescription2}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "floor")}
+                  />
+                )}
               </div>
 
               {/* Table to Display Images */}
               <div className="col-md-12 mt-2">
-                <div
-                  className="mt-4 tbl-container"
-                  style={{ maxHeight: "300px", overflowY: "auto" }}
-                >
+                <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
                       <tr>
                         <th>File Name</th>
-                        <th>Image</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* 2D Images */}
-                      {formData.two_d_images.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardTwoDImage("two_d_images", index)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {floorPlanRatios.map(({ key, label }) => {
+                        const files = formData[key] || [];
+
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.document_url || file.preview}
+                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
+                              />
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => handleFileDiscardCoverImage(key, index)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })}
                     </tbody>
+
                   </table>
                 </div>
               </div>
+
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">

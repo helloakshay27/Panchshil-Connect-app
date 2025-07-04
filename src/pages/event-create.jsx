@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
+import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const EventCreate = () => {
   const navigate = useNavigate();
@@ -28,6 +29,14 @@ const EventCreate = () => {
     is_important: "",
     email_trigger_enabled: "",
     set_reminders_attributes: [],
+    cover_image_1_by_1: [],
+    cover_image_9_by_16: [],
+    cover_image_3_by_2: [],
+    cover_image_16_by_9: [],
+    event_images_1_by_1: [],
+    event_images_9_by_16: [],
+    event_images_3_by_2: [],
+    event_images_16_by_9: [],
   });
 
   console.log("formData", formData);
@@ -47,6 +56,11 @@ const EventCreate = () => {
   const [image, setImage] = useState([]);
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
+  const [showAttachmentTooltip, setShowAttachmentTooltip] = useState(false);
+  const [showCoverUploader, setShowCoverUploader] = useState(false);
+  const [showEventUploader, setShowEventUploader] = useState(false);
+  const previewUrlsRef = useRef(new Map()); // Store preview URLs for cleanup
 
   const timeOptions = [
     // { value: "", label: "Select Unit" },
@@ -61,6 +75,136 @@ const EventCreate = () => {
     hours: { min: 0, max: 672 },
     days: { min: 0, max: 28 },
     weeks: { min: 0, max: 4 },
+  };
+
+  const coverImageRatios = [
+    { key: "cover_image_1_by_1", label: "1:1" },
+    { key: "cover_image_16_by_9", label: "16:9" },
+    { key: "cover_image_9_by_16", label: "9:16" },
+    { key: "cover_image_3_by_2", label: "3:2" },
+  ];
+
+  const eventImageRatios = [
+    { key: "event_images_1_by_1", label: "1:1" },
+    { key: "event_images_16_by_9", label: "16:9" },
+    { key: "event_images_9_by_16", label: "9:16" },
+    { key: "event_images_3_by_2", label: "3:2" },
+  ];
+
+  const eventUploadConfig = {
+    "cover image": ["16:9", "1:1", "9:16", "3:2"],
+    "event images": ["16:9", "1:1", "9:16", "3:2"],
+  };
+
+  const coverImageType = "cover image";
+  const selectedCoverRatios = eventUploadConfig[coverImageType] || [];
+  const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const dynamicCoverDescription = `Supports ${selectedCoverRatios.join(
+    ", "
+  )} aspect ratios`;
+
+  const eventImageType = "event images";
+  const selectedEventRatios = eventUploadConfig[eventImageType] || [];
+  const eventImageLabel = eventImageType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const dynamicEventDescription = `Supports ${selectedEventRatios.join(
+    ", "
+  )} aspect ratios`;
+
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...files],
+    }));
+  };
+
+  const handleCroppedImages = (validImages, type = "cover") => {
+    if (!validImages || validImages.length === 0) {
+      toast.error(
+        `No valid ${type} image${
+          ["cover", "event"].includes(type) ? "" : "s"
+        } selected.`
+      );
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(":", "_by_");
+      const prefix = type === "cover" ? "cover_image" : "event_images";
+      const key = `${prefix}_${formattedRatio}`;
+      updateFormData(key, [
+        {
+          file: img.file,
+          name: img.file.name,
+          preview: URL.createObjectURL(img.file),
+          ratio: img.ratio,
+          id: `${key}-${Date.now()}-${Math.random()}`, // Unique ID for each image
+        },
+      ]);
+    });
+
+    if (type === "cover") {
+      setShowCoverUploader(false);
+    } else {
+      setShowEventUploader(false);
+    }
+  };
+
+  const closeModal = (type) => {
+    let prefix = "";
+    switch (type) {
+      case "cover":
+        prefix = coverImageType; // "gallery image"
+        break;
+      case "event":
+        prefix = eventImageType; // "floor plan"
+        break;
+    }
+  };
+
+  const handleImageRemoval = (key, index) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter((_, i) => i !== index);
+      return {
+        ...prev,
+        [key]: updatedArray.length > 0 ? updatedArray : [],
+      };
+    });
+  };
+
+  const handleAttachmentRemoval = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      attachfile: prev.attachfile.filter((_, i) => i !== index),
+    }));
+  };
+
+  console.log("formData", formData);
+
+  const discardImage = (key, imageToRemove) => {
+    setFormData((prev) => {
+      const updatedArray = (prev[key] || []).filter(
+        (img) => img.id !== imageToRemove.id
+      );
+
+      // Remove the key if the array becomes empty
+      const newFormData = { ...prev };
+      if (updatedArray.length === 0) {
+        delete newFormData[key];
+      } else {
+        newFormData[key] = updatedArray;
+      }
+
+      return newFormData;
+    });
+
+    // If the removed image is being previewed, reset previewImg
+    if (previewImg === imageToRemove.preview) {
+      setPreviewImg(null);
+    }
   };
 
   // Set Reminders
@@ -270,6 +414,28 @@ const EventCreate = () => {
       data.append("event[rsvp_number]", formData.rsvp_number);
     }
 
+    // For coverImageRatios
+    coverImageRatios.forEach(({ key }) => {
+      const images = formData[key];
+      if (Array.isArray(images) && images.length > 0) {
+        const img = images[0]; // 👈 only the first image
+        if (img?.file instanceof File) {
+          data.append(`event[${key}]`, img.file); // 👈 flat key format
+        }
+      }
+    });
+
+    // For eventImageRatios
+    eventImageRatios.forEach(({ key }) => {
+      const images = formData[key];
+      if (Array.isArray(images) && images.length > 0) {
+        const img = images[0]; // 👈 only the first image
+        if (img?.file instanceof File) {
+          data.append(`event[${key}]`, img.file); // 👈 flat key format
+        }
+      }
+    });
+
     // Updated reminder data appending
     preparedReminders.forEach((reminder, index) => {
       if (reminder.id)
@@ -303,19 +469,19 @@ const EventCreate = () => {
       }
     });
 
-    if (formData.attachfile && formData.attachfile.length > 0) {
-      formData.attachfile.forEach((file) => {
-        if (file instanceof File) {
-          data.append("event[event_images][]", file);
-        } else {
-          console.warn("Invalid file detected:", file);
-        }
-      });
-    } else {
-      toast.error("Attachment is required.");
-      setLoading(false);
-      return;
-    }
+    // if (formData.attachfile && formData.attachfile.length > 0) {
+    //   formData.attachfile.forEach((file) => {
+    //     if (file instanceof File) {
+    //       data.append("event[event_images][]", file);
+    //     } else {
+    //       console.warn("Invalid file detected:", file);
+    //     }
+    //   });
+    // } else {
+    //   // toast.error("Attachment is required.");
+    //   setLoading(false);
+    //   return;
+    // }
 
     if (Array.isArray(formData.group_id)) {
       formData.group_id.forEach((id) => {
@@ -325,7 +491,11 @@ const EventCreate = () => {
       data.append("event[group_id][]", formData.group_id);
     }
 
+    console.log("dta to be sent:", Array.from(data.entries()));
+
     try {
+      console.log("dta to be sent:", Array.from(data.entries()));
+
       const response = await axios.post(`${baseURL}events.json`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -351,6 +521,14 @@ const EventCreate = () => {
         is_important: "",
         email_trigger_enabled: "",
         set_reminders_attributes: [],
+        cover_image_1_by_1: [],
+        cover_image_9_by_16: [],
+        cover_image_3_by_2: [],
+        cover_image_16_by_9: [],
+        event_images_1_by_1: [],
+        event_images_9_by_16: [],
+        event_images_3_by_2: [],
+        event_images_16_by_9: [],
       });
 
       navigate("/event-list");
@@ -496,6 +674,26 @@ const EventCreate = () => {
     setDialogOpen(true);
   };
 
+  const handleAttachmentUpload = (e) => {
+    const files = Array.from(e.target.files);
+
+    const newAttachments = files.map((file) => {
+      const isVideo = file.type.includes("video") || file.name.endsWith(".mp4");
+      return {
+        file,
+        name: file.name,
+        type: file.type || (isVideo ? "video/mp4" : "image/jpeg"),
+        preview: URL.createObjectURL(file),
+        size: file.size,
+      };
+    });
+
+    setFormData((prev) => ({
+      ...prev,
+      attachfile: [...(prev.attachfile || []), ...newAttachments],
+    }));
+  };
+
   return (
     <>
       <div className="main-content">
@@ -613,7 +811,7 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Attachment
@@ -641,143 +839,98 @@ const EventCreate = () => {
                           onChange={(e) => handleFileChange(e, "attachfile")}
                         />
                       </div>
-                    </div>
+                    </div> */}
 
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3 col-sm-6 col-12">
                       <div className="form-group">
-                        <label>
-                          Cover Image
+                        <label className="d-flex align-items-center gap-1 mb-2">
+                          <span>Cover Image</span>
+
                           <span
                             className="tooltip-container"
                             onMouseEnter={() => setShowTooltip(true)}
                             onMouseLeave={() => setShowTooltip(false)}
+                            style={{ cursor: 'pointer', fontWeight: 'bold' }}
                           >
                             [i]
                             {showTooltip && (
-                              <span className="tooltip-text">
+                              <span
+                                className="tooltip-text"
+                                style={{
+                                  marginLeft: '6px',
+                                  background: '#f9f9f9',
+                                  border: '1px solid #ccc',
+                                  padding: '6px 8px',
+                                  borderRadius: '4px',
+                                  position: 'absolute',
+                                  zIndex: 1000,
+                                  fontSize: '13px',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
                                 Max Upload Size 3 MB and Required ratio is 16:9
                               </span>
                             )}
                           </span>
                         </label>
-                        <ImageUploadingButton
-                          value={image}
-                          onChange={handleCoverImageUpload}
-                          btntext="Upload Cover Image"
-                          variant="custom"
-                        />
-                        <small className="form-text text-muted">
-                          Required ratio must be 16:9
-                        </small>
-                        <ImageCropper
-                          open={dialogOpen}
-                          image={image?.[0]?.dataURL || null}
-                          onComplete={(cropped) => {
-                            if (cropped) {
-                              setCroppedImage(cropped.base64);
-                              setFormData((prev) => ({
-                                ...prev,
-                                cover_image: [cropped.file], // Store as array to match your existing structure
-                              }));
-                            }
-                            setDialogOpen(false);
-                          }}
-                          requiredRatios={[16 / 9, 9 / 16, 1]}
-                          requiredRatioLabel="16:9"
-                          allowedRatios={[
-                            { label: "16:9", ratio: 16 / 9 },
-                            { label: "9:16", ratio: 9 / 16 },
-                            { label: "1:1", ratio: 1 },
-                          ]}
-                          containerStyle={{
-                            position: "relative",
-                            width: "100%",
-                            height: 300,
-                            background: "#fff",
-                          }}
-                        />
 
-                        {/* Cover Image Preview */}
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setShowUploader(true)}
+                          className="custom-upload-button input-upload-button"
+                        >
+                          <span
+                            className="upload-button-label"
+                          >
+                            Choose file
+                          </span>
+                          <span
+                            className="upload-button-value"
+                          >
+                            No file chosen
+                          </span>
+                        </span>
+
+                        {showUploader && (
+                          <ProjectBannerUpload
+                            onClose={() => setShowUploader(false)}
+                            includeInvalidRatios={false}
+                            selectedRatioProp={selectedRatios}
+                            showAsModal={true}
+                            label={dynamicLabel}
+                            description={dynamicDescription}
+                            onContinue={handleCropComplete}
+                          />
+                        )}
+
                         <div className="mt-2">
-                          {croppedImage ? (
-                            <div className="position-relative">
-                              <img
-                                src={croppedImage}
-                                alt="Cover Preview"
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                              {/* <button
-                                type="button"
-                                className="btn btn-danger btn-sm position-absolute"
-                                style={{
-                                  top: "-5px",
-                                  right: "-5px",
-                                  fontSize: "10px",
-                                  width: "20px",
-                                  height: "20px",
-                                  padding: "0",
-                                  borderRadius: "50%",
-                                }}
-                                onClick={() => {
-                                  setCroppedImage(null);
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    cover_image: [],
-                                  }));
-                                }}
-                                title="Remove cover image"
+                          {Array.isArray(formData.cover_image_16_by_9) &&
+                            formData.cover_image_16_by_9.length > 0 ? (
+                            formData.cover_image_16_by_9.map((file, index) => (
+                              <div
+                                key={index}
+                                className="position-relative"
+                                style={{ marginRight: "10px", marginBottom: "10px" }}
                               >
-                                ×
-                              </button> */}
-                            </div>
-                          ) : formData.cover_image &&
-                            formData.cover_image[0] &&
-                            typeof formData.cover_image[0] === "string" ? (
-                            <div className="position-relative">
-                              <img
-                                src={formData.cover_image[0]}
-                                alt="Existing Cover"
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                              {/* <button
-                                type="button"
-                                className="btn btn-danger btn-sm position-absolute"
-                                style={{
-                                  top: "-5px",
-                                  right: "-5px",
-                                  fontSize: "10px",
-                                  width: "20px",
-                                  height: "20px",
-                                  padding: "0",
-                                  borderRadius: "50%",
-                                }}
-                                onClick={() => {
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    cover_image: [],
-                                  }));
-                                }}
-                                title="Remove existing cover image"
-                              >
-                                ×
-                              </button> */}
-                            </div>
+                                <img
+                                  src={file.preview}
+                                  alt={file.name}
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                    objectFit: "cover"
+                                  }}
+                                />
+                              </div>
+                            ))
                           ) : (
-                            <span></span>
+                            <span>No image selected</span>
                           )}
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="col-md-3">
                       <div className="form-group">
@@ -789,11 +942,11 @@ const EventCreate = () => {
                               type="radio"
                               name="is_important"
                               value="true"
-                              checked={formData.is_important === true} // Ensure boolean comparison
+                              checked={formData.is_important === true}
                               onChange={() =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  is_important: true, // Store as boolean
+                                  is_important: true,
                                 }))
                               }
                             />
@@ -810,11 +963,11 @@ const EventCreate = () => {
                               type="radio"
                               name="is_important"
                               value="false"
-                              checked={formData.is_important === false} // Ensure boolean comparison
+                              checked={formData.is_important === false}
                               onChange={() =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  is_important: false, // Store as boolean
+                                  is_important: false,
                                 }))
                               }
                             />
@@ -1221,26 +1374,292 @@ const EventCreate = () => {
                   </div>
                 </div>
               </div>
-              <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    onClick={handleSubmit}
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    Submit
-                  </button>
+
+              <div className="card mt-3 pb-4 mx-4">
+                <div className="card-header3">
+                  <h3 className="card-title">File Upload</h3>
                 </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
+                <div className="card-body mt-0 pb-0">
+                  <div className="row"></div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Event Cover Image{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB and Supports{" "}
+                            {selectedCoverRatios.join(", ")} aspect ratios
+                          </span>
+                        )}
+                      </span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      type="button"
+                      onClick={() => setShowCoverUploader(true)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    {showCoverUploader && (
+                      <ProjectBannerUpload
+                        onClose={() => setShowCoverUploader(false)}
+                        includeInvalidRatios={false}
+                        selectedRatioProp={selectedCoverRatios}
+                        showAsModal={true}
+                        label={coverImageLabel}
+                        description={dynamicCoverDescription}
+                        onContinue={(validImages) =>
+                          handleCroppedImages(validImages, "cover")
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div
+                      className="mt-4 tbl-container"
+                      style={{ maxHeight: "300px", overflowY: "auto" }}
+                    >
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {coverImageRatios.flatMap(({ key, label }) => {
+                            const files = Array.isArray(formData[key])
+                              ? formData[key]
+                              : formData[key]
+                              ? [formData[key]]
+                              : [];
+
+                            if (files.length === 0) return [];
+
+                            return files.map((file, index) => {
+                              const preview =
+                                file.preview || file.document_url || "";
+                              const name =
+                                file.name ||
+                                file.document_file_name ||
+                                `Image ${index + 1}`;
+                              const ratio = file.ratio || label;
+
+                              return (
+                                <tr key={`${key}-${file.id || index}`}>
+                                  <td>{name}</td>
+                                  <td>
+                                    {preview ? (
+                                      <img
+                                        style={{
+                                          maxWidth: 100,
+                                          maxHeight: 100,
+                                          objectFit: "cover",
+                                        }}
+                                        className="img-fluid rounded"
+                                        src={preview}
+                                        alt={name}
+                                        onError={(e) => {
+                                          console.error(
+                                            `Failed to load image: ${preview}`
+                                          );
+                                          e.target.src =
+                                            "https://via.placeholder.com/100?text=Preview+Failed";
+                                        }}
+                                      />
+                                    ) : (
+                                      <span>No Preview Available</span>
+                                    )}
+                                  </td>
+                                  <td>{ratio}</td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        handleImageRemoval(key, index, file.id)
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            });
+                          })}
+
+                          {coverImageRatios.every(
+                            ({ key }) =>
+                              !(formData[key] && formData[key].length > 0)
+                          ) && (
+                            <tr>
+                              {/* <td colSpan="4" className="text-center">No cover images uploaded</td> */}
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Event Images{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowAttachmentTooltip(true)}
+                        onMouseLeave={() => setShowAttachmentTooltip(false)}
+                      >
+                        [i]
+                        {showAttachmentTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB and Supports{" "}
+                            {selectedEventRatios.join(", ")} aspect ratios
+                          </span>
+                        )}
+                      </span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      type="button"
+                      onClick={() => setShowEventUploader(true)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    {showEventUploader && (
+                      <ProjectBannerUpload
+                        onClose={() => setShowEventUploader(false)}
+                        includeInvalidRatios={false}
+                        selectedRatioProp={selectedEventRatios}
+                        showAsModal={true}
+                        label={eventImageLabel}
+                        description={dynamicEventDescription}
+                        onContinue={(validImages) =>
+                          handleCroppedImages(validImages, "event")
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div
+                      className="mt-4 tbl-container"
+                      style={{ maxHeight: "300px", overflowY: "auto" }}
+                    >
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {eventImageRatios.map(({ key, label }) =>
+                            (formData[key] || []).length > 0
+                              ? formData[key].map((file, index) => (
+                                  <tr key={`${key}-${file.id}`}>
+                                    <td>{file.name || "Unnamed File"}</td>
+                                    <td>
+                                      {file.preview ? (
+                                        <img
+                                          style={{
+                                            maxWidth: 100,
+                                            maxHeight: 100,
+                                            objectFit: "cover",
+                                          }}
+                                          className="img-fluid rounded"
+                                          src={file.preview}
+                                          alt={file.name || "Event Image"}
+                                          onError={(e) => {
+                                            console.error(
+                                              `Failed to load image: ${file.preview}`
+                                            );
+                                            e.target.src =
+                                              "https://via.placeholder.com/100?text=Preview+Failed";
+                                          }}
+                                        />
+                                      ) : (
+                                        <span>No Preview Available</span>
+                                      )}
+                                    </td>
+                                    <td>{file.ratio || label}</td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        className="purple-btn2"
+                                        onClick={() =>
+                                          handleImageRemoval(key, index)
+                                        }
+                                      >
+                                        x
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))
+                              : null
+                          )}
+                          {eventImageRatios.every(
+                            ({ key }) => (formData[key] || []).length === 0
+                          ) && (
+                            <tr>
+                              {/* <td colSpan="4" className="text-center">
+                            No event images uploaded
+                          </td> */}
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
+              </div>
+            </div>
+            <div className="row justify-content-center">
+              <div className="col-md-2">
+                <button
+                  onClick={handleSubmit}
+                  type="submit"
+                  className="purple-btn2 w-100"
+                  disabled={loading}
+                >
+                  Submit
+                </button>
+              </div>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 w-100"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
