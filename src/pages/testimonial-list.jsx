@@ -151,6 +151,54 @@ const TestimonialList = () => {
     }
   };
 
+   const handleToggleShow = async (id, currentStatus) => {
+    const updatedStatus = !currentStatus;
+  
+    // Dismiss any existing toast first
+    if (activeToastId) {
+      toast.dismiss(activeToastId);
+    }
+  
+    try {
+      await axios.put(
+        `${baseURL}testimonials/${id}.json`,
+        { testimonial: { show_on_home: updatedStatus } }, // <-- update this line
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+  
+      setTestimonials((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, show_on_home: updatedStatus } : item
+        )
+      );
+  
+      // Show new toast and store its ID
+      const newToastId = toast.success("Status updated successfully!", {
+        duration: 3000,
+        position: "top-center",
+        id: `toggle-${id}`,
+      });
+  
+      setActiveToastId(newToastId);
+    } catch (error) {
+      console.error("Error updating status:", error);
+  
+      // Show error toast and store its ID
+      const newToastId = toast.error("Testimonial is disabled.", {
+        duration: 3000,
+        position: "top-center",
+        id: `toggle-error-${id}`,
+      });
+  
+      setActiveToastId(newToastId);
+    }
+  };
+
   return (
     <div className="main-content">
       <div className="module-data-section container-fluid">
@@ -245,6 +293,7 @@ const TestimonialList = () => {
                         <th>Content</th>
                         <th>Created At</th>
                         <th>Updated At</th>
+                        <th>Show on Home</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -260,7 +309,7 @@ const TestimonialList = () => {
                                   padding: "2px",
                                 }}
                               >
-                                {testimonialPermissions.update === "true" && (
+                                {/* {testimonialPermissions.update === "true" && ( */}
                                   <button
                                     className="btn btn-link"
                                     onClick={() =>
@@ -295,7 +344,7 @@ const TestimonialList = () => {
                                       />
                                     </svg>
                                   </button>
-                                )}
+                                {/* )} */}
                                 {testimonialPermissions.show === "true" && (
                                   <button
                                     onClick={() =>
@@ -356,6 +405,45 @@ const TestimonialList = () => {
                               {new Date(
                                 testimonial.updated_at
                               ).toLocaleString()}
+                            </td>
+                             <td>
+                               <button
+                                    onClick={() =>
+                                      handleToggleShow(testimonial.id, testimonial.show_on_home)
+                                    }
+                                    className="toggle-button"
+                                    style={{
+                                      border: "none",
+                                      background: "none",
+                                      cursor: "pointer",
+                                      padding: 0,
+                                      width: "35px",
+                                    }}
+                                  >
+                                    {testimonial.show_on_home ? (
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="40"
+                                        height="25"
+                                        fill="#de7008"
+                                        className="bi bi-toggle-on"
+                                        viewBox="0 0 16 16"
+                                      >
+                                        <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                                      </svg>
+                                    ) : (
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="40"
+                                        height="25"
+                                        fill="#667085"
+                                        className="bi bi-toggle-off"
+                                        viewBox="0 0 16 16"
+                                      >
+                                        <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                                      </svg>
+                                    )}
+                                  </button>
                             </td>
                           </tr>
                         ))

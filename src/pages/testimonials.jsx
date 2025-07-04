@@ -153,7 +153,7 @@ const Testimonials = () => {
   };
 
   const bannerUploadConfig = {
-    "video preview image url": ["16:9"],
+    "video preview image url": ["16:9","1:1","9:16","3:2"],
   };
 
   const currentUploadType = "video preview image url"; // Can be dynamic
