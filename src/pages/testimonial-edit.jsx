@@ -21,6 +21,11 @@ const TestimonialEdit = () => {
     content: testimonial?.content || "",
     video_url: testimonial?.video_preview_image_url || "",
     preview_image: testimonial?.preview_image || "",
+    preview_image_16_by_9: testimonial?.preview_image_16_by_9 || [],
+    preview_image_3_by_2: testimonial?.preview_image_3_by_2 || [],
+    preview_image_1_by_1: testimonial?.preview_image_1_by_1 || [],
+    preview_image_9_by_16: testimonial?.preview_image_9_by_16 || [],
+    testimonial_video: null, // Initialize with null, will be set on file upload
   });
 
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
@@ -57,6 +62,11 @@ const TestimonialEdit = () => {
           content: response.data.content || "",
           video_url: response.data.video_preview_image_url || "",
           preview_image: response.data.preview_image || "",
+          preview_image_16_by_9: response.data.preview_image_16_by_9 || [],
+          preview_image_3_by_2: response.data.preview_image_3_by_2 || [],
+          preview_image_1_by_1: response.data.preview_image_1_by_1 || [],
+          preview_image_9_by_16: response.data.preview_image_9_by_16 || [],
+
         });
 
         // Set existing video URL if available
@@ -112,6 +122,13 @@ const TestimonialEdit = () => {
       [name]: value || "",
     }));
   };
+
+  const TestimonialImageRatios = [
+    { key: "preview_image_1_by_1", label: "1:1" },
+    { key: "preview_image_16_by_9", label: "16:9" },
+    { key: "preview_image_9_by_16", label: "9:16" },
+    { key: "preview_image_3_by_2", label: "3:2" },
+  ];
 
   const handleBannerVideoChange = (e) => {
     const file = e.target.files[0];
@@ -203,7 +220,7 @@ const TestimonialEdit = () => {
   };
 
   const bannerUploadConfig = {
-    "preview image": ["16:9","1:1","9:16","3:2"],
+    "preview image": ["16:9", "1:1", "9:16", "3:2"],
   };
 
   const currentUploadType = "preview image"; // Can be dynamic
@@ -216,10 +233,14 @@ const TestimonialEdit = () => {
   )} aspect ratios`;
 
   const updateFormData = (key, files) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: files,
-    }));
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [key]: [...(prev[key] || []), ...files],
+      };
+      console.log(`Updated formData for key ${key}:`, newData[key]); // Debugging
+      return newData;
+    });
   };
 
   const handleCropComplete = (validImages) => {
@@ -229,16 +250,22 @@ const TestimonialEdit = () => {
       return;
     }
 
-    validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(":", "_by_"); // e.g., "16:9" -> "16by9"
-      const key = `${currentUploadType}_${formattedRatio}`
-        .replace(/\s+/g, "_")
-        .toLowerCase(); // e.g., banner_image_16by9
+    const ratioKeyMap = {
+      "1:1": "preview_image_1_by_1",
+      "16:9": "preview_image_16_by_9",
+      "9:16": "preview_image_9_by_16",
+      "3:2": "preview_image_3_by_2",
+    };
 
-      updateFormData(key, [img]); // send as array to preserve consistency
+    validImages.forEach((img) => {
+      const key = ratioKeyMap[img.ratio];
+      if (key) {
+        updateFormData(key, [img]); // Append new image to existing ones
+      }
     });
 
-    setPreviewImg(validImages[0].preview); // preview first image only
+    // Only update preview if needed (e.g., for UI display of the latest image)
+    setPreviewImg(validImages[0].preview);
     setShowUploader(false);
   };
 
@@ -280,33 +307,46 @@ const TestimonialEdit = () => {
       sendData.append("testimonial[building_id]", formData.building_id);
       sendData.append("testimonial[content]", formData.content);
 
+
       // Always use the cropped image file if present
       // if (image[0] && image[0].file instanceof File) {
       //   sendData.append("testimonial[preview_image]", image[0].file);
       // } else
 
-      Object.entries(formData).forEach(([key, images]) => {
-        if (key.startsWith("preview_image_") && Array.isArray(images)) {
-          images.forEach((img) => {
-            const backendField =
-              key.replace("video_preview_image_url", "testimonial[video_preview_image_url") + "]";
-            // e.g., preview[preview_image_1by1]
+      // Object.entries(formData).forEach(([key, images]) => {
+      //   if (key.startsWith("preview_image_") && Array.isArray(images)) {
+      //     images.forEach((img) => {
+      //       const backendField =
+      //         key.replace("video_preview_image_url", "testimonial[video_preview_image_url") + "]";
+      //       // e.g., preview[preview_image_1by1]
 
-            if (img.file instanceof File) {
-              sendData.append(backendField, img.file);
-            }
-          });
+      //       if (img.file instanceof File) {
+      //         sendData.append(backendField, img.file);
+      //       }
+      //     });
+      //   }
+      // });
+      // Append all preview image files
+      TestimonialImageRatios.forEach(({ key }) => {
+        const images = formData[key];
+        if (Array.isArray(images) && images.length > 0) {
+          const img = images[0];
+          if (img?.file instanceof File) {
+            sendData.append(`testimonial[${key}]`, img.file);
+          }
         }
       });
 
-// Handle 16:9 preview image from new structure
-if (Array.isArray(formData.preview_image_16_by_9)) {
-  formData.preview_image_16_by_9.forEach((img) => {
-    if (img.file instanceof File) {
-      sendData.append("testimonial[preview_image_16_by_9]", img.file);
-    }
-  });
-}
+
+
+      // Handle 16:9 preview image from new structure
+      if (Array.isArray(formData.preview_image_16_by_9)) {
+        formData.preview_image_16_by_9.forEach((img) => {
+          if (img.file instanceof File) {
+            sendData.append("testimonial[preview_image_16_by_9]", img.file);
+          }
+        });
+      }
 
 
       // Append video file if present
@@ -343,41 +383,41 @@ if (Array.isArray(formData.preview_image_16_by_9)) {
   };
 
   const handleFileDiscardCoverImage = async (key, index) => {
-      const Image = formData[key][index]; // Get the selected image
-      if (!Image.id) {
-        // If the image has no ID, it's a newly uploaded file. Just remove it locally.
-        const updatedFiles = formData[key].filter((_, i) => i !== index);
-        setFormData({ ...formData, [key]: updatedFiles });
-        toast.success("Image removed successfully!");
-        return;
-      }
-  
-      try {
-        const response = await fetch(
-          `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          }
-        );
-  
-        if (!response.ok) {
-          throw new Error("Failed to delete videos");
+    const Image = formData[key][index]; // Get the selected image
+    if (!Image.id) {
+      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         }
-  
-        // Remove the deleted image from the state
-        const updatedFiles = formData[key].filter((_, i) => i !== index);
-        setFormData({ ...formData, [key]: updatedFiles });
-  
-        // console.log(`Image with ID ${Image.id} deleted successfully`);
-        toast.success("Image deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting image:", error);
-        alert("Failed to delete image. Please try again.");
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete videos");
       }
-    };
+
+      // Remove the deleted image from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      // console.log(`Image with ID ${Image.id} deleted successfully`);
+      toast.success("Image deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Failed to delete image. Please try again.");
+    }
+  };
 
   return (
     <div className="">
@@ -495,103 +535,6 @@ if (Array.isArray(formData.preview_image_16_by_9)) {
                   </div>
                 </div>
               </div>
-
-              {/* <div className="col-md-3">
-                <div className="form-group">
-                  <label>
-                    Preview Image{" "}
-                    <span
-                      className="tooltip-container"
-                      onMouseEnter={() => setShowTooltip(true)}
-                      onMouseLeave={() => setShowTooltip(false)}
-                    >
-                      [i]
-                      {showTooltip && (
-                        <span className="tooltip-text">
-                          Max Upload Size 3 MB and Required ratio is 16:9
-                        </span>
-                      )}
-                    </span>
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <ImageUploadingButton
-                    value={image}
-                    onChange={handleImageUpload}
-                    variant="custom"
-                  />
-                  <small className="form-text text-muted">
-                    Required ratio must be 16:9
-                  </small>
-                  <ImageCropper
-                    open={dialogOpen}
-                    image={image?.[0]?.dataURL || null}
-                    onComplete={(cropped) => {
-                      if (cropped) {
-                        setCroppedImage(cropped.base64);
-                        setPreviewImg(cropped.base64);
-                        setFormData((prev) => ({
-                          ...prev,
-                          attachfile: cropped.file,
-                          video_preview_image_url: cropped.base64,
-                        }));
-                      }
-                      setDialogOpen(false);
-                    }}
-                    requiredRatios={[16 / 9, 1, 9 / 16]}
-                    requiredRatioLabel="16:9"
-                    allowedRatios={[
-                      { label: "16:9", ratio: 16 / 9 },
-                      { label: "9:16", ratio: 9 / 16 },
-                      { label: "1:1", ratio: 1 },
-                    ]}
-                    containerStyle={{
-                      position: "relative",
-                      width: "100%",
-                      height: 300,
-                      background: "#fff",
-                    }}
-                  />
-                  {errors.attachfile && (
-                    <span className="error text-danger">
-                      {errors.attachfile}
-                    </span>
-                  )}
-
-                 
-                  {previewImg && (
-                    <div className="mt-2">
-                      <img
-                        src={croppedImage || previewImg}
-                        className="img-fluid rounded"
-                        alt="Preview"
-                        style={{
-                          maxWidth: "100px",
-                          maxHeight: "100px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  {!previewImg && existingImageUrl && (
-                    <div className="mt-2">
-                      <img
-                        src={existingImageUrl}
-                        className="img-fluid rounded"
-                        alt="Current Preview"
-                        style={{
-                          maxWidth: "100px",
-                          maxHeight: "100px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div> */}
-
               <div className="col-md-3 col-sm-6 col-12">
                 <div className="form-group">
                   <label className="d-flex align-items-center gap-1 mb-2">
@@ -656,104 +599,54 @@ if (Array.isArray(formData.preview_image_16_by_9)) {
                 </div>
               </div>
 
-              <div className="col-md-12 mt-2">
-                {Array.isArray(formData.preview_image_16_by_9) &&
-                  formData.preview_image_16_by_9.length > 0 ? (
-                  // ✅ Uploaded image table view
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Ratio</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.preview_image_16_by_9.map((file, index) => (
-                            <tr key={index}>
-                              <td>{file.name}</td>
-                              <td>
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={file.preview}
-                                  alt={file.name}
-                                />
-                              </td>
-                              <td>{file.ratio || "16:9"}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleFileDiscardCoverImage("preview_image_16_by_9", index)
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ) : previewImg || existingImageUrl ? (
-                  // ✅ Fallback table for single preview/cropped/existing image
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Ratio</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>preview_image_16_by_9.jpg</td>
+              <div className="col-md-12 mt-4">
+                <div className="tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {TestimonialImageRatios.flatMap(({ key, label }) => {
+                        const value = formData[key];
+                        if (!value || (Array.isArray(value) && value.length === 0)) return [];
+
+                        const files = Array.isArray(value) ? value : [value];
+
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.name || file.document_file_name || `Image ${index + 1}`}</td>
                             <td>
                               <img
-                                src={
-                                  croppedImage || previewImg || existingImageUrl
-                                }
+                                src={file.preview || file.document_url}
+                                alt={file.name || `Image ${index + 1}`}
                                 className="img-fluid rounded"
-                                alt="Preview"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                }}
+                                style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
                               />
                             </td>
-                            <td>16:9</td>
+                            <td>{label}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() =>
-                                    handleFileDiscardCoverImage("preview_image_16_by_9", 0)
-                                  }
+                                onClick={() => handleFileDiscardCoverImage(key, index)}
                               >
                                 x
                               </button>
                             </td>
                           </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-2">
-                    <span>No image selected</span>
-                  </div>
-                )}
+                        ));
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
+
+
             </div>
           </div>
 

@@ -129,7 +129,7 @@ import FaqEdit from "./pages/faq-edit";
 
 // const baseURL = process.env.REACT_APP_BASE_URL; // or your const
 
-if (baseURL === "https://api-connect.panchshil.com/") {
+if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/") {
   console.log("Base URL is set to Panchshil Connect");
   document.body.classList.add("theme-connect");
 } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {

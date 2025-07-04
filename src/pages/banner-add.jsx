@@ -20,6 +20,7 @@ const BannerAdd = () => {
   const [image, setImage] = useState(null);
   const [showUploader, setShowUploader] = useState(false);
   const [selectedRatio, setSelectedRatio] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     banner_type: null,
@@ -87,7 +88,7 @@ const BannerAdd = () => {
   };
 
   const bannerUploadConfig = {
-    'banner video': ['1:1', '9:16']
+    'banner video': ['1:1', '9:16', '16:9', '3:2'],
   };
 
   const currentUploadType = 'banner video';
@@ -144,6 +145,19 @@ const BannerAdd = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if (isSubmitting) return; // Prevent multiple submissions 
+
+
+    const hasProjectBanner1by1 = formData.banner_video_1_by_1
+      && formData.banner_video_1_by_1.some(img => img.file instanceof File);
+
+
+    if (!hasProjectBanner1by1) {
+      toast.error("Banner Image with 1:1 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
 
     if (!validateForm()) {
       setLoading(false);
@@ -168,15 +182,15 @@ const BannerAdd = () => {
 
       console.log("data to be sent:", Array.from(sendData.entries()));
 
-      // await axios.post(`${baseURL}banners.json`, sendData, {
-      //   headers: {
-      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
+      await axios.post(`${baseURL}banners.json`, sendData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Banner created successfully");
-      // navigate("/banner-list");
+      navigate("/banner-list");
     } catch (error) {
       console.error(error);
       toast.error(`Error creating banner: ${error.message}`);

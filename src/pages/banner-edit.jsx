@@ -23,6 +23,7 @@ const BannerEdit = () => {
   const [fileType, setFileType] = useState(null);
   const [originalBannerVideo, setOriginalBannerVideo] = useState(null); // Store original preview
   const [showUploader, setShowUploader] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Prevent multiple submissions
 
   const [formData, setFormData] = useState({
     title: "",
@@ -213,6 +214,12 @@ const BannerEdit = () => {
   // };
 
 
+  const project_banner = [
+    { key: 'banner_video_1_by_1', label: '1:1' },
+    { key: 'banner_video_16_by_9', label: '16:9' },
+    { key: 'banner_video_9_by_16', label: '9:16' },
+    { key: 'banner_video_3_by_2', label: '3:2' },
+  ];
   const updateFormData = (key, files) => {
     setFormData((prev) => ({
       ...prev,
@@ -261,6 +268,19 @@ const BannerEdit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
+
+    const hasProjectBanner1by1 = Array.isArray(formData.banner_video_1_by_1) && formData.banner_video_1_by_1.some(
+      img => img?.file instanceof File || img?.id || img?.document_file_name
+    );
+
+    if (!hasProjectBanner1by1) {
+      toast.error("Banner video with 1:1 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
     if (!validateForm()) return;
 
     setLoading(true);
@@ -322,6 +342,55 @@ const BannerEdit = () => {
   };
 
   const handleCancel = () => navigate(-1);
+
+  const handleFetchedDiscardGallery = async (key, index, imageId) => {
+    // If no imageId, it's a new image, just remove locally
+    if (!imageId) {
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
+      toast.success("Image removed successfully!");
+      return;
+    }
+
+    // Existing image: delete from server, then remove locally
+    try {
+      const response = await fetch(
+        `${baseURL}banners/${id}/remove_image/${imageId}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        // Optionally, handle 404 as a successful local delete
+        if (response.status === 404) {
+          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          setFormData({ ...formData, [key]: updatedFiles });
+          toast.success("Image removed from UI (already deleted on server).");
+          return;
+        }
+        throw new Error("Failed to delete image");
+      }
+
+
+      // Remove from UI after successful delete
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
+
+      toast.success("Image deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting image:", error.message);
+      toast.error("Failed to delete image. Please try again.");
+    }
+  };
 
   return (
     <div className="container-fluid" style={{ height: '100vh', overflowY: 'auto' }}>
@@ -409,7 +478,7 @@ const BannerEdit = () => {
                         role="button"
                         tabIndex={0}
                         onClick={() => setShowUploader(true)}
-                        className="custom-upload-button input-upload-button"                       
+                        className="custom-upload-button input-upload-button"
                       >
                         <span
                           className="upload-button-label"
@@ -453,40 +522,40 @@ const BannerEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {['banner_video_1_by_1', 'banner_video_9_by_16'].map((key) => {
-                        const file = formData[key];
-                        if (!file) return null;
+                      {project_banner.map(({ key, label }) => {
+                        const files = Array.isArray(formData[key]) ? formData[key] : formData[key] ? [formData[key]] : [];
 
-                        const normalizedFile = Array.isArray(file) ? file[0] : file;
-                        const preview = normalizedFile.preview || normalizedFile.document_url || "";
-                        const name = normalizedFile.name || normalizedFile.document_file_name || "Unnamed";
-                        const ratio = key.replace("banner_video_", "").replace("_by_", ":");
+                        return files.map((file, index) => {
+                          const preview = file.preview || file.document_url || '';
+                          const name = file.name || file.document_file_name || 'Unnamed';
 
-                        return (
-                          <tr key={key}>
-                            <td>{name}</td>
-                            <td>
-                              <img
-                                style={{ maxWidth: 100, maxHeight: 100 }}
-                                className="img-fluid rounded"
-                                src={preview}
-                                alt={name}
-                              />
-                            </td>
-                            <td>{ratio}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() => discardImage(key, normalizedFile)}
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        );
+                          return (
+                            <tr key={`${key}-${index}`}>
+                              <td>{name}</td>
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={preview}
+                                  alt={name}
+                                />
+                              </td>
+                              <td>{file.ratio || label}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() => handleFetchedDiscardGallery(key, index, file.id)}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        });
                       })}
                     </tbody>
+
                   </table>
                 </div>
               </div>

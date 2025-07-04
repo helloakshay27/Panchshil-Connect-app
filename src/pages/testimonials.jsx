@@ -35,14 +35,27 @@ const Testimonials = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [existingImageUrl, setExistingImageUrl] = useState(null);
   const [showUploader, setShowUploader] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     testimonial_video: null,
     attachfile: null,
-    video_preview_image_url_16_by_9: "",
+    preview_image_16_by_9: [],
+    preview_image_3_by_2: [],
+    preview_image_1_by_1: [],
+    preview_image_9_by_16: [],
+
   });
 
-  console.log("Form Data:", formData);
+
+  const TestimonialImageRatios = [
+    { key: "preview_image_1_by_1", label: "1:1" },
+    { key: "preview_image_16_by_9", label: "16:9" },
+    { key: "preview_image_9_by_16", label: "9:16" },
+    { key: "preview_image_3_by_2", label: "3:2" },
+  ];
+
+
 
   const handleBannerVideoChange = (e) => {
     const file = e.target.files[0];
@@ -153,7 +166,7 @@ const Testimonials = () => {
   };
 
   const bannerUploadConfig = {
-    "video preview image url": ["16:9","1:1","9:16","3:2"],
+    "video preview image url": ["16:9", "1:1", "9:16", "3:2"],
   };
 
   const currentUploadType = "video preview image url"; // Can be dynamic
@@ -165,32 +178,43 @@ const Testimonials = () => {
     ", "
   )} aspect ratios`;
 
-  const updateFormData = (key, files) => {
-    setFormData((prev) => ({
+const updateFormData = (key, files) => {
+  setFormData((prev) => {
+    const newData = {
       ...prev,
       [key]: [...(prev[key] || []), ...files],
-    }));
-  };
+    };
+    console.log(`Updated formData for key ${key}:`, newData[key]); // Debugging
+    return newData;
+  });
+};
 
-  const handleCropComplete = (validImages) => {
-    if (!validImages || validImages.length === 0) {
-      toast.error("No valid images selected.");
-      setShowUploader(false);
-      return;
-    }
-
-    validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(":", "_by_"); // e.g., "16:9" -> "16by9"
-      const key = `${currentUploadType}_${formattedRatio}`
-        .replace(/\s+/g, "_")
-        .toLowerCase(); // e.g., banner_image_16by9
-
-      updateFormData(key, [img]); // send as array to preserve consistency
-    });
-
-    setPreviewImg(validImages[0].preview); // preview first image only
+const handleCropComplete = (validImages) => {
+  if (!validImages || validImages.length === 0) {
+    toast.error("No valid images selected.");
     setShowUploader(false);
+    return;
+  }
+
+  const ratioKeyMap = {
+    "1:1": "preview_image_1_by_1",
+    "16:9": "preview_image_16_by_9",
+    "9:16": "preview_image_9_by_16",
+    "3:2": "preview_image_3_by_2",
   };
+
+  validImages.forEach((img) => {
+    const key = ratioKeyMap[img.ratio];
+    if (key) {
+      updateFormData(key, [img]); // Append new image to existing ones
+    }
+  });
+
+  // Only update preview if needed (e.g., for UI display of the latest image)
+  setPreviewImg(validImages[0].preview);
+  setShowUploader(false);
+};
+
 
   console.log("formData", formData);
 
@@ -263,8 +287,19 @@ const Testimonials = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
     setLoading(true);
     toast.dismiss();
+
+    const hasProjectBanner1by1 = formData.preview_image_16_by_9
+    && formData.preview_image_16_by_9.some(img => img.file instanceof File);
+
+    if (!hasProjectBanner1by1) {
+      toast.error("Preview Image with 16:9 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
 
     const validationErrors = validateForm();
     if (validationErrors.length > 0) {
@@ -292,16 +327,26 @@ const Testimonials = () => {
     //   form.append("testimonial[preview_image]", formData.attachfile);
     // }
 
-    Object.entries(formData).forEach(([key, images]) => {
-      if (key.startsWith("video_preview_image_url") && Array.isArray(images)) {
-        images.forEach((img) => {
-          const backendField =
-            key.replace("video_preview_image_url", "testimonial[video_preview_image_url") + "]";
-          // e.g., preview[preview_image_1by1]
-          if (img.file instanceof File) {
-            form.append(backendField, img.file);
-          }
-        });
+    // Object.entries(formData).forEach(([key, images]) => {
+    //   if (key.startsWith("video_preview_image_url") && Array.isArray(images)) {
+    //     images.forEach((img) => {
+    //       const backendField =
+    //         key.replace("video_preview_image_url", "testimonial[video_preview_image_url") + "]";
+    //       // e.g., preview[preview_image_1by1]
+    //       if (img.file instanceof File) {
+    //         form.append(backendField, img.file);
+    //       }
+    //     });
+    //   }
+    // });
+
+    TestimonialImageRatios.forEach(({ key }) => {
+      const images = formData[key];
+      if (Array.isArray(images) && images.length > 0) {
+        const img = images[0];
+        if (img?.file instanceof File) {
+          form.append(`testimonial[${key}]`, img.file);
+        }
       }
     });
 
@@ -314,12 +359,12 @@ const Testimonials = () => {
     try {
       console.log("data to be sent:", Array.from(form.entries()));
 
-      // const response = await axios.post(`${baseURL}testimonials.json`, form, {
-      //   headers: {
-      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
+      const response = await axios.post(`${baseURL}testimonials.json`, form, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Data saved successfully!");
       // reset all
@@ -336,7 +381,7 @@ const Testimonials = () => {
         attachfile: null,
         video_preview_image_url: "",
       });
-      // navigate("/testimonial-list");
+      navigate("/testimonial-list");
     } catch (error) {
       console.error("Error submitting testimonial:", error);
       toast.error("Failed to submit. Please check your input.");
@@ -613,8 +658,8 @@ const Testimonials = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-12 ">
-                    <div className=" tbl-container">
+                  <div className="col-md-12 mt-4">
+                    <div className="tbl-container">
                       <table className="w-100">
                         <thead>
                           <tr>
@@ -625,36 +670,36 @@ const Testimonials = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            ...(formData.video_preview_image_url_16_by_9 || []).map(
-                              (file) => ({
-                                ...file,
-                                type: "video_preview_image_url_16_by_9",
-                              })
-                            ),
-                          ].map((file, index) => (
-                            <tr key={index}>
-                              <td>{file.name}</td>
-                              <td>
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={file.preview}
-                                  alt={file.name}
-                                />
-                              </td>
-                              <td>{file.ratio}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() => discardImage(file.type, file)}
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
+                          {TestimonialImageRatios.flatMap(({ key, label }) => {
+                            const value = formData[key];
+                            if (!value || (Array.isArray(value) && value.length === 0)) return [];
+
+                            const files = Array.isArray(value) ? value : [value];
+
+                            return files.map((file, index) => (
+                              <tr key={`${key}-${index}`}>
+                                <td>{file.name || file.document_file_name || `Image ${index + 1}`}</td>
+                                <td>
+                                  <img
+                                    src={file.preview || file.document_url}
+                                    alt={file.name || `Image ${index + 1}`}
+                                    className="img-fluid rounded"
+                                    style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+                                  />
+                                </td>
+                                <td>{label}</td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() => handleFileDiscardCoverImage(key, index)}
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ));
+                          })}
                         </tbody>
                       </table>
                     </div>

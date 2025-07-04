@@ -125,6 +125,7 @@ const ProjectDetailsEdit = () => {
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
   const [showBannerModal, setShowBannerModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
 
@@ -137,10 +138,10 @@ const ProjectDetailsEdit = () => {
   });
 
   const projectUploadConfig = {
-    'image': ['9:16'],
-    'cover images': ['1:1'],
-    'gallery image': ['16:9'],
-    'project 2d image': ['16:9'],
+    'image': ['9:16', '16:9', '1:1', '3:2'],
+    'cover images': ['1:1', '9:16', '16:9', '3:2'],
+    'gallery image': ['16:9', '1:1', '9:16', '3:2'],
+    'project 2d image': ['16:9', '1:1', '3:2', '9:16'],
   };
   const coverImageType = 'cover images';
   const galleryImageType = 'gallery image';
@@ -168,10 +169,9 @@ const ProjectDetailsEdit = () => {
   const updateFormData = (key, files) => {
     setFormData((prev) => ({
       ...prev,
-      [key]: [...(prev[key] || []), ...Array.from(files)], // Ensure real File objects
+      [key]: [...(prev[key] || []), ...files],
     }));
   };
-
 
   const handleCroppedImages = (validImages, type = "cover") => {
     if (!validImages || validImages.length === 0) {
@@ -186,27 +186,26 @@ const ProjectDetailsEdit = () => {
 
       switch (type) {
         case "gallery":
-          prefix = galleryImageType; // "gallery image"
+          prefix = galleryImageType;
           break;
         case "floor":
-          prefix = floorImageType; // "floor plan"
+          prefix = floorImageType;
           break;
         case "banner":
-          prefix = bannerImageType; // explicitly use string for banner
+          prefix = bannerImageType;
           break;
         case "cover":
         default:
-          prefix = coverImageType; // "cover image"
+          prefix = coverImageType;
           break;
       }
 
       const key = `${prefix}_${formattedRatio}`.replace(/\s+/g, "_").toLowerCase();
-      updateFormData(key, [img]);
+      updateFormData(key, [img]); // Append the new image
     });
 
     closeModal(type);
   };
-
   const closeModal = (type) => {
     switch (type) {
       case "gallery":
@@ -228,28 +227,7 @@ const ProjectDetailsEdit = () => {
 
 
 
-  const discardImage = (key, imageToRemove) => {
-    setFormData((prev) => {
-      const updatedArray = (prev[key] || []).filter(
-        (img) => img.id !== imageToRemove.id
-      );
 
-      // Remove the key if the array becomes empty
-      const newFormData = { ...prev };
-      if (updatedArray.length === 0) {
-        delete newFormData[key];
-      } else {
-        newFormData[key] = updatedArray;
-      }
-
-      return newFormData;
-    });
-
-    // If the removed image is being previewed, reset previewImg
-    if (previewImg === imageToRemove.preview) {
-      setPreviewImg(null);
-    }
-  };
 
   // console.log(statusOptions);
 
@@ -933,12 +911,17 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleFetchedDiscardGallery = async (key, index, imageId) => {
+    // If no imageId, it's a new image, just remove locally
     if (!imageId) {
-      console.error("Error: No image ID found for deletion.");
-      toast.error("Failed to delete image. Image ID is missing.");
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
+      toast.success("Image removed successfully!");
       return;
     }
 
+    // Existing image: delete from server, then remove locally
     try {
       const response = await fetch(
         `${baseURL}projects/${id}/remove_gallery_image/${imageId}.json`,
@@ -952,40 +935,45 @@ const ProjectDetailsEdit = () => {
       );
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to delete image. Server response:`);
+        // Optionally, handle 404 as a successful local delete
+        if (response.status === 404) {
+          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          setFormData({ ...formData, [key]: updatedFiles });
+          toast.success("Image removed from UI (already deleted on server).");
+          return;
+        }
+        throw new Error("Failed to delete image");
       }
 
-      // Update state to remove the deleted image
+
+      // Remove from UI after successful delete
       setFormData((prev) => {
-        const updatedFetchedGallery = prev[key]
-          .map((fileGroup, i) => {
-            if (i !== index) return fileGroup;
-
-            const updatedAttachments = (fileGroup.attachfiles || []).filter(
-              (a) => a.id !== imageId
-            );
-
-            return {
-              ...fileGroup,
-              attachfiles: updatedAttachments,
-            };
-          })
-          .filter((group) => group.attachfiles && group.attachfiles.length > 0);
-
-        return {
-          ...prev,
-          [key]: updatedFetchedGallery,
-        };
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
       });
 
       toast.success("Image deleted successfully!");
-      // console.log(`Image with ID ${imageId} deleted successfully`);
     } catch (error) {
       console.error("Error deleting image:", error.message);
       toast.error("Failed to delete image. Please try again.");
     }
   };
+
+  const discardImage = (key, fileToRemove) => {
+    setFormData((prev) => {
+      const updatedFiles = prev[key].filter(
+        (file) => file !== fileToRemove
+      );
+
+      return {
+        ...prev,
+        [key]: updatedFiles,
+      };
+    });
+
+    toast.success("Image removed successfully!");
+  };
+
 
   const handleDiscardBroucher = async (key) => {
     const brochure = formData[key];
@@ -1149,7 +1137,14 @@ const ProjectDetailsEdit = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete videos");
+        // Optionally, handle 404 as a successful local delete
+        if (response.status === 404) {
+          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          setFormData({ ...formData, [key]: updatedFiles });
+          toast.success("Image removed from UI (already deleted on server).");
+          return;
+        }
+        throw new Error("Failed to delete image");
       }
 
       // Remove the deleted image from the state
@@ -1564,8 +1559,10 @@ const ProjectDetailsEdit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
     setLoading(true);
 
+    // Validate form data
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
       toast.error(validationErrors[0]);
@@ -1573,13 +1570,67 @@ const ProjectDetailsEdit = () => {
       return;
     }
 
+    // Check for required images
+    const hasGalleryImage16by9 = formData.gallery_image_16_by_9 && formData.gallery_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+    const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+    const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File || img.id || img.document_file_name);
+    const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
+      img => img?.file instanceof File || img?.id || img?.document_file_name
+    );
+    const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+
+    // Debug formData structure
+    console.log("formData.image_9_by_16:", formData.image_9_by_16);
+    console.log("formData.cover_images_16_by_9:", formData.cover_images_16_by_9);
+    console.log("hasProjectBanner9by16:", hasProjectBanner9by16);
+    console.log("hasProjectCover16by9:", hasProjectCover16by9);
+
+    // Check if all required images are present
+    const allImagesPresent = hasGalleryImage16by9 && hasFloorPlan16by9 && hasProjectBanner9by16 && hasProjectCover16by9;
+
+    console.log("allImagesPresent:", allImagesPresent);
+
+    // Perform individual validation checks only if not all images are present
+    if (!allImagesPresent) {
+      if (!hasGalleryImage16by9) {
+        toast.error("Gallery 16:9 images are required.");
+        setLoading(false);
+        setIsSubmitting(false);
+        return;
+      }
+      if (!hasFloorPlan16by9) {
+        toast.error("Floor plans with 16:9 ratio are required.");
+        setLoading(false);
+        setIsSubmitting(false);
+        return;
+      }
+      if (!hasProjectBanner9by16 && !hasProjectBanner1by1) {
+        toast.error("Project banner one of them or both(9:16) and (1:1) is required.");
+        setLoading(false);
+        setIsSubmitting(false);
+        return;
+      }
+      if (!hasProjectCover16by9) {
+        toast.error("Project cover (16:9) is required.");
+        setLoading(false);
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     const data = new FormData();
 
     data.append("project[Amenities]", nameSend);
-
     data.append("project[Configuration_Type]", nameSends);
 
+    if (formData.gallery_image && Array.isArray(formData.gallery_image) && formData.gallery_image.length < 3) {
+      toast.error("Please upload 3 or more gallery images.");
+      setLoading(false);
+      setIsSubmitting(false);
 
+
+      return;
+    }
 
     if (plans.length > 0) {
       plans.forEach((plan, idx) => {
@@ -1593,15 +1644,9 @@ const ProjectDetailsEdit = () => {
     }
 
     Object.entries(formData).forEach(([key, value]) => {
-
-      for (let [key, value] of data.entries()) {
-        console.log(`${key}:`, value);
-      }
-      // ...inside handleSubmit...
       if (key === "image" && Array.isArray(value) && value[0] instanceof File) {
         data.append("project[image]", value[0]);
-      }
-      if (key === "Address") {
+      } else if (key === "Address") {
         Object.entries(value).forEach(([addressKey, addressValue]) => {
           data.append(`project[Address][${addressKey}]`, addressValue);
         });
@@ -1610,115 +1655,70 @@ const ProjectDetailsEdit = () => {
         if (file) {
           data.append("project[ProjectBrochure][]", file);
         }
-      } else if (
-        key === "project_emailer_templetes" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_emailer_templetes" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectEmailerTempletes][]", file);
           }
         });
-      } else if (
-        key === "project_ppt" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_ppt" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectPPT][]", file);
           }
         });
-      } else if (
-        key === "two_d_images" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "two_d_images" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[Project2DImage][]", file);
           }
         });
-      } else if (
-        key === "project_creatives" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_creatives" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreatives][]", file);
           }
         });
-      }
-      //       else if (plans.length > 0) {
-      //   plans.forEach((plan) => {
-      //     data.append(`project[plans][name]`, plan.name);
-      //     plan.images.forEach((img) => {
-      //       data.append(`project[plans][images][]`, img);
-      //     });
-      //   });
-      // }
-      else if (key === "cover_images" && Array.isArray(value) && value.length) {
+      } else if (key === "cover_images" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[cover_images][]", file);
           }
         });
-      } else if (
-        key === "project_creative_generics" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_creative_generics" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreativeGenerics][]", file);
           }
         });
-      } else if (
-        key === "project_creative_offers" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_creative_offers" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreativeOffers][]", file);
           }
         });
-      } else if (
-        key === "project_interiors" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_interiors" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectInteriors][]", file);
           }
         });
-      } else if (
-        key === "project_exteriors" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_exteriors" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectExteriors][]", file);
           }
         });
-      } else if (
-        key === "project_layout" &&
-        Array.isArray(value) &&
-        value.length
-      ) {
+      } else if (key === "project_layout" && Array.isArray(value) && value.length) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -1735,54 +1735,30 @@ const ProjectDetailsEdit = () => {
       } else if (key === "gallery_image_" && Array.isArray(value)) {
         value.forEach((fileObj, index) => {
           if (fileObj.gallery_image_ instanceof File) {
-            // ✅ Check for actual File
-            data.append("project[gallery_image_][]", fileObj.gallery_image_); // ✅ Send actual File
-            data.append(
-              `project[gallery_image_file_name]`,
-              fileObj.gallery_image_file_name
-            );
-            data.append(
-              `project[gallery_type]`,
-              fileObj.gallery_image_file_type
-            );
-            data.append(
-              `project[gallery_image_is_day][${index}]`,
-              fileObj.isDay
-            );
+            data.append("project[gallery_image_][]", fileObj.gallery_image_);
+            data.append(`project[gallery_image_file_name]`, fileObj.gallery_image_file_name);
+            data.append(`project[gallery_type]`, fileObj.gallery_image_file_type);
+            data.append(`project[gallery_image_is_day][${index}]`, fileObj.isDay);
           }
         });
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
-        const newTitles = []; // Array to store titles of new images
-
+        const newTitles = [];
         value.forEach((fileObj) => {
           if (fileObj.project_qrcode_image instanceof File) {
-            // Append the image file
-            data.append(
-              "project[project_qrcode_image][]",
-              fileObj.project_qrcode_image
-            );
+            data.append("project[project_qrcode_image][]", fileObj.project_qrcode_image);
           }
           if (fileObj.isNew) {
-            // Collect titles of new images
             newTitles.push(fileObj.title || "");
           }
         });
-
-        // Append only the titles of new images
         newTitles.forEach((title) => {
           data.append("project[project_qrcode_image_titles][]", title);
         });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
-            data.append(
-              `project[virtual_tour_url_multiple][${index}][virtual_tour_url]`,
-              item.virtual_tour_url
-            );
-            data.append(
-              `project[virtual_tour_url_multiple][${index}][virtual_tour_name]`,
-              item.virtual_tour_name
-            );
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_url]`, item.virtual_tour_url);
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name);
             console.log("Virtual Tour URL:", item.virtual_tour_url);
             console.log("Virtual Tour Name:", item.virtual_tour_name);
           }
@@ -1790,23 +1766,12 @@ const ProjectDetailsEdit = () => {
       } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.tower_name && item.rera_number) {
-            data.append(
-              `project[Rera_Number_multiple][${index}][tower_name]`,
-              item.tower_name
-            );
-            data.append(
-              `project[Rera_Number_multiple][${index}][rera_number]`,
-              item.rera_number
-            );
-            data.append(
-              `project[Rera_Number_multiple][${index}][rera_url]`,
-              item.rera_url
-            );
+            data.append(`project[Rera_Number_multiple][${index}][tower_name]`, item.tower_name);
+            data.append(`project[Rera_Number_multiple][${index}][rera_number]`, item.rera_number);
+            data.append(`project[Rera_Number_multiple][${index}][rera_url]`, item.rera_url);
           }
         });
-        // } 
-      }
-      else if (key.startsWith("image") && Array.isArray(value)) {
+      } else if (key.startsWith("image") && Array.isArray(value)) {
         value.forEach((img) => {
           const backendField = key.replace("image", "project[image") + "]";
           if (img.file instanceof File) {
@@ -1834,16 +1799,13 @@ const ProjectDetailsEdit = () => {
             data.append(backendField, img.file);
           }
         });
-      }
-      else if (key !== "image" && key !== "previewImage") {
-        // Skip previewImage and image (already handled)
+      } else if (key !== "image" && key !== "previewImage") {
         data.append(`project[${key}]`, value);
       }
     });
 
-    // for (let [key, value] of data.entries()) {
-    //   console.log(`${key}:`, value);
-    // }
+    // Debug FormData entries
+    console.log("FormData entries:", Array.from(data.entries()));
 
     try {
       const response = await axios.put(`${baseURL}projects/${id}.json`, data, {
@@ -1852,7 +1814,6 @@ const ProjectDetailsEdit = () => {
         },
       });
 
-      // console.log(response.data);
       toast.success("Project updated successfully");
       navigate("/project-list");
     } catch (error) {
@@ -1938,22 +1899,6 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-
-
-  // const statusOptions = {
-  //   "Office Parks": [
-  //     { value: "Completed", label: "Completed" },
-  //     // { value: "Under-Construction", label: "Under Construction" },
-  //     { value: "Ready-To-Move-in", label: "Ready To Move in" },
-  //     { value: "Upcoming", label: "Upcoming" },
-  //   ],
-  //   Residential: [
-  //     { value: "Completed", label: "Completed" },
-  //     { value: "Ready-To-Move-in", label: "Ready To Move in" },
-  //     { value: "Upcoming", label: "Upcoming" },
-  //   ],
-  // };
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -1972,39 +1917,6 @@ const ProjectDetailsEdit = () => {
   const handleReraUrlChange = (e) => {
     setReraUrl(e.target.value);
   };
-
-  // Handle Adding a RERA Entry
-  // const handleAddRera = () => {
-  //   if (!towerName.trim() || !reraNumber.trim()) {
-  //     toast.error("Both Tower and RERA Number are required.");
-  //     return;
-  //   }
-
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     Rera_Number_multiple: [
-  //       ...prev.Rera_Number_multiple,
-  //       {
-  //         tower_name: towerName,
-  //         rera_number: reraNumber,
-  //       },
-  //     ],
-  //   }));
-
-  //   // Clear input fields after adding
-  //   setTowerName("");
-  //   setReraNumber("");
-  // };
-
-  // // Handle Deleting a RERA Entry
-  // const handleDeleteRera = (index) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     Rera_Number_multiple: prev.Rera_Number_multiple.filter(
-  //       (_, i) => i !== index
-  //     ),
-  //   }));
-  // };
 
   // Handles adding a new RERA entry
   const handleAddRera = () => {
@@ -2111,27 +2023,7 @@ const ProjectDetailsEdit = () => {
   const configurationTypes = [
     ...new Set(configurations.map((config) => config.configuration_type)),
   ].map((type) => ({ value: type, label: type }));
-  // const handleImageUpload = (event) => {
-  //   const files = Array.from(event.target.files);
 
-  //   if (!selectedCategory) {
-  //     alert("Please select an image category first.");
-  //     return;
-  //   }
-
-  //   const updatedImages = files.map((file) => ({
-  //     gallery_image: file, // ✅ Store actual File
-  //     gallery_image_file_name: file.name,
-  //     gallery_image_file_type: selectedCategory,
-  //   }));
-
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gallery_image: [...(prev.gallery_image || []), ...updatedImages], // ✅ Ensure existing images are not overwritten
-  //   }));
-
-  //   event.target.value = ""; // Reset file input
-  // };
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
@@ -2245,28 +2137,6 @@ const ProjectDetailsEdit = () => {
     }
   };
 
-  // const handleGalleryImageUpload = (event) => {
-  //   const files = Array.from(event.target.files);
-  //   if (!files.length) return;
-
-  //   const newFiles = files.map((file) => ({
-  //     id: null, // No ID for new uploads
-  //     document_file_name: file.name,
-  //     document_content_type: file.type,
-  //     document_url: URL.createObjectURL(file),
-  //     file,
-  //   }));
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gallery_image: [...prev.gallery_image, ...files],
-  //   }));
-  // };
-  // const handleDiscardGallery = (index) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gallery_image: prev.gallery_image.filter((_, i) => i !== index),
-  //   }));
-  // };
   const handleDiscardPpt = (key, index) => {
     setFormData((prev) => {
       if (!prev[key] || !Array.isArray(prev[key])) return prev;
@@ -2567,20 +2437,7 @@ const ProjectDetailsEdit = () => {
     }
 
     if (name === "plans") {
-      // const newFiles = Array.from(files);
-      // const validFiles = [];
-      // newFiles.forEach((file) => {
-      //   if (!allowedTypes.plans.includes(file.type)) {
-      //     toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-      //     return;
-      //   }
-      //   if (file.size > MAX_SIZES.plans) {
-      //     toast.error("Image size must be less than 3MB.");
-      //     return;
-      //   }
-      //   validFiles.push(file);
-      // });
-      // if (validFiles.length > 0) {
+
       setFormData((prev) => ({
         ...prev,
         plans: [...(prev.plans || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
@@ -4471,16 +4328,15 @@ const ProjectDetailsEdit = () => {
                     <tbody>
                       {project_banner.map(({ key, label }) => {
                         const files = formData[key] || [];
-
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
-                            <td>{file.document_file_name}</td>
+                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.document_url}
-                                alt={file.document_file_name}
+                                src={file.document_url || file.preview}
+                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
                               />
                             </td>
                             <td>{file.ratio || label}</td>
@@ -4488,7 +4344,7 @@ const ProjectDetailsEdit = () => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage(key, file)}
+                                onClick={() => handleFileDiscardCoverImage(key, index)}
                               >
                                 x
                               </button>
@@ -4497,6 +4353,7 @@ const ProjectDetailsEdit = () => {
                         ));
                       })}
                     </tbody>
+
                   </table>
                 </div>
               </div>
@@ -4639,13 +4496,13 @@ const ProjectDetailsEdit = () => {
 
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
-                            <td>{file.document_file_name}</td>
+                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.document_url}
-                                alt={file.document_file_name}
+                                src={file.document_url || file.preview}
+                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
                               />
                             </td>
                             <td>{file.ratio || label}</td>
@@ -4653,7 +4510,7 @@ const ProjectDetailsEdit = () => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage(key, file)}
+                                onClick={() => handleFileDiscardCoverImage(key, index)}
                               >
                                 x
                               </button>
@@ -4662,6 +4519,7 @@ const ProjectDetailsEdit = () => {
                         ));
                       })}
                     </tbody>
+
                   </table>
                 </div>
 
@@ -4846,13 +4704,13 @@ const ProjectDetailsEdit = () => {
 
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
-                            <td>{file.document_file_name}</td>
+                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.document_url}
-                                alt={file.document_file_name}
+                                src={file.document_url || file.preview}
+                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
                               />
                             </td>
                             <td>{file.ratio || label}</td>
@@ -4860,15 +4718,19 @@ const ProjectDetailsEdit = () => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage(key, file)}
+                                onClick={() => {
+                                  handleFetchedDiscardGallery(key, index, file.id);
+                                }}
                               >
                                 x
                               </button>
+
                             </td>
                           </tr>
                         ));
                       })}
                     </tbody>
+
                   </table>
                 </div>
               </div>
@@ -5246,13 +5108,13 @@ const ProjectDetailsEdit = () => {
 
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
-                            <td>{file.document_file_name}</td>
+                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.document_url}
-                                alt={file.document_file_name}
+                                src={file.document_url || file.preview}
+                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
                               />
                             </td>
                             <td>{file.ratio || label}</td>
@@ -5260,7 +5122,7 @@ const ProjectDetailsEdit = () => {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => discardImage(key, file)}
+                                onClick={() => handleFileDiscardCoverImage(key, index)}
                               >
                                 x
                               </button>
@@ -5269,6 +5131,7 @@ const ProjectDetailsEdit = () => {
                         ));
                       })}
                     </tbody>
+
                   </table>
                 </div>
               </div>

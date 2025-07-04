@@ -134,14 +134,11 @@ const ProjectDetailsCreate = () => {
   });
 
   const projectUploadConfig = {
-    'image': ['9:16', '1:1', '16:9',],
-    'cover images': ['1:1', '16:9', '9:16'],
-    'gallery image': ['16:9', '1:1', '9:16'],
-    'project 2d image': ['16:9', '1:1', '9:16'],
+    'image': ['9:16', '1:1', '16:9', '3:2'],
+    'cover images': ['1:1', '16:9', '9:16', '3:2'],
+    'gallery image': ['16:9', '1:1', '9:16', '3:2'],
+    'project 2d image': ['16:9', '1:1', '9:16', '3:2'],
   };
-
-
-
 
 
   const coverImageType = 'cover images';
@@ -1207,6 +1204,257 @@ const ProjectDetailsCreate = () => {
     return true;
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (isSubmitting) return;
+
+  //   setIsSubmitting(true);
+  //   setLoading(true);
+
+  //   const validationErrors = validateForm(formData);
+  //   // ✅ Fix: Ensure form validation correctly stops submission
+  //   if (!validateForm(formData)) {
+  //     setLoading(false);
+  //     setIsSubmitting(false);
+  //     return;
+  //   }
+
+  //   const data = new FormData();
+
+  //   Object.entries(formData).forEach(([key, value]) => {
+  //     // if (key === "order_no") {
+  //     //   data.append("project[order_no]", parseInt(value) || null); // Append order_no as null if not provided
+  //     // }
+  //     if (key === "plans" && Array.isArray(value)) {
+  //       value.forEach((plan, index) => {
+  //         data.append(`project[plans][${index}][name]`, plan.name);
+  //         if (Array.isArray(plan.images)) {
+  //           plan.images.forEach((img) => {
+  //             data.append(`project[plans][${index}][images][]`, img);
+  //           });
+  //         }
+  //       });
+  //     } else if (key === "Address") {
+  //       for (const addressKey in value) {
+  //         data.append(`project[Address][${addressKey}]`, value[addressKey]);
+  //       }
+  //     } else if (key === "brochure" && Array.isArray(value)) {
+  //       value.forEach((file) => {
+  //         if (file instanceof File) {
+  //           data.append("project[ProjectBrochure][]", file);
+  //         }
+  //       });
+  //     } else if (key === "project_emailer_templetes" && Array.isArray(value)) {
+  //       value.forEach((file) => {
+  //         if (file instanceof File) {
+  //           data.append("project[ProjectEmailerTempletes][]", file);
+  //         }
+  //       });
+  //     } else if (key === "two_d_images" && Array.isArray(value)) {
+  //       value.forEach((file) => data.append("project[Project2DImage][]", file));
+  //     } else if (key === "project_creatives" && Array.isArray(value)) {
+  //       value.forEach((file) =>
+  //         data.append("project[ProjectCreatives][]", file)
+  //       );
+  //     } else if (key === "cover_images" && Array.isArray(value)) {
+  //       value.forEach((file) => data.append("project[cover_images][]", file));
+  //     }
+  //     // else if (key === "project_sales_type") {
+  //     //   value.forEach((file) =>
+  //     //     data.append("project[project_sales_type][]", value.vae)
+  //     //   );
+  //     // }
+  //     else if (key === "project_creative_generics" && Array.isArray(value)) {
+  //       value.forEach((file) =>
+  //         data.append("project[ProjectCreativeGenerics][]", file)
+  //       );
+  //     } else if (key === "project_creative_offers" && Array.isArray(value)) {
+  //       value.forEach((file) =>
+  //         data.append("project[ProjectCreativeOffers][]", file)
+  //       );
+  //     } else if (key === "project_interiors" && Array.isArray(value)) {
+  //       value.forEach((file) =>
+  //         data.append("project[ProjectInteriors][]", file)
+  //       );
+  //     } else if (key === "project_exteriors" && Array.isArray(value)) {
+  //       value.forEach((file) =>
+  //         data.append("project[ProjectExteriors][]", file)
+  //       );
+  //     } else if (key === "project_layout" && Array.isArray(value)) {
+  //       value.forEach((file) => data.append("project[ProjectLayout][]", file));
+  //     } else if (key === "videos" && Array.isArray(value)) {
+  //       value.forEach((file) => data.append("project[ProjectVideo][]", file));
+  //     } else if (key === "gallery_image" && Array.isArray(value)) {
+  //       value.forEach((fileObj, index) => {
+  //         if (fileObj.gallery_image instanceof File) {
+  //           // ✅ Check for actual File
+  //           data.append("project[gallery_image][]", fileObj.gallery_image);
+  //           data.append(
+  //             `project[gallery_image_file_name][${index}]`,
+  //             fileObj.gallery_image_file_name
+  //           );
+  //           data.append(
+  //             `project[gallery_type]`,
+  //             fileObj.gallery_image_file_type
+  //           );
+  //           data.append(
+  //             `project[gallery_image_is_day][${index}]`,
+  //             fileObj.isDay
+  //           );
+  //         }
+  //       });
+  //     } else if (key === "image" && mainImageUpload[0]?.file instanceof File) {
+  //       data.append("project[image]", mainImageUpload[0]?.file);
+  //     } else if (key === "video_preview_image_url" && value instanceof File) {
+  //       data.append("project[video_preview_image_url]", value);
+  //     } else if (key === "project_qrcode_image" && Array.isArray(value)) {
+  //       const newTitles = []; // Array to store titles of new images
+
+  //       value.forEach((fileObj) => {
+  //         if (fileObj.project_qrcode_image instanceof File) {
+  //           // Append the image file
+  //           data.append(
+  //             "project[project_qrcode_image][]",
+  //             fileObj.project_qrcode_image
+  //           );
+  //         }
+  //         if (fileObj.isNew) {
+  //           // Collect titles of new images
+  //           newTitles.push(fileObj.title || "");
+  //         }
+  //       });
+
+  //       // Append only the titles of new images
+  //       newTitles.forEach((title) => {
+  //         data.append("project[project_qrcode_image_titles][]", title);
+  //       });
+  //     } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
+  //       value.forEach((item, index) => {
+  //         if (item.virtual_tour_url && item.virtual_tour_name) {
+  //           data.append(
+  //             `project[virtual_tour_url_multiple][${index}][virtual_tour_url]`,
+  //             item.virtual_tour_url
+  //           );
+  //           data.append(
+  //             `project[virtual_tour_url_multiple][${index}][virtual_tour_name]`,
+  //             item.virtual_tour_name
+  //           );
+  //         }
+  //       });
+  //     } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
+  //       value.forEach((item, index) => {
+  //         if (item.tower_name && item.rera_number) {
+  //           data.append(
+  //             `project[Rera_Number_multiple][${index}][tower_name]`,
+  //             item.tower_name
+  //           );
+  //           data.append(
+  //             `project[Rera_Number_multiple][${index}][rera_number]`,
+  //             item.rera_number
+  //           );
+  //           data.append(
+  //             `project[Rera_Number_multiple][${index}][rera_url]`,
+  //             item.rera_url
+  //           );
+  //         }
+  //       });
+  //     } else if (key === "project_ppt" && Array.isArray(value)) {
+  //       value.forEach((file) => {
+  //         if (file instanceof File) {
+  //           data.append("project[ProjectPPT]", file);
+  //         }
+  //       });
+  //     } else if (key === "project_creatives" && Array.isArray(value)) {
+  //       value.forEach(({ file, type }) => {
+  //         if (file instanceof File) {
+  //           data.append("project[project_creatives][]", file); // Upload file
+  //           data.append(`project[project_creatives_types][]`, type); // Store selected type
+  //         }
+  //       });
+  //     } else if (key === "cover_images" && Array.isArray(value)) {
+  //       value.forEach(({ file, type }) => {
+  //         if (file instanceof File) {
+  //           data.append("project[cover_images][]", file); // Upload file
+  //           data.append(`project[cover_images_types][]`, type); // Store selected type
+  //         }
+  //       });
+  //     } else if (key === "project_sales_type" && Array.isArray(value)) {
+  //       // value.forEach(({ file, type }) => {
+  //       // if (file instanceof File) {
+  //       data.append("project[project_sales_type][]", value); // Upload file
+  //       // data.append(`project[project_sales_type][]`, type); // Store selected type
+  //       // }
+  //     }
+  //     else if (key.startsWith("image") && Array.isArray(value)) {
+  //       value.forEach((img) => {
+  //         const backendField = key.replace("image", "project[image") + "]";
+  //         if (img.file instanceof File) {
+  //           data.append(backendField, img.file);
+  //         }
+  //       });
+  //     } else if (key.startsWith("cover_images_") && Array.isArray(value)) {
+  //       value.forEach((img) => {
+  //         const backendField = key.replace("cover_images_", "project[cover_images_") + "]";
+  //         if (img.file instanceof File) {
+  //           data.append(backendField, img.file);
+  //         }
+  //       });
+  //     } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
+  //       value.forEach((img) => {
+  //         const backendField = key.replace("gallery_image_", "project[gallery_image_") + "]";
+  //         if (img.file instanceof File) {
+  //           data.append(backendField, img.file);
+  //         }
+  //       });
+  //     } else if (key.startsWith("project_2d_image") && Array.isArray(value)) {
+  //       value.forEach((img) => {
+  //         const backendField = key.replace("project_2d_image", "project[project_2d_image") + "]";
+  //         if (img.file instanceof File) {
+  //           data.append(backendField, img.file);
+  //         }
+  //       });
+  //     } else {
+  //       data.append(`project[${key}]`, value);
+  //     }
+  //   });
+
+  //   console.log("data to be sent:", Array.from(data.entries()));
+
+  //   try {
+  //     // const response = await axios.post(`${baseURL}projects.json`, data, {
+  //     //   headers: {
+  //     //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //     //   },
+  //     // });
+  //     console.log("data to be sent:", Array.from(data.entries()));
+  //     // console.log("New Data",response.data);
+  //     toast.success("Project submitted successfully");
+  //     sessionStorage.removeItem("cached_projects");
+
+  //     // Navigate("/project-list");
+  //   } catch (error) {
+  //     // catch (error) {
+  //     //   console.error("Error submitting the form:", error);
+  //     //   toast.error("Failed to submit the form. Please try again.");
+  //     // }
+  //     console.error("Error submitting the form:", error);
+  //     if (
+  //       error.response &&
+  //       error.response.status === 422 &&
+  //       error.response.data &&
+  //       (error.response.data.project_name || error.response.data.Project_Name)
+  //     ) {
+  //       toast.error("Project name already exists.");
+  //     } else {
+  //       toast.error("Failed to submit the form. Please try again.");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -1215,23 +1463,62 @@ const ProjectDetailsCreate = () => {
     setIsSubmitting(true);
     setLoading(true);
 
+    // Validate form data
     const validationErrors = validateForm(formData);
-    // ✅ Fix: Ensure form validation correctly stops submission
     if (!validateForm(formData)) {
       setLoading(false);
       setIsSubmitting(false);
       return;
     }
 
+    // Validate gallery images (16:9 and 9:16)
+    const hasGalleryImage16by9 = formData.gallery_image_16_by_9 && formData.gallery_image_16_by_9.some(img => img.file instanceof File);
+
+    // Validate floor plans (9:16, 1:1, 16:9)
+    // const hasFloorPlan9by16 = formData.project_2d_image_9_by_16 && formData.project_2d_image_9_by_16.some(img => img.file instanceof File);
+    // const hasFloorPlan1by1 = formData.project_2d_image_1_by_1 && formData.project_2d_image_1_by_1.some(img => img.file instanceof File);
+    const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File);
+
+    // Validate project banner images
+    const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File);
+    const hasProjectBanner1by1 = formData.image_1_by_1 && formData.image_1_by_1.some(img => img.file instanceof File);
+
+    // Validate project cover images
+    const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File);
+
+    // Check if all required images are present
+    if (!hasGalleryImage16by9) {
+      toast.error("Both 16:9 gallery images are required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!hasFloorPlan16by9) {
+      toast.error("Floor plans with 16:9 ratios are required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!hasProjectBanner9by16 && !hasProjectBanner1by1) {
+      toast.error("Project banner image with 9:16 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+    if (!hasProjectCover16by9) {
+      toast.error("Project cover image with 16:9 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
+
+
     const data = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
-      // if (key === "order_no") {
-      //   data.append("project[order_no]", parseInt(value) || null); // Append order_no as null if not provided
-      // }
-
-
-
       if (key === "plans" && Array.isArray(value)) {
         value.forEach((plan, index) => {
           data.append(`project[plans][${index}][name]`, plan.name);
@@ -1260,33 +1547,17 @@ const ProjectDetailsCreate = () => {
       } else if (key === "two_d_images" && Array.isArray(value)) {
         value.forEach((file) => data.append("project[Project2DImage][]", file));
       } else if (key === "project_creatives" && Array.isArray(value)) {
-        value.forEach((file) =>
-          data.append("project[ProjectCreatives][]", file)
-        );
+        value.forEach((file) => data.append("project[ProjectCreatives][]", file));
       } else if (key === "cover_images" && Array.isArray(value)) {
         value.forEach((file) => data.append("project[cover_images][]", file));
-      }
-      // else if (key === "project_sales_type") {
-      //   value.forEach((file) =>
-      //     data.append("project[project_sales_type][]", value.vae)
-      //   );
-      // }
-      else if (key === "project_creative_generics" && Array.isArray(value)) {
-        value.forEach((file) =>
-          data.append("project[ProjectCreativeGenerics][]", file)
-        );
+      } else if (key === "project_creative_generics" && Array.isArray(value)) {
+        value.forEach((file) => data.append("project[ProjectCreativeGenerics][]", file));
       } else if (key === "project_creative_offers" && Array.isArray(value)) {
-        value.forEach((file) =>
-          data.append("project[ProjectCreativeOffers][]", file)
-        );
+        value.forEach((file) => data.append("project[ProjectCreativeOffers][]", file));
       } else if (key === "project_interiors" && Array.isArray(value)) {
-        value.forEach((file) =>
-          data.append("project[ProjectInteriors][]", file)
-        );
+        value.forEach((file) => data.append("project[ProjectInteriors][]", file));
       } else if (key === "project_exteriors" && Array.isArray(value)) {
-        value.forEach((file) =>
-          data.append("project[ProjectExteriors][]", file)
-        );
+        value.forEach((file) => data.append("project[ProjectExteriors][]", file));
       } else if (key === "project_layout" && Array.isArray(value)) {
         value.forEach((file) => data.append("project[ProjectLayout][]", file));
       } else if (key === "videos" && Array.isArray(value)) {
@@ -1294,20 +1565,10 @@ const ProjectDetailsCreate = () => {
       } else if (key === "gallery_image" && Array.isArray(value)) {
         value.forEach((fileObj, index) => {
           if (fileObj.gallery_image instanceof File) {
-            // ✅ Check for actual File
             data.append("project[gallery_image][]", fileObj.gallery_image);
-            data.append(
-              `project[gallery_image_file_name][${index}]`,
-              fileObj.gallery_image_file_name
-            );
-            data.append(
-              `project[gallery_type]`,
-              fileObj.gallery_image_file_type
-            );
-            data.append(
-              `project[gallery_image_is_day][${index}]`,
-              fileObj.isDay
-            );
+            data.append(`project[gallery_image_file_name][${index}]`, fileObj.gallery_image_file_name);
+            data.append(`project[gallery_type]`, fileObj.gallery_image_file_type);
+            data.append(`project[gallery_image_is_day][${index}]`, fileObj.isDay);
           }
         });
       } else if (key === "image" && mainImageUpload[0]?.file instanceof File) {
@@ -1315,54 +1576,31 @@ const ProjectDetailsCreate = () => {
       } else if (key === "video_preview_image_url" && value instanceof File) {
         data.append("project[video_preview_image_url]", value);
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
-        const newTitles = []; // Array to store titles of new images
-
+        const newTitles = [];
         value.forEach((fileObj) => {
           if (fileObj.project_qrcode_image instanceof File) {
-            // Append the image file
-            data.append(
-              "project[project_qrcode_image][]",
-              fileObj.project_qrcode_image
-            );
+            data.append("project[project_qrcode_image][]", fileObj.project_qrcode_image);
           }
           if (fileObj.isNew) {
-            // Collect titles of new images
             newTitles.push(fileObj.title || "");
           }
         });
-
-        // Append only the titles of new images
         newTitles.forEach((title) => {
           data.append("project[project_qrcode_image_titles][]", title);
         });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
-            data.append(
-              `project[virtual_tour_url_multiple][${index}][virtual_tour_url]`,
-              item.virtual_tour_url
-            );
-            data.append(
-              `project[virtual_tour_url_multiple][${index}][virtual_tour_name]`,
-              item.virtual_tour_name
-            );
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_url]`, item.virtual_tour_url);
+            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name);
           }
         });
       } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.tower_name && item.rera_number) {
-            data.append(
-              `project[Rera_Number_multiple][${index}][tower_name]`,
-              item.tower_name
-            );
-            data.append(
-              `project[Rera_Number_multiple][${index}][rera_number]`,
-              item.rera_number
-            );
-            data.append(
-              `project[Rera_Number_multiple][${index}][rera_url]`,
-              item.rera_url
-            );
+            data.append(`project[Rera_Number_multiple][${index}][tower_name]`, item.tower_name);
+            data.append(`project[Rera_Number_multiple][${index}][rera_number]`, item.rera_number);
+            data.append(`project[Rera_Number_multiple][${index}][rera_url]`, item.rera_url);
           }
         });
       } else if (key === "project_ppt" && Array.isArray(value)) {
@@ -1374,25 +1612,20 @@ const ProjectDetailsCreate = () => {
       } else if (key === "project_creatives" && Array.isArray(value)) {
         value.forEach(({ file, type }) => {
           if (file instanceof File) {
-            data.append("project[project_creatives][]", file); // Upload file
-            data.append(`project[project_creatives_types][]`, type); // Store selected type
+            data.append("project[project_creatives][]", file);
+            data.append(`project[project_creatives_types][]`, type);
           }
         });
       } else if (key === "cover_images" && Array.isArray(value)) {
         value.forEach(({ file, type }) => {
           if (file instanceof File) {
-            data.append("project[cover_images][]", file); // Upload file
-            data.append(`project[cover_images_types][]`, type); // Store selected type
+            data.append("project[cover_images][]", file);
+            data.append(`project[cover_images_types][]`, type);
           }
         });
       } else if (key === "project_sales_type" && Array.isArray(value)) {
-        // value.forEach(({ file, type }) => {
-        // if (file instanceof File) {
-        data.append("project[project_sales_type][]", value); // Upload file
-        // data.append(`project[project_sales_type][]`, type); // Store selected type
-        // }
-      }
-      else if (key.startsWith("image") && Array.isArray(value)) {
+        data.append("project[project_sales_type][]", value);
+      } else if (key.startsWith("image") && Array.isArray(value)) {
         value.forEach((img) => {
           const backendField = key.replace("image", "project[image") + "]";
           if (img.file instanceof File) {
@@ -1409,6 +1642,13 @@ const ProjectDetailsCreate = () => {
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
         value.forEach((img) => {
           const backendField = key.replace("gallery_image_", "project[gallery_image_") + "]";
+          if (img.file instanceof File) {
+            data.append(backendField, img.file);
+          }
+        });
+      } else if (key.startsWith("floor_plans_") && Array.isArray(value)) {
+        value.forEach((img) => {
+          const backendField = key.replace("floor_plans_", "project[floor_plans_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
@@ -1434,16 +1674,11 @@ const ProjectDetailsCreate = () => {
         },
       });
 
-      console.log(response.data);
+      console.log("data to be sent:", Array.from(data.entries()));
       toast.success("Project submitted successfully");
       sessionStorage.removeItem("cached_projects");
-
       Navigate("/project-list");
     } catch (error) {
-      // catch (error) {
-      //   console.error("Error submitting the form:", error);
-      //   toast.error("Failed to submit the form. Please try again.");
-      // }
       console.error("Error submitting the form:", error);
       if (
         error.response &&
@@ -1460,7 +1695,6 @@ const ProjectDetailsCreate = () => {
       setIsSubmitting(false);
     }
   };
-
   useEffect(() => {
     const fetchProjects = async () => {
       // const token = "RnPRz2AhXvnFIrbcRZKpJqA8aqMAP_JEraLesGnu43Q"; // Replace with your actual token
@@ -2137,12 +2371,6 @@ const ProjectDetailsCreate = () => {
     { key: "cover_images_9_by_16", label: "9:16" },
     { key: "cover_images_3_by_2", label: "3:2" },
   ];
-
-
-
-
-
-
   return (
     <>
       {/* <Header /> */}
