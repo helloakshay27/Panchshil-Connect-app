@@ -610,61 +610,110 @@ const EventEdit = () => {
   };
 
   // Function to remove image from preview
-  const handleRemoveImage = async (index) => {
-    toast.dismiss();
-    setFormData((prev) => {
-      const imageToRemove = prev.previewImage[index];
+  // const handleRemoveImage = async (index) => {
+  //   toast.dismiss();
+  //   setFormData((prev) => {
+  //     const imageToRemove = prev.previewImage[index];
 
-      if (imageToRemove.isExisting) {
-        // Call backend API to remove the image
-        axios
-          .delete(`${baseURL}events/${id}/remove_image/${imageToRemove.id}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          })
-          .then(() => {
-            toast.success("Image removed successfully!");
-          })
-          .catch(() => {
-            toast.error("Failed to remove image from server.");
-          });
+  //     if (imageToRemove.isExisting) {
+  //       // Call backend API to remove the image
+  //       axios
+  //         .delete(`${baseURL}events/${id}/remove_image/${imageToRemove.id}`, {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //           },
+  //         })
+  //         .then(() => {
+  //           toast.success("Image removed successfully!");
+  //         })
+  //         .catch(() => {
+  //           toast.error("Failed to remove image from server.");
+  //         });
 
-        // Optimistically update UI
-        const updatedExistingImages = prev.existingImages.filter(
-          (img) => img.id !== imageToRemove.id
-        );
-        return {
-          ...prev,
-          existingImages: updatedExistingImages,
-          previewImage: prev.previewImage.filter((_, i) => i !== index),
-        };
-      } else {
-        // If it's a new image, remove from newImages and attachfile
-        const newImageIndex = prev.newImages.findIndex(
-          (img) => img.url === imageToRemove.url
-        );
+  //       // Optimistically update UI
+  //       const updatedExistingImages = prev.existingImages.filter(
+  //         (img) => img.id !== imageToRemove.id
+  //       );
+  //       return {
+  //         ...prev,
+  //         existingImages: updatedExistingImages,
+  //         previewImage: prev.previewImage.filter((_, i) => i !== index),
+  //       };
+  //     } else {
+  //       // If it's a new image, remove from newImages and attachfile
+  //       const newImageIndex = prev.newImages.findIndex(
+  //         (img) => img.url === imageToRemove.url
+  //       );
 
-        if (newImageIndex !== -1) {
-          const updatedNewImages = prev.newImages.filter(
-            (_, i) => i !== newImageIndex
-          );
-          const updatedFiles = Array.from(prev.attachfile).filter(
-            (_, i) => i !== newImageIndex
-          );
+  //       if (newImageIndex !== -1) {
+  //         const updatedNewImages = prev.newImages.filter(
+  //           (_, i) => i !== newImageIndex
+  //         );
+  //         const updatedFiles = Array.from(prev.attachfile).filter(
+  //           (_, i) => i !== newImageIndex
+  //         );
 
-          return {
-            ...prev,
-            newImages: updatedNewImages,
-            attachfile: updatedFiles,
-            previewImage: prev.previewImage.filter((_, i) => i !== index),
-          };
-        }
-      }
+  //         return {
+  //           ...prev,
+  //           newImages: updatedNewImages,
+  //           attachfile: updatedFiles,
+  //           previewImage: prev.previewImage.filter((_, i) => i !== index),
+  //         };
+  //       }
+  //     }
 
-      return prev;
-    });
-  };
+  //     return prev;
+  //   });
+  // };
+
+    const handleFetchedDiscardGallery = async (key, index, imageId) => {
+       // If no imageId, it's a new image, just remove locally
+       if (!imageId) {
+         setFormData((prev) => {
+           const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+           return { ...prev, [key]: updatedFiles };
+         });
+         toast.success("Image removed successfully!");
+         return;
+       }
+   
+       // Existing image: delete from server, then remove locally
+       try {
+         const response = await fetch(
+           `${baseURL}events/${id}/remove_image/${imageId}.json`,
+           {
+             method: "DELETE",
+             headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+             },
+           }
+         );
+   
+         if (!response.ok) {
+           // Optionally, handle 404 as a successful local delete
+           if (response.status === 404) {
+             const updatedFiles = formData[key].filter((_, i) => i !== index);
+             setFormData({ ...formData, [key]: updatedFiles });
+             toast.success("Image removed from UI (already deleted on server).");
+             return;
+           }
+           throw new Error("Failed to delete image");
+         }
+   
+   
+         // Remove from UI after successful delete
+         setFormData((prev) => {
+           const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+           return { ...prev, [key]: updatedFiles };
+         });
+   
+         toast.success("Image deleted successfully!");
+       } catch (error) {
+         console.error("Error deleting image:", error.message);
+         toast.error("Failed to delete image. Please try again.");
+       }
+     };
 
   const handleRadioChange = (e) => {
     const { name, value } = e.target;
@@ -1842,7 +1891,7 @@ const EventEdit = () => {
                                       type="button"
                                       className="purple-btn2"
                                       onClick={() =>
-                                        handleImageRemoval(key, index, file.id)
+                                        handleFetchedDiscardGallery(key, index, file.id)
                                       }
                                     >
                                       x
@@ -1981,7 +2030,7 @@ const EventEdit = () => {
                                       type="button"
                                       className="purple-btn2"
                                       onClick={() =>
-                                        handleRemoveImage(key, index, file.id)
+                                        handleFetchedDiscardGallery(key, index, file.id)
                                       }
                                     >
                                       x

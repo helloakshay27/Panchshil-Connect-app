@@ -9,7 +9,7 @@
   --grey: #3a3a33;
   --light-grey: #8692a6;
   --text-color: #084236;
-  --scrollbar-color: #000000;
+  /* --scrollbar-color: #000000; */
 }
 
 /* === Theme: API-CONNECT === */
@@ -132,7 +132,7 @@ table path {
 /* Custom scrollbar styles for Firefox */
 
 * {
-  scrollbar-width: thin;
+  /* scrollbar-width: thin; */
   /* Thin scrollbar */
   scrollbar-color: var(--scrollbar-color) #f1f1f1;
   /* Thumb and track colors */

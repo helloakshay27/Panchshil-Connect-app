@@ -151,53 +151,61 @@ const TestimonialList = () => {
     }
   };
 
-   const handleToggleShow = async (id, currentStatus) => {
-    const updatedStatus = !currentStatus;
-  
-    // Dismiss any existing toast first
-    if (activeToastId) {
-      toast.dismiss(activeToastId);
+const handleToggleShow = async (id, currentStatus) => {
+  const updatedStatus = !currentStatus;
+
+  // Dismiss any existing toast first
+  if (activeToastId) {
+    toast.dismiss(activeToastId);
+  }
+
+  try {
+    await axios.put(
+      `${baseURL}testimonials/${id}.json`,
+      { testimonial: { show_on_home: updatedStatus } },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
+
+    setTestimonials((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, show_on_home: updatedStatus } : item
+      )
+    );
+
+    const newToastId = toast.success("Status updated successfully!", {
+      duration: 3000,
+      position: "top-center",
+      id: `toggle-${id}`,
+    });
+
+    setActiveToastId(newToastId);
+  } catch (error) {
+    console.error("Error updating status:", error);
+
+    let errorMessage = "An error occurred.";
+    if (error.response && error.response.status === 400) {
+      const errors = error.response.data.errors;
+      if (Array.isArray(errors) && errors.length > 0) {
+        errorMessage = errors.join(" "); // Combine all error messages
+      } else if (typeof errors === "string") {
+        errorMessage = errors;
+      }
     }
-  
-    try {
-      await axios.put(
-        `${baseURL}testimonials/${id}.json`,
-        { testimonial: { show_on_home: updatedStatus } }, // <-- update this line
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-  
-      setTestimonials((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, show_on_home: updatedStatus } : item
-        )
-      );
-  
-      // Show new toast and store its ID
-      const newToastId = toast.success("Status updated successfully!", {
-        duration: 3000,
-        position: "top-center",
-        id: `toggle-${id}`,
-      });
-  
-      setActiveToastId(newToastId);
-    } catch (error) {
-      console.error("Error updating status:", error);
-  
-      // Show error toast and store its ID
-      const newToastId = toast.error("Testimonial is disabled.", {
-        duration: 3000,
-        position: "top-center",
-        id: `toggle-error-${id}`,
-      });
-  
-      setActiveToastId(newToastId);
-    }
-  };
+
+    const newToastId = toast.error(errorMessage, {
+      duration: 3000,
+      position: "top-center",
+      id: `toggle-error-${id}`,
+    });
+
+    setActiveToastId(newToastId);
+  }
+};
 
   return (
     <div className="main-content">
