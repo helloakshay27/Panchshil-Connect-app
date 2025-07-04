@@ -42,6 +42,7 @@ const TestimonialEdit = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchTestimonialData = async () => {
@@ -232,16 +233,37 @@ const TestimonialEdit = () => {
     ", "
   )} aspect ratios`;
 
+  // const updateFormData = (key, files) => {
+  //   setFormData((prev) => {
+  //     // Normalize previous entries: ensure it's always an array
+  //     const existing = Array.isArray(prev[key])
+  //       ? prev[key]
+  //       : prev[key]
+  //       ? [prev[key]]
+  //       : [];
+
+  //     // Append new files without overwriting
+  //     const merged = [...existing, ...files];
+
+  //     console.log(`✅ Merged formData[${key}]:`, merged);
+
+  //     return {
+  //       ...prev,
+  //       [key]: merged,
+  //     };
+  //   });
+  // };
   const updateFormData = (key, files) => {
     setFormData((prev) => {
       const newData = {
         ...prev,
-        [key]: [...(prev[key] || []), ...files],
+        [key]: files,
       };
-      console.log(`Updated formData for key ${key}:`, newData[key]); // Debugging
+      console.log(`✅ Replaced formData[${key}]:`, newData[key]);
       return newData;
     });
   };
+
 
   const handleCropComplete = (validImages) => {
     if (!validImages || validImages.length === 0) {
@@ -296,8 +318,21 @@ const TestimonialEdit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (isSubmitting) return;
     // Optional: Add validation here if needed
+
+    const testimonial16by9 = formData.preview_image_16_by_9;;
+    const hasTestimonial16by9 = Array.isArray(testimonial16by9)
+      ? testimonial16by9.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
+      : !!(testimonial16by9?.file instanceof File || testimonial16by9?.id || testimonial16by9?.document_file_name);
+
+    if (!hasTestimonial16by9) {
+      toast.error("Please upload at least one 16:9 preview image.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
 
     setLoading(true);
     try {
@@ -382,43 +417,90 @@ const TestimonialEdit = () => {
     navigate(-1);
   };
 
-  const handleFileDiscardCoverImage = async (key, index) => {
-    const Image = formData[key][index]; // Get the selected image
-    if (!Image.id) {
-      // If the image has no ID, it's a newly uploaded file. Just remove it locally.
-      const updatedFiles = formData[key].filter((_, i) => i !== index);
-      setFormData({ ...formData, [key]: updatedFiles });
+  // const handleFileDiscardCoverImage = async (key, index) => {
+  //   const Image = formData[key][index]; // Get the selected image
+  //   if (!Image.id) {
+  //     // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+  //     const updatedFiles = formData[key].filter((_, i) => i !== index);
+  //     setFormData({ ...formData, [key]: updatedFiles });
+  //     toast.success("Image removed successfully!");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch(
+  //       `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to delete videos");
+  //     }
+
+  //     // Remove the deleted image from the state
+  //     const updatedFiles = formData[key].filter((_, i) => i !== index);
+  //     setFormData({ ...formData, [key]: updatedFiles });
+
+  //     // console.log(`Image with ID ${Image.id} deleted successfully`);
+  //     toast.success("Image deleted successfully!");
+  //   } catch (error) {
+  //     console.error("Error deleting image:", error);
+  //     alert("Failed to delete image. Please try again.");
+  //   }
+  // };
+  const handleFetchedDiscardGallery = async (key, index, imageId) => {
+    // If no imageId, it's a new image, just remove locally
+    if (!imageId) {
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
       toast.success("Image removed successfully!");
       return;
     }
 
+    // Existing image: delete from server, then remove locally
     try {
       const response = await fetch(
-        `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
+        `${baseURL}banners/${id}/remove_creative_image/${imageId}.json`,
         {
           method: "DELETE",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete videos");
+        // Optionally, handle 404 as a successful local delete
+        if (response.status === 404) {
+          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          setFormData({ ...formData, [key]: updatedFiles });
+          toast.success("Image removed from UI (already deleted on server).");
+          return;
+        }
+        throw new Error("Failed to delete image");
       }
 
-      // Remove the deleted image from the state
-      const updatedFiles = formData[key].filter((_, i) => i !== index);
-      setFormData({ ...formData, [key]: updatedFiles });
 
-      // console.log(`Image with ID ${Image.id} deleted successfully`);
+      // Remove from UI after successful delete
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
+
       toast.success("Image deleted successfully!");
     } catch (error) {
-      console.error("Error deleting image:", error);
-      alert("Failed to delete image. Please try again.");
+      console.error("Error deleting image:", error.message);
+      toast.error("Failed to delete image. Please try again.");
     }
   };
-
   return (
     <div className="">
       <div className="">
@@ -612,36 +694,44 @@ const TestimonialEdit = () => {
                     </thead>
                     <tbody>
                       {TestimonialImageRatios.flatMap(({ key, label }) => {
-                        const value = formData[key];
-                        if (!value || (Array.isArray(value) && value.length === 0)) return [];
+                        const files = Array.isArray(formData[key])
+                          ? formData[key]
+                          : formData[key]
+                            ? [formData[key]]
+                            : [];
 
-                        const files = Array.isArray(value) ? value : [value];
+                        return files.map((file, index) => {
+                          const preview = file.preview || file.document_url || '';
+                          const name = file.name || file.document_file_name || `Image ${index + 1}`;
+                          const ratio = file.ratio || label;
 
-                        return files.map((file, index) => (
-                          <tr key={`${key}-${index}`}>
-                            <td>{file.name || file.document_file_name || `Image ${index + 1}`}</td>
-                            <td>
-                              <img
-                                src={file.preview || file.document_url}
-                                alt={file.name || `Image ${index + 1}`}
-                                className="img-fluid rounded"
-                                style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
-                              />
-                            </td>
-                            <td>{label}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() => handleFileDiscardCoverImage(key, index)}
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ));
+                          return (
+                            <tr key={`${key}-${index}`}>
+                              <td>{name}</td>
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+                                  className="img-fluid rounded"
+                                  src={preview}
+                                  alt={name}
+                                />
+                              </td>
+                              <td>{ratio}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() => handleFetchedDiscardGallery(key, index, file.id)}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        });
                       })}
                     </tbody>
+
                   </table>
                 </div>
               </div>

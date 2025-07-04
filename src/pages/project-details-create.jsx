@@ -1471,24 +1471,31 @@ const ProjectDetailsCreate = () => {
       return;
     }
 
-    // Validate gallery images (16:9 and 9:16)
-    const hasGalleryImage16by9 = formData.gallery_image_16_by_9 && formData.gallery_image_16_by_9.some(img => img.file instanceof File);
-
-    // Validate floor plans (9:16, 1:1, 16:9)
-    // const hasFloorPlan9by16 = formData.project_2d_image_9_by_16 && formData.project_2d_image_9_by_16.some(img => img.file instanceof File);
-    // const hasFloorPlan1by1 = formData.project_2d_image_1_by_1 && formData.project_2d_image_1_by_1.some(img => img.file instanceof File);
-    const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File);
-
     // Validate project banner images
     const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File);
     const hasProjectBanner1by1 = formData.image_1_by_1 && formData.image_1_by_1.some(img => img.file instanceof File);
 
+
     // Validate project cover images
     const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File);
 
+
+    // Validate gallery images (16:9 and 9:16)
+    const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+      ? formData.gallery_image_16_by_9.filter((img) => img.file instanceof File)
+      : [];
+
+
+    // Validate floor plans (9:16, 1:1, 16:9)
+    const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File);
+
+
+
+
+
     // Check if all required images are present
-    if (!hasGalleryImage16by9) {
-      toast.error("Both 16:9 gallery images are required.");
+    if (gallery16By9Files.length < 3) {
+      toast.error("At least 3 gallery images with 16:9 ratio are required.");
       setLoading(false);
       setIsSubmitting(false);
       return;

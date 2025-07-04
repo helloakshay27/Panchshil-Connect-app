@@ -1571,7 +1571,14 @@ const ProjectDetailsEdit = () => {
     }
 
     // Check for required images
-    const hasGalleryImage16by9 = formData.gallery_image_16_by_9 && formData.gallery_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+    const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+      ? formData.gallery_image_16_by_9.filter(
+        (img) =>
+          img.file instanceof File ||
+          !!img.id ||
+          !!img.document_file_name
+      )
+      : [];
     const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
     const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File || img.id || img.document_file_name);
     const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
@@ -1579,21 +1586,15 @@ const ProjectDetailsEdit = () => {
     );
     const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
 
-    // Debug formData structure
-    console.log("formData.image_9_by_16:", formData.image_9_by_16);
-    console.log("formData.cover_images_16_by_9:", formData.cover_images_16_by_9);
-    console.log("hasProjectBanner9by16:", hasProjectBanner9by16);
-    console.log("hasProjectCover16by9:", hasProjectCover16by9);
-
     // Check if all required images are present
-    const allImagesPresent = hasGalleryImage16by9 && hasFloorPlan16by9 && hasProjectBanner9by16 && hasProjectCover16by9;
+    const allImagesPresent = gallery16By9Files.length >= 3 && hasFloorPlan16by9 && hasProjectBanner9by16 && hasProjectCover16by9;
 
     console.log("allImagesPresent:", allImagesPresent);
 
     // Perform individual validation checks only if not all images are present
     if (!allImagesPresent) {
-      if (!hasGalleryImage16by9) {
-        toast.error("Gallery 16:9 images are required.");
+      if (gallery16By9Files.length < 3) {
+        toast.error("At least 3 gallery images with 16:9 ratio are required.");
         setLoading(false);
         setIsSubmitting(false);
         return;

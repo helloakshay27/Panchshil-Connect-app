@@ -221,11 +221,15 @@ const BannerEdit = () => {
     { key: 'banner_video_3_by_2', label: '3:2' },
   ];
   const updateFormData = (key, files) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: files, // replace the existing entry with the new file(s)
-    }));
+    setFormData((prev) => {
+      const existing = Array.isArray(prev[key]) ? prev[key] : prev[key] ? [prev[key]] : [];
+      return {
+        ...prev,
+        [key]: [...existing, ...files],
+      };
+    });
   };
+
 
   const handleCropComplete = (validImages) => {
     if (!validImages || validImages.length === 0) {
@@ -270,9 +274,10 @@ const BannerEdit = () => {
     e.preventDefault();
     if (isSubmitting) return; // Prevent multiple submissions
 
-    const hasProjectBanner1by1 = Array.isArray(formData.banner_video_1_by_1) && formData.banner_video_1_by_1.some(
-      img => img?.file instanceof File || img?.id || img?.document_file_name
-    );
+    const banner1by1 = formData.banner_video_1_by_1;
+    const hasProjectBanner1by1 = Array.isArray(banner1by1)
+      ? banner1by1.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
+      : !!(banner1by1?.file instanceof File || banner1by1?.id || banner1by1?.document_file_name);
 
     if (!hasProjectBanner1by1) {
       toast.error("Banner video with 1:1 ratio is required.");
@@ -280,6 +285,7 @@ const BannerEdit = () => {
       setIsSubmitting(false);
       return;
     }
+
 
     if (!validateForm()) return;
 
