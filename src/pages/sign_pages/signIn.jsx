@@ -303,7 +303,7 @@ const SignIn = () => {
 
         {config.showRegisterButton && (
           <button className="register-btn-panchshil" onClick={regiterPage}>
-            {loading ? "Register in..." : "REGISTER"}
+            {loading ? "Register" : "REGISTER"}
           </button>
         )}
       </div>

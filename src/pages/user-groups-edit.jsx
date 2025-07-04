@@ -63,6 +63,12 @@ const UserGroupEdit = () => {
           member_ids: Array.isArray(userGroupData.usergroup_members)
             ? userGroupData.usergroup_members.map((member) => member.user_id)
             : [],
+          member_map: Array.isArray(userGroupData.usergroup_members)
+            ? userGroupData.usergroup_members.reduce((acc, member) => {
+                acc[member.user_id] = member.id; // user_id => usergroup_member.id
+                return acc;
+              }, {})
+            : {},
         });
       }
     } catch (error) {
@@ -289,6 +295,38 @@ const UserGroupEdit = () => {
     navigate(-1);
   };
 
+  const handleMemberChange = async (selectedOptions) => {
+    const selectedMemberIds = selectedOptions.map((option) => option.value);
+
+    const removedMemberIds = formData.member_ids.filter(
+      (prevId) => !selectedMemberIds.includes(prevId)
+    );
+
+    for (const userId of removedMemberIds) {
+      const memberIdToDelete = formData.member_map[userId];
+
+      if (!memberIdToDelete) continue;
+
+      try {
+        await axios.delete(
+          `${baseURL}usergroup_members/${memberIdToDelete}.json`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+        console.log(`Deleted usergroup_member ID: ${memberIdToDelete}`);
+      } catch (error) {
+        console.error(`Error deleting member ID ${memberIdToDelete}:`, error);
+      }
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      member_ids: selectedMemberIds,
+    }));
+  };
 
   return (
     <div className="main-content">
@@ -409,14 +447,7 @@ const UserGroupEdit = () => {
                                 }
                               : { value: id, label: `User ${id}` };
                           })}
-                          onChange={(selectedOptions) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              member_ids: selectedOptions.map(
-                                (option) => option.value
-                              ),
-                            }))
-                          }
+                          onChange={handleMemberChange}
                         />
                       </div>
                     </div>

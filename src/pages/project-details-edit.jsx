@@ -2121,6 +2121,8 @@ const ProjectDetailsEdit = () => {
         ...newImages,
       ],
     }));
+
+      e.target.value = ""; // Reset the input box after upload
   };
 
   const handleQRCodeImageNameChange = (index, newName) => {
