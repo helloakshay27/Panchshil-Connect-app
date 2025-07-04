@@ -1817,6 +1817,7 @@ const ProjectDetailsEdit = () => {
       });
 
       toast.success("Project updated successfully");
+      sessionStorage.removeItem("cached_projects");
       navigate("/project-list");
     } catch (error) {
       console.error("Error updating the project:", error);
