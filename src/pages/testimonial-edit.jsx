@@ -20,6 +20,7 @@ const TestimonialEdit = () => {
     building_id: testimonial?.building_id ?? null,
     content: testimonial?.content || "",
     video_url: testimonial?.video_preview_image_url || "",
+    preview_image: testimonial?.preview_image || "",
   });
 
   const [buildingTypeOptions, setBuildingTypeOptions] = useState([]);
@@ -55,6 +56,7 @@ const TestimonialEdit = () => {
           building_id: response.data.building_id ?? null,
           content: response.data.content || "",
           video_url: response.data.video_preview_image_url || "",
+          preview_image: response.data.preview_image || "",
         });
 
         // Set existing video URL if available
@@ -64,7 +66,7 @@ const TestimonialEdit = () => {
         }
 
         // Set existing preview image if available
-        const imageUrl = response.data?.video_preview_image_url;
+        const imageUrl = response.data?.preview_image_16_by_9?.document_url;
         if (imageUrl) {
           setExistingImageUrl(imageUrl);
         }
@@ -201,7 +203,7 @@ const TestimonialEdit = () => {
   };
 
   const bannerUploadConfig = {
-    "preview image": ["16:9"],
+    "preview image": ["16:9","1:1","9:16","3:2"],
   };
 
   const currentUploadType = "preview image"; // Can be dynamic
@@ -228,7 +230,7 @@ const TestimonialEdit = () => {
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(":", "by"); // e.g., "16:9" -> "16by9"
+      const formattedRatio = img.ratio.replace(":", "_by_"); // e.g., "16:9" -> "16by9"
       const key = `${currentUploadType}_${formattedRatio}`
         .replace(/\s+/g, "_")
         .toLowerCase(); // e.g., banner_image_16by9
@@ -297,15 +299,15 @@ const TestimonialEdit = () => {
         }
       });
 
+// Handle 16:9 preview image from new structure
+if (Array.isArray(formData.preview_image_16_by_9)) {
+  formData.preview_image_16_by_9.forEach((img) => {
+    if (img.file instanceof File) {
+      sendData.append("testimonial[preview_image_16_by_9]", img.file);
+    }
+  });
+}
 
-      if (formData.attachfile) {
-        sendData.append("testimonial[preview_image]", formData.attachfile);
-      } else if (formData.video_url) {
-        sendData.append(
-          "testimonial[video_preview_image_url]",
-          formData.video_url.trim()
-        );
-      }
 
       // Append video file if present
       if (formData.testimonial_video) {
@@ -339,6 +341,43 @@ const TestimonialEdit = () => {
   const handleCancel = () => {
     navigate(-1);
   };
+
+  const handleFileDiscardCoverImage = async (key, index) => {
+      const Image = formData[key][index]; // Get the selected image
+      if (!Image.id) {
+        // If the image has no ID, it's a newly uploaded file. Just remove it locally.
+        const updatedFiles = formData[key].filter((_, i) => i !== index);
+        setFormData({ ...formData, [key]: updatedFiles });
+        toast.success("Image removed successfully!");
+        return;
+      }
+  
+      try {
+        const response = await fetch(
+          `${baseURL}projects/${id}/remove_creative_image/${Image.id}.json`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to delete videos");
+        }
+  
+        // Remove the deleted image from the state
+        const updatedFiles = formData[key].filter((_, i) => i !== index);
+        setFormData({ ...formData, [key]: updatedFiles });
+  
+        // console.log(`Image with ID ${Image.id} deleted successfully`);
+        toast.success("Image deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting image:", error);
+        alert("Failed to delete image. Please try again.");
+      }
+    };
 
   return (
     <div className="">
@@ -618,8 +657,8 @@ const TestimonialEdit = () => {
               </div>
 
               <div className="col-md-12 mt-2">
-                {Array.isArray(formData.preview_image_16by9) &&
-                  formData.preview_image_16by9.length > 0 ? (
+                {Array.isArray(formData.preview_image_16_by_9) &&
+                  formData.preview_image_16_by_9.length > 0 ? (
                   // ✅ Uploaded image table view
                   <div className="col-md-12 mt-2">
                     <div className="mt-4 tbl-container">
@@ -633,7 +672,7 @@ const TestimonialEdit = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {formData.preview_image_16by9.map((file, index) => (
+                          {formData.preview_image_16_by_9.map((file, index) => (
                             <tr key={index}>
                               <td>{file.name}</td>
                               <td>
@@ -650,7 +689,7 @@ const TestimonialEdit = () => {
                                   type="button"
                                   className="purple-btn2"
                                   onClick={() =>
-                                    discardImage("preview_image_16by9", file)
+                                    handleFileDiscardCoverImage("preview_image_16_by_9", index)
                                   }
                                 >
                                   x
@@ -677,7 +716,7 @@ const TestimonialEdit = () => {
                         </thead>
                         <tbody>
                           <tr>
-                            <td>preview_image_16by9.jpg</td>
+                            <td>preview_image_16_by_9.jpg</td>
                             <td>
                               <img
                                 src={
@@ -698,12 +737,8 @@ const TestimonialEdit = () => {
                                 type="button"
                                 className="purple-btn2"
                                 onClick={() =>
-                                  discardImage("preview_image_16by9", {
-                                    preview: previewImg || existingImageUrl,
-                                    name: "preview_image_16by9.jpg",
-                                    ratio: "16:9",
-                                  })
-                                }
+                                    handleFileDiscardCoverImage("preview_image_16_by_9", 0)
+                                  }
                               >
                                 x
                               </button>
