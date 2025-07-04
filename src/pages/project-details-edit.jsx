@@ -165,12 +165,12 @@ const ProjectDetailsEdit = () => {
 
 
 
-const updateFormData = (key, files) => {
-  setFormData((prev) => ({
-    ...prev,
-    [key]: [...(prev[key] || []), ...Array.from(files)], // Ensure real File objects
-  }));
-};
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...Array.from(files)], // Ensure real File objects
+    }));
+  };
 
 
   const handleCroppedImages = (validImages, type = "cover") => {
@@ -378,6 +378,33 @@ const updateFormData = (key, files) => {
 
   // console.log("data", projectsType);
 
+  const project_banner = [
+    { key: 'image_1_by_1', label: '1:1' },
+    { key: 'image_16_by_9', label: '16:9' },
+    { key: 'image_9_by_16', label: '9:16' },
+    { key: 'image_3_by_2', label: '3:2' },
+  ];
+  const gallery_images = [
+    { key: "gallery_image_16_by_9", label: "16:9" },
+    { key: "gallery_image_1_by_1", label: "1:1" },
+    { key: "gallery_image_9_by_16", label: "9:16" },
+    { key: "gallery_image_3_by_2", label: "3:2" },
+  ];
+  const floorPlanRatios = [
+    { key: "project_2d_image_16_by_9", label: "16:9" },
+    { key: "project_2d_image_1_by_1", label: "1:1" },
+    { key: "project_2d_image_3_by_2", label: "3:2" },
+    { key: "project_2d_image_9_by_16", label: "9:16" },
+  ];
+
+  const coverImageRatios = [
+    { key: "cover_images_1_by_1", label: "1:1" },
+    { key: "cover_images_16_by_9", label: "16:9" },
+    { key: "cover_images_9_by_16", label: "9:16" },
+    { key: "cover_images_3_by_2", label: "3:2" },
+  ];
+
+
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
@@ -388,16 +415,27 @@ const updateFormData = (key, files) => {
         });
 
         const projectData = response.data;
-        // console.log("projectData", projectData);
-        setPlans(
-          (projectData.plans || []).map((plan) => ({
-            name: plan.name,
-            images: (plan.images || []).map((img) =>
-              img.document_url ? { ...img, isApi: true } : img
-            ),
-          }))
-        );
 
+        // Step 1: Combine all image ratio keys
+        const allImageKeys = [
+          ...project_banner,
+          ...gallery_images,
+          ...floorPlanRatios,
+          ...coverImageRatios,
+        ];
+
+        // Step 2: Dynamically extract image arrays
+        const dynamicImageData = {};
+        allImageKeys.forEach(({ key }) => {
+          const value = projectData[key];
+          dynamicImageData[key] = Array.isArray(value)
+            ? value
+            : value
+              ? [value]
+              : [];
+        });
+
+        // Step 3: Set static + dynamic formData
         setFormData({
           Property_Type: projectData.property_type || "",
           Property_type_id: projectData.property_type_id || "",
@@ -405,9 +443,6 @@ const updateFormData = (key, files) => {
           building_type: projectData.building_type || "",
           Project_Construction_Status:
             projectData.Project_Construction_Status || "",
-          // Configuration_Type: Array.isArray(projectData.configurations)
-          //   ? projectData.configurations.map((config) => config.name)
-          //   : [],
           Configuration_Type1: Array.isArray(projectData.configurations)
             ? projectData.configurations.map((config) => ({
               id: config.id,
@@ -415,7 +450,6 @@ const updateFormData = (key, files) => {
             }))
             : [],
           Project_Name: projectData.project_name || "",
-          SFDC_Project_Id: projectData.SFDC_Project_Id || "",
           project_address: projectData.project_address || "",
           Project_Description: projectData.project_description || "",
           Price_Onward: projectData.price || "",
@@ -431,22 +465,21 @@ const updateFormData = (key, files) => {
           Number_Of_Units: projectData.no_of_apartments || "",
           Rera_Number_multiple: projectData.rera_number_multiple || [],
           Amenities1: Array.isArray(projectData.amenities)
-            ? projectData.amenities.map((ammit) => ({
-              id: ammit.id,
-              name: ammit.name,
+            ? projectData.amenities.map((a) => ({
+              id: a.id,
+              name: a.name,
             }))
             : [],
           Specifications: Array.isArray(projectData.specifications)
-            ? projectData.specifications.map((spac) => spac.name)
+            ? projectData.specifications.map((s) => s.name)
             : [],
           Land_Area: projectData.land_area || "",
           land_uom: projectData.land_uom || "",
           project_tag: projectData.project_tag || "",
-          virtual_tour_url_multiple:
-            projectData.virtual_tour_url_multiple || [],
+          virtual_tour_url_multiple: projectData.virtual_tour_url_multiple || [],
           map_url: projectData.map_url || "",
           image: Array.isArray(projectData.image_url)
-            ? projectData.image_url.map(url => ({ document_url: url }))
+            ? projectData.image_url.map((url) => ({ document_url: url }))
             : projectData.image_url
               ? [{ document_url: projectData.image_url }]
               : [],
@@ -465,16 +498,8 @@ const updateFormData = (key, files) => {
           two_d_images: projectData.two_d_images || [],
           videos: projectData.videos || [],
           fetched_gallery_image: projectData.gallery_image || [],
-          // video_preview_image_url:
-          //   projectData?.video_list[0]?.video_preview_image_url || "",
-          // project_ppt: [],
-          // fetched_Project_PPT: projectData.project_ppt
-          //   ? [projectData.project_ppt]
-          //   : [],
           project_layout: projectData.project_layout || [],
           project_creatives: projectData.project_creatives || [],
-          // plans: projectData.plans || [],
-          cover_images_1_by_1: projectData.cover_images_1_by_1 || [],
           project_creative_generics:
             projectData.project_creative_generics || [],
           project_creative_offers: projectData.project_creative_offers || [],
@@ -482,13 +507,11 @@ const updateFormData = (key, files) => {
           project_exteriors: projectData.project_exteriors || [],
           project_emailer_templetes:
             projectData.project_emailer_templetes || [],
-          // ...inside setFormData in fetchProjectDetails...
           project_ppt: Array.isArray(projectData.ProjectPPT)
             ? projectData.ProjectPPT
             : projectData.ProjectPPT
               ? [projectData.ProjectPPT]
               : [],
-          // Remove ppt_name from state, not needed if you always use array of objects
           project_sales_type: projectData.project_sales_type || "",
           order_no: projectData.order_no || "",
           enable_enquiry: projectData.enable_enquiry || false,
@@ -496,44 +519,22 @@ const updateFormData = (key, files) => {
           disclaimer: projectData.project_disclaimer || "",
           project_qrcode_image: projectData.project_qrcode_images || [],
           rera_url: projectData.rera_url || "",
-          image_9_by_16: Array.isArray(projectData.image_9_by_16)
-            ? projectData.image_9_by_16
-            : projectData.image_9_by_16
-              ? [projectData.image_9_by_16]
-              : [],
 
-          cover_images_1_by_1: Array.isArray(projectData.cover_images_1_by_1)
-            ? projectData.cover_images_1_by_1
-            : projectData.cover_images_1_by_1
-              ? [projectData.cover_images_1_by_1]
-              : [],
-
-          project_2d_image_16_by_9: Array.isArray(projectData.project_2d_image_16_by_9)
-            ? projectData.project_2d_image_16_by_9
-            : projectData.project_2d_image_16_by_9
-              ? [projectData.project_2d_image_16_by_9]
-              : [],
-
-          gallery_image_16_by_9: Array.isArray(projectData.gallery_image_16_by_9)
-            ? projectData.gallery_image_16_by_9
-            : projectData.gallery_image_16_by_9
-              ? [projectData.gallery_image_16_by_9]
-              : [],
-
+          // ✅ Dynamically spread image ratios
+          ...dynamicImageData,
         });
 
-        //       setPlans(
-        //   (projectData.plans || []).map(plan => ({
-        //     name: plan.name,
-        //     images: (plan.images || []).map(img =>
-        //       img.document_url
-        //         ? { ...img, isApi: true } // Mark as API image
-        //         : img
-        //     ),
-        //   }))
-        // );
+        // Set floor plans
+        setPlans(
+          (projectData.plans || []).map((plan) => ({
+            name: plan.name,
+            images: (plan.images || []).map((img) =>
+              img.document_url ? { ...img, isApi: true } : img
+            ),
+          }))
+        );
 
-        setProject(response.data);
+        setProject(projectData);
       } catch (err) {
         setError("Failed to fetch project details.");
         console.log(err);
@@ -541,8 +542,10 @@ const updateFormData = (key, files) => {
         setLoading(false);
       }
     };
+
     fetchProjectDetails();
   }, []);
+
 
   // console.log(formData);
 
@@ -2887,6 +2890,7 @@ const updateFormData = (key, files) => {
     (config) => !selectedConfigurationNames.includes(config.name)
   );
 
+
   return (
     <>
       {/* <Header /> */}
@@ -4436,6 +4440,7 @@ const updateFormData = (key, files) => {
               </div>
 
               <div className="col-md-12 mt-2">
+
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
@@ -4447,39 +4452,33 @@ const updateFormData = (key, files) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* ✅ Normalize image_9_by_16 into an array */}
-                      {(() => {
-                        const image9by16List = Array.isArray(formData.image_9_by_16)
-                          ? formData.image_9_by_16
-                          : formData.image_9_by_16
-                            ? [formData.image_9_by_16]
-                            : [];
+                      {project_banner.map(({ key, label }) => {
+                        const files = formData[key] || [];
 
-                        return image9by16List.map((file, index) => (
-                          <tr key={index}>
-                            <td>{file.name || file.document_file_name}</td>
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.document_file_name}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.preview || file.document_url}
-                                alt={file.name || file.document_file_name}
+                                src={file.document_url}
+                                alt={file.document_file_name}
                               />
                             </td>
-                            <td>{file.ratio || '-'}</td>
+                            <td>{file.ratio || label}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleFileDiscardCoverImage("image_9_by_16", index)}
+                                onClick={() => discardImage(key, file)}
                               >
                                 x
                               </button>
                             </td>
                           </tr>
                         ));
-                      })()}
-
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -4618,42 +4617,49 @@ const updateFormData = (key, files) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* ✅ Normalize image_9_by_16 into an array */}
-                      {(() => {
-                        const cover_images_1_by_1 = Array.isArray(formData.cover_images_1_by_1)
-                          ? formData.cover_images_1_by_1
-                          : formData.cover_images_1_by_1
-                            ? [formData.cover_images_1_by_1]
-                            : [];
+                      {coverImageRatios.map(({ key, label }) => {
+                        const files = formData[key] || [];
 
-                        return cover_images_1_by_1.map((file, index) => (
-                          <tr key={index}>
-                            <td>{file.name || file.document_file_name}</td>
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.document_file_name}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.preview || file.document_url}
-                                alt={file.name || file.document_file_name}
+                                src={file.document_url}
+                                alt={file.document_file_name}
                               />
                             </td>
-                            <td>{file.ratio || '-'}</td>
+                            <td>{file.ratio || label}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleFileDiscardCoverImage("cover_images_1_by_1", index)}
+                                onClick={() => discardImage(key, file)}
                               >
                                 x
                               </button>
                             </td>
                           </tr>
                         ));
-                      })()}
-
+                      })}
                     </tbody>
                   </table>
                 </div>
+
+                {/* Uploader Component */}
+                {showUploader && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowUploader(false)}
+                    includeInvalidRatios={false}
+                    selectedRatioProp={selectedCoverRatios}
+                    showAsModal={true}
+                    label={coverImageLabel}
+                    description={dynamicDescription}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
+                  />
+                )}
               </div>
 
 
@@ -4803,50 +4809,48 @@ const updateFormData = (key, files) => {
 
               {/* Main Section */}
               <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
+                <div
+                  className="mt-4 tbl-container"
+                  style={{ maxHeight: "300px", overflowY: "auto" }}
+                >
                   <table className="w-100">
                     <thead>
                       <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Ratio</th>
+                        {/* <th>Image Category</th> */}
+                        <th>Image Name</th>
+                        <th>Image</th>
+                        <th>Day/Night</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* ✅ Normalize image_9_by_16 into an array */}
-                      {(() => {
-                        const gallery_image_16_by_9 = Array.isArray(formData.gallery_image_16_by_9)
-                          ? formData.gallery_image_16_by_9
-                          : formData.gallery_image_16_by_9
-                            ? [formData.gallery_image_16_by_9]
-                            : [];
+                      {gallery_images.map(({ key, label }) => {
+                        const files = formData[key] || [];
 
-                        return gallery_image_16_by_9.map((file, index) => (
-                          <tr key={index}>
-                            <td>{file.name || file.document_file_name}</td>
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.document_file_name}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.preview || file.document_url}
-                                alt={file.name || file.document_file_name}
+                                src={file.document_url}
+                                alt={file.document_file_name}
                               />
                             </td>
-                            <td>{file.ratio || '-'}</td>
+                            <td>{file.ratio || label}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleFetchedDiscardGallery("gallery_image_16_by_9", file)}
+                                onClick={() => discardImage(key, file)}
                               >
                                 x
                               </button>
                             </td>
                           </tr>
                         ));
-                      })()}
-
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -5208,7 +5212,7 @@ const updateFormData = (key, files) => {
               </div>
 
               {/* Table to Display Images */}
-         <div className="col-md-12 mt-2">
+              <div className="col-md-12 mt-2">
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
@@ -5220,39 +5224,33 @@ const updateFormData = (key, files) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* ✅ Normalize image_9_by_16 into an array */}
-                      {(() => {
-                        const project_2d_image_16_by_9 = Array.isArray(formData.project_2d_image_16_by_9)
-                          ? formData.project_2d_image_16_by_9
-                          : formData.project_2d_image_16_by_9
-                            ? [formData.project_2d_image_16_by_9]
-                            : [];
+                      {floorPlanRatios.map(({ key, label }) => {
+                        const files = formData[key] || [];
 
-                        return project_2d_image_16_by_9.map((file, index) => (
-                          <tr key={index}>
-                            <td>{file.name || file.document_file_name}</td>
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.document_file_name}</td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
-                                src={file.preview || file.document_url}
-                                alt={file.name || file.document_file_name}
+                                src={file.document_url}
+                                alt={file.document_file_name}
                               />
                             </td>
-                            <td>{file.ratio || '-'}</td>
+                            <td>{file.ratio || label}</td>
                             <td>
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleDiscardTwoDImage("image_9_by_16", index)}
+                                onClick={() => discardImage(key, file)}
                               >
                                 x
                               </button>
                             </td>
                           </tr>
                         ));
-                      })()}
-
+                      })}
                     </tbody>
                   </table>
                 </div>

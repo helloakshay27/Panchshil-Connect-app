@@ -134,11 +134,12 @@ const ProjectDetailsCreate = () => {
   });
 
   const projectUploadConfig = {
-    'image': ['9:16'],
-    'cover images': ['1:1'],
-    'gallery image': ['16:9'],
-    'project 2d image': ['16:9'],
+    'image': ['9:16', '1:1', '16:9',],
+    'cover images': ['1:1', '16:9', '9:16'],
+    'gallery image': ['16:9', '1:1', '9:16'],
+    'project 2d image': ['16:9', '1:1', '9:16'],
   };
+
 
 
 
@@ -1414,7 +1415,7 @@ const ProjectDetailsCreate = () => {
         });
       } else if (key.startsWith("project_2d_image") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("project_2d_image", "project[project_2d_image_") + "]";
+          const backendField = key.replace("project_2d_image", "project[project_2d_image") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
@@ -2110,6 +2111,37 @@ const ProjectDetailsCreate = () => {
       ),
     }));
   };
+
+  const project_banner = [
+    { key: 'image_1_by_1', label: '1:1' },
+    { key: 'image_16_by_9', label: '16:9' },
+    { key: 'image_9_by_16', label: '9:16' },
+    { key: 'image_3_by_2', label: '3:2' },
+  ];
+  const gallery_images = [
+    { key: "gallery_image_16_by_9", label: "16:9" },
+    { key: "gallery_image_1_by_1", label: "1:1" },
+    { key: "gallery_image_9_by_16", label: "9:16" },
+    { key: "gallery_image_3_by_2", label: "3:2" },
+  ];
+  const floorPlanRatios = [
+    { key: "project_2d_image_16_by_9", label: "16:9" },
+    { key: "project_2d_image_1_by_1", label: "1:1" },
+    { key: "project_2d_image_3_by_2", label: "3:2" },
+    { key: "project_2d_image_9_by_16", label: "9:16" },
+  ];
+
+  const coverImageRatios = [
+    { key: "cover_images_1_by_1", label: "1:1" },
+    { key: "cover_images_16_by_9", label: "16:9" },
+    { key: "cover_images_9_by_16", label: "9:16" },
+    { key: "cover_images_3_by_2", label: "3:2" },
+  ];
+
+
+
+
+
 
   return (
     <>
@@ -3442,6 +3474,7 @@ const ProjectDetailsCreate = () => {
                 />
               )}
               <div className="col-md-12 mt-2">
+
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
@@ -3449,41 +3482,45 @@ const ProjectDetailsCreate = () => {
                         <th>File Name</th>
                         <th>Preview</th>
                         <th>Ratio</th>
-
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.image_9_by_16?.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.name}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={file.preview}
-                              alt={file.name}
-                            />
-                          </td>
-                          <td>{file.ratio}</td>
+                      {project_banner.map(({ key, label }) => {
+                        const files = formData[key] || [];
 
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => discardImage("image_9_by_16", file)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.preview}
+                                alt={file.name}
+                              />
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage(key, file)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })}
                     </tbody>
                   </table>
                 </div>
-
-
               </div>
+
+
+
+
 
 
 
@@ -3535,39 +3572,42 @@ const ProjectDetailsCreate = () => {
                         <th>File Name</th>
                         <th>Preview</th>
                         <th>Ratio</th>
-
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.cover_images_1_by_1?.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.name}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={file.preview}
-                              alt={file.name}
-                            />
-                          </td>
-                          <td>{file.ratio}</td>
+                      {coverImageRatios.map(({ key, label }) => {
+                        const files = formData[key] || [];
 
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => discardImage("cover_images_1_by_1", file)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.preview}
+                                alt={file.name}
+                              />
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage(key, file)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })}
                     </tbody>
                   </table>
                 </div>
 
+                {/* Uploader Component */}
                 {showUploader && (
                   <ProjectBannerUpload
                     onClose={() => setShowUploader(false)}
@@ -3580,6 +3620,7 @@ const ProjectDetailsCreate = () => {
                   />
                 )}
               </div>
+
 
 
               <div className="d-flex justify-content-between align-items-end mx-1">
@@ -3671,35 +3712,38 @@ const ProjectDetailsCreate = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* First render API fetched images */}
-                      {formData.gallery_image_16_by_9?.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.name}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={file.preview}
-                              alt={file.name}
-                            />
-                          </td>
-                          <td>{file.ratio}</td>
+                      {gallery_images.map(({ key, label }) => {
+                        const files = formData[key] || [];
 
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => discardImage("gallery_image_16_by_9", file)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.preview}
+                                alt={file.name}
+                              />
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage(key, file)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })}
                     </tbody>
                   </table>
                 </div>
               </div>
+
               {/* Brochure Upload */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -3959,37 +4003,38 @@ const ProjectDetailsCreate = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* 2D Images */}
-                      {formData.project_2d_image?.map((file, index) => (
-                        <tr key={index}>
-                          <td> {file.name}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={file.preview}
-                              alt={file.name}
-                            />
-                          </td>
-                          <td>{file.ratio}</td>
+                      {floorPlanRatios.map(({ key, label }) => {
+                        const files = formData[key] || [];
 
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                discardImage("project_2d_image", file)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.preview}
+                                alt={file.name}
+                              />
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage(key, file)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })}
                     </tbody>
                   </table>
                 </div>
               </div>
+
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
