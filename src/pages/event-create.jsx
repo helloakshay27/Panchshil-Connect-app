@@ -449,10 +449,11 @@ const EventCreate = () => {
     eventImageRatios.forEach(({ key }) => {
       const images = formData[key];
       if (Array.isArray(images) && images.length > 0) {
-        const img = images[0]; // 👈 only the first image
-        if (img?.file instanceof File) {
-          data.append(`event[${key}]`, img.file); // 👈 flat key format
-        }
+        images.forEach((img) => {
+          if (img?.file instanceof File) {
+            data.append(`event[${key}][]`, img.file); 
+          }
+        });
       }
     });
 

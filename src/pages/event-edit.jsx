@@ -824,12 +824,14 @@ const EventEdit = () => {
     eventImageRatios.forEach(({ key }) => {
       const images = formData[key];
       if (Array.isArray(images) && images.length > 0) {
-        const img = images[0];
-        if (img?.file instanceof File) {
-          data.append(`event[${key}]`, img.file);
-        }
+        images.forEach((img) => {
+          if (img?.file instanceof File) {
+            data.append(`event[${key}][]`, img.file); 
+          }
+        });
       }
     });
+    
 
     // Handle 16:9 preview image from new structure
     if (Array.isArray(formData.event_images_16_by_9)) {
