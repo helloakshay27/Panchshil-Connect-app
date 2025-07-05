@@ -770,7 +770,7 @@ const BannerEdit = () => {
                                 <button
                                   type="button"
                                   className="purple-btn2"
-                                  onClick={() => discardImage(key, file)}
+                                  onClick={() => handleFetchedDiscardGallery(key, index,file.id)}
                                 >
                                   x
                                 </button>

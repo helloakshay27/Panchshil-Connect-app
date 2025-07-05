@@ -3982,7 +3982,7 @@ const ProjectDetailsCreate = () => {
                         {/* <th>Image Category</th> */}
                         <th>Image Name</th>
                         <th>Image</th>
-                        <th>Day/Night</th>
+                        <th>Ratio</th>
                         <th>Action</th>
                       </tr>
                     </thead>
