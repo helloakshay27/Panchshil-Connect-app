@@ -626,7 +626,7 @@ const TestimonialEdit = () => {
                   <label className="d-flex align-items-center gap-1 mb-2">
                     <span>Preview Image</span>
 
-                    <span
+                    {/* <span
                       className="tooltip-container"
                       onMouseEnter={() => setShowTooltip(true)}
                       onMouseLeave={() => setShowTooltip(false)}
@@ -648,7 +648,19 @@ const TestimonialEdit = () => {
                           Max Upload Size 3 MB and Required ratio is 16:9
                         </span>
                       )}
-                    </span>
+                    </span> */}
+                     <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowVideoTooltip(true)}
+                        onMouseLeave={() => setShowVideoTooltip(false)}
+                      >
+                        [i]
+                        {showVideoTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB and Required ratio is 16:9
+                          </span>
+                        )}
+                      </span>
 
                     <span className="otp-asterisk text-danger">*</span>
                   </label>

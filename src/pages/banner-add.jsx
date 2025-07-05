@@ -95,10 +95,10 @@ const BannerAdd = () => {
   ];
 
   const bannerUploadConfig = {
-    'banner video': ['1:1', '9:16', '16:9', '3:2'],
+    'Banner Attachment': ['1:1', '9:16', '16:9', '3:2'],
   };
 
-  const currentUploadType = 'banner video';
+  const currentUploadType = 'Banner Attachment';
   const selectedRatios = bannerUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
   const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
@@ -160,7 +160,7 @@ const BannerAdd = () => {
 
 
     if (!hasProjectBanner1by1) {
-      toast.error("Banner Image with 1:1 ratio is required.");
+      toast.error("Banner Attachment with 1:1 ratio is required.");
       setLoading(false);
       setIsSubmitting(false);
       return;

@@ -165,10 +165,10 @@ const Testimonials = () => {
   };
 
   const bannerUploadConfig = {
-    "video preview image url": ["16:9", "1:1", "9:16", "3:2"],
+    "preview image": ["16:9", "1:1", "9:16", "3:2"],
   };
 
-  const currentUploadType = "video preview image url"; // Can be dynamic
+  const currentUploadType = "preview image"; // Can be dynamic
   const selectedRatios = bannerUploadConfig[currentUploadType] || [];
   const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
     m.toUpperCase()
@@ -598,7 +598,7 @@ const handleCropComplete = (validImages) => {
                       <label className="d-flex align-items-center gap-1 mb-2">
                         <span>Preview Image</span>
 
-                        <span
+                        {/* <span
                           className="tooltip-container"
                           onMouseEnter={() => setShowTooltip(true)}
                           onMouseLeave={() => setShowTooltip(false)}
@@ -617,6 +617,18 @@ const handleCropComplete = (validImages) => {
                               fontSize: '13px',
                               whiteSpace: 'nowrap',
                             }}>
+                              Max Upload Size 3 MB and Required ratio is 16:9
+                            </span>
+                          )}
+                        </span> */}
+                         <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowVideoTooltip(true)}
+                          onMouseLeave={() => setShowVideoTooltip(false)}
+                        >
+                          [i]
+                          {showVideoTooltip && (
+                            <span className="tooltip-text">
                               Max Upload Size 3 MB and Required ratio is 16:9
                             </span>
                           )}
