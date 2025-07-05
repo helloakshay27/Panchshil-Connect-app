@@ -44,7 +44,6 @@ const Testimonials = () => {
     preview_image_3_by_2: [],
     preview_image_1_by_1: [],
     preview_image_9_by_16: [],
-
   });
 
 
@@ -692,7 +691,7 @@ const handleCropComplete = (validImages) => {
                                   <button
                                     type="button"
                                     className="purple-btn2"
-                                    onClick={() => handleFileDiscardCoverImage(key, index)}
+                                    onClick={() => discardImage(key, file)}
                                   >
                                     x
                                   </button>
