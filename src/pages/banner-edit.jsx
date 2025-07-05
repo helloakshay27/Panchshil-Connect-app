@@ -648,8 +648,9 @@ const BannerEdit = () => {
           z-index: 10;
         }
       `}</style>
+      
   
-      <div className="website-content overflow-hidden">
+      <div className="module-data-section container-fluid overflow-hidden">
         <div className="module-data-section">
           <div className="card mt-4 pb-4 mx-4">
             <div className="card-header">
@@ -784,7 +785,10 @@ const BannerEdit = () => {
               </div>
   
               {/* Sticky Footer Buttons */}
-              <div className="row mt-4 sticky-footer justify-content-center">
+             
+            </div>
+          </div>
+           <div className="row mt-4 sticky-footer justify-content-center">
                 <div className="col-md-2">
                   <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
                     Submit
@@ -796,12 +800,10 @@ const BannerEdit = () => {
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
         </div>
       </div>
-
-  </div>
+   </div>
+ 
   );
 };
 
