@@ -411,127 +411,337 @@ const BannerEdit = () => {
   };
 
 
+  // return (
+  //   <div className="container-fluid d-flex flex-column" style={{ height: '100vh' }}>
+  //     <style>
+  //       {`
+  //         input[type="file"]::-webkit-file-upload-button {
+  //           background: #f1f5f9;
+  //           color: #1f2937;
+  //           padding: 8px 16px;
+  //           margin: 0;
+  //           margin-right: 12px;
+  //           border: none;
+  //           border-right: 1px solid #cbd5e0;
+  //           border-radius: 5px 0 0 5px;
+  //           cursor: pointer;
+  //           font-weight: 500;
+  //         }
+  
+  //         input[type="file"] {
+  //           border: 1px solid #cbd5e0;
+  //           border-radius: 6px;
+  //           padding: 0;
+  //           font-family: sans-serif;
+  //           color: #374151;
+  //           height: 38px;
+  //           margin-left: 10px;
+  //         }
+  
+  //         .scrollable-content {
+  //           overflow-y: auto;
+  //           flex-grow: 1;
+  //           padding-bottom: 120px; /* space to avoid overlap with sticky footer */
+  //         }
+  
+  //         .sticky-footer {
+  //           background: white;
+  //           padding: 12px 0;
+  //           box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+  //           position: sticky;
+  //           bottom: 0;
+  //           z-index: 100;
+  //         }
+  //       `}
+  //     </style>
+  
+  //     {/* Scrollable Content Area */}
+  //     <div className="scrollable-content">
+  //       <div className="row">
+  //         <div className="col-12">
+  //           <div className="card mt-4">
+  //             <div className="card-header">
+  //               <h3 className="card-title">Edit Banner</h3>
+  //             </div>
+  //             <div className="card-body">
+  //               {loading ? (
+  //                 <p>Loading...</p>
+  //               ) : (
+  //                 <div className="row">
+  //                   <div className="col-md-3">
+  //                     <div className="form-group">
+  //                       <label>Title <span className="text-danger">*</span></label>
+  //                       <input
+  //                         className="form-control"
+  //                         type="text"
+  //                         name="title"
+  //                         value={formData.title}
+  //                         onChange={handleChange}
+  //                       />
+  //                       {errors.title && <span className="text-danger">{errors.title}</span>}
+  //                     </div>
+  //                   </div>
+  
+  //                   <div className="col-md-3">
+  //                     <div className="form-group">
+  //                       <label>Project <span className="text-danger">*</span></label>
+  //                       <SelectBox
+  //                         options={projects.map((p) => ({ label: p.project_name, value: p.id }))}
+  //                         defaultValue={formData.project_id}
+  //                         onChange={(value) => setFormData({ ...formData, project_id: value })}
+  //                       />
+  //                       {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
+  //                     </div>
+  //                   </div>
+  
+  //                   <div className="col-md-3 col-sm-6 col-12">
+  //                     <div className="form-group d-flex flex-column">
+  //                       <label className="mb-2">
+  //                         Banner Attachment{" "}
+  //                         <span
+  //                           className="tooltip-container"
+  //                           onMouseEnter={() => setShowVideoTooltip(true)}
+  //                           onMouseLeave={() => setShowVideoTooltip(false)}
+  //                         >
+  //                           [i]
+  //                           {showVideoTooltip && (
+  //                             <span className="tooltip-text">
+  //                               9:16 or 1:1 Format Should Only Be Allowed
+  //                             </span>
+  //                           )}
+  //                         </span>
+  //                       </label>
+  
+  //                       <span
+  //                         role="button"
+  //                         tabIndex={0}
+  //                         onClick={() => setShowUploader(true)}
+  //                         className="custom-upload-button input-upload-button"
+  //                       >
+  //                         <span className="upload-button-label">Choose file</span>
+  //                         <span className="upload-button-value">No file chosen</span>
+  //                       </span>
+  
+  //                       {showUploader && (
+  //                         <ProjectBannerUpload
+  //                           onClose={() => setShowUploader(false)}
+  //                           includeInvalidRatios={false}
+  //                           selectedRatioProp={selectedRatios}
+  //                           showAsModal={true}
+  //                           label={dynamicLabel}
+  //                           description={dynamicDescription}
+  //                           onContinue={handleCropComplete}
+  //                         />
+  //                       )}
+  //                     </div>
+  //                   </div>
+  //                 </div>
+  //               )}
+  
+  //               <div className="col-md-12 mt-2">
+  //                 <div className="mt-4 tbl-container">
+  //                   <table className="w-100 table table-bordered">
+  //                     <thead>
+  //                       <tr>
+  //                         <th>File Name</th>
+  //                         <th>Preview</th>
+  //                         <th>Ratio</th>
+  //                         <th>Action</th>
+  //                       </tr>
+  //                     </thead>
+  //                     <tbody>
+  //                       {project_banner.map(({ key, label }) => {
+  //                         const files = Array.isArray(formData[key]) ? formData[key] : formData[key] ? [formData[key]] : [];
+  
+  //                         return files.map((file, index) => {
+  //                           const preview = file.preview || file.document_url || '';
+  //                           const name = file.name || file.document_file_name || 'Unnamed';
+  
+  //                           return (
+  //                             <tr key={`${key}-${index}`}>
+  //                               <td>{name}</td>
+  //                               <td>
+  //                                 <img
+  //                                   style={{ maxWidth: 100, maxHeight: 100 }}
+  //                                   className="img-fluid rounded"
+  //                                   src={preview}
+  //                                   alt={name}
+  //                                 />
+  //                               </td>
+  //                               <td>{file.ratio || label}</td>
+  //                               <td>
+  //                                 <button
+  //                                   type="button"
+  //                                   className="purple-btn2"
+  //                                   onClick={() => handleFetchedDiscardGallery(key, index, file.id)}
+  //                                 >
+  //                                   x
+  //                                 </button>
+  //                               </td>
+  //                             </tr>
+  //                           );
+  //                         });
+  //                       })}
+  //                     </tbody>
+  //                   </table>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  
+  //     {/* Sticky Submit/Cancel Button Footer */}
+  //     <div className="row sticky-footer justify-content-center">
+  //       <div className="col-md-2">
+  //         <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
+  //           Submit
+  //         </button>
+  //       </div>
+  //       <div className="col-md-2">
+  //         <button onClick={handleCancel} className="purple-btn2 w-100">
+  //           Cancel
+  //         </button>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
   return (
-    <div className="container-fluid" style={{ height: '100vh', overflowY: 'auto' }}>
-      <style>
-        {`
-  input[type="file"]::-webkit-file-upload-button {
-    background: #f1f5f9;
-    color: #1f2937;
-    padding: 8px 16px;
-    margin: 0;
-    margin-right: 12px; /* ← added space between button and label */
-    border: none;
-    border-right: 1px solid #cbd5e0;
-    border-radius: 5px 0 0 5px;
-    cursor: pointer;
-    font-weight: 500;
-  }
+    <div className="main-content">
 
-  input[type="file"] {
-    border: 1px solid #cbd5e0;
-    border-radius: 6px;
-    padding: 0;
-    font-family: sans-serif;
-    color: #374151;
-    height: 38px;
-    margin-left: 10px;
-  }
-`}
-
-      </style>
-      <div className="row">
-        <div className="col-12">
-          <div className="card mt-4">
+      <style jsx>{`
+        .btn-primary {
+          background: #f1f5f9;
+          color: #1f2937;
+          padding: 8px 16px;
+          border: 1px solid #cbd5e0;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: 500;
+          margin-left: 10px;
+          height: 38px;
+          display: inline-flex;
+          align-items: center;
+        }
+        .btn-primary:hover {
+          background: #e2e8f0;
+        }
+        .scrollable-table {
+          max-height: 300px;
+          overflow-y: auto;
+        }
+        .tbl-container table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .tbl-container th, .tbl-container td {
+          padding: 8px;
+          border: 1px solid #ddd;
+          text-align: left;
+        }
+        .sticky-footer {
+          position: sticky;
+          bottom: 0;
+          background: white;
+          padding-top: 16px;
+          z-index: 10;
+        }
+      `}</style>
+  
+      <div className="website-content overflow-hidden">
+        <div className="module-data-section">
+          <div className="card mt-4 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Edit Banner</h3>
+              <h3 className="card-title">Create Banner</h3>
             </div>
+  
             <div className="card-body">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Title <span className="text-danger">*</span></label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                      />
-                      {errors.title && <span className="text-danger">{errors.title}</span>}
-                    </div>
+              <div className="row">
+                {/* Title Input */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Title<span className="otp-asterisk"> *</span>
+                    </label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      placeholder="Enter title"
+                    />
+                    {errors.title && <span className="text-danger">{errors.title}</span>}
                   </div>
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Project <span className="text-danger">*</span></label>
-                      <SelectBox
-                        options={projects.map((p) => ({ label: p.project_name, value: p.id }))}
-                        defaultValue={formData.project_id}
-                        onChange={(value) => setFormData({ ...formData, project_id: value })}
-                      />
-                      {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
-                    </div>
-                  </div>
-                  <div className="col-md-3 col-sm-6 col-12">
-                    <div className="form-group d-flex flex-column">
-                      <label className="mb-2">
-                        Banner Attachment{" "}
-                        <span
-                          className="tooltip-container"
-                          onMouseEnter={() => setShowVideoTooltip(true)}
-                          onMouseLeave={() => setShowVideoTooltip(false)}
-                        >
-                          [i]
-                          {showVideoTooltip && (
-                            <span className="tooltip-text">
-                              9:16 or 1:1 Format Should Only Be Allowed
-                            </span>
-                          )}
-                        </span>
-                      </label>
-
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => setShowUploader(true)}
-                        className="custom-upload-button input-upload-button"
-                      >
-                        <span
-                          className="upload-button-label"
-                        >
-                          Choose file
-                        </span>
-                        <span
-                          className="upload-button-value"
-                        >
-                          No file chosen
-                        </span>
-                      </span>
-
-
-                      {showUploader && (
-                        <ProjectBannerUpload
-                          onClose={() => setShowUploader(false)}
-                          includeInvalidRatios={false}
-                          selectedRatioProp={selectedRatios}
-                          showAsModal={true}
-                          label={dynamicLabel}
-                          description={dynamicDescription}
-                          onContinue={handleCropComplete}
-                        />
-                      )}
-                    </div>
-                  </div>
-
                 </div>
-              )}
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
+  
+                {/* Project Select */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Project<span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={projects.map((project) => ({
+                        label: project.project_name,
+                        value: project.id,
+                      }))}
+                      value={formData.project_id}
+                      onChange={(value) => setFormData({ ...formData, project_id: value })}
+                    />
+                    {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
+                  </div>
+                </div>
+  
+                {/* Banner Attachment Upload */}
+                <div className="col-md-3 col-sm-6 col-12">
+                  <div className="form-group d-flex flex-column">
+                    <label className="mb-2">
+                      Banner Attachment{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowVideoTooltip(true)}
+                        onMouseLeave={() => setShowVideoTooltip(false)}
+                      >
+                        [i]
+                        {showVideoTooltip && (
+                          <span className="tooltip-text">
+                            9:16 or 1:1 Format Should Only Be Allowed
+                          </span>
+                        )}
+                      </span>
+                    </label>
+  
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setShowUploader(true)}
+                      className="custom-upload-button input-upload-button"
+                    >
+                      <span className="upload-button-label">Choose file</span>
+                      <span className="upload-button-value">No file chosen</span>
+                    </span>
+  
+                    {showUploader && (
+                      <ProjectBannerUpload
+                        onClose={() => setShowUploader(false)}
+                        includeInvalidRatios={false}
+                        selectedRatioProp={selectedRatios}
+                        showAsModal={true}
+                        label={dynamicLabel}
+                        description={dynamicDescription}
+                        onContinue={handleCropComplete}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+  
+              {/* Scrollable Image Table */}
+              <div className="col-md-12 mt-4">
+                <div className="scrollable-table tbl-container">
+                  <table>
                     <thead>
                       <tr>
                         <th>File Name</th>
@@ -543,11 +753,11 @@ const BannerEdit = () => {
                     <tbody>
                       {project_banner.map(({ key, label }) => {
                         const files = Array.isArray(formData[key]) ? formData[key] : formData[key] ? [formData[key]] : [];
-
+  
                         return files.map((file, index) => {
                           const preview = file.preview || file.document_url || '';
                           const name = file.name || file.document_file_name || 'Unnamed';
-
+  
                           return (
                             <tr key={`${key}-${index}`}>
                               <td>{name}</td>
@@ -564,7 +774,7 @@ const BannerEdit = () => {
                                 <button
                                   type="button"
                                   className="purple-btn2"
-                                  onClick={() => handleFetchedDiscardGallery(key, index, file.id)}
+                                  onClick={() => discardImage(key, file)}
                                 >
                                   x
                                 </button>
@@ -574,29 +784,29 @@ const BannerEdit = () => {
                         });
                       })}
                     </tbody>
-
                   </table>
                 </div>
               </div>
+  
+              {/* Sticky Footer Buttons */}
+              <div className="row mt-4 sticky-footer justify-content-center">
+                <div className="col-md-2">
+                  <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
+                    Submit
+                  </button>
+                </div>
+                <div className="col-md-2">
+                  <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
             </div>
-
-
           </div>
         </div>
       </div>
-      <div className="row mt-2 justify-content-center">
-        <div className="col-md-2">
-          <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
-            Submit
-          </button>
-        </div>
-        <div className="col-md-2">
-          <button onClick={handleCancel} className="purple-btn2 w-100">
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+
+  </div>
   );
 };
 

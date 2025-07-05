@@ -227,6 +227,7 @@ const BannerAdd = () => {
 
   return (
     <div className="main-content">
+
       <style jsx>{`
         .btn-primary {
           background: #f1f5f9;
@@ -244,17 +245,38 @@ const BannerAdd = () => {
         .btn-primary:hover {
           background: #e2e8f0;
         }
+        .scrollable-table {
+          max-height: 300px;
+          overflow-y: auto;
+        }
+        .tbl-container table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .tbl-container th, .tbl-container td {
+          padding: 8px;
+          border: 1px solid #ddd;
+          text-align: left;
+        }
+        .sticky-footer {
+          position: sticky;
+          bottom: 0;
+          background: white;
+          padding-top: 16px;
+          z-index: 10;
+        }
       `}</style>
-
+  
       <div className="website-content overflow-hidden">
         <div className="module-data-section">
           <div className="card mt-4 pb-4 mx-4">
             <div className="card-header">
               <h3 className="card-title">Create Banner</h3>
             </div>
-
+  
             <div className="card-body">
               <div className="row">
+                {/* Title Input */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -271,7 +293,8 @@ const BannerAdd = () => {
                     {errors.title && <span className="text-danger">{errors.title}</span>}
                   </div>
                 </div>
-
+  
+                {/* Project Select */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -288,7 +311,8 @@ const BannerAdd = () => {
                     {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
                   </div>
                 </div>
-
+  
+                {/* Banner Attachment Upload */}
                 <div className="col-md-3 col-sm-6 col-12">
                   <div className="form-group d-flex flex-column">
                     <label className="mb-2">
@@ -306,24 +330,17 @@ const BannerAdd = () => {
                         )}
                       </span>
                     </label>
-
+  
                     <span
                       role="button"
                       tabIndex={0}
                       onClick={() => setShowUploader(true)}
                       className="custom-upload-button input-upload-button"
                     >
-                      <span
-                        className="upload-button-label"
-                      >
-                        Choose file
-                      </span>
-                      <span
-                        className="upload-button-value"
-                      >
-                        No file chosen
-                      </span>
+                      <span className="upload-button-label">Choose file</span>
+                      <span className="upload-button-value">No file chosen</span>
                     </span>
+  
                     {showUploader && (
                       <ProjectBannerUpload
                         onClose={() => setShowUploader(false)}
@@ -338,9 +355,11 @@ const BannerAdd = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
+  
+              {/* Scrollable Image Table */}
+              <div className="col-md-12 mt-4">
+                <div className="scrollable-table tbl-container">
+                  <table>
                     <thead>
                       <tr>
                         <th>File Name</th>
@@ -352,11 +371,11 @@ const BannerAdd = () => {
                     <tbody>
                       {project_banner.map(({ key, label }) => {
                         const files = Array.isArray(formData[key]) ? formData[key] : formData[key] ? [formData[key]] : [];
-
+  
                         return files.map((file, index) => {
                           const preview = file.preview || file.document_url || '';
                           const name = file.name || file.document_file_name || 'Unnamed';
-
+  
                           return (
                             <tr key={`${key}-${index}`}>
                               <td>{name}</td>
@@ -383,29 +402,31 @@ const BannerAdd = () => {
                         });
                       })}
                     </tbody>
-
                   </table>
+                </div>
+              </div>
+  
+              {/* Sticky Footer Buttons */}
+              <div className="row mt-4 sticky-footer justify-content-center">
+                <div className="col-md-2">
+                  <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
+                    Submit
+                  </button>
+                </div>
+                <div className="col-md-2">
+                  <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
-                Submit
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
-                Cancel
-              </button>
-            </div>
-          </div>
         </div>
       </div>
-    </div>
+
+  </div>
   );
+  
 };
 
 export default BannerAdd;
