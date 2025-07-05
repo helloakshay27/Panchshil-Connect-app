@@ -32,6 +32,8 @@ const BannerEdit = () => {
     active: true,
     banner_video_1_by_1: null,
     banner_video_9_by_16: null,
+    banner_video_16_by_9: null,
+    banner_video_3_by_2: null,
   });
   console.log('formData', formData);
 
@@ -60,6 +62,8 @@ const BannerEdit = () => {
           banner_video: bannerData.banner_video?.document_url || null,
           banner_video_1_by_1: bannerData.banner_video_1_by_1 || null,
           banner_video_9_by_16: bannerData.banner_video_9_by_16 || null,
+          banner_video_16_by_9: bannerData.banner_video_16_by_9 || null,
+          banner_video_3_by_2: bannerData.banner_video_3_by_2 || null,
           active: true,
         });
         setOriginalBannerVideo(bannerData.banner_video?.document_url || null); // Store original
@@ -197,7 +201,7 @@ const BannerEdit = () => {
   };
 
   const bannerUploadConfig = {
-    'banner image': ['1:1', '9:16']
+    'banner image': ['1:1', '9:16', '16:9', '3:2'],
   };
 
 

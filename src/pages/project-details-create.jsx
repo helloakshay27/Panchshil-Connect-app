@@ -1497,8 +1497,8 @@ const ProjectDetailsCreate = () => {
 
 
     // Validate gallery images (16:9 and 9:16)
-    const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
-      ? formData.gallery_image_16_by_9.filter((img) => img.file instanceof File)
+    const gallery16By9Files = formData.gallery_image_16_by_9
+      ? formData.gallery_image_16_by_9.some((img) => img.file instanceof File)
       : [];
 
 
@@ -1510,7 +1510,7 @@ const ProjectDetailsCreate = () => {
 
 
     // Check if all required images are present
-    if (gallery16By9Files.length < 3) {
+    if (!gallery16By9Files) {
       toast.error("At least 3 gallery images with 16:9 ratio are required.");
       setLoading(false);
       setIsSubmitting(false);

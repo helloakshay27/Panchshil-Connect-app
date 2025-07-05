@@ -434,7 +434,7 @@ const ProjectDetailsEdit = () => {
             }
           });
         });
-
+        
         // Step 3: Set static + dynamic formData
         setFormData({
           Property_Type: projectData.property_type || "",
@@ -445,9 +445,9 @@ const ProjectDetailsEdit = () => {
             projectData.Project_Construction_Status || "",
           Configuration_Type1: Array.isArray(projectData.configurations)
             ? projectData.configurations.map((config) => ({
-                id: config.id,
-                name: config.name,
-              }))
+              id: config.id,
+              name: config.name,
+            }))
             : [],
           Project_Name: projectData.project_name || "",
           project_address: projectData.project_address || "",
@@ -466,9 +466,9 @@ const ProjectDetailsEdit = () => {
           Rera_Number_multiple: projectData.rera_number_multiple || [],
           Amenities1: Array.isArray(projectData.amenities)
             ? projectData.amenities.map((ammit) => ({
-                id: ammit.id,
-                name: ammit.name,
-              }))
+              id: ammit.id,
+              name: ammit.name,
+            }))
             : [],
           Specifications: Array.isArray(projectData.specifications)
             ? projectData.specifications.map((s) => s.name)
@@ -481,8 +481,8 @@ const ProjectDetailsEdit = () => {
           image: Array.isArray(projectData.image_url)
             ? projectData.image_url.map((url) => ({ document_url: url }))
             : projectData.image_url
-            ? [{ document_url: projectData.image_url }]
-            : [],
+              ? [{ document_url: projectData.image_url }]
+              : [],
           previewImage: Array.isArray(projectData.image_url)
             ? projectData.image_url[0] || ""
             : projectData.image_url || "",
@@ -510,8 +510,8 @@ const ProjectDetailsEdit = () => {
           project_ppt: Array.isArray(projectData.ProjectPPT)
             ? projectData.ProjectPPT
             : projectData.ProjectPPT
-            ? [projectData.ProjectPPT]
-            : [],
+              ? [projectData.ProjectPPT]
+              : [],
           // Remove ppt_name from state, not needed if you always use array of objects
           project_sales_type: projectData.project_sales_type || "",
           order_no: projectData.order_no || "",
@@ -589,8 +589,7 @@ const ProjectDetailsEdit = () => {
 
         if (!sizeCheck.valid) {
           toast.error(
-            `Brochure file too large: ${sizeCheck.name} (${
-              sizeCheck.size
+            `Brochure file too large: ${sizeCheck.name} (${sizeCheck.size
             }). Maximum allowed size is ${formatFileSize(MAX_BROCHURE_SIZE)}.`
           );
           e.target.value = ""; // Reset input
@@ -695,8 +694,7 @@ const ProjectDetailsEdit = () => {
 
         if (!sizeCheck.valid) {
           toast.error(
-            `Image file too large: ${sizeCheck.name} (${
-              sizeCheck.size
+            `Image file too large: ${sizeCheck.name} (${sizeCheck.size
             }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
           );
           e.target.value = ""; // Reset input
@@ -734,8 +732,7 @@ const ProjectDetailsEdit = () => {
 
       if (!sizeCheck.valid) {
         toast.error(
-          `Image file too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `Image file too large: ${sizeCheck.name} (${sizeCheck.size
           }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
         );
         e.target.value = ""; // Reset input
@@ -799,8 +796,7 @@ const ProjectDetailsEdit = () => {
 
       if (!sizeCheck.valid) {
         toast.error(
-          `Image file too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `Image file too large: ${sizeCheck.name} (${sizeCheck.size
           }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
         );
         e.target.value = ""; // Reset input
@@ -1581,8 +1577,8 @@ const ProjectDetailsEdit = () => {
     }
 
     // Check for required images
-    const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
-      ? formData.gallery_image_16_by_9.filter(
+    const gallery16By9Files = formData.gallery_image_16_by_9
+      ? formData.gallery_image_16_by_9.some(
         (img) =>
           img.file instanceof File ||
           !!img.id ||
@@ -1603,8 +1599,8 @@ const ProjectDetailsEdit = () => {
 
     // Perform individual validation checks only if not all images are present
     if (!allImagesPresent) {
-      if (gallery16By9Files.length < 3) {
-        toast.error("At least 3 gallery images with 16:9 ratio are required.");
+      if (!gallery16By9Files) {
+        toast.error("gallery Image with 16:9 ratio are required");
         setLoading(false);
         setIsSubmitting(false);
         return;
@@ -1881,7 +1877,7 @@ const ProjectDetailsEdit = () => {
         bannerPreviewImage: imageURL,
       }));
       setDialogOpen((prev) => ({ ...prev, image: true }));
-    } 
+    }
     // else if (type === "cover_images") {
     //   setCoverImageUpload(newImageList);
     //   setFormData((prevData) => ({
@@ -1891,26 +1887,26 @@ const ProjectDetailsEdit = () => {
     //   setDialogOpen((prev) => ({ ...prev, cover_images: true }));
     // } 
     else if (type === "cover_images") {
-    // Skip cropper for GIFs
-    if (fileType === "image/gif") {
+      // Skip cropper for GIFs
+      if (fileType === "image/gif") {
+        setFormData((prevData) => ({
+          ...prevData,
+          cover_images: Array.isArray(prevData.cover_images)
+            ? [...prevData.cover_images, file]
+            : [file],
+          coverPreviewImage: imageURL,
+        }));
+        setCoverImageUpload([]); // Reset ImageUploadingButton
+        setDialogOpen((prev) => ({ ...prev, cover_images: false }));
+        return;
+      }
+      setCoverImageUpload(newImageList);
       setFormData((prevData) => ({
         ...prevData,
-        cover_images: Array.isArray(prevData.cover_images)
-          ? [...prevData.cover_images, file]
-          : [file],
         coverPreviewImage: imageURL,
       }));
-      setCoverImageUpload([]); // Reset ImageUploadingButton
-      setDialogOpen((prev) => ({ ...prev, cover_images: false }));
-      return;
+      setDialogOpen((prev) => ({ ...prev, cover_images: true }));
     }
-    setCoverImageUpload(newImageList);
-    setFormData((prevData) => ({
-      ...prevData,
-      coverPreviewImage: imageURL,
-    }));
-    setDialogOpen((prev) => ({ ...prev, cover_images: true }));
-  }
     else if (type === "gallery_image") {
       setGalleryImageUpload(newImageList);
       setFormData((prevData) => ({
@@ -2122,7 +2118,7 @@ const ProjectDetailsEdit = () => {
       ],
     }));
 
-      e.target.value = ""; // Reset the input box after upload
+    e.target.value = ""; // Reset the input box after upload
   };
 
   const handleQRCodeImageNameChange = (index, newName) => {
@@ -2605,8 +2601,7 @@ const ProjectDetailsEdit = () => {
       if (tooLargeFiles.length > 0) {
         tooLargeFiles.forEach((file) => {
           toast.error(
-            `File too large: ${file.name} (${
-              file.size
+            `File too large: ${file.name} (${file.size
             }). Max size: ${formatFileSize(MAX_SIZES[name])}`
           );
         });
@@ -2629,8 +2624,7 @@ const ProjectDetailsEdit = () => {
       const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.image)}`
         );
         return;
@@ -2651,8 +2645,7 @@ const ProjectDetailsEdit = () => {
       );
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${
-            sizeCheck.size
+          `File too large: ${sizeCheck.name} (${sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
         );
         return;
@@ -3160,7 +3153,7 @@ const ProjectDetailsEdit = () => {
                         project_tag: value,
                       }))
                     }
-                    // isDisableFirstOption={true}
+                  // isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -4272,8 +4265,8 @@ const ProjectDetailsEdit = () => {
                                     img instanceof File || img instanceof Blob
                                       ? URL.createObjectURL(img)
                                       : typeof img === "string"
-                                      ? img
-                                      : img?.document_url || "" // fallback if img is an object like { url: "..." }
+                                        ? img
+                                        : img?.document_url || "" // fallback if img is an object like { url: "..." }
                                   }
                                   alt="Plan"
                                   style={{
@@ -5271,8 +5264,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5370,8 +5363,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5475,8 +5468,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5577,8 +5570,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5679,8 +5672,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5781,8 +5774,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
+                                    ? URL.createObjectURL(file)
+                                    : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -6001,8 +5994,8 @@ const ProjectDetailsEdit = () => {
                                 file.document_url // API response video
                                   ? file.document_url
                                   : file instanceof File // Uploaded video file
-                                  ? URL.createObjectURL(file)
-                                  : ""
+                                    ? URL.createObjectURL(file)
+                                    : ""
                               }
                               autoPlay
                               muted

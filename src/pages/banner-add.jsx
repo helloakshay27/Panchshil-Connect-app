@@ -87,6 +87,13 @@ const BannerAdd = () => {
     };
   };
 
+  const project_banner = [
+    { key: 'banner_video_1_by_1', label: '1:1' },
+    { key: 'banner_video_16_by_9', label: '16:9' },
+    { key: 'banner_video_9_by_16', label: '9:16' },
+    { key: 'banner_video_3_by_2', label: '3:2' },
+  ];
+
   const bannerUploadConfig = {
     'banner video': ['1:1', '9:16', '16:9', '3:2'],
   };
@@ -169,12 +176,27 @@ const BannerAdd = () => {
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
 
+      // Object.entries(formData).forEach(([key, images]) => {
+      //   if (key.startsWith("banner_video_") && Array.isArray(images)) {
+      //     images.forEach((img) => {
+      //       const backendField = key.replace("banner_video_", "banner[banner_video_") + "]";
+      //       if (img.file instanceof File) {
+      //         sendData.append(backendField, img.file);
+      //       }
+      //     });
+      //   }
+      // });
+
       Object.entries(formData).forEach(([key, images]) => {
-        if (key.startsWith("banner_video_") && Array.isArray(images)) {
+        if (
+          (key.startsWith("banner_video_") || key.startsWith("banner_image_")) &&
+          Array.isArray(images)
+        ) {
           images.forEach((img) => {
-            const backendField = key.replace("banner_video_", "banner[banner_video_") + "]";
+            const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
             if (img.file instanceof File) {
-              sendData.append(backendField, img.file);
+              // sendData.append(backendField, img.file);
+              sendData.append(`banner[${key}]`, img.file);
             }
           });
         }
@@ -328,37 +350,40 @@ const BannerAdd = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {[...(formData.banner_video_1_by_1 || []).map((file) => ({
-                        ...file,
-                        type: "banner_video_1_by_1",
-                      })),
-                      ...(formData.banner_video_9_by_16 || []).map((file) => ({
-                        ...file,
-                        type: "banner_video_9_by_16",
-                      }))].map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.name}</td>
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={file.preview}
-                              alt={file.name}
-                            />
-                          </td>
-                          <td>{file.ratio}</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => discardImage(file.type, file)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {project_banner.map(({ key, label }) => {
+                        const files = Array.isArray(formData[key]) ? formData[key] : formData[key] ? [formData[key]] : [];
+
+                        return files.map((file, index) => {
+                          const preview = file.preview || file.document_url || '';
+                          const name = file.name || file.document_file_name || 'Unnamed';
+
+                          return (
+                            <tr key={`${key}-${index}`}>
+                              <td>{name}</td>
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={preview}
+                                  alt={name}
+                                />
+                              </td>
+                              <td>{file.ratio || label}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() => discardImage(key, file)}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        });
+                      })}
                     </tbody>
+
                   </table>
                 </div>
               </div>
