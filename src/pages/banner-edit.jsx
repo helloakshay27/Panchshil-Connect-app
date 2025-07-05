@@ -654,7 +654,7 @@ const BannerEdit = () => {
         <div className="module-data-section">
           <div className="card mt-4 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Create Banner</h3>
+              <h3 className="card-title">Banner Edit</h3>
             </div>
   
             <div className="card-body">

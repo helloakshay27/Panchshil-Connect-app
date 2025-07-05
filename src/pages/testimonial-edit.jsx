@@ -512,7 +512,7 @@ const TestimonialEdit = () => {
           {/* <form onSubmit={handleSubmit}> */}
           <div className="card mt-4 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Edit Testimonial</h3>
+              <h3 className="card-title">Testimonial Edit</h3>
             </div>
             <div className="card-body">
               <div className="row">
