@@ -678,21 +678,16 @@ const BannerEdit = () => {
   
                 {/* Project Select */}
                 <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Project<span className="otp-asterisk"> *</span>
-                    </label>
-                    <SelectBox
-                      options={projects.map((project) => ({
-                        label: project.project_name,
-                        value: project.id,
-                      }))}
-                      value={formData.project_id}
-                      onChange={(value) => setFormData({ ...formData, project_id: value })}
-                    />
-                    {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
-                  </div>
-                </div>
+                      <div className="form-group">
+                        <label>Project <span className="text-danger">*</span></label>
+                        <SelectBox
+                          options={projects.map((p) => ({ label: p.project_name, value: p.id }))}
+                          defaultValue={formData.project_id}
+                          onChange={(value) => setFormData({ ...formData, project_id: value })}
+                        />
+                        {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
+                      </div>
+                    </div>
   
                 {/* Banner Attachment Upload */}
                 <div className="col-md-3 col-sm-6 col-12">
