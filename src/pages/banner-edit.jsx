@@ -357,7 +357,7 @@ const BannerEdit = () => {
     // If no imageId, it's a new image, just remove locally
     if (!imageId) {
       setFormData((prev) => {
-        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        const updatedFiles = Array.isArray(prev[key]) ? prev[key].filter((_, i) => i !== index) : [];
         return { ...prev, [key]: updatedFiles };
       });
       toast.success("Image removed successfully!");
@@ -380,7 +380,9 @@ const BannerEdit = () => {
       if (!response.ok) {
         // Optionally, handle 404 as a successful local delete
         if (response.status === 404) {
-          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          const updatedFiles = Array.isArray(formData[key])
+            ? formData[key].filter((_, i) => i !== index)
+            : [];
           setFormData({ ...formData, [key]: updatedFiles });
           toast.success("Image removed from UI (already deleted on server).");
           return;
@@ -388,10 +390,9 @@ const BannerEdit = () => {
         throw new Error("Failed to delete image");
       }
 
-
       // Remove from UI after successful delete
       setFormData((prev) => {
-        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        const updatedFiles = Array.isArray(prev[key]) ? prev[key].filter((_, i) => i !== index) : [];
         return { ...prev, [key]: updatedFiles };
       });
 
@@ -401,6 +402,7 @@ const BannerEdit = () => {
       toast.error("Failed to delete image. Please try again.");
     }
   };
+
 
   return (
     <div className="container-fluid" style={{ height: '100vh', overflowY: 'auto' }}>

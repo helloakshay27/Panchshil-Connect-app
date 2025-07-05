@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
@@ -10,6 +10,7 @@ import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 
 const TestimonialEdit = () => {
   const { state } = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { testimonial } = state || {};
   console.log(testimonial);
@@ -404,6 +405,7 @@ const TestimonialEdit = () => {
       );
 
       toast.success("Testimonial updated successfully!");
+      sessionStorage.removeItem("editTestimonialId");
       navigate("/testimonial-list");
     } catch (error) {
       console.error("Error updating testimonial:", error);
@@ -454,20 +456,19 @@ const TestimonialEdit = () => {
   //   }
   // };
   const handleFetchedDiscardGallery = async (key, index, imageId) => {
-    // If no imageId, it's a new image, just remove locally
     if (!imageId) {
       setFormData((prev) => {
-        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        const currentFiles = Array.isArray(prev[key]) ? prev[key] : [prev[key]];
+        const updatedFiles = currentFiles.filter((_, i) => i !== index);
         return { ...prev, [key]: updatedFiles };
       });
       toast.success("Image removed successfully!");
       return;
     }
-
-    // Existing image: delete from server, then remove locally
+  
     try {
       const response = await fetch(
-        `${baseURL}banners/${id}/remove_creative_image/${imageId}.json`,
+        `${baseURL}testimonials/${testimonial.id}/remove_image/${imageId}.json`,
         {
           method: "DELETE",
           headers: {
@@ -476,31 +477,34 @@ const TestimonialEdit = () => {
           },
         }
       );
-
+  
       if (!response.ok) {
-        // Optionally, handle 404 as a successful local delete
         if (response.status === 404) {
-          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          const currentFiles = Array.isArray(formData[key])
+            ? formData[key]
+            : [formData[key]];
+          const updatedFiles = currentFiles.filter((_, i) => i !== index);
           setFormData({ ...formData, [key]: updatedFiles });
           toast.success("Image removed from UI (already deleted on server).");
           return;
         }
         throw new Error("Failed to delete image");
       }
-
-
-      // Remove from UI after successful delete
+  
+      // Successful deletion
       setFormData((prev) => {
-        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        const currentFiles = Array.isArray(prev[key]) ? prev[key] : [prev[key]];
+        const updatedFiles = currentFiles.filter((_, i) => i !== index);
         return { ...prev, [key]: updatedFiles };
       });
-
+  
       toast.success("Image deleted successfully!");
     } catch (error) {
       console.error("Error deleting image:", error.message);
       toast.error("Failed to delete image. Please try again.");
     }
   };
+  
   return (
     <div className="">
       <div className="">
