@@ -224,16 +224,23 @@ const BannerEdit = () => {
     { key: 'banner_video_9_by_16', label: '9:16' },
     { key: 'banner_video_3_by_2', label: '3:2' },
   ];
-  const updateFormData = (key, files) => {
-    setFormData((prev) => {
-      const existing = Array.isArray(prev[key]) ? prev[key] : prev[key] ? [prev[key]] : [];
-      return {
-        ...prev,
-        [key]: [...existing, ...files],
-      };
-    });
-  };
+  // const updateFormData = (key, files) => {
+  //   setFormData((prev) => {
+  //     const existing = Array.isArray(prev[key]) ? prev[key] : prev[key] ? [prev[key]] : [];
+  //     return {
+  //       ...prev,
+  //       [key]: [...existing, ...files],
+  //     };
+  //   });
+  // };
 
+  const updateFormData = (key, files) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: files, // Replace existing files instead of appending
+    }));
+  };
+  
 
   const handleCropComplete = (validImages) => {
     if (!validImages || validImages.length === 0) {
