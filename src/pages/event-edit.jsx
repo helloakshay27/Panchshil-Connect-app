@@ -667,6 +667,7 @@ const EventEdit = () => {
   // };
 
     const handleFetchedDiscardGallery = async (key, index, imageId) => {
+      toast.dismiss();
        // If no imageId, it's a new image, just remove locally
        if (!imageId) {
          setFormData((prev) => {
@@ -703,11 +704,11 @@ const EventEdit = () => {
    
    
          // Remove from UI after successful delete
-         setFormData((prev) => {
-           const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
-           return { ...prev, [key]: updatedFiles };
-         });
-   
+        setFormData((prev) => ({
+                ...prev,
+               [key]: null,
+                }));
+
          toast.success("Image deleted successfully!");
        } catch (error) {
          console.error("Error deleting image:", error.message);
@@ -742,6 +743,30 @@ const EventEdit = () => {
 
     if (!validateForm()) return;
     setLoading(true);
+
+    const cover16by9 = formData.cover_image_16_by_9;;
+    const hasCover16by9 = Array.isArray(cover16by9)
+      ? cover16by9.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
+      : !!(cover16by9?.file instanceof File || cover16by9?.id || cover16by9?.document_file_name);
+
+       const event16by9 = formData.event_images_16_by_9;;
+    const hasEvent16by9 = Array.isArray(event16by9)
+      ? event16by9.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
+      : !!(event16by9?.file instanceof File || event16by9?.id || event16by9?.document_file_name);
+
+    if (!hasCover16by9) {
+      toast.error("Cover Image with 16:9 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
+     if (!hasEvent16by9) {
+      toast.error("Event Image with 16:9 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
 
     const data = new FormData();
 
@@ -1094,7 +1119,7 @@ const EventEdit = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Attachment
@@ -1116,13 +1141,13 @@ const EventEdit = () => {
                           className="form-control"
                           type="file"
                           name="attachfile"
-                          accept="image/*,video/*" // ✅ Accept only images and videos
+                          accept="image/*,video/*" 
                           multiple
-                          onChange={handleFileChange} // Handle file selection
+                          onChange={handleFileChange} 
                         />
                       </div>
 
-                      {/* Image Preview with Remove Button */}
+                    
                       {Array.isArray(formData.previewImage) &&
                         formData.previewImage.length > 0 && (
                           <div className="d-flex flex-wrap gap-2 mt-2">
@@ -1155,7 +1180,7 @@ const EventEdit = () => {
                                       }}
                                     />
                                   )}
-                                  {/* Remove button */}
+                                
                                   <button
                                     type="button"
                                     className="btn btn-danger btn-sm position-absolute"
@@ -1177,7 +1202,7 @@ const EventEdit = () => {
                                   >
                                     ×
                                   </button>
-                                  {/* Badge to show if image is existing or new */}
+                                 
                                   <small
                                     className={`badge ${
                                       isExisting ? "bg-info" : "bg-success"
@@ -1195,7 +1220,7 @@ const EventEdit = () => {
                             })}
                           </div>
                         )}
-                    </div>
+                    </div> */}
                     {/* <div className="col-md-3 col-sm-6 col-12">
                       <div className="form-group mt-3">
                   
@@ -1346,168 +1371,7 @@ const EventEdit = () => {
                     </div>
 
                     {/* Share With Radio Buttons */}
-                    <div className="col-md-4">
-                      <div className="form-group mt-3">
-                        <label>Share With</label>
-                        <div className="d-flex gap-3">
-                          {/* All */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="all"
-                              checked={formData.shared === "all"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "all",
-                                  user_id: [],
-                                  group_id: "",
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              All
-                            </label>
-                          </div>
-                          {/* Individuals */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="individual"
-                              checked={formData.shared === "individual"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "individual",
-                                  group_id: "",
-                                }))
-                              }
-                              disabled={
-                                !eventUserID || eventUserID.length === 0
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{
-                                color:
-                                  !eventUserID || eventUserID.length === 0
-                                    ? "gray"
-                                    : "black",
-                              }}
-                            >
-                              Individuals
-                            </label>
-                          </div>
-                          {/* Groups */}
-                          {/* <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="group"
-                              checked={formData.shared === "group"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "group",
-                                  user_id: [],
-                                  group_id: [], // Reset to empty array
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{
-                                color:
-                                  !groups || groups.length === 0
-                                    ? "black"
-                                    : "black",
-                              }}
-                            >
-                              Groups
-                            </label>
-                          </div> */}
-                        </div>
-                      </div>
-
-                      {/* Individuals MultiSelect */}
-                      {formData.shared === "individual" && (
-                        <div className="form-group">
-                          <label>Event User ID</label>
-                          <MultiSelectBox
-                            options={eventUserID?.map((user) => ({
-                              value: user.id,
-                              label: `${user.firstname} ${user.lastname}`,
-                            }))}
-                            value={
-                              Array.isArray(formData.user_id)
-                                ? formData.user_id.map((userId) => {
-                                    const user = eventUserID.find(
-                                      (u) => u.id === userId
-                                    );
-                                    return user
-                                      ? {
-                                          value: userId,
-                                          label: `${user.firstname} ${user.lastname}`,
-                                        }
-                                      : {
-                                          value: userId,
-                                          label: `User ${userId}`,
-                                        };
-                                  })
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                user_id: selectedOptions.map(
-                                  (option) => option.value
-                                ),
-                              }))
-                            }
-                          />
-                        </div>
-                      )}
-
-                      {/* Groups MultiSelect */}
-                      {/* {formData.shared === "group" && (
-                        <div className="form-group">
-                          <label>Share with Groups</label>
-                          <MultiSelectBox
-                            options={groups?.map((group) => ({
-                              value: group.id,
-                              label: group.name,
-                            }))}
-                            value={
-                              formData.group_id
-                                ? formData.group_id.split(",").map((id) => ({
-                                  value: id,
-                                  label:
-                                    groups.find(
-                                      (group) => group.id.toString() === id
-                                    )?.name || `Group ${id}`,
-                                }))
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                group_id: selectedOptions.map(
-                                  (option) => option.value
-                                ),
-                              }))
-                            }
-                          />
-                        </div>
-                      )} */}
-                    </div>
+                   
 
                     <div className="col-md-3">
                       <div className="form-group mt-3">
@@ -1713,7 +1577,7 @@ const EventEdit = () => {
                               justifyContent: "center",
                             }}
                           >
-                            Add Reminder
+                            + Add
                           </button>
                         </div>
                       </div>
@@ -1767,6 +1631,168 @@ const EventEdit = () => {
                             </div>
                           </div>
                         ))}
+                    </div>
+                     <div className="col-md-4">
+                      <div className="form-group mt-3">
+                        <label>Share With</label>
+                        <div className="d-flex gap-3">
+                          {/* All */}
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shared"
+                              value="all"
+                              checked={formData.shared === "all"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shared: "all",
+                                  user_id: [],
+                                  group_id: "",
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              All
+                            </label>
+                          </div>
+                          {/* Individuals */}
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shared"
+                              value="individual"
+                              checked={formData.shared === "individual"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shared: "individual",
+                                  group_id: "",
+                                }))
+                              }
+                              disabled={
+                                !eventUserID || eventUserID.length === 0
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{
+                                color:
+                                  !eventUserID || eventUserID.length === 0
+                                    ? "gray"
+                                    : "black",
+                              }}
+                            >
+                              Individuals
+                            </label>
+                          </div>
+                          {/* Groups */}
+                          {/* <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shared"
+                              value="group"
+                              checked={formData.shared === "group"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shared: "group",
+                                  user_id: [],
+                                  group_id: [], // Reset to empty array
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{
+                                color:
+                                  !groups || groups.length === 0
+                                    ? "black"
+                                    : "black",
+                              }}
+                            >
+                              Groups
+                            </label>
+                          </div> */}
+                        </div>
+                      </div>
+
+                      {/* Individuals MultiSelect */}
+                      {formData.shared === "individual" && (
+                        <div className="form-group">
+                          <label>Event User ID</label>
+                          <MultiSelectBox
+                            options={eventUserID?.map((user) => ({
+                              value: user.id,
+                              label: `${user.firstname} ${user.lastname}`,
+                            }))}
+                            value={
+                              Array.isArray(formData.user_id)
+                                ? formData.user_id.map((userId) => {
+                                    const user = eventUserID.find(
+                                      (u) => u.id === userId
+                                    );
+                                    return user
+                                      ? {
+                                          value: userId,
+                                          label: `${user.firstname} ${user.lastname}`,
+                                        }
+                                      : {
+                                          value: userId,
+                                          label: `User ${userId}`,
+                                        };
+                                  })
+                                : []
+                            }
+                            onChange={(selectedOptions) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                user_id: selectedOptions.map(
+                                  (option) => option.value
+                                ),
+                              }))
+                            }
+                          />
+                        </div>
+                      )}
+
+                      {/* Groups MultiSelect */}
+                      {/* {formData.shared === "group" && (
+                        <div className="form-group">
+                          <label>Share with Groups</label>
+                          <MultiSelectBox
+                            options={groups?.map((group) => ({
+                              value: group.id,
+                              label: group.name,
+                            }))}
+                            value={
+                              formData.group_id
+                                ? formData.group_id.split(",").map((id) => ({
+                                  value: id,
+                                  label:
+                                    groups.find(
+                                      (group) => group.id.toString() === id
+                                    )?.name || `Group ${id}`,
+                                }))
+                                : []
+                            }
+                            onChange={(selectedOptions) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                group_id: selectedOptions.map(
+                                  (option) => option.value
+                                ),
+                              }))
+                            }
+                          />
+                        </div>
+                      )} */}
                     </div>
                   </div>
                 </div>
@@ -1925,8 +1951,7 @@ const EventEdit = () => {
                         [i]
                         {showAttachmentTooltip && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB and Supports{" "}
-                            {selectedEventRatios.join(", ")} aspect ratios
+                            Max Upload Size 3 MB and Required ratio is 16:9
                           </span>
                         )}
                       </span>

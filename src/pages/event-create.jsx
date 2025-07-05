@@ -373,6 +373,26 @@ const EventCreate = () => {
     setLoading(true);
     toast.dismiss();
 
+      const hasProjectBanner1by1 = formData.cover_image_16_by_9
+    && formData.cover_image_16_by_9.some(img => img.file instanceof File);
+
+     const hasEventBanner1by1 = formData.event_images_16_by_9
+    && formData.event_images_16_by_9.some(img => img.file instanceof File);
+
+    if (!hasProjectBanner1by1) {
+      toast.error("Cover Image with 16:9 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!hasEventBanner1by1) {
+      toast.error("Event Image with 16:9 ratio is required.");
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
+
     const preparedReminders = prepareRemindersForSubmission();
 
     // Use backend value for shared
@@ -982,151 +1002,7 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label>Share With</label>
-                        <div className="d-flex gap-3">
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="all"
-                              checked={formData.shared === "all"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "all",
-                                  user_id: "",
-                                  group_id: "",
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              All
-                            </label>
-                          </div>
-
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="individual"
-                              checked={formData.shared === "individual"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "individual",
-                                  group_id: "", // clear other
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              Individuals
-                            </label>
-                          </div>
-
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="group"
-                              checked={formData.shared === "group"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "group",
-                                  user_id: "", // clear other
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              Groups
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-
-                      {formData.shared === "individual" && (
-                        <div className="form-group">
-                          <label>Event User ID</label>
-                          <MultiSelectBox
-                            options={eventUserID.map((user) => ({
-                              value: user.id,
-                              label: `${user.firstname} ${user.lastname}`,
-                            }))}
-                            value={
-                              formData.user_id
-                                ? formData.user_id.split(",").map((id) => {
-                                    const user = eventUserID.find(
-                                      (u) => u.id.toString() === id
-                                    );
-                                    return {
-                                      value: id,
-                                      label: `${user?.firstname} ${user?.lastname}`,
-                                    };
-                                  })
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                user_id: selectedOptions
-                                  .map((option) => option.value)
-                                  .join(","),
-                              }))
-                            }
-                          />
-                        </div>
-                      )}
-
-                      {formData.shared === "group" && (
-                        <div className="form-group">
-                          <label>Share with Groups</label>
-                          <MultiSelectBox
-                            options={groups.map((group) => ({
-                              value: group.id,
-                              label: group.name,
-                            }))}
-                            value={
-                              Array.isArray(formData.group_id)
-                                ? formData.group_id
-                                    .map((id) => {
-                                      const group = groups.find(
-                                        (g) =>
-                                          g.id === id ||
-                                          g.id.toString() === id.toString()
-                                      );
-                                      return group
-                                        ? { value: group.id, label: group.name }
-                                        : null;
-                                    })
-                                    .filter(Boolean)
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                group_id: selectedOptions.map(
-                                  (option) => option.value
-                                ),
-                              }))
-                            }
-                          />
-                        </div>
-                      )}
-                    </div>
+                   
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Send Email</label>
@@ -1316,7 +1192,7 @@ const EventCreate = () => {
                               justifyContent: "center",
                             }}
                           >
-                            Add Reminder
+                           + Add
                           </button>
                         </div>
                       </div>
@@ -1370,6 +1246,152 @@ const EventCreate = () => {
                             </div>
                           </div>
                         ))}
+                    </div>
+
+                     <div className="col-md-4">
+                      <div className="form-group">
+                        <label>Share With</label>
+                        <div className="d-flex gap-3">
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shared"
+                              value="all"
+                              checked={formData.shared === "all"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shared: "all",
+                                  user_id: "",
+                                  group_id: "",
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              All
+                            </label>
+                          </div>
+
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shared"
+                              value="individual"
+                              checked={formData.shared === "individual"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shared: "individual",
+                                  group_id: "", // clear other
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              Individuals
+                            </label>
+                          </div>
+
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="shared"
+                              value="group"
+                              checked={formData.shared === "group"}
+                              onChange={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shared: "group",
+                                  user_id: "", // clear other
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              style={{ color: "black" }}
+                            >
+                              Groups
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {formData.shared === "individual" && (
+                        <div className="form-group">
+                          <label>Event User ID</label>
+                          <MultiSelectBox
+                            options={eventUserID.map((user) => ({
+                              value: user.id,
+                              label: `${user.firstname} ${user.lastname}`,
+                            }))}
+                            value={
+                              formData.user_id
+                                ? formData.user_id.split(",").map((id) => {
+                                    const user = eventUserID.find(
+                                      (u) => u.id.toString() === id
+                                    );
+                                    return {
+                                      value: id,
+                                      label: `${user?.firstname} ${user?.lastname}`,
+                                    };
+                                  })
+                                : []
+                            }
+                            onChange={(selectedOptions) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                user_id: selectedOptions
+                                  .map((option) => option.value)
+                                  .join(","),
+                              }))
+                            }
+                          />
+                        </div>
+                      )}
+
+                      {formData.shared === "group" && (
+                        <div className="form-group">
+                          <label>Share with Groups</label>
+                          <MultiSelectBox
+                            options={groups.map((group) => ({
+                              value: group.id,
+                              label: group.name,
+                            }))}
+                            value={
+                              Array.isArray(formData.group_id)
+                                ? formData.group_id
+                                    .map((id) => {
+                                      const group = groups.find(
+                                        (g) =>
+                                          g.id === id ||
+                                          g.id.toString() === id.toString()
+                                      );
+                                      return group
+                                        ? { value: group.id, label: group.name }
+                                        : null;
+                                    })
+                                    .filter(Boolean)
+                                : []
+                            }
+                            onChange={(selectedOptions) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                group_id: selectedOptions.map(
+                                  (option) => option.value
+                                ),
+                              }))
+                            }
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
