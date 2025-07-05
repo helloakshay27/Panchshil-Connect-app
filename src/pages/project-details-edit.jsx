@@ -1785,7 +1785,7 @@ const ProjectDetailsEdit = () => {
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("gallery_image_", "project[gallery_image_") + "]";
+          const backendField = key.replace("gallery_image_", "project[gallery_image_") + "][]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
