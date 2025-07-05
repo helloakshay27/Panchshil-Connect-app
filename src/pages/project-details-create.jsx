@@ -163,10 +163,13 @@ const ProjectDetailsCreate = () => {
   const dynamicDescription3 = `Supports ${selectedBannerRatios.join(', ')} aspect ratios`;
 
   const updateFormData = (key, files) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: [...(prev[key] || []), ...files],
-    }));
+    setFormData((prev) => {
+      const existing = Array.isArray(prev[key]) ? prev[key] : [];
+      return {
+        ...prev,
+        [key]: [...existing, ...files],
+      };
+    });
   };
 
   const handleCroppedImages = (validImages, type = "cover") => {
@@ -1497,9 +1500,9 @@ const ProjectDetailsCreate = () => {
 
 
     // Validate gallery images (16:9 and 9:16)
-    const gallery16By9Files = formData.gallery_image_16_by_9
-      ? formData.gallery_image_16_by_9.some((img) => img.file instanceof File)
-      : [];
+    const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+    ? formData.gallery_image_16_by_9.filter((img) => img.file instanceof File)
+    : [];
 
 
     // Validate floor plans (9:16, 1:1, 16:9)
@@ -1510,7 +1513,7 @@ const ProjectDetailsCreate = () => {
 
 
     // Check if all required images are present
-    if (!gallery16By9Files) {
+    if (gallery16By9Files.length < 3) {
       toast.error("At least 3 gallery images with 16:9 ratio are required.");
       setLoading(false);
       setIsSubmitting(false);
@@ -1668,12 +1671,13 @@ const ProjectDetailsCreate = () => {
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("gallery_image_", "project[gallery_image_") + "]";
+          const backendField = key.replace("gallery_image_", "project[gallery_image_") + "][]"; // Append [] for multiple files
           if (img.file instanceof File) {
-            data.append(backendField, img.file);
+            data.append(backendField, img.file); // ✅ Use the variable name
           }
         });
-      } else if (key.startsWith("floor_plans_") && Array.isArray(value)) {
+      }
+      else if (key.startsWith("floor_plans_") && Array.isArray(value)) {
         value.forEach((img) => {
           const backendField = key.replace("floor_plans_", "project[floor_plans_") + "]";
           if (img.file instanceof File) {
@@ -3800,7 +3804,7 @@ const ProjectDetailsCreate = () => {
                   {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
-               <button
+                <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
                   onClick={() =>
@@ -5112,7 +5116,7 @@ const ProjectDetailsCreate = () => {
                 </div>
               </div>
 
-{/* <div className="d-flex justify-content-between align-items-end mx-1">
+              {/* <div className="d-flex justify-content-between align-items-end mx-1">
     <h5 className="mt-3">Project Creatives</h5>
 
    

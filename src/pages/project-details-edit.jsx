@@ -434,7 +434,7 @@ const ProjectDetailsEdit = () => {
             }
           });
         });
-        
+
         // Step 3: Set static + dynamic formData
         setFormData({
           Property_Type: projectData.property_type || "",
@@ -1577,14 +1577,14 @@ const ProjectDetailsEdit = () => {
     }
 
     // Check for required images
-    const gallery16By9Files = formData.gallery_image_16_by_9
-      ? formData.gallery_image_16_by_9.some(
+    const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+    ? formData.gallery_image_16_by_9.filter(
         (img) =>
           img.file instanceof File ||
           !!img.id ||
           !!img.document_file_name
       )
-      : [];
+    : [];
     const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
     const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File || img.id || img.document_file_name);
     const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
@@ -1599,8 +1599,8 @@ const ProjectDetailsEdit = () => {
 
     // Perform individual validation checks only if not all images are present
     if (!allImagesPresent) {
-      if (!gallery16By9Files) {
-        toast.error("gallery Image with 16:9 ratio are required");
+      if (gallery16By9Files.length < 3) {
+        toast.error("At least 3 gallery images with 16:9 ratio are required.");
         setLoading(false);
         setIsSubmitting(false);
         return;
