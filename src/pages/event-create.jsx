@@ -1416,8 +1416,7 @@ const EventCreate = () => {
                         [i]
                         {showTooltip && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB and Supports{" "}
-                            {selectedCoverRatios.join(", ")} aspect ratios
+                            Max Upload Size 3 MB and Required ratio is 16:9
                           </span>
                         )}
                       </span>
@@ -1552,8 +1551,7 @@ const EventCreate = () => {
                         [i]
                         {showAttachmentTooltip && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB and Supports{" "}
-                            {selectedEventRatios.join(", ")} aspect ratios
+                           Max Upload Size 3 MB and Required ratio is 16:9
                           </span>
                         )}
                       </span>
