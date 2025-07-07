@@ -148,7 +148,7 @@ const ProjectDetails = () => {
             <h3 className="card-title">Project Details</h3>
             <div className="card-body">
               <div className="row px-3">
-                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                {/* <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6">
                     <label>Project Banner Image</label>
                   </div>
@@ -166,7 +166,7 @@ const ProjectDetails = () => {
                       }}
                     />
                   </div>
-                </div>
+                </div> */}
                 <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
                     <label>Project Type</label>
@@ -176,20 +176,6 @@ const ProjectDetails = () => {
                       <span className="me-3">
                         <span className="text-dark">
                           : {formData.property_type}
-                        </span>
-                      </span>
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
-                  <div className="col-6 ">
-                    <label>SFDC Project ID</label>
-                  </div>
-                  <div className="col-6">
-                    <label className="text">
-                      <span className="me-3">
-                        <span className="text-dark">
-                          : {formData.SFDC_Project_Id}
                         </span>
                       </span>
                     </label>
@@ -243,7 +229,6 @@ const ProjectDetails = () => {
                     </label>
                   </div>
                 </div>
-
                 <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
                     <label>Project Name</label>
@@ -253,6 +238,20 @@ const ProjectDetails = () => {
                       <span className="me-3">
                         <span className="text-dark">
                           : {formData.project_name}
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                  <div className="col-6 ">
+                    <label>SFDC Project ID</label>
+                  </div>
+                  <div className="col-6">
+                    <label className="text">
+                      <span className="me-3">
+                        <span className="text-dark">
+                          : {formData.SFDC_Project_Id}
                         </span>
                       </span>
                     </label>
@@ -542,6 +541,59 @@ const ProjectDetails = () => {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                   <div className="col-6 ">
+                    <label>Disclaimer</label>
+                  </div>
+                  <div className="col-6">
+                    <p
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: isExpanded ? "unset" : 1, // Show only 1 line initially
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: isExpanded ? "normal" : "nowrap",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => setIsExpanded(!isExpanded)}
+                    >
+                      : {formData.disclaimer}{" "}
+                      {!isExpanded && (
+                        <span style={{ color: "black", cursor: "pointer" }}>
+                          ...
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                  <div className="col-6">
+                    <label>Project QR Code Image</label>
+                  </div>
+                  <div className="col-6 d-flex flex-wrap">
+                    <span className="me-2">:</span>
+                    {formData?.project_qrcode_images?.length > 0 ? (
+                      formData.project_qrcode_images.map((img, index) => (
+                        <img
+                          key={index}
+                          src={img.document_url}
+                          alt={`QR Code ${index + 1}`}
+                          className="img-fluid me-2 mb-2"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "contain",
+                            display: "block",
+                          }}
+                        />
+                      ))
+                    ) : (
+                      <span>No QR code images available</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                  <div className="col-6 ">
                     <label>Enable Enquiry</label>
                   </div>
                   <div className="col-6">
@@ -613,7 +665,7 @@ const ProjectDetails = () => {
           </div>
           <div className="card-body">
             <div className="row">
-              <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+              {/* <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                 <div className="col-6 ">
                   <label>Rera Number</label>
                 </div>
@@ -633,6 +685,28 @@ const ProjectDetails = () => {
                       </span>
                     </span>
                   </label>
+                </div>
+              </div> */}
+              <div className=" col-sm-12 row px-3">
+                <div className="">
+                  {formData?.rera_number_multiple?.length > 0 ? (
+                    formData.rera_number_multiple.map((rera, idx) => (
+                      <div key={idx} className="mb-1">
+                        <strong>Tower Name :{rera.tower_name},</strong>{" "}
+                        <strong>Rera Number :{rera.rera_number},</strong>{" "}
+                        <a
+                          href={rera.rera_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-decoration-underline"
+                        >
+                          Rera URL :{rera.rera_url}
+                        </a>
+                      </div>
+                    ))
+                  ) : (
+                    <span className="text-muted">N/A</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -791,13 +865,89 @@ const ProjectDetails = () => {
             </div>
           </div>
         </div>
+         {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+        <div className="card mt-3 pb-4 mx-4">
+          <div className="card-header3">
+            <h3 className="card-title">Plans</h3>
+          </div>
+          <div className="card-body pb-2 mb-1 mt-0">
+            <div className="row ">
+              <div className="col-md-12 mt-4">
+                <h5>Project Plans</h5>
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>Plan Name</th>
+                        <th>File Name</th>
+                        <th>File Type</th>
+                        <th>Updated At</th>
+                        <th>Image</th>
+                        {/* <th>Download</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData?.plans?.length > 0 ? (
+                        formData.plans.map((plan, planIdx) => (
+                          <React.Fragment key={`plan-${planIdx}`}>
+                            {plan.images?.length > 0 ? (
+                              plan.images.map((img, imgIdx) => (
+                                <tr key={`plan-${planIdx}-img-${imgIdx}`}>
+                                  <td>{plan.name}</td>
+                                  <td>{img.document_file_name}</td>
+                                  <td>{img.document_content_type}</td>
+                                  <td>{img.document_updated_at}</td>
+                                  <td>
+                                    <img
+                                      src={img.document_url}
+                                      alt={`Plan Image ${imgIdx}`}
+                                      style={{
+                                        width: "100px",
+                                        height: "100px",
+                                        objectFit: "contain",
+                                        display: "block",
+                                      }}
+                                      className="img-fluid rounded"
+                                    />
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr key={`plan-${planIdx}-no-img`}>
+                                <td>{plan.name}</td>
+                                <td
+                                  colSpan="4"
+                                  className="text-center text-muted"
+                                >
+                                  No images available for this plan.
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            No Plans Available
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+         )}
+
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
             <h3 className="card-title">Document Attachment</h3>
           </div>
           <div className="card-body pb-2 mb-1 mt-0">
             <div className="row ">
-              <div className="col-md-12 mt-2">
+              {/* <div className="col-md-12 mt-2">
                 <h5 className=" ">Gallery Images</h5>
                 {loading ? (
                   <div className="text-center">
@@ -854,6 +1004,302 @@ const ProjectDetails = () => {
                     </table>
                   </div>
                 )}
+              </div> */}
+              <div className="col-md-12 mt-4">
+                <h5>Project Banner Images</h5>
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>File Type</th>
+                        <th>Updated At</th>
+                        <th>Image</th>
+                        {/* <th>Download</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        const eventGroups = [
+                          formData.image_1_by_1,
+                          formData.image_9_by_16,
+                          formData.image_3_by_2,
+                          formData.image_16_by_9,
+                        ];
+
+                        const allEventImages = eventGroups
+                          .filter((img) => img && img.document_url) // filter out nulls or objects without a URL
+                          .map((img) => img); // no need to flatten, since these are single objects
+
+                        return allEventImages.length > 0 ? (
+                          allEventImages.map((file, index) => (
+                            <tr key={`event-${index}`}>
+                              <td>{file.document_file_name}</td>
+                              <td>{file.document_content_type}</td>
+                              <td>{file.document_updated_at}</td>
+                              <td>
+                                <img
+                                  src={file.document_url}
+                                  alt={`Event ${index}`}
+                                  style={{
+                                    width: "100px",
+                                    height: "100px",
+                                    objectFit: "contain",
+                                    display: "block",
+                                  }}
+                                  className="img-fluid rounded"
+                                />
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            {/* <td colSpan="4" className="text-center">
+                              No Event Images
+                            </td> */}
+                          </tr>
+                        );
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="col-md-12 mt-4">
+                <h5>Project Cover Images</h5>
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>File Type</th>
+                        <th>Updated At</th>
+                        <th>Image</th>
+                        {/* <th>Download</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        const eventGroups = [
+                          formData.cover_images_1_by_1,
+                          formData.cover_images_9_by_16,
+                          formData.cover_images_3_by_2,
+                          formData.cover_images_16_by_9,
+                        ];
+
+                        const allEventImages = eventGroups
+                          .filter(
+                            (group) => Array.isArray(group) && group.length > 0
+                          )
+                          .flat()
+                          .filter((img) => img?.document_url);
+
+                        return allEventImages.length > 0 ? (
+                          allEventImages.map((file, index) => (
+                            <tr key={`event-${index}`}>
+                              <td>{file.document_file_name}</td>
+                              <td>{file.document_content_type}</td>
+                              <td>{file.document_updated_at}</td>
+                              <td>
+                                <img
+                                  src={file.document_url}
+                                  alt={`Event ${index}`}
+                                  style={{
+                                    width: "100px",
+                                    height: "100px",
+                                    objectFit: "contain",
+                                    display: "block",
+                                  }}
+                                  className="img-fluid rounded"
+                                />
+                              </td>
+                              {/* <td>
+                                <a href={`${file.document_url}`}>
+                                  {" "}
+                                  <svg
+                                    width="15"
+                                    height="16"
+                                    viewBox="0 0 22 23"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
+                                      fill="#8B0203"
+                                    ></path>
+                                  </svg>
+                                </a>
+                              </td> */}
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            {/* <td colSpan="4" className="text-center">
+                              No Event Images
+                            </td> */}
+                          </tr>
+                        );
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="col-md-12 mt-4">
+                <h5>Gallery Images</h5>
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>File Type</th>
+                        <th>Updated At</th>
+                        <th>Image</th>
+                        {/* <th>Download</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        const eventGroups = [
+                          formData.gallery_image_1_by_1,
+                          formData.gallery_image_9_by_16,
+                          formData.gallery_image_3_by_2,
+                          formData.gallery_image_16_by_9,
+                        ];
+
+                        const allEventImages = eventGroups
+                          .filter(
+                            (group) => Array.isArray(group) && group.length > 0
+                          )
+                          .flat()
+                          .filter((img) => img?.document_url);
+
+                        return allEventImages.length > 0 ? (
+                          allEventImages.map((file, index) => (
+                            <tr key={`event-${index}`}>
+                              <td>{file.document_file_name}</td>
+                              <td>{file.document_content_type}</td>
+                              <td>{file.document_updated_at}</td>
+                              <td>
+                                <img
+                                  src={file.document_url}
+                                  alt={`Event ${index}`}
+                                  style={{
+                                    width: "100px",
+                                    height: "100px",
+                                    objectFit: "contain",
+                                    display: "block",
+                                  }}
+                                  className="img-fluid rounded"
+                                />
+                              </td>
+                              {/* <td>
+                                <a href={`${file.document_url}`}>
+                                  {" "}
+                                  <svg
+                                    width="15"
+                                    height="16"
+                                    viewBox="0 0 22 23"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
+                                      fill="#8B0203"
+                                    ></path>
+                                  </svg>
+                                </a>
+                              </td> */}
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            {/* <td colSpan="4" className="text-center">
+                              No Event Images
+                            </td> */}
+                          </tr>
+                        );
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="col-md-12 mt-4">
+                <h5>Floor Plan</h5>
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>File Type</th>
+                        <th>Updated At</th>
+                        <th>Image</th>
+                        {/* <th>Download</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        const eventGroups = [
+                          formData.project_2d_image_1_by_1,
+                          formData.project_2d_image_9_by_16,
+                          formData.project_2d_image_3_by_2,
+                          formData.project_2d_image_16_by_9,
+                        ];
+
+                        const allEventImages = eventGroups
+                          .filter(
+                            (group) => Array.isArray(group) && group.length > 0
+                          )
+                          .flat()
+                          .filter((img) => img?.document_url);
+
+                        return allEventImages.length > 0 ? (
+                          allEventImages.map((file, index) => (
+                            <tr key={`event-${index}`}>
+                              <td>{file.document_file_name}</td>
+                              <td>{file.document_content_type}</td>
+                              <td>{file.document_updated_at}</td>
+                              <td>
+                                <img
+                                  src={file.document_url}
+                                  alt={`Event ${index}`}
+                                  style={{
+                                    width: "100px",
+                                    height: "100px",
+                                    objectFit: "contain",
+                                    display: "block",
+                                  }}
+                                  className="img-fluid rounded"
+                                />
+                              </td>
+                              {/* <td>
+                                <a href={`${file.document_url}`}>
+                                  {" "}
+                                  <svg
+                                    width="15"
+                                    height="16"
+                                    viewBox="0 0 22 23"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M20.8468 22.9744H1.1545C0.662189 22.9744 0.333984 22.6462 0.333984 22.1538V15.5897C0.333984 15.0974 0.662189 14.7692 1.1545 14.7692C1.6468 14.7692 1.97501 15.0974 1.97501 15.5897V21.3333H20.0263V15.5897C20.0263 15.0974 20.3545 14.7692 20.8468 14.7692C21.3391 14.7692 21.6673 15.0974 21.6673 15.5897V22.1538C21.6673 22.6462 21.3391 22.9744 20.8468 22.9744ZM11.0007 18.0513C10.9186 18.0513 10.7545 18.0513 10.6724 17.9692C10.5904 17.9692 10.5083 17.8872 10.4263 17.8051L3.86219 11.241C3.53398 10.9128 3.53398 10.4205 3.86219 10.0923C4.19039 9.7641 4.6827 9.7641 5.01091 10.0923L10.1801 15.2615V0.820513C10.1801 0.328205 10.5083 0 11.0007 0C11.493 0 11.8212 0.328205 11.8212 0.820513V15.2615L16.9904 10.0923C17.3186 9.7641 17.8109 9.7641 18.1391 10.0923C18.4673 10.4205 18.4673 10.9128 18.1391 11.241L11.575 17.8051C11.493 17.8872 11.4109 17.9692 11.3289 17.9692C11.2468 18.0513 11.0827 18.0513 11.0007 18.0513Z"
+                                      fill="#8B0203"
+                                    ></path>
+                                  </svg>
+                                </a>
+                              </td> */}
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            {/* <td colSpan="4" className="text-center">
+                              No Event Images
+                            </td> */}
+                          </tr>
+                        );
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <div className="col-md-12 mt-2">
                 <h5 className=" ">Brochure</h5>

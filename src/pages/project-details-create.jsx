@@ -1500,25 +1500,52 @@ const ProjectDetailsCreate = () => {
 
 
     // Validate gallery images (16:9 and 9:16)
+    // const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+    //   ? formData.gallery_image_16_by_9.filter((img) => img.file instanceof File)
+    //   : [];
+
     const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
-      ? formData.gallery_image_16_by_9.filter((img) => img.file instanceof File)
-      : [];
+  ? formData.gallery_image_16_by_9.filter((img) => img.file instanceof File)
+  : [];
 
 
     // Validate floor plans (9:16, 1:1, 16:9)
     const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File);
 
 
+  const imageCount = gallery16By9Files.length;
 
 
 
     // Check if all required images are present
-    if (gallery16By9Files.length < 3) {
-      toast.error("At least 3 gallery images with 16:9 ratio are required.");
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    // if (gallery16By9Files.length < 3) {
+    //   toast.error("At least 3 gallery images with 16:9 ratio are required.");
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
+
+if (imageCount < 3 || imageCount % 3 !== 0) {
+  const remainder = imageCount % 3;
+  const imagesNeeded = 3 - remainder;
+  const nextAllowed = imageCount + imagesNeeded;
+  const previousAllowed = imageCount - remainder;
+
+  let message = `Currently ${imageCount} gallery image${imageCount !== 1 ? "s" : ""} uploaded. `;
+
+  if (imageCount < 3) {
+    // ❗ User has less than minimum required images
+    message += `Please upload at least 3 gallery images with 16:9 ratio to proceed.`;
+  } else {
+    // ⚖️ User has 4, 5, 7, 8, etc. — not a multiple of 3
+    message += `Please upload ${imagesNeeded} more to make it ${nextAllowed}, or remove ${remainder} to make it ${previousAllowed} (multiples of 3 only) with 16:9 ratio to proceed.`;
+  }
+
+  toast.error(message);
+  setLoading(false);
+  setIsSubmitting(false);
+  return;
+}
 
     if (!hasFloorPlan16by9) {
       toast.error("Floor plans with 16:9 ratios are required.");
@@ -3711,7 +3738,7 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltip && (
                       <span className="tooltip-text">
-                        Max Upload Size 3 MB and Required ratio is 16:9
+                        Max Upload Size 3 MB and Required ratio is 9:16 and 1:1
                       </span>
                     )}
                   </span>
@@ -4018,6 +4045,130 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
               </div>
+               <div className="d-flex justify-content-between align-items-end mx-1">
+                <h5 className="mt-3">
+                  Floor Plan{" "}
+                  <span
+                    className="tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 3 MB and Required ratio is 16:9
+                      </span>
+                    )}
+                  </span>
+                </h5>
+
+                {/* <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  onClick={() =>
+                    document.getElementById("two_d_images").click()
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button> */}
+                {/* <input
+                  id="two_d_images"
+                  className="form-control"
+                  type="file"
+                  name="two_d_images"
+                  accept="image/*"
+                  onChange={(e) =>
+                    handleFileUpload("two_d_images", e.target.files)
+                  }
+                  multiple
+                  style={{ display: "none" }}
+                /> */}
+
+                <button
+                  className="purple-btn2 rounded-3"
+                  fdprocessedid="xn3e6n"
+                  type="button"
+                  onClick={() => setShowFloorPlanModal(true)}
+
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    fill="currentColor"
+                    className="bi bi-plus"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+
+                {showFloorPlanModal && (
+                  <ProjectBannerUpload
+                    onClose={() => setShowFloorPlanModal(false)}
+                    selectedRatioProp={selectedFloorRatios}
+                    showAsModal={true}
+                    label={floorImageLabel}
+                    description={dynamicDescription2}
+                    onContinue={(validImages) => handleCroppedImages(validImages, "floor")}
+                  />
+                )}
+              </div >
+
+              <div className="col-md-12 mt-2">
+                <div className="mt-4 tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th>File Name</th>
+                        <th>Preview</th>
+                        <th>Ratio</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {floorPlanRatios.map(({ key, label }) => {
+                        const files = formData[key] || [];
+
+                        return files.map((file, index) => (
+                          <tr key={`${key}-${index}`}>
+                            <td>{file.name}</td>
+                            <td>
+                              <img
+                                style={{ maxWidth: 100, maxHeight: 100 }}
+                                className="img-fluid rounded"
+                                src={file.preview}
+                                alt={file.name}
+                              />
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() => discardImage(key, file)}
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ));
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
               {/* Brochure Upload */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -4184,130 +4335,7 @@ const ProjectDetailsCreate = () => {
               </div>
 
               {/* 2D Images */}
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Floor Plan{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">
-                        Max Upload Size 3 MB and Required ratio is 16:9
-                      </span>
-                    )}
-                  </span>
-                </h5>
-
-                {/* <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("two_d_images").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button> */}
-                {/* <input
-                  id="two_d_images"
-                  className="form-control"
-                  type="file"
-                  name="two_d_images"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileUpload("two_d_images", e.target.files)
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                /> */}
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  type="button"
-                  onClick={() => setShowFloorPlanModal(true)}
-
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-
-                {showFloorPlanModal && (
-                  <ProjectBannerUpload
-                    onClose={() => setShowFloorPlanModal(false)}
-                    selectedRatioProp={selectedFloorRatios}
-                    showAsModal={true}
-                    label={floorImageLabel}
-                    description={dynamicDescription2}
-                    onContinue={(validImages) => handleCroppedImages(validImages, "floor")}
-                  />
-                )}
-              </div >
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Ratio</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {floorPlanRatios.map(({ key, label }) => {
-                        const files = formData[key] || [];
-
-                        return files.map((file, index) => (
-                          <tr key={`${key}-${index}`}>
-                            <td>{file.name}</td>
-                            <td>
-                              <img
-                                style={{ maxWidth: 100, maxHeight: 100 }}
-                                className="img-fluid rounded"
-                                src={file.preview}
-                                alt={file.name}
-                              />
-                            </td>
-                            <td>{file.ratio || label}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() => discardImage(key, file)}
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ));
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+             
 
 
               <div className="d-flex justify-content-between align-items-end mx-1">

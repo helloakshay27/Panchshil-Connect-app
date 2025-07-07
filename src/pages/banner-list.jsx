@@ -371,6 +371,9 @@ const BannerList = () => {
                                   {[
                                     { key: "banner_video_9_by_16", ratio: "9:16" },
                                     { key: "banner_video_1_by_1", ratio: "1:1" },
+                                    { key: "banner_video_16_by_9", ratio: "16:9" },
+                                    { key: "banner_video_3_by_2", ratio: "3:2" },
+
                                   ]
                                     .filter((item) => banners_list?.[item.key])
                                     .map((item) => {
