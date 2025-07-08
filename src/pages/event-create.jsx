@@ -8,6 +8,7 @@ import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
 
 const EventCreate = () => {
   const navigate = useNavigate();
@@ -142,6 +143,67 @@ const EventCreate = () => {
           preview: URL.createObjectURL(img.file),
           ratio: img.ratio,
           id: `${key}-${Date.now()}-${Math.random()}`, // Unique ID for each image
+        },
+      ]);
+    });
+
+    if (type === "cover") {
+      setShowCoverUploader(false);
+    } else {
+      setShowEventUploader(false);
+    }
+  };
+
+  const handleEventCroppedImages = (
+    validImages,
+    videoFiles = [],
+    type = "cover"
+  ) => {
+    // Handle video files first
+    if (videoFiles && videoFiles.length > 0) {
+      videoFiles.forEach((video) => {
+        const formattedRatio = video.ratio.replace(":", "_by_");
+        const prefix = type === "cover" ? "cover_image" : "event_images";
+        const key = `${prefix}_${formattedRatio}`;
+
+        updateFormData(key, [
+          {
+            file: video.file,
+            name: video.file.name,
+            preview: URL.createObjectURL(video.file),
+            ratio: video.ratio,
+            type: "video",
+            id: `${key}-${Date.now()}-${Math.random()}`,
+          },
+        ]);
+      });
+
+      if (type === "cover") {
+        setShowCoverUploader(false);
+      } else {
+        setShowEventUploader(false);
+      }
+      return;
+    }
+
+    // Handle images
+    if (!validImages || validImages.length === 0) {
+      toast.error(`No valid ${type} files selected.`);
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(":", "_by_");
+      const prefix = type === "cover" ? "cover_image" : "event_images";
+      const key = `${prefix}_${formattedRatio}`;
+      updateFormData(key, [
+        {
+          file: img.file,
+          name: img.file.name,
+          preview: URL.createObjectURL(img.file),
+          ratio: img.ratio,
+          type: "image",
+          id: `${key}-${Date.now()}-${Math.random()}`,
         },
       ]);
     });
@@ -373,11 +435,13 @@ const EventCreate = () => {
     setLoading(true);
     toast.dismiss();
 
-      const hasProjectBanner1by1 = formData.cover_image_16_by_9
-    && formData.cover_image_16_by_9.some(img => img.file instanceof File);
+    const hasProjectBanner1by1 =
+      formData.cover_image_16_by_9 &&
+      formData.cover_image_16_by_9.some((img) => img.file instanceof File);
 
-     const hasEventBanner1by1 = formData.event_images_16_by_9
-    && formData.event_images_16_by_9.some(img => img.file instanceof File);
+    const hasEventBanner1by1 =
+      formData.event_images_16_by_9 &&
+      formData.event_images_16_by_9.some((img) => img.file instanceof File);
 
     if (!hasProjectBanner1by1) {
       toast.error("Cover Image with 16:9 ratio is required.");
@@ -451,7 +515,7 @@ const EventCreate = () => {
       if (Array.isArray(images) && images.length > 0) {
         images.forEach((img) => {
           if (img?.file instanceof File) {
-            data.append(`event[${key}][]`, img.file); 
+            data.append(`event[${key}][]`, img.file);
           }
         });
       }
@@ -1003,7 +1067,6 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                   
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Send Email</label>
@@ -1193,7 +1256,7 @@ const EventCreate = () => {
                               justifyContent: "center",
                             }}
                           >
-                           + Add
+                            + Add
                           </button>
                         </div>
                       </div>
@@ -1249,7 +1312,7 @@ const EventCreate = () => {
                         ))}
                     </div>
 
-                     <div className="col-md-4">
+                    <div className="col-md-4">
                       <div className="form-group">
                         <label>Share With</label>
                         <div className="d-flex gap-3">
@@ -1542,7 +1605,7 @@ const EventCreate = () => {
                   </div>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
-                      Event Images{" "}
+                      Event Attachment{" "}
                       <span
                         className="tooltip-container"
                         onMouseEnter={() => setShowAttachmentTooltip(true)}
@@ -1551,7 +1614,7 @@ const EventCreate = () => {
                         [i]
                         {showAttachmentTooltip && (
                           <span className="tooltip-text">
-                           Max Upload Size 3 MB and Required ratio is 16:9
+                            Max Upload Size 3 MB and Required ratio is 16:9
                           </span>
                         )}
                       </span>
@@ -1574,16 +1637,21 @@ const EventCreate = () => {
                       <span>Add</span>
                     </button>
                     {showEventUploader && (
-                      <ProjectBannerUpload
+                      <ProjectImageVideoUpload
                         onClose={() => setShowEventUploader(false)}
                         includeInvalidRatios={false}
                         selectedRatioProp={selectedEventRatios}
                         showAsModal={true}
                         label={eventImageLabel}
                         description={dynamicEventDescription}
-                        onContinue={(validImages) =>
-                          handleCroppedImages(validImages, "event")
+                        onContinue={(validImages, videoFiles) =>
+                          handleEventCroppedImages(
+                            validImages,
+                            videoFiles,
+                            "event"
+                          )
                         }
+                        allowVideos={true}
                       />
                     )}
                   </div>
@@ -1601,7 +1669,7 @@ const EventCreate = () => {
                             <th>Action</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        {/* <tbody>
                           {eventImageRatios.map(({ key, label }) =>
                             (formData[key] || []).length > 0
                               ? formData[key].map((file, index) => (
@@ -1650,10 +1718,83 @@ const EventCreate = () => {
                             ({ key }) => (formData[key] || []).length === 0
                           ) && (
                             <tr>
-                              {/* <td colSpan="4" className="text-center">
-                            No event images uploaded
-                          </td> */}
+                             
                             </tr>
+                          )}
+                        </tbody> */}
+
+                        <tbody>
+                          {eventImageRatios.map(({ key, label }) =>
+                            (formData[key] || []).length > 0
+                              ? formData[key].map((file, index) => {
+                                  const isVideo =
+                                    file.type === "video" ||
+                                    (file.file &&
+                                      file.file.type.startsWith("video/")) ||
+                                    (file.preview &&
+                                      [".mp4", ".webm", ".ogg"].some((ext) =>
+                                        file.preview.toLowerCase().endsWith(ext)
+                                      ));
+
+                                  return (
+                                    <tr key={`${key}-${file.id}`}>
+                                      <td>{file.name || "Unnamed File"}</td>
+                                      <td>
+                                        {isVideo ? (
+                                          <video
+                                            controls
+                                            style={{
+                                              maxWidth: 100,
+                                              maxHeight: 100,
+                                              objectFit: "cover",
+                                            }}
+                                            className="img-fluid rounded"
+                                          >
+                                            <source
+                                              src={file.preview}
+                                              type={
+                                                file.file?.type || "video/mp4"
+                                              }
+                                            />
+                                            Your browser does not support the
+                                            video tag.
+                                          </video>
+                                        ) : (
+                                          <img
+                                            style={{
+                                              maxWidth: 100,
+                                              maxHeight: 100,
+                                              objectFit: "cover",
+                                            }}
+                                            className="img-fluid rounded"
+                                            src={file.preview}
+                                            alt={file.name || "Event Image"}
+                                            onError={(e) => {
+                                              console.error(
+                                                `Failed to load image: ${file.preview}`
+                                              );
+                                              e.target.src =
+                                                "https://via.placeholder.com/100?text=Preview+Failed";
+                                            }}
+                                          />
+                                        )}
+                                      </td>
+                                      <td>{file.ratio || label}</td>
+                                      <td>
+                                        <button
+                                          type="button"
+                                          className="purple-btn2"
+                                          onClick={() =>
+                                            handleImageRemoval(key, index)
+                                          }
+                                        >
+                                          x
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  );
+                                })
+                              : null
                           )}
                         </tbody>
                       </table>
