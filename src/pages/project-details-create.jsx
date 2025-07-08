@@ -15,6 +15,7 @@ import { baseURL } from "./baseurl/apiDomain";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
 
 const ProjectDetailsCreate = () => {
   const [formData, setFormData] = useState({
@@ -171,6 +172,71 @@ const ProjectDetailsCreate = () => {
       };
     });
   };
+
+  const handleCroppedCoverImages = (validImages, type = "cover", videoFiles = []) => {
+  // Handle video files first (including GIFs)
+  if (videoFiles && videoFiles.length > 0) {
+    videoFiles.forEach((video) => {
+      const formattedRatio = video.ratio.replace(":", "_by_");
+      let prefix = "";
+
+      switch (type) {
+        case "gallery":
+          prefix = galleryImageType; // "gallery image"
+          break;
+        case "floor":
+          prefix = floorImageType; // "floor plan"
+          break;
+        case "banner":
+          prefix = bannerImageType; // "banner image" for banner
+          break;
+        case "cover":
+        default:
+          prefix = coverImageType; // "cover image"
+          break;
+      }
+
+      const key = `${prefix}_${formattedRatio}`.replace(/\s+/g, "_").toLowerCase();
+      updateFormData(key, [video]);
+    });
+    
+    closeModal(type);
+    return;
+  }
+
+  // Handle images if no videos
+  if (!validImages || validImages.length === 0) {
+    toast.error(`No valid ${type} image${["cover", "banner"].includes(type) ? "" : "s"} selected.`);
+    closeModal(type);
+    return;
+  }
+
+  validImages.forEach((img) => {
+    const formattedRatio = img.ratio.replace(":", "_by_");
+    let prefix = "";
+
+    switch (type) {
+      case "gallery":
+        prefix = galleryImageType;
+        break;
+      case "floor":
+        prefix = floorImageType;
+        break;
+      case "banner":
+        prefix = bannerImageType;
+        break;
+      case "cover":
+      default:
+        prefix = coverImageType;
+        break;
+    }
+
+    const key = `${prefix}_${formattedRatio}`.replace(/\s+/g, "_").toLowerCase();
+    updateFormData(key, [img]);
+  });
+
+  closeModal(type);
+};
 
   const handleCroppedImages = (validImages, type = "cover") => {
     if (!validImages || validImages.length === 0) {
@@ -3878,7 +3944,7 @@ if (imageCount < 3 || imageCount % 3 !== 0) {
                       </tr>
                     </thead>
                     <tbody>
-                      {coverImageRatios.map(({ key, label }) => {
+                      {/* {coverImageRatios.map(({ key, label }) => {
                         const files = formData[key] || [];
 
                         return files.map((file, index) => (
@@ -3904,13 +3970,72 @@ if (imageCount < 3 || imageCount % 3 !== 0) {
                             </td>
                           </tr>
                         ));
-                      })}
+                      })} */}
+                      {coverImageRatios.map(({ key, label }) => {
+    const files = Array.isArray(formData[key])
+      ? formData[key]
+      : formData[key]
+      ? [formData[key]]
+      : [];
+
+    return files.map((file, index) => {
+      const preview = file.preview || file.document_url || "";
+      const name = file.name || file.document_file_name || "Unnamed";
+      const isVideo = 
+        file.type === "video" || 
+        file.file?.type?.startsWith("video/") || 
+        preview.endsWith(".mp4") || 
+        preview.endsWith(".webm") || 
+        preview.endsWith(".gif") || 
+        preview.endsWith(".ogg");
+
+      return (
+        <tr key={`${key}-${index}`}>
+          <td>{name}</td>
+          <td>
+            {isVideo ? (
+              <video
+                controls
+                style={{ maxWidth: 100, maxHeight: 100 }}
+                className="img-fluid rounded"
+              >
+                <source
+                  src={preview}
+                  type={
+                    file.file?.type ||
+                    `video/${preview.split(".").pop()}`
+                  }
+                />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <img
+                style={{ maxWidth: 100, maxHeight: 100 }}
+                className="img-fluid rounded"
+                src={preview}
+                alt={name}
+              />
+            )}
+          </td>
+          <td>{file.ratio || label}</td>
+          <td>
+            <button
+              type="button"
+              className="purple-btn2"
+              onClick={() => discardImage(key, file)}
+            >
+              x
+            </button>
+          </td>
+        </tr>
+      );
+    });
+  })}
                     </tbody>
                   </table>
                 </div>
 
-                {/* Uploader Component */}
-                {showUploader && (
+                  {/* {showUploader && (
                   <ProjectBannerUpload
                     onClose={() => setShowUploader(false)}
                     includeInvalidRatios={false}
@@ -3919,8 +4044,23 @@ if (imageCount < 3 || imageCount % 3 !== 0) {
                     label={coverImageLabel}
                     description={dynamicDescription}
                     onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
-                  />
-                )}
+                  /> */}
+
+                {/* Uploader Component */}
+{showUploader && (
+  <ProjectImageVideoUpload
+    onClose={() => setShowUploader(false)}
+    includeInvalidRatios={false}
+    selectedRatioProp={selectedCoverRatios}
+    showAsModal={true}
+    label={coverImageLabel}
+    description={dynamicDescription}
+    onContinue={(validImages, videoFiles) => 
+      handleCroppedCoverImages(validImages, "cover", videoFiles)
+    }
+    allowVideos={true}
+  />
+)}
               </div>
 
 
