@@ -255,7 +255,7 @@ const Eventlist = () => {
                           <th>Event From</th>
                           <th>Event To</th>
                           <th>Status</th>
-                          <th>Event Image</th>
+                          {/* <th>Event Image</th> */}
                         </tr>
                       </thead>
 
@@ -367,7 +367,7 @@ const Eventlist = () => {
                                   </button>
                                 )}
                               </td>
-{/* 
+                              {/* 
                               <td
                                   className="text-center"
                                   style={{
@@ -393,7 +393,7 @@ const Eventlist = () => {
                                   )}
                                 </td> */}
 
-                              <td
+                              {/* <td
                                 className="text-center"
                                 style={{
                                   border: "1px solid #ddd",
@@ -420,7 +420,7 @@ const Eventlist = () => {
                                 ) : (
                                   <span>No image</span>
                                 )}
-                              </td>
+                              </td> */}
                             </tr>
                           ))
                         )}

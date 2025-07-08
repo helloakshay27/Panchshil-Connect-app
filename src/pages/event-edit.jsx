@@ -8,6 +8,7 @@ import MultiSelectBox from "../components/base/MultiSelectBox";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
 
 const EventEdit = () => {
   const { id } = useParams();
@@ -189,23 +190,86 @@ const EventEdit = () => {
     setShowCoverUploader(false);
   };
 
-  const handleEventImageCropComplete = (validImages) => {
+  // const handleEventImageCropComplete = (validImages) => {
+  //   if (!validImages || validImages.length === 0) {
+  //     toast.error("No valid images selected.");
+  //     setShowEventUploader(false);
+  //     return;
+  //   }
+
+  //   validImages.forEach((img) => {
+  //     if (!img.ratio) return;
+
+  //     const formattedRatio = img.ratio.replace(":", "_by_");
+  //     const key = `event_images_${formattedRatio}`;
+
+  //     updateEventFormData(key, [img]); // Replace or overwrite
+  //   });
+
+  //   // setPreviewImg(validImages[0].preview);
+  //   setShowEventUploader(false);
+  // };
+
+  const handleEventCroppedImages = (
+    validImages,
+    videoFiles = [],
+    type = "event"
+  ) => {
+    // Handle video files first
+    if (videoFiles && videoFiles.length > 0) {
+      videoFiles.forEach((video) => {
+        const formattedRatio = video.ratio.replace(":", "_by_");
+        const prefix = type === "cover" ? "cover_image" : "event_images";
+        const key = `${prefix}_${formattedRatio}`;
+
+        setFormData((prev) => ({
+          ...prev,
+          [key]: [
+            ...(prev[key] || []), // Keep existing files
+            {
+              file: video.file,
+              name: video.file.name,
+              preview: URL.createObjectURL(video.file),
+              ratio: video.ratio,
+              type: "video",
+              id: `${key}-${Date.now()}-${Math.random()}`,
+            },
+          ],
+        }));
+      });
+
+      setShowEventUploader(false);
+      return;
+    }
+
+    // Handle images
     if (!validImages || validImages.length === 0) {
-      toast.error("No valid images selected.");
+      toast.error(`No valid ${type} files selected.`);
       setShowEventUploader(false);
       return;
     }
 
     validImages.forEach((img) => {
-      if (!img.ratio) return;
-
       const formattedRatio = img.ratio.replace(":", "_by_");
-      const key = `event_images_${formattedRatio}`;
+      const prefix = type === "cover" ? "cover_image" : "event_images";
+      const key = `${prefix}_${formattedRatio}`;
 
-      updateEventFormData(key, [img]); // Replace or overwrite
+      setFormData((prev) => ({
+        ...prev,
+        [key]: [
+          ...(prev[key] || []), // Keep existing files
+          {
+            file: img.file,
+            name: img.file.name,
+            preview: URL.createObjectURL(img.file),
+            ratio: img.ratio,
+            type: "image",
+            id: `${key}-${Date.now()}-${Math.random()}`,
+          },
+        ],
+      }));
     });
 
-    // setPreviewImg(validImages[0].preview);
     setShowEventUploader(false);
   };
 
@@ -666,55 +730,54 @@ const EventEdit = () => {
   //   });
   // };
 
-    const handleFetchedDiscardGallery = async (key, index, imageId) => {
-      toast.dismiss();
-       // If no imageId, it's a new image, just remove locally
-       if (!imageId) {
-         setFormData((prev) => {
-           const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
-           return { ...prev, [key]: updatedFiles };
-         });
-         toast.success("Image removed successfully!");
-         return;
-       }
-   
-       // Existing image: delete from server, then remove locally
-       try {
-         const response = await fetch(
-           `${baseURL}events/${id}/remove_image/${imageId}.json`,
-           {
-             method: "DELETE",
-             headers: {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-             },
-           }
-         );
-   
-         if (!response.ok) {
-           // Optionally, handle 404 as a successful local delete
-           if (response.status === 404) {
-             const updatedFiles = formData[key].filter((_, i) => i !== index);
-             setFormData({ ...formData, [key]: updatedFiles });
-             toast.success("Image removed from UI (already deleted on server).");
-             return;
-           }
-           throw new Error("Failed to delete image");
-         }
-   
-   
-         // Remove from UI after successful delete
-        setFormData((prev) => ({
-                ...prev,
-               [key]: null,
-                }));
+  const handleFetchedDiscardGallery = async (key, index, imageId) => {
+    toast.dismiss();
+    // If no imageId, it's a new image, just remove locally
+    if (!imageId) {
+      setFormData((prev) => {
+        const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
+        return { ...prev, [key]: updatedFiles };
+      });
+      toast.success("Image removed successfully!");
+      return;
+    }
 
-         toast.success("Image deleted successfully!");
-       } catch (error) {
-         console.error("Error deleting image:", error.message);
-         toast.error("Failed to delete image. Please try again.");
-       }
-     };
+    // Existing image: delete from server, then remove locally
+    try {
+      const response = await fetch(
+        `${baseURL}events/${id}/remove_image/${imageId}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        // Optionally, handle 404 as a successful local delete
+        if (response.status === 404) {
+          const updatedFiles = formData[key].filter((_, i) => i !== index);
+          setFormData({ ...formData, [key]: updatedFiles });
+          toast.success("Image removed from UI (already deleted on server).");
+          return;
+        }
+        throw new Error("Failed to delete image");
+      }
+
+      // Remove from UI after successful delete
+      setFormData((prev) => ({
+        ...prev,
+        [key]: null,
+      }));
+
+      toast.success("Image deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting image:", error.message);
+      toast.error("Failed to delete image. Please try again.");
+    }
+  };
 
   const handleRadioChange = (e) => {
     const { name, value } = e.target;
@@ -744,15 +807,29 @@ const EventEdit = () => {
     if (!validateForm()) return;
     setLoading(true);
 
-    const cover16by9 = formData.cover_image_16_by_9;;
+    const cover16by9 = formData.cover_image_16_by_9;
     const hasCover16by9 = Array.isArray(cover16by9)
-      ? cover16by9.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
-      : !!(cover16by9?.file instanceof File || cover16by9?.id || cover16by9?.document_file_name);
+      ? cover16by9.some(
+          (img) =>
+            img?.file instanceof File || img?.id || img?.document_file_name
+        )
+      : !!(
+          cover16by9?.file instanceof File ||
+          cover16by9?.id ||
+          cover16by9?.document_file_name
+        );
 
-       const event16by9 = formData.event_images_16_by_9;;
+    const event16by9 = formData.event_images_16_by_9;
     const hasEvent16by9 = Array.isArray(event16by9)
-      ? event16by9.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
-      : !!(event16by9?.file instanceof File || event16by9?.id || event16by9?.document_file_name);
+      ? event16by9.some(
+          (img) =>
+            img?.file instanceof File || img?.id || img?.document_file_name
+        )
+      : !!(
+          event16by9?.file instanceof File ||
+          event16by9?.id ||
+          event16by9?.document_file_name
+        );
 
     if (!hasCover16by9) {
       toast.error("Cover Image with 16:9 ratio is required.");
@@ -761,7 +838,7 @@ const EventEdit = () => {
       return;
     }
 
-     if (!hasEvent16by9) {
+    if (!hasEvent16by9) {
       toast.error("Event Image with 16:9 ratio is required.");
       setLoading(false);
       setIsSubmitting(false);
@@ -826,12 +903,11 @@ const EventEdit = () => {
       if (Array.isArray(images) && images.length > 0) {
         images.forEach((img) => {
           if (img?.file instanceof File) {
-            data.append(`event[${key}][]`, img.file); 
+            data.append(`event[${key}][]`, img.file);
           }
         });
       }
     });
-    
 
     // Handle 16:9 preview image from new structure
     if (Array.isArray(formData.event_images_16_by_9)) {
@@ -1373,7 +1449,6 @@ const EventEdit = () => {
                     </div>
 
                     {/* Share With Radio Buttons */}
-                   
 
                     <div className="col-md-3">
                       <div className="form-group mt-3">
@@ -1634,7 +1709,7 @@ const EventEdit = () => {
                           </div>
                         ))}
                     </div>
-                     <div className="col-md-4">
+                    <div className="col-md-4">
                       <div className="form-group mt-3">
                         <label>Share With</label>
                         <div className="d-flex gap-3">
@@ -1919,7 +1994,11 @@ const EventEdit = () => {
                                       type="button"
                                       className="purple-btn2"
                                       onClick={() =>
-                                        handleFetchedDiscardGallery(key, index, file.id)
+                                        handleFetchedDiscardGallery(
+                                          key,
+                                          index,
+                                          file.id
+                                        )
                                       }
                                     >
                                       x
@@ -1942,9 +2021,9 @@ const EventEdit = () => {
                       </table>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
+                  {/* <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
-                      Event Images{" "}
+                      Event Attachment{" "}
                       <span
                         className="tooltip-container"
                         onMouseEnter={() => setShowAttachmentTooltip(true)}
@@ -2073,9 +2152,169 @@ const EventEdit = () => {
                               !(formData[key] && formData[key].length > 0)
                           ) && (
                             <tr>
-                              {/* <td colSpan="4" className="text-center">No event images uploaded</td> */}
+                            
                             </tr>
                           )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div> */}
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Event Attachment{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowAttachmentTooltip(true)}
+                        onMouseLeave={() => setShowAttachmentTooltip(false)}
+                      >
+                        [i]
+                        {showAttachmentTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size for video 10 MB and for image 3 MB
+                          </span>
+                        )}
+                      </span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      type="button"
+                      onClick={() => setShowEventUploader(true)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    {showEventUploader && (
+                      <ProjectImageVideoUpload
+                        onClose={() => setShowEventUploader(false)}
+                        includeInvalidRatios={false}
+                        selectedRatioProp={selectedEventRatios}
+                        showAsModal={true}
+                        label={eventImageLabel}
+                        description={dynamicEventDescription}
+                        onContinue={(validImages, videoFiles) =>
+                          handleEventCroppedImages(
+                            validImages,
+                            videoFiles,
+                            "event"
+                          )
+                        }
+                        allowVideos={true}
+                      />
+                    )}
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div
+                      className="mt-4 tbl-container"
+                      style={{ maxHeight: "300px", overflowY: "auto" }}
+                    >
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {eventImageRatios.flatMap(({ key, label }) => {
+                            const files = Array.isArray(formData[key])
+                              ? formData[key]
+                              : formData[key]
+                              ? [formData[key]]
+                              : [];
+
+                            if (files.length === 0) return [];
+
+                            return files.map((file, index) => {
+                              const preview =
+                                file.preview || file.document_url || "";
+                              const name =
+                                file.name ||
+                                file.document_file_name ||
+                                `File ${index + 1}`;
+                              const ratio = file.ratio || label;
+                              const isVideo =
+                                file.type === "video" ||
+                                (file.file &&
+                                  file.file.type.startsWith("video/")) ||
+                                (preview &&
+                                  [".mp4", ".webm", ".ogg"].some((ext) =>
+                                    preview.toLowerCase().endsWith(ext)
+                                  ));
+
+                              return (
+                                <tr key={`${key}-${file.id || index}`}>
+                                  <td>{name}</td>
+                                  <td>
+                                    {isVideo ? (
+                                      <video
+                                        controls
+                                        style={{
+                                          maxWidth: 100,
+                                          maxHeight: 100,
+                                          objectFit: "cover",
+                                        }}
+                                        className="img-fluid rounded"
+                                      >
+                                        <source
+                                          src={preview}
+                                          type={file.file?.type || "video/mp4"}
+                                        />
+                                        Your browser does not support the video
+                                        tag.
+                                      </video>
+                                    ) : (
+                                      <img
+                                        style={{
+                                          maxWidth: 100,
+                                          maxHeight: 100,
+                                          objectFit: "cover",
+                                        }}
+                                        className="img-fluid rounded"
+                                        src={preview}
+                                        alt={name}
+                                        onError={(e) => {
+                                          console.error(
+                                            `Failed to load image: ${preview}`
+                                          );
+                                          e.target.src =
+                                            "https://via.placeholder.com/100?text=Preview+Failed";
+                                        }}
+                                      />
+                                    )}
+                                  </td>
+                                  <td>{ratio}</td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        handleFetchedDiscardGallery(
+                                          key,
+                                          index,
+                                          file.id
+                                        )
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            });
+                          })}
                         </tbody>
                       </table>
                     </div>

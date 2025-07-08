@@ -6,6 +6,7 @@ import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
 
 const BannerEdit = () => {
   const navigate = useNavigate();
@@ -35,11 +36,7 @@ const BannerEdit = () => {
     banner_video_16_by_9: null,
     banner_video_3_by_2: null,
   });
-  console.log('formData', formData);
-
-
-
-
+  console.log("formData", formData);
 
   useEffect(() => {
     fetchBanner();
@@ -109,8 +106,23 @@ const BannerEdit = () => {
     const file = event.target.files[0];
     if (!file) return;
 
-    const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/bmp", "image/tiff", "image/gif"];
-    const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv", "video/x-flv"];
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/bmp",
+      "image/tiff",
+      "image/gif",
+    ];
+    const allowedVideoTypes = [
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/quicktime",
+      "video/x-msvideo",
+      "video/x-ms-wmv",
+      "video/x-flv",
+    ];
     const sizeInMB = file.size / (1024 * 1024);
 
     const isImage = allowedImageTypes.includes(file.type);
@@ -156,7 +168,13 @@ const BannerEdit = () => {
     setPreviewImg(null);
     setPreviewVideo(null);
     setFormData((prev) => ({ ...prev, banner_video: originalBannerVideo }));
-    setFileType(originalBannerVideo ? (isImageFile(originalBannerVideo) ? "image" : "video") : null);
+    setFileType(
+      originalBannerVideo
+        ? isImageFile(originalBannerVideo)
+          ? "image"
+          : "video"
+        : null
+    );
     if (originalBannerVideo) {
       if (isImageFile(originalBannerVideo)) {
         setPreviewImg(originalBannerVideo);
@@ -201,14 +219,17 @@ const BannerEdit = () => {
   };
 
   const bannerUploadConfig = {
-    'Banner Attachment': ['1:1', '9:16', '16:9', '3:2'],
+    "Banner Attachment": ["1:1", "9:16", "16:9", "3:2"],
   };
 
-
-  const currentUploadType = 'Banner Attachment'; // Can be dynamic
+  const currentUploadType = "Banner Attachment"; // Can be dynamic
   const selectedRatios = bannerUploadConfig[currentUploadType] || [];
-  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const dynamicDescription = `Supports ${selectedRatios.join(', ')} aspect ratios`;
+  const dynamicLabel = currentUploadType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const dynamicDescription = `Supports ${selectedRatios.join(
+    ", "
+  )} aspect ratios`;
 
   // const updateFormData = (key, files) => {
   //   setFormData((prev) => ({
@@ -217,12 +238,11 @@ const BannerEdit = () => {
   //   }));
   // };
 
-
   const project_banner = [
-    { key: 'banner_video_1_by_1', label: '1:1' },
-    { key: 'banner_video_16_by_9', label: '16:9' },
-    { key: 'banner_video_9_by_16', label: '9:16' },
-    { key: 'banner_video_3_by_2', label: '3:2' },
+    { key: "banner_video_1_by_1", label: "1:1" },
+    { key: "banner_video_16_by_9", label: "16:9" },
+    { key: "banner_video_9_by_16", label: "9:16" },
+    { key: "banner_video_3_by_2", label: "3:2" },
   ];
   // const updateFormData = (key, files) => {
   //   setFormData((prev) => {
@@ -240,22 +260,60 @@ const BannerEdit = () => {
       [key]: files, // Replace existing files instead of appending
     }));
   };
-  
 
-  const handleCropComplete = (validImages) => {
+  // const handleCropComplete = (validImages) => {
+  //   if (!validImages || validImages.length === 0) {
+  //     toast.error("No valid images selected.");
+  //     setShowUploader(false);
+  //     return;
+  //   }
+
+  //   validImages.forEach((img) => {
+  //     const formattedRatio = img.ratio.replace(':', '_by_'); // e.g., "1:1" -> "1_by_1", "9:16" -> "9_by_16"
+  //     const key = `banner_video_${formattedRatio}`; // e.g., banner_video_1_by_1, banner_video_9_by_16
+  //     updateFormData(key, [img]); // send as array to preserve consistency
+  //   });
+
+  //   // setPreviewImg(validImages[0].preview); // preview first image only
+  //   setShowUploader(false);
+  // };
+
+  const handleCropComplete = (validImages, videoFiles = []) => {
+    // Handle video files first
+    if (videoFiles && videoFiles.length > 0) {
+      videoFiles.forEach((video) => {
+        const formattedRatio = video.ratio.replace(":", "_by_");
+        const key = `banner_video_${formattedRatio}`;
+        updateFormData(key, [video]);
+
+        // Set preview for the first video
+        if (videoFiles[0] === video) {
+          setPreviewVideo(URL.createObjectURL(video.file));
+          setFileType("video");
+        }
+      });
+      return;
+    }
+
+    // Handle images (existing logic)
     if (!validImages || validImages.length === 0) {
-      toast.error("No valid images selected.");
+      toast.error("No valid files selected.");
       setShowUploader(false);
       return;
     }
 
     validImages.forEach((img) => {
-      const formattedRatio = img.ratio.replace(':', '_by_'); // e.g., "1:1" -> "1_by_1", "9:16" -> "9_by_16"
-      const key = `banner_video_${formattedRatio}`; // e.g., banner_video_1_by_1, banner_video_9_by_16
-      updateFormData(key, [img]); // send as array to preserve consistency
+      const formattedRatio = img.ratio.replace(":", "_by_");
+      const key = `banner_video_${formattedRatio}`;
+      updateFormData(key, [img]);
+
+      // Set preview for the first image
+      if (validImages[0] === img) {
+        setPreviewImg(img.preview);
+        setFileType("image");
+      }
     });
 
-    // setPreviewImg(validImages[0].preview); // preview first image only
     setShowUploader(false);
   };
   const discardImage = (key, imageToRemove) => {
@@ -287,8 +345,15 @@ const BannerEdit = () => {
 
     const banner1by1 = formData.banner_video_1_by_1;
     const hasProjectBanner1by1 = Array.isArray(banner1by1)
-      ? banner1by1.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
-      : !!(banner1by1?.file instanceof File || banner1by1?.id || banner1by1?.document_file_name);
+      ? banner1by1.some(
+          (img) =>
+            img?.file instanceof File || img?.id || img?.document_file_name
+        )
+      : !!(
+          banner1by1?.file instanceof File ||
+          banner1by1?.id ||
+          banner1by1?.document_file_name
+        );
 
     if (!hasProjectBanner1by1) {
       toast.error("Banner Attachment with 1:1 ratio is required.");
@@ -296,7 +361,6 @@ const BannerEdit = () => {
       setIsSubmitting(false);
       return;
     }
-
 
     if (!validateForm()) return;
 
@@ -312,15 +376,16 @@ const BannerEdit = () => {
         sendData.append("banner[banner_video]", formData.banner_video);
       }
 
-
       // Handle banner video/image fields like banner_video_1_by_1, banner_video_9_by_16, etc.
       Object.entries(formData).forEach(([key, images]) => {
         if (
-          (key.startsWith("banner_video_") || key.startsWith("banner_image_")) &&
+          (key.startsWith("banner_video_") ||
+            key.startsWith("banner_image_")) &&
           Array.isArray(images)
         ) {
           images.forEach((img) => {
-            const backendField = key.replace("banner_image_", "banner[banner_image_") + "]";
+            const backendField =
+              key.replace("banner_image_", "banner[banner_image_") + "]";
             if (img.file instanceof File) {
               // sendData.append(backendField, img.file);
               sendData.append(`banner[${key}]`, img.file);
@@ -337,8 +402,6 @@ const BannerEdit = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
-
 
       toast.success("Banner updated successfully");
       navigate("/banner-list");
@@ -364,7 +427,9 @@ const BannerEdit = () => {
     // If no imageId, it's a new image, just remove locally
     if (!imageId) {
       setFormData((prev) => {
-        const updatedFiles = Array.isArray(prev[key]) ? prev[key].filter((_, i) => i !== index) : [];
+        const updatedFiles = Array.isArray(prev[key])
+          ? prev[key].filter((_, i) => i !== index)
+          : [];
         return { ...prev, [key]: updatedFiles };
       });
       toast.success("Image removed successfully!");
@@ -399,7 +464,9 @@ const BannerEdit = () => {
 
       // Remove from UI after successful delete
       setFormData((prev) => {
-        const updatedFiles = Array.isArray(prev[key]) ? prev[key].filter((_, i) => i !== index) : [];
+        const updatedFiles = Array.isArray(prev[key])
+          ? prev[key].filter((_, i) => i !== index)
+          : [];
         return { ...prev, [key]: updatedFiles };
       });
 
@@ -409,7 +476,6 @@ const BannerEdit = () => {
       toast.error("Failed to delete image. Please try again.");
     }
   };
-
 
   // return (
   //   <div className="container-fluid d-flex flex-column" style={{ height: '100vh' }}>
@@ -427,7 +493,7 @@ const BannerEdit = () => {
   //           cursor: pointer;
   //           font-weight: 500;
   //         }
-  
+
   //         input[type="file"] {
   //           border: 1px solid #cbd5e0;
   //           border-radius: 6px;
@@ -437,13 +503,13 @@ const BannerEdit = () => {
   //           height: 38px;
   //           margin-left: 10px;
   //         }
-  
+
   //         .scrollable-content {
   //           overflow-y: auto;
   //           flex-grow: 1;
   //           padding-bottom: 120px; /* space to avoid overlap with sticky footer */
   //         }
-  
+
   //         .sticky-footer {
   //           background: white;
   //           padding: 12px 0;
@@ -454,7 +520,7 @@ const BannerEdit = () => {
   //         }
   //       `}
   //     </style>
-  
+
   //     {/* Scrollable Content Area */}
   //     <div className="scrollable-content">
   //       <div className="row">
@@ -481,7 +547,7 @@ const BannerEdit = () => {
   //                       {errors.title && <span className="text-danger">{errors.title}</span>}
   //                     </div>
   //                   </div>
-  
+
   //                   <div className="col-md-3">
   //                     <div className="form-group">
   //                       <label>Project <span className="text-danger">*</span></label>
@@ -493,7 +559,7 @@ const BannerEdit = () => {
   //                       {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
   //                     </div>
   //                   </div>
-  
+
   //                   <div className="col-md-3 col-sm-6 col-12">
   //                     <div className="form-group d-flex flex-column">
   //                       <label className="mb-2">
@@ -511,7 +577,7 @@ const BannerEdit = () => {
   //                           )}
   //                         </span>
   //                       </label>
-  
+
   //                       <span
   //                         role="button"
   //                         tabIndex={0}
@@ -521,7 +587,7 @@ const BannerEdit = () => {
   //                         <span className="upload-button-label">Choose file</span>
   //                         <span className="upload-button-value">No file chosen</span>
   //                       </span>
-  
+
   //                       {showUploader && (
   //                         <ProjectBannerUpload
   //                           onClose={() => setShowUploader(false)}
@@ -537,7 +603,7 @@ const BannerEdit = () => {
   //                   </div>
   //                 </div>
   //               )}
-  
+
   //               <div className="col-md-12 mt-2">
   //                 <div className="mt-4 tbl-container">
   //                   <table className="w-100 table table-bordered">
@@ -552,11 +618,11 @@ const BannerEdit = () => {
   //                     <tbody>
   //                       {project_banner.map(({ key, label }) => {
   //                         const files = Array.isArray(formData[key]) ? formData[key] : formData[key] ? [formData[key]] : [];
-  
+
   //                         return files.map((file, index) => {
   //                           const preview = file.preview || file.document_url || '';
   //                           const name = file.name || file.document_file_name || 'Unnamed';
-  
+
   //                           return (
   //                             <tr key={`${key}-${index}`}>
   //                               <td>{name}</td>
@@ -591,7 +657,7 @@ const BannerEdit = () => {
   //         </div>
   //       </div>
   //     </div>
-  
+
   //     {/* Sticky Submit/Cancel Button Footer */}
   //     <div className="row sticky-footer justify-content-center">
   //       <div className="col-md-2">
@@ -609,7 +675,6 @@ const BannerEdit = () => {
   // );
   return (
     <div className="main-content">
-
       <style jsx>{`
         .btn-primary {
           background: #f1f5f9;
@@ -635,7 +700,8 @@ const BannerEdit = () => {
           width: 100%;
           border-collapse: collapse;
         }
-        .tbl-container th, .tbl-container td {
+        .tbl-container th,
+        .tbl-container td {
           padding: 8px;
           border: 1px solid #ddd;
           text-align: left;
@@ -648,15 +714,14 @@ const BannerEdit = () => {
           z-index: 10;
         }
       `}</style>
-      
-  
+
       <div className="module-data-section container-fluid overflow-hidden">
         <div className="module-data-section">
           <div className="card mt-4 pb-4 mx-4">
             <div className="card-header">
               <h3 className="card-title">Banner Edit</h3>
             </div>
-  
+
             <div className="card-body">
               <div className="row">
                 {/* Title Input */}
@@ -673,23 +738,34 @@ const BannerEdit = () => {
                       onChange={handleChange}
                       placeholder="Enter title"
                     />
-                    {errors.title && <span className="text-danger">{errors.title}</span>}
+                    {errors.title && (
+                      <span className="text-danger">{errors.title}</span>
+                    )}
                   </div>
                 </div>
-  
+
                 {/* Project Select */}
                 <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Project <span className="text-danger">*</span></label>
-                        <SelectBox
-                          options={projects.map((p) => ({ label: p.project_name, value: p.id }))}
-                          defaultValue={formData.project_id}
-                          onChange={(value) => setFormData({ ...formData, project_id: value })}
-                        />
-                        {errors.project_id && <span className="text-danger">{errors.project_id}</span>}
-                      </div>
-                    </div>
-  
+                  <div className="form-group">
+                    <label>
+                      Project <span className="text-danger">*</span>
+                    </label>
+                    <SelectBox
+                      options={projects.map((p) => ({
+                        label: p.project_name,
+                        value: p.id,
+                      }))}
+                      defaultValue={formData.project_id}
+                      onChange={(value) =>
+                        setFormData({ ...formData, project_id: value })
+                      }
+                    />
+                    {errors.project_id && (
+                      <span className="text-danger">{errors.project_id}</span>
+                    )}
+                  </div>
+                </div>
+
                 {/* Banner Attachment Upload */}
                 <div className="col-md-3 col-sm-6 col-12">
                   <div className="form-group d-flex flex-column">
@@ -707,8 +783,9 @@ const BannerEdit = () => {
                           </span>
                         )}
                       </span>
+                      <span className="otp-asterisk"> *</span>
                     </label>
-  
+
                     <span
                       role="button"
                       tabIndex={0}
@@ -716,11 +793,13 @@ const BannerEdit = () => {
                       className="custom-upload-button input-upload-button"
                     >
                       <span className="upload-button-label">Choose file</span>
-                      <span className="upload-button-value">No file chosen</span>
+                      <span className="upload-button-value">
+                        No file chosen
+                      </span>
                     </span>
-  
+
                     {showUploader && (
-                      <ProjectBannerUpload
+                      <ProjectImageVideoUpload
                         onClose={() => setShowUploader(false)}
                         includeInvalidRatios={false}
                         selectedRatioProp={selectedRatios}
@@ -728,12 +807,13 @@ const BannerEdit = () => {
                         label={dynamicLabel}
                         description={dynamicDescription}
                         onContinue={handleCropComplete}
+                        allowVideos={true}
                       />
                     )}
                   </div>
                 </div>
               </div>
-  
+
               {/* Scrollable Image Table */}
               <div className="col-md-12 mt-4">
                 <div className="scrollable-table tbl-container">
@@ -746,7 +826,7 @@ const BannerEdit = () => {
                         <th>Action</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    {/* <tbody>
                       {project_banner.map(({ key, label }) => {
                         const files = Array.isArray(formData[key]) ? formData[key] : formData[key] ? [formData[key]] : [];
   
@@ -779,31 +859,177 @@ const BannerEdit = () => {
                           );
                         });
                       })}
+                    </tbody> */}
+                    <tbody>
+
+                      {(previewVideo || formData.banner_video?.document_url) && (
+  <tr>
+     <td>
+      {/* Try to fetch name in proper fallback order */}
+      {previewVideo?.name ||
+        formData.banner_video?.document_file_name ||
+        formData.banner_video?.file_name ||
+        (typeof formData.banner_video === "object"
+          ? formData.banner_video?.document_url?.split("/")?.pop()
+          : formData.banner_video?.split("/")?.pop()) ||
+        "Video/Image"}
+    </td>
+    <td>
+      {isImageFile(previewVideo || formData.banner_video?.document_url) ? (
+        <img
+          src={previewVideo || formData.banner_video?.document_url}
+          className="img-fluid rounded"
+          alt="Preview"
+          style={{
+            maxWidth: "100px",
+            maxHeight: "150px",
+            objectFit: "cover",
+          }}
+        />
+      ) : (
+        <video
+          src={previewVideo || formData.banner_video?.document_url}
+          controls
+          className="img-fluid rounded"
+          style={{
+            maxWidth: "200px",
+            maxHeight: "150px",
+            objectFit: "cover",
+          }}
+        />
+      )}
+    </td>
+    <td>N/A</td> {/* Add ratio if you have it */}
+    <td>
+      <button
+        type="button"
+        className="purple-btn2"
+        onClick={() => handleFetchedDiscardGallery("banner_video")}
+      >
+        x
+      </button>
+    </td>
+  </tr>
+)}
+
+                      {project_banner.map(({ key, label }) => {
+                        const files = Array.isArray(formData[key])
+                          ? formData[key]
+                          : formData[key]
+                          ? [formData[key]]
+                          : [];
+
+                        return files.map((file, index) => {
+                          // Get the preview URL - prioritize object URL over document_url
+                          const preview =
+                            file.preview ||
+                            (file.file
+                              ? URL.createObjectURL(file.file)
+                              : null) ||
+                            file.document_url ||
+                            "";
+
+                          const name =
+                            file.name || file.document_file_name || "Unnamed";
+
+                          // More reliable video detection
+                          const isVideo =
+                            file.type === "video" ||
+                            (file.file &&
+                              file.file.type.startsWith("video/")) ||
+                            (file.document_url &&
+                              [".mp4", ".webm", ".ogg"].some((ext) =>
+                                file.document_url.toLowerCase().endsWith(ext)
+                              )) ||
+                            (preview &&
+                              [".mp4", ".webm", ".ogg"].some((ext) =>
+                                preview.toLowerCase().endsWith(ext)
+                              ));
+
+                          return (
+                            <tr key={`${key}-${index}`}>
+                              <td>{name}</td>
+                              <td>
+                                {isVideo ? (
+                                  <video
+                                    controls
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    key={preview} // Important for re-rendering when preview changes
+                                  >
+                                    <source
+                                      src={preview}
+                                      type={
+                                        file.file?.type ||
+                                        (file.document_url
+                                          ? `video/${file.document_url
+                                              .split(".")
+                                              .pop()}`
+                                          : "video/mp4")
+                                      }
+                                    />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                ) : (
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={preview}
+                                    alt={name}
+                                  />
+                                )}
+                              </td>
+                              <td>{file.ratio || label}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFetchedDiscardGallery(
+                                      key,
+                                      index,
+                                      file.id
+                                    )
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        });
+                      })}
                     </tbody>
                   </table>
                 </div>
               </div>
-  
+
               {/* Sticky Footer Buttons */}
-             
             </div>
           </div>
-           <div className="row mt-4 sticky-footer justify-content-center">
-                <div className="col-md-2">
-                  <button onClick={handleSubmit} className="purple-btn2 w-100" disabled={loading}>
-                    Submit
-                  </button>
-                </div>
-                <div className="col-md-2">
-                  <button type="button" className="purple-btn2 w-100" onClick={handleCancel}>
-                    Cancel
-                  </button>
-                </div>
-              </div>
+          <div className="row mt-4 sticky-footer justify-content-center">
+            <div className="col-md-2">
+              <button
+                onClick={handleSubmit}
+                className="purple-btn2 w-100"
+                disabled={loading}
+              >
+                Submit
+              </button>
+            </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 w-100"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-   </div>
- 
+    </div>
   );
 };
 

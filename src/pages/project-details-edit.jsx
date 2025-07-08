@@ -4420,6 +4420,33 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
+                      {Array.isArray(formData.image) &&
+  formData.image.map((img, index) => (
+    <tr key={`banner-image-${index}`}>
+      <td>{img.document_file_name || img.document_url || `Image ${index + 1}`}</td>
+      <td>
+        {img.document_url && (
+          <img
+            src={img.document_url}
+            alt={img.document_file_name || `Image ${index + 1}`}
+            style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+            className="img-fluid rounded"
+          />
+        )}
+      </td>
+      <td>N/A</td> 
+      <td>
+        <button
+          type="button"
+          className="purple-btn2"
+          onClick={() => handleFileDiscardCoverImage("image", index)}
+        >
+          x
+        </button>
+      </td>
+    </tr>
+  ))}
+
                       {project_banner.map(({ key, label }) => {
                         const files = formData[key] || [];
                         return files.map((file, index) => (
@@ -4585,6 +4612,42 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
+                        {formData.cover_images?.map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.document_file_name || file.name}</td>{" "}
+                          {/* Show name from API or uploaded file */}
+                          <td>
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={
+                                file.document_url // API response images
+                                  ? file.document_url
+                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
+                                  ? URL.createObjectURL(file)
+                                  : null
+                              }
+                              alt={
+                                file.document_file_name || file.name || "Image"
+                              }
+                            />
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleFileDiscardCoverImage(
+                                  "cover_images",
+                                  index
+                                )
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                       {coverImageRatios.map(({ key, label }) => {
                         const files = formData[key] || [];
 
@@ -4807,6 +4870,39 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
+                      {formData.fetched_gallery_image?.map((file, index) =>
+    file.attachfiles?.map((attachment, idx) => (
+      <tr key={`fetched-${index}-${idx}`}>
+        <td>{attachment.document_file_name || "N/A"}</td>
+        <td>
+          {attachment.document_url && (
+            <img
+              style={{ maxWidth: 100, maxHeight: 100 }}
+              className="img-fluid rounded"
+              src={attachment.document_url}
+              alt={attachment.document_file_name || "Fetched Image"}
+            />
+          )}
+        </td>
+        <td>
+          {/* <div>{file.day_night ? "Day" : "Night"}</div> */}
+          N/A
+
+        </td>
+        <td>
+          <button
+            type="button"
+            className="purple-btn2"
+            onClick={() =>
+              handleFetchedDiscardGallery("fetched_gallery_image", index, attachment.id)
+            }
+          >
+            x
+          </button>
+        </td>
+      </tr>
+    ))
+  )}
                       {gallery_images.map(({ key, label }) => {
                         const files = formData[key] || [];
 
@@ -4968,6 +5064,40 @@ const ProjectDetailsEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
+                       {formData.two_d_images.map((file, index) => (
+                        <tr key={index}>
+                          <td>{file.document_file_name || file.name}</td>{" "}
+                          {/* Show name from API or uploaded file */}
+                          <td>
+                            <img
+                              style={{ maxWidth: 100, maxHeight: 100 }}
+                              className="img-fluid rounded"
+                              src={
+                                file.document_url // API response images
+                                  ? file.document_url
+                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
+                                  ? URL.createObjectURL(file)
+                                  : null
+                              }
+                              alt={
+                                file.document_file_name || file.name || "Image"
+                              }
+                            />
+                          </td>
+                          <td>N/A</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleDiscardTwoDImage("two_d_images", index)
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                       {floorPlanRatios.map(({ key, label }) => {
                         const files = formData[key] || [];
 

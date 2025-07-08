@@ -62,7 +62,8 @@ const TestimonialEdit = () => {
           user_profile: response.data.profile_of_user || "",
           building_id: response.data.building_id ?? null,
           content: response.data.content || "",
-          video_url: response.data.video_preview_image_url || "",
+          // video_url: response.data.video_preview_image_url || "",
+           video_preview_image_url: response.data.video_preview_image_url || "",
           preview_image: response.data.preview_image || "",
           preview_image_16_by_9: response.data.preview_image_16_by_9 || [],
           preview_image_3_by_2: response.data.preview_image_3_by_2 || [],
@@ -455,55 +456,113 @@ const TestimonialEdit = () => {
   //     alert("Failed to delete image. Please try again.");
   //   }
   // };
-  const handleFetchedDiscardGallery = async (key, index, imageId) => {
-    if (!imageId) {
-      setFormData((prev) => {
-        const currentFiles = Array.isArray(prev[key]) ? prev[key] : [prev[key]];
-        const updatedFiles = currentFiles.filter((_, i) => i !== index);
-        return { ...prev, [key]: updatedFiles };
-      });
-      toast.success("Image removed successfully!");
-      return;
-    }
+  // const handleFetchedDiscardGallery = async (key, index, imageId) => {
+  //   if (!imageId) {
+  //     setFormData((prev) => {
+  //       const currentFiles = Array.isArray(prev[key]) ? prev[key] : [prev[key]];
+  //       const updatedFiles = currentFiles.filter((_, i) => i !== index);
+  //       return { ...prev, [key]: updatedFiles };
+  //     });
+  //     toast.success("Image removed successfully!");
+  //     return;
+  //   }
   
-    try {
-      const response = await fetch(
-        `${baseURL}testimonials/${testimonial.id}/remove_image/${imageId}.json`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `${baseURL}testimonials/${testimonial.id}/remove_image/${imageId}.json`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //         },
+  //       }
+  //     );
   
-      if (!response.ok) {
-        if (response.status === 404) {
-          const currentFiles = Array.isArray(formData[key])
-            ? formData[key]
-            : [formData[key]];
-          const updatedFiles = currentFiles.filter((_, i) => i !== index);
-          setFormData({ ...formData, [key]: updatedFiles });
-          toast.success("Image removed from UI (already deleted on server).");
-          return;
-        }
-        throw new Error("Failed to delete image");
+  //     if (!response.ok) {
+  //       if (response.status === 404) {
+  //         const currentFiles = Array.isArray(formData[key])
+  //           ? formData[key]
+  //           : [formData[key]];
+  //         const updatedFiles = currentFiles.filter((_, i) => i !== index);
+  //         setFormData({ ...formData, [key]: updatedFiles });
+  //         toast.success("Image removed from UI (already deleted on server).");
+  //         return;
+  //       }
+  //       throw new Error("Failed to delete image");
+  //     }
+  
+  //     // Successful deletion
+  //     setFormData((prev) => {
+  //       const currentFiles = Array.isArray(prev[key]) ? prev[key] : [prev[key]];
+  //       const updatedFiles = currentFiles.filter((_, i) => i !== index);
+  //       return { ...prev, [key]: updatedFiles };
+  //     });
+  
+  //     toast.success("Image deleted successfully!");
+  //   } catch (error) {
+  //     console.error("Error deleting image:", error.message);
+  //     toast.error("Failed to delete image. Please try again.");
+  //   }
+  // };
+
+  const handleFetchedDiscardGallery = async (key, index = null, imageId = null) => {
+  // Handle preview image case (single URL)
+  if (key === "video_preview_image_url") {
+    setFormData(prev => ({ ...prev, video_preview_image_url: "" }));
+    toast.success("Preview image removed successfully!");
+    return;
+  }
+
+  // Handle array cases (for other images)
+  if (!imageId) {
+    setFormData((prev) => {
+      const currentFiles = Array.isArray(prev[key]) ? prev[key] : [prev[key]];
+      const updatedFiles = currentFiles.filter((_, i) => i !== index);
+      return { ...prev, [key]: updatedFiles };
+    });
+    toast.success("Image removed successfully!");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${baseURL}testimonials/${testimonial.id}/remove_image/${imageId}.json`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       }
-  
-      // Successful deletion
-      setFormData((prev) => {
-        const currentFiles = Array.isArray(prev[key]) ? prev[key] : [prev[key]];
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        const currentFiles = Array.isArray(formData[key])
+          ? formData[key]
+          : [formData[key]];
         const updatedFiles = currentFiles.filter((_, i) => i !== index);
-        return { ...prev, [key]: updatedFiles };
-      });
-  
-      toast.success("Image deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting image:", error.message);
-      toast.error("Failed to delete image. Please try again.");
+        setFormData({ ...formData, [key]: updatedFiles });
+        toast.success("Image removed from UI (already deleted on server).");
+        return;
+      }
+      throw new Error("Failed to delete image");
     }
-  };
+
+    // Successful deletion
+    setFormData((prev) => {
+      const currentFiles = Array.isArray(prev[key]) ? prev[key] : [prev[key]];
+      const updatedFiles = currentFiles.filter((_, i) => i !== index);
+      return { ...prev, [key]: updatedFiles };
+    });
+
+    toast.success("Image deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting image:", error.message);
+    toast.error("Failed to delete image. Please try again.");
+  }
+};
   
   return (
     <div className="">
@@ -709,6 +768,40 @@ const TestimonialEdit = () => {
                       </tr>
                     </thead>
                     <tbody>
+               {formData.video_preview_image_url && (
+  <tr>
+    <td>
+      {formData.video_preview_image_url.split("/").pop() || "Preview Image"}
+    </td>
+    <td>
+      <img
+        src={formData.video_preview_image_url}
+        className="img-fluid rounded"
+        alt="Preview"
+        style={{
+          maxWidth: "100px",
+          maxHeight: "100px",
+          objectFit: "cover",
+        }}
+        onError={(e) => {
+          console.error("Failed to load image:", e.target.src);
+          e.target.src = "https://via.placeholder.com/100?text=Image+Error";
+        }}
+      />
+    </td>
+    <td>N/A</td>
+    <td>
+      <button
+        type="button"
+        className="purple-btn2"
+        onClick={() => handleFetchedDiscardGallery("video_preview_image_url")}
+      >
+        ×
+      </button>
+    </td>
+  </tr>
+)}
+
                       {TestimonialImageRatios.flatMap(({ key, label }) => {
                         const files = Array.isArray(formData[key])
                           ? formData[key]
