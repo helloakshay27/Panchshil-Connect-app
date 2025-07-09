@@ -71,7 +71,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.firstname || "N/A"}
+                        : {formData.firstname || ""}
                       </span>
                     </div>
                   </div>
@@ -82,7 +82,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.lastname || "N/A"}
+                        : {formData.lastname || ""}
                       </span>
                     </div>
                   </div>
@@ -94,7 +94,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.email || "N/A"}
+                        : {formData.email || ""}
                       </span>
                     </div>
                   </div>
@@ -105,7 +105,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.mobile || "N/A"}
+                        : {formData.mobile || ""}
                       </span>
                     </div>
                   </div>
@@ -115,7 +115,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.email || "N/A"}
+                        : {formData.alternate_email1 || ""}
                       </span>
                     </div>
                   </div>
@@ -125,7 +125,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.alternate_address || "N/A"}
+                        : {formData.alternate_address || ""}
                       </span>
                     </div>
                   </div>
@@ -135,7 +135,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.user_title || "N/A"}
+                        : {formData.user_title || ""}
                       </span>
                     </div>
                   </div>
@@ -145,7 +145,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.gender || "N/A"}
+                        : {formData.gender || ""}
                       </span>
                     </div>
                   </div>
@@ -155,7 +155,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.birth_date || "N/A"}
+                        : {formData.birth_date || ""}
                       </span>
                     </div>
                   </div>
@@ -165,7 +165,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.employee_type || "N/A"}
+                        : {formData.employee_type || ""}
                       </span>
                     </div>
                   </div>
@@ -175,7 +175,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.company_id || "N/A"}
+                        : {formData.company_id || ""}
                       </span>
                     </div>
                   </div>
@@ -185,7 +185,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.organization_id || "N/A"}
+                        : {formData.organization_id || ""}
                       </span>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.role_id || "N/A"}
+                        : {formData.role_id || ""}
                       </span>
                     </div>
                   </div>
@@ -205,7 +205,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.department_id || "N/A"}
+                        : {formData.department_id || ""}
                       </span>
                     </div>
                   </div>
@@ -215,7 +215,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.site_id || "N/A"}
+                        : {formData.site_id || ""}
                       </span>
                     </div>
                   </div>
