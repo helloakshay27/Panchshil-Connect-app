@@ -128,7 +128,6 @@ const ProjectDetailsEdit = () => {
   const [showBannerModal, setShowBannerModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
   const [dialogOpen, setDialogOpen] = useState({
     image: false,
     cover_images: false,
@@ -137,33 +136,46 @@ const ProjectDetailsEdit = () => {
   });
 
   const projectUploadConfig = {
-    'image': ['9:16', '16:9', '1:1', '3:2'],
-    'cover images': ['1:1', '9:16', '16:9', '3:2'],
-    'gallery image': ['16:9', '1:1', '9:16', '3:2'],
-    'project 2d image': ['16:9', '1:1', '3:2', '9:16'],
+    image: ["9:16", "16:9", "1:1", "3:2"],
+    "cover images": ["1:1", "9:16", "16:9", "3:2"],
+    "gallery image": ["16:9", "1:1", "9:16", "3:2"],
+    "project 2d image": ["16:9", "1:1", "3:2", "9:16"],
   };
-  const coverImageType = 'cover images';
-  const galleryImageType = 'gallery image';
-  const floorImageType = 'project 2d image';
-  const bannerImageType = 'image';
+  const coverImageType = "cover images";
+  const galleryImageType = "gallery image";
+  const floorImageType = "project 2d image";
+  const bannerImageType = "image";
 
   const selectedCoverRatios = projectUploadConfig[coverImageType] || [];
   const selectedGalleryRatios = projectUploadConfig[galleryImageType] || [];
   const selectedFloorRatios = projectUploadConfig[floorImageType] || [];
   const selectedBannerRatios = projectUploadConfig[bannerImageType] || [];
 
-  const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const galleryImageLabel = galleryImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const floorImageLabel = floorImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-  const bannerImageLabel = bannerImageType.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
+  const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const galleryImageLabel = galleryImageType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const floorImageLabel = floorImageType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const bannerImageLabel = bannerImageType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
 
-  const dynamicDescription = `Supports ${selectedCoverRatios.join(', ')} aspect ratios`;
-  const dynamicDescription1 = `Supports ${selectedGalleryRatios.join(', ')} aspect ratios`;
-  const dynamicDescription2 = `Supports ${selectedFloorRatios.join(', ')} aspect ratios`;
-  const dynamicDescription3 = `Supports ${selectedBannerRatios.join(', ')} aspect ratios`;
-
-
-
+  const dynamicDescription = `Supports ${selectedCoverRatios.join(
+    ", "
+  )} aspect ratios`;
+  const dynamicDescription1 = `Supports ${selectedGalleryRatios.join(
+    ", "
+  )} aspect ratios`;
+  const dynamicDescription2 = `Supports ${selectedFloorRatios.join(
+    ", "
+  )} aspect ratios`;
+  const dynamicDescription3 = `Supports ${selectedBannerRatios.join(
+    ", "
+  )} aspect ratios`;
 
   const updateFormData = (key, files) => {
     setFormData((prev) => ({
@@ -172,7 +184,11 @@ const ProjectDetailsEdit = () => {
     }));
   };
 
-  const handleCroppedCoverImages = (validImages, videoFiles = [], type = "cover") => {
+  const handleCroppedCoverImages = (
+    validImages,
+    videoFiles = [],
+    type = "cover"
+  ) => {
     // Handle video files first
     if (videoFiles && videoFiles.length > 0) {
       videoFiles.forEach((video) => {
@@ -195,7 +211,9 @@ const ProjectDetailsEdit = () => {
             break;
         }
 
-        const key = `${prefix}_${formattedRatio}`.replace(/\s+/g, "_").toLowerCase();
+        const key = `${prefix}_${formattedRatio}`
+          .replace(/\s+/g, "_")
+          .toLowerCase();
         updateFormData(key, [video]);
 
         // Set preview for the first video if it's cover type
@@ -234,7 +252,9 @@ const ProjectDetailsEdit = () => {
           break;
       }
 
-      const key = `${prefix}_${formattedRatio}`.replace(/\s+/g, "_").toLowerCase();
+      const key = `${prefix}_${formattedRatio}`
+        .replace(/\s+/g, "_")
+        .toLowerCase();
       updateFormData(key, [img]);
 
       // Set preview for the first image if it's cover type
@@ -248,7 +268,11 @@ const ProjectDetailsEdit = () => {
 
   const handleCroppedImages = (validImages, type = "cover") => {
     if (!validImages || validImages.length === 0) {
-      toast.error(`No valid ${type} image${["cover", "banner"].includes(type) ? "" : "s"} selected.`);
+      toast.error(
+        `No valid ${type} image${
+          ["cover", "banner"].includes(type) ? "" : "s"
+        } selected.`
+      );
       closeModal(type);
       return;
     }
@@ -273,7 +297,9 @@ const ProjectDetailsEdit = () => {
           break;
       }
 
-      const key = `${prefix}_${formattedRatio}`.replace(/\s+/g, "_").toLowerCase();
+      const key = `${prefix}_${formattedRatio}`
+        .replace(/\s+/g, "_")
+        .toLowerCase();
       updateFormData(key, [img]); // Append the new image
     });
 
@@ -297,10 +323,6 @@ const ProjectDetailsEdit = () => {
         break;
     }
   };
-
-
-
-
 
   // console.log(statusOptions);
 
@@ -429,10 +451,10 @@ const ProjectDetailsEdit = () => {
   // console.log("data", projectsType);
 
   const project_banner = [
-    { key: 'image_1_by_1', label: '1:1' },
-    { key: 'image_16_by_9', label: '16:9' },
-    { key: 'image_9_by_16', label: '9:16' },
-    { key: 'image_3_by_2', label: '3:2' },
+    { key: "image_1_by_1", label: "1:1" },
+    { key: "image_16_by_9", label: "16:9" },
+    { key: "image_9_by_16", label: "9:16" },
+    { key: "image_3_by_2", label: "3:2" },
   ];
   const gallery_images = [
     { key: "gallery_image_16_by_9", label: "16:9" },
@@ -453,7 +475,6 @@ const ProjectDetailsEdit = () => {
     { key: "cover_images_9_by_16", label: "9:16" },
     { key: "cover_images_3_by_2", label: "3:2" },
   ];
-
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -483,7 +504,6 @@ const ProjectDetailsEdit = () => {
           ...coverImageRatios,
         ];
 
-
         const galleryImages = {
           gallery_image_1_by_1: [],
           gallery_image_9_by_16: [],
@@ -498,8 +518,8 @@ const ProjectDetailsEdit = () => {
           dynamicImageData[key] = Array.isArray(value)
             ? value
             : value
-              ? [value]
-              : [];
+            ? [value]
+            : [];
         });
 
         const seenImages = new Set();
@@ -512,21 +532,20 @@ const ProjectDetailsEdit = () => {
         //   });
         // });
 
+        (projectData.gallery_image || []).forEach((item) => {
+          Object.keys(galleryImages).forEach((key) => {
+            if (Array.isArray(item[key])) {
+              const uniqueImages = item[key].filter((img) => {
+                const id = img.id || img.document_url;
+                if (seenImages.has(id)) return false;
+                seenImages.add(id);
+                return true;
+              });
 
-       (projectData.gallery_image || []).forEach((item) => {
-  Object.keys(galleryImages).forEach((key) => {
-    if (Array.isArray(item[key])) {
-      const uniqueImages = item[key].filter((img) => {
-        const id = img.id || img.document_url;
-        if (seenImages.has(id)) return false;
-        seenImages.add(id);
-        return true;
-      });
-
-      galleryImages[key] = galleryImages[key].concat(uniqueImages);
-    }
-  });
-});
+              galleryImages[key] = galleryImages[key].concat(uniqueImages);
+            }
+          });
+        });
 
         // Step 3: Set static + dynamic formData
         setFormData({
@@ -538,9 +557,9 @@ const ProjectDetailsEdit = () => {
             projectData.Project_Construction_Status || "",
           Configuration_Type1: Array.isArray(projectData.configurations)
             ? projectData.configurations.map((config) => ({
-              id: config.id,
-              name: config.name,
-            }))
+                id: config.id,
+                name: config.name,
+              }))
             : [],
           Project_Name: projectData.project_name || "",
           project_address: projectData.project_address || "",
@@ -559,9 +578,9 @@ const ProjectDetailsEdit = () => {
           Rera_Number_multiple: projectData.rera_number_multiple || [],
           Amenities1: Array.isArray(projectData.amenities)
             ? projectData.amenities.map((ammit) => ({
-              id: ammit.id,
-              name: ammit.name,
-            }))
+                id: ammit.id,
+                name: ammit.name,
+              }))
             : [],
           Specifications: Array.isArray(projectData.specifications)
             ? projectData.specifications.map((s) => s.name)
@@ -569,13 +588,14 @@ const ProjectDetailsEdit = () => {
           Land_Area: projectData.land_area || "",
           land_uom: projectData.land_uom || "",
           project_tag: projectData.project_tag || "",
-          virtual_tour_url_multiple: projectData.virtual_tour_url_multiple || [],
+          virtual_tour_url_multiple:
+            projectData.virtual_tour_url_multiple || [],
           map_url: projectData.map_url || "",
           image: Array.isArray(projectData.image_url)
             ? projectData.image_url.map((url) => ({ document_url: url }))
             : projectData.image_url
-              ? [{ document_url: projectData.image_url }]
-              : [],
+            ? [{ document_url: projectData.image_url }]
+            : [],
           previewImage: Array.isArray(projectData.image_url)
             ? projectData.image_url[0] || ""
             : projectData.image_url || "",
@@ -603,8 +623,8 @@ const ProjectDetailsEdit = () => {
           project_ppt: Array.isArray(projectData.ProjectPPT)
             ? projectData.ProjectPPT
             : projectData.ProjectPPT
-              ? [projectData.ProjectPPT]
-              : [],
+            ? [projectData.ProjectPPT]
+            : [],
           // Remove ppt_name from state, not needed if you always use array of objects
           project_sales_type: projectData.project_sales_type || "",
           order_no: projectData.order_no || "",
@@ -613,11 +633,11 @@ const ProjectDetailsEdit = () => {
           disclaimer: projectData.project_disclaimer || "",
           project_qrcode_image: projectData.project_qrcode_images || [],
           rera_url: projectData.rera_url || "",
+          cover_images: projectData.cover_images || [],
 
           // ✅ Dynamically spread image ratios
           ...dynamicImageData,
-          ...galleryImages,    
-
+          ...galleryImages,
         });
 
         // Set floor plans
@@ -641,7 +661,6 @@ const ProjectDetailsEdit = () => {
 
     fetchProjectDetails();
   }, []);
-
 
   // console.log(formData);
 
@@ -682,7 +701,8 @@ const ProjectDetailsEdit = () => {
 
         if (!sizeCheck.valid) {
           toast.error(
-            `Brochure file too large: ${sizeCheck.name} (${sizeCheck.size
+            `Brochure file too large: ${sizeCheck.name} (${
+              sizeCheck.size
             }). Maximum allowed size is ${formatFileSize(MAX_BROCHURE_SIZE)}.`
           );
           e.target.value = ""; // Reset input
@@ -787,7 +807,8 @@ const ProjectDetailsEdit = () => {
 
         if (!sizeCheck.valid) {
           toast.error(
-            `Image file too large: ${sizeCheck.name} (${sizeCheck.size
+            `Image file too large: ${sizeCheck.name} (${
+              sizeCheck.size
             }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
           );
           e.target.value = ""; // Reset input
@@ -825,7 +846,8 @@ const ProjectDetailsEdit = () => {
 
       if (!sizeCheck.valid) {
         toast.error(
-          `Image file too large: ${sizeCheck.name} (${sizeCheck.size
+          `Image file too large: ${sizeCheck.name} (${
+            sizeCheck.size
           }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
         );
         e.target.value = ""; // Reset input
@@ -889,7 +911,8 @@ const ProjectDetailsEdit = () => {
 
       if (!sizeCheck.valid) {
         toast.error(
-          `Image file too large: ${sizeCheck.name} (${sizeCheck.size
+          `Image file too large: ${sizeCheck.name} (${
+            sizeCheck.size
           }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
         );
         e.target.value = ""; // Reset input
@@ -1046,7 +1069,6 @@ const ProjectDetailsEdit = () => {
         throw new Error("Failed to delete image");
       }
 
-
       // Remove from UI after successful delete
       setFormData((prev) => {
         const updatedFiles = (prev[key] || []).filter((_, i) => i !== index);
@@ -1062,9 +1084,7 @@ const ProjectDetailsEdit = () => {
 
   const discardImage = (key, fileToRemove) => {
     setFormData((prev) => {
-      const updatedFiles = prev[key].filter(
-        (file) => file !== fileToRemove
-      );
+      const updatedFiles = prev[key].filter((file) => file !== fileToRemove);
 
       return {
         ...prev,
@@ -1074,7 +1094,6 @@ const ProjectDetailsEdit = () => {
 
     toast.success("Image removed successfully!");
   };
-
 
   const handleDiscardBroucher = async (key) => {
     const brochure = formData[key];
@@ -1679,138 +1698,140 @@ const ProjectDetailsEdit = () => {
     //   )
     // : [];
 
-//     const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
-//   ? formData.gallery_image_16_by_9.filter(
-//       (img) =>
-//         img?.file instanceof File || !!img?.id || !!img?.document_file_name
-//     )
-//   : [];
-//     const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
-//     const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File || img.id || img.document_file_name);
-//     const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
-//       img => img?.file instanceof File || img?.id || img?.document_file_name
-//     );
-//     const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+    //     const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+    //   ? formData.gallery_image_16_by_9.filter(
+    //       (img) =>
+    //         img?.file instanceof File || !!img?.id || !!img?.document_file_name
+    //     )
+    //   : [];
+    //     const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+    //     const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File || img.id || img.document_file_name);
+    //     const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
+    //       img => img?.file instanceof File || img?.id || img?.document_file_name
+    //     );
+    //     const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
 
-//     // Check if all required images are present
-//     const allImagesPresent = gallery16By9Files.length >= 3 && hasFloorPlan16by9 && hasProjectBanner9by16 && hasProjectCover16by9;
+    //     // Check if all required images are present
+    //     const allImagesPresent = gallery16By9Files.length >= 3 && hasFloorPlan16by9 && hasProjectBanner9by16 && hasProjectCover16by9;
 
-//     console.log("allImagesPresent:", allImagesPresent);
+    //     console.log("allImagesPresent:", allImagesPresent);
 
-//     const galleryImageCount = gallery16By9Files.length;
+    //     const galleryImageCount = gallery16By9Files.length;
 
-//     if (galleryImageCount < 3 || galleryImageCount % 3 !== 0) {
-//   const remainder = galleryImageCount % 3;
-//   const imagesNeeded = 3 - remainder;
-//   const nextValidCount = galleryImageCount + imagesNeeded;
-//   const previousValidCount = galleryImageCount - remainder;
+    //     if (galleryImageCount < 3 || galleryImageCount % 3 !== 0) {
+    //   const remainder = galleryImageCount % 3;
+    //   const imagesNeeded = 3 - remainder;
+    //   const nextValidCount = galleryImageCount + imagesNeeded;
+    //   const previousValidCount = galleryImageCount - remainder;
 
-//   let message = `Currently ${galleryImageCount} gallery image${galleryImageCount !== 1 ? "s" : ""} uploaded. `;
+    //   let message = `Currently ${galleryImageCount} gallery image${galleryImageCount !== 1 ? "s" : ""} uploaded. `;
 
-//   if (galleryImageCount < 3) {
-//     // Case: User uploaded less than 3
-//     message += `Please upload at least 3 gallery images with 16:9 ratio to proceed.`;
-//   } else {
-//     // Case: User uploaded more than 3 but not a multiple of 3
-//     message += `Please upload ${imagesNeeded} more to make it ${nextValidCount}, or remove ${remainder} to make it ${previousValidCount} (multiples of 3 only) with 16:9 ratio to proceed.`;
-//   }
+    //   if (galleryImageCount < 3) {
+    //     // Case: User uploaded less than 3
+    //     message += `Please upload at least 3 gallery images with 16:9 ratio to proceed.`;
+    //   } else {
+    //     // Case: User uploaded more than 3 but not a multiple of 3
+    //     message += `Please upload ${imagesNeeded} more to make it ${nextValidCount}, or remove ${remainder} to make it ${previousValidCount} (multiples of 3 only) with 16:9 ratio to proceed.`;
+    //   }
 
-//   toast.error(message);
-//   setLoading(false);
-//   setIsSubmitting(false);
-//   return;
-// }
+    //   toast.error(message);
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
+    //     // Perform individual validation checks only if not all images are present
+    //     if (!allImagesPresent) {
+    //       if (gallery16By9Files.length < 3) {
+    //         toast.error("At least 3 gallery images with 16:9 ratio are required.");
+    //         setLoading(false);
+    //         setIsSubmitting(false);
+    //         return;
+    //       }
+    //       if (!hasFloorPlan16by9) {
+    //         toast.error("Floor plans with 16:9 ratio are required.");
+    //         setLoading(false);
+    //         setIsSubmitting(false);
+    //         return;
+    //       }
+    //       if (!hasProjectBanner9by16 && !hasProjectBanner1by1) {
+    //         toast.error("Project banner one of them or both(9:16) and (1:1) is required.");
+    //         setLoading(false);
+    //         setIsSubmitting(false);
+    //         return;
+    //       }
+    //       if (!hasProjectCover16by9) {
+    //         toast.error("Project cover (16:9) is required.");
+    //         setLoading(false);
+    //         setIsSubmitting(false);
+    //         return;
+    //       }
+    //     }
 
-//     // Perform individual validation checks only if not all images are present
-//     if (!allImagesPresent) {
-//       if (gallery16By9Files.length < 3) {
-//         toast.error("At least 3 gallery images with 16:9 ratio are required.");
-//         setLoading(false);
-//         setIsSubmitting(false);
-//         return;
-//       }
-//       if (!hasFloorPlan16by9) {
-//         toast.error("Floor plans with 16:9 ratio are required.");
-//         setLoading(false);
-//         setIsSubmitting(false);
-//         return;
-//       }
-//       if (!hasProjectBanner9by16 && !hasProjectBanner1by1) {
-//         toast.error("Project banner one of them or both(9:16) and (1:1) is required.");
-//         setLoading(false);
-//         setIsSubmitting(false);
-//         return;
-//       }
-//       if (!hasProjectCover16by9) {
-//         toast.error("Project cover (16:9) is required.");
-//         setLoading(false);
-//         setIsSubmitting(false);
-//         return;
-//       }
-//     }
+    // const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+    //   ? formData.gallery_image_16_by_9.filter(
+    //       (img) =>
+    //         img?.file instanceof File || !!img?.id || !!img?.document_file_name
+    //     )
+    //   : [];
 
-// const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
-//   ? formData.gallery_image_16_by_9.filter(
-//       (img) =>
-//         img?.file instanceof File || !!img?.id || !!img?.document_file_name
-//     )
-//   : [];
+    // const galleryImageCount = gallery16By9Files.length;
 
-// const galleryImageCount = gallery16By9Files.length;
+    // // Only validate if at least one image is uploaded
+    // if (galleryImageCount > 0 && (galleryImageCount < 3 || galleryImageCount % 3 !== 0)) {
+    //   const remainder = galleryImageCount % 3;
+    //   const imagesNeeded = 3 - remainder;
+    //   const nextValidCount = galleryImageCount + imagesNeeded;
+    //   const previousValidCount = galleryImageCount - remainder;
 
-// // Only validate if at least one image is uploaded
-// if (galleryImageCount > 0 && (galleryImageCount < 3 || galleryImageCount % 3 !== 0)) {
-//   const remainder = galleryImageCount % 3;
-//   const imagesNeeded = 3 - remainder;
-//   const nextValidCount = galleryImageCount + imagesNeeded;
-//   const previousValidCount = galleryImageCount - remainder;
+    //   let message = `Currently ${galleryImageCount} gallery image${galleryImageCount !== 1 ? "s" : ""} uploaded. `;
 
-//   let message = `Currently ${galleryImageCount} gallery image${galleryImageCount !== 1 ? "s" : ""} uploaded. `;
+    //   if (galleryImageCount < 3) {
+    //     message += `Please upload at least 3 gallery images with 16:9 ratio to proceed.`;
+    //   } else {
+    //     message += `Please upload ${imagesNeeded} more to make it ${nextValidCount}, or remove ${remainder} to make it ${previousValidCount} (multiples of 3 only) with 16:9 ratio to proceed.`;
+    //   }
 
-//   if (galleryImageCount < 3) {
-//     message += `Please upload at least 3 gallery images with 16:9 ratio to proceed.`;
-//   } else {
-//     message += `Please upload ${imagesNeeded} more to make it ${nextValidCount}, or remove ${remainder} to make it ${previousValidCount} (multiples of 3 only) with 16:9 ratio to proceed.`;
-//   }
+    //   toast.error(message);
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
-//   toast.error(message);
-//   setLoading(false);
-//   setIsSubmitting(false);
-//   return;
-// }
+    const gallery_images = [
+      "gallery_image_16_by_9",
+      "gallery_image_1_by_1",
+      "gallery_image_9_by_16",
+      "gallery_image_3_by_2",
+    ];
 
-const gallery_images = [
-  "gallery_image_16_by_9",
-  "gallery_image_1_by_1",
-  "gallery_image_9_by_16",
-  "gallery_image_3_by_2",
-];
+    const isValidImage = (img) =>
+      img?.file instanceof File || !!img?.id || !!img?.document_file_name;
 
-const isValidImage = (img) =>
-  img?.file instanceof File || !!img?.id || !!img?.document_file_name;
+    // Combine all valid images from all gallery fields
+    let totalValidGalleryImages = 0;
 
-// Combine all valid images from all gallery fields
-let totalValidGalleryImages = 0;
+    for (const key of gallery_images) {
+      const images = Array.isArray(formData[key])
+        ? formData[key].filter(isValidImage)
+        : [];
+      totalValidGalleryImages += images.length;
+    }
 
-for (const key of gallery_images) {
-  const images = Array.isArray(formData[key]) ? formData[key].filter(isValidImage) : [];
-  totalValidGalleryImages += images.length;
-}
+    if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
+      const remainder = totalValidGalleryImages % 3;
+      const imagesNeeded = 3 - remainder;
+      const previousValidCount = totalValidGalleryImages - remainder;
 
-if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
-  const remainder = totalValidGalleryImages % 3;
-  const imagesNeeded = 3 - remainder;
-  const previousValidCount = totalValidGalleryImages - remainder;
+      const message = `Currently in Gallery ${totalValidGalleryImages} image${
+        totalValidGalleryImages !== 1 ? "s" : ""
+      } uploaded. Please upload ${imagesNeeded} more or remove ${remainder} to make it a multiple of 3.`;
 
-  const message = `Currently in Gallery ${totalValidGalleryImages} image${totalValidGalleryImages !== 1 ? "s" : ""} uploaded. Please upload ${imagesNeeded} more or remove ${remainder} to make it a multiple of 3.`;
-
-  toast.error(message);
-  setLoading(false);
-  setIsSubmitting(false);
-  return;
-}
-
+      toast.error(message);
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
 
     const data = new FormData();
 
@@ -1840,70 +1861,110 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
         if (file) {
           data.append("project[ProjectBrochure][]", file);
         }
-      } else if (key === "project_emailer_templetes" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "project_emailer_templetes" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectEmailerTempletes][]", file);
           }
         });
-      } else if (key === "project_ppt" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "project_ppt" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectPPT][]", file);
           }
         });
-      } else if (key === "two_d_images" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "two_d_images" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[Project2DImage][]", file);
           }
         });
-      } else if (key === "project_creatives" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "project_creatives" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreatives][]", file);
           }
         });
-      } else if (key === "cover_images" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "cover_images" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[cover_images][]", file);
           }
         });
-      } else if (key === "project_creative_generics" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "project_creative_generics" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreativeGenerics][]", file);
           }
         });
-      } else if (key === "project_creative_offers" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "project_creative_offers" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectCreativeOffers][]", file);
           }
         });
-      } else if (key === "project_interiors" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "project_interiors" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectInteriors][]", file);
           }
         });
-      } else if (key === "project_exteriors" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "project_exteriors" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectExteriors][]", file);
           }
         });
-      } else if (key === "project_layout" && Array.isArray(value) && value.length) {
+      } else if (
+        key === "project_layout" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
         value.forEach((fileObj) => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
@@ -1921,16 +1982,28 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
         value.forEach((fileObj, index) => {
           if (fileObj.gallery_image_ instanceof File) {
             data.append("project[gallery_image_][]", fileObj.gallery_image_);
-            data.append(`project[gallery_image_file_name]`, fileObj.gallery_image_file_name);
-            data.append(`project[gallery_type]`, fileObj.gallery_image_file_type);
-            data.append(`project[gallery_image_is_day][${index}]`, fileObj.isDay);
+            data.append(
+              `project[gallery_image_file_name]`,
+              fileObj.gallery_image_file_name
+            );
+            data.append(
+              `project[gallery_type]`,
+              fileObj.gallery_image_file_type
+            );
+            data.append(
+              `project[gallery_image_is_day][${index}]`,
+              fileObj.isDay
+            );
           }
         });
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
         const newTitles = [];
         value.forEach((fileObj) => {
           if (fileObj.project_qrcode_image instanceof File) {
-            data.append("project[project_qrcode_image][]", fileObj.project_qrcode_image);
+            data.append(
+              "project[project_qrcode_image][]",
+              fileObj.project_qrcode_image
+            );
           }
           if (fileObj.isNew) {
             newTitles.push(fileObj.title || "");
@@ -1942,8 +2015,14 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
-            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_url]`, item.virtual_tour_url);
-            data.append(`project[virtual_tour_url_multiple][${index}][virtual_tour_name]`, item.virtual_tour_name);
+            data.append(
+              `project[virtual_tour_url_multiple][${index}][virtual_tour_url]`,
+              item.virtual_tour_url
+            );
+            data.append(
+              `project[virtual_tour_url_multiple][${index}][virtual_tour_name]`,
+              item.virtual_tour_name
+            );
             console.log("Virtual Tour URL:", item.virtual_tour_url);
             console.log("Virtual Tour Name:", item.virtual_tour_name);
           }
@@ -1951,9 +2030,18 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
       } else if (key === "Rera_Number_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.tower_name && item.rera_number) {
-            data.append(`project[Rera_Number_multiple][${index}][tower_name]`, item.tower_name);
-            data.append(`project[Rera_Number_multiple][${index}][rera_number]`, item.rera_number);
-            data.append(`project[Rera_Number_multiple][${index}][rera_url]`, item.rera_url);
+            data.append(
+              `project[Rera_Number_multiple][${index}][tower_name]`,
+              item.tower_name
+            );
+            data.append(
+              `project[Rera_Number_multiple][${index}][rera_number]`,
+              item.rera_number
+            );
+            data.append(
+              `project[Rera_Number_multiple][${index}][rera_url]`,
+              item.rera_url
+            );
           }
         });
       } else if (key.startsWith("image") && Array.isArray(value)) {
@@ -1965,21 +2053,24 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
         });
       } else if (key.startsWith("cover_images_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("cover_images_", "project[cover_images_") + "]";
+          const backendField =
+            key.replace("cover_images_", "project[cover_images_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("gallery_image_", "project[gallery_image_") + "][]";
+          const backendField =
+            key.replace("gallery_image_", "project[gallery_image_") + "][]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
         });
       } else if (key.startsWith("project_2d_image_") && Array.isArray(value)) {
         value.forEach((img) => {
-          const backendField = key.replace("project_2d_image_", "project[project_2d_image_") + "]";
+          const backendField =
+            key.replace("project_2d_image_", "project[project_2d_image_") + "]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
           }
@@ -2072,7 +2163,7 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
     //     coverPreviewImage: imageURL,
     //   }));
     //   setDialogOpen((prev) => ({ ...prev, cover_images: true }));
-    // } 
+    // }
     else if (type === "cover_images") {
       // Skip cropper for GIFs
       if (fileType === "image/gif") {
@@ -2093,8 +2184,7 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
         coverPreviewImage: imageURL,
       }));
       setDialogOpen((prev) => ({ ...prev, cover_images: true }));
-    }
-    else if (type === "gallery_image") {
+    } else if (type === "gallery_image") {
       setGalleryImageUpload(newImageList);
       setFormData((prevData) => ({
         ...prevData,
@@ -2249,7 +2339,6 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
   const configurationTypes = [
     ...new Set(configurations.map((config) => config.configuration_type)),
   ].map((type) => ({ value: type, label: type }));
-
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
@@ -2665,7 +2754,6 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
     }
 
     if (name === "plans") {
-
       setFormData((prev) => ({
         ...prev,
         plans: [...(prev.plans || []), ...validFiles], // ✅ Fix: Ensure existing files are kept
@@ -2788,7 +2876,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
       if (tooLargeFiles.length > 0) {
         tooLargeFiles.forEach((file) => {
           toast.error(
-            `File too large: ${file.name} (${file.size
+            `File too large: ${file.name} (${
+              file.size
             }). Max size: ${formatFileSize(MAX_SIZES[name])}`
           );
         });
@@ -2811,7 +2900,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
       const sizeCheck = isFileSizeValid(file, MAX_SIZES.image);
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${sizeCheck.size
+          `File too large: ${sizeCheck.name} (${
+            sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.image)}`
         );
         return;
@@ -2832,7 +2922,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
       );
       if (!sizeCheck.valid) {
         toast.error(
-          `File too large: ${sizeCheck.name} (${sizeCheck.size
+          `File too large: ${sizeCheck.name} (${
+            sizeCheck.size
           }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
         );
         return;
@@ -2991,7 +3082,6 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
   const filteredConfigurations = configurations.filter(
     (config) => !selectedConfigurationNames.includes(config.name)
   );
-
 
   return (
     <>
@@ -3340,7 +3430,7 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                         project_tag: value,
                       }))
                     }
-                  // isDisableFirstOption={true}
+                    // isDisableFirstOption={true}
                   />
                 </div>
               </div>
@@ -4452,8 +4542,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                     img instanceof File || img instanceof Blob
                                       ? URL.createObjectURL(img)
                                       : typeof img === "string"
-                                        ? img
-                                        : img?.document_url || "" // fallback if img is an object like { url: "..." }
+                                      ? img
+                                      : img?.document_url || "" // fallback if img is an object like { url: "..." }
                                   }
                                   alt="Plan"
                                   style={{
@@ -4515,7 +4605,6 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                   fdprocessedid="xn3e6n"
                   type="button"
                   onClick={() => setShowBannerModal(true)}
-
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -4538,14 +4627,14 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                     showAsModal={true}
                     label={bannerImageLabel}
                     description={dynamicDescription3}
-                    onContinue={(validImages) => handleCroppedImages(validImages, "banner")}
+                    onContinue={(validImages) =>
+                      handleCroppedImages(validImages, "banner")
+                    }
                   />
                 )}
-
               </div>
 
               <div className="col-md-12 mt-2">
-
                 <div className="mt-4 tbl-container">
                   <table className="w-100">
                     <thead>
@@ -4558,43 +4647,64 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                     </thead>
                     <tbody>
                       {Array.isArray(formData.image) &&
-  formData.image.map((img, index) => (
-    <tr key={`banner-image-${index}`}>
-      <td>{img.document_file_name || img.document_url || `Image ${index + 1}`}</td>
-      <td>
-        {img.document_url && (
-          <img
-            src={img.document_url}
-            alt={img.document_file_name || `Image ${index + 1}`}
-            style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
-            className="img-fluid rounded"
-          />
-        )}
-      </td>
-      <td>N/A</td> 
-      <td>
-        <button
-          type="button"
-          className="purple-btn2"
-          onClick={() => handleFileDiscardCoverImage("image", index)}
-        >
-          x
-        </button>
-      </td>
-    </tr>
-  ))}
+                        formData.image.map((img, index) => (
+                          <tr key={`banner-image-${index}`}>
+                            <td>
+                              {img.document_file_name ||
+                                img.document_url ||
+                                `Image ${index + 1}`}
+                            </td>
+                            <td>
+                              {img.document_url && (
+                                <img
+                                  src={img.document_url}
+                                  alt={
+                                    img.document_file_name ||
+                                    `Image ${index + 1}`
+                                  }
+                                  style={{
+                                    maxWidth: 100,
+                                    maxHeight: 100,
+                                    objectFit: "cover",
+                                  }}
+                                  className="img-fluid rounded"
+                                />
+                              )}
+                            </td>
+                            <td>N/A</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleFileDiscardCoverImage("image", index)
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
 
                       {project_banner.map(({ key, label }) => {
                         const files = formData[key] || [];
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
-                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
+                            <td>
+                              {file.document_file_name ||
+                                file.name ||
+                                `Image ${index + 1}`}
+                            </td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
                                 src={file.document_url || file.preview}
-                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
+                                alt={
+                                  file.document_file_name ||
+                                  file.name ||
+                                  `Image ${index + 1}`
+                                }
                               />
                             </td>
                             <td>{file.ratio || label}</td>
@@ -4602,7 +4712,9 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleFileDiscardCoverImage(key, index)}
+                                onClick={() =>
+                                  handleFileDiscardCoverImage(key, index)
+                                }
                               >
                                 x
                               </button>
@@ -4611,12 +4723,9 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                         ));
                       })}
                     </tbody>
-
                   </table>
                 </div>
               </div>
-
-
 
               {/* Gallery Section */}
               <div className="d-flex justify-content-between align-items-end mx-1">
@@ -4670,7 +4779,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                   display: "none" }}
                 /> */}
 
-                {/* <ImageUploadingButton
+                {
+                  /* <ImageUploadingButton
                   value={coverImageUpload}
                   onChange={(list) => handleImageUploaded(list, "cover_images")}
                   variant="button"
@@ -4708,7 +4818,6 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                     fdprocessedid="xn3e6n"
                     type="button"
                     onClick={() => setShowUploader(true)}
-
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -4735,15 +4844,17 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                   //   onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
                   // />
                   <ProjectImageVideoUpload
-  onClose={() => setShowUploader(false)}
-  includeInvalidRatios={false}
-  selectedRatioProp={selectedCoverRatios}
-  showAsModal={true}
-  label={coverImageLabel}
-  description={dynamicDescription}
-  onContinue={(validImages, videoFiles) => handleCroppedCoverImages(validImages, videoFiles, "cover")}
-  allowVideos={true}
-/>
+                    onClose={() => setShowUploader(false)}
+                    includeInvalidRatios={false}
+                    selectedRatioProp={selectedCoverRatios}
+                    showAsModal={true}
+                    label={coverImageLabel}
+                    description={dynamicDescription}
+                    onContinue={(validImages, videoFiles) =>
+                      handleCroppedCoverImages(validImages, videoFiles, "cover")
+                    }
+                    allowVideos={true}
+                  />
                 )}
               </div>
 
@@ -4759,7 +4870,7 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                       </tr>
                     </thead>
                     <tbody>
-                        {formData.cover_images?.map((file, index) => (
+                      {formData.cover_images?.map((file, index) => (
                         <tr key={index}>
                           <td>{file.document_file_name || file.name}</td>{" "}
                           {/* Show name from API or uploaded file */}
@@ -4823,87 +4934,89 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                         ));
                       })} */}
                       {coverImageRatios.map(({ key, label }) => {
-  const files = Array.isArray(formData[key])
-    ? formData[key]
-    : formData[key]
-    ? [formData[key]]
-    : [];
+                        const files = Array.isArray(formData[key])
+                          ? formData[key]
+                          : formData[key]
+                          ? [formData[key]]
+                          : [];
 
-  return files.map((file, index) => {
-    // Get the preview URL - prioritize object URL over document_url
-    const preview =
-      file.preview ||
-      (file.file
-        ? URL.createObjectURL(file.file)
-        : null) ||
-      file.document_url ||
-      "";
+                        return files.map((file, index) => {
+                          // Get the preview URL - prioritize object URL over document_url
+                          const preview =
+                            file.preview ||
+                            (file.file
+                              ? URL.createObjectURL(file.file)
+                              : null) ||
+                            file.document_url ||
+                            "";
 
-    const name =
-      file.name || file.document_file_name || "Unnamed";
+                          const name =
+                            file.name || file.document_file_name || "Unnamed";
 
-    // More reliable video detection
-    const isVideo =
-      file.type === "video" ||
-      (file.file && file.file.type.startsWith("video/")) ||
-      (file.document_url &&
-        [".mp4", ".webm", ".ogg"].some((ext) =>
-          file.document_url.toLowerCase().endsWith(ext)
-        )) ||
-      (preview &&
-        [".mp4", ".webm", ".ogg"].some((ext) =>
-          preview.toLowerCase().endsWith(ext)
-        ));
+                          // More reliable video detection
+                          const isVideo =
+                            file.type === "video" ||
+                            (file.file &&
+                              file.file.type.startsWith("video/")) ||
+                            (file.document_url &&
+                              [".mp4", ".webm", ".ogg"].some((ext) =>
+                                file.document_url.toLowerCase().endsWith(ext)
+                              )) ||
+                            (preview &&
+                              [".mp4", ".webm", ".ogg"].some((ext) =>
+                                preview.toLowerCase().endsWith(ext)
+                              ));
 
-    return (
-      <tr key={`${key}-${index}`}>
-        <td>{name}</td>
-        <td>
-          {isVideo ? (
-            <video
-              controls
-              style={{ maxWidth: 100, maxHeight: 100 }}
-              className="img-fluid rounded"
-              key={preview} // Important for re-rendering when preview changes
-            >
-              <source
-                src={preview}
-                type={
-                  file.file?.type ||
-                  (file.document_url
-                    ? `video/${file.document_url
-                        .split(".")
-                        .pop()}`
-                    : "video/mp4")
-                }
-              />
-              Your browser does not support the video tag.
-            </video>
-          ) : (
-            <img
-              style={{ maxWidth: 100, maxHeight: 100 }}
-              className="img-fluid rounded"
-              src={preview}
-              alt={name}
-            />
-          )}
-        </td>
-        <td>{file.ratio || label}</td>
-        <td>
-          <button
-            type="button"
-            className="purple-btn2"
-            onClick={() => handleFileDiscardCoverImage(key, index)}
-          >
-            x
-          </button>
-        </td>
-      </tr>
-    );
-  });
-})}
+                          return (
+                            <tr key={`${key}-${index}`}>
+                              <td>{name}</td>
+                              <td>
+                                {isVideo ? (
+                                  <video
+                                    controls
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    key={preview} // Important for re-rendering when preview changes
+                                  >
+                                    <source
+                                      src={preview}
+                                      type={
+                                        file.file?.type ||
+                                        (file.document_url
+                                          ? `video/${file.document_url
+                                              .split(".")
+                                              .pop()}`
+                                          : "video/mp4")
+                                      }
+                                    />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                ) : (
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={preview}
+                                    alt={name}
+                                  />
+                                )}
+                              </td>
+                              <td>{file.ratio || label}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFileDiscardCoverImage(key, index)
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        });
+                      })}
                     </tbody>
-
                   </table>
                 </div>
 
@@ -4916,11 +5029,12 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                     showAsModal={true}
                     label={coverImageLabel}
                     description={dynamicDescription}
-                    onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
+                    onContinue={(validImages) =>
+                      handleCroppedImages(validImages, "cover")
+                    }
                   />
                 )}
               </div>
-
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -5047,13 +5161,11 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                   ]}
                 /> */}
 
-
                 <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
                   type="button"
                   onClick={() => setShowGalleryModal(true)}
-
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -5075,7 +5187,9 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                     showAsModal={true}
                     label={galleryImageLabel}
                     description={dynamicDescription1}
-                    onContinue={(validImages) => handleCroppedImages(validImages, "gallery")}
+                    onContinue={(validImages) =>
+                      handleCroppedImages(validImages, "gallery")
+                    }
                   />
                 )}
               </div>
@@ -5098,50 +5212,64 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                     </thead>
                     <tbody>
                       {formData.fetched_gallery_image?.map((file, index) =>
-    file.attachfiles?.map((attachment, idx) => (
-      <tr key={`fetched-${index}-${idx}`}>
-        <td>{attachment.document_file_name || "N/A"}</td>
-        <td>
-          {attachment.document_url && (
-            <img
-              style={{ maxWidth: 100, maxHeight: 100 }}
-              className="img-fluid rounded"
-              src={attachment.document_url}
-              alt={attachment.document_file_name || "Fetched Image"}
-            />
-          )}
-        </td>
-        <td>
-          {/* <div>{file.day_night ? "Day" : "Night"}</div> */}
-          N/A
-
-        </td>
-        <td>
-          <button
-            type="button"
-            className="purple-btn2"
-            onClick={() =>
-              handleFetchedDiscardGallery("fetched_gallery_image", index, attachment.id)
-            }
-          >
-            x
-          </button>
-        </td>
-      </tr>
-    ))
-  )}
+                        file.attachfiles?.map((attachment, idx) => (
+                          <tr key={`fetched-${index}-${idx}`}>
+                            <td>{attachment.document_file_name || "N/A"}</td>
+                            <td>
+                              {attachment.document_url && (
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={attachment.document_url}
+                                  alt={
+                                    attachment.document_file_name ||
+                                    "Fetched Image"
+                                  }
+                                />
+                              )}
+                            </td>
+                            <td>
+                              {/* <div>{file.day_night ? "Day" : "Night"}</div> */}
+                              N/A
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleFetchedDiscardGallery(
+                                    "fetched_gallery_image",
+                                    index,
+                                    attachment.id
+                                  )
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                       {gallery_images.map(({ key, label }) => {
                         const files = formData[key] || [];
 
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
-                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
+                            <td>
+                              {file.document_file_name ||
+                                file.name ||
+                                `Image ${index + 1}`}
+                            </td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
                                 src={file.document_url || file.preview}
-                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
+                                alt={
+                                  file.document_file_name ||
+                                  file.name ||
+                                  `Image ${index + 1}`
+                                }
                               />
                             </td>
                             <td>{file.ratio || label}</td>
@@ -5150,23 +5278,25 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                 type="button"
                                 className="purple-btn2"
                                 onClick={() => {
-                                  handleFetchedDiscardGallery(key, index, file.id);
+                                  handleFetchedDiscardGallery(
+                                    key,
+                                    index,
+                                    file.id
+                                  );
                                 }}
                               >
                                 x
                               </button>
-
                             </td>
                           </tr>
                         ));
                       })}
                     </tbody>
-
                   </table>
                 </div>
               </div>
 
-                <div className="d-flex justify-content-between align-items-end mx-1">
+              <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Floor Plan{" "}
                   <span
@@ -5251,7 +5381,6 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                   fdprocessedid="xn3e6n"
                   type="button"
                   onClick={() => setShowFloorPlanModal(true)}
-
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -5273,7 +5402,9 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                     showAsModal={true}
                     label={floorImageLabel}
                     description={dynamicDescription2}
-                    onContinue={(validImages) => handleCroppedImages(validImages, "floor")}
+                    onContinue={(validImages) =>
+                      handleCroppedImages(validImages, "floor")
+                    }
                   />
                 )}
               </div>
@@ -5291,7 +5422,7 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                       </tr>
                     </thead>
                     <tbody>
-                       {formData.two_d_images.map((file, index) => (
+                      {formData.two_d_images.map((file, index) => (
                         <tr key={index}>
                           <td>{file.document_file_name || file.name}</td>{" "}
                           {/* Show name from API or uploaded file */}
@@ -5330,13 +5461,21 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
 
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
-                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
+                            <td>
+                              {file.document_file_name ||
+                                file.name ||
+                                `Image ${index + 1}`}
+                            </td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
                                 src={file.document_url || file.preview}
-                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
+                                alt={
+                                  file.document_file_name ||
+                                  file.name ||
+                                  `Image ${index + 1}`
+                                }
                               />
                             </td>
                             <td>{file.ratio || label}</td>
@@ -5344,7 +5483,9 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                               <button
                                 type="button"
                                 className="purple-btn2"
-                                onClick={() => handleFileDiscardCoverImage(key, index)}
+                                onClick={() =>
+                                  handleFileDiscardCoverImage(key, index)
+                                }
                               >
                                 x
                               </button>
@@ -5353,7 +5494,6 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                         ));
                       })}
                     </tbody>
-
                   </table>
                 </div>
               </div>
@@ -5594,8 +5734,6 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
               </div>
 
               {/* 2D Images */}
-            
-
 
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -5670,8 +5808,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
+                                  ? URL.createObjectURL(file)
+                                  : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5769,8 +5907,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
+                                  ? URL.createObjectURL(file)
+                                  : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5874,8 +6012,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
+                                  ? URL.createObjectURL(file)
+                                  : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -5976,8 +6114,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
+                                  ? URL.createObjectURL(file)
+                                  : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -6078,8 +6216,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
+                                  ? URL.createObjectURL(file)
+                                  : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -6180,8 +6318,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                 file.document_url // API response images
                                   ? file.document_url
                                   : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                    ? URL.createObjectURL(file)
-                                    : null
+                                  ? URL.createObjectURL(file)
+                                  : null
                               }
                               alt={
                                 file.document_file_name || file.name || "Image"
@@ -6400,8 +6538,8 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                                 file.document_url // API response video
                                   ? file.document_url
                                   : file instanceof File // Uploaded video file
-                                    ? URL.createObjectURL(file)
-                                    : ""
+                                  ? URL.createObjectURL(file)
+                                  : ""
                               }
                               autoPlay
                               muted

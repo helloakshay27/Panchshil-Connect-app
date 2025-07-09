@@ -861,56 +861,72 @@ const BannerEdit = () => {
                       })}
                     </tbody> */}
                     <tbody>
-
-                      {(previewVideo || formData.banner_video?.document_url) && (
-  <tr>
-     <td>
-      {/* Try to fetch name in proper fallback order */}
-      {previewVideo?.name ||
-        formData.banner_video?.document_file_name ||
-        formData.banner_video?.file_name ||
-        (typeof formData.banner_video === "object"
-          ? formData.banner_video?.document_url?.split("/")?.pop()
-          : formData.banner_video?.split("/")?.pop()) ||
-        "Video/Image"}
-    </td>
-    <td>
-      {isImageFile(previewVideo || formData.banner_video?.document_url) ? (
-        <img
-          src={previewVideo || formData.banner_video?.document_url}
-          className="img-fluid rounded"
-          alt="Preview"
-          style={{
-            maxWidth: "100px",
-            maxHeight: "150px",
-            objectFit: "cover",
-          }}
-        />
-      ) : (
-        <video
-          src={previewVideo || formData.banner_video?.document_url}
-          controls
-          className="img-fluid rounded"
-          style={{
-            maxWidth: "200px",
-            maxHeight: "150px",
-            objectFit: "cover",
-          }}
-        />
-      )}
-    </td>
-    <td>N/A</td> {/* Add ratio if you have it */}
-    <td>
-      <button
-        type="button"
-        className="purple-btn2"
-        onClick={() => handleFetchedDiscardGallery("banner_video")}
-      >
-        x
-      </button>
-    </td>
-  </tr>
-)}
+                      {(previewVideo ||
+                        previewImg ||
+                        formData.banner_video?.document_url) && (
+                        <tr>
+                          <td>
+                            {/* Try to fetch name in proper fallback order */}
+                            {previewVideo?.name ||
+                              previewImg?.name ||
+                              formData.banner_video?.document_file_name ||
+                              formData.banner_video?.file_name ||
+                              (typeof formData.banner_video === "object"
+                                ? formData.banner_video?.document_url
+                                    ?.split("/")
+                                    ?.pop()
+                                : formData.banner_video?.split("/")?.pop()) ||
+                              "Video/Image"}
+                          </td>
+                          <td>
+                            {isImageFile(
+                              previewVideo ||
+                                previewImg ||
+                                formData.banner_video?.document_url
+                            ) ? (
+                              <img
+                                src={
+                                  previewImg ||
+                                  formData.banner_video?.document_url
+                                }
+                                className="img-fluid rounded"
+                                alt="Preview"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "150px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            ) : (
+                              <video
+                                src={
+                                  previewVideo ||
+                                  formData.banner_video?.document_url
+                                }
+                                controls
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "200px",
+                                  maxHeight: "150px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            )}
+                          </td>
+                          <td>N/A</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="purple-btn2"
+                              onClick={() =>
+                                handleFetchedDiscardGallery("banner_video")
+                              }
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      )}
 
                       {project_banner.map(({ key, label }) => {
                         const files = Array.isArray(formData[key])

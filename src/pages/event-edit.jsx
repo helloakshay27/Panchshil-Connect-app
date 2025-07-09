@@ -484,11 +484,13 @@ const EventEdit = () => {
             isExisting: true,
           })) || [];
 
-          const attachfileData = data.attachfile 
-        ? Array.isArray(data.attachfile) 
-          ? data.attachfile 
-          : [data.attachfile]
-        : [];
+        const attachfileData = data.attachfile
+          ? Array.isArray(data.attachfile)
+            ? data.attachfile
+            : [data.attachfile]
+          : [];
+
+        const coverImageData = data.cover_image || null;
 
         setFormData((prev) => ({
           ...prev,
@@ -502,7 +504,7 @@ const EventEdit = () => {
           existingImages: existingImages,
           previewImage: existingImages,
           existingCoverImage: existingCoverImage, // <-- use the correct object
-          cover_image: null,
+          cover_image: coverImageData,
           set_reminders_attributes: formattedReminders,
           cover_image_1_by_1: data.cover_image_1_by_1 || [],
           cover_image_9_by_16: data.cover_image_9_by_16 || [],
@@ -1951,7 +1953,43 @@ const EventEdit = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          
+                          {formData.cover_image?.document_url && (
+                            <tr>
+                              <td>
+                                {formData.cover_image.document_file_name ||
+                                  formData.cover_image.file_name ||
+                                  formData.cover_image.document_url
+                                    ?.split("/")
+                                    ?.pop() ||
+                                  "Cover Image"}
+                              </td>
+                              <td>
+                                <img
+                                  src={formData.cover_image.document_url}
+                                  alt="Cover Preview"
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </td>
+                              <td>N/A</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFetchedDiscardGallery("cover_image")
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          )}
+
                           {coverImageRatios.flatMap(({ key, label }) => {
                             const files = Array.isArray(formData[key])
                               ? formData[key]
@@ -2236,34 +2274,41 @@ const EventEdit = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {Array.isArray(formData.attachfile) && formData.attachfile.map((file) => (
-      <tr key={`attachfile-${file.id}`}>
-        <td>{file.document_file_name || "N/A"}</td>
-        <td>
-          {file.document_url && (
-            <img
-              style={{ maxWidth: "100px", maxHeight: "100px" }}
-              className="img-fluid rounded"
-              src={file.document_url}
-              alt={file.document_file_name || "Attached file"}
-            />
-          )}
-        </td>
-        <td>
-          N/A
-        </td>
-        <td>
-          <button
-            type="button"
-            className="purple-btn2"
-            onClick={() => handleFetchedDiscardGallery(file.id)}
-            title="Remove attached file"
-          >
-            ×
-          </button>
-        </td>
-      </tr>
-    ))}
+                          {Array.isArray(formData.attachfile) &&
+                            formData.attachfile.map((file) => (
+                              <tr key={`attachfile-${file.id}`}>
+                                <td>{file.document_file_name || "N/A"}</td>
+                                <td>
+                                  {file.document_url && (
+                                    <img
+                                      style={{
+                                        maxWidth: "100px",
+                                        maxHeight: "100px",
+                                      }}
+                                      className="img-fluid rounded"
+                                      src={file.document_url}
+                                      alt={
+                                        file.document_file_name ||
+                                        "Attached file"
+                                      }
+                                    />
+                                  )}
+                                </td>
+                                <td>N/A</td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleFetchedDiscardGallery(file.id)
+                                    }
+                                    title="Remove attached file"
+                                  >
+                                    ×
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
                           {eventImageRatios.flatMap(({ key, label }) => {
                             const files = Array.isArray(formData[key])
                               ? formData[key]
