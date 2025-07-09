@@ -115,40 +115,77 @@ const SignInRustomjee = () => {
     }
   };
 
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
-    
-    if (loading) return; // Prevent multiple submissions
-    
-    toast.dismiss();
-    
-    // Strict validation for 10-digit mobile number
-    if (!mobile || mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
-      setError("Please enter a valid 10-digit mobile number.");
-      return;
-    }
-    
-    setError("");
-    setLoading(true);
 
-    try {
-      const response = await axios.post(
-        `${config.baseURL}/generate_code`,
-        { mobile }
-      );
+  //   const handleSendOtp = async (e) => {
+  //   e.preventDefault();
+    
+  //   if (loading) return; // Prevent multiple submissions
+    
+  //   toast.dismiss();
+    
+  //   // Strict validation for 10-digit mobile number
+  //   if (!mobile || mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
+  //     setError("Please enter a valid 10-digit mobile number.");
+  //     return;
+  //   }
+    
+  //   setError("");
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await axios.post(
+  //       `${config.baseURL}/generate_code`,
+  //       { mobile }
+  //     );
       
-      // Navigate to the dedicated OTP verification page with the mobile number as a query parameter
-      navigate(`/verify-otp?mobile=${encodeURIComponent(mobile)}`);
+  //     // Navigate to the dedicated OTP verification page with the mobile number as a query parameter
+  //     navigate(`/verify-otp?mobile=${encodeURIComponent(mobile)}`);
       
-      toast.success("OTP Sent successfully", { id: "otp-sent" });
-    } catch (err) {
-      toast.error("Failed to send OTP. Please try again.", { id: "otp-error" });
-      console.error(err);
-      setError("Failed to send OTP. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     toast.success("OTP Sent successfully", { id: "otp-sent" });
+  //   } catch (err) {
+  //     toast.error("Failed to send OTP. Please try again.", { id: "otp-error" });
+  //     console.error(err);
+  //     setError("Failed to send OTP. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+ const handleSendOtp = async (e) => {
+  e.preventDefault();
+
+  if (loading) return;
+
+  toast.dismiss();
+
+  if (!mobile || mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
+    setError("Please enter a valid 10-digit mobile number.");
+    return;
+  }
+
+  setError("");
+  setLoading(true);
+
+  try {
+    const response = await axios.get(`${config.baseURL}get_otps/generate_otp.json`, {
+      params: {
+        client: "rustomjee",
+        mobile: mobile,
+      }
+    });
+
+    toast.success("OTP Sent successfully", { id: "otp-sent" });
+
+    navigate(`/verify-otp?mobile=${encodeURIComponent(mobile)}`);
+  } catch (err) {
+    toast.error("Failed to send OTP. Please try again.", { id: "otp-error" });
+    console.error(err);
+    setError("Failed to send OTP. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const renderPasswordLogin = () => {
     return (
