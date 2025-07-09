@@ -78,6 +78,7 @@ const ProjectDetailsList = () => {
 
       // Optional: save to sessionStorage
       sessionStorage.setItem("cached_projects", JSON.stringify(projectsData));
+      
 
       setPagination({
         current_page: getPageFromStorage(),
@@ -159,6 +160,8 @@ const ProjectDetailsList = () => {
         )
       );
 
+      sessionStorage.removeItem("cached_projects");
+
       // Show new toast and store its ID
       const newToastId = toast.success("Status updated successfully!", {
         duration: 3000, // Toast will auto-dismiss after 3 seconds
@@ -234,6 +237,8 @@ const ProjectDetailsList = () => {
       )
     );
 
+    sessionStorage.removeItem("cached_projects");
+
     // Show new toast and store its ID
     const newToastId = toast.success("Status updated successfully!", {
       duration: 3000,
@@ -243,17 +248,27 @@ const ProjectDetailsList = () => {
 
     setActiveToastId(newToastId);
   } catch (error) {
-    console.error("Error updating status:", error);
+  console.error("Error updating status:", error);
 
-    // Show error toast and store its ID
-    const newToastId = toast.error("Project is not active or published.", {
+  let newToastId;
+
+  if (error.response && error.response.status === 422) {
+    const message = error.response.data?.active?.[0] || "Unprocessable Entity.";
+    newToastId = toast.error(message, {
       duration: 3000,
       position: "top-center",
       id: `toggle-error-${id}`,
     });
-
-    setActiveToastId(newToastId);
+  } else {
+    newToastId = toast.error("Project is not active or published.", {
+      duration: 3000,
+      position: "top-center",
+      id: `toggle-error-${id}`,
+    });
   }
+
+  setActiveToastId(newToastId);
+}
 };
 
   return (

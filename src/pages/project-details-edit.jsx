@@ -1679,41 +1679,131 @@ const ProjectDetailsEdit = () => {
     //   )
     // : [];
 
-    const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
-  ? formData.gallery_image_16_by_9.filter(
-      (img) =>
-        img?.file instanceof File || !!img?.id || !!img?.document_file_name
-    )
-  : [];
-    const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
-    const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File || img.id || img.document_file_name);
-    const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
-      img => img?.file instanceof File || img?.id || img?.document_file_name
-    );
-    const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+//     const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+//   ? formData.gallery_image_16_by_9.filter(
+//       (img) =>
+//         img?.file instanceof File || !!img?.id || !!img?.document_file_name
+//     )
+//   : [];
+//     const hasFloorPlan16by9 = formData.project_2d_image_16_by_9 && formData.project_2d_image_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
+//     const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(img => img.file instanceof File || img.id || img.document_file_name);
+//     const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
+//       img => img?.file instanceof File || img?.id || img?.document_file_name
+//     );
+//     const hasProjectCover16by9 = formData.cover_images_16_by_9 && formData.cover_images_16_by_9.some(img => img.file instanceof File || img.id || img.document_file_name);
 
-    // Check if all required images are present
-    const allImagesPresent = gallery16By9Files.length >= 3 && hasFloorPlan16by9 && hasProjectBanner9by16 && hasProjectCover16by9;
+//     // Check if all required images are present
+//     const allImagesPresent = gallery16By9Files.length >= 3 && hasFloorPlan16by9 && hasProjectBanner9by16 && hasProjectCover16by9;
 
-    console.log("allImagesPresent:", allImagesPresent);
+//     console.log("allImagesPresent:", allImagesPresent);
 
-    const galleryImageCount = gallery16By9Files.length;
+//     const galleryImageCount = gallery16By9Files.length;
 
-    if (galleryImageCount < 3 || galleryImageCount % 3 !== 0) {
-  const remainder = galleryImageCount % 3;
+//     if (galleryImageCount < 3 || galleryImageCount % 3 !== 0) {
+//   const remainder = galleryImageCount % 3;
+//   const imagesNeeded = 3 - remainder;
+//   const nextValidCount = galleryImageCount + imagesNeeded;
+//   const previousValidCount = galleryImageCount - remainder;
+
+//   let message = `Currently ${galleryImageCount} gallery image${galleryImageCount !== 1 ? "s" : ""} uploaded. `;
+
+//   if (galleryImageCount < 3) {
+//     // Case: User uploaded less than 3
+//     message += `Please upload at least 3 gallery images with 16:9 ratio to proceed.`;
+//   } else {
+//     // Case: User uploaded more than 3 but not a multiple of 3
+//     message += `Please upload ${imagesNeeded} more to make it ${nextValidCount}, or remove ${remainder} to make it ${previousValidCount} (multiples of 3 only) with 16:9 ratio to proceed.`;
+//   }
+
+//   toast.error(message);
+//   setLoading(false);
+//   setIsSubmitting(false);
+//   return;
+// }
+
+
+//     // Perform individual validation checks only if not all images are present
+//     if (!allImagesPresent) {
+//       if (gallery16By9Files.length < 3) {
+//         toast.error("At least 3 gallery images with 16:9 ratio are required.");
+//         setLoading(false);
+//         setIsSubmitting(false);
+//         return;
+//       }
+//       if (!hasFloorPlan16by9) {
+//         toast.error("Floor plans with 16:9 ratio are required.");
+//         setLoading(false);
+//         setIsSubmitting(false);
+//         return;
+//       }
+//       if (!hasProjectBanner9by16 && !hasProjectBanner1by1) {
+//         toast.error("Project banner one of them or both(9:16) and (1:1) is required.");
+//         setLoading(false);
+//         setIsSubmitting(false);
+//         return;
+//       }
+//       if (!hasProjectCover16by9) {
+//         toast.error("Project cover (16:9) is required.");
+//         setLoading(false);
+//         setIsSubmitting(false);
+//         return;
+//       }
+//     }
+
+// const gallery16By9Files = Array.isArray(formData.gallery_image_16_by_9)
+//   ? formData.gallery_image_16_by_9.filter(
+//       (img) =>
+//         img?.file instanceof File || !!img?.id || !!img?.document_file_name
+//     )
+//   : [];
+
+// const galleryImageCount = gallery16By9Files.length;
+
+// // Only validate if at least one image is uploaded
+// if (galleryImageCount > 0 && (galleryImageCount < 3 || galleryImageCount % 3 !== 0)) {
+//   const remainder = galleryImageCount % 3;
+//   const imagesNeeded = 3 - remainder;
+//   const nextValidCount = galleryImageCount + imagesNeeded;
+//   const previousValidCount = galleryImageCount - remainder;
+
+//   let message = `Currently ${galleryImageCount} gallery image${galleryImageCount !== 1 ? "s" : ""} uploaded. `;
+
+//   if (galleryImageCount < 3) {
+//     message += `Please upload at least 3 gallery images with 16:9 ratio to proceed.`;
+//   } else {
+//     message += `Please upload ${imagesNeeded} more to make it ${nextValidCount}, or remove ${remainder} to make it ${previousValidCount} (multiples of 3 only) with 16:9 ratio to proceed.`;
+//   }
+
+//   toast.error(message);
+//   setLoading(false);
+//   setIsSubmitting(false);
+//   return;
+// }
+
+const gallery_images = [
+  "gallery_image_16_by_9",
+  "gallery_image_1_by_1",
+  "gallery_image_9_by_16",
+  "gallery_image_3_by_2",
+];
+
+const isValidImage = (img) =>
+  img?.file instanceof File || !!img?.id || !!img?.document_file_name;
+
+// Combine all valid images from all gallery fields
+let totalValidGalleryImages = 0;
+
+for (const key of gallery_images) {
+  const images = Array.isArray(formData[key]) ? formData[key].filter(isValidImage) : [];
+  totalValidGalleryImages += images.length;
+}
+
+if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
+  const remainder = totalValidGalleryImages % 3;
   const imagesNeeded = 3 - remainder;
-  const nextValidCount = galleryImageCount + imagesNeeded;
-  const previousValidCount = galleryImageCount - remainder;
+  const previousValidCount = totalValidGalleryImages - remainder;
 
-  let message = `Currently ${galleryImageCount} gallery image${galleryImageCount !== 1 ? "s" : ""} uploaded. `;
-
-  if (galleryImageCount < 3) {
-    // Case: User uploaded less than 3
-    message += `Please upload at least 3 gallery images with 16:9 ratio to proceed.`;
-  } else {
-    // Case: User uploaded more than 3 but not a multiple of 3
-    message += `Please upload ${imagesNeeded} more to make it ${nextValidCount}, or remove ${remainder} to make it ${previousValidCount} (multiples of 3 only) with 16:9 ratio to proceed.`;
-  }
+  const message = `Currently in Gallery ${totalValidGalleryImages} image${totalValidGalleryImages !== 1 ? "s" : ""} uploaded. Please upload ${imagesNeeded} more or remove ${remainder} to make it a multiple of 3.`;
 
   toast.error(message);
   setLoading(false);
@@ -1721,34 +1811,6 @@ const ProjectDetailsEdit = () => {
   return;
 }
 
-
-    // Perform individual validation checks only if not all images are present
-    if (!allImagesPresent) {
-      if (gallery16By9Files.length < 3) {
-        toast.error("At least 3 gallery images with 16:9 ratio are required.");
-        setLoading(false);
-        setIsSubmitting(false);
-        return;
-      }
-      if (!hasFloorPlan16by9) {
-        toast.error("Floor plans with 16:9 ratio are required.");
-        setLoading(false);
-        setIsSubmitting(false);
-        return;
-      }
-      if (!hasProjectBanner9by16 && !hasProjectBanner1by1) {
-        toast.error("Project banner one of them or both(9:16) and (1:1) is required.");
-        setLoading(false);
-        setIsSubmitting(false);
-        return;
-      }
-      if (!hasProjectCover16by9) {
-        toast.error("Project cover (16:9) is required.");
-        setLoading(false);
-        setIsSubmitting(false);
-        return;
-      }
-    }
 
     const data = new FormData();
 
