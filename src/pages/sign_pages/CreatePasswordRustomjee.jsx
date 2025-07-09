@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
@@ -8,9 +8,6 @@ import { Rustomji_URL, baseURL } from "../baseurl/apiDomain";
 const CreatePasswordRustomjee = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [passwordRequirements, setPasswordRequirements] = useState({
@@ -22,8 +19,10 @@ const CreatePasswordRustomjee = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const email = queryParams.get("email");
+  const mobile = queryParams.get("mobile");
 
-  // Rustomjee configuration - matching the login page style
   const config = {
     baseURL: "https://dev-panchshil-super-app.lockated.com/",
     logoUrl: Rustomji_URL,
@@ -35,44 +34,24 @@ const CreatePasswordRustomjee = () => {
     columnClass: "col-lg-4 p-0 m-0 col-md-6",
   };
 
-  useEffect(() => {
-    // Get email, mobile and token from URL parameters
-    const params = new URLSearchParams(location.search);
-    const emailParam = params.get("email");
-    const mobileParam = params.get("mobile");
-    const tokenParam = params.get("token");
-
-    if (emailParam) setEmail(emailParam);
-    if (mobileParam) setMobile(mobileParam);
-    if (tokenParam) setToken(tokenParam);
-  }, [location.search]);
-
   const validatePassword = (password) => {
     const requirements = {
-      minLength: password.length >= 8,
+      minLength: password.length >= 8 && password.length <= 32,
       hasUppercase: /[A-Z]/.test(password),
       hasNumber: /[0-9]/.test(password),
-      hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+      hasSpecial: /[!@#$%^&*]/.test(password),
     };
-
     setPasswordRequirements(requirements);
-    return Object.values(requirements).every((value) => value);
+    return Object.values(requirements).every(Boolean);
   };
 
-  const handlePasswordChange = (e) => {
-    const password = e.target.value;
-    setNewPassword(password);
-    validatePassword(password);
-  };
-
-  const handleResetPassword = async (e) => {
+  const handlePasswordReset = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
 
-    // Validate passwords
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Passwords do not match.");
       setLoading(false);
       return;
     }
@@ -84,24 +63,32 @@ const CreatePasswordRustomjee = () => {
     }
 
     try {
-      const response = await axios.post(`${baseURL}reset_password`, {
-        email,
-        mobile,
-        token,
-        password: newPassword,
-      });
+      const response = await axios.post(
+        `${baseURL}users/forgot_password.json`,
+        {
+          user: {
+            email_or_mobile: email || mobile,
+            password: newPassword,
+          },
+        }
+      );
 
-      if (response.data.success) {
-        toast.success("Password reset successfully");
+      console.log("Password Reset Response:", response.data);
+
+      const successMessage = response.data?.message || "";
+      if (
+        response.data?.access_token ||
+        successMessage.toLowerCase().includes("success")
+      ) {
+        toast.success("Password reset successfully!");
         navigate("/login");
       } else {
-        setError(
-          response.data.message || "An error occurred while resetting password"
-        );
+        setError(successMessage || "Password reset failed. Please try again.");
       }
     } catch (err) {
       setError(
-        err.response?.data?.message || "An error occurred during password reset"
+        err.response?.data?.message ||
+          "An error occurred during password reset. Please try again."
       );
     } finally {
       setLoading(false);
@@ -128,7 +115,7 @@ const CreatePasswordRustomjee = () => {
 
                 <form
                   className="mt-2 login-content-rust"
-                  onSubmit={handleResetPassword}
+                  onSubmit={handlePasswordReset}
                 >
                   <h6 className={config.formTextColor}>Create New Password</h6>
                   <p className={`mt-4 ${config.formTextColor}`}>
@@ -149,60 +136,32 @@ const CreatePasswordRustomjee = () => {
                       id="newPasswordInput"
                       placeholder="Enter new password..."
                       value={newPassword}
-                      onChange={handlePasswordChange}
+                      onChange={(e) => {
+                        setNewPassword(e.target.value);
+                        validatePassword(e.target.value);
+                      }}
                       required
                     />
                   </div>
 
                   <div className="mark-indicator-rust">
-                    <div className="requirement-item">
-                      <span className="bullet-point">•</span>
-                      <p
-                        className={`requirement-text ${
-                          passwordRequirements.minLength
-                            ? "requirement-met"
-                            : ""
-                        }`}
-                      >
-                        Minimum 8 characters
-                      </p>
-                    </div>
-                    <div className="requirement-item">
-                      <span className="bullet-point">•</span>
-                      <p
-                        className={`requirement-text ${
-                          passwordRequirements.hasUppercase
-                            ? "requirement-met"
-                            : ""
-                        }`}
-                      >
-                        At least one uppercase letter
-                      </p>
-                    </div>
-                    <div className="requirement-item">
-                      <span className="bullet-point">•</span>
-                      <p
-                        className={`requirement-text ${
-                          passwordRequirements.hasNumber
-                            ? "requirement-met"
-                            : ""
-                        }`}
-                      >
-                        At least one number
-                      </p>
-                    </div>
-                    <div className="requirement-item">
-                      <span className="bullet-point">•</span>
-                      <p
-                        className={`requirement-text ${
-                          passwordRequirements.hasSpecial
-                            ? "requirement-met"
-                            : ""
-                        }`}
-                      >
-                        At least one special character (!@#$%)
-                      </p>
-                    </div>
+                    {Object.entries(passwordRequirements).map(([key, met]) => (
+                      <div className="requirement-item" key={key}>
+                        <span className="bullet-point">•</span>
+                        <p
+                          className={`requirement-text ${
+                            met ? "requirement-met" : ""
+                          }`}
+                        >
+                          {key === "minLength" && "Minimum 8 characters"}
+                          {key === "hasUppercase" &&
+                            "At least one uppercase letter"}
+                          {key === "hasNumber" && "At least one number"}
+                          {key === "hasSpecial" &&
+                            "At least one special character (!@#$%)"}
+                        </p>
+                      </div>
+                    ))}
                   </div>
 
                   <div className="form-group position-relative">

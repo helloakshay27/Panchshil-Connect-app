@@ -11,34 +11,59 @@ import {
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentLogo, setCurrentLogo] = useState(LOGO_URL);
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Determine which logo to display based on baseURL
-    if (baseURL === "https://api-connect.panchshil.com/") {
+    if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/") {
       setCurrentLogo(LOGO_URL);
     } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
       setCurrentLogo(Rustomji_URL_Black);
     } else {
-      // Default logo for other environments including localhost
       setCurrentLogo(LOGO_URL);
+    }
+
+    // Load user data from localStorage
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
     }
   }, [baseURL]);
 
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);
-  const firstname = localStorage.getItem("firstname");
-  const lastname = localStorage.getItem("lastname");
+
+  // Get user info with fallbacks
+  const getUserInfo = () => {
+    if (!userData) {
+      return {
+        firstname: localStorage.getItem("firstname") || "",
+        lastname: localStorage.getItem("lastname") || "",
+        email: localStorage.getItem("email") || "example@example.com",
+        profile_icon: localStorage.getItem("profile_icon") || null
+      };
+    }
+    
+    return {
+      firstname: userData.firstname || "",
+      lastname: userData.lastname || "",
+      email: userData.email || "example@example.com",
+      profile_icon: userData.avatar_file_name 
+        ? `${baseURL}/${userData.avatar_file_name}`
+        : null
+    };
+  };
+
+  const { firstname, lastname, email, profile_icon } = getUserInfo();
   const userInitial = firstname ? firstname.charAt(0).toUpperCase() : "";
-  const profile_icon = localStorage.getItem("profile_icon");
-  const isValidImage =
-    profile_icon && profile_icon !== "null" && profile_icon !== "undefined";
 
   const signout = () => {
     localStorage.clear();
     sessionStorage.clear();
+    setUserData(null);
     setShowModal(false);
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -71,9 +96,10 @@ const Header = () => {
                   ? `${firstname || ""} ${lastname || ""}`
                   : "First Name"}
               </h5>
-              <p className="text-black">
+              {/* <p className="text-black">
                 {localStorage.getItem("email") || "example@example.com"}
-              </p>
+              </p> */}
+              <p className="text-black">{email}</p>
               <button className="purple-btn2 my-3" onClick={signout}>
                 Sign Out
               </button>

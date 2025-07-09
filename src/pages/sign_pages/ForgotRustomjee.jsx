@@ -32,11 +32,6 @@ const ForgotRustomjee = () => {
     setLoading(true);
 
     // Navigate immediately — seamless UX
-    navigate(
-      `/forgot-otp?email=${encodeURIComponent(
-        email
-      )}&mobile=${encodeURIComponent(mobile)}`
-    );
 
     // Let OTP call run in the background
     try {
@@ -45,13 +40,19 @@ const ForgotRustomjee = () => {
         mobile,
       });
 
-      if (response.data.success) {
+      if (response.data.message) {
         toast.success("OTP Sent successfully");
+
+        navigate(
+          `/forgot-otp?email=${encodeURIComponent(
+            email
+          )}&mobile=${encodeURIComponent(mobile)}`
+        );
       } else {
         toast.error(response.data.message || "Something went wrong");
       }
     } catch (err) {
-      // toast.error(err.response?.data?.message || "Error sending OTP");
+      toast.error(err.response?.data?.message || "Error sending OTP");
     } finally {
       setLoading(false);
     }
@@ -109,7 +110,6 @@ const ForgotRustomjee = () => {
                         setMobile(value);
                         setUsername(value);
                       }}
-                   
                     />
                   </div>
 

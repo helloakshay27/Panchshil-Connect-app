@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
@@ -18,6 +18,8 @@ const SignIn = () => {
   const [showOtpSection, setShowOtpSection] = useState(false);
   // const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [countdown, setCountdown] = useState(45);
+  const [canResend, setCanResend] = useState(false);
 
   const [OtpSection, setOtpSection] = useState(true);
 
@@ -77,7 +79,10 @@ const SignIn = () => {
         sessionStorage.setItem("firstname", response.data?.firstname);
         sessionStorage.setItem("lastname", response.data?.lastname);
         sessionStorage.setItem("user_id", response.data?.id);
-        sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
+        sessionStorage.setItem(
+          "profile_icon",
+          response?.data?.profile_icon_url
+        );
 
         // Duplicate in localStorage
         localStorage.setItem("email", response.data?.email);
@@ -152,57 +157,192 @@ const SignIn = () => {
     }
   };
 
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    if (!otp) {
-      // setError("Please enter a valid OTP.");
-      toast.error("Please enter a valid OTP.");
-      return;
+  // const handleVerifyOtp = async (e) => {
+  //   e.preventDefault();
+  //   if (!otp) {
+  //     // setError("Please enter a valid OTP.");
+  //     toast.error("Please enter a valid OTP.");
+  //     return;
+  //   }
+  //   setError("");
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await axios.post(`${config.baseURL}/verify_code.json`, {
+  //       mobile,
+  //       otp,
+  //     });
+
+  //     console.log("Response: verify code", response);
+  //     const { access_token, email, firstname } = response.data;
+  //     if (access_token) {
+  //       localStorage.setItem("access_token", access_token);
+  //       const lockRole = response.data?.lock_role;
+  //       if (lockRole) {
+  //         localStorage.setItem("lock_role_name", lockRole.name);
+  //         localStorage.setItem(
+  //           "lock_role_permissions",
+  //           lockRole.permissions_hash
+  //         );
+  //       }
+  //       sessionStorage.setItem("email", response.data?.email);
+  //       sessionStorage.setItem("firstname", response.data?.firstname);
+  //       sessionStorage.setItem("lastname", response.data?.lastname);
+  //       sessionStorage.setItem("user_id", response.data?.id);
+  //       sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
+  //       localStorage.setItem("user_id", response.data?.id);
+  //       // sessionStorage.setItem("email", email);
+  //       // sessionStorage.setItem("firstname", firstname);
+  //       navigate("/project-list");
+  //       toast.success("Login successfully");
+  //     } else {
+  //       // setError("Login failed. Please check your credentials.");
+  //       toast.error("Login failed. Please check your credentials.");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError(
+  //       err.response?.data?.message ||
+  //       "An error occurred during login. Please try again."
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Add this useEffect for the countdown timer
+  useEffect(() => {
+    if (showOtpSection) {
+      setCountdown(45);
+      setCanResend(false);
+
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(timer);
+            setCanResend(true);
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
     }
-    setError("");
+  }, [showOtpSection]);
+
+  // Add this function for resend OTP
+  const handleResendOtp = async () => {
+    if (!canResend) return;
+
     setLoading(true);
+    setError("");
+    toast.dismiss();
 
     try {
-      const response = await axios.post(`${config.baseURL}/verify_code.json`, {
+      const response = await axios.post(`${config.baseURL}/generate_code`, {
         mobile,
-        otp,
       });
+      toast.success("OTP sent again successfully");
+      setCountdown(45);
+      setCanResend(false);
 
-      console.log("Response: verify code", response);
-      const { access_token, email, firstname } = response.data;
-      if (access_token) {
-        localStorage.setItem("access_token", access_token);
-        const lockRole = response.data?.lock_role;
-        if (lockRole) {
-          localStorage.setItem("lock_role_name", lockRole.name);
-          localStorage.setItem(
-            "lock_role_permissions",
-            lockRole.permissions_hash
-          );
-        }
-        sessionStorage.setItem("email", response.data?.email);
-        sessionStorage.setItem("firstname", response.data?.firstname);
-        sessionStorage.setItem("lastname", response.data?.lastname);
-        sessionStorage.setItem("user_id", response.data?.id);
-        sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
-        localStorage.setItem("user_id", response.data?.id);
-        // sessionStorage.setItem("email", email);
-        // sessionStorage.setItem("firstname", firstname);
-        navigate("/project-list");
-        toast.success("Login successfully");
-      } else {
-        // setError("Login failed. Please check your credentials.");
-        toast.error("Login failed. Please check your credentials.");
-      }
+      // Restart countdown
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(timer);
+            setCanResend(true);
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
     } catch (err) {
-      console.error(err);
-      setError(
-        err.response?.data?.message ||
-        "An error occurred during login. Please try again."
-      );
+      toast.error(err.response?.data?.error || "Failed to resend OTP");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to format time
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    toast.dismiss();
+    setError("");
+
+    if (!otp) {
+      setError("Please enter a valid OTP.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/get_otps/verify_otp`,
+        {
+          params: {
+            mobile: mobile,
+            otp: otp,
+          },
+        }
+      );
+
+      const { otp_valid, message, user, access_token } = response.data;
+
+      if (otp_valid) {
+        // Store all user data and tokens
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("userData", JSON.stringify(user));
+        sessionStorage.setItem("isLoggedIn", "true");
+
+        // Store individual fields for easy access
+        sessionStorage.setItem("email", user.email);
+        sessionStorage.setItem("firstname", user.firstname);
+        sessionStorage.setItem("lastname", user.lastname || "");
+        sessionStorage.setItem("mobile", user.mobile);
+        sessionStorage.setItem("userId", user.id);
+
+        toast.success(message || "OTP verified successfully");
+
+        // Navigate after a slight delay to ensure state is updated
+        setTimeout(() => {
+          navigate("/project-list", { replace: true });
+        }, 100);
+      } else {
+        setError(message || "Invalid OTP. Please try again.");
+        setOtp(""); // Clear OTP field on failure
+      }
+    } catch (err) {
+      console.error("OTP Verification Error:", err);
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.error?.message ||
+        "An error occurred while verifying OTP. Please try again.";
+      toast.error(errorMessage);
+      setError(errorMessage);
+      setOtp(""); // Clear OTP field on error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const goBack = () => {
+    // Reset all OTP related states
+    setOtp("");
+    setShowOtpSection(false);
+    setOtpSection(true);
+    setMobile("");
+    setError("");
+    setCountdown(45);
+    setCanResend(false);
   };
 
   const renderPasswordLogin = () => {
@@ -311,6 +451,63 @@ const SignIn = () => {
   };
 
   const renderOtpLogin = () => (
+    // <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
+    //   {OtpSection && (
+    //     <div className="form-group position-relative">
+    //       <label
+    //         className={`mb-1 text-white ${config.formTextColor}`}
+    //         htmlFor="mobile"
+    //       >
+    //         Mobile Number
+    //       </label>
+    //       <input
+    //         // style={{height:"44px"}}
+    //         type="tel"
+    //         id="mobile"
+    //         className="form-control-panchshil "
+    //         placeholder="Enter registered mobile number..."
+    //         value={mobile}
+    //         onChange={(e) => setMobile(e.target.value)}
+    //         required
+    //       />
+    //       <button
+    //         type="button"
+    //         className="btn-panchshil btn-danger mt-5"
+    //         onClick={handleSendOtp}
+    //       >
+    //         SEND OTP
+    //       </button>
+    //     </div>
+    //   )}
+
+    //   {showOtpSection && (
+    //     <div className="form-group position-relative">
+    //       <label
+    //         className={`mb-1 text-white ${config.formTextColor}`}
+    //         htmlFor="otp"
+    //       >
+    //        OTP
+    //       </label>
+    //       <input
+    //         type="text"
+    //         id="otp"
+    //         className="form-control-panchshil mb-2"
+    //         placeholder="Enter OTP"
+    //         value={otp}
+    //         onChange={(e) => setOtp(e.target.value)}
+    //         required
+    //       />
+    //     </div>
+    //   )}
+
+    //   {error && <p className="text-danger">{error}</p>}
+
+    //   {showOtpSection && (
+    //     <button type="submit" className="btn-panchshil btn-danger mt-2">
+    //       Verify OTP
+    //     </button>
+    //   )}
+    // </form>
     <form onSubmit={handleVerifyOtp} className="mt-3 login-content">
       {OtpSection && (
         <div className="form-group position-relative">
@@ -321,7 +518,6 @@ const SignIn = () => {
             Mobile Number
           </label>
           <input
-            // style={{height:"44px"}}
             type="tel"
             id="mobile"
             className="form-control-panchshil "
@@ -334,38 +530,80 @@ const SignIn = () => {
             type="button"
             className="btn-panchshil btn-danger mt-5"
             onClick={handleSendOtp}
+            disabled={loading}
           >
-            SEND OTP
+            {loading ? "Sending..." : "SEND OTP"}
           </button>
         </div>
       )}
 
       {showOtpSection && (
-        <div className="form-group position-relative">
-          <label
-            className={`mb-1 text-white ${config.formTextColor}`}
-            htmlFor="otp"
+        <>
+          <div className="form-group position-relative">
+            <p className={`pb-3 text-white w-[80%]`}>
+              We've sent a 5-digit confirmation code to your mobile number. Make
+              sure you enter the correct code.
+            </p>
+            <label
+              className={`mb-1 text-white ${config.formTextColor}`}
+              htmlFor="otp"
+            >
+              OTP
+            </label>
+            <input
+              type="text"
+              id="otp"
+              className="form-control-panchshil mb-2"
+              placeholder="Enter 5 digit OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+              maxLength={5}
+            />
+          </div>
+
+          {error && <p className="text-danger">{error}</p>}
+
+          <button
+            type="submit"
+            className="btn-panchshil btn-danger mt-2"
+            disabled={loading}
           >
-            Enter OTP
-          </label>
-          <input
-            type="text"
-            id="otp"
-            className="form-control-panchshil mb-2"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
-        </div>
-      )}
+            {loading ? "Verifying..." : "VERIFY OTP"}
+          </button>
 
-      {error && <p className="text-danger">{error}</p>}
-
-      {showOtpSection && (
-        <button type="submit" className="btn-panchshil btn-danger mt-2">
-          Verify OTP
-        </button>
+          <div className="text-center mt-3">
+            {canResend ? (
+              <button
+                // type="button"
+                onClick={handleResendOtp}
+                className="btn btn-link p-0 text-white"
+                disabled={loading}
+              >
+                <span className="back-login-link">Resend OTP</span>
+              </button>
+            ) : (
+              <p className="text-white resend-timer mb-0">
+                Resend code in{" "}
+                <span className="resend-time">{formatTime(countdown)}</span>
+              </p>
+            )}
+          </div>
+          <div className="text-center mt-5">
+            <p className="form-text-muted mb-0 go-back-wrapper">
+              Entered wrong email id?
+              <button
+                type="button"
+                onClick={goBack}
+                className="back-login-link"
+              >
+                <span style={{ fontWeight: "bold", marginLeft: "5px" }}>
+                  GO BACK
+                </span>
+              </button>
+            </p>
+          </div>
+        </>
       )}
     </form>
   );

@@ -62,6 +62,11 @@ const ProjectDetailsList = () => {
     setProjectPermission(permissions);
   }, []);
 
+  useEffect(() => {
+  console.log("Auth check - isLoggedIn:", sessionStorage.getItem("isLoggedIn"));
+  console.log("Auth check - access_token:", localStorage.getItem("access_token"));
+}, []);
+
   const fetchProjects = async () => {
     setLoading(true);
     const url = `${baseURL}get_projects_all.json`;
