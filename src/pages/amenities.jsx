@@ -13,6 +13,7 @@ const Amenities = () => {
   const [loading, setLoading] = useState(false);
   const [amenityType, setAmenityType] = useState(""); // ✅ Correct State Name
   const [showTooltip, setShowTooltip] = useState(false);
+  const [nightMode, setNightMode] = useState(false); // ✅ Added night mode state
 
   const navigate = useNavigate();
 
@@ -43,6 +44,7 @@ const Amenities = () => {
     const formData = new FormData();
     formData.append("amenity_setup[name]", name);
     formData.append("amenity_setup[amenity_type]", amenityType);
+    formData.append("amenity_setup[night_mode]", nightMode); // ✅ Added night mode to form data
     if (icon) {
       formData.append("icon", icon);
     }
@@ -61,6 +63,7 @@ const Amenities = () => {
       setAmenityType("");
       setIcon(null);
       setPreviewImage(null);
+      setNightMode(false); // ✅ Reset night mode state
       navigate("/setup-member/amenities-list");
     } catch (err) {
       if (err.response?.status === 422) {
@@ -153,6 +156,49 @@ const Amenities = () => {
                           />
                         </div>
                       )}
+                    </div>
+
+                    {/* ✅ Night Mode Toggle */}
+                    <div className="col-md-3 mt-2">
+                      <label>Night Mode</label>
+                      <div className="form-group">
+                        <button
+                          type="button"
+                          onClick={() => setNightMode(!nightMode)}
+                          className="toggle-button"
+                          style={{
+                            border: "none",
+                            background: "none",
+                            cursor: "pointer",
+                            padding: 0,
+                            width: "35px",
+                          }}
+                        >
+                          {nightMode ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="40"
+                              height="30"
+                              fill="var(--red)"
+                              className="bi bi-toggle-on"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="40"
+                              height="30"
+                              fill="#667085"
+                              className="bi bi-toggle-off"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                     </div>
 
                     {/* Amenity Type SelectBox */}

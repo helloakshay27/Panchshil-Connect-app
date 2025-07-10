@@ -1670,6 +1670,25 @@ const ProjectDetailsCreate = () => {
   //   }
   // }
 
+      const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(
+    img => img.file instanceof File || img.id || img.document_file_name
+  );
+  
+  const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
+    img => img?.file instanceof File || img?.id || img?.document_file_name
+  );
+  
+  const allImagesPresent = hasProjectBanner9by16 || hasProjectBanner1by1;
+  
+  console.log("allImagesPresent:", allImagesPresent);
+  
+  if (!allImagesPresent) {
+    toast.error("Project banner one of them or both (9:16) and (1:1) is required.");
+    setLoading(false);
+    setIsSubmitting(false);
+    return;
+  }
+
  const gallery_images = [
   "gallery_image_16_by_9",
   "gallery_image_1_by_1",
@@ -3879,7 +3898,7 @@ if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
                       </span>
                     )}
                   </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                 <span className="otp-asterisk"> *</span>
                 </h5>
 
                 <button

@@ -34,11 +34,23 @@ const ForgotRustomjee = () => {
     // Navigate immediately — seamless UX
 
     // Let OTP call run in the background
+
+    //  try {
+    //   const response = await axios.post(`${baseURL}generate_code`, {
+    //     email,
+    //     mobile,
+    //   });
+
     try {
-      const response = await axios.post(`${baseURL}generate_code`, {
-        email,
-        mobile,
-      });
+      const response = await axios.get(
+        `${config.baseURL}get_otps/generate_otp.json`,
+        {
+          params: {
+            client: "rustomjee",
+            mobile: mobile,
+          },
+        }
+      );
 
       if (response.data.message) {
         toast.success("OTP Sent successfully");
