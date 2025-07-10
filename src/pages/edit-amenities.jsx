@@ -12,6 +12,8 @@ const EditAmenities = () => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [darkModeIcon, setDarkModeIcon] = useState(null); // ✅ Added dark mode icon state
+  const [previewDarkModeImage, setPreviewDarkModeImage] = useState(null); // ✅ Added dark mode preview state
   const [loading, setLoading] = useState(false);
   const [amenityType, setAmenityType] = useState("");
   const [nightMode, setNightMode] = useState(false); // ✅ Added night mode state
@@ -32,6 +34,11 @@ const EditAmenities = () => {
         // ✅ Correctly set the preview image
         if (response.data.attachfile?.document_url) {
           setPreviewImage(response.data.attachfile.document_url);
+        }
+
+        // ✅ Set dark mode icon preview if exists
+        if (response.data.dark_mode_icon?.document_url) {
+          setPreviewDarkModeImage(response.data.dark_mode_icon.document_url);
         }
       } catch (error) {
         console.error("Error fetching amenity:", error);
@@ -57,6 +64,20 @@ const EditAmenities = () => {
     }
   };
 
+  // ✅ Added dark mode icon file change handler
+  const handleDarkModeFileChange = (e) => {
+    const file = e.target.files[0];
+    setDarkModeIcon(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewDarkModeImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -72,6 +93,10 @@ const EditAmenities = () => {
     formData.append("amenity_setup[night_mode]", nightMode); // ✅ Added night mode to form data
     if (icon) {
       formData.append("icon", icon);
+    }
+    // ✅ Added dark mode icon to form data
+    if (darkModeIcon) {
+      formData.append("dark_mode_icon", darkModeIcon);
     }
 
     try {
@@ -172,6 +197,42 @@ const EditAmenities = () => {
                         />
                       ) : (
                         <p className="text-muted">No image uploaded</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* ✅ Dark Mode Icon Upload */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Upload Dark Mode Icon{" "}
+                        <span className="otp-asterisk">{" "}*</span>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        accept=".png,.jpg,.jpeg,.svg"
+                        onChange={handleDarkModeFileChange}
+                      />
+                    </div>
+
+                    {/* ✅ Show Dark Mode Preview Image (Default or New Upload) */}
+                    <div className="mt-2">
+                      {previewDarkModeImage ? (
+                        <img
+                          src={previewDarkModeImage}
+                          alt="Dark Mode Preview"
+                          className="img-fluid rounded"
+                          style={{
+                            maxWidth: "100px",
+                            maxHeight: "100px",
+                            objectFit: "cover",
+                            border: "1px solid #ccc",
+                            padding: "5px",
+                          }}
+                        />
+                      ) : (
+                        <p className="text-muted"></p>
                       )}
                     </div>
                   </div>

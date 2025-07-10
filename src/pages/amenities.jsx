@@ -10,9 +10,12 @@ const Amenities = () => {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [darkModeIcon, setDarkModeIcon] = useState(null); // ✅ Added dark mode icon state
+  const [previewDarkModeImage, setPreviewDarkModeImage] = useState(null); // ✅ Added dark mode preview state
   const [loading, setLoading] = useState(false);
   const [amenityType, setAmenityType] = useState(""); // ✅ Correct State Name
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showDarkModeTooltip, setShowDarkModeTooltip] = useState(false); // ✅ Added dark mode tooltip state
   const [nightMode, setNightMode] = useState(false); // ✅ Added night mode state
 
   const navigate = useNavigate();
@@ -32,6 +35,22 @@ const Amenities = () => {
     }
   };
 
+  // ✅ Added dark mode icon file change handler
+  const handleDarkModeFileChange = (e) => {
+    const file = e.target.files[0];
+    setDarkModeIcon(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewDarkModeImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewDarkModeImage(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -48,6 +67,10 @@ const Amenities = () => {
     if (icon) {
       formData.append("icon", icon);
     }
+    // ✅ Added dark mode icon to form data
+    if (darkModeIcon) {
+      formData.append("dark_mode_icon", darkModeIcon);
+    }
 
     try {
       await axios.post(`${baseURL}amenity_setups.json`, formData, {
@@ -63,6 +86,8 @@ const Amenities = () => {
       setAmenityType("");
       setIcon(null);
       setPreviewImage(null);
+      setDarkModeIcon(null); // ✅ Reset dark mode icon state
+      setPreviewDarkModeImage(null); // ✅ Reset dark mode preview state
       setNightMode(false); // ✅ Reset night mode state
       navigate("/setup-member/amenities-list");
     } catch (err) {
@@ -145,6 +170,51 @@ const Amenities = () => {
                           <img
                             src={previewImage}
                             alt="Uploaded Preview"
+                            className="img-fluid rounded"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                              border: "1px solid #ccc",
+                              padding: "5px",
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ✅ Dark Mode Icon Upload */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Upload Dark Mode Icon{" "}
+                          <span
+                            className="tooltip-container"
+                            onMouseEnter={() => setShowDarkModeTooltip(true)}
+                            onMouseLeave={() => setShowDarkModeTooltip(false)}
+                          >
+                            [i]
+                            {showDarkModeTooltip && (
+                              <span className="tooltip-text">
+                                Max Upload Size 10 MB
+                              </span>
+                            )}
+                          </span>
+                          <span className="otp-asterisk"> *</span>
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          accept=".png,.jpg,.jpeg,.svg"
+                          onChange={handleDarkModeFileChange}
+                        />
+                      </div>
+                      {/* ✅ Dark Mode Preview Image Section */}
+                      {previewDarkModeImage && (
+                        <div className="mt-2">
+                          <img
+                            src={previewDarkModeImage}
+                            alt="Dark Mode Preview"
                             className="img-fluid rounded"
                             style={{
                               maxWidth: "100px",
