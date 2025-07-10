@@ -17,7 +17,7 @@ const UserEdit = () => {
   const [organizations, setOrganizations] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [departments, setDepartments] = useState([]); // Added departments state
-   const [sites, setSites] = useState([]);
+  const [sites, setSites] = useState([]);
   const [sitesLoading, setSitesLoading] = useState([]);
   const [rolesLoading, setRolesLoading] = useState(false);
   const [organizationsLoading, setOrganizationsLoading] = useState(false);
@@ -56,7 +56,7 @@ const UserEdit = () => {
     fetchCompanies();
     fetchDepartments(); // Added department fetching
     fetchUserData();
-    fetchSites(); 
+    fetchSites();
   }, [id]);
 
   // Fetch user data
@@ -81,16 +81,26 @@ const UserEdit = () => {
         throw new Error("Invalid user data structure in API response");
       }
 
-      if (userData?.birth_date) {
-        try {
-          const [day, month, year] = userData.birth_date.split("-");
-          userData.birth_date = `${year}-${month.padStart(
+      //  if (userData?.birth_date) {
+      //   try {
+      //     const [day, month, year] = userData.birth_date.split("-");
+      //     userData.birth_date = `${year}-${month.padStart(
+      //       2,
+      //       "0"
+      //     )}-${day.padStart(2, "0")}`;
+      //   } catch (error) {
+      //     console.warn("Could not parse birth_date:", error);
+      //     userData.birth_date = "";
+      //   }
+      // }
+
+      if (response.data.birth_date) {
+        const [day, month, year] = response.data.birth_date.split("-");
+        if (day && month && year) {
+          response.data.birth_date = `${year}-${month.padStart(
             2,
             "0"
           )}-${day.padStart(2, "0")}`;
-        } catch (error) {
-          console.warn("Could not parse birth_date:", error);
-          userData.birth_date = "";
         }
       }
 
@@ -245,9 +255,9 @@ const UserEdit = () => {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-  
+
       console.log("Sites API response:", response.data); // Debug the API response
-  
+
       // Check if response.data is directly an array
       if (response.data && Array.isArray(response.data)) {
         setSites(response.data);
@@ -268,7 +278,7 @@ const UserEdit = () => {
 
   const handleChange = (e) => {
     if (!e || !e.target) return; // Prevents the crash
-    
+
     const { name, value, type, checked } = e.target;
     const fieldValue = type === "checkbox" ? checked : value;
     if (errors[name]) {
@@ -283,6 +293,17 @@ const UserEdit = () => {
     }));
   };
 
+  const getMaxBirthDate = () => {
+    const today = new Date();
+    const maxDate = new Date(
+      today.getFullYear() - 16,
+      today.getMonth(),
+      today.getDate()
+    );
+    return maxDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  };
+
+  // Update your validateForm function to include birth date validation
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
@@ -294,7 +315,7 @@ const UserEdit = () => {
       { field: "email", label: "Email" },
       { field: "role_id", label: "Role" },
       { field: "company_id", label: "Company" },
-      { field: "department_id", label: "Department" }, // Added department to required fields
+      { field: "department_id", label: "Department" },
     ];
 
     let emptyFields = requiredFields.filter(
@@ -305,6 +326,7 @@ const UserEdit = () => {
       toast.error("Please fill in all the required fields.");
       return false;
     }
+
     for (const { field, label } of requiredFields) {
       if (!formData[field] || String(formData[field]).trim() === "") {
         newErrors[field] = `${label} is mandatory`;
@@ -312,6 +334,23 @@ const UserEdit = () => {
         toast.dismiss();
         toast.error(`${label} is mandatory`);
         return false;
+      }
+    }
+
+    // Birth date validation - must be at least 16 years old
+    if (formData.birth_date) {
+      const birthDate = new Date(formData.birth_date);
+      const today = new Date();
+      const minDate = new Date(
+        today.getFullYear() - 16,
+        today.getMonth(),
+        today.getDate()
+      );
+
+      if (birthDate > minDate) {
+        newErrors.birth_date = "User must be at least 16 years old";
+        isValid = false;
+        toast.error("User must be at least 16 years old");
       }
     }
 
@@ -364,12 +403,11 @@ const UserEdit = () => {
 
     setLoading(true);
 
-    // Format birth date for API if it exists
-    let formattedData = { ...formData };
-    if (formData?.birth_date) {
-      const [year, month, day] = formData.birth_date.split("-");
-      formattedData.birth_date = `${day}-${month}-${year}`;
-    }
+    //  let formattedData = { ...formData };
+    // if (formData?.birth_date) {
+    //   const [year, month, day] = formData.birth_date.split("-");
+    //   formattedData.birth_date = `${day}-${month}-${year}`;
+    // }
 
     // Create user object from form data
     const data = new FormData();
@@ -385,22 +423,29 @@ const UserEdit = () => {
     data.append("user[employee_type]", formData.employee_type);
     data.append("user[user_title]", formData.user_title);
     data.append("user[gender]", formData.gender);
-    data.append("user[birth_date]", formData.birth_date);
+
+    //  data.append("user[birth_date]", formData.birth_date);
+
+    // Format birth date properly for API (DD-MM-YYYY)
+    if (formData.birth_date) {
+      const [year, month, day] = formData.birth_date.split("-");
+      data.append("user[birth_date]", `${day}-${month}-${year}`);
+    }
+
     data.append("user[site_id]", formData.site_id);
     data.append("user[department_id]", formData.department_id);
 
     try {
-      // Using the user_details endpoint for updating user
       const response = await axios.put(`${baseURL}users/${id}.json`, data, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data", // Changed to multipart/form-data for FormData
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
 
       toast.success("User updated successfully");
       console.log("Response from API:", response.data);
-      navigate("/setup-member/user-list"); // Adjust this navigation path as needed
+      navigate("/setup-member/user-list");
     } catch (error) {
       console.error("Error updating user:", error);
       const errorMessage = error.response?.data?.message || error.message;
@@ -411,20 +456,22 @@ const UserEdit = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1); 
+    navigate(-1);
   };
 
   if (formData?.birth_date) {
     const [day, month, year] = formData.birth_date.split("-");
-    
+
     if (day && month && year) {
-      formData.birth_date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      formData.birth_date = `${year}-${String(month).padStart(2, "0")}-${String(
+        day
+      ).padStart(2, "0")}`;
     }
   } else {
     //FallBack
     console.warn("birth_date is null or undefined");
   }
-  
+
   const formatDateToDisplay = (dateStr) => {
     if (!dateStr) return "";
     const [year, month, day] = dateStr.split("-");
@@ -680,8 +727,7 @@ const UserEdit = () => {
                         </div>
                       </div>
 
-                      {/* Birth Date */}
-                      <div className="col-md-3">
+                         {/* <div className="col-md-3">
                         <div className="form-group">
                           <label>Birth Date</label>
                           <input
@@ -692,8 +738,29 @@ const UserEdit = () => {
                             onChange={handleChange}
                           />
                         </div>
-                      </div>
+                      </div> */}
 
+                      {/* Birth Date */}
+                      <div className="col-md-3">
+                        <div className="form-group">
+                          <label>Birth Date</label>
+                          <input
+                            className={`form-control ${
+                              errors.birth_date ? "is-invalid" : ""
+                            }`}
+                            type="date"
+                            name="birth_date"
+                            value={formData.birth_date || ""}
+                            max={getMaxBirthDate()} // This restricts the date picker
+                            onChange={handleChange}
+                          />
+                          {errors.birth_date && (
+                            <div className="invalid-feedback">
+                              {errors.birth_date}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                       {/* Employee Type */}
                       <div className="col-md-3">
                         <div className="form-group">
@@ -757,7 +824,9 @@ const UserEdit = () => {
                                 organization_id: value,
                               });
                             }}
-                            className={errors.organization_id ? "is-invalid" : ""}
+                            className={
+                              errors.organization_id ? "is-invalid" : ""
+                            }
                           />
                           {errors.organization_id && (
                             <div className="invalid-feedback">

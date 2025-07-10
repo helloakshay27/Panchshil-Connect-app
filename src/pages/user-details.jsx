@@ -175,7 +175,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.company_id || ""}
+                        : {formData.user_company_name || ""}
                       </span>
                     </div>
                   </div>
@@ -185,7 +185,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.organization_id || ""}
+                        : {formData.user_org_name || ""}
                       </span>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.role_id || ""}
+                        : {formData.lock_role_name || ""}
                       </span>
                     </div>
                   </div>
@@ -205,7 +205,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.department_id || ""}
+                        : {formData.department_name || ""}
                       </span>
                     </div>
                   </div>
@@ -215,7 +215,7 @@ const UserDetails = () => {
                     </div>
                     <div className="col-6">
                       <span className="text-dark">
-                        : {formData.site_id || ""}
+                        : {formData.site_name || ""}
                       </span>
                     </div>
                   </div>

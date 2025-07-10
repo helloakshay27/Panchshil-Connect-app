@@ -167,9 +167,9 @@ const UserCreate = () => {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-  
+
       console.log("Sites API response:", response.data); // Debug the API response
-  
+
       // Check if response.data is directly an array
       if (response.data && Array.isArray(response.data)) {
         setSites(response.data);
@@ -187,7 +187,6 @@ const UserCreate = () => {
       setSitesLoading(false);
     }
   };
-  
 
   // Handle input changes
   const handleChange = (e) => {
@@ -200,6 +199,16 @@ const UserCreate = () => {
       ...prev,
       [name]: fieldValue,
     }));
+  };
+
+   const getMaxBirthDate = () => {
+    const today = new Date();
+    const maxDate = new Date(
+      today.getFullYear() - 16,
+      today.getMonth(),
+      today.getDate()
+    );
+    return maxDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
   };
 
   // Validate form data
@@ -216,7 +225,7 @@ const UserCreate = () => {
       { field: "role_id", label: "Role" },
       { field: "company_id", label: "Company" },
       { field: "organization_id", label: "Organization" },
-      { field: "department_id", label: "Department" }
+      { field: "department_id", label: "Department" },
     ];
 
     // Check all mandatory fields
@@ -283,6 +292,7 @@ const UserCreate = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
+    toast.dismiss();
     e.preventDefault();
 
     if (!validateForm()) {
@@ -321,8 +331,19 @@ const UserCreate = () => {
       navigate("/setup-member/user-list"); // Adjust this navigation path as needed
     } catch (error) {
       console.error("Error creating user:", error);
-      const errorMessage = error.response?.data?.message || error.message;
-      toast.error(`Error creating user: ${errorMessage}`);
+
+      if (error.response?.status === 422) {
+        // Show specific message returned by backend (if available)
+        const message =
+          error.response.data?.message ||
+          error.response.data?.errors?.[0] ||
+          "Validation error. Please check the form.";
+        toast.error(`Validation Error: ${message}`);
+      } else {
+        // Fallback for other errors
+        const errorMessage = error.response?.data?.message || error.message;
+        toast.error(`Error creating user: ${errorMessage}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -435,8 +456,7 @@ const UserCreate = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Mobile Number{" "}
-                          <span className="otp-asterisk">*</span>
+                          Mobile Number <span className="otp-asterisk">*</span>
                         </label>
                         <input
                           className={`form-control ${
@@ -474,9 +494,7 @@ const UserCreate = () => {
                           onChange={handleChange}
                         />
                         {errors.email && (
-                          <div className="invalid-feedback">
-                            {errors.email}
-                          </div>
+                          <div className="invalid-feedback">{errors.email}</div>
                         )}
                       </div>
                     </div>
@@ -555,7 +573,7 @@ const UserCreate = () => {
                     </div>
 
                     {/* Birth Date */}
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>Birth Date</label>
                         <input
@@ -566,7 +584,28 @@ const UserCreate = () => {
                           onChange={handleChange}
                         />
                       </div>
-                    </div>
+                    </div> */}
+
+                      <div className="col-md-3">
+                        <div className="form-group">
+                          <label>Birth Date</label>
+                          <input
+                            className={`form-control ${
+                              errors.birth_date ? "is-invalid" : ""
+                            }`}
+                            type="date"
+                            name="birth_date"
+                            value={formData.birth_date || ""}
+                            max={getMaxBirthDate()} // This restricts the date picker
+                            onChange={handleChange}
+                          />
+                          {errors.birth_date && (
+                            <div className="invalid-feedback">
+                              {errors.birth_date}
+                            </div>
+                          )}
+                        </div>
+                      </div>
 
                     {/* Employee Type */}
                     <div className="col-md-3">
