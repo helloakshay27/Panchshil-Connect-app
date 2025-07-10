@@ -267,6 +267,7 @@ const AmenitiesList = () => {
                         <th>Name</th>
 
                         <th>Icon</th>
+                        <th>Dark Mode Icon</th>
                         <th>Night Mode</th>
                       </tr>
                     </thead>
@@ -391,6 +392,21 @@ const AmenitiesList = () => {
                               {amenity.icon_url ? (
                                 <img
                                   src={amenity.icon_url}
+                                  className="img-fluid rounded"
+                                  alt={amenity.name || "No Name"}
+                                  style={{
+                                    maxWidth: "100px",
+                                    maxHeight: "100px",
+                                  }}
+                                />
+                              ) : (
+                                <span>No Icon</span>
+                              )}
+                            </td>
+                            <td>
+                              {amenity.dark_mode_icon_url ? (
+                                <img
+                                  src={amenity.dark_mode_icon_url}
                                   className="img-fluid rounded"
                                   alt={amenity.name || "No Name"}
                                   style={{
