@@ -55,15 +55,12 @@ const LockFunctionEdit = () => {
     // Fetch existing lock functions to get possible parent functions
     const fetchParentFunctions = async () => {
       try {
-        const response = await axios.get(
-          `${baseURL}/lock_functions.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}/lock_functions.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         // Extract unique parent_function values from the response
         const uniqueParentFunctions = [
@@ -134,6 +131,10 @@ const LockFunctionEdit = () => {
       actionName = "support_service";
     } else if (value === "Press Releases") {
       actionName = "press_releases";
+    } else if (value === "FAQ") {
+      actionName = "faq";
+    } else if (value === "Referral Program") {
+      actionName = "referral_program";
     } else if (value === "User Role") {
       actionName = "user_role";
     } else if (value === "Lock Function") {
@@ -150,6 +151,16 @@ const LockFunctionEdit = () => {
       actionName = "amenities";
     } else if (value === "Site Slot") {
       actionName = "site_slot";
+    } else if (value === "TDS Tutorials") {
+      actionName = "tds_tutorials";
+    } else if (value === "Plus Services") {
+      actionName = "plus_services";
+    } else if (value === "SMTP Settings") {
+      actionName = "smtp_settings";
+    } else if (value === "FAQ Category") {
+      actionName = "faq_category";
+    } else if (value === "FAQ SubCategory") {
+      actionName = "faq_subcategory";
     }
 
     setFormData({
@@ -209,16 +220,12 @@ const LockFunctionEdit = () => {
         },
       };
 
-      await axios.put(
-        `${baseURL}/lock_functions/${id}.json`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.put(`${baseURL}/lock_functions/${id}.json`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       toast.success("Lock function updated successfully");
       navigate("/setup-member/lock-function-list");
@@ -264,6 +271,8 @@ const LockFunctionEdit = () => {
     { label: "Company", value: "Company" },
     { label: "Support Service", value: "Support Service" },
     { label: "Press Releases", value: "Press Releases" },
+    { label: "FAQ", value: "FAQ" },
+    { label: "Referral Program", value: "Referral Program" },
     { label: "User Role", value: "User Role" },
     { label: "Lock Function", value: "Lock Function" },
     { label: "Property Type", value: "Property Type" },
@@ -272,6 +281,11 @@ const LockFunctionEdit = () => {
     { label: "Project Config", value: "Project Config" },
     { label: "Amenities", value: "Amenities" },
     { label: "Site Slot", value: "Site Slot" },
+    { label: "TDS Tutorials", value: "TDS Tutorials" },
+    { label: "Plus Services", value: "Plus Services" },
+    { label: "SMTP Settings", value: "SMTP Settings" },
+    { label: "FAQ Category", value: "FAQ Category" },
+    { label: "FAQ SubCategory", value: "FAQ SubCategory" },
   ];
 
   return (
@@ -338,7 +352,7 @@ const LockFunctionEdit = () => {
                       </label>
                       <SelectBox
                         options={[
-                          { label: "All Functions", value: "All Functions" }, 
+                          { label: "All Functions", value: "All Functions" },
                         ]}
                         defaultValue={formData.parent_function}
                         onChange={(value) =>

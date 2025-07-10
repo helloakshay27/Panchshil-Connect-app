@@ -168,12 +168,16 @@ const LockFunctionCreate = () => {
       actionName = "company";
     } else if (value === "Department") {
       actionName = "department";
-    }  else if (value === "Site") {
-      actionName = "site";  
+    } else if (value === "Site") {
+      actionName = "site";
     } else if (value === "Support Service") {
       actionName = "support_service";
     } else if (value === "Press Releases") {
       actionName = "press_releases";
+    } else if (value === "FAQ") {
+      actionName = "faq";
+    } else if (value === "Referral Program") {
+      actionName = "referral_program";
     } else if (value === "User Role") {
       actionName = "user_role";
     } else if (value === "Lock Function") {
@@ -192,6 +196,16 @@ const LockFunctionCreate = () => {
       actionName = "amenities";
     } else if (value === "Site Slot") {
       actionName = "site_slot";
+    } else if (value === "TDS Tutorials") {
+      actionName = "tds_tutorials";
+    } else if (value === "Plus Services") {
+      actionName = "plus_services";
+    } else if (value === "SMTP Settings") {
+      actionName = "smtp_settings";
+    } else if (value === "FAQ Category") {
+      actionName = "faq_category";
+    } else if (value === "FAQ SubCategory") {
+      actionName = "faq_subcategory";
     }
 
     setFormData({
@@ -242,6 +256,11 @@ const LockFunctionCreate = () => {
                             value: "Support Service",
                           },
                           { label: "Press Releases", value: "Press Releases" },
+                          { label: "FAQ", value: "FAQ" },
+                          {
+                            label: "Referral Program",
+                            value: "Referral Program",
+                          },
                           { label: "User Role", value: "User Role" },
                           { label: "Lock Function", value: "Lock Function" },
                           { label: "User Module", value: "User Module" },
@@ -254,6 +273,14 @@ const LockFunctionCreate = () => {
                           { label: "Project Config", value: "Project Config" },
                           { label: "Amenities", value: "Amenities" },
                           { label: "Site Slot", value: "Site Slot" },
+                          { label: "TDS Tutorials", value: "TDS Tutorials" },
+                          { label: "Plus Services", value: "Plus Services" },
+                          { label: "SMTP Settings", value: "SMTP Settings" },
+                          { label: "FAQ Category", value: "FAQ Category" },
+                          {
+                            label: "FAQ SubCategory",
+                            value: "FAQ SubCategory",
+                          },
                           // Add more if needed
                         ]}
                         Value={formData.name}

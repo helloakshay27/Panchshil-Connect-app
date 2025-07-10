@@ -19,6 +19,8 @@ const Sidebar = () => {
   const [pressReleasesActive, setPressReleasesActive] = useState(false);
   const [supportServiceActive, setSupportServiceActive] = useState(false);
   const [siteActive, setSiteActive] = useState(false);
+  const [faqActive, setFaqActive] = useState(false);
+  const [referralProgramActive, setReferralProgramActive] = useState(false);
 
   useEffect(() => {
     const hasProjectPermission = hasPermission("project");
@@ -65,6 +67,13 @@ const Sidebar = () => {
 
     const supporrtServicePermission = hasPermission("support_service");
     setSupportServiceActive(supporrtServicePermission);
+
+    const faqPermission = hasPermission("faq");
+    setFaqActive(faqPermission);
+
+    const referralProgramPermission = hasPermission("referral_program");
+    setReferralProgramActive(referralProgramPermission);
+
   }, []);
   return (
     <>
@@ -1514,7 +1523,7 @@ const Sidebar = () => {
                 </li>
               )}
                          
-
+                 {faqActive && (
                 <li className="menu-item d-flex">
                   
                   <NavLink
@@ -1543,7 +1552,8 @@ const Sidebar = () => {
                     </span>
                   </NavLink>
                 </li> 
-
+                 )}
+                 {referralProgramActive && (
                 <li className="menu-item d-flex">
                   
                   <NavLink
@@ -1572,6 +1582,7 @@ const Sidebar = () => {
                     </span>
                   </NavLink>
                 </li> 
+                 )}
             </ul>
           </div>
           <div className="left-2 mt-3" id="mySidebar">

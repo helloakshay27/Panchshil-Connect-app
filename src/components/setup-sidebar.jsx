@@ -14,7 +14,11 @@ const SetupSidebar = () => {
   const [projectConfigActive, setProjectConfigActive] = useState(false);
   const [amenitiesActive, setAmenitiesActive] = useState(false);
   const [siteSlotActive, setSiteSlotActive] = useState(false);
-
+  const [tdsTutorialsActive, setTdsTustorialsActive] = useState(false);
+  const [plusServicesActive, setPlusServicesActive] = useState(false);
+   const [smtpSettingsActive, setSmtpSettingsActive] = useState(false);
+   const [faqCategoryActive, setFaqCategoryActive] = useState(false);
+   const [faqSubCategoryActive, setFaqSubCategoryActive] = useState(false);
 
 
   useEffect(() => {
@@ -44,6 +48,21 @@ const SetupSidebar = () => {
 
         const SiteSlotPermission = hasPermission("site_slot");
         setSiteSlotActive(SiteSlotPermission);
+
+         const TDSTutorialsPermission = hasPermission("tds_tutorials");
+        setTdsTustorialsActive(TDSTutorialsPermission);
+
+        const PlusServicesPermission = hasPermission("plus_services");
+        setPlusServicesActive(PlusServicesPermission);
+
+        const SmtpSettingsPermission = hasPermission("smtp_settings");
+        setSmtpSettingsActive(SmtpSettingsPermission);
+
+        const FaqCategoryPermission = hasPermission("faq_category");
+        setFaqCategoryActive(FaqCategoryPermission);
+
+        const FaqSubCategoryPermission = hasPermission("faq_subcategory");
+        setFaqSubCategoryActive(FaqSubCategoryPermission);
 
 
     }, []);
@@ -578,6 +597,7 @@ const SetupSidebar = () => {
                 </NavLink>
               </li>
               )}
+              {tdsTutorialsActive && (
                <li className="menu-item d-flex">
                 
                 <NavLink
@@ -611,6 +631,8 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">TDS Tutorials </span>
                 </NavLink>
               </li>
+              )}
+               {plusServicesActive && (
                <li className="menu-item d-flex">
                 
                 <NavLink
@@ -644,6 +666,8 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">Plus Services </span>
                 </NavLink>
               </li>
+               )}
+                {smtpSettingsActive && (
                 <li className="menu-item d-flex">
                 
                 <NavLink
@@ -677,6 +701,8 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">SMTP Settings </span>
                 </NavLink>
               </li>
+                )}
+                 {faqCategoryActive && (
                <li className="menu-item d-flex">
                 
                 <NavLink
@@ -710,6 +736,8 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">FAQ Category </span>
                 </NavLink>
               </li>
+                 )}
+                  {faqSubCategoryActive && (
                 <li className="menu-item d-flex">
                 
                 <NavLink
@@ -743,6 +771,7 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">FAQ SubCategory </span>
                 </NavLink>
               </li>
+                  )}
                          
             </ul>
           </div>
