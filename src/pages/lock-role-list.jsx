@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Toaster, toast } from 'react-hot-toast';
+import { Toaster, toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
-
 
 const LockRoleList = () => {
   const [lockRoles, setLockRoles] = useState([]);
@@ -14,7 +13,7 @@ const LockRoleList = () => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [editedPermissions, setEditedPermissions] = useState({});
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,49 +24,49 @@ const LockRoleList = () => {
   useEffect(() => {
     if (selectedRole && lockFunctions.length > 0) {
       try {
-        // Try to parse existing permissions or create new ones based on available functions
         let permissions = {};
-        
-        if (selectedRole.permissions_hash && selectedRole.permissions_hash !== "") {
-          // Parse existing permissions
+
+        if (
+          selectedRole.permissions_hash &&
+          selectedRole.permissions_hash !== ""
+        ) {
           permissions = JSON.parse(selectedRole.permissions_hash);
         }
-        
-        // Make sure all functions are present in permissions
-        lockFunctions.forEach(func => {
-          const functionName = func.action_name || func.name.toLowerCase().replace(/\s+/g, '_');
+
+        lockFunctions.forEach((func) => {
+          const functionName =
+            func.action_name || func.name.toLowerCase().replace(/\s+/g, "_");
           if (!permissions[functionName]) {
-            permissions[functionName] = { 
-              all: "false", 
-              create: "false", 
-              show: "false", 
-              update: "false", 
-              destroy: "false" 
+            permissions[functionName] = {
+              all: "false",
+              create: "false",
+              show: "false",
+              update: "false",
+              destroy: "false",
             };
           }
         });
-        
+
         setEditedPermissions(permissions);
       } catch (error) {
         console.error("Error parsing permissions:", error);
-        
-        // Create default permissions based on available functions
+
         const defaultPermissions = {};
-        lockFunctions.forEach(func => {
-          const functionName = func.action_name || func.name.toLowerCase().replace(/\s+/g, '_');
-          defaultPermissions[functionName] = { 
-            all: "false", 
-            create: "false", 
-            show: "false", 
-            update: "false", 
-            destroy: "false" 
+        lockFunctions.forEach((func) => {
+          const functionName =
+            func.action_name || func.name.toLowerCase().replace(/\s+/g, "_");
+          defaultPermissions[functionName] = {
+            all: "false",
+            create: "false",
+            show: "false",
+            update: "false",
+            destroy: "false",
           };
         });
-        
+
         setEditedPermissions(defaultPermissions);
       }
     } else {
-      // Reset permissions when no role is selected
       setEditedPermissions({});
     }
   }, [selectedRole, lockFunctions]);
@@ -75,15 +74,12 @@ const LockRoleList = () => {
   const fetchLockFunctions = async () => {
     try {
       setFunctionsLoading(true);
-      const response = await axios.get(
-        `${baseURL}/lock_functions.json`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${baseURL}/lock_functions.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       setLockFunctions(response.data || []);
     } catch (error) {
@@ -94,22 +90,49 @@ const LockRoleList = () => {
     }
   };
 
+  // const fetchLockRoles = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(
+  //       `${baseURL}/lock_roles.json`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+
+  //     setLockRoles(response.data || []);
+  //     // We don't auto-select any role now to show blank table first
+  //     setSelectedRole(null);
+  //   } catch (error) {
+  //     console.error("Error fetching lock roles:", error);
+  //     toast.error("Failed to load lock roles");
+  //     setError("Failed to load lock roles");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchLockRoles = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${baseURL}/lock_roles.json`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${baseURL}/lock_roles.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      setLockRoles(response.data || []);
-      // We don't auto-select any role now to show blank table first
-      setSelectedRole(null);
+      const roles = response.data || [];
+      setLockRoles(roles);
+
+      if (roles.length > 0) {
+        setSelectedRole(roles[0]);
+      } else {
+        setSelectedRole(null);
+      }
     } catch (error) {
       console.error("Error fetching lock roles:", error);
       toast.error("Failed to load lock roles");
@@ -129,54 +152,57 @@ const LockRoleList = () => {
 
   const handlePermissionChange = (functionName, permType) => {
     const updatedPermissions = { ...editedPermissions };
-    
-    // Toggle the permission
+
     const currentValue = updatedPermissions[functionName][permType];
-    updatedPermissions[functionName][permType] = currentValue === "true" ? "false" : "true";
-    
-    // If "all" is checked, check all other permissions
-    if (permType === "all" && updatedPermissions[functionName][permType] === "true") {
+    updatedPermissions[functionName][permType] =
+      currentValue === "true" ? "false" : "true";
+
+    if (
+      permType === "all" &&
+      updatedPermissions[functionName][permType] === "true"
+    ) {
       updatedPermissions[functionName].create = "true";
       updatedPermissions[functionName].show = "true";
       updatedPermissions[functionName].update = "true";
       updatedPermissions[functionName].destroy = "true";
     }
-    
-    // If "all" is unchecked, uncheck all other permissions
-    if (permType === "all" && updatedPermissions[functionName][permType] === "false") {
+
+    if (
+      permType === "all" &&
+      updatedPermissions[functionName][permType] === "false"
+    ) {
       updatedPermissions[functionName].create = "false";
       updatedPermissions[functionName].show = "false";
       updatedPermissions[functionName].update = "false";
       updatedPermissions[functionName].destroy = "false";
     }
-    
-    // Check if all individual permissions are checked, then check "all" too
+
     if (permType !== "all") {
-      const allChecked = 
+      const allChecked =
         updatedPermissions[functionName].create === "true" &&
         updatedPermissions[functionName].show === "true" &&
         updatedPermissions[functionName].update === "true" &&
         updatedPermissions[functionName].destroy === "true";
-      
+
       updatedPermissions[functionName].all = allChecked ? "true" : "false";
     }
-    
+
     setEditedPermissions(updatedPermissions);
   };
 
   const savePermissions = async () => {
-    toast.dismiss(); // Dismiss any existing toasts
+    toast.dismiss();
     if (!selectedRole) return;
-  
+
     try {
       const permissionsHash = JSON.stringify(editedPermissions);
-  
+
       await axios.put(
         `${baseURL}/lock_roles/${selectedRole.id}.json`,
         {
           lock_role: {
-            permissions_hash: permissionsHash
-          }
+            permissions_hash: permissionsHash,
+          },
         },
         {
           headers: {
@@ -185,50 +211,46 @@ const LockRoleList = () => {
           },
         }
       );
-  
-      const updatedRoles = lockRoles.map(role => 
-        role.id === selectedRole.id 
-          ? { ...role, permissions_hash: permissionsHash } 
+
+      const updatedRoles = lockRoles.map((role) =>
+        role.id === selectedRole.id
+          ? { ...role, permissions_hash: permissionsHash }
           : role
       );
-  
+
       setLockRoles(updatedRoles);
-  
-      // ✅ Beautiful green toast
       toast.success("Role Updated successfully!");
     } catch (error) {
       console.error("Error saving permissions:", error);
       toast.error("Failed to update role.");
     }
   };
-  
-  
 
   const filteredRoles = lockRoles.filter(
     (role) =>
       role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (role.display_name && role.display_name.toLowerCase().includes(searchTerm.toLowerCase()))
+      (role.display_name &&
+        role.display_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  // Function to format function name for display
   const formatFunctionName = (name) => {
-    // Convert snake_case to Title Case
-    return name.split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    return name
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
-  // Function to get a list of all function names being used
   const getFunctionDisplayName = (functionName) => {
-    const func = lockFunctions.find(f => 
-      (f.action_name && f.action_name === functionName) || 
-      (f.name && f.name.toLowerCase().replace(/\s+/g, '_') === functionName)
+    const func = lockFunctions.find(
+      (f) =>
+        (f.action_name && f.action_name === functionName) ||
+        (f.name && f.name.toLowerCase().replace(/\s+/g, "_") === functionName)
     );
-    
+
     if (func) {
       return func.name;
     }
-    
+
     return formatFunctionName(functionName);
   };
 
@@ -236,7 +258,7 @@ const LockRoleList = () => {
     <div className="main-content">
       <div className="module-data-section container-fluid">
         {error && <div className="alert alert-danger">{error}</div>}
-        
+
         <div className="d-flex justify-content-end px-4 pt-2 mt-3">
           <div className="col-md-4 pe-2 pt-2">
             <div className="input-group">
@@ -291,7 +313,6 @@ const LockRoleList = () => {
         </div>
 
         <div className="row mx-2 mt-3">
-          {/* Left sidebar with roles */}
           <div className="col-md-3">
             <div className="card sidebar-card">
               <div className="role-list">
@@ -307,12 +328,16 @@ const LockRoleList = () => {
                   </div>
                 ) : filteredRoles.length > 0 ? (
                   filteredRoles.map((role) => (
-                    <div 
-                      key={role.id} 
-                      className={`role-item ${selectedRole && selectedRole.id === role.id ? 'active' : ''}`}
+                    <div
+                      key={role.id}
+                      className={`role-item ${
+                        selectedRole && selectedRole.id === role.id
+                          ? "active"
+                          : ""
+                      }`}
                       onClick={() => handleRoleSelect(role)}
                     >
-                      {role.name || 'Unnamed Role'}
+                      {role.name || "Unnamed Role"}
                     </div>
                   ))
                 ) : (
@@ -322,18 +347,13 @@ const LockRoleList = () => {
             </div>
           </div>
 
-          {/* Right content with permissions table */}
           <div className="col-md-9">
             <div className="card">
               <div className="card-header d-flex justify-content-between align-items-center">
-                <h3 className="card-title m-0">
-                  {/* {selectedRole ? `${selectedRole.name} Permissions` : 'Role Permissions'} */}
-                  Role Permissions
-                </h3>
-                {/* {selectedRole && <div className="card-title-badge">new Permissions</div>} */}
+                <h3 className="card-title m-0">Role Permissions</h3>
               </div>
               <div className="card-body">
-                {(loading || functionsLoading) ? (
+                {loading || functionsLoading ? (
                   <div className="text-center">
                     <div
                       className="spinner-border"
@@ -345,80 +365,126 @@ const LockRoleList = () => {
                   </div>
                 ) : selectedRole ? (
                   <div className="permissions-table-container mb-4">
-                    {(!editedPermissions || typeof editedPermissions !== 'object') ? (
+                    {!editedPermissions ||
+                    typeof editedPermissions !== "object" ? (
                       <div className="alert alert-warning">
-                        Unable to load permissions. Using default empty permissions.
+                        Unable to load permissions. Using default empty
+                        permissions.
                       </div>
                     ) : (
                       <>
-                         <div className="tbl-container">
-                         <table className="w-100">
-                          <thead>
-                            <tr className="bg-light">
-                              <th>Functions</th>
-                              <th >All</th>
-                              <th >Add</th>
-                              <th >View</th>
-                              <th >Edit</th>
-                              <th >Disable</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {Object.keys(editedPermissions).map((functionName) => (
-                              <tr key={functionName}>
-                                <td>{getFunctionDisplayName(functionName)}</td>
-                                <td className="text-center">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={editedPermissions[functionName]?.all === "true"} 
-                                    onChange={() => handlePermissionChange(functionName, "all")}
-                                  />
-                                </td>
-                                <td className="text-center">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={editedPermissions[functionName]?.create === "true"} 
-                                    onChange={() => handlePermissionChange(functionName, "create")}
-                                  />
-                                </td>
-                                <td className="text-center">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={editedPermissions[functionName]?.show === "true"} 
-                                    onChange={() => handlePermissionChange(functionName, "show")}
-                                  />
-                                </td>
-                                <td className="text-center">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={editedPermissions[functionName]?.update === "true"} 
-                                    onChange={() => handlePermissionChange(functionName, "update")}
-                                  />
-                                </td>
-                                <td className="text-center">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={editedPermissions[functionName]?.destroy === "true"} 
-                                    onChange={() => handlePermissionChange(functionName, "destroy")}
-                                  />
-                                </td>
+                        <div className="tbl-container">
+                          <table className="w-100">
+                            <thead>
+                              <tr className="bg-light">
+                                <th>Functions</th>
+                                <th>All</th>
+                                <th>Add</th>
+                                <th>View</th>
+                                <th>Edit</th>
+                                <th>Disable</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {Object.keys(editedPermissions).map(
+                                (functionName) => (
+                                  <tr key={functionName}>
+                                    <td>
+                                      {getFunctionDisplayName(functionName)}
+                                    </td>
+                                    <td className="text-center">
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          editedPermissions[functionName]
+                                            ?.all === "true"
+                                        }
+                                        onChange={() =>
+                                          handlePermissionChange(
+                                            functionName,
+                                            "all"
+                                          )
+                                        }
+                                      />
+                                    </td>
+                                    <td className="text-center">
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          editedPermissions[functionName]
+                                            ?.create === "true"
+                                        }
+                                        onChange={() =>
+                                          handlePermissionChange(
+                                            functionName,
+                                            "create"
+                                          )
+                                        }
+                                      />
+                                    </td>
+                                    <td className="text-center">
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          editedPermissions[functionName]
+                                            ?.show === "true"
+                                        }
+                                        onChange={() =>
+                                          handlePermissionChange(
+                                            functionName,
+                                            "show"
+                                          )
+                                        }
+                                      />
+                                    </td>
+                                    <td className="text-center">
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          editedPermissions[functionName]
+                                            ?.update === "true"
+                                        }
+                                        onChange={() =>
+                                          handlePermissionChange(
+                                            functionName,
+                                            "update"
+                                          )
+                                        }
+                                      />
+                                    </td>
+                                    <td className="text-center">
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          editedPermissions[functionName]
+                                            ?.destroy === "true"
+                                        }
+                                        onChange={() =>
+                                          handlePermissionChange(
+                                            functionName,
+                                            "destroy"
+                                          )
+                                        }
+                                      />
+                                    </td>
+                                  </tr>
+                                )
+                              )}
+                            </tbody>
+                          </table>
                         </div>
-                        
-                        <div className="text-end mt-3">
-    <button 
-      className="update-btn"
-      onClick={savePermissions}
-    >
-      Update
-    </button>
-  </div>
 
-  {/* Toaster component */}
-  {/* <Toaster
+                        <div className="text-end mt-3">
+                          <button
+                            className="update-btn"
+                            onClick={savePermissions}
+                          >
+                            Update
+                          </button>
+                        </div>
+
+                        {/* Toaster component */}
+                        {/* <Toaster
     position="top-right"
     toastOptions={{
       style: {
@@ -433,12 +499,13 @@ const LockRoleList = () => {
       },
     }}
   /> */}
-
                       </>
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-4">Select a role to view permissions</div>
+                  <div className="text-center py-4">
+                    Select a role to view permissions
+                  </div>
                 )}
               </div>
             </div>
