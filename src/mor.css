@@ -696,8 +696,8 @@ section .locked img {
   padding: 4px 8px;
 }
 
-.avatar,
-.avatar2 {
+/* .avatar, */
+/* .avatar2 {
   display: inline-block;
   vertical-align: middle;
   position: relative;
@@ -709,20 +709,54 @@ section .locked img {
   margin: 5px;
   padding: 2px;
   border: 1px solid;
+} */
+.avatar,
+.avatar2 {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--red);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
 }
+
+.avatar__image2 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 
 .avatar2 {
   height: 50px;
   width: 50px;
 }
 
-.avatar__letters,
+/* .avatar__letters,
 .avatar__letters2 {
   left: 50%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
   color: var(--red);
+} */
+
+.avatar__letters,
+.avatar__letters2 {
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+  background-color: var(--red);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
 .avatar__letters2 {
