@@ -1798,24 +1798,30 @@ const ProjectDetailsEdit = () => {
     //   return;
     // }
 
-    const hasProjectBanner9by16 = formData.image_9_by_16 && formData.image_9_by_16.some(
-  img => img.file instanceof File || img.id || img.document_file_name
-);
+    const hasProjectBanner9by16 =
+      formData.image_9_by_16 &&
+      formData.image_9_by_16.some(
+        (img) => img.file instanceof File || img.id || img.document_file_name
+      );
 
-const hasProjectBanner1by1 = Array.isArray(formData.image_1_by_1) && formData.image_1_by_1.some(
-  img => img?.file instanceof File || img?.id || img?.document_file_name
-);
+    const hasProjectBanner1by1 =
+      Array.isArray(formData.image_1_by_1) &&
+      formData.image_1_by_1.some(
+        (img) => img?.file instanceof File || img?.id || img?.document_file_name
+      );
 
-const allImagesPresent = hasProjectBanner9by16 || hasProjectBanner1by1;
+    const allImagesPresent = hasProjectBanner9by16 || hasProjectBanner1by1;
 
-console.log("allImagesPresent:", allImagesPresent);
+    console.log("allImagesPresent:", allImagesPresent);
 
-if (!allImagesPresent) {
-  toast.error("Project banner one of them or both (9:16) and (1:1) is required.");
-  setLoading(false);
-  setIsSubmitting(false);
-  return;
-}
+    if (!allImagesPresent) {
+      toast.error(
+        "Project banner one of them or both (9:16) and (1:1) is required."
+      );
+      setLoading(false);
+      setIsSubmitting(false);
+      return;
+    }
 
     const gallery_images = [
       "gallery_image_16_by_9",
@@ -4616,7 +4622,7 @@ if (!allImagesPresent) {
                       </span>
                     )}
                   </span>
-                   <span className="otp-asterisk"> *</span>
+                  <span className="otp-asterisk"> *</span>
                 </h5>
 
                 <button
@@ -5315,25 +5321,28 @@ if (!allImagesPresent) {
                 </div>
               </div>
 
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Floor Plan{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">
-                        Max Upload Size 3 MB and Required ratio is 16:9
+              {(baseURL === "https://api-connect.panchshil.com/" ||
+                baseURL === "https://panchshil-super.lockated.com/") && (
+                <>
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Floor Plan{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB and Required ratio is 16:9
+                          </span>
+                        )}
                       </span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
 
-                {/* <button
+                    {/* <button
                   className="purple-btn2 rounded-3"
                   onClick={() =>
                     document.getElementById("two_d_images").click()
@@ -5362,7 +5371,7 @@ if (!allImagesPresent) {
                   style={{ display: "none" }}
                 /> */}
 
-                {/* <ImageUploadingButton
+                    {/* <ImageUploadingButton
                   value={floorPlanImageUpload}
                   onChange={(list) => handleImageUploaded(list, "two_d_images")}
                   variant="button"
@@ -5395,127 +5404,135 @@ if (!allImagesPresent) {
                   ]}
                 /> */}
 
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  type="button"
-                  onClick={() => setShowFloorPlanModal(true)}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      fdprocessedid="xn3e6n"
+                      type="button"
+                      onClick={() => setShowFloorPlanModal(true)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
 
-                {showFloorPlanModal && (
-                  <ProjectBannerUpload
-                    onClose={() => setShowFloorPlanModal(false)}
-                    selectedRatioProp={selectedFloorRatios}
-                    showAsModal={true}
-                    label={floorImageLabel}
-                    description={dynamicDescription2}
-                    onContinue={(validImages) =>
-                      handleCroppedImages(validImages, "floor")
-                    }
-                  />
-                )}
-              </div>
+                    {showFloorPlanModal && (
+                      <ProjectBannerUpload
+                        onClose={() => setShowFloorPlanModal(false)}
+                        selectedRatioProp={selectedFloorRatios}
+                        showAsModal={true}
+                        label={floorImageLabel}
+                        description={dynamicDescription2}
+                        onContinue={(validImages) =>
+                          handleCroppedImages(validImages, "floor")
+                        }
+                      />
+                    )}
+                  </div>
 
-              {/* Table to Display Images */}
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Ratio</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {formData.two_d_images.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>N/A</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardTwoDImage("two_d_images", index)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      {floorPlanRatios.map(({ key, label }) => {
-                        const files = formData[key] || [];
-
-                        return files.map((file, index) => (
-                          <tr key={`${key}-${index}`}>
-                            <td>
-                              {file.document_file_name ||
-                                file.name ||
-                                `Image ${index + 1}`}
-                            </td>
-                            <td>
-                              <img
-                                style={{ maxWidth: 100, maxHeight: 100 }}
-                                className="img-fluid rounded"
-                                src={file.document_url || file.preview}
-                                alt={
-                                  file.document_file_name ||
-                                  file.name ||
-                                  `Image ${index + 1}`
-                                }
-                              />
-                            </td>
-                            <td>{file.ratio || label}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() =>
-                                  handleFileDiscardCoverImage(key, index)
-                                }
-                              >
-                                x
-                              </button>
-                            </td>
+                  {/* Table to Display Images */}
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
                           </tr>
-                        ));
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                        </thead>
+                        <tbody>
+                          {formData.two_d_images.map((file, index) => (
+                            <tr key={index}>
+                              <td>{file.document_file_name || file.name}</td>{" "}
+                              {/* Show name from API or uploaded file */}
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={
+                                    file.document_url // API response images
+                                      ? file.document_url
+                                      : file.type &&
+                                        file.type.startsWith("image") // Avoid error if file.type is undefined
+                                      ? URL.createObjectURL(file)
+                                      : null
+                                  }
+                                  alt={
+                                    file.document_file_name ||
+                                    file.name ||
+                                    "Image"
+                                  }
+                                />
+                              </td>
+                              <td>N/A</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleDiscardTwoDImage(
+                                      "two_d_images",
+                                      index
+                                    )
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                          {floorPlanRatios.map(({ key, label }) => {
+                            const files = formData[key] || [];
+
+                            return files.map((file, index) => (
+                              <tr key={`${key}-${index}`}>
+                                <td>
+                                  {file.document_file_name ||
+                                    file.name ||
+                                    `Image ${index + 1}`}
+                                </td>
+                                <td>
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={file.document_url || file.preview}
+                                    alt={
+                                      file.document_file_name ||
+                                      file.name ||
+                                      `Image ${index + 1}`
+                                    }
+                                  />
+                                </td>
+                                <td>{file.ratio || label}</td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleFileDiscardCoverImage(key, index)
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ));
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )}
               {/* <div className="col-md-12 mt-2">
                 <h6 className="mt-3">Previous Gallery Images</h6>
                
@@ -5663,780 +5680,77 @@ if (!allImagesPresent) {
                 </div>
               </div>
 
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project PPT{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 5 MB</span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
-                </h5>
+              {(baseURL === "https://api-connect.panchshil.com/" ||
+                baseURL === "https://panchshil-super.lockated.com/") && (
+                <>
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project PPT{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 5 MB
+                          </span>
+                        )}
+                      </span>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}>*</span> */}
+                    </h5>
 
-                <button
-                  className="purple-btn2 rounded-3"
-                  onClick={() => document.getElementById("project_ppt").click()}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      onClick={() =>
+                        document.getElementById("project_ppt").click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
 
-                <input
-                  id="project_ppt"
-                  className="form-control"
-                  type="file"
-                  name="project_ppt"
-                  accept=".ppt, .pptx"
-                  onChange={(e) =>
-                    handleFileUpload("project_ppt", e.target.files)
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
+                    <input
+                      id="project_ppt"
+                      className="form-control"
+                      type="file"
+                      name="project_ppt"
+                      accept=".ppt, .pptx"
+                      onChange={(e) =>
+                        handleFileUpload("project_ppt", e.target.files)
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
 
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(formData.project_ppt ?? []).length > 0 ? (
-                        formData.project_ppt.map((file, index) => (
-                          <tr key={`ppt-${index}`}>
-                            <td>
-                              {file.name ||
-                                file.document_file_name ||
-                                file ||
-                                "No File"}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() =>
-                                  handleDiscardFilePpt("project_ppt", index)
-                                }
-                              >
-                                x
-                              </button>
-                            </td>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Action</th>
                           </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          {/* <td colSpan={2}>No PPT files uploaded</td> */}
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* 2D Images */}
-
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Layout{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 3 MB</span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("project_layout").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-
-                <input
-                  id="project_layout"
-                  className="form-control"
-                  type="file"
-                  name="project_layout"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileUpload("project_layout", e.target.files)
-                  }
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* 2D Images */}
-                      {formData.project_layout.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFileDiscardLayout("project_layout", index)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Creatives{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 3 MB</span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("project_creatives").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <input
-                  id="project_creatives"
-                  className="form-control"
-                  type="file"
-                  name="project_creatives"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileUpload("project_creatives", e.target.files)
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* 2D Images */}
-                      {formData.project_creatives.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFileDiscardCreative(
-                                  "project_creatives",
-                                  index
-                                )
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Creative Generics{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 3 MB</span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("project_creative_generics").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <input
-                  id="project_creative_generics"
-                  className="form-control"
-                  type="file"
-                  name="project_creative_generics"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileUpload(
-                      "project_creative_generics",
-                      e.target.files
-                    )
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* 2D Images */}
-                      {formData.project_creative_generics.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFileDiscardCreativeGenerics(
-                                  "project_creative_generics",
-                                  index
-                                )
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Creative Offers{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 3 MB</span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("project_creative_offers").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <input
-                  id="project_creative_offers"
-                  className="form-control"
-                  type="file"
-                  name="project_creative_offers"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileUpload("project_creative_offers", e.target.files)
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* 2D Images */}
-                      {formData.project_creative_offers.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFileDiscardCreativeOffers(
-                                  "project_creative_offers",
-                                  index
-                                )
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Interiors{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 3 MB</span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("project_interiors").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <input
-                  id="project_interiors"
-                  className="form-control"
-                  type="file"
-                  name="project_interiors"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileUpload("project_interiors", e.target.files)
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* 2D Images */}
-                      {formData.project_interiors.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFileDiscardInteriors(
-                                  "project_interiors",
-                                  index
-                                )
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Exteriors{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 3 MB</span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("project_exteriors").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <input
-                  id="project_exteriors"
-                  className="form-control"
-                  type="file"
-                  name="project_exteriors"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileUpload("project_exteriors", e.target.files)
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* 2D Images */}
-                      {formData.project_exteriors.map((file, index) => (
-                        <tr key={index}>
-                          <td>{file.document_file_name || file.name}</td>{" "}
-                          {/* Show name from API or uploaded file */}
-                          <td>
-                            <img
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response images
-                                  ? file.document_url
-                                  : file.type && file.type.startsWith("image") // Avoid error if file.type is undefined
-                                  ? URL.createObjectURL(file)
-                                  : null
-                              }
-                              alt={
-                                file.document_file_name || file.name || "Image"
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFileDiscardExteriors(
-                                  "project_exteriors",
-                                  index
-                                )
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project Emailer Template{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">Max Upload Size 5 MB</span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  onClick={() =>
-                    document.getElementById("project_emailer_templetes").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <input
-                  id="project_emailer_templetes"
-                  className="form-control"
-                  type="file"
-                  name="project_emailer_templetes"
-                  accept=".pdf,.docx"
-                  onChange={(e) =>
-                    handleFileUpload(
-                      "project_emailer_templetes",
-                      e.target.files
-                    )
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* Project PPT Files */}
-                      {formData.project_emailer_templetes &&
-                        (Array.isArray(formData.project_emailer_templetes) ? (
-                          // If it's an array of files
-                          formData.project_emailer_templetes.map(
-                            (file, index) => (
-                              <tr key={`emailer-${index}`}>
+                        </thead>
+                        <tbody>
+                          {(formData.project_ppt ?? []).length > 0 ? (
+                            formData.project_ppt.map((file, index) => (
+                              <tr key={`ppt-${index}`}>
                                 <td>
-                                  {file?.name ||
-                                    file?.document_file_name ||
+                                  {file.name ||
+                                    file.document_file_name ||
+                                    file ||
                                     "No File"}
                                 </td>
                                 <td>
@@ -6444,8 +5758,339 @@ if (!allImagesPresent) {
                                     type="button"
                                     className="purple-btn2"
                                     onClick={() =>
-                                      handleFileDiscardEmailerTemplate(
-                                        "project_emailer_templetes",
+                                      handleDiscardFilePpt("project_ppt", index)
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              {/* <td colSpan={2}>No PPT files uploaded</td> */}
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* 2D Images */}
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Layout{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB
+                          </span>
+                        )}
+                      </span>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
+
+                    <button
+                      className="purple-btn2 rounded-3"
+                      fdprocessedid="xn3e6n"
+                      onClick={() =>
+                        document.getElementById("project_layout").click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+
+                    <input
+                      id="project_layout"
+                      className="form-control"
+                      type="file"
+                      name="project_layout"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileUpload("project_layout", e.target.files)
+                      }
+                      style={{ display: "none" }}
+                    />
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 2D Images */}
+                          {formData.project_layout.map((file, index) => (
+                            <tr key={index}>
+                              <td>{file.document_file_name || file.name}</td>{" "}
+                              {/* Show name from API or uploaded file */}
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={
+                                    file.document_url // API response images
+                                      ? file.document_url
+                                      : file.type &&
+                                        file.type.startsWith("image") // Avoid error if file.type is undefined
+                                      ? URL.createObjectURL(file)
+                                      : null
+                                  }
+                                  alt={
+                                    file.document_file_name ||
+                                    file.name ||
+                                    "Image"
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFileDiscardLayout(
+                                      "project_layout",
+                                      index
+                                    )
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Creatives{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB
+                          </span>
+                        )}
+                      </span>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
+
+                    <button
+                      className="purple-btn2 rounded-3"
+                      fdprocessedid="xn3e6n"
+                      onClick={() =>
+                        document.getElementById("project_creatives").click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="project_creatives"
+                      className="form-control"
+                      type="file"
+                      name="project_creatives"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileUpload("project_creatives", e.target.files)
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 2D Images */}
+                          {formData.project_creatives.map((file, index) => (
+                            <tr key={index}>
+                              <td>{file.document_file_name || file.name}</td>{" "}
+                              {/* Show name from API or uploaded file */}
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={
+                                    file.document_url // API response images
+                                      ? file.document_url
+                                      : file.type &&
+                                        file.type.startsWith("image") // Avoid error if file.type is undefined
+                                      ? URL.createObjectURL(file)
+                                      : null
+                                  }
+                                  alt={
+                                    file.document_file_name ||
+                                    file.name ||
+                                    "Image"
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFileDiscardCreative(
+                                      "project_creatives",
+                                      index
+                                    )
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Creative Generics{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB
+                          </span>
+                        )}
+                      </span>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
+
+                    <button
+                      className="purple-btn2 rounded-3"
+                      fdprocessedid="xn3e6n"
+                      onClick={() =>
+                        document
+                          .getElementById("project_creative_generics")
+                          .click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="project_creative_generics"
+                      className="form-control"
+                      type="file"
+                      name="project_creative_generics"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileUpload(
+                          "project_creative_generics",
+                          e.target.files
+                        )
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 2D Images */}
+                          {formData.project_creative_generics.map(
+                            (file, index) => (
+                              <tr key={index}>
+                                <td>{file.document_file_name || file.name}</td>{" "}
+                                {/* Show name from API or uploaded file */}
+                                <td>
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={
+                                      file.document_url // API response images
+                                        ? file.document_url
+                                        : file.type &&
+                                          file.type.startsWith("image") // Avoid error if file.type is undefined
+                                        ? URL.createObjectURL(file)
+                                        : null
+                                    }
+                                    alt={
+                                      file.document_file_name ||
+                                      file.name ||
+                                      "Image"
+                                    }
+                                  />
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleFileDiscardCreativeGenerics(
+                                        "project_creative_generics",
                                         index
                                       )
                                     }
@@ -6455,132 +6100,565 @@ if (!allImagesPresent) {
                                 </td>
                               </tr>
                             )
-                          )
-                        ) : (
-                          <tr>
-                            <td>
-                              {formData.project_emailer_templetes?.name ||
-                                formData.project_emailer_templetes
-                                  ?.document_file_name ||
-                                "No File"}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() =>
-                                  handleDiscardFile(
-                                    "project_emailer_templetes",
-                                    0
-                                  )
-                                }
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
-              <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Videos{" "}
-                  <span
-                    className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                  >
-                    [i]
-                    {showTooltip && (
-                      <span className="tooltip-text">
-                        Max Upload Size 10 MB
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Creative Offers{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB
+                          </span>
+                        )}
                       </span>
-                    )}
-                  </span>
-                  {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
-                </h5>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
 
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() => document.getElementById("videos").click()}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <input
-                  id="videos"
-                  type="file"
-                  accept="video/mp4,video/webm,video/ogg"
-                  name="videos"
-                  onChange={handleChange}
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      fdprocessedid="xn3e6n"
+                      onClick={() =>
+                        document
+                          .getElementById("project_creative_offers")
+                          .click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="project_creative_offers"
+                      className="form-control"
+                      type="file"
+                      name="project_creative_offers"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileUpload(
+                          "project_creative_offers",
+                          e.target.files
+                        )
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
 
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Videos</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* Videos */}
-                      {formData.videos.map((file, index) => (
-                        <tr key={index}>
-                          {/* Ensure filename is displayed correctly */}
-                          <td>
-                            {file.document_file_name || file.name || "No Name"}
-                          </td>
-                          <td>
-                            <video
-                              style={{ maxWidth: 100, maxHeight: 100 }}
-                              className="img-fluid rounded"
-                              src={
-                                file.document_url // API response video
-                                  ? file.document_url
-                                  : file instanceof File // Uploaded video file
-                                  ? URL.createObjectURL(file)
-                                  : ""
-                              }
-                              autoPlay
-                              muted
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handleFileDiscard("videos", index)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 2D Images */}
+                          {formData.project_creative_offers.map(
+                            (file, index) => (
+                              <tr key={index}>
+                                <td>{file.document_file_name || file.name}</td>{" "}
+                                {/* Show name from API or uploaded file */}
+                                <td>
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={
+                                      file.document_url // API response images
+                                        ? file.document_url
+                                        : file.type &&
+                                          file.type.startsWith("image") // Avoid error if file.type is undefined
+                                        ? URL.createObjectURL(file)
+                                        : null
+                                    }
+                                    alt={
+                                      file.document_file_name ||
+                                      file.name ||
+                                      "Image"
+                                    }
+                                  />
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleFileDiscardCreativeOffers(
+                                        "project_creative_offers",
+                                        index
+                                      )
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
-              {/* <div className="col-md-3 mt-4">
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Interiors{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB
+                          </span>
+                        )}
+                      </span>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
+
+                    <button
+                      className="purple-btn2 rounded-3"
+                      fdprocessedid="xn3e6n"
+                      onClick={() =>
+                        document.getElementById("project_interiors").click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="project_interiors"
+                      className="form-control"
+                      type="file"
+                      name="project_interiors"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileUpload("project_interiors", e.target.files)
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 2D Images */}
+                          {formData.project_interiors.map((file, index) => (
+                            <tr key={index}>
+                              <td>{file.document_file_name || file.name}</td>{" "}
+                              {/* Show name from API or uploaded file */}
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={
+                                    file.document_url // API response images
+                                      ? file.document_url
+                                      : file.type &&
+                                        file.type.startsWith("image") // Avoid error if file.type is undefined
+                                      ? URL.createObjectURL(file)
+                                      : null
+                                  }
+                                  alt={
+                                    file.document_file_name ||
+                                    file.name ||
+                                    "Image"
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFileDiscardInteriors(
+                                      "project_interiors",
+                                      index
+                                    )
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Exteriors{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB
+                          </span>
+                        )}
+                      </span>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
+
+                    <button
+                      className="purple-btn2 rounded-3"
+                      fdprocessedid="xn3e6n"
+                      onClick={() =>
+                        document.getElementById("project_exteriors").click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="project_exteriors"
+                      className="form-control"
+                      type="file"
+                      name="project_exteriors"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileUpload("project_exteriors", e.target.files)
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 2D Images */}
+                          {formData.project_exteriors.map((file, index) => (
+                            <tr key={index}>
+                              <td>{file.document_file_name || file.name}</td>{" "}
+                              {/* Show name from API or uploaded file */}
+                              <td>
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={
+                                    file.document_url // API response images
+                                      ? file.document_url
+                                      : file.type &&
+                                        file.type.startsWith("image") // Avoid error if file.type is undefined
+                                      ? URL.createObjectURL(file)
+                                      : null
+                                  }
+                                  alt={
+                                    file.document_file_name ||
+                                    file.name ||
+                                    "Image"
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFileDiscardExteriors(
+                                      "project_exteriors",
+                                      index
+                                    )
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Emailer Template{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 5 MB
+                          </span>
+                        )}
+                      </span>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
+
+                    <button
+                      className="purple-btn2 rounded-3"
+                      onClick={() =>
+                        document
+                          .getElementById("project_emailer_templetes")
+                          .click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="project_emailer_templetes"
+                      className="form-control"
+                      type="file"
+                      name="project_emailer_templetes"
+                      accept=".pdf,.docx"
+                      onChange={(e) =>
+                        handleFileUpload(
+                          "project_emailer_templetes",
+                          e.target.files
+                        )
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* Project PPT Files */}
+                          {formData.project_emailer_templetes &&
+                            (Array.isArray(
+                              formData.project_emailer_templetes
+                            ) ? (
+                              // If it's an array of files
+                              formData.project_emailer_templetes.map(
+                                (file, index) => (
+                                  <tr key={`emailer-${index}`}>
+                                    <td>
+                                      {file?.name ||
+                                        file?.document_file_name ||
+                                        "No File"}
+                                    </td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        className="purple-btn2"
+                                        onClick={() =>
+                                          handleFileDiscardEmailerTemplate(
+                                            "project_emailer_templetes",
+                                            index
+                                          )
+                                        }
+                                      >
+                                        x
+                                      </button>
+                                    </td>
+                                  </tr>
+                                )
+                              )
+                            ) : (
+                              <tr>
+                                <td>
+                                  {formData.project_emailer_templetes?.name ||
+                                    formData.project_emailer_templetes
+                                      ?.document_file_name ||
+                                    "No File"}
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDiscardFile(
+                                        "project_emailer_templetes",
+                                        0
+                                      )
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Videos{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 10 MB
+                          </span>
+                        )}
+                      </span>
+                      {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
+                    </h5>
+
+                    <button
+                      className="purple-btn2 rounded-3"
+                      fdprocessedid="xn3e6n"
+                      onClick={() => document.getElementById("videos").click()}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="videos"
+                      type="file"
+                      accept="video/mp4,video/webm,video/ogg"
+                      name="videos"
+                      onChange={handleChange}
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Videos</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* Videos */}
+                          {formData.videos.map((file, index) => (
+                            <tr key={index}>
+                              {/* Ensure filename is displayed correctly */}
+                              <td>
+                                {file.document_file_name ||
+                                  file.name ||
+                                  "No Name"}
+                              </td>
+                              <td>
+                                <video
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={
+                                    file.document_url // API response video
+                                      ? file.document_url
+                                      : file instanceof File // Uploaded video file
+                                      ? URL.createObjectURL(file)
+                                      : ""
+                                  }
+                                  autoPlay
+                                  muted
+                                />
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    handleFileDiscard("videos", index)
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* <div className="col-md-3 mt-4">
                 <div className="form-group">
                   <label>
                     Video Preview Image Url
@@ -6625,17 +6703,19 @@ if (!allImagesPresent) {
                 )}
               </div> */}
 
-              <div className="form-group">
-                <label>Video Preview Image Url</label>
-                <input
-                  className="form-control"
-                  rows={1}
-                  name="video_preview_image_url"
-                  placeholder="Enter Video Url"
-                  value={formData.video_preview_image_url}
-                  onChange={handleChange}
-                />
-              </div>
+                  <div className="form-group">
+                    <label>Video Preview Image Url</label>
+                    <input
+                      className="form-control"
+                      rows={1}
+                      name="video_preview_image_url"
+                      placeholder="Enter Video Url"
+                      value={formData.video_preview_image_url}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </>
+              )}
 
               {/* <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
@@ -6752,139 +6832,149 @@ if (!allImagesPresent) {
             </div>
           </div>
         </div>
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3 d-flex justify-content-between align-items-center">
-            <h3 className="card-title">Virtual Tour</h3>
-          </div>
-          <div className="card-body mt-0 pb-0">
-            {/* Input Fields */}
-            <div className="row align-items-center">
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Virtual Tour Name{" "}
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
+
+        {(baseURL === "https://api-connect.panchshil.com/" ||
+          baseURL === "https://panchshil-super.lockated.com/") && (
+          <>
+            <div className="card mt-3 pb-4 mx-4">
+              <div className="card-header3 d-flex justify-content-between align-items-center">
+                <h3 className="card-title">Virtual Tour</h3>
+              </div>
+              <div className="card-body mt-0 pb-0">
+                {/* Input Fields */}
+                <div className="row align-items-center">
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>
+                        Virtual Tour Name{" "}
+                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
                     </span> */}
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="virtual_tour_name"
-                    placeholder="Enter Virtual Tour Name"
-                    value={virtualTourName}
-                    onChange={handleVirtualTourNameChange}
-                  />
-                </div>
-              </div>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="virtual_tour_name"
+                        placeholder="Enter Virtual Tour Name"
+                        value={virtualTourName}
+                        onChange={handleVirtualTourNameChange}
+                      />
+                    </div>
+                  </div>
 
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Virtual Tour URL{" "}
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>
+                        Virtual Tour URL{" "}
+                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
                       {" "}
                       *
                     </span> */}
-                  </label>
-                  <input
-                    className="form-control"
-                    type="url"
-                    name="virtual_tour_url"
-                    placeholder="Enter Virtual Tour URL"
-                    value={virtualTourUrl}
-                    onChange={handleVirtualTourChange}
-                  />
-                </div>
-              </div>
+                      </label>
+                      <input
+                        className="form-control"
+                        type="url"
+                        name="virtual_tour_url"
+                        placeholder="Enter Virtual Tour URL"
+                        value={virtualTourUrl}
+                        onChange={handleVirtualTourChange}
+                      />
+                    </div>
+                  </div>
 
-              <div className="col-md-3 mt-2">
-                <button
-                  className="purple-btn2 rounded-3"
-                  style={{ marginTop: "23px" }}
-                  onClick={handleAddVirtualTour}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={26}
-                    height={20}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span> Add</span>
-                </button>
+                  <div className="col-md-3 mt-2">
+                    <button
+                      className="purple-btn2 rounded-3"
+                      style={{ marginTop: "23px" }}
+                      onClick={handleAddVirtualTour}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={26}
+                        height={20}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span> Add</span>
+                    </button>
+                  </div>
+                </div>
+
+                {formData.virtual_tour_url_multiple.length > 0 && (
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container w-100">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>Sr No</th>
+                            <th>Tour Name</th>
+                            <th>Tour URL</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.virtual_tour_url_multiple.map(
+                            (tour, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                {/* Editable Tour Name */}
+                                <td>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    value={tour.virtual_tour_name}
+                                    onChange={(e) =>
+                                      handleEditVirtualTour(
+                                        index,
+                                        "virtual_tour_name",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </td>
+                                {/* Editable Tour URL */}
+                                <td>
+                                  <input
+                                    type="url"
+                                    className="form-control"
+                                    value={tour.virtual_tour_url}
+                                    onChange={(e) =>
+                                      handleEditVirtualTour(
+                                        index,
+                                        "virtual_tour_url",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </td>
+                                {/* Delete Button */}
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDeleteVirtualTour(index)
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-
-            {formData.virtual_tour_url_multiple.length > 0 && (
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container w-100">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>Sr No</th>
-                        <th>Tour Name</th>
-                        <th>Tour URL</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {formData.virtual_tour_url_multiple.map((tour, index) => (
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          {/* Editable Tour Name */}
-                          <td>
-                            <input
-                              type="text"
-                              className="form-control"
-                              value={tour.virtual_tour_name}
-                              onChange={(e) =>
-                                handleEditVirtualTour(
-                                  index,
-                                  "virtual_tour_name",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </td>
-                          {/* Editable Tour URL */}
-                          <td>
-                            <input
-                              type="url"
-                              className="form-control"
-                              value={tour.virtual_tour_url}
-                              onChange={(e) =>
-                                handleEditVirtualTour(
-                                  index,
-                                  "virtual_tour_url",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </td>
-                          {/* Delete Button */}
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handleDeleteVirtualTour(index)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+          </>
+        )}
         <div className="row mt-2 justify-content-center">
           <div className="col-md-2">
             <button
