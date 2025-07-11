@@ -65,6 +65,13 @@ const SignIn = () => {
       return;
     }
 
+     if (!password || password.trim() === "") {
+    // setError("Please enter your password.");
+    toast.error("Please enter your password.");
+    setLoading(false);
+    return;
+  }
+
     try {
       const response = await axios.post(`${baseURL}/users/signin.json`, {
         user: {

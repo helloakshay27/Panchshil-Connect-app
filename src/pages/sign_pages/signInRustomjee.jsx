@@ -42,6 +42,7 @@ const SignInRustomjee = () => {
   const handlePasswordLogin = async (e) => {
     toast.dismiss();
     e.preventDefault();
+    toast.dismiss();
     
     if (loading) return; // Prevent multiple submissions
     
@@ -51,10 +52,18 @@ const SignInRustomjee = () => {
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address.");
+      // setError("Please enter a valid email address.");
+      toast.error("Please enter a valid email address.");
       setLoading(false);
       return;
     }
+
+     if (!password || password.trim() === "") {
+    // setError("Please enter your password.");
+    toast.error("Please enter your password.");
+    setLoading(false);
+    return;
+  }
 
     try {
       const response = await axios.post(`${config.baseURL}/users/signin.json`, {
@@ -90,7 +99,7 @@ const SignInRustomjee = () => {
       }
     } catch (err) {
       toast.error("Login failed. Please check your credentials.", { id: "login-error" });
-      setError("An error occurred during login. Please try again.");
+      // setError("An error occurred during login. Please try again.");
     } finally {
       setLoading(false);
     }
