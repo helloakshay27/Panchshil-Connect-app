@@ -161,6 +161,10 @@ const LockFunctionEdit = () => {
       actionName = "faq_category";
     } else if (value === "FAQ SubCategory") {
       actionName = "faq_subcategory";
+    } else if (value === "Construction Update") {
+      actionName = "construction_update";
+    } else if (value === "User Groups") {
+      actionName = "user_groups";
     }
 
     setFormData({
@@ -274,10 +278,12 @@ const LockFunctionEdit = () => {
     { label: "FAQ", value: "FAQ" },
     { label: "Referral Program", value: "Referral Program" },
     { label: "User Role", value: "User Role" },
+    { label: "User Groups", value: "User Groups" },
     { label: "Lock Function", value: "Lock Function" },
     { label: "Property Type", value: "Property Type" },
     { label: "Project Building", value: "Project Building" },
-    { label: "Construction", value: "Construction" },
+    { label: "Construction Status", value: "Construction Status" },
+    { label: "Construction Update", value: "Construction Update" },
     { label: "Project Config", value: "Project Config" },
     { label: "Amenities", value: "Amenities" },
     { label: "Site Slot", value: "Site Slot" },

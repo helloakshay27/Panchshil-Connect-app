@@ -7,10 +7,12 @@ const SetupSidebar = () => {
 
   const [showUserModuleSidebar, setShowUserModuleSidebar] = useState(false);
   const [userRoleActive, setUserRoleActive] = useState(false);
+   const [userGroupsActive, setUserGroupsActive] = useState(false);
   const [lockFunctionActive, setLockFunctionActive] = useState(false);
   const [propertyTypeActive, setPropertyTypeActive] = useState(false);
   const [projectBuildingActive, setProjectBuildingActive] = useState(false);
   const [constructionActive, setConstructionActive] = useState(false);
+  const [constructionUpdatesActive, setConstructionUpdatesActive] = useState(false);
   const [projectConfigActive, setProjectConfigActive] = useState(false);
   const [amenitiesActive, setAmenitiesActive] = useState(false);
   const [siteSlotActive, setSiteSlotActive] = useState(false);
@@ -28,6 +30,9 @@ const SetupSidebar = () => {
        const UserRolePermission = hasPermission("user_role");
         setUserRoleActive(UserRolePermission);
 
+         const UserGroupsPermission = hasPermission("user_Groups");
+        setUserGroupsActive(UserGroupsPermission);
+
         const lockFunctionPermission = hasPermission("lock_function");
         setLockFunctionActive(lockFunctionPermission);
 
@@ -39,6 +44,9 @@ const SetupSidebar = () => {
 
         const ConstructionPermission = hasPermission("construction");
         setConstructionActive(ConstructionPermission);
+
+        const ConstructionUpdatesPermission = hasPermission("construction_update");
+        setConstructionUpdatesActive(ConstructionUpdatesPermission);
 
         const ProjectConfigPermission = hasPermission("project_config");
         setProjectConfigActive(ProjectConfigPermission);
@@ -168,6 +176,7 @@ const SetupSidebar = () => {
                 </NavLink>
               </li>
             )}
+             {userGroupsActive && (
              <li className="menu-item d-flex">
                 <NavLink
                   to="/setup-member/user-groups-list"
@@ -202,6 +211,7 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">User Groups</span>
                 </NavLink>
               </li>
+             )}
             {lockFunctionActive && (
               <li className="menu-item d-flex">
                 {/* <a
@@ -431,6 +441,8 @@ const SetupSidebar = () => {
                 </NavLink>
               </li>
               )}
+
+               {constructionUpdatesActive && (
                   <li className="menu-item d-flex">
                 {/* <a
                   className="menu-link d-flex"
@@ -488,6 +500,7 @@ const SetupSidebar = () => {
                   </span>
                 </NavLink>
               </li>
+               )}
               {projectConfigActive && (
               <li className="menu-item d-flex">
                 {/* <a
