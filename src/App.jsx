@@ -120,6 +120,10 @@ import FaqCategoryList from "./pages/faq-category-list";
 import FaqSubCategory from "./pages/faq-subcategory";
 import FaqSubCategoryList from "./pages/faq-subcategory-list";
 import ReferralProcess from "./components/Referralcomponent/referral-page";
+import ConstructionUpdates from "./pages/Construction-updates-create";
+import ConstructionUpdatesCreate from "./pages/Construction-updates-create";
+import ConstructionUpdatesEdit from "./pages/Construction-updates-edit";
+import ConstructionUpdatesList from "./pages/Construction-updates-list";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -474,6 +478,12 @@ function App() {
           <Route path="/setup-member/faq-subcategory/create" element={<FaqSubCategory />} />
           <Route path="/setup-member/faq-subcategory/:faqSubId/edit" element={<FaqSubCategory />} />
 
+          <Route path="/setup-member/construction-updates-create" element={<ConstructionUpdatesCreate />} />
+           <Route
+            path="/setup-member/construction-updates-edit/:id"
+            element={<ConstructionUpdatesEdit />}
+          />
+           <Route path="/setup-member/construction-updates-list" element={<ConstructionUpdatesList />} />
 
 
         </Route>
