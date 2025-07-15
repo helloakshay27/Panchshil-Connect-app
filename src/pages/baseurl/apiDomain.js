@@ -11,15 +11,19 @@ switch (hostname) {
     break;
 
   case "uat-connect.panchshil.com":
+    baseURL = "https://uatapi-connect.panchshil.com/";
+    break;
+
+  case "connect.panchshil.com":
     baseURL = "https://api-connect.panchshil.com/";
     break;
 
   case "localhost":
-    baseURL = "https://panchshil-super.lockated.com/"; // fallback
+    baseURL = "https://panchshil-super.lockated.com/"; 
     break;
 
   default:
-    baseURL = "https://api-connect.panchshil.com/"; 
+    baseURL = "https://uatapi-connect.panchshil.com/"; 
     break;
 }
 
