@@ -10,6 +10,7 @@ const PasswordResetSuccess = () => {
   // Panchshil configuration (similar to the one in SignIn component)
   const config = {
     baseURL: "https://api-connect.panchshil.com/",
+    // baseURL: "https://connect.panchshil.com/",
     logoUrl: LOGO_URL,
     loginBgClass: "login_bg",
     loginSecClass: "reset-success-sec",
