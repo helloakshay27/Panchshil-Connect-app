@@ -86,7 +86,7 @@ const Register = () => {
               <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
                 <div
                   className="login-sec"
-                  style={{ padding: "6% 10%" }}
+                  // style={{ padding: "6% 10%" }}
                   id="forgetPasswordContainer"
                 >
                   <img
@@ -105,15 +105,17 @@ const Register = () => {
                       <label className="mb-1 text-white" htmlFor="email">
                         Full Name
                       </label>
+                      <div className="panchshil-password-input">
                       <input
                         type="text"
                         id="email"
-                        className="form-control-panchshil mb-2"
+                        className="panchshil-password-field"
                         placeholder="Enter fullname here..."
                         value={firstname}
                         onChange={(e) => setFirstname(e.target.value)}
                         required
                       />
+                    </div>
                     </div>
                     {/* <div className="form-group position-relative">
                       <label className="mb-1" htmlFor="password">
@@ -133,26 +135,29 @@ const Register = () => {
                       <label className="mb-1 text-white" htmlFor="Email">
                         Email ID
                       </label>
+                       <div className="panchshil-password-input">
                       <input
                         type="Email"
                         id="password"
-                        className="form-control-panchshil mb-2"
+                        className="panchshil-password-field"
                         placeholder="Enter email id here..."
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
+                    </div>
                     <div className="form-group position-relative">
                       <label className="mb-1 text-white" htmlFor="mobile">
                         Mobile Number
                         {/* <span style={{ color: "#de7008" }}> *</span> */}
                       </label>
+                      <div className="panchshil-password-input">
                       <input
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9]{10}"
-                        className="form-control-panchshil mb-2"
+                        className="panchshil-password-field"
                         placeholder="Enter mobile number here..."
                         id="mobile"
                         name="mobile"
@@ -163,11 +168,12 @@ const Register = () => {
                         style={{ appearance: "textfield" }}
                       />
                     </div>
+                    </div>
 
                     {error && <p className="text-danger">{error}</p>}
                     <button
                       type="submit"
-                      className="btn-panchshil btn-danger mt-2"
+                      className="btn-panchshil btn-danger mt-4"
                     >
                       {loading ? "Register in..." : "Register"}
                     </button>

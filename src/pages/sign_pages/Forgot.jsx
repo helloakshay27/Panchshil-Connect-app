@@ -75,7 +75,7 @@ const Forgot = () => {
               <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
                 <div
                   className="login-sec"
-                  style={{ padding: "6% 10%" }}
+                  // style={{ padding: "6% 10%" }}
                   id="forgetPasswordContainer"
                 >
                   <img
@@ -111,9 +111,10 @@ const Forgot = () => {
                       <label className="mb-1 text-white" htmlFor="forgetEmail">
                         Email ID
                       </label>
+                      <div className="panchshil-password-input">
                       <input
                         type="text"
-                        className="form-control-panchshil"
+                        className="panchshil-password-field"
                         id="forgetEmail"
                         placeholder="Enter your registered email id..."
                         value={email || mobile || username}
@@ -124,6 +125,7 @@ const Forgot = () => {
                           setUsername(value);
                         }}
                       />
+                    </div>
                     </div>
                     {/* Error message */}
                     {error && (

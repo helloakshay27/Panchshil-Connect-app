@@ -362,17 +362,19 @@ const SignIn = () => {
           >
             Email ID
           </label>
+          <div className="panchshil-password-input">
 
           <input
             // style={{height:"44px"}}
             type="email"
             id="email"
-            className="form-control-panchshil mb-2"
+            className="panchshil-password-field"
             placeholder="Enter email id here..."
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+          </div>
         </div>
         {/* <div className="form-group position-relative">
           <label
@@ -392,7 +394,7 @@ const SignIn = () => {
             required
           />
         </div> */}
-        <div className="form-group position-relative">
+        {/* <div className="form-group position-relative">
           <label
             className={`mb-1 text-white ${config.formTextColor}`}
             htmlFor="password"
@@ -431,7 +433,38 @@ const SignIn = () => {
               )}
             </button>
           </div>
-        </div>
+        </div> */}
+     <div className="form-group position-relative">
+  <label
+    className={`mb-1 text-white ${config.formTextColor}`}
+    htmlFor="password"
+  >
+    Password
+  </label>
+  <div className="panchshil-password-input">
+    <input
+      type={showPassword ? "text" : "password"}
+      id="password"
+      className="panchshil-password-field"
+      placeholder="Enter password here..."
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+    />
+    <button
+      type="button"
+      className="panchshil-password-toggle"
+      onClick={() => setShowPassword(!showPassword)}
+      aria-label={showPassword ? "Hide password" : "Show password"}
+    >
+      {showPassword ? (
+        <EyeOff size={18} color="var(--red)" />
+      ) : (
+        <Eye size={18} color="var(--red)" />
+      )}
+    </button>
+  </div>
+</div>
         {/* <div className="form-group">
           <label
             className={`mb-1 text-white ${config.formTextColor}`}
@@ -554,10 +587,12 @@ const SignIn = () => {
           >
             Mobile Number
           </label>
+            <div className="panchshil-password-input">
+
           <input
             type="tel"
             id="mobile"
-            className="form-control-panchshil "
+            className="panchshil-password-field"
             placeholder="Enter registered mobile number..."
             value={mobile}
             onChange={(e) => setMobile(e.target.value)}
@@ -571,6 +606,7 @@ const SignIn = () => {
           >
             {loading ? "Sending..." : "SEND OTP"}
           </button>
+        </div>
         </div>
       )}
 
@@ -587,16 +623,18 @@ const SignIn = () => {
             >
               OTP
             </label>
+            <div className="panchshil-password-input">
             <input
               type="text"
               id="otp"
-              className="form-control-panchshil mb-2"
+              className="panchshil-password-field"
               placeholder="Enter 5 digit OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
               maxLength={5}
             />
+          </div>
           </div>
 
           {error && <p className="text-danger">{error}</p>}

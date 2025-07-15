@@ -115,7 +115,7 @@ const CreatePassword = () => {
               <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
                 <div
                   className="login-sec"
-                  style={{ padding: "6% 10%" }}
+                  // style={{ padding: "6% 10%" }}
                   id="forgetPasswordContainer"
                 >
                   <img
@@ -125,7 +125,7 @@ const CreatePassword = () => {
                     alt="Logo"
                   />
                   <form
-                    className="create-new-password-content"
+                    className="otp-content"
                     id="createPasswordForm"
                     onSubmit={handlePasswordReset}
                   >
@@ -150,15 +150,17 @@ const CreatePassword = () => {
                       <label className="mb-1 text-white" htmlFor="newPassword">
                         New Password
                       </label>
+                       <div className="panchshil-password-input">
                       <input
                         type="password"
-                        className="form-control-panchshil"
+                        className="panchshil-password-field"
                         id="newPassword"
                         placeholder="Enter your new password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
                       />
+                    </div>
                     </div>
                     <div className="mark-indicator-rust mb-2">
                       <div className="requirement-item">
@@ -218,15 +220,17 @@ const CreatePassword = () => {
                       >
                         Confirm Password
                       </label>
+                       <div className="panchshil-password-input">
                       <input
                         type="password"
-                        className="form-control-panchshil"
+                        className="panchshil-password-field"
                         id="confirmPassword"
                         placeholder="Confirm your new password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                       />
+                    </div>
                     </div>
 
                     {/* Error message */}

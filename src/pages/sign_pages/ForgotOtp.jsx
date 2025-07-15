@@ -92,7 +92,7 @@ const ForgotOtp = () => {
               <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
                 <div
                   className="login-sec"
-                  style={{ padding: "4% 10%" }}
+                  // style={{ padding: "4% 10%" }}
                   id="forgetPasswordContainer"
                 >
                   <img
@@ -127,15 +127,17 @@ const ForgotOtp = () => {
                       <label className="mb-1 text-white" htmlFor="otp">
                         OTP
                       </label>
+                      <div className="panchshil-password-input">
                       <input
                         type="text"
-                        className="form-control-panchshil"
+                        className="panchshil-password-field"
                         id="otp"
                         placeholder="Enter 5-digit OTP..."
                         value={otp}
                         onChange={handleOtpChange}
                         maxLength={6}
                       />
+                    </div>
                     </div>
                     {error && <p className="text-danger">{error}</p>}
                     {/* Submit button */}
