@@ -409,67 +409,131 @@ const LoginWithOtpRustomjee = () => {
     return () => clearInterval(timer);
   }, [location.search]);
 
+  //   const handleOtpSubmit = async (e) => {
+  //   e.preventDefault();
+  //   toast.dismiss();
+  //   setError("");
+
+  //   if (!otp) {
+  //     setError("Please enter a valid OTP.");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await axios.get(
+  //       `${config.baseURL}/get_otps/verify_otp`,
+  //       {
+  //         params: {
+  //           mobile: mobile,
+  //           otp: otp,
+  //         },
+  //       }
+  //     );
+
+  //     const { otp_valid, message, user, access_token } = response.data;
+
+  //     if (otp_valid) {
+  //       // Store all user data and tokens
+  //       localStorage.setItem("access_token", access_token);
+  //       localStorage.setItem("userData", JSON.stringify(user));
+  //       sessionStorage.setItem("isLoggedIn", "true");
+
+  //       // Store individual fields for easy access
+  //       sessionStorage.setItem("email", user.email);
+  //       sessionStorage.setItem("firstname", user.firstname);
+  //       sessionStorage.setItem("lastname", user.lastname || "");
+  //       sessionStorage.setItem("mobile", user.mobile);
+  //       sessionStorage.setItem("userId", user.id);
+
+  //       toast.success(message || "OTP verified successfully");
+
+  //       // Navigate after a slight delay to ensure state is updated
+  //       setTimeout(() => {
+  //         navigate("/project-list", { replace: true });
+  //       }, 100);
+  //     } else {
+  //       setError(message || "Invalid OTP. Please try again.");
+  //       setOtp(""); // Clear OTP field on failure
+  //     }
+  //   } catch (err) {
+  //     console.error("OTP Verification Error:", err);
+  //     const errorMessage =
+  //       err.response?.data?.message ||
+  //       err.response?.data?.error?.message ||
+  //       "An error occurred while verifying OTP. Please try again.";
+  //     toast.error(errorMessage);
+  //     setError(errorMessage);
+  //     setOtp(""); // Clear OTP field on error
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleOtpSubmit = async (e) => {
-    e.preventDefault();
-    toast.dismiss();
-    setError("");
+  e.preventDefault();
+  toast.dismiss();
+  setError("");
 
-    if (!otp) {
-      setError("Please enter a valid OTP.");
-      return;
-    }
+  const trimmedOtp = otp.trim();
 
-    setLoading(true);
+  if (!trimmedOtp) {
+    setError("Please enter a valid OTP.");
+    return;
+  }
 
-    try {
-      const response = await axios.get(
-        `${config.baseURL}/get_otps/verify_otp`,
-        {
-          params: {
-            mobile: mobile,
-            otp: otp,
-          },
-        }
-      );
+  setLoading(true);
 
-      const { otp_valid, message, user, access_token } = response.data;
-
-      if (otp_valid) {
-        // Store all user data and tokens
-        localStorage.setItem("access_token", access_token);
-        localStorage.setItem("userData", JSON.stringify(user));
-        sessionStorage.setItem("isLoggedIn", "true");
-
-        // Store individual fields for easy access
-        sessionStorage.setItem("email", user.email);
-        sessionStorage.setItem("firstname", user.firstname);
-        sessionStorage.setItem("lastname", user.lastname || "");
-        sessionStorage.setItem("mobile", user.mobile);
-        sessionStorage.setItem("userId", user.id);
-
-        toast.success(message || "OTP verified successfully");
-
-        // Navigate after a slight delay to ensure state is updated
-        setTimeout(() => {
-          navigate("/project-list", { replace: true });
-        }, 100);
-      } else {
-        setError(message || "Invalid OTP. Please try again.");
-        setOtp(""); // Clear OTP field on failure
+  try {
+    const response = await axios.get(
+      `${config.baseURL}/get_otps/verify_otp`,
+      {
+        params: {
+          mobile: mobile,
+          otp: trimmedOtp,
+        },
       }
-    } catch (err) {
-      console.error("OTP Verification Error:", err);
-      const errorMessage =
-        err.response?.data?.message ||
-        err.response?.data?.error?.message ||
-        "An error occurred while verifying OTP. Please try again.";
-      toast.error(errorMessage);
-      setError(errorMessage);
-      setOtp(""); // Clear OTP field on error
-    } finally {
-      setLoading(false);
+    );
+
+    console.log("API Response:", response.data);
+
+    const { verified, message, user, access_token } = response.data;
+
+    if (verified === true) {
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("userData", JSON.stringify(user));
+      sessionStorage.setItem("isLoggedIn", "true");
+
+      sessionStorage.setItem("email", user.email);
+      sessionStorage.setItem("firstname", user.firstname);
+      sessionStorage.setItem("lastname", user.lastname || "");
+      sessionStorage.setItem("mobile", user.mobile);
+      sessionStorage.setItem("userId", user.id);
+
+      toast.success(message || "OTP verified successfully");
+
+      setTimeout(() => {
+        navigate("/project-list", { replace: true });
+      }, 100);
+    } else {
+      setError(message || "Invalid OTP. Please try again.");
+      setOtp("");
     }
-  };
+  } catch (err) {
+    console.error("OTP Verification Error:", err);
+    const errorMessage =
+      err.response?.data?.message ||
+      err.response?.data?.error?.message ||
+      "An error occurred while verifying OTP. Please try again.";
+    toast.error(errorMessage);
+    setError(errorMessage);
+    setOtp("");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleResendOtp = async () => {
     if (!canResend) return;
