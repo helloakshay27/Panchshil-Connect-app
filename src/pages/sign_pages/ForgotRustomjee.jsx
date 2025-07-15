@@ -47,7 +47,7 @@ const ForgotRustomjee = () => {
         {
           params: {
             client: "rustomjee",
-            mobile: mobile,
+            email: email,
           },
         }
       );

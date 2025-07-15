@@ -16,7 +16,7 @@ const Header = () => {
 
   useEffect(() => {
     // Determine which logo to display based on baseURL
-    if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/") {
+    if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/") {
       setCurrentLogo(LOGO_URL);
     } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
       setCurrentLogo(Rustomji_URL_Black);

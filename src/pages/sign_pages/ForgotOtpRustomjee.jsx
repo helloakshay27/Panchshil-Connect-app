@@ -55,34 +55,66 @@ const ForgotOtpRustomjee = () => {
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
+    toast.dismiss();
     setError("");
-    setLoading(true);
-    navigate(
-      `/reset-password?email=${encodeURIComponent(
-        email
-      )}&mobile=${encodeURIComponent(mobile)}`
-    );
 
-    // OTP validation (assuming 6-digit OTP)
-    if (!/^[0-9]{6}$/.test(otp)) {
-      setError("Please enter a valid 6-digit OTP.");
-      setLoading(false);
+    const trimmedOtp = otp.trim();
+
+    if (!trimmedOtp) {
+      setError("Please enter a valid OTP.");
       return;
     }
 
-    try {
-      const response = await axios.post(`${baseURL}verify-otp`, {
-        email,
-        otp,
-      });
+    setLoading(true);
 
-      if (response.data.success) {
-        toast.success("OTP verified successfully");
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/get_otps/verify_otp`,
+        {
+          params: {
+            mobile: mobile,
+            otp: trimmedOtp,
+          },
+        }
+      );
+
+      console.log("API Response:", response.data);
+
+      const { verified, message, user, access_token } = response.data;
+
+      if (verified === true) {
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("userData", JSON.stringify(user));
+        sessionStorage.setItem("isLoggedIn", "true");
+
+        sessionStorage.setItem("email", user.email);
+        sessionStorage.setItem("firstname", user.firstname);
+        sessionStorage.setItem("lastname", user.lastname || "");
+        sessionStorage.setItem("mobile", user.mobile);
+        sessionStorage.setItem("userId", user.id);
+
+        toast.success(message || "OTP verified successfully");
+
+        setTimeout(() => {
+          navigate(
+            `/reset-password?email=${encodeURIComponent(
+              email
+            )}&mobile=${encodeURIComponent(mobile)}`
+          );
+        }, 100);
       } else {
-        setError("Invalid OTP. Please try again.");
+        setError(message || "Invalid OTP. Please try again.");
+        setOtp("");
       }
     } catch (err) {
-      setError("An error occurred while verifying OTP. Please try again.");
+      console.error("OTP Verification Error:", err);
+      const errorMessage =
+        err.response?.data?.error ||
+        err.response?.data?.error?.message ||
+        "An error occurred while verifying OTP. Please try again.";
+      toast.error(errorMessage);
+      setError(errorMessage);
+      setOtp("");
     } finally {
       setLoading(false);
     }
@@ -95,12 +127,17 @@ const ForgotOtpRustomjee = () => {
     setError("");
 
     try {
-      const response = await axios.post(`${baseURL}generate_code`, {
-        email,
-        mobile,
-      });
+      const response = await axios.get(
+        `${config.baseURL}get_otps/generate_otp.json`,
+        {
+          params: {
+            email: email,
+            mobile: mobile,
+          },
+        }
+      );
 
-      if (response.data.success) {
+      if (response.data.message) {
         toast.success("OTP sent again successfully");
         setCountdown(45);
         setCanResend(false);
@@ -120,7 +157,9 @@ const ForgotOtpRustomjee = () => {
         setError(response.data.message || "Something went wrong");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred");
+      setError(
+        err.response?.data?.message || "An error occurred while resending OTP."
+      );
     } finally {
       setLoading(false);
     }
@@ -196,12 +235,23 @@ const ForgotOtpRustomjee = () => {
                   </div>
 
                   <div className="text-center mt-4">
-                    <p className="form-text-muted resend-timer mb-0">
-                      Resend code in{" "}
-                      <span className="resend-time">
-                        {formatTime(countdown)}
-                      </span>
-                    </p>
+                    {canResend ? (
+                      <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        className="btn btn-link p-0"
+                        disabled={loading}
+                      >
+                        <span className="resend-link">Resend OTP</span>
+                      </button>
+                    ) : (
+                      <p className="form-text-muted resend-timer mb-0">
+                        Resend code in{" "}
+                        <span className="resend-time">
+                          {formatTime(countdown)}
+                        </span>
+                      </p>
+                    )}
                   </div>
 
                   <div className="text-center mt-5">
