@@ -4116,7 +4116,8 @@ const ProjectDetailsEdit = () => {
             </div>
           </div>
         </div>
-        {/* RERA Number Section */}
+        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+                  <>
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3 d-flex justify-content-between align-items-center">
             <h3 className="card-title">RERA Number</h3>
@@ -4267,6 +4268,8 @@ const ProjectDetailsEdit = () => {
             )}
           </div>
         </div>
+        </>
+        )}
 
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
@@ -5321,9 +5324,8 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              {(baseURL === "https://api-connect.panchshil.com/" ||
-                baseURL === "https://panchshil-super.lockated.com/") || baseURL === "https://uatapi-connect.panchshil.com/" && (
-                <>
+              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+                  <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
                       Floor Plan{" "}
@@ -5680,9 +5682,8 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
-              {(baseURL === "https://api-connect.panchshil.com/" ||
-                baseURL === "https://panchshil-super.lockated.com/") || baseURL === "https://uatapi-connect.panchshil.com/" && (
-                <>
+             {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+                  <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
                       Project PPT{" "}
@@ -6833,9 +6834,8 @@ const ProjectDetailsEdit = () => {
           </div>
         </div>
 
-        {(baseURL === "https://api-connect.panchshil.com/" ||
-          baseURL === "https://panchshil-super.lockated.com/") || baseURL === "https://uatapi-connect.panchshil.com/" && (
-          <>
+        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+                  <>
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header3 d-flex justify-content-between align-items-center">
                 <h3 className="card-title">Virtual Tour</h3>
