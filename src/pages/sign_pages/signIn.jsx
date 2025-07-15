@@ -31,7 +31,7 @@ const SignIn = () => {
     // baseURL: "http://localhost:3000/",
     baseURL: "https://api-connect.panchshil.com/",
 
-    // baseURL: "https://api-connect.panchshil.com/",
+    // baseURL: "https://connect.panchshil.com/",
     logoUrl: LOGO_URL,
     loginBgClass: "login_bg",
     loginSecClass: "login-sec",
@@ -392,7 +392,7 @@ const SignIn = () => {
             required
           />
         </div> */}
-        {/* <div className="form-group position-relative">
+        <div className="form-group position-relative">
           <label
             className={`mb-1 text-white ${config.formTextColor}`}
             htmlFor="password"
@@ -431,8 +431,8 @@ const SignIn = () => {
               )}
             </button>
           </div>
-        </div> */}
-        <div className="form-group">
+        </div>
+        {/* <div className="form-group">
           <label
             className={`mb-1 text-white ${config.formTextColor}`}
             htmlFor="password"
@@ -461,7 +461,7 @@ const SignIn = () => {
               )}
             </button>
           </div>
-        </div>
+        </div> */}
         <div className="d-flex justify-content-end mt-2 mb-3 gap-2">
           <a className="rustomjee-forget-btn" href="/forgot-password">
             Forgot password?
