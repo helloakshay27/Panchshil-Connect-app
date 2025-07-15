@@ -119,7 +119,7 @@ const CreatePassword = () => {
                   id="forgetPasswordContainer"
                 >
                   <img
-                    className="logo_img mb-2"
+                    className="logo_img"
                     style={config.logoStyle}
                     src={config.logoUrl}
                     alt="Logo"

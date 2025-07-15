@@ -79,7 +79,7 @@ const Forgot = () => {
                   id="forgetPasswordContainer"
                 >
                   <img
-                    className="logo_img mb-5"
+                    className="logo_img"
                     style={config.logoStyle}
                     src={config.logoUrl}
                     alt="Logo"

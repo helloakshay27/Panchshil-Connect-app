@@ -65,12 +65,12 @@ const SignIn = () => {
       return;
     }
 
-     if (!password || password.trim() === "") {
-    // setError("Please enter your password.");
-    toast.error("Please enter your password.");
-    setLoading(false);
-    return;
-  }
+    if (!password || password.trim() === "") {
+      // setError("Please enter your password.");
+      toast.error("Please enter your password.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await axios.post(`${baseURL}/users/signin.json`, {
@@ -392,7 +392,7 @@ const SignIn = () => {
             required
           />
         </div> */}
-        <div className="form-group position-relative">
+        {/* <div className="form-group position-relative">
           <label
             className={`mb-1 text-white ${config.formTextColor}`}
             htmlFor="password"
@@ -426,6 +426,36 @@ const SignIn = () => {
             >
               {showPassword ? (
                 <EyeOff size={18} color="var(--red)" /> // orange-red color as per screenshot
+              ) : (
+                <Eye size={18} color="var(--red)" />
+              )}
+            </button>
+          </div>
+        </div> */}
+        <div className="form-group">
+          <label
+            className={`mb-1 text-white ${config.formTextColor}`}
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <div className="password-toggle-container">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              className="form-control-panchshil"
+              placeholder="Enter password here..."
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOff size={18} color="var(--red)" />
               ) : (
                 <Eye size={18} color="var(--red)" />
               )}

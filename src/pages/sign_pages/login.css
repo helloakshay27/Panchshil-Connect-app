@@ -459,16 +459,17 @@ h2 {
   /* border-radius: 5px; */
 }
 
-.form-control-panchshil {
+/* .form-control-panchshil {
   width: -webkit-fill-available;
   padding: 0.375rem 0.75rem !important;
   font-size: 16px;
   border: 1px solid #ccc;
-  /* border-radius: 5px; */
   align-items: center;
   max-width: 400px;
   height: 44px;
-}
+} */
+
+
 
 /* Style for the checkbox */
 
@@ -1231,6 +1232,91 @@ input#confirmPassword {
   .logo_img {
     width: 80px !important;
     height: 80px !important;
+  }
+}
+
+/* ========== FIREFOX FIXES & CONSISTENT INPUT STYLING ========== */
+/* Reset for Firefox input styling */
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="text"] {
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  padding: 0.375rem 0.75rem;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #495057;
+  width: 100%;
+  height: 44px;
+  box-shadow: none;
+}
+
+/* Focus state for Firefox */
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Updated Panchshil form controls */
+.form-control-panchshil {
+  width: 100%;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  height: 44px;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  max-width: 400px; /* Keep your max-width if needed */
+}
+
+/* New password toggle container */
+.password-toggle-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px; /* Match your input width */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Firefox-specific fixes */
+@-moz-document url-prefix() {
+  .form-control-panchshil {
+    padding: 10px 12px !important;
+  }
+  
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="text"] {
+    padding: 10px 12px;
+  }
+  
+  /* Additional Firefox-specific fixes if needed */
+  .password-toggle {
+    right: 12px;
   }
 }
 
