@@ -7,7 +7,7 @@ const Footer = () => {
   let logoStyle = { height: "35px" };
   if (
     domain === "https://panchshil-super.lockated.com/" ||
-    domain === "https://api-connect.panchshil.com/" || domain === "http://localhost:3000/"
+    domain === "https://api-connect.panchshil.com/" || domain === "https://uatapi-connect.panchshil.com/"
   ) {
     logoUrl =
       "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
