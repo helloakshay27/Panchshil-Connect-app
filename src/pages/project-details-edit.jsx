@@ -5322,7 +5322,7 @@ const ProjectDetailsEdit = () => {
               </div>
 
               {(baseURL === "https://api-connect.panchshil.com/" ||
-                baseURL === "https://panchshil-super.lockated.com/") && (
+                baseURL === "https://panchshil-super.lockated.com/") || baseURL === "https://uatapi-connect.panchshil.com/" && (
                 <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
@@ -5681,7 +5681,7 @@ const ProjectDetailsEdit = () => {
               </div>
 
               {(baseURL === "https://api-connect.panchshil.com/" ||
-                baseURL === "https://panchshil-super.lockated.com/") && (
+                baseURL === "https://panchshil-super.lockated.com/") || baseURL === "https://uatapi-connect.panchshil.com/" && (
                 <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
@@ -6834,7 +6834,7 @@ const ProjectDetailsEdit = () => {
         </div>
 
         {(baseURL === "https://api-connect.panchshil.com/" ||
-          baseURL === "https://panchshil-super.lockated.com/") && (
+          baseURL === "https://panchshil-super.lockated.com/") || baseURL === "https://uatapi-connect.panchshil.com/" && (
           <>
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header3 d-flex justify-content-between align-items-center">
