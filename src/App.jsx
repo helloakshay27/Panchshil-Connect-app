@@ -124,6 +124,8 @@ import ConstructionUpdates from "./pages/Construction-updates-create";
 import ConstructionUpdatesCreate from "./pages/Construction-updates-create";
 import ConstructionUpdatesEdit from "./pages/Construction-updates-edit";
 import ConstructionUpdatesList from "./pages/Construction-updates-list";
+import ServiceCategoryForm from "./pages/service-category";
+import ServiceCategoryList from "./pages/service-category-list";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -485,6 +487,9 @@ function App() {
           />
            <Route path="/setup-member/construction-updates-list" element={<ConstructionUpdatesList />} />
 
+           <Route path="/setup-member/service-category/create" element={<ServiceCategoryForm />} />
+          <Route path="/setup-member/service-category/:serviceId/edit" element={<ServiceCategoryForm />} />
+          <Route path="/setup-member/service-category-list" element={<ServiceCategoryList />} />
 
         </Route>
       </Routes>

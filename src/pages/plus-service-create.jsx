@@ -7,6 +7,7 @@ import { baseURL } from "./baseurl/apiDomain";
 
 const PlusServiceCreate = () => {
   const [projects, setProjects] = useState([]);
+  const [services, setServices] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [loading, setLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -15,6 +16,7 @@ const PlusServiceCreate = () => {
     name: "",
     description: "",
     attachment: null,
+    service_category_id: "",
   });
 
   console.log("formData", serviceData);
@@ -41,6 +43,28 @@ const PlusServiceCreate = () => {
     };
 
     fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        const response = await axios.get(`${baseURL}service_categories.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+        setServices(response.data || []);
+      } catch (error) {
+        console.error(
+          "Error fetching services:",
+          error.response?.data || error.message
+        );
+        toast.error("Failed to load projects");
+      }
+    };
+
+    fetchService();
   }, []);
 
   const handleInputChange = (e) => {
@@ -73,7 +97,7 @@ const PlusServiceCreate = () => {
       return;
     }
 
-    const maxSize = 3 * 1024 * 1024; // 3MB
+    const maxSize = 3 * 1024 * 1024;
     if (file.size > maxSize) {
       toast.error("Image must be less than 3MB.");
       e.target.value = "";
@@ -114,16 +138,17 @@ const PlusServiceCreate = () => {
     try {
       const formData = new FormData();
 
-      // Add plus_service data (matching the desired JSON structure)
       formData.append("plus_service[name]", serviceData.name);
       formData.append("plus_service[description]", serviceData.description);
+      formData.append(
+        "plus_service[service_category_id]",
+        serviceData.service_category_id
+      );
 
-      // Add single attachment if present
       if (serviceData.attachment) {
         formData.append("plus_service[attachment]", serviceData.attachment);
       }
 
-      // API call to plus_services endpoint
       const response = await axios.post(
         `${baseURL}plus_services.json`,
         formData,
@@ -136,7 +161,6 @@ const PlusServiceCreate = () => {
 
       toast.success("Plus Service created successfully!");
 
-      // Reset form
       setServiceData({
         name: "",
         description: "",
@@ -144,7 +168,6 @@ const PlusServiceCreate = () => {
       });
       setSelectedProjectId("");
 
-      // Clear file input
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput) fileInput.value = "";
 
@@ -182,7 +205,6 @@ const PlusServiceCreate = () => {
             </div>
             <div className="card-body">
               <div className="row">
-                {/* Service Name Field */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -200,7 +222,6 @@ const PlusServiceCreate = () => {
                   </div>
                 </div>
 
-                {/* Description Field */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -218,7 +239,27 @@ const PlusServiceCreate = () => {
                   </div>
                 </div>
 
-                {/* Single Image Field */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Service Category<span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={services.map((service) => ({
+                        label: service.service_cat_name,
+                        value: service.id,
+                      }))}
+                      value={serviceData.service_category_id}
+                      onChange={(value) =>
+                        setServiceData({
+                          ...serviceData,
+                          service_category_id: value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
                 <div className="col-md-3 mt-1">
                   <div className="form-group">
                     <label>
@@ -244,7 +285,6 @@ const PlusServiceCreate = () => {
                       onChange={handleImageChange}
                     />
 
-                    {/* Image Preview */}
                     {serviceData.attachment && (
                       <div className="mt-3">
                         <div className="position-relative d-inline-block">
@@ -294,7 +334,6 @@ const PlusServiceCreate = () => {
             </div>
           </div>
 
-          {/* Submit and Cancel Buttons */}
           <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
               <button

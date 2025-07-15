@@ -3,80 +3,107 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import SelectBox from "../components/base/SelectBox";
 
 const PlusServiceEdit = () => {
-  const { id } = useParams(); // Get ID from URL parameters
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [services, setServices] = useState([]);
 
   const [serviceData, setServiceData] = useState({
     name: "",
     description: "",
     attachment: null,
-    existingImageUrl: "", // To store existing image URL
+    service_category_id: "",
+    existingImageUrl: "",
   });
 
-  const [imageChanged, setImageChanged] = useState(false); // Track if image was changed
+  const [imageChanged, setImageChanged] = useState(false);
 
   console.log("formData", serviceData);
 
   const navigate = useNavigate();
 
-  // Fetch existing plus service data
- useEffect(() => {
-  const fetchPlusService = async () => {
-    if (!id) {
-      toast.error("Service ID is required");
-      navigate("/setup-member/plus-services-list");
-      return;
-    }
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        const response = await axios.get(`${baseURL}service_categories.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+        setServices(response.data || []);
+      } catch (error) {
+        console.error(
+          "Error fetching services:",
+          error.response?.data || error.message
+        );
+        toast.error("Failed to load projects");
+      }
+    };
 
-    try {
-      setFetchLoading(true);
-      const response = await axios.get(`${baseURL}plus_services/${id}.json`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "application/json",
-        },
-      });
+    fetchService();
+  }, []);
 
-      const serviceInfo = response.data.plus_service || response.data;
-
-      // Find the correct image URL from the attachment object if present
-      let existingImageUrl = "";
-      if (serviceInfo.attachment && (serviceInfo.attachment.document_url || serviceInfo.attachment.url)) {
-        existingImageUrl = serviceInfo.attachment.document_url || serviceInfo.attachment.url;
-      } else if (serviceInfo.attachment_url) {
-        existingImageUrl = serviceInfo.attachment_url;
-      } else if (serviceInfo.image_url) {
-        existingImageUrl = serviceInfo.image_url;
+  useEffect(() => {
+    const fetchPlusService = async () => {
+      if (!id) {
+        toast.error("Service ID is required");
+        navigate("/setup-member/plus-services-list");
+        return;
       }
 
-      setServiceData({
-        name: serviceInfo.name || "",
-        description: serviceInfo.description || "",
-        attachment: null,
-        existingImageUrl: existingImageUrl,
-      });
+      try {
+        setFetchLoading(true);
+        const response = await axios.get(`${baseURL}plus_services/${id}.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-    } catch (error) {
-      console.error("Error fetching plus service:", error);
+        const serviceInfo = response.data.plus_service || response.data;
 
-      if (error.response?.status === 404) {
-        toast.error("Plus service not found");
-      } else {
-        toast.error("Failed to load plus service data");
+        let existingImageUrl = "";
+        if (
+          serviceInfo.attachment &&
+          (serviceInfo.attachment.document_url || serviceInfo.attachment.url)
+        ) {
+          existingImageUrl =
+            serviceInfo.attachment.document_url || serviceInfo.attachment.url;
+        } else if (serviceInfo.attachment_url) {
+          existingImageUrl = serviceInfo.attachment_url;
+        } else if (serviceInfo.image_url) {
+          existingImageUrl = serviceInfo.image_url;
+        }
+
+        setServiceData({
+          name: serviceInfo.name || "",
+          description: serviceInfo.description || "",
+          attachment: null,
+          existingImageUrl: existingImageUrl,
+          service_category_id: serviceInfo.service_category_id || "",
+        });
+      } catch (error) {
+        console.error("Error fetching plus service:", error);
+
+        if (error.response?.status === 404) {
+          toast.error("Plus service not found");
+        } else {
+          toast.error("Failed to load plus service data");
+        }
+
+        navigate("/plus-services-list");
+      } finally {
+        setFetchLoading(false);
       }
+    };
 
-      navigate("/plus-services-list");
-    } finally {
-      setFetchLoading(false);
-    }
-  };
-
-  fetchPlusService();
-}, [id, navigate]);
+    fetchPlusService();
+  }, [id, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -90,7 +117,6 @@ const PlusServiceEdit = () => {
     const file = e.target.files[0];
 
     if (!file) {
-      // If no file selected, revert to existing image
       setServiceData((prev) => ({ ...prev, attachment: null }));
       setImageChanged(false);
       return;
@@ -110,7 +136,7 @@ const PlusServiceEdit = () => {
       return;
     }
 
-    const maxSize = 3 * 1024 * 1024; // 3MB
+    const maxSize = 3 * 1024 * 1024;
     if (file.size > maxSize) {
       toast.error("Image must be less than 3MB.");
       e.target.value = "";
@@ -129,12 +155,12 @@ const PlusServiceEdit = () => {
   };
 
   const removeExistingImage = () => {
-    setServiceData((prev) => ({ 
-      ...prev, 
+    setServiceData((prev) => ({
+      ...prev,
       attachment: null,
-      existingImageUrl: "" 
+      existingImageUrl: "",
     }));
-    setImageChanged(true); // Mark as changed to send empty attachment
+    setImageChanged(true);
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = "";
   };
@@ -164,31 +190,33 @@ const PlusServiceEdit = () => {
     try {
       const formData = new FormData();
 
-      // Add plus_service data
       formData.append("plus_service[name]", serviceData.name);
       formData.append("plus_service[description]", serviceData.description);
+      formData.append(
+        "plus_service[service_category_id]",
+        serviceData.service_category_id
+      );
 
-      // Only append attachment if image was changed
       if (imageChanged) {
         if (serviceData.attachment) {
-          // New image selected
           formData.append("plus_service[attachment]", serviceData.attachment);
         } else {
-          // Image was removed - send empty attachment
           formData.append("plus_service[attachment]", "");
         }
       }
 
-      // API call to update plus_service
-      const response = await axios.patch(`${baseURL}plus_services/${id}.json`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
+      const response = await axios.patch(
+        `${baseURL}plus_services/${id}.json`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
 
       toast.success("Plus Service updated successfully!");
       navigate("/setup-member/plus-services-list");
-
     } catch (error) {
       console.error("Error updating plus service:", error);
 
@@ -212,17 +240,6 @@ const PlusServiceEdit = () => {
     navigate("/setup-member/plus-services-list");
   };
 
-  // Show loading while fetching data
-  // if (fetchLoading) {
-  //   return (
-  //     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
-  //       <div className="spinner-border" role="status">
-  //         <span className="sr-only">Loading...</span>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="">
       <div className="module-data-section p-3">
@@ -233,7 +250,6 @@ const PlusServiceEdit = () => {
             </div>
             <div className="card-body">
               <div className="row">
-                {/* Service Name Field */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -251,7 +267,6 @@ const PlusServiceEdit = () => {
                   </div>
                 </div>
 
-                {/* Description Field */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
@@ -269,8 +284,28 @@ const PlusServiceEdit = () => {
                   </div>
                 </div>
 
-                {/* Image Field */}
-                <div className="col-md-3 mt-1">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Service Category<span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={services.map((service) => ({
+                        label: service.service_cat_name,
+                        value: service.id,
+                      }))}
+                      defaultValue={serviceData.service_category_id}
+                      onChange={(value) =>
+                        setServiceData({
+                          ...serviceData,
+                          service_category_id: value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
                   <div className="form-group">
                     <label>
                       Service Image{" "}
@@ -282,7 +317,8 @@ const PlusServiceEdit = () => {
                         [i]
                         {showTooltip && (
                           <span className="tooltip-text">
-                            Single image, max 3MB. Upload new image to replace existing one.
+                            Single image, max 3MB. Upload new image to replace
+                            existing one.
                           </span>
                         )}
                       </span>
@@ -295,9 +331,7 @@ const PlusServiceEdit = () => {
                       onChange={handleImageChange}
                     />
 
-                    {/* Image Preview */}
                     <div className="mt-3">
-                      {/* Show new image if selected */}
                       {serviceData.attachment && imageChanged ? (
                         <div className="position-relative d-inline-block">
                           <img
@@ -338,7 +372,6 @@ const PlusServiceEdit = () => {
                           </div> */}
                         </div>
                       ) : (
-                        /* Show existing image if no new image selected */
                         serviceData.existingImageUrl && (
                           <div className="position-relative d-inline-block">
                             <img
@@ -375,12 +408,14 @@ const PlusServiceEdit = () => {
                         )
                       )}
 
-                      {/* Show message if no image */}
-                      {!serviceData.attachment && !serviceData.existingImageUrl && (
-                        <div className="text-center p-3 border border-dashed">
-                          <small className="text-muted">No image selected</small>
-                        </div>
-                      )}
+                      {!serviceData.attachment &&
+                        !serviceData.existingImageUrl && (
+                          <div className="text-center p-3 border border-dashed">
+                            <small className="text-muted">
+                              No image selected
+                            </small>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -388,7 +423,6 @@ const PlusServiceEdit = () => {
             </div>
           </div>
 
-          {/* Submit and Cancel Buttons */}
           <div className="row mt-2 justify-content-center">
             <div className="col-md-2">
               <button
@@ -396,7 +430,7 @@ const PlusServiceEdit = () => {
                 className="purple-btn2 purple-btn2-shadow w-100"
                 disabled={loading}
               >
-                {loading ? "Updating..." : "Update"}
+                {loading ? "Submitting..." : "Submit"}
               </button>
             </div>
             <div className="col-md-2">
