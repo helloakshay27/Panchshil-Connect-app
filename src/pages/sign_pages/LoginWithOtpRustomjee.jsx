@@ -523,7 +523,7 @@ const LoginWithOtpRustomjee = () => {
   } catch (err) {
     console.error("OTP Verification Error:", err);
     const errorMessage =
-      err.response?.data?.message ||
+      err.response?.data?.error ||
       err.response?.data?.error?.message ||
       "An error occurred while verifying OTP. Please try again.";
     toast.error(errorMessage);
@@ -650,10 +650,10 @@ const LoginWithOtpRustomjee = () => {
                       <button
                         type="button"
                         onClick={handleResendOtp}
-                        className="btn btn-link p-0"
+                        className="btn btn-link p-0 text-white"
                         disabled={loading}
                       >
-                        <span className="resend-link">Resend OTP</span>
+                        <span className="back-login-link">Resend OTP</span>
                       </button>
                     ) : (
                       <p className="form-text-muted resend-timer mb-0">

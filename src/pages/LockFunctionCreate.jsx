@@ -210,6 +210,8 @@ const LockFunctionCreate = () => {
       actionName = "construction_update";
     } else if (value === "User Groups") {
       actionName = "user_groups";
+    } else if (value === "Service Category") {
+      actionName = "service_category";
     }
 
     setFormData({
@@ -286,6 +288,10 @@ const LockFunctionCreate = () => {
                           {
                             label: "FAQ SubCategory",
                             value: "FAQ SubCategory",
+                          },
+                            {
+                            label: "Service Category",
+                            value: "Service Category",
                           },
                           // Add more if needed
                         ]}

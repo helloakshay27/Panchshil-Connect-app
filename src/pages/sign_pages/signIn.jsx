@@ -302,9 +302,9 @@ const SignIn = () => {
         }
       );
 
-      const { otp_valid, message, user, access_token } = response.data;
+      const { verified, message, user, access_token } = response.data;
 
-      if (otp_valid) {
+      if (verified) {
         // Store all user data and tokens
         localStorage.setItem("access_token", access_token);
         localStorage.setItem("userData", JSON.stringify(user));
@@ -632,7 +632,7 @@ const SignIn = () => {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
-              maxLength={5}
+              maxLength={6}
             />
           </div>
           </div>

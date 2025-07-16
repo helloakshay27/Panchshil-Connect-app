@@ -165,6 +165,8 @@ const LockFunctionEdit = () => {
       actionName = "construction_update";
     } else if (value === "User Groups") {
       actionName = "user_groups";
+    } else if (value === "Service Category") {
+      actionName = "service_category";
     }
 
     setFormData({
@@ -292,6 +294,10 @@ const LockFunctionEdit = () => {
     { label: "SMTP Settings", value: "SMTP Settings" },
     { label: "FAQ Category", value: "FAQ Category" },
     { label: "FAQ SubCategory", value: "FAQ SubCategory" },
+     {
+                            label: "Service Category",
+                            value: "Service Category",
+                          },
   ];
 
   return (

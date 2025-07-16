@@ -21,6 +21,7 @@ const SetupSidebar = () => {
    const [smtpSettingsActive, setSmtpSettingsActive] = useState(false);
    const [faqCategoryActive, setFaqCategoryActive] = useState(false);
    const [faqSubCategoryActive, setFaqSubCategoryActive] = useState(false);
+   const [serviceCategoryActive, setServiceCategoryActive] = useState(false);
 
 
   useEffect(() => {
@@ -72,6 +73,8 @@ const SetupSidebar = () => {
         const FaqSubCategoryPermission = hasPermission("faq_subcategory");
         setFaqSubCategoryActive(FaqSubCategoryPermission);
 
+        const ServiceCategoryPermission = hasPermission("service_category");
+        setServiceCategoryActive(ServiceCategoryPermission);
 
     }, []);
 
@@ -839,6 +842,40 @@ const SetupSidebar = () => {
                     </g>
                   </svg>
                   <span className="menu-link-text">FAQ SubCategory </span>
+                </NavLink>
+              </li>
+                  )}
+                  {serviceCategoryActive && (
+                    <li className="menu-item d-flex">
+                      <NavLink
+                        to="/setup-member/service-category-list"
+                        style={{ flexDirection: "column" }}
+                  className={({ isActive }) =>
+                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.0"
+                    width="72.000000pt"
+                    height="72.000000pt"
+                    viewBox="0 0 72.000000 72.000000"
+                    preserveAspectRatio="xMidYMid meet"
+                  >
+                    <metadata>
+                      Created by potrace 1.10, written by Peter Selinger
+                      2001-2011
+                    </metadata>
+                    <g
+                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                      fill="#000000"
+                      stroke="none"
+                    >
+                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                    </g>
+                  </svg>
+                  <span className="menu-link-text">Service Category </span>
                 </NavLink>
               </li>
                   )}

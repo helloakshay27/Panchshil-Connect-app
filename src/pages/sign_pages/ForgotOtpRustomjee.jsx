@@ -239,10 +239,10 @@ const ForgotOtpRustomjee = () => {
                       <button
                         type="button"
                         onClick={handleResendOtp}
-                        className="btn btn-link p-0"
+                        className="btn btn-link p-0 text-white"
                         disabled={loading}
                       >
-                        <span className="resend-link">Resend OTP</span>
+                        <span className="back-login-link">Resend OTP</span>
                       </button>
                     ) : (
                       <p className="form-text-muted resend-timer mb-0">
