@@ -167,7 +167,9 @@ const LockFunctionEdit = () => {
       actionName = "user_groups";
     } else if (value === "Service Category") {
       actionName = "service_category";
-    }
+    } else if (value === "Image Config") {
+      actionName = "image_config";  
+    }  
 
     setFormData({
       ...formData,
@@ -298,6 +300,7 @@ const LockFunctionEdit = () => {
                             label: "Service Category",
                             value: "Service Category",
                           },
+      { label: "Image Config", value: "Image Config" },
   ];
 
   return (

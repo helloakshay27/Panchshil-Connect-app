@@ -4918,6 +4918,7 @@ const ProjectDetailsEdit = () => {
                               }
                             />
                           </td>
+                          <td>N/A</td>
                           <td>
                             <button
                               type="button"
