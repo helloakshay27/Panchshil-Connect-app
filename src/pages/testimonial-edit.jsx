@@ -323,17 +323,17 @@ const TestimonialEdit = () => {
     if (isSubmitting) return;
     // Optional: Add validation here if needed
 
-    const testimonial16by9 = formData.preview_image_16_by_9;;
-    const hasTestimonial16by9 = Array.isArray(testimonial16by9)
-      ? testimonial16by9.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
-      : !!(testimonial16by9?.file instanceof File || testimonial16by9?.id || testimonial16by9?.document_file_name);
+    // const testimonial16by9 = formData.preview_image_16_by_9;;
+    // const hasTestimonial16by9 = Array.isArray(testimonial16by9)
+    //   ? testimonial16by9.some(img => img?.file instanceof File || img?.id || img?.document_file_name)
+    //   : !!(testimonial16by9?.file instanceof File || testimonial16by9?.id || testimonial16by9?.document_file_name);
 
-    if (!hasTestimonial16by9) {
-      toast.error("Please upload at least one 16:9 preview image.");
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    // if (!hasTestimonial16by9) {
+    //   toast.error("Please upload at least one 16:9 preview image.");
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
 
     setLoading(true);

@@ -435,27 +435,27 @@ const EventCreate = () => {
     setLoading(true);
     toast.dismiss();
 
-    const hasProjectBanner1by1 =
-      formData.cover_image_16_by_9 &&
-      formData.cover_image_16_by_9.some((img) => img.file instanceof File);
+    // const hasProjectBanner1by1 =
+    //   formData.cover_image_16_by_9 &&
+    //   formData.cover_image_16_by_9.some((img) => img.file instanceof File);
 
-    const hasEventBanner1by1 =
-      formData.event_images_16_by_9 &&
-      formData.event_images_16_by_9.some((img) => img.file instanceof File);
+    // const hasEventBanner1by1 =
+    //   formData.event_images_16_by_9 &&
+    //   formData.event_images_16_by_9.some((img) => img.file instanceof File);
 
-    if (!hasProjectBanner1by1) {
-      toast.error("Cover Image with 16:9 ratio is required.");
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    // if (!hasProjectBanner1by1) {
+    //   toast.error("Cover Image with 16:9 ratio is required.");
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
-    if (!hasEventBanner1by1) {
-      toast.error("Event Image with 16:9 ratio is required.");
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    // if (!hasEventBanner1by1) {
+    //   toast.error("Event Image with 16:9 ratio is required.");
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
     const preparedReminders = prepareRemindersForSubmission();
 

@@ -816,43 +816,43 @@ const EventEdit = () => {
     if (!validateForm()) return;
     setLoading(true);
 
-    const cover16by9 = formData.cover_image_16_by_9;
-    const hasCover16by9 = Array.isArray(cover16by9)
-      ? cover16by9.some(
-          (img) =>
-            img?.file instanceof File || img?.id || img?.document_file_name
-        )
-      : !!(
-          cover16by9?.file instanceof File ||
-          cover16by9?.id ||
-          cover16by9?.document_file_name
-        );
+    // const cover16by9 = formData.cover_image_16_by_9;
+    // const hasCover16by9 = Array.isArray(cover16by9)
+    //   ? cover16by9.some(
+    //       (img) =>
+    //         img?.file instanceof File || img?.id || img?.document_file_name
+    //     )
+    //   : !!(
+    //       cover16by9?.file instanceof File ||
+    //       cover16by9?.id ||
+    //       cover16by9?.document_file_name
+    //     );
 
-    const event16by9 = formData.event_images_16_by_9;
-    const hasEvent16by9 = Array.isArray(event16by9)
-      ? event16by9.some(
-          (img) =>
-            img?.file instanceof File || img?.id || img?.document_file_name
-        )
-      : !!(
-          event16by9?.file instanceof File ||
-          event16by9?.id ||
-          event16by9?.document_file_name
-        );
+    // const event16by9 = formData.event_images_16_by_9;
+    // const hasEvent16by9 = Array.isArray(event16by9)
+    //   ? event16by9.some(
+    //       (img) =>
+    //         img?.file instanceof File || img?.id || img?.document_file_name
+    //     )
+    //   : !!(
+    //       event16by9?.file instanceof File ||
+    //       event16by9?.id ||
+    //       event16by9?.document_file_name
+    //     );
 
-    if (!hasCover16by9) {
-      toast.error("Cover Image with 16:9 ratio is required.");
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    // if (!hasCover16by9) {
+    //   toast.error("Cover Image with 16:9 ratio is required.");
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
-    if (!hasEvent16by9) {
-      toast.error("Event Image with 16:9 ratio is required.");
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    // if (!hasEvent16by9) {
+    //   toast.error("Event Image with 16:9 ratio is required.");
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
     const data = new FormData();
 

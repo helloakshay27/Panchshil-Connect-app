@@ -283,17 +283,17 @@ const BannerAdd = () => {
     e.preventDefault();
     if (isSubmitting) return;
 
-    const banner1by1 = formData.banner_video_1_by_1;
-    const hasProjectBanner1by1 = Array.isArray(banner1by1)
-      ? banner1by1.some((img) => img?.file instanceof File)
-      : !!(banner1by1?.file instanceof File);
+    // const banner1by1 = formData.banner_video_1_by_1;
+    // const hasProjectBanner1by1 = Array.isArray(banner1by1)
+    //   ? banner1by1.some((img) => img?.file instanceof File)
+    //   : !!(banner1by1?.file instanceof File);
 
-    if (!hasProjectBanner1by1) {
-      toast.error("Banner Attachment with 1:1 ratio is required.");
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    // if (!hasProjectBanner1by1) {
+    //   toast.error("Banner Attachment with 1:1 ratio is required.");
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
     if (!validateForm()) {
       setLoading(false);

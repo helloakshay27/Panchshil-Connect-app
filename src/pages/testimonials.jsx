@@ -290,22 +290,22 @@ const handleCropComplete = (validImages) => {
     setLoading(true);
     toast.dismiss();
 
-    const hasProjectBanner1by1 = formData.preview_image_16_by_9
-    && formData.preview_image_16_by_9.some(img => img.file instanceof File);
+    // const hasProjectBanner1by1 = formData.preview_image_16_by_9
+    // && formData.preview_image_16_by_9.some(img => img.file instanceof File);
 
-    if (!hasProjectBanner1by1) {
-      toast.error("Preview Image with 16:9 ratio is required.");
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    // if (!hasProjectBanner1by1) {
+    //   toast.error("Preview Image with 16:9 ratio is required.");
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
-    const validationErrors = validateForm();
-    if (validationErrors.length > 0) {
-      validationErrors.forEach((error) => toast.error(error));
-      setLoading(false);
-      return;
-    }
+    // const validationErrors = validateForm();
+    // if (validationErrors.length > 0) {
+    //   validationErrors.forEach((error) => toast.error(error));
+    //   setLoading(false);
+    //   return;
+    // }
 
     const form = new FormData();
     form.append("testimonial[user_name]", userName.trim());
