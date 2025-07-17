@@ -211,7 +211,7 @@ const SiteVisitSlotConfigList = () => {
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/setup-member/siteslot-create")}
+                onClick={() => navigate("/setup-member/visitslot-create")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -231,7 +231,7 @@ const SiteVisitSlotConfigList = () => {
 
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header">
-              <h3 className="card-title">Site Slot List</h3>
+              <h3 className="card-title">Visit Slot List</h3>
             </div>
             <div className="card-body mt-3 pb-4 pt-0">
               {loading ? (

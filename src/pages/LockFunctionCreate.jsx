@@ -194,8 +194,8 @@ const LockFunctionCreate = () => {
       actionName = "project_config";
     } else if (value === "Amenities") {
       actionName = "amenities";
-    } else if (value === "Site Slot") {
-      actionName = "site_slot";
+    } else if (value === "Visit Slot") {
+      actionName = "visit_slot";
     } else if (value === "TDS Tutorials") {
       actionName = "tds_tutorials";
     } else if (value === "Plus Services") {
@@ -282,7 +282,7 @@ const LockFunctionCreate = () => {
                           { label: "Construction Update", value: "Construction Update" },
                           { label: "Project Config", value: "Project Config" },
                           { label: "Amenities", value: "Amenities" },
-                          { label: "Site Slot", value: "Site Slot" },
+                          { label: "Visit Slot", value: "Visit Slot" },
                           { label: "TDS Tutorials", value: "TDS Tutorials" },
                           { label: "Plus Services", value: "Plus Services" },
                           { label: "SMTP Settings", value: "SMTP Settings" },

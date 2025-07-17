@@ -311,9 +311,7 @@ function App() {
           <Route path="/sitevisit-create" element={<SitevisitCreate />} />
           <Route path="/sitevisit-list" element={<SitevisitList />} />
           <Route path="/sitevisit-edit/:id" element={<SitevisitEdit />} />
-          <Route path="/department-create" element={<DepartmentCreate />} />
-          <Route path="/department-list" element={<DepartmentList />} />
-          <Route path="/department-edit/:id" element={<DepartmentEdit />} />
+        
           <Route path="/site-create" element={<SiteCreate />} />
           <Route path="/site-list" element={<SiteList />} />
           <Route path="/site-edit/:id" element={<SiteEdit />} />
@@ -323,11 +321,11 @@ function App() {
           <Route path="/referral-program-edit/:id" element={<ReferralProgramEdit />} />
 
           <Route
-            path="/setup-member/siteslot-create"
+            path="/setup-member/visitslot-create"
             element={<SiteVisitSlotConfig />}
           />
           <Route
-            path="/setup-member/siteslot-list"
+            path="/setup-member/visitslot-list"
             element={<SiteVisitSlotConfigList />}
           />
           <Route path="/company-create" element={<CompanyCreate />} />
@@ -492,6 +490,10 @@ function App() {
            <Route path="/setup-member/service-category/create" element={<ServiceCategoryForm />} />
           <Route path="/setup-member/service-category/:serviceId/edit" element={<ServiceCategoryForm />} />
           <Route path="/setup-member/service-category-list" element={<ServiceCategoryList />} />
+
+            <Route path="/setup-member/department-create" element={<DepartmentCreate />} />
+          <Route path="/setup-member/department-list" element={<DepartmentList />} />
+          <Route path="/setup-member/department-edit/:id" element={<DepartmentEdit />} />
 
           <Route
             path="/setup-member/image-config-list"

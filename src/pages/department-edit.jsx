@@ -48,7 +48,7 @@ const DepartmentEdit = () => {
     } catch (error) {
       console.error("Error fetching department:", error);
       toast.error("Failed to fetch department data");
-      navigate("/department-list");
+      navigate("/setup-member/department-list");
     }
   };
 
@@ -141,7 +141,7 @@ const DepartmentEdit = () => {
 
       console.log("Update response:", response);
       toast.success("Department updated successfully!");
-      navigate("/department-list");
+      navigate("/setup-member/department-list");
     } catch (error) {
       console.error("Error updating department:", error);
       toast.error(error.response?.data?.message || "Failed to update department.");
@@ -261,7 +261,7 @@ const DepartmentEdit = () => {
                 <button
                   type="submit"
                     className="purple-btn2 w-100"
-                  onClick={() => navigate("/department-list")}
+                  onClick={() => navigate("/setup-member/department-list")}
                 >
                   Cancel
                 </button>

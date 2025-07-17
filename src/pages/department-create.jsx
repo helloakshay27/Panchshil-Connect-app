@@ -134,7 +134,7 @@ const DepartmentCreate = () => {
 
       if (response.ok) {
         toast.success("Department created successfully!");
-        navigate("/department-list");
+        navigate("/setup-member/department-list");
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || "Failed to create department.");

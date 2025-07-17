@@ -67,7 +67,7 @@ const SiteVisitSlotConfig = () => {
   
       toast.success("Slot created successfully!");
       console.log("Data successfully submitted:", response.data);
-      navigate("/setup-member/siteslot-list");
+      navigate("/setup-member/visitslot-list");
     } catch (error) {
       console.error(
         "Error submitting data:",
@@ -92,7 +92,7 @@ const SiteVisitSlotConfig = () => {
             <form onSubmit={handleSubmit}>
               <div className="card mt-4 pb-4 mx-4">
                 <div className="card-header">
-                  <h3 className="card-title">Create Site Slot</h3>
+                  <h3 className="card-title">Create Visit Slot</h3>
                 </div>
                 <div className="card-body">
                   <div className="row">

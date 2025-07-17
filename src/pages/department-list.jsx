@@ -192,7 +192,7 @@ const DepartmentList = () => {
               <button
                 className="purple-btn2 rounded-3"
                 fdprocessedid="xn3e6n"
-                onClick={() => navigate("/department-create")}
+                onClick={() => navigate("/setup-member/department-create")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -244,7 +244,7 @@ const DepartmentList = () => {
                         <tr key={department.id}>
                           <td>
                             {/* {departmentPermission.update === "true" && ( */}
-                              <a href={`/department-edit/${department.id}`}>
+                              <a href={`/setup-member/department-edit/${department.id}`}>
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="24"
