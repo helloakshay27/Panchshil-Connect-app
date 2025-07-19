@@ -29,9 +29,9 @@ const SignIn = () => {
   const config = {
     // baseURL: "https://panchshil-super.lockated.com/",
     // baseURL: "http://localhost:3000/",
-    baseURL: "https://api-connect.panchshil.com/",
+    // baseURL: "https://api-connect.panchshil.com/",
 
-    // baseURL: "https://connect.panchshil.com/",
+    baseURL: "https://uatapi-connect.panchshil.com/",
     logoUrl: LOGO_URL,
     loginBgClass: "login_bg",
     loginSecClass: "login-sec",
@@ -613,8 +613,8 @@ const SignIn = () => {
       {showOtpSection && (
         <>
           <div className="form-group position-relative">
-            <p className={`pb-3 text-white w-[80%]`}>
-              We've sent a 5-digit confirmation code to your mobile number. Make
+            <p className={`pb-3 text-white`}>
+              We've sent a 6-digit confirmation code to your mobile number. Make
               sure you enter the correct code.
             </p>
             <label
@@ -628,7 +628,7 @@ const SignIn = () => {
               type="text"
               id="otp"
               className="panchshil-password-field"
-              placeholder="Enter 5 digit OTP"
+              placeholder="Enter 6 digit OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
