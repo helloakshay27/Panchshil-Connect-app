@@ -409,7 +409,7 @@ const LockFunctionEdit = () => {
 
           {/* Submit and Cancel Buttons */}
           <div className="row mt-4 justify-content-center">
-            <div className="col-md-3">
+            <div className="col-md-2">
               <button
                 onClick={handleSubmit}
                 className="purple-btn2 w-100"
@@ -418,7 +418,7 @@ const LockFunctionEdit = () => {
                 {submitLoading ? "Updating..." : "Update"}
               </button>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-2">
               <button
                 type="button"
                 className="purple-btn2 w-100"

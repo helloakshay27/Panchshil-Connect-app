@@ -408,7 +408,7 @@ const LockFunctionCreate = () => {
 
           {/* Submit and Cancel Buttons */}
           <div className="row mt-4 justify-content-center">
-            <div className="col-md-3">
+            <div className="col-md-2">
               <button
                 onClick={handleSubmit}
                 className="purple-btn2 w-100"
@@ -417,7 +417,7 @@ const LockFunctionCreate = () => {
                 {loading ? "Submitting..." : "Submit"}
               </button>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-2">
               <button
                 type="button"
                 className="purple-btn2 w-100"

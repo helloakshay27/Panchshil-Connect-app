@@ -440,7 +440,7 @@ const SiteCreate = () => {
               <div className="col-md-2">
                 <button
                   type="submit"
-                  className="purple-btn2 purple-btn2-shadow w-100"
+                  className="purple-btn2 w-100"
                   disabled={submitting}
                 >
                   {submitting ? "Submitting..." : "Submit"}
@@ -449,7 +449,7 @@ const SiteCreate = () => {
               <div className="col-md-2">
                 <button
                   type="button"
-                  className="purple-btn2 purple-btn2-shadow w-100"
+                  className="purple-btn2 w-100"
                   onClick={() => navigate(-1)}
                 >
                   Cancel
