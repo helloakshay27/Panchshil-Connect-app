@@ -128,6 +128,9 @@ import ServiceCategoryForm from "./pages/service-category";
 import ServiceCategoryList from "./pages/service-category-list";
 import ImageConfig from "./pages/image-config-list";
 import EditImagesConfiguration from "./pages/image-config-edit";
+import BankDetailsCreate from "./pages/bank-details-create";
+import BankDetailsList from "./pages/bank-details-list";
+import BankDetailsEdit from "./pages/bank-details-edit";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -502,6 +505,16 @@ function App() {
            <Route
             path="/setup-member/image-config/:id"
             element={<EditImagesConfiguration />}
+          />
+
+            <Route path="/setup-member/bank-details-create" element={<BankDetailsCreate />} />
+             <Route
+            path="/setup-member/bank-details-list"
+            element={<BankDetailsList />}
+          />
+          <Route
+            path="/setup-member/bank-details-edit/:id"
+            element={<BankDetailsEdit />}
           />
 
         </Route>

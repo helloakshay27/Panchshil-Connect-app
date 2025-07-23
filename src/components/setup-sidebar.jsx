@@ -24,6 +24,7 @@ const SetupSidebar = () => {
    const [serviceCategoryActive, setServiceCategoryActive] = useState(false);
   const [imageConfigActive, setImageConfigActive] = useState(false);
   const [departmentActive, setDepartmentActive] = useState(false);
+  const [bankDetailsActive, setBankDetailsActive] = useState(false);
 
 
   useEffect(() => {
@@ -83,6 +84,9 @@ const SetupSidebar = () => {
 
          const departmentPermission = hasPermission("department");
           setDepartmentActive(departmentPermission);
+
+        const BankDetailsPermission = hasPermission("bank_details");
+        setBankDetailsActive(BankDetailsPermission);
 
     }, []);
 
@@ -277,7 +281,42 @@ const SetupSidebar = () => {
                   <span className="menu-link-text">Lock Function</span>
                 </NavLink>
               </li>
-              ) }
+              )}
+              {bankDetailsActive && (
+              <li className="menu-item d-flex">
+                <NavLink
+                  to="/setup-member/bank-details-list"
+                  style={{ flexDirection: "column" }}
+                  className={({ isActive }) =>
+                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.0"
+                    width="72.000000pt"
+                    height="72.000000pt"
+                    viewBox="0 0 72.000000 72.000000"
+                    preserveAspectRatio="xMidYMid meet"
+                  >
+                    <metadata>
+                      Created by potrace 1.10, written by Peter Selinger
+                      2001-2011
+                    </metadata>
+                    <g
+                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                      fill="#000000"
+                      stroke="none"
+                    >
+                      <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
+                      <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
+                    </g>
+                  </svg>
+
+                  <span className="menu-link-text">Bank Details</span>
+                </NavLink>
+              </li>
+              )}
 
               {propertyTypeActive && (
               <li className="menu-item d-flex">

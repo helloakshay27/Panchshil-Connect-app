@@ -214,7 +214,9 @@ const LockFunctionCreate = () => {
       actionName = "service_category";
     } else if (value === "Image Config") {
       actionName = "image_config";  
-    }  
+    } else if (value === "Bank Details") {
+      actionName = "bank_details";  
+    }
 
     setFormData({
       ...formData,
@@ -296,6 +298,7 @@ const LockFunctionCreate = () => {
                             value: "Service Category",
                           },
                           { label: "Image Config", value: "Image Config" },
+                          { label: "Bank Details", value: "Bank Details" },
                           // Add more if needed
                         ]}
                         Value={formData.name}

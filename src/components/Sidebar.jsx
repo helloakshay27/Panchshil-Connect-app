@@ -734,39 +734,9 @@ const Sidebar = () => {
                   <span className="menu-link-text">Gallery</span>
                 </a>
               </li> */}
-              {referralActive && (
+              {/* {referralActive && (
                 <li className="menu-item d-flex">
-                  {/* <a
-                  className="menu-link d-flex"
-                  style={{ flexDirection: "column" }}
-                  href="/referral-list"
-                  data-section="security"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M6.9168 21.6804H22.2314V1.261H1.812V8.4078"
-                      stroke="#DD7007"
-                    ></path>
-                    <path d="M9.9797 16.5755H18.1475" stroke="#DD7007"></path>
-                    <path d="M5.8959 6.3658H18.1475" stroke="#DD7007"></path>
-                    <path d="M9.9797 11.4707H18.1475" stroke="#DD7007"></path>
-                    <path
-                      d="M6.9024 16.6194L6.9024 11.4856H1.7686"
-                      stroke="#DD7007"
-                    ></path>
-                    <path
-                      d="M6.9094 11.4707L3.6146 14.7656C1.7106 16.6695 1.7106 19.7565 3.6146 21.6605L4.6932 22.739"
-                      stroke="#DD7007"
-                    ></path>
-                  </svg>
-                  <span className="menu-link-text">Referral</span>
-                </a> */}
+
                   <NavLink
                     to="/referral-list"
                     style={{ flexDirection: "column" }}
@@ -791,40 +761,10 @@ const Sidebar = () => {
                     <span className="menu-link-text">Referral</span>
                   </NavLink>
                 </li>
-              )}
-              {enquiryActive && (
+              )} */}
+              {/* {enquiryActive && (
                 <li className="menu-item d-flex">
-                  {/* <a
-                  className="menu-link d-flex"
-                  style={{ flexDirection: "column" }}
-                  href="/enquiry-list"
-                  data-section="security"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M6.9168 21.6804H22.2314V1.261H1.812V8.4078"
-                      stroke="#DD7007"
-                    ></path>
-                    <path d="M9.9797 16.5755H18.1475" stroke="#DD7007"></path>
-                    <path d="M5.8959 6.3658H18.1475" stroke="#DD7007"></path>
-                    <path d="M9.9797 11.4707H18.1475" stroke="#DD7007"></path>
-                    <path
-                      d="M6.9024 16.6194L6.9024 11.4856H1.7686"
-                      stroke="#DD7007"
-                    ></path>
-                    <path
-                      d="M6.9094 11.4707L3.6146 14.7656C1.7106 16.6695 1.7106 19.7565 3.6146 21.6605L4.6932 22.739"
-                      stroke="#DD7007"
-                    ></path>
-                  </svg>
-                  <span className="menu-link-text">Enquiry</span>
-                </a> */}
+                  
                   <NavLink
                     to="/enquiry-list"
                     style={{ flexDirection: "column" }}
@@ -878,7 +818,7 @@ const Sidebar = () => {
                     <span className="menu-link-text">Enquiry</span>
                   </NavLink>
                 </li>
-              )}
+              )} */}
               {eventActive && (
                 <li className="menu-item d-flex">
                   {/* <a
@@ -1069,36 +1009,9 @@ const Sidebar = () => {
                   <span className="menu-link-text">Site Slot </span>
                 </a>
               </li> */}
-              {siteVisitActive && (
+              {/* {siteVisitActive && (
                 <li className="menu-item d-flex">
-                  {/* <a
-                  className="menu-link d-flex"
-                  style={{ flexDirection: "column" }}
-                  href="/sitevisit-list"
-                  data-section="security"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none" 
-                  >
-                    <g
-                      id="location-pin-3--navigation-map-maps-pin-gps-location"
-                      stroke="#DD7007"
-                      strokeWidth="2"
-                    >
-                      <path id="Vector" d="M20 17L22 23H2L4 17" />
-                      <path id="Vector_2" d="M12.5 8.5h-1v-1h1v1Z" />
-                      <path
-                        id="Rectangle 2008"
-                        d="M5 8.03447C5 12.7241 12 18 12 18s7 -5.2759 7 -9.96553c0 -3.88503 -3.134 -7.03448 -7 -7.03448 -3.86599 0 -7 3.14945 -7 7.03448Z"
-                      />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">Site visit</span>
-                </a> */}
+                 
                   <NavLink
                     to="/sitevisit-list"
                     style={{ flexDirection: "column" }}
@@ -1134,7 +1047,7 @@ const Sidebar = () => {
                     <span className="menu-link-text">Site visit</span>
                   </NavLink>
                 </li>
-              )}
+              )} */}
               {organizationActive && baseURL === "https://dev-panchshil-super-app.lockated.com/" &&  (
                 <li className="menu-item d-flex">
                   {/* <a
