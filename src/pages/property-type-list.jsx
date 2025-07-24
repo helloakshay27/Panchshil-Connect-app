@@ -113,8 +113,8 @@ const PropertyTypeList = () => {
     <div className="main-content">
       {/* <div className="website-content overflow-auto"> */}
         <div className="module-data-section container-fluid">
-          <div className="d-flex justify-content-end px-4 pt-2 mt-3">
-            <div className="col-md-4 pe-2 pt-2">
+          <div className="d-flex justify-content-end px-4">
+            <div className="col-md-4 pe-2 mt-1">
               <form
                 action="/pms/departments"
                 acceptCharset="UTF-8"
@@ -159,7 +159,7 @@ const PropertyTypeList = () => {
               </form>
             </div>
             { propertyTypePermission.create === "true" && (
-            <div className="card-tools mt-1">
+            <div className="card-tools">
               <button
                 className="purple-btn2 rounded-3"
                 onClick={() => navigate("/setup-member/property-type")}
@@ -181,12 +181,12 @@ const PropertyTypeList = () => {
             )}
           </div>
           {/* Table Content */}
-          <div className="card mt-4 pb-4 mx-3">
+          <div className="card mt-3 pb-4 mx-3">
             <div className="card-header">
               <h3 className="card-title">Property Type List</h3>
             </div>
-            <div className="card-body mt-4 pb-4 pt-0">
-              <div className="tbl-container mt-3">
+            <div className="card-body mt-3 pt-0">
+              <div className="tbl-container">
               {loading ? (
                 <div className="text-center">
                   <div

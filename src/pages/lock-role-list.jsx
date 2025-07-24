@@ -72,6 +72,7 @@ const LockRoleList = () => {
   }, [selectedRole, lockFunctions]);
 
   const fetchLockFunctions = async () => {
+    toast.dismiss();
     try {
       setFunctionsLoading(true);
       const response = await axios.get(`${baseURL}/lock_functions.json`, {
@@ -116,6 +117,7 @@ const LockRoleList = () => {
   // };
 
   const fetchLockRoles = async () => {
+    toast.dismiss();
     try {
       setLoading(true);
       const response = await axios.get(`${baseURL}/lock_roles.json`, {
@@ -136,7 +138,7 @@ const LockRoleList = () => {
     } catch (error) {
       console.error("Error fetching lock roles:", error);
       toast.error("Failed to load lock roles");
-      setError("Failed to load lock roles");
+      // setError("Failed to load lock roles");
     } finally {
       setLoading(false);
     }
@@ -259,8 +261,8 @@ const LockRoleList = () => {
       <div className="module-data-section container-fluid">
         {error && <div className="alert alert-danger">{error}</div>}
 
-        <div className="d-flex justify-content-end px-4 pt-2 mt-3">
-          <div className="col-md-4 pe-2 pt-2">
+        <div className="d-flex justify-content-end px-4">
+          <div className="col-md-4 pe-2 mt-1">
             <div className="input-group">
               <input
                 type="text"
@@ -291,7 +293,7 @@ const LockRoleList = () => {
               </div>
             </div>
           </div>
-          <div className="card-tools mt-1">
+          <div className="card-tools">
             <button
               className="purple-btn2 rounded-3"
               fdprocessedid="xn3e6n"

@@ -41,7 +41,7 @@ const TdsTutorialList = () => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          setError("Unauthorized: Please check your API key or token.");
+          // setError("Unauthorized: Please check your API key or token.");
         } else if (response.status === 404) {
           setError("TDS tutorials not found.");
         } else {
@@ -65,7 +65,7 @@ const TdsTutorialList = () => {
       }));
     } catch (error) {
       console.error("Error fetching TDS tutorial data:", error);
-      setError("Failed to fetch TDS tutorial data. Please try again.");
+      // setError("Failed to fetch TDS tutorial data. Please try again.");
       setTutorials([]);
     } finally {
       setLoading(false);
@@ -157,8 +157,8 @@ const TdsTutorialList = () => {
       <div className="module-data-section container-fluid">
         {error && <div className="alert alert-danger">{error}</div>}
 
-        <div className="d-flex justify-content-end px-4 pt-2 mt-3">
-          <div className="col-md-4 pe-2 pt-2">
+        <div className="d-flex justify-content-end px-4">
+          <div className="col-md-4 pe-2 mt-1">
             <div className="input-group">
               <input
                 type="text"
@@ -192,7 +192,7 @@ const TdsTutorialList = () => {
               </div>
             </div>
           </div>
-          <div className="card-tools mt-1">
+          <div className="card-tools">
             {tutorials.length < 1 && (
               <button
                 className="purple-btn2 rounded-3"
@@ -214,11 +214,11 @@ const TdsTutorialList = () => {
           </div>
         </div>
 
-        <div className="card mt-3 pb-4 mx-4">
+        <div className="card mt-3 mx-4">
           <div className="card-header">
             <h3 className="card-title">TDS Tutorial List</h3>
           </div>
-          <div className="card-body mt-4 pb-4 pt-0">
+          <div className="card-body mt-3 pt-0">
             {loading ? (
               <div className="text-center">
                 <div
@@ -230,7 +230,7 @@ const TdsTutorialList = () => {
                 </div>
               </div>
             ) : (
-              <div className="tbl-container mt-4">
+              <div className="tbl-container">
                 <table className="w-100">
                   <thead>
                     <tr>

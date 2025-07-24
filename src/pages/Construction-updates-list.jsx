@@ -245,8 +245,8 @@ const ConstructionUpdatesList = () => {
   return (
     <div className="main-content">
       <div className="module-data-section container-fluid">
-        <div className="d-flex justify-content-end px-4 pt-2 mt-3">
-          <div className="col-md-4 pe-2 pt-2">
+        <div className="d-flex justify-content-end px-4">
+          <div className="col-md-4 pe-2 mt-1">
             <form
               onSubmit={handleSearchSubmit}
               action="/construction_updates"
@@ -289,7 +289,7 @@ const ConstructionUpdatesList = () => {
             </form>
           </div>
           {/* {constructionPermissions.create === "true" && ( */}
-          <div className="card-tools mt-1">
+          <div className="card-tools">
             <button
               className="purple-btn2 rounded-3"
               onClick={() =>
@@ -313,11 +313,11 @@ const ConstructionUpdatesList = () => {
           {/* )} */}
         </div>
         <div className="module-data-section container-fluid">
-          <div className="card mt-4 pb-4 mx-3">
+          <div className="card mt-3 mx-3">
             <div className="card-header">
               <h3 className="card-title">Construction Updates List</h3>
             </div>
-            <div className="card-body mt-4 pb-4 pt-0">
+            <div className="card-body mt-3 pt-0">
               {loading ? (
                 <div className="text-center">
                   <div
@@ -329,7 +329,7 @@ const ConstructionUpdatesList = () => {
                   </div>
                 </div>
               ) : (
-                <div className="tbl-container mt-3 ">
+                <div className="tbl-container ">
                   <table className="w-100">
                     <thead>
                       <tr>

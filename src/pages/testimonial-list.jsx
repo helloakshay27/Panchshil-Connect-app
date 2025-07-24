@@ -210,7 +210,7 @@ const handleToggleShow = async (id, currentStatus) => {
   return (
     <div className="main-content">
       <div className="module-data-section container-fluid">
-        <div className="d-flex justify-content-end px-4 pt-2 mt-3 ">
+        <div className="d-flex justify-content-end px-4">
           <div className="col-md-4 pe-2 pt-2">
             <form action="/pms/departments" acceptCharset="UTF-8" method="get">
               <div className="input-group">
@@ -279,7 +279,7 @@ const handleToggleShow = async (id, currentStatus) => {
             <div className="card-header">
               <h3 className="card-title">Testimonials List</h3>
             </div>
-            <div className="card-body mt-4 pb-4 pt-0">
+            <div className="card-body mt-3 pt-0">
               {loading ? (
                 <div className="text-center">
                   <div
@@ -291,7 +291,7 @@ const handleToggleShow = async (id, currentStatus) => {
                   </div>
                 </div>
               ) : (
-                <div className="tbl-container mt-3 ">
+                <div className="tbl-container ">
                   <table className="w-100">
                     <thead>
                       <tr>
