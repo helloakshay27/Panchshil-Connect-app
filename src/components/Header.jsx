@@ -6,6 +6,7 @@ import {
   LOGO_URL,
   Rustomji_URL,
   Rustomji_URL_Black,
+  LOGO_Kalpataru_URL
 } from "../pages/baseurl/apiDomain";
 
 const Header = () => {
@@ -18,8 +19,8 @@ const Header = () => {
     // Determine which logo to display based on baseURL
     if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/") {
       setCurrentLogo(LOGO_URL);
-    } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
-      setCurrentLogo(Rustomji_URL_Black);
+    } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") {
+      setCurrentLogo(LOGO_Kalpataru_URL);
     } else {
       setCurrentLogo(LOGO_URL);
     }
