@@ -1,23 +1,34 @@
 import React from "react";
 import "../mor.css";
-import { baseURL } from "../pages/baseurl/apiDomain";
+import { baseURL, Lokated_URL } from "../pages/baseurl/apiDomain";
 const Footer = () => {
   const domain = baseURL;
   let logoUrl;
   let logoStyle = { height: "35px" };
   if (
     domain === "https://panchshil-super.lockated.com/" ||
-    domain === "https://api-connect.panchshil.com/" || domain === "https://uatapi-connect.panchshil.com/"
+    domain === "https://api-connect.panchshil.com/" || 
+    domain === "https://uatapi-connect.panchshil.com/"
   ) {
-    logoUrl =
-      "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
-    // Optional: style for Panchshil logo (if needed)
-    logoStyle = { height: "35px", width: "30px" };
-  } else {
-    logoUrl =
-      "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/logo.png";
-    // Conditional style for Rustomjee logo
-    logoStyle = { height: "40px", width: "90px" , filter: "grayscale(1)", background: "#fff", borderRadius: "4px" };
+    // Panchshil logo
+    logoUrl = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
+    logoStyle = { height: "35px", width: "35px" };
+  } 
+  else if (domain === "https://kalpataru.lockated.com/") {
+    // Lockated logo
+    logoUrl = Lokated_URL;
+    logoStyle = { height: "35px", width: "120px" };
+  }
+  else {
+    // Rustomjee logo (default)
+    logoUrl = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/logo.png";
+    logoStyle = { 
+      height: "35px", 
+      width: "100px", 
+      filter: "grayscale(1)", 
+      background: "#fff", 
+      borderRadius: "4px" 
+    };
   }
 
   return (

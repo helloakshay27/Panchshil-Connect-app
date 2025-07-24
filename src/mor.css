@@ -5623,12 +5623,30 @@ ul.pagination.justify-content-center {
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 20px; /* Spacing between logo & nav links */
+  /* gap: 20px;  */
 }
 
 /* Logo */
-.logo {
-  height: 70px; /* Adjust logo size */
+/* .logo {
+  height: 70px; 
+  max-width: 150px;
+} */
+
+/* For Rustomjee logo */
+.logo.rustomjee-logo {
+  height: 55px;
+  max-width: 150px;
+}
+
+/* For Lockated logo */
+.logo.lockated-logo {
+  height: 35px;
+  max-width: 150px;
+}
+
+/* For Panchshil logo */
+.logo.panchshil-logo {
+  height: 70px;
   max-width: 150px;
 }
 

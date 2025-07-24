@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
-import { Rustomji_URL, baseURL } from "../baseurl/apiDomain";
+import { Lokated_URL, Rustomji_URL, baseURL } from "../baseurl/apiDomain";
 
 const ForgotOtpRustomjee = () => {
   const [otp, setOtp] = useState("");
@@ -18,15 +18,20 @@ const ForgotOtpRustomjee = () => {
   const location = useLocation();
 
   // Rustomjee configuration - matching the login page style
+  const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
+  const isRustomjee = baseURL === "https://dev-panchshil-super-app.lockated.com/";
+  
+  // Configuration based on the portal
   const config = {
-    baseURL: "https://dev-panchshil-super-app.lockated.com/",
-    logoUrl: Rustomji_URL,
-    loginBgClass: "login_bg_rustomji",
-    loginSecClass: "login-sec-rustom",
-    logoStyle: { width: 335, height: 108, margin: "20px 0px 30px" },
+    baseURL: baseURL,
+    logoUrl: isKalpataru ? Lokated_URL : Rustomji_URL,
+    loginBgClass: isKalpataru ? "login_bg_kalpataru" : "login_bg_rustomji",
+    loginSecClass: isKalpataru ? "login-sec-rustom" : "login-sec-rustom",
+    logoStyle: { width: "100%", height: 70, margin: "40px 0px 30px" },
+    showRegisterButton: false,
     formTextColor: "text-light",
     alignContent: "justify-content-end",
-    columnClass: "col-lg-4 p-0 m-0 col-md-6",
+    columnClass: "col-lg-4 p-0 m-0 col-md-6"
   };
 
   useEffect(() => {

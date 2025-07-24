@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
-import { LOGO_Kalpataru_URL, Rustomji_URL } from "../baseurl/apiDomain";
+import { baseURL, Rustomji_URL, Lokated_URL } from "../baseurl/apiDomain";
 import { Eye, EyeOff } from "lucide-react";
 
 const SignInRustomjee = () => {
@@ -20,13 +20,16 @@ const SignInRustomjee = () => {
   const navigate = useNavigate();
   
   // Rustomjee configuration
+  const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
+  const isRustomjee = baseURL === "https://dev-panchshil-super-app.lockated.com/";
+  
+  // Configuration based on the portal
   const config = {
-    // baseURL: "https://dev-panchshil-super-app.lockated.com/",
-      baseURL: "https://kalpataru.lockated.com/",
-    logoUrl: LOGO_Kalpataru_URL,
-    loginBgClass: "login_bg_rustomji",
-    loginSecClass: "login-sec-rustom",
-    logoStyle: { width: 335, height: 108, margin: "20px 0px 30px" },
+    baseURL: baseURL,
+    logoUrl: isKalpataru ? Lokated_URL : Rustomji_URL,
+    loginBgClass: isKalpataru ? "login_bg_kalpataru" : "login_bg_rustomji",
+    loginSecClass: isKalpataru ? "login-sec-rustom" : "login-sec-rustom",
+    logoStyle: { width: "100%", height: 90, margin: "45px 0px 30px" },
     showRegisterButton: false,
     formTextColor: "text-light",
     alignContent: "justify-content-end",

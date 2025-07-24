@@ -6,7 +6,8 @@ import {
   LOGO_URL,
   Rustomji_URL,
   Rustomji_URL_Black,
-  LOGO_Kalpataru_URL
+  LOGO_Kalpataru_URL,
+  Lokated_URL,
 } from "../pages/baseurl/apiDomain";
 
 const Header = () => {
@@ -15,13 +16,20 @@ const Header = () => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
+  const hostname = window.location.hostname; // like dev-panchshil-super-app.lockated.com
+
+const isPanchshil = hostname.includes("panchshil");
+const isRustomjee = hostname.includes("rustomjee"); 
+
   useEffect(() => {
     // Determine which logo to display based on baseURL
     if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/") {
       setCurrentLogo(LOGO_URL);
-    } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") {
-      setCurrentLogo(LOGO_Kalpataru_URL);
-    } else {
+    } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+      setCurrentLogo(Rustomji_URL_Black);
+     } else if (baseURL === "https://kalpataru.lockated.com/") {
+      setCurrentLogo(Lokated_URL);
+     }else {
       setCurrentLogo(LOGO_URL);
     }
 
@@ -119,7 +127,7 @@ const Header = () => {
               src={currentLogo}
               alt={currentLogo === LOGO_URL ? "Panchshil Logo" : "Rustomjee Logo"}
             /> */}
-            <img
+            {/* <img
               className={`logo ${
                 currentLogo === Rustomji_URL_Black
                   ? "rustomjee-logo"
@@ -129,7 +137,24 @@ const Header = () => {
               alt={
                 currentLogo === LOGO_URL ? "Panchshil Logo" : "Rustomjee Logo"
               }
-            />
+            /> */}
+            <img
+  className={`logo ${
+    currentLogo === Rustomji_URL_Black
+      ? "rustomjee-logo"
+      : currentLogo === Lokated_URL
+        ? "lockated-logo"
+        : "panchshil-logo"
+  }`}
+  src={currentLogo}
+  alt={
+    currentLogo === LOGO_URL 
+      ? "Panchshil Logo"
+      : currentLogo === Lokated_URL
+        ? "Lockated Logo"
+        : "Rustomjee Logo"
+  }
+/>
 
             <div className="nav-links ms-4">
               <NavLink

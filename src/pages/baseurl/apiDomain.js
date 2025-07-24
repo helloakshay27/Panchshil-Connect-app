@@ -53,6 +53,8 @@ const Panchshil_Favicon_URL =
 
 const LOGO_Kalpataru_URL = "https://kalpataru-s3.s3.ap-south-1.amazonaws.com/Kalpataru+Logo.png"
 
+const Lokated_URL = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Logo121.png"
+
 
 export {
   baseURL,
@@ -63,4 +65,5 @@ export {
   Rustomji_Favicon_URL,
   Panchshil_Favicon_URL,
   LOGO_Kalpataru_URL,
+  Lokated_URL,
 };

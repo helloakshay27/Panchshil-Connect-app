@@ -182,6 +182,8 @@ function App() {
       faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
     } else if (baseURL.startsWith("https://dev-panchshil-super-app.lockated.com/")) {
       faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Rustomjee_icon.png";
+    } else {
+      faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/default_icon.png";
     }
 
     const link = document.querySelector("link[rel~='icon']");
