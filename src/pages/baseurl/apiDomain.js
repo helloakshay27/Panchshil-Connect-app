@@ -6,6 +6,11 @@ switch (hostname) {
   case "ui-loyalty-super.lockated.com":
     baseURL = "https://dev-panchshil-super-app.lockated.com/";
     break;
+
+   case "ui-kalpataru.lockated.com":
+    baseURL = "https://kalpataru.lockated.com/";
+    break;  
+
   case "ui-panchshil-super.lockated.com":
     baseURL = "https://panchshil-super.lockated.com/";
     break;
@@ -19,7 +24,7 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://uatapi-connect.panchshil.com/"; 
+    baseURL = "https://kalpataru.lockated.com/"; 
     break;
 
   default:
@@ -46,6 +51,9 @@ const Rustomji_Favicon_URL =
 const Panchshil_Favicon_URL =
   "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
 
+const LOGO_Kalpataru_URL = "https://kalpataru-s3.s3.ap-south-1.amazonaws.com/Kalpataru+Logo.png"
+
+
 export {
   baseURL,
   token,
@@ -54,4 +62,5 @@ export {
   Rustomji_URL_Black,
   Rustomji_Favicon_URL,
   Panchshil_Favicon_URL,
+  LOGO_Kalpataru_URL,
 };

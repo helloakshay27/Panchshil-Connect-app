@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
-import { Rustomji_URL } from "../baseurl/apiDomain";
+import { LOGO_Kalpataru_URL, Rustomji_URL } from "../baseurl/apiDomain";
 import { Eye, EyeOff } from "lucide-react";
 
 const SignInRustomjee = () => {
@@ -21,9 +21,9 @@ const SignInRustomjee = () => {
   
   // Rustomjee configuration
   const config = {
-    baseURL: "https://dev-panchshil-super-app.lockated.com/",
-    // baseURL: "https://piramal-loyalty-dev.lockated.com/",
-    logoUrl: Rustomji_URL,
+    // baseURL: "https://dev-panchshil-super-app.lockated.com/",
+      baseURL: "https://kalpataru.lockated.com/",
+    logoUrl: LOGO_Kalpataru_URL,
     loginBgClass: "login_bg_rustomji",
     loginSecClass: "login-sec-rustom",
     logoStyle: { width: 335, height: 108, margin: "20px 0px 30px" },

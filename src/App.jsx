@@ -145,10 +145,10 @@ import BankDetailsEdit from "./pages/bank-details-edit";
 
 // const baseURL = process.env.REACT_APP_BASE_URL; // or your const
 
-if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/") {
+if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/" ) {
   console.log("Base URL is set to Panchshil Connect");
   document.body.classList.add("theme-connect");
-} else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+} else if (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") {
   document.body.classList.add("theme-dev");
 }
 
@@ -159,7 +159,7 @@ let ForgotOtpComponent;
 let CreatePasswordComponent;
 let LoginWithOtpComponent;
 
-if (baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://uatapi-connect.panchshil.com/") {
+if (baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://uatapi-connect.panchshil.com/" ) {
   // if (baseURL === "https://api-connect.panchshil.com/") {
   // if (baseURL === "http://localhost:3000/") {
   LoginComponent = <SignIn />;
