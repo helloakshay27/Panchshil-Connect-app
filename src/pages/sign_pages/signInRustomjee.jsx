@@ -29,7 +29,9 @@ const SignInRustomjee = () => {
     logoUrl: isKalpataru ? Lokated_URL : Rustomji_URL,
     loginBgClass: isKalpataru ? "login_bg_kalpataru" : "login_bg_rustomji",
     loginSecClass: isKalpataru ? "login-sec-rustom" : "login-sec-rustom",
-    logoStyle: { width: "100%", height: 90, margin: "45px 0px 30px" },
+   logoStyle: isKalpataru 
+    ? { width: "80%", height: 65, margin: "45px 0px 30px" } // Kalpataru logo style
+    : { width: "100%", height: 100, margin: "45px 0px 30px" }, // Rustomjee logo style
     showRegisterButton: false,
     formTextColor: "text-light",
     alignContent: "justify-content-end",
