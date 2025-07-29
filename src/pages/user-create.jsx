@@ -761,7 +761,8 @@ const UserCreate = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Site <span className="otp-asterisk">*</span>
+                          Site 
+                          {/* <span className="otp-asterisk">*</span> */}
                         </label>
                         <SelectBox
                           name="site_id"
