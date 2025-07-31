@@ -473,17 +473,75 @@ const ConstructionUpdatesList = () => {
 
                             <td>
                               {update.attachment?.document_url ? (
-                                <img
-                                  src={update.attachment.document_url}
-                                  className="img-fluid rounded"
-                                  //   alt={amenity.name || "No Name"}
-                                  style={{
-                                    maxWidth: "100px",
-                                    maxHeight: "100px",
-                                  }}
-                                />
+                                (() => {
+                                  const fileName = update.attachment.document_file_name || '';
+                                  const contentType = update.attachment.document_content_type || '';
+                                  const isVideo = contentType.startsWith('video/') || 
+                                                fileName.match(/\.(mp4|mov|avi|mkv|webm)$/i);
+                                  const isImage = contentType.startsWith('image/') || 
+                                                fileName.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i);
+                                  
+                                  if (isVideo) {
+                                    return (
+                                      <video
+                                        width="100"
+                                        height="65"
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        style={{
+                                          borderRadius: "8px",
+                                          objectFit: "cover",
+                                          display: "block",
+                                        }}
+                                      >
+                                        <source src={update.attachment.document_url} type={contentType} />
+                                        Your browser does not support the video tag.
+                                      </video>
+                                    );
+                                  } else if (isImage) {
+                                    return (
+                                      <img
+                                        src={update.attachment.document_url}
+                                        className="img-fluid rounded"
+                                        alt={update.attachment.document_file_name || "Attachment"}
+                                        style={{
+                                          maxWidth: "100px",
+                                          maxHeight: "100px",
+                                          objectFit: "cover",
+                                          borderRadius: "8px",
+                                        }}
+                                        onError={(e) => {
+                                          console.error("Failed to load image:", e.target.src);
+                                        }}
+                                      />
+                                    );
+                                  } else {
+                                    // For other file types (PDF, DOC, etc.)
+                                    return (
+                                      <div 
+                                        className="file-preview d-flex align-items-center justify-content-center rounded"
+                                        style={{
+                                          width: "100px",
+                                          height: "65px",
+                                          border: "1px solid #ccc",
+                                          backgroundColor: "#f8f9fa",
+                                          borderRadius: "8px",
+                                        }}
+                                      >
+                                        <div className="text-center">
+                                          <i className="fas fa-file fa-lg text-secondary mb-1"></i>
+                                          <div className="small text-muted">
+                                            {fileName ? fileName.split('.').pop().toUpperCase() : 'FILE'}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                })()
                               ) : (
-                                <span>No Icon</span>
+                                <span>No Attachment</span>
                               )}
                             </td>
 

@@ -174,11 +174,25 @@ const ConstructionUpdatesEdit = () => {
     setAttachment(file);
 
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const fileType = file.type;
+      
+      // Check if it's an image
+      if (fileType.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } 
+      // Check if it's a video
+      else if (fileType.startsWith('video/')) {
+        const videoUrl = URL.createObjectURL(file);
+        setPreviewImage(videoUrl);
+      } 
+      // For other file types (PDF, DOC, etc.)
+      else {
+        setPreviewImage(null);
+      }
     } else {
       setPreviewImage(existingAttachment);
     }
@@ -465,7 +479,7 @@ const ConstructionUpdatesEdit = () => {
                             [i]
                             {showTooltip && (
                               <span className="tooltip-text">
-                                Max Upload Size 10 MB
+                                Max Upload Size 10 MB - Supports Images, Videos, PDF, DOC
                               </span>
                             )}
                           </span>
@@ -473,25 +487,117 @@ const ConstructionUpdatesEdit = () => {
                         <input
                           className="form-control"
                           type="file"
-                          accept=".png,.jpg,.jpeg,.svg,.pdf,.doc,.docx"
+                          accept=".png,.jpg,.jpeg,.svg,.pdf,.doc,.docx,.mp4,.mov,.avi,.mkv,.webm"
                           onChange={handleFileChange}
                         />
                        
                       </div>
                       {previewImage && (
                         <div className="mt-2">
-                          <img
-                            src={previewImage}
-                            alt="Attachment Preview"
-                            className="img-fluid rounded"
-                            style={{
-                              maxWidth: "100px",
-                              maxHeight: "100px",
-                              objectFit: "cover",
-                              border: "1px solid #ccc",
-                              padding: "5px",
-                            }}
-                          />
+                          {/* Check if we have an attachment (new file) or existing attachment */}
+                          {attachment ? (
+                            // New file preview
+                            attachment.type.startsWith('image/') ? (
+                              <img
+                                src={previewImage}
+                                alt="Attachment Preview"
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                  border: "1px solid #ccc",
+                                  padding: "5px",
+                                }}
+                              />
+                            ) : attachment.type.startsWith('video/') ? (
+                              <video
+                                src={previewImage}
+                                controls
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "150px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                  border: "1px solid #ccc",
+                                  padding: "5px",
+                                }}
+                              />
+                            ) : (
+                              <div 
+                                className="file-preview d-flex align-items-center justify-content-center rounded"
+                                style={{
+                                  width: "100px",
+                                  height: "100px",
+                                  border: "1px solid #ccc",
+                                  backgroundColor: "#f8f9fa",
+                                }}
+                              >
+                                <div className="text-center">
+                                  <i className="fas fa-file fa-2x text-secondary mb-1"></i>
+                                  <div className="small text-muted">
+                                    {attachment.name.split('.').pop().toUpperCase()}
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          ) : (
+                            // Existing attachment preview (from server)
+                            existingAttachmentName && existingAttachmentName.match(/\.(mp4|mov|avi|mkv|webm)$/i) ? (
+                              <video
+                                src={previewImage}
+                                controls
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "150px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                  border: "1px solid #ccc",
+                                  padding: "5px",
+                                }}
+                              />
+                            ) : existingAttachmentName && existingAttachmentName.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i) ? (
+                              <img
+                                src={previewImage}
+                                alt="Attachment Preview"
+                                className="img-fluid rounded"
+                                style={{
+                                  maxWidth: "100px",
+                                  maxHeight: "100px",
+                                  objectFit: "cover",
+                                  border: "1px solid #ccc",
+                                  padding: "5px",
+                                }}
+                              />
+                            ) : (
+                              <div 
+                                className="file-preview d-flex align-items-center justify-content-center rounded"
+                                style={{
+                                  width: "100px",
+                                  height: "100px",
+                                  border: "1px solid #ccc",
+                                  backgroundColor: "#f8f9fa",
+                                }}
+                              >
+                                <div className="text-center">
+                                  <i className="fas fa-file fa-2x text-secondary mb-1"></i>
+                                  <div className="small text-muted">
+                                    {existingAttachmentName ? existingAttachmentName.split('.').pop().toUpperCase() : 'FILE'}
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          )}
+                          {/* File info */}
+                          <div className="small text-muted mt-1">
+                            {attachment ? (
+                              `${attachment.name} (${(attachment.size / (1024 * 1024)).toFixed(2)} MB)`
+                            ) : existingAttachmentName ? (
+                              existingAttachmentName
+                            ) : (
+                              'Existing attachment'
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
