@@ -131,6 +131,11 @@ import EditImagesConfiguration from "./pages/image-config-edit";
 import BankDetailsCreate from "./pages/bank-details-create";
 import BankDetailsList from "./pages/bank-details-list";
 import BankDetailsEdit from "./pages/bank-details-edit";
+import BankForm from "./pages/banks";
+import BankList from "./pages/banks-list";
+import HomeLoanAdd from "./pages/home-loan-create";
+import HomeLoanEdit from "./pages/home-loan-edit";
+import HomeLoanList from "./pages/home-loan-list";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -500,6 +505,10 @@ function App() {
           <Route path="/setup-member/department-list" element={<DepartmentList />} />
           <Route path="/setup-member/department-edit/:id" element={<DepartmentEdit />} />
 
+           <Route path="/setup-member/banks/create" element={<BankForm />} />
+          <Route path="/setup-member/banks/:bankId/edit" element={<BankForm />} />
+          <Route path="/setup-member/banks-list" element={<BankList />} />
+
           <Route
             path="/setup-member/image-config-list"
             element={<ImageConfig />}
@@ -517,6 +526,19 @@ function App() {
           <Route
             path="/setup-member/bank-details-edit/:id"
             element={<BankDetailsEdit />}
+          />
+
+          <Route
+            path="/setup-member/home-loan-create"
+            element={<HomeLoanAdd />}
+          />
+          <Route
+            path="/setup-member/home-loan-list"
+            element={<HomeLoanList />}
+          />
+          <Route
+            path="/setup-member/home-loan-edit/:id"
+            element={<HomeLoanEdit />}
           />
 
         </Route>

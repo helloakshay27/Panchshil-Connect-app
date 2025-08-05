@@ -215,8 +215,12 @@ const LockFunctionCreate = () => {
     } else if (value === "Image Config") {
       actionName = "image_config";  
     } else if (value === "Bank Details") {
-      actionName = "bank_details";  
-    }
+      actionName = "bank_details";
+    } else if (value === "Home Loan") {
+      actionName = "home_loan";
+    } else if (value === "Banks") {
+      actionName = "banks"; 
+    }  
 
     setFormData({
       ...formData,
@@ -299,6 +303,8 @@ const LockFunctionCreate = () => {
                           },
                           { label: "Image Config", value: "Image Config" },
                           { label: "Bank Details", value: "Bank Details" },
+                          { label: "Home Loan", value: "Home Loan" },
+                          { label: "Banks", value: "Banks" },
                           // Add more if needed
                         ]}
                         Value={formData.name}
