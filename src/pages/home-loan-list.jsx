@@ -360,31 +360,24 @@ const HomeLoanList = () => {
                                 {formatCurrency(loan.required_loan_amt)}
                               </td>
                               <td>{loan.tenure || "-"}</td>
-                              <td>
-                                <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
-                                  {loan.preffered_banks && loan.preffered_banks.length > 0 ? (
-                                    loan.preffered_banks.map((bank, bankIndex) => (
-                                      <span
-                                        key={bankIndex}
-                                        // style={{
-                                        //   padding: "4px 8px",
-                                        //   backgroundColor: "#f8f9fa",
-                                        //   borderRadius: "4px",
-                                        //   border: "1px solid #ddd",
-                                        //   fontSize: "12px",
-                                        //   fontWeight: "500",
-                                        //   color: "#495057"
-                                        // }}
-                                        title={`Bank ID: ${bank.bank_id}`}
-                                      >
-                                        {bank.bank_id}
-                                      </span>
-                                    ))
-                                  ) : (
-                                    "-"
-                                  )}
-                                </div>
-                              </td>
+                             <td>
+  <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
+    {loan.preffered_banks && loan.preffered_banks.length > 0 ? (
+      loan.preffered_banks.map((bank, bankIndex) => (
+        <span
+          key={bankIndex}
+          title={`Bank Name: ${bank.bank_name}`}
+        >
+          {bank.bank_name}
+          {bankIndex !== loan.preffered_banks.length - 1 && ","}
+        </span>
+      ))
+    ) : (
+      "-"
+    )}
+  </div>
+</td>
+
                               <td>
                                 {formatDate(loan.created_at)}
                               </td>

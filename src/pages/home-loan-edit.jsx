@@ -137,42 +137,12 @@ const HomeLoanEdit = () => {
   const validateForm = () => {
     let newErrors = {};
     
-    // if (!formData.professional_detail.trim()) {
-    //   newErrors.professional_detail = "Professional detail is mandatory";
-    // }
-    // if (!formData.monthly_income.trim()) {
-    //   newErrors.monthly_income = "Monthly income is mandatory";
-    // }
-    // if (!formData.dob.trim()) {
-    //   newErrors.dob = "Date of birth is mandatory";
-    // }
-    // if (!formData.existing_emis.trim()) {
-    //   newErrors.existing_emis = "Existing EMIs is mandatory";
-    // }
-    // if (!formData.preffered_time.trim()) {
-    //   newErrors.preffered_time = "Preferred time is mandatory";
-    // }
-    // if (!formData.tenure.trim()) {
-    //   newErrors.tenure = "Tenure is mandatory";
-    // }
-    // if (!formData.required_loan_amt.trim()) {
-    //   newErrors.required_loan_amt = "Required loan amount is mandatory";
-    // }
     if (!formData.project_id) {
       newErrors.project_id = "Project is mandatory";
     }
     if (!formData.bank_ids || formData.bank_ids.length === 0) {
       newErrors.bank_ids = "At least one bank must be selected";
     }
-
-   
-    // if (formData.monthly_income && isNaN(formData.monthly_income)) {
-    //   newErrors.monthly_income = "Monthly income must be a valid number";
-    // }
-
-    // if (formData.existing_emis && isNaN(formData.existing_emis)) {
-    //   newErrors.existing_emis = "Existing EMIs must be a valid number";
-    // }
 
     // Validate required loan amount is a number
     if (formData.required_loan_amt && isNaN(formData.required_loan_amt.replace(/,/g, ''))) {
@@ -251,6 +221,36 @@ const HomeLoanEdit = () => {
     }
   };
 
+  const handleBankChange = (selectedOptions) => {
+    console.log("Selected options:", selectedOptions);
+    
+    // Extract just the IDs from selected options
+    const selectedBankIds = selectedOptions ? selectedOptions.map((option) => option.value) : [];
+    
+    console.log("Selected bank IDs:", selectedBankIds);
+
+    setFormData((prev) => ({
+      ...prev,
+      bank_ids: selectedBankIds,
+    }));
+
+    // Clear error when banks are selected
+    if (errors.bank_ids && selectedBankIds.length > 0) {
+      setErrors({ ...errors, bank_ids: "" });
+    }
+  };
+
+  // Helper function to get selected bank options for MultiSelectBox
+  const getSelectedBankOptions = () => {
+    if (!formData.bank_ids || !banks.length) return [];
+    
+    return formData.bank_ids
+      .map((bankId) => {
+        const bank = banks.find((b) => b.id === parseInt(bankId));
+        return bank ? { value: bank.id, label: bank.bank_name } : null;
+      })
+      .filter(Boolean); // Remove null values
+  };
 
   return (
     <div className="main-content">
@@ -443,16 +443,8 @@ const HomeLoanEdit = () => {
                           value: bank.id,
                           label: bank.bank_name,
                         }))}
-                        value={formData.bank_ids.map((id) => ({
-                          value: id,
-                          label: banks.find(bank => bank.id === parseInt(id))?.bank_name || '',
-                        }))}
-                        onChange={(selectedOptions) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            bank_ids: selectedOptions.map((option) => option.value),
-                          }))
-                        }
+                        value={getSelectedBankOptions()}
+                        onChange={handleBankChange}
                         placeholder="Select Banks"
                       />
                       {errors.bank_ids && (
@@ -460,6 +452,7 @@ const HomeLoanEdit = () => {
                       )}
                     </div>
                   </div>
+
                 </div>
               </div>
 
