@@ -113,6 +113,7 @@ const ServiceCategoryForm = () => {
       let headers;
       
       if (imageFile) {
+        // When there's a new image file, use FormData
         const formDataPayload = new FormData();
         formDataPayload.append('service_category[service_cat_name]', formData.service_cat_name);
         formDataPayload.append('service_category[service_image]', imageFile);
@@ -121,7 +122,13 @@ const ServiceCategoryForm = () => {
         payload = formDataPayload;
         headers = getMultipartHeaders();
       } else {
-        payload = { service_category: formData };
+        // When no new image file, send only text fields as JSON
+        const updateData = {
+          service_cat_name: formData.service_cat_name,
+          active: formData.active
+        };
+        
+        payload = { service_category: updateData };
         headers = getAuthHeaders();
       }
       
