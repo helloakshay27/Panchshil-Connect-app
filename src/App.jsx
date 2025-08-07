@@ -136,6 +136,10 @@ import BankList from "./pages/banks-list";
 import HomeLoanAdd from "./pages/home-loan-create";
 import HomeLoanEdit from "./pages/home-loan-edit";
 import HomeLoanList from "./pages/home-loan-list";
+import NoticeboardForm from "./pages/noticeboard-create";
+import NoticeboardList from "./pages/noticeboard-list";
+import NoticeboardDetails from "./pages/noticeboard-details";
+// import NoticeboardDetailsMinimal from "./pages/noticeboard-details-minimal";
 
 // // import EditGallery from './EditGallery';
 // if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
@@ -539,6 +543,24 @@ function App() {
           <Route
             path="/setup-member/home-loan-edit/:id"
             element={<HomeLoanEdit />}
+          />
+
+          {/* Noticeboard Routes */}
+          <Route
+            path="/noticeboard-create"
+            element={<NoticeboardForm />}
+          />
+          <Route
+            path="/noticeboard-edit/:id"
+            element={<NoticeboardForm />}
+          />
+          <Route
+            path="/noticeboard-list"
+            element={<NoticeboardList />}
+          />
+          <Route
+            path="/noticeboard-details/:id"
+            element={<NoticeboardDetails />}
           />
 
         </Route>

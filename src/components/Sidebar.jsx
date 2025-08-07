@@ -8,6 +8,7 @@ const Sidebar = () => {
   const [showProjectSidebar, setShowProjectSidebar] = useState(false);
   const [bannerActive, setBannerActive] = useState(false);
   const [eventActive, setEventActive] = useState(false);
+  const [broadcastActive, setBroadcastActive] = useState(false);
   const [amenitiesActive, setAmenitoiesActive] = useState(false);
   const [testimonialActive, setTestimonialActive] = useState(false);
   const [referralActive, setReferralActive] = useState(false);
@@ -32,6 +33,9 @@ const Sidebar = () => {
 
     const EventPermission = hasPermission("event");
     setEventActive(EventPermission);
+
+    const BroadcastPermission = hasPermission("noticeboard");
+    setBroadcastActive(BroadcastPermission);
 
     const amenitiesPermission = hasPermission("amenities");
     setAmenitoiesActive(amenitiesPermission);
@@ -955,6 +959,34 @@ const Sidebar = () => {
                       />
                     </svg>
                     <span className="menu-link-text">Event</span>
+                  </NavLink>
+                </li>
+              )}
+
+              {broadcastActive && (
+                <li className="menu-item d-flex">
+                  <NavLink
+                    to="/noticeboard-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${
+                        isActive ? "active" : ""
+                      }`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        d="M11 2a1 1 0 0 1 1 1v9h-1V8a1 1 0 0 0-1-1H6V5a1 1 0 0 1 1-1h4zM5 7v8a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V3a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v4zM1 5a1 1 0 0 1 1-1h2v1H2v8h1v1H2a1 1 0 0 1-1-1V5z"
+                        fill="#DD7007"
+                      />
+                    </svg>
+                    <span className="menu-link-text">Broadcast</span>
                   </NavLink>
                 </li>
               )}
