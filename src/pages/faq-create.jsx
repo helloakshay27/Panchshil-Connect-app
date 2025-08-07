@@ -151,6 +151,21 @@ const FaqCreate = () => {
       return;
     }
 
+     if (
+    (baseURL === "https://dev-panchshil-super-app.lockated.com/" ||
+      baseURL === "https://kalpataru.lockated.com/")
+  ) {
+    if (!formData.faq_category_id) {
+      toast.error("FAQ Category is required");
+      return;
+    }
+
+    if (!formData.faq_sub_category_id) {
+      toast.error("FAQ Sub Category is required");
+      return;
+    }
+  }
+
     // if (!selectedSiteId) {
     //   toast.error("Site is required");
     //   return;
@@ -252,8 +267,8 @@ const FaqCreate = () => {
                     <div className="form-group">
                       <label>
                         FAQ Category 
-                         {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
-                        <span className="otp-asterisk">*</span>
+                       {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") && (
+                            <span className="otp-asterisk"> *</span>
                         )}
                       </label>
                       <SelectBox
@@ -280,7 +295,9 @@ const FaqCreate = () => {
                     <div className="form-group">
                       <label>
                         FAQ Sub Category
-                        {/* <span className="otp-asterisk">*</span> */}
+                        {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") && (
+                          <span className="otp-asterisk"> *</span>
+                        )}
                       </label>
                       <SelectBox
                         options={[

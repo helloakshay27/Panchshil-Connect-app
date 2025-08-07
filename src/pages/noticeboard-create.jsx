@@ -1108,7 +1108,7 @@ const NoticeboardForm = () => {
                         </label>
                         <textarea
                           className="form-control"
-                          rows={3}
+                          rows={1}
                           name="notice_text"
                           placeholder="Enter Notice Text"
                           value={formData.notice_text}
@@ -1117,7 +1117,7 @@ const NoticeboardForm = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-1">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>Notice Type</label>
                         <SelectBox
@@ -1148,7 +1148,7 @@ const NoticeboardForm = () => {
                         <label>Comment</label>
                         <textarea
                           className="form-control"
-                          rows={2}
+                          rows={1}
                           name="comment"
                           placeholder="Enter Comment"
                           value={formData.comment}
