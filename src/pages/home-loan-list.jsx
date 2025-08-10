@@ -204,7 +204,7 @@ const HomeLoanList = () => {
                     name="s[project_name_cont]"
                     id="s_project_name_cont"
                     className="form-control tbl-search table_search"
-                    placeholder="Search by project name, address, or loan amount"
+                    placeholder="Search..."
                     fdprocessedid="u38fp"
                     value={searchQuery}
                     onChange={handleSearchChange}
@@ -237,7 +237,7 @@ const HomeLoanList = () => {
               </form>
             </div>
             {/* {homeLoanPermissions.create === "true" && ( */}
-              <div className="card-tools">
+              {/* <div className="card-tools">
                 <button
                   className="purple-btn2 rounded-3"
                   fdprocessedid="xn3e6n"
@@ -255,7 +255,7 @@ const HomeLoanList = () => {
                   </svg>
                   <span>Add</span>
                 </button>
-              </div>
+              </div> */}
             {/* )} */}
           </div>
 
@@ -281,7 +281,7 @@ const HomeLoanList = () => {
                     <table className="w-100">
                       <thead>
                         <tr>
-                          <th>Action</th>
+                          {/* <th>Action</th> */}
                           <th>Sr No</th>
                           <th>Project Name</th>
                           <th>Project Address</th>
@@ -295,8 +295,7 @@ const HomeLoanList = () => {
                         {displayedHomeLoans.length > 0 ? (
                           displayedHomeLoans.map((loan, index) => (
                             <tr key={loan.id}>
-                              <td>
-                                {/* Edit Icon */}
+                              {/* <td>
                                 {homeLoanPermissions.update === "true" && (
                                   <a
                                     href={`/home-loan-edit/${loan.id}`}
@@ -321,7 +320,6 @@ const HomeLoanList = () => {
                                   </a>
                                 )}
 
-                                {/* View Icon */}
                                 <a
                                   href={`/setup-member/home-loan-edit/${loan.id}`}
                                   className="me-2"
@@ -344,7 +342,7 @@ const HomeLoanList = () => {
                                   />
                                 </svg>
                                 </a>
-                              </td>
+                              </td> */}
                               <td>
                                 {(pagination.current_page - 1) * pageSize +
                                   index +

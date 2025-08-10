@@ -545,6 +545,7 @@ const NoticeboardForm = () => {
   };
 
   const validateForm = (formData) => {
+    toast.dismiss();
     const errors = [];
 
     if (!formData.notice_heading) {
@@ -555,13 +556,20 @@ const NoticeboardForm = () => {
       errors.push("Broadcast Text is required.");
       return errors;
     }
-    if (!selectedProjectId) {
-      errors.push("Project selection is required.");
+    // if (!selectedProjectId) {
+    //   errors.push("Project selection is required.");
+    // }
+    if (!formData.comment) {
+      errors.push("Comment is required.");
+    }
+    if (!formData.expire_time) {
+      errors.push("Expire Time is required.");
     }
     return errors;
   };
 
   const handleSubmit = async (e) => {
+    toast.dismiss();
     e.preventDefault();
     setLoading(true);
     toast.dismiss();
@@ -1130,7 +1138,9 @@ const NoticeboardForm = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Expire Time</label>
+                        <label>Expire Time
+                          <span className="otp-asterisk"> *</span>
+                        </label>
                         <input
                           className="form-control"
                           type="datetime-local"
@@ -1145,7 +1155,9 @@ const NoticeboardForm = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Comment</label>
+                        <label>Comment
+                           <span className="otp-asterisk"> *</span>
+                        </label>
                         <textarea
                           className="form-control"
                           rows={1}
