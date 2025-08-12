@@ -15,23 +15,40 @@ const ForgotRustomjee = () => {
   const navigate = useNavigate();
 
   // Rustomjee configuration - matching the login page style
-  const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
+  // const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
+  // const isRustomjee = baseURL === "https://dev-panchshil-super-app.lockated.com/";
+  
+  // // Configuration based on the portal
+  // const config = {
+  //   baseURL: baseURL,
+  //   logoUrl: isKalpataru ? Lokated_URL : Rustomji_URL,
+  //   loginBgClass: isKalpataru ? "login_bg_kalpataru" : "login_bg_rustomji",
+  //   loginSecClass: isKalpataru ? "login-sec-rustom" : "login-sec-rustom",
+  //   logoStyle: isKalpataru 
+  //   ? { width: "80%", height: 65, margin: "45px 0px 30px" } // Kalpataru logo style
+  //   : { width: "100%", height: 100, margin: "45px 0px 30px" }, // Rustomjee logo style
+  //   showRegisterButton: false,
+  //   formTextColor: "text-light",
+  //   alignContent: "justify-content-end",
+  //   columnClass: "col-lg-4 p-0 m-0 col-md-6"
+  // };
+
+   const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
   const isRustomjee = baseURL === "https://dev-panchshil-super-app.lockated.com/";
   
   // Configuration based on the portal
   const config = {
     baseURL: baseURL,
-    logoUrl: isKalpataru ? Lokated_URL : Rustomji_URL,
-    loginBgClass: isKalpataru ? "login_bg_kalpataru" : "login_bg_rustomji",
-    loginSecClass: isKalpataru ? "login-sec-rustom" : "login-sec-rustom",
-    logoStyle: isKalpataru 
-    ? { width: "80%", height: 65, margin: "45px 0px 30px" } // Kalpataru logo style
-    : { width: "100%", height: 100, margin: "45px 0px 30px" }, // Rustomjee logo style
+    logoUrl: Lokated_URL, // Always Lockated logo for both URLs
+    loginBgClass: "login_bg_kalpataru" ,
+    loginSecClass: "login-sec-rustom", // same for both
+    logoStyle: { width: "80%", height: 65, margin: "45px 0px 30px" }, // Kalpataru/Lockated style for both
     showRegisterButton: false,
     formTextColor: "text-light",
     alignContent: "justify-content-end",
     columnClass: "col-lg-4 p-0 m-0 col-md-6"
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

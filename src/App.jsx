@@ -139,6 +139,9 @@ import HomeLoanList from "./pages/home-loan-list";
 import NoticeboardForm from "./pages/noticeboard-create";
 import NoticeboardList from "./pages/noticeboard-list";
 import NoticeboardDetails from "./pages/noticeboard-details";
+import LoanManagerAdd from "./pages/loan-manager-add";
+import LoanManagerList from "./pages/loan-manager-list";
+import LoanManagerEdit from "./pages/loan-manager-edit";
 // import NoticeboardDetailsMinimal from "./pages/noticeboard-details-minimal";
 
 // // import EditGallery from './EditGallery';
@@ -562,6 +565,20 @@ function App() {
             path="/noticeboard-details/:id"
             element={<NoticeboardDetails />}
           />
+
+           <Route
+            path="/setup-member/loan-manager-list"
+            element={<LoanManagerList />}
+          />
+          <Route
+            path="/setup-member/loan-manager-create"
+            element={<LoanManagerAdd />}
+          />
+          <Route
+            path="/setup-member/loan-manager-edit/:id"
+            element={<LoanManagerEdit />}
+          />
+
 
         </Route>
       </Routes>
