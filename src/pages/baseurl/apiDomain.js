@@ -20,7 +20,7 @@ switch (hostname) {
     break;
 
   case "connect.panchshil.com":
-    baseURL = "https://panchshil-super.lockated.com/";
+    baseURL = "https://api-connect.panchshil.com/";
     break;
 
   case "localhost":
