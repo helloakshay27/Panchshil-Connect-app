@@ -17,6 +17,7 @@ const PlusServiceCreate = () => {
     description: "",
     attachment: null,
     service_category_id: "",
+    order_no: "",
   });
 
   console.log("formData", serviceData);
@@ -144,6 +145,10 @@ const PlusServiceCreate = () => {
         "plus_service[service_category_id]",
         serviceData.service_category_id
       );
+      
+      if (serviceData.order_no) {
+        formData.append("plus_service[order_no]", serviceData.order_no);
+      }
 
       if (serviceData.attachment) {
         formData.append("plus_service[attachment]", serviceData.attachment);
@@ -165,6 +170,7 @@ const PlusServiceCreate = () => {
         name: "",
         description: "",
         attachment: null,
+        order_no: "",
       });
       setSelectedProjectId("");
 
@@ -256,6 +262,22 @@ const PlusServiceCreate = () => {
                           service_category_id: value,
                         })
                       }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Order Number
+                    </label>
+                    <input
+                      className="form-control"
+                      type="number"
+                      placeholder="Enter Order Number"
+                      name="order_no"
+                      value={serviceData.order_no}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>

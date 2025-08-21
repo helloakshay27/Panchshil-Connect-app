@@ -18,6 +18,7 @@ const PlusServiceEdit = () => {
     attachment: null,
     service_category_id: "",
     existingImageUrl: "",
+    order_no: "",
   });
 
   const [imageChanged, setImageChanged] = useState(false);
@@ -86,6 +87,7 @@ const PlusServiceEdit = () => {
           attachment: null,
           existingImageUrl: existingImageUrl,
           service_category_id: serviceInfo.service_category_id || "",
+          order_no: serviceInfo.order_no || "",
         });
       } catch (error) {
         console.error("Error fetching plus service:", error);
@@ -197,6 +199,10 @@ const PlusServiceEdit = () => {
         serviceData.service_category_id
       );
 
+      if (serviceData.order_no) {
+        formData.append("plus_service[order_no]", serviceData.order_no);
+      }
+
       if (imageChanged) {
         if (serviceData.attachment) {
           formData.append("plus_service[attachment]", serviceData.attachment);
@@ -301,6 +307,22 @@ const PlusServiceEdit = () => {
                           service_category_id: value,
                         })
                       }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Order No
+                    </label>
+                    <input
+                      className="form-control"
+                      type="number"
+                      placeholder="Enter Order Number"
+                      name="order_no"
+                      value={serviceData.order_no}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
