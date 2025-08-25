@@ -300,6 +300,12 @@ const ProjectDetailsEdit = () => {
       const key = `${prefix}_${formattedRatio}`
         .replace(/\s+/g, "_")
         .toLowerCase();
+      
+      // Add file_name property with timestamp-based default name for gallery images
+      if (type === "gallery") {
+        img.file_name = `gallery_image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+      
       updateFormData(key, [img]); // Append the new image
     });
 
@@ -540,11 +546,33 @@ const ProjectDetailsEdit = () => {
                 if (seenImages.has(id)) return false;
                 seenImages.add(id);
                 return true;
-              });
+              }).map((img) => ({
+                ...img,
+                // Add file_name property for existing images if not present
+                file_name: img.file_name || img.document_file_name || img.title || `existing_image_${img.id || Date.now()}`
+              }));
 
               galleryImages[key] = galleryImages[key].concat(uniqueImages);
             }
           });
+        });
+
+        // Also process gallery images that are directly in the projectData structure  
+        Object.keys(galleryImages).forEach((key) => {
+          if (Array.isArray(projectData[key])) {
+            const directImages = projectData[key].filter((img) => {
+              const id = img.id || img.document_url;
+              if (seenImages.has(id)) return false;
+              seenImages.add(id);
+              return true;
+            }).map((img) => ({
+              ...img,
+              // Add file_name property for existing images if not present
+              file_name: img.file_name || img.document_file_name || img.title || `existing_image_${img.id || Date.now()}`
+            }));
+
+            galleryImages[key] = galleryImages[key].concat(directImages);
+          }
         });
 
         // Step 3: Set static + dynamic formData
@@ -1031,6 +1059,23 @@ const ProjectDetailsEdit = () => {
       const updatedGallery = [...prev.gallery_image];
       updatedGallery[index].gallery_image_file_name = value;
       return { ...prev, gallery_image: updatedGallery };
+    });
+  };
+
+  // Function to handle gallery image name changes for different ratios
+  const handleGalleryImageNameChange = (key, index, newName) => {
+    setFormData((prev) => {
+      const updatedImages = [...(prev[key] || [])];
+      if (updatedImages[index]) {
+        updatedImages[index] = {
+          ...updatedImages[index],
+          file_name: newName,
+        };
+      }
+      return {
+        ...prev,
+        [key]: updatedImages,
+      };
     });
   };
 
@@ -1823,40 +1868,40 @@ const ProjectDetailsEdit = () => {
     //   return;
     // }
 
-    const gallery_images = [
-      "gallery_image_16_by_9",
-      "gallery_image_1_by_1",
-      "gallery_image_9_by_16",
-      "gallery_image_3_by_2",
-    ];
+    // const gallery_images = [
+    //   "gallery_image_16_by_9",
+    //   "gallery_image_1_by_1",
+    //   "gallery_image_9_by_16",
+    //   "gallery_image_3_by_2",
+    // ];
 
-    const isValidImage = (img) =>
-      img?.file instanceof File || !!img?.id || !!img?.document_file_name;
+    // const isValidImage = (img) =>
+    //   img?.file instanceof File || !!img?.id || !!img?.document_file_name;
 
-    // Combine all valid images from all gallery fields
-    let totalValidGalleryImages = 0;
+    // // Combine all valid images from all gallery fields
+    // let totalValidGalleryImages = 0;
 
-    for (const key of gallery_images) {
-      const images = Array.isArray(formData[key])
-        ? formData[key].filter(isValidImage)
-        : [];
-      totalValidGalleryImages += images.length;
-    }
+    // for (const key of gallery_images) {
+    //   const images = Array.isArray(formData[key])
+    //     ? formData[key].filter(isValidImage)
+    //     : [];
+    //   totalValidGalleryImages += images.length;
+    // }
 
-    if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
-      const remainder = totalValidGalleryImages % 3;
-      const imagesNeeded = 3 - remainder;
-      const previousValidCount = totalValidGalleryImages - remainder;
+    // if (totalValidGalleryImages > 0 && totalValidGalleryImages % 3 !== 0) {
+    //   const remainder = totalValidGalleryImages % 3;
+    //   const imagesNeeded = 3 - remainder;
+    //   const previousValidCount = totalValidGalleryImages - remainder;
 
-      const message = `Currently in Gallery ${totalValidGalleryImages} image${
-        totalValidGalleryImages !== 1 ? "s" : ""
-      } uploaded. Please upload ${imagesNeeded} more or remove ${remainder} to make it a multiple of 3.`;
+    //   const message = `Currently in Gallery ${totalValidGalleryImages} image${
+    //     totalValidGalleryImages !== 1 ? "s" : ""
+    //   } uploaded. Please upload ${imagesNeeded} more or remove ${remainder} to make it a multiple of 3.`;
 
-      toast.error(message);
-      setLoading(false);
-      setIsSubmitting(false);
-      return;
-    }
+    //   toast.error(message);
+    //   setLoading(false);
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
     const data = new FormData();
 
@@ -2085,11 +2130,16 @@ const ProjectDetailsEdit = () => {
           }
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
-        value.forEach((img) => {
+        value.forEach((img, imgIndex) => {
           const backendField =
             key.replace("gallery_image_", "project[gallery_image_") + "][]";
           if (img.file instanceof File) {
             data.append(backendField, img.file);
+            // Add file_name parameter for gallery images
+            if (img.file_name) {
+              const fileNameField = key.replace("gallery_image_", "project[gallery_image_") + "_file_names][]";
+              data.append(fileNameField, img.file_name);
+            }
           }
         });
       } else if (key.startsWith("project_2d_image_") && Array.isArray(value)) {
@@ -5285,9 +5335,24 @@ const ProjectDetailsEdit = () => {
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
                             <td>
-                              {file.document_file_name ||
-                                file.name ||
-                                `Image ${index + 1}`}
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={
+                                  file.file_name ||
+                                  file.document_file_name ||
+                                  file.name ||
+                                  `Image ${index + 1}`
+                                }
+                                onChange={(e) =>
+                                  handleGalleryImageNameChange(key, index, e.target.value)
+                                }
+                                placeholder="Enter image name"
+                                style={{
+                                  minWidth: "150px",
+                                  fontSize: "14px",
+                                }}
+                              />
                             </td>
                             <td>
                               <img
@@ -5295,6 +5360,7 @@ const ProjectDetailsEdit = () => {
                                 className="img-fluid rounded"
                                 src={file.document_url || file.preview}
                                 alt={
+                                  file.file_name ||
                                   file.document_file_name ||
                                   file.name ||
                                   `Image ${index + 1}`

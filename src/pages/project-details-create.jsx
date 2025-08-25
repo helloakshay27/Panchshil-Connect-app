@@ -185,6 +185,18 @@ const ProjectDetailsCreate = () => {
     });
   };
 
+  // Function to handle gallery image name changes
+  const handleGalleryImageNameChange = (groupKey, imageIndex, newName) => {
+    setFormData(prevData => ({
+      ...prevData,
+      [groupKey]: prevData[groupKey].map((img, index) => 
+        index === imageIndex 
+          ? { ...img, file_name: newName }
+          : img
+      )
+    }));
+  };
+
   const handleCroppedCoverImages = (
     validImages,
     type = "cover",
@@ -296,7 +308,14 @@ const ProjectDetailsCreate = () => {
       const key = `${prefix}_${formattedRatio}`
         .replace(/\s+/g, "_")
         .toLowerCase();
-      updateFormData(key, [img]);
+      
+      // Add file_name property to the image object
+      const imageWithName = {
+        ...img,
+        file_name: img.name || `${type} Image ${Date.now()}`
+      };
+      
+      updateFormData(key, [imageWithName]);
     });
 
     closeModal(type);
@@ -1928,11 +1947,16 @@ const ProjectDetailsCreate = () => {
           }
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
-        value.forEach((img) => {
+        value.forEach((img, imgIndex) => {
           const backendField =
             key.replace("gallery_image_", "project[gallery_image_") + "][]"; // Append [] for multiple files
           if (img.file instanceof File) {
             data.append(backendField, img.file);
+            // Add file_name parameter
+            if (img.file_name) {
+              const fileNameField = key.replace("gallery_image_", "project[gallery_image_") + "_file_names][]";
+              data.append(fileNameField, img.file_name);
+            }
           }
         });
       } else if (key.startsWith("floor_plans_") && Array.isArray(value)) {
@@ -4309,13 +4333,29 @@ const ProjectDetailsCreate = () => {
 
                         return files.map((file, index) => (
                           <tr key={`${key}-${index}`}>
-                            <td>{file.name}</td>
+                            <td>
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={file.file_name || file.name || `Image ${index + 1}`}
+                                onChange={(e) => handleGalleryImageNameChange(key, index, e.target.value)}
+                                placeholder="Enter image name"
+                                style={{
+                                  border: "1px solid #ddd",
+                                  borderRadius: "4px",
+                                  padding: "5px 8px",
+                                  fontSize: "14px",
+                                  width: "100%"
+                                }}
+                              />
+                              {/* <small className="text-muted">Ratio: {label}</small> */}
+                            </td>
                             <td>
                               <img
                                 style={{ maxWidth: 100, maxHeight: 100 }}
                                 className="img-fluid rounded"
                                 src={file.preview}
-                                alt={file.name}
+                                alt={file.file_name || file.name || `Gallery Image ${index + 1}`}
                               />
                             </td>
                             <td>{file.ratio || label}</td>
