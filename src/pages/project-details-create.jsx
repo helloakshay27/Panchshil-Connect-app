@@ -1947,16 +1947,11 @@ const ProjectDetailsCreate = () => {
           }
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
-        value.forEach((img, imgIndex) => {
-          const backendField =
-            key.replace("gallery_image_", "project[gallery_image_") + "][]"; // Append [] for multiple files
+        value.forEach((img) => {
           if (img.file instanceof File) {
-            data.append(backendField, img.file);
-            // Add file_name parameter
-            if (img.file_name) {
-              const fileNameField = key.replace("gallery_image_", "project[gallery_image_") + "_file_names][]";
-              data.append(fileNameField, img.file_name);
-            }
+            // Send as array without indices
+            data.append(`project[${key}][][file]`, img.file);
+            data.append(`project[${key}][][file_name]`, img.file_name || img.file.name);
           }
         });
       } else if (key.startsWith("floor_plans_") && Array.isArray(value)) {
@@ -1982,6 +1977,14 @@ const ProjectDetailsCreate = () => {
     });
 
     console.log("data to be sent:", Array.from(data.entries()));
+    console.log("Gallery image data being sent:", {
+      gallery_16_by_9: formData.gallery_image_16_by_9,
+      gallery_1_by_1: formData.gallery_image_1_by_1,
+      gallery_9_by_16: formData.gallery_image_9_by_16,
+      gallery_3_by_2: formData.gallery_image_3_by_2
+    });
+    console.log("QR code image data being sent:", formData.project_qrcode_image);
+    console.log("Gallery images structure: Arrays without numeric indices");
 
     try {
       const response = await axios.post(`${baseURL}projects.json`, data, {
@@ -3344,11 +3347,7 @@ const ProjectDetailsCreate = () => {
                           type="text"
                           className="form-control me-2"
                           placeholder="Enter image name"
-                          value={
-                            image.isNew
-                              ? image.title || "" // For new uploads, use editable title
-                              : image.title || image.file_name || "" // For existing, show title if present, else fallback to file_name
-                          }
+                          value={image.title || ""}
                           onChange={(e) =>
                             handleQRCodeImageNameChange(index, e.target.value)
                           }
@@ -4337,9 +4336,9 @@ const ProjectDetailsCreate = () => {
                               <input
                                 type="text"
                                 className="form-control"
-                                value={file.file_name || file.name || `Image ${index + 1}`}
+                                value={file.file_name || ""}
                                 onChange={(e) => handleGalleryImageNameChange(key, index, e.target.value)}
-                                placeholder="Enter image name"
+                                placeholder={file.name || `Image ${index + 1}`}
                                 style={{
                                   border: "1px solid #ddd",
                                   borderRadius: "4px",

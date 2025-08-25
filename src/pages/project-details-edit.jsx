@@ -2068,19 +2068,38 @@ const ProjectDetailsEdit = () => {
         });
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
         const newTitles = [];
+        const existingUpdates = [];
+        
         value.forEach((fileObj) => {
           if (fileObj.project_qrcode_image instanceof File) {
+            // New QR code image
             data.append(
               "project[project_qrcode_image][]",
               fileObj.project_qrcode_image
             );
           }
+          
           if (fileObj.isNew) {
+            // Title for new image
             newTitles.push(fileObj.title || "");
+          } else if (fileObj.id && fileObj.title) {
+            // Existing image with updated title
+            existingUpdates.push({
+              id: fileObj.id,
+              title: fileObj.title
+            });
           }
         });
+        
+        // Send titles for new images
         newTitles.forEach((title) => {
           data.append("project[project_qrcode_image_titles][]", title);
+        });
+        
+        // Send updates for existing images
+        existingUpdates.forEach((update, index) => {
+          data.append(`project[project_qrcode_image_updates][${index}][id]`, update.id);
+          data.append(`project[project_qrcode_image_updates][${index}][title]`, update.title);
         });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
@@ -2131,15 +2150,14 @@ const ProjectDetailsEdit = () => {
         });
       } else if (key.startsWith("gallery_image_") && Array.isArray(value)) {
         value.forEach((img, imgIndex) => {
-          const backendField =
-            key.replace("gallery_image_", "project[gallery_image_") + "][]";
           if (img.file instanceof File) {
-            data.append(backendField, img.file);
-            // Add file_name parameter for gallery images
-            if (img.file_name) {
-              const fileNameField = key.replace("gallery_image_", "project[gallery_image_") + "_file_names][]";
-              data.append(fileNameField, img.file_name);
-            }
+            // New image upload - send as array without indices
+            data.append(`project[${key}][][file]`, img.file);
+            data.append(`project[${key}][][file_name]`, img.file_name || img.file.name);
+          } else if (img.id && img.file_name) {
+            // Existing image with updated name - send id and file_name
+            data.append(`project[${key}_updates][${imgIndex}][id]`, img.id);
+            data.append(`project[${key}_updates][${imgIndex}][file_name]`, img.file_name);
           }
         });
       } else if (key.startsWith("project_2d_image_") && Array.isArray(value)) {
@@ -2157,6 +2175,14 @@ const ProjectDetailsEdit = () => {
 
     // Debug FormData entries
     console.log("FormData entries:", Array.from(data.entries()));
+    console.log("Gallery image data being sent:", {
+      gallery_16_by_9: formData.gallery_image_16_by_9,
+      gallery_1_by_1: formData.gallery_image_1_by_1,
+      gallery_9_by_16: formData.gallery_image_9_by_16,
+      gallery_3_by_2: formData.gallery_image_3_by_2
+    });
+    console.log("QR code image data being sent:", formData.project_qrcode_image);
+    console.log("Gallery images structure: Arrays without numeric indices");
 
     try {
       const response = await axios.put(`${baseURL}projects/${id}.json`, data, {
@@ -4009,11 +4035,7 @@ const ProjectDetailsEdit = () => {
                           type="text"
                           className="form-control me-2"
                           placeholder="Enter image name"
-                          value={
-                            image.isNew
-                              ? image.title || "" // For new uploads, use editable title
-                              : image.title || image.file_name || "" // For existing, show title if present, else fallback to file_name
-                          }
+                          value={image.title || ""} // Always use title, don't fallback to file_name
                           onChange={(e) =>
                             handleQRCodeImageNameChange(index, e.target.value)
                           }
@@ -5338,12 +5360,7 @@ const ProjectDetailsEdit = () => {
                               <input
                                 type="text"
                                 className="form-control"
-                                value={
-                                  file.file_name ||
-                                  file.document_file_name ||
-                                  file.name ||
-                                  `Image ${index + 1}`
-                                }
+                                value={file.file_name || ""}
                                 onChange={(e) =>
                                   handleGalleryImageNameChange(key, index, e.target.value)
                                 }
@@ -5361,7 +5378,7 @@ const ProjectDetailsEdit = () => {
                                 src={file.document_url || file.preview}
                                 alt={
                                   file.file_name ||
-                                  file.document_file_name ||
+                                  file.file_name ||
                                   file.name ||
                                   `Image ${index + 1}`
                                 }
