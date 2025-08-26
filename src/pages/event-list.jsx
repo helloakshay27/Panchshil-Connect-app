@@ -268,7 +268,7 @@ const Eventlist = () => {
                           displayedEvents.map((event, index) => (
                             <tr key={event.id}>
                               <td>
-                                {/* {eventPermission.update === "true" && (
+                                {eventPermission.update === "true" && (
                                   <a
                                     href=""
                                     onClick={() =>
@@ -292,7 +292,7 @@ const Eventlist = () => {
                                       />
                                     </svg>
                                   </a>
-                                )} */}
+                                )}
                                 {eventPermission.show === "true" && (
                                   <a
                                     href=""
