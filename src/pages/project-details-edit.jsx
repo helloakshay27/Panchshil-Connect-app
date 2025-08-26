@@ -2156,8 +2156,8 @@ const ProjectDetailsEdit = () => {
             data.append(`project[${key}][][file_name]`, img.file_name || img.file.name);
           } else if (img.id && img.file_name) {
             // Existing image with updated name - send id and file_name
-            data.append(`project[${key}_updates][${imgIndex}][id]`, img.id);
-            data.append(`project[${key}_updates][${imgIndex}][file_name]`, img.file_name);
+            data.append(`project[${key}][][id]`, img.id);
+            data.append(`project[${key}][][file_name]`, img.file_name);
           }
         });
       } else if (key.startsWith("project_2d_image_") && Array.isArray(value)) {
@@ -5378,7 +5378,7 @@ const ProjectDetailsEdit = () => {
                                 src={file.document_url || file.preview}
                                 alt={
                                   file.file_name ||
-                                  file.file_name ||
+                                  file.document_file_name ||
                                   file.name ||
                                   `Image ${index + 1}`
                                 }
