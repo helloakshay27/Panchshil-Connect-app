@@ -2158,6 +2158,7 @@ const ProjectDetailsEdit = () => {
             // Existing image with updated name - send id and file_name
             data.append(`project[${key}][][id]`, img.id);
             data.append(`project[${key}][][file_name]`, img.file_name);
+            
           }
         });
       } else if (key.startsWith("project_2d_image_") && Array.isArray(value)) {
@@ -4846,73 +4847,7 @@ const ProjectDetailsEdit = () => {
                   {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
-                {/* <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() =>
-                    document.getElementById("cover_images").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <input
-                  id="cover_images"
-                  className="form-control"
-                  type="file"
-                  name="cover_images"
-                  accept="image/*"
-                  onChange={(e) =>
-                    handleFileUpload("cover_images", e.target.files)
-                  }
-                  multiple
-                  style={{ 
-                  display: "none" }}
-                /> */}
-
                 {
-                  /* <ImageUploadingButton
-                  value={coverImageUpload}
-                  onChange={(list) => handleImageUploaded(list, "cover_images")}
-                  variant="button"
-                  btntext="+ Add"
-                />
-
-                <ImageCropper
-                  open={dialogOpen.cover_images}
-                  image={coverImageUpload?.[0]?.dataURL}
-                  originalFile={coverImageUpload?.[0]?.file}
-                  onComplete={(cropped) => {
-                    if (cropped) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        cover_images: Array.isArray(prev.cover_images)
-                          ? [...prev.cover_images, cropped.file]
-                          : [cropped.file],
-                        coverPreviewImage: URL.createObjectURL(cropped.file),
-                      }));
-                    }
-                    setDialogOpen((prev) => ({ ...prev, cover_images: false }));
-                    setCoverImageUpload([]); // Reset ImageUploadingButton
-                  }}
-                  requiredRatios={[16 / 9, 9 / 16, 1]} // Required ratios for cropping
-                  requiredRatioLabel="16:9"
-                  allowedRatios={[
-                    { label: "16:9", ratio: 16 / 9 },
-                    { label: "9:16", ratio: 9 / 16 },
-                    { label: "1:1", ratio: 1 },
-                  ]}
-                /> */
-
                   <button
                     className="purple-btn2 rounded-3"
                     fdprocessedid="xn3e6n"
@@ -4934,15 +4869,6 @@ const ProjectDetailsEdit = () => {
                 }
 
                 {showUploader && (
-                  // <ProjectBannerUpload
-                  //   onClose={() => setShowUploader(false)}
-                  //   includeInvalidRatios={false}
-                  //   selectedRatioProp={selectedCoverRatios}
-                  //   showAsModal={true}
-                  //   label={coverImageLabel}
-                  //   description={dynamicDescription}
-                  //   onContinue={(validImages) => handleCroppedImages(validImages, "cover")}
-                  // />
                   <ProjectImageVideoUpload
                     onClose={() => setShowUploader(false)}
                     includeInvalidRatios={false}
@@ -5007,33 +4933,6 @@ const ProjectDetailsEdit = () => {
                           </td>
                         </tr>
                       ))}
-                      {/* {coverImageRatios.map(({ key, label }) => {
-                        const files = formData[key] || [];
-
-                        return files.map((file, index) => (
-                          <tr key={`${key}-${index}`}>
-                            <td>{file.document_file_name || file.name || `Image ${index + 1}`}</td>
-                            <td>
-                              <img
-                                style={{ maxWidth: 100, maxHeight: 100 }}
-                                className="img-fluid rounded"
-                                src={file.document_url || file.preview}
-                                alt={file.document_file_name || file.name || `Image ${index + 1}`}
-                              />
-                            </td>
-                            <td>{file.ratio || label}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() => handleFileDiscardCoverImage(key, index)}
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ));
-                      })} */}
                       {coverImageRatios.map(({ key, label }) => {
                         const files = Array.isArray(formData[key])
                           ? formData[key]
@@ -5155,112 +5054,8 @@ const ProjectDetailsEdit = () => {
                   {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
-                {/* Category Dropdown and Add Button in one row */}
                 <div className="d-flex align-items-center">
-                  {/* <div className="me-2">
-                    <SelectBox
-                      options={categoryTypes}
-                      defaultValue={selectedCategory}
-                      onChange={(value) => setSelectedCategory(value)}
-                    />
-                    */}
                 </div>
-
-                {/* Add Button */}
-                {/* <button
-                    className="purple-btn2 rounded-3"
-                    onClick={() =>
-                      document.getElementById("gallery_image").click()
-                    }
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      fill="currentColor"
-                      className="bi bi-plus"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                    </svg>
-                    <span>Add</span>
-                  </button>
-                </div>
-
-                <input
-                  id="gallery_image"
-                  type="file"
-                  accept="image/*"
-                  name="gallery_image"
-                  onChange={handleImageUpload}
-                  multiple
-                  style={{ display: "none" }}
-                /> */}
-
-                {/* <ImageUploadingButton
-                  value={galleryImageUpload}
-                  onChange={(list) =>
-                    handleImageUploaded(list, "gallery_image")
-                  }
-                  variant="button"
-                  btntext="+ Add"
-                />
-
-                <ImageCropper
-                  open={dialogOpen.gallery_image}
-                  image={galleryImageUpload?.[0]?.dataURL}
-                  originalFile={galleryImageUpload?.[0]?.file}
-                  onComplete={(cropped) => {
-                    if (cropped) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        gallery_image: Array.isArray(prev.gallery_image)
-                          ? [
-                              ...prev.gallery_image,
-                              {
-                                gallery_image: cropped.file,
-                                gallery_image_file_name: cropped.file.name,
-                                gallery_image_file_type:
-                                  selectedCategory || "Gallery",
-                                isDay: true,
-                                attachfile: {
-                                  document_url: URL.createObjectURL(
-                                    cropped.file
-                                  ),
-                                },
-                              },
-                            ]
-                          : [
-                              {
-                                gallery_image: cropped.file,
-                                gallery_image_file_name: cropped.file.name,
-                                gallery_image_file_type:
-                                  selectedCategory || "Gallery",
-                                isDay: true,
-                                attachfile: {
-                                  document_url: URL.createObjectURL(
-                                    cropped.file
-                                  ),
-                                },
-                              },
-                            ],
-                        previewImage: URL.createObjectURL(cropped.file),
-                      }));
-                    }
-                    setDialogOpen((prev) => ({
-                      ...prev,
-                      gallery_image: false,
-                    }));
-                    setGalleryImageUpload([]);
-                  }}
-                  requiredRatios={[16 / 9, 9 / 16, 1]} // Required ratios for cropping
-                  requiredRatioLabel="16:9"
-                  allowedRatios={[
-                    { label: "16:9", ratio: 16 / 9 },
-                    { label: "9:16", ratio: 9 / 16 },
-                    { label: "1:1", ratio: 1 },
-                  ]}
-                /> */}
 
                 <button
                   className="purple-btn2 rounded-3"
@@ -5280,17 +5075,19 @@ const ProjectDetailsEdit = () => {
                   </svg>
                   <span>Add</span>
                 </button>
-
+                
+                {/* MODIFIED: Replaced ProjectBannerUpload with ProjectImageVideoUpload for Gallery */}
                 {showGalleryModal && (
-                  <ProjectBannerUpload
+                  <ProjectImageVideoUpload
                     onClose={() => setShowGalleryModal(false)}
                     selectedRatioProp={selectedGalleryRatios}
                     showAsModal={true}
                     label={galleryImageLabel}
                     description={dynamicDescription1}
-                    onContinue={(validImages) =>
-                      handleCroppedImages(validImages, "gallery")
+                    onContinue={(validImages, videoFiles) =>
+                      handleCroppedCoverImages(validImages, videoFiles, "gallery")
                     }
+                    allowVideos={true}
                   />
                 )}
               </div>
@@ -5304,9 +5101,8 @@ const ProjectDetailsEdit = () => {
                   <table className="w-100">
                     <thead>
                       <tr>
-                        {/* <th>Image Category</th> */}
                         <th>Image Name</th>
-                        <th>Image</th>
+                        <th>Preview</th>
                         <th>Ratio</th>
                         <th>Action</th>
                       </tr>
@@ -5330,7 +5126,6 @@ const ProjectDetailsEdit = () => {
                               )}
                             </td>
                             <td>
-                              {/* <div>{file.day_night ? "Day" : "Night"}</div> */}
                               N/A
                             </td>
                             <td>
@@ -5351,57 +5146,78 @@ const ProjectDetailsEdit = () => {
                           </tr>
                         ))
                       )}
+                      {/* MODIFIED: Updated gallery table to render videos */}
                       {gallery_images.map(({ key, label }) => {
                         const files = formData[key] || [];
+                        return files.map((file, index) => {
+                          const preview = file.preview || (file.file ? URL.createObjectURL(file.file) : null) || file.document_url || "";
+                          const name = file.file_name || file.document_file_name || file.name || "Unnamed";
+                          const isVideo = file.type === "video" || (file.file && file.file.type.startsWith("video/")) || (file.document_url && [".mp4", ".webm", ".ogg"].some(ext => file.document_url.toLowerCase().endsWith(ext))) || (preview && [".mp4", ".webm", ".ogg"].some(ext => preview.toLowerCase().endsWith(ext)));
 
-                        return files.map((file, index) => (
-                          <tr key={`${key}-${index}`}>
-                            <td>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={file.file_name || ""}
-                                onChange={(e) =>
-                                  handleGalleryImageNameChange(key, index, e.target.value)
-                                }
-                                placeholder="Enter image name"
-                                style={{
-                                  minWidth: "150px",
-                                  fontSize: "14px",
-                                }}
-                              />
-                            </td>
-                            <td>
-                              <img
-                                style={{ maxWidth: 100, maxHeight: 100 }}
-                                className="img-fluid rounded"
-                                src={file.document_url || file.preview}
-                                alt={
-                                  file.file_name ||
-                                  file.document_file_name ||
-                                  file.name ||
-                                  `Image ${index + 1}`
-                                }
-                              />
-                            </td>
-                            <td>{file.ratio || label}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="purple-btn2"
-                                onClick={() => {
-                                  handleFetchedDiscardGallery(
-                                    key,
-                                    index,
-                                    file.id
-                                  );
-                                }}
-                              >
-                                x
-                              </button>
-                            </td>
-                          </tr>
-                        ));
+                          return (
+                            <tr key={`${key}-${index}`}>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={file.file_name || ""}
+                                  onChange={(e) =>
+                                    handleGalleryImageNameChange(key, index, e.target.value)
+                                  }
+                                  placeholder="Enter image name"
+                                  style={{
+                                    minWidth: "150px",
+                                    fontSize: "14px",
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                {isVideo ? (
+                                  <video
+                                    controls
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    key={preview}
+                                  >
+                                    <source
+                                      src={preview}
+                                      type={
+                                        file.file?.type ||
+                                        (file.document_url
+                                          ? `video/${file.document_url.split(".").pop()}`
+                                          : "video/mp4")
+                                      }
+                                    />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                ) : (
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={preview}
+                                    alt={name}
+                                  />
+                                )}
+                              </td>
+                              <td>{file.ratio || label}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() => {
+                                    handleFetchedDiscardGallery(
+                                      key,
+                                      index,
+                                      file.id
+                                    );
+                                  }}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        });
                       })}
                     </tbody>
                   </table>
@@ -5427,69 +5243,6 @@ const ProjectDetailsEdit = () => {
                       </span>
                       {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                     </h5>
-
-                    {/* <button
-                  className="purple-btn2 rounded-3"
-                  onClick={() =>
-                    document.getElementById("two_d_images").click()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={26}
-                    height={20}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-
-                <input
-                  id="two_d_images"
-                  type="file"
-                  accept="image/*"
-                  name="two_d_images"
-                  onChange={handleChange}
-                  multiple
-                  style={{ display: "none" }}
-                /> */}
-
-                    {/* <ImageUploadingButton
-                  value={floorPlanImageUpload}
-                  onChange={(list) => handleImageUploaded(list, "two_d_images")}
-                  variant="button"
-                  btntext="+ Add"
-                />
-
-                <ImageCropper
-                  open={dialogOpen.two_d_images}
-                  image={floorPlanImageUpload?.[0]?.dataURL}
-                  originalFile={floorPlanImageUpload?.[0]?.file}
-                  onComplete={(cropped) => {
-                    if (cropped) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        two_d_images: Array.isArray(prev.two_d_images)
-                          ? [...prev.two_d_images, cropped.file]
-                          : [cropped.file],
-                        previewImage: URL.createObjectURL(cropped.file),
-                      }));
-                    }
-                    setDialogOpen((prev) => ({ ...prev, two_d_images: false }));
-                    setFloorPlanImageUpload([]); // Reset ImageUploadingButton
-                  }}
-                  requiredRatios={[16 / 9, 9 / 16, 1]} // Required ratios for cropping
-                  requiredRatioLabel="16:9"
-                  allowedRatios={[
-                    { label: "16:9", ratio: 16 / 9 },
-                    { label: "9:16", ratio: 9 / 16 },
-                    { label: "1:1", ratio: 1 },
-                  ]}
-                /> */}
-
                     <button
                       className="purple-btn2 rounded-3"
                       fdprocessedid="xn3e6n"
@@ -5619,72 +5372,6 @@ const ProjectDetailsEdit = () => {
                   </div>
                 </>
               )}
-              {/* <div className="col-md-12 mt-2">
-                <h6 className="mt-3">Previous Gallery Images</h6>
-               
-
-                <div
-                  className="tbl-container"
-                  style={{ maxHeight: "300px", overflowY: "auto" }}
-                >
-                  <table className="w-100">
-                    <thead className="thead-dark">
-                      <tr>
-                        <th style={{ width: "25%" }}>Image Category</th>
-                        <th style={{ width: "25%" }}>Image Name</th>
-                        <th style={{ width: "25%" }}>Image</th>
-                        <th style={{ width: "25%" }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {formData.fetched_gallery_image?.map((file, index) =>
-                        file.attachfiles?.length > 0 ? (
-                          file.attachfiles.map((attachment, idx) => (
-                            <tr key={`${index}-${idx}`}>
-                              <td>{file.gallery_type || "N/A"}</td>
-                              <td>{attachment.file_name || "N/A"}</td>
-                              <td className="text-center">
-                                {attachment.document_url ? (
-                                  <img
-                                    src={attachment.document_url}
-                                    alt={
-                                      attachment.document_file_name ||
-                                      "Fetched Image"
-                                    }
-                                    style={{
-                                      maxWidth: "80px",
-                                      maxHeight: "80px",
-                                    }}
-                                  />
-                                ) : (
-                                  <p>No Image</p>
-                                )}
-                              </td>
-                              <td className="text-center">
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() => handleDiscardGallery(index)}
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr key={index}>
-                            <td>{file.gallery_type || "N/A"}</td>
-                            <td>N/A</td>
-                            <td>No Attachments</td>
-                            <td></td>
-                          </tr>
-                        )
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div> */}
-              {/* Brochure Upload */}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
@@ -6742,52 +6429,6 @@ const ProjectDetailsEdit = () => {
                       </table>
                     </div>
                   </div>
-
-                  {/* <div className="col-md-3 mt-4">
-                <div className="form-group">
-                  <label>
-                    Video Preview Image Url
-                    <span
-                      className="tooltip-container"
-                      onMouseEnter={() => setShowTooltip(true)}
-                      onMouseLeave={() => setShowTooltip(false)}
-                    >
-                      [i]
-                      {showTooltip && (
-                        <span className="tooltip-text">
-                          Max Upload Size 50 MB
-                        </span>
-                      )}
-                    </span>
-                  
-                  </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    name="video_preview_image_url"
-                    accept="image/*"
-                    required
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                {formData.previewImage || formData.video_preview_image_url ? (
-                  <img
-                    src={formData.previewImage || formData.video_preview_image_url} 
-                    alt=""
-                    className="img-fluid rounded mt-2"
-                    style={{
-                      maxWidth: "100px",
-                      maxHeight: "100px",
-                      objectFit: "cover",
-                      marginBottom: "15px",
-                    }}
-                  />
-                ) : (
-                  <span>No image selected</span>
-                )}
-              </div> */}
-
                   <div className="form-group">
                     <label>Video Preview Image Url</label>
                     <input
@@ -6801,119 +6442,6 @@ const ProjectDetailsEdit = () => {
                   </div>
                 </>
               )}
-
-              {/* <div className="d-flex justify-content-between align-items-end mx-1">
-                <h5 className="mt-3">
-                  Project PPT{" "}
-                  <span style={{ color: "#de7008", fontSize: "16px" }}>*</span>
-                </h5>
-
-                <button
-                  className="purple-btn2 rounded-3"
-                  onClick={() => document.getElementById("project_ppt").click()}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={16}
-                    height={16}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-
-                <input
-                  id="project_ppt"
-                  className="form-control"
-                  type="file"
-                  name="project_ppt"
-                  accept=".ppt, .pptx"
-                  onChange={(e) =>
-                    handleFileUpload("project_ppt", e.target.files)
-                  }
-                  multiple
-                  style={{ display: "none" }}
-                />
-              </div>
-
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      
-                      {formData.fetched_Project_PPT?.map((file, index) => (
-                        <tr key={`fetched-ppt-${index}`}>
-                          <td>
-                            {file.project_ppt_url
-                              ? file.project_ppt_url.split("/").pop()
-                              : "N/A"}
-                          </td>
-                          <td>
-                            {file.project_ppt_url && (
-                              <a
-                                href={file.project_ppt_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn btn-sm btn-primary"
-                              >
-                                View PPT
-                              </a>
-                            )}
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFetchedDiscardPPT(index, file.id)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                     
-                      {(formData.project_ppt ?? []).map((file, index) => (
-                        <tr key={`new-ppt-${index}`}>
-                          <td>{file.name}</td>
-                          <td>
-                            <a
-                              href={URL.createObjectURL(file)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn btn-sm btn-primary"
-                            >
-                              View PPT
-                            </a>
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleDiscardPpt("project_ppt", index)
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>*/}
             </div>
           </div>
         </div>
@@ -6931,10 +6459,6 @@ const ProjectDetailsEdit = () => {
                     <div className="form-group">
                       <label>
                         Virtual Tour Name{" "}
-                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
                       </label>
                       <input
                         className="form-control"
@@ -6951,10 +6475,6 @@ const ProjectDetailsEdit = () => {
                     <div className="form-group">
                       <label>
                         Virtual Tour URL{" "}
-                        {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
                       </label>
                       <input
                         className="form-control"
