@@ -1127,7 +1127,7 @@ const Sidebar = () => {
                   </NavLink>
                 </li>
               )}
-              {companyActive && baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+              {companyActive && (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") && (
                 <li className="menu-item d-flex">
                   {/* <a
                   className="menu-link d-flex"

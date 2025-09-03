@@ -142,10 +142,10 @@ const SiteCreate = () => {
       toast.error("Site Name is required.");
       return false;
     }
-    if (!formData.companyId) {
-      toast.error("Company is required.");
-      return false;
-    }
+    // if (!formData.companyId) {
+    //   toast.error("Company is required.");
+    //   return false;
+    // }
     // if (!formData.organizationId) {
     //   toast.error("Organization is required.");
     //   return false;
@@ -238,7 +238,7 @@ const SiteCreate = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company <span className="otp-asterisk"> *</span>
+                        Company 
                       </label>
                       <SelectBox
                         name="companyId"

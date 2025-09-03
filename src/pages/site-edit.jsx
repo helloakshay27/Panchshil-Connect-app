@@ -194,10 +194,10 @@ const SiteEdit = () => {
       toast.error("Site Name is required.");
       return false;
     }
-    if (!formData.companyId) {
-      toast.error("Company is required.");
-      return false;
-    }
+    // if (!formData.companyId) {
+    //   toast.error("Company is required.");
+    //   return false;
+    // }
     return true;
   };
 
@@ -301,7 +301,7 @@ const SiteEdit = () => {
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Company <span className="otp-asterisk"> *</span>
+                        Company 
                       </label>
                       <SelectBox
                         name="companyId"
