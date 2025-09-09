@@ -181,7 +181,7 @@ const config = {
   try {
     const response = await axios.get(`${config.baseURL}get_otps/generate_otp.json`, {
       params: {
-        client: "rustomjee",
+        // client: "rustomjee",
         mobile: mobile,
       }
     });

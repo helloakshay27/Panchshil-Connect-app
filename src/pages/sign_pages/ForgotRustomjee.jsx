@@ -70,7 +70,7 @@ const ForgotRustomjee = () => {
         `${config.baseURL}get_otps/generate_otp.json`,
         {
           params: {
-            client: "rustomjee",
+            // client: "rustomjee",
             email: email,
           },
         }

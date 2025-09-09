@@ -571,7 +571,7 @@ const config = {
         `${config.baseURL}get_otps/generate_otp.json`,
         {
           params: {
-            client: "rustomjee",
+            // client: "rustomjee",
             mobile: mobile,
           },
         }
