@@ -25,6 +25,10 @@ const Sidebar = () => {
   const [referralProgramActive, setReferralProgramActive] = useState(false);
 
   useEffect(() => {
+    // Debug: Check if permissions are loaded
+    const permissions = localStorage.getItem("lock_role_permissions");
+    console.log("Sidebar - Permissions from localStorage:", permissions);
+    
     const hasProjectPermission = hasPermission("project");
     setShowProjectSidebar(hasProjectPermission);
 

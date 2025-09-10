@@ -522,13 +522,31 @@ const config = {
 
     console.log("API Response:", response.data);
 
-    const { verified, message, user, access_token } = response.data;
+    const { verified, message, user, access_token, lock_role } = response.data;
 
     if (verified === true) {
+      // Store authentication and user data in localStorage (matching SignInRustomjee pattern)
       localStorage.setItem("access_token", access_token);
+      localStorage.setItem("email", user.email);
+      localStorage.setItem("firstname", user.firstname);
+      localStorage.setItem("lastname", user.lastname || "");
+      localStorage.setItem("user_id", user.id);
+      localStorage.setItem("profile_icon", user.profile_icon_url || "");
+      
+      // Store lock_role information for permissions (critical for sidebar)
+      // The lock_role is at the root level of the response, not under user
+      const roleData = lock_role || response.data.lock_role;
+      if (roleData) {
+        localStorage.setItem("lock_role_name", roleData.name);
+        localStorage.setItem("lock_role_permissions", roleData.permissions_hash);
+        console.log("Stored permissions:", roleData.permissions_hash);
+      } else {
+        console.warn("No lock_role data found in response");
+      }
+      
+      // Also store in sessionStorage for backward compatibility
       localStorage.setItem("userData", JSON.stringify(user));
       sessionStorage.setItem("isLoggedIn", "true");
-
       sessionStorage.setItem("email", user.email);
       sessionStorage.setItem("firstname", user.firstname);
       sessionStorage.setItem("lastname", user.lastname || "");
