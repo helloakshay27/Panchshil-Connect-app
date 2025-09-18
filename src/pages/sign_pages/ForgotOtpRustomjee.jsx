@@ -93,7 +93,7 @@ const ForgotOtpRustomjee = () => {
 
     try {
       const response = await axios.get(
-        `${config.baseURL}/get_otps/verify_otp`,
+        `${config.baseURL}/get_otps/verify_otp.json`,
         {
           params: {
             mobile: mobile,
