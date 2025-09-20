@@ -222,7 +222,7 @@ const BankList = () => {
                       <th>Interest Rate (%)</th>
                       <th>Bank Logo</th>
                       <th>Created Date</th>
-                      <th>Status</th>
+                      {/* <th>Status</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -285,7 +285,7 @@ const BankList = () => {
                             <span style={{ display: 'none' }}>Logo Not Available</span>
                           </td>
                           <td>{formatDate(bank.created_at)}</td>
-                          <td>
+                          {/* <td>
                             <button
                               onClick={() =>
                                 handleToggle(bank.id, bank.active)
@@ -323,7 +323,7 @@ const BankList = () => {
                                 </svg>
                               )}
                             </button>
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     ) : (
