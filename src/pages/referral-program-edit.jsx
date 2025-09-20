@@ -25,6 +25,24 @@ const ReferralProgramEdit = () => {
   console.log("formData:", formData);
   console.log("existingImages:", existingImages);
 
+  // Auto-resize textarea when formData.description changes
+  useEffect(() => {
+    const textarea = document.querySelector('textarea[name="description"]');
+    if (textarea) {
+      if (formData.description && formData.description.trim()) {
+        // Reset height to measure actual scroll height
+        textarea.style.height = '38px';
+        // Only increase if content exceeds single line height
+        if (textarea.scrollHeight > 38) {
+          textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+        }
+      } else {
+        // Keep single row height when empty
+        textarea.style.height = '38px';
+      }
+    }
+  }, [formData.description]);
+
   // Fetch existing referral data
   useEffect(() => {
     const fetchReferralData = async () => {
@@ -97,6 +115,26 @@ const ReferralProgramEdit = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Auto-resize textarea function
+  const handleDescriptionChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Auto-resize textarea only when content actually wraps to next line
+    const textarea = e.target;
+    if (value.trim()) {
+      // Reset height to measure actual scroll height
+      textarea.style.height = '38px';
+      // Only increase if content exceeds single line height (38px + buffer for line wrapping)
+      if (textarea.scrollHeight > 42) {
+        textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+      }
+    } else {
+      // Reset to single row height when empty
+      textarea.style.height = '38px';
+    }
   };
 
   const handleImageChange = (e) => {
@@ -365,11 +403,44 @@ const ReferralProgramEdit = () => {
                     <label>Description</label>
                     <textarea
                       className="form-control"
-                      rows={1}
                       placeholder="Enter Description"
                       name="description"
                       value={formData.description}
-                      onChange={handleChange}
+                      onChange={handleDescriptionChange}
+                      style={{
+                        height: '38px', // Single row height initially
+                        maxHeight: '200px',
+                        resize: 'none',
+                        overflow: 'auto',
+                        lineHeight: '1.5',
+                        wordWrap: 'break-word'
+                      }}
+                      onInput={(e) => {
+                        if (e.target.value.trim()) {
+                          // Reset height to measure actual scroll height
+                          e.target.style.height = '38px';
+                          // Only increase if content exceeds single line height (38px + buffer for line wrapping)
+                          if (e.target.scrollHeight > 42) {
+                            e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
+                          }
+                        } else {
+                          e.target.style.height = '38px';
+                        }
+                      }}
+                      ref={(textarea) => {
+                        if (textarea) {
+                          if (formData.description && formData.description.trim()) {
+                            // Reset height to measure actual scroll height
+                            textarea.style.height = '38px';
+                            // Only increase if content exceeds single line height (38px + buffer for line wrapping)
+                            if (textarea.scrollHeight > 42) {
+                              textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+                            }
+                          } else {
+                            textarea.style.height = '38px';
+                          }
+                        }
+                      }}
                     />
                   </div>
                 </div>

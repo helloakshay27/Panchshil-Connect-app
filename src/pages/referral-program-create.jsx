@@ -21,6 +21,24 @@ const ReferralProgramCreate = () => {
 
   const navigate = useNavigate();
 
+  // Auto-resize textarea when referralData.description changes
+  useEffect(() => {
+    const textarea = document.querySelector('textarea[name="description"]');
+    if (textarea) {
+      if (referralData.description && referralData.description.trim()) {
+        // Reset height to measure actual scroll height
+        textarea.style.height = '35px';
+        // Only increase if content exceeds single line height
+        if (textarea.scrollHeight > 35) {
+          textarea.style.height = Math.min(textarea.scrollHeight, 300) + 'px';
+        }
+      } else {
+        // Keep single row height when empty
+        textarea.style.height = '35px';
+      }
+    }
+  }, [referralData.description]);
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -49,6 +67,29 @@ const ReferralProgramCreate = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Auto-resize textarea function
+  const handleDescriptionChange = (e) => {
+    const { name, value } = e.target;
+    setReferralData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    
+    // Auto-resize textarea only when content actually wraps to next line
+    const textarea = e.target;
+    if (value.trim()) {
+      // Reset height to measure actual scroll height
+      textarea.style.height = '35px';
+      // Only increase if content exceeds single line height
+      if (textarea.scrollHeight > 35) {
+        textarea.style.height = Math.min(textarea.scrollHeight, 300) + 'px';
+      }
+    } else {
+      // Reset to single row height when empty
+      textarea.style.height = '35px';
+    }
   };
 
   const handleImageChange = (e) => {
@@ -238,11 +279,44 @@ const ReferralProgramCreate = () => {
                     <label>Description</label>
                     <textarea
                       className="form-control"
-                      rows={1}
                       placeholder="Enter Description"
                       name="description"
                       value={referralData.description}
-                      onChange={handleInputChange}
+                      onChange={handleDescriptionChange}
+                      style={{
+                        height: '35px', // Single row height initially
+                        maxHeight: '300px',
+                        resize: 'none',
+                        overflow: 'auto',
+                        lineHeight: '1.5',
+                        wordWrap: 'break-word'
+                      }}
+                      onInput={(e) => {
+                        if (e.target.value.trim()) {
+                          // Reset height to measure actual scroll height
+                          e.target.style.height = '35px';
+                          // Only increase if content exceeds single line height
+                          if (e.target.scrollHeight > 35) {
+                            e.target.style.height = Math.min(e.target.scrollHeight, 300) + 'px';
+                          }
+                        } else {
+                          e.target.style.height = '35px';
+                        }
+                      }}
+                      ref={(textarea) => {
+                        if (textarea) {
+                          if (referralData.description && referralData.description.trim()) {
+                            // Reset height to measure actual scroll height
+                            textarea.style.height = '35px';
+                            // Only increase if content exceeds single line height
+                            if (textarea.scrollHeight > 35) {
+                              textarea.style.height = Math.min(textarea.scrollHeight, 300) + 'px';
+                            }
+                          } else {
+                            textarea.style.height = '35px';
+                          }
+                        }
+                      }}
                     />
                   </div>
                 </div>
