@@ -19,7 +19,7 @@ const Forgot = () => {
     // baseURL: "https://panchshil-super.lockated.com/",
     // baseURL: "http://localhost:3000/",
 
-    baseURL: "https://api-connect.panchshil.com/",
+    baseURL: baseURL,
     logoUrl: LOGO_URL,
     loginBgClass: "login_bg",
     loginSecClass: "login-sec",
@@ -35,31 +35,52 @@ const Forgot = () => {
     setLoading(true);
     setError("");
 
-    navigate(
-      `/forgot-otp?email=${encodeURIComponent(
-        email
-      )}&mobile=${encodeURIComponent(mobile)}`
-    );
-    try {
-      const response = await axios.post(`${baseURL}generate_code`, {
-        email,
-        mobile,
-      });
+    // Validation - ensure email or mobile is provided
+    const inputValue = email || mobile || username;
+    if (!inputValue || !inputValue.trim()) {
+      setError("Please enter your email ID");
+      setLoading(false);
+      return;
+    }
 
-      if (response.data.success) {
-        toast.success("OTP Sent successfully");
+    try {
+      // Using GET request like Rustomjee
+      const response = await axios.get(
+        `${config.baseURL}get_otps/generate_otp.json`,
+        {
+          params: {
+            
+            email,
+            // mobile, // Send the same value for both email and mobile
+          },
+        }
+      );
+
+      console.log("Generate OTP Response:", response.data);
+
+      if (response.data.message) {
+        toast.success("OTP sent successfully");
+        
+        // Navigate to OTP page with both email and mobile parameters
+        navigate(
+          `/forgot-otp?email=${encodeURIComponent(
+            inputValue
+          )}&mobile=${encodeURIComponent(inputValue)}`
+        );
       } else {
         setError(response.data.message || "Something went wrong");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred");
+      console.error("Generate OTP Error:", err);
+      const errorMessage = 
+        err.response?.data?.message || 
+        err.response?.data?.error ||
+        "An error occurred while sending OTP";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
-
-  const regiterPage = () => {
-    navigate("/login");
   };
 
   const goToLoginPage = () => {
@@ -104,7 +125,7 @@ const Forgot = () => {
                     {/* Email field */}
                     <h5 className="text-white">Forgot Password?</h5>
                     <p className="mt-3 mb-3 text-white">
-                      Enter you registered email ID below and we'll send you the
+                      Enter your registered email ID below and we&apos;ll send you the
                       OTP to reset your password.
                     </p>
                     <div className="form-group position-relative">

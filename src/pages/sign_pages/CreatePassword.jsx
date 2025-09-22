@@ -86,7 +86,7 @@ const CreatePassword = () => {
           },
         }
       );
-      navigate("/");
+      navigate("/login");
 
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);
@@ -94,7 +94,7 @@ const CreatePassword = () => {
         sessionStorage.setItem("firstname", response.data.firstname);
 
         // Redirect to the home page
-        navigate("/password-success");
+        navigate("/login");
         toast.success("Password reset successfully!");
       } else {
         setError("Password reset failed. Please try again.");
