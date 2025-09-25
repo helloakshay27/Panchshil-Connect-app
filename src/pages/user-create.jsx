@@ -24,6 +24,7 @@ const UserCreate = () => {
     lastname: "",
     mobile: "",
     email: "",
+    password: "",
     role_id: "",
     company_id: "",
     department_id: "",
@@ -222,6 +223,7 @@ const UserCreate = () => {
       { field: "lastname", label: "Last Name" },
       { field: "mobile", label: "Mobile Number" },
       { field: "email", label: "Email" },
+      { field: "password", label: "Password" },
       { field: "role_id", label: "Role" },
       { field: "company_id", label: "Company" },
       { field: "organization_id", label: "Organization" },
@@ -286,6 +288,13 @@ const UserCreate = () => {
       toast.error("Mobile number should be 10 digits");
     }
 
+    // Password validation - minimum 6 characters
+    if (formData.password && formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters long";
+      isValid = false;
+      toast.error("Password must be at least 6 characters long");
+    }
+
     setErrors(newErrors);
     return isValid && Object.keys(newErrors).length === 0;
   };
@@ -309,6 +318,7 @@ const UserCreate = () => {
     data.append("user[lastname]", formData.lastname);
     data.append("user[mobile]", formData.mobile);
     data.append("user[email]", formData.email);
+    data.append("user[password]", formData.password);
     data.append("user[alternate_email1]", formData.alternate_email1);
     data.append("user[alternate_address]", formData.alternate_address);
     data.append("user[employee_type]", formData.employee_type);
@@ -495,6 +505,28 @@ const UserCreate = () => {
                         />
                         {errors.email && (
                           <div className="invalid-feedback">{errors.email}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Password */}
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>
+                          Password <span className="otp-asterisk">*</span>
+                        </label>
+                        <input
+                          className={`form-control ${
+                            errors.password ? "is-invalid" : ""
+                          }`}
+                          type="password"
+                          name="password"
+                          placeholder="Enter password"
+                          value={formData.password}
+                          onChange={handleChange}
+                        />
+                        {errors.password && (
+                          <div className="invalid-feedback">{errors.password}</div>
                         )}
                       </div>
                     </div>

@@ -29,6 +29,7 @@ const UserEdit = () => {
     lastname: "",
     mobile: "",
     email: "",
+    password: "",
     role_id: "",
     company_id: "",
     department_id: "",
@@ -113,6 +114,7 @@ const UserEdit = () => {
         lastname: response.data.lastname,
         mobile: response.data.mobile,
         email: response.data.email,
+        password: response.data.password || "********", // Display masked password
         alternate_email1: response.data.alternate_email1,
         alternate_email2: response.data.alternate_email2,
         alternate_address: response.data.alternate_address,
@@ -651,6 +653,26 @@ const UserEdit = () => {
                               {errors.email}
                             </div>
                           )}
+                        </div>
+                      </div>
+
+                      {/* Password - Read Only */}
+                      <div className="col-md-3">
+                        <div className="form-group">
+                          <label>Password</label>
+                          <input
+                            className="form-control"
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            disabled
+                            readOnly
+                            style={{ 
+                              backgroundColor: "#f8f9fa", 
+                              cursor: "not-allowed" 
+                            }}
+                          />
                         </div>
                       </div>
 
