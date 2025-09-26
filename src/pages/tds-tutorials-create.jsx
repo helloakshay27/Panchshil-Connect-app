@@ -107,6 +107,7 @@ const TdsTutorialCreate = () => {
       // Add tds_tutorial data
       formData.append("tds_tutorial[name]", tutorialData.name);
       formData.append("tds_tutorial[description]", tutorialData.description);
+      formData.append("tds_tutorial[active]", true);
 
       // Add single attachment if exists
       if (tutorialData.attachment) {

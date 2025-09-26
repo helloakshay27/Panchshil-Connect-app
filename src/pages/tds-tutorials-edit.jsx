@@ -235,6 +235,7 @@ const TdsTutorialEdit = () => {
       const formData = new FormData();
       formData.append("tds_tutorial[name]", tutorialData.name);
       formData.append("tds_tutorial[description]", tutorialData.description);
+      formData.append("tds_tutorial[active]", true);
 
       // Separate existing and new files
       const existingFiles = tutorialData.attachments.filter(
