@@ -33,12 +33,21 @@ const isRustomjee = hostname.includes("rustomjee");
       setCurrentLogo(LOGO_URL);
     }
 
-    // Load user data from localStorage
+    // Load user data from localStorage with safe parsing
     const storedUserData = localStorage.getItem("userData");
-    if (storedUserData) {
-      setUserData(JSON.parse(storedUserData));
+    if (storedUserData && storedUserData !== "undefined" && storedUserData !== "null") {
+      try {
+        const parsedData = JSON.parse(storedUserData);
+        if (parsedData && typeof parsedData === 'object') {
+          setUserData(parsedData);
+        }
+      } catch (error) {
+        console.warn("Failed to parse userData from localStorage:", error);
+        // Optionally clear the corrupted data
+        localStorage.removeItem("userData");
+      }
     }
-  }, [baseURL]);
+  }, []);
 
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);

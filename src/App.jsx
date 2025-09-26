@@ -142,6 +142,7 @@ import NoticeboardDetails from "./pages/noticeboard-details";
 import LoanManagerAdd from "./pages/loan-manager-add";
 import LoanManagerList from "./pages/loan-manager-list";
 import LoanManagerEdit from "./pages/loan-manager-edit";
+import CommonFileUpload from "./pages/common-files";
 // import NoticeboardDetailsMinimal from "./pages/noticeboard-details-minimal";
 
 // // import EditGallery from './EditGallery';
@@ -577,6 +578,11 @@ function App() {
           <Route
             path="/setup-member/loan-manager-edit/:id"
             element={<LoanManagerEdit />}
+          />
+
+           <Route
+            path="/setup-member/common-files-upload"
+            element={<CommonFileUpload />}
           />
 
 

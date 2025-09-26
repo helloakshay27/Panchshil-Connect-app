@@ -226,7 +226,7 @@ const UserCreate = () => {
       { field: "password", label: "Password" },
       { field: "role_id", label: "Role" },
       { field: "company_id", label: "Company" },
-      { field: "organization_id", label: "Organization" },
+      // { field: "organization_id", label: "Organization" },
       { field: "department_id", label: "Department" },
     ];
 
@@ -690,7 +690,8 @@ const UserCreate = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
-                          Organization <span className="otp-asterisk">*</span>
+                          Organization 
+                          {/* <span className="otp-asterisk">*</span> */}
                         </label>
                         <SelectBox
                           name="organization_id"

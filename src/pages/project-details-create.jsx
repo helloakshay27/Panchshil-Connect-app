@@ -68,6 +68,7 @@ const ProjectDetailsCreate = () => {
     project_interiors: [],
     project_exteriors: [],
     project_emailer_templetes: [],
+    KnwYrApt_Technical: [],
     project_layout: [],
     project_sales_type: "",
     order_no: null,
@@ -551,6 +552,7 @@ const ProjectDetailsCreate = () => {
       project_interiors: MAX_IMAGE_SIZE,
       project_exteriors: MAX_IMAGE_SIZE,
       project_emailer_templetes: MAX_BROCHURE_SIZE,
+      KnwYrApt_Technical: MAX_BROCHURE_SIZE,
       project_layout: MAX_IMAGE_SIZE,
       project_qrcode_image: MAX_IMAGE_SIZE,
       plans: MAX_IMAGE_SIZE, // 3MB
@@ -583,6 +585,10 @@ const ProjectDetailsCreate = () => {
         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
       ], // ✅ PPT & PPTX support
       project_emailer_templetes: [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ],
+      KnwYrApt_Technical: [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ],
@@ -669,6 +675,34 @@ const ProjectDetailsCreate = () => {
           ...prev,
           project_emailer_templetes: [
             ...prev.project_emailer_templetes,
+            ...validFiles,
+          ],
+        }));
+      }
+    }
+
+    if (name === "KnwYrApt_Technical") {
+      // Handle multiple technical files
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.KnwYrApt_Technical.includes(file.type)) {
+          toast.error(
+            "Only PDF and DOCX files are allowed for project technical files."
+          );
+          return;
+        }
+
+        if (!validateFile(file, MAX_SIZES[name])) return;
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          KnwYrApt_Technical: [
+            ...prev.KnwYrApt_Technical,
             ...validFiles,
           ],
         }));
@@ -1039,6 +1073,10 @@ const ProjectDetailsCreate = () => {
       const updatedFiles = [...formData.project_emailer_templetes];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, project_emailer_templetes: updatedFiles });
+    } else if (fileType === "KnwYrApt_Technical") {
+      const updatedFiles = [...formData.KnwYrApt_Technical];
+      updatedFiles.splice(index, 1);
+      setFormData({ ...formData, KnwYrApt_Technical: updatedFiles });
     } else if (fileType === "project_layout") {
       const updatedFiles = [...formData.project_layout];
       updatedFiles.splice(index, 1);
@@ -1187,6 +1225,12 @@ const ProjectDetailsCreate = () => {
         value.forEach((file) => {
           if (file instanceof File) {
             data.append("project[ProjectEmailerTempletes][]", file);
+          }
+        });
+      } else if (key === "KnwYrApt_Technical" && Array.isArray(value)) {
+        value.forEach((file) => {
+          if (file instanceof File) {
+            data.append("project[KnwYrApt_Technical][]", file);
           }
         });
       } else if (key === "two_d_images" && Array.isArray(value)) {
@@ -4148,6 +4192,98 @@ const ProjectDetailsCreate = () => {
                                       onClick={() =>
                                         handleDiscardFile(
                                           "project_emailer_templetes",
+                                          index
+                                        )
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              )
+                            )
+                          ) : (
+                            <tr>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Know Your Apartment Files{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 20 MB
+                          </span>
+                        )}
+                      </span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      onClick={() =>
+                        document
+                          .getElementById("KnwYrApt_Technical")
+                          .click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="KnwYrApt_Technical"
+                      className="form-control"
+                      type="file"
+                      name="KnwYrApt_Technical"
+                      accept=".pdf,.docx"
+                      onChange={(e) =>
+                        handleFileUpload(
+                          "KnwYrApt_Technical",
+                          e.target.files
+                        )
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.KnwYrApt_Technical.length > 0 ? (
+                            formData.KnwYrApt_Technical.map(
+                              (technicalFile, index) => (
+                                <tr key={`technical-${index}`}>
+                                  <td>{technicalFile.name}</td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        handleDiscardFile(
+                                          "KnwYrApt_Technical",
                                           index
                                         )
                                       }

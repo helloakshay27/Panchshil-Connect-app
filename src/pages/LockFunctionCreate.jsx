@@ -222,6 +222,8 @@ const LockFunctionCreate = () => {
       actionName = "banks"; 
     } else if (value === "Loan Manager") {
       actionName = "loan_manager";
+    } else if (value === "Common Files") {
+      actionName = "common_files";
     }
 
     setFormData({
@@ -308,6 +310,7 @@ const LockFunctionCreate = () => {
                           { label: "Home Loan", value: "Home Loan" },
                           { label: "Banks", value: "Banks" },
                           { label: "Loan Manager", value: "Loan Manager" },
+                          { label: "Common Files", value: "Common Files" },
                           // Add more if needed
                         ]}
                         Value={formData.name}

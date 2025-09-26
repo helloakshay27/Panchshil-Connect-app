@@ -832,7 +832,7 @@ const UserEdit = () => {
                         <div className="form-group">
                           <label>
                             Organization
-                            <span className="otp-asterisk"> *</span>
+                            {/* <span className="otp-asterisk"> *</span> */}
                           </label>
                           <SelectBox
                             options={organizations.map((org) => ({

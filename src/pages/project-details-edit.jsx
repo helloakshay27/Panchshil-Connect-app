@@ -73,6 +73,7 @@ const ProjectDetailsEdit = () => {
     project_interiors: [],
     project_exteriors: [],
     project_emailer_templetes: [],
+    KnwYrApt_Technical: [],
     project_layout: [],
     project_sales_type: "",
     video_preview_image_url: "",
@@ -648,6 +649,7 @@ const ProjectDetailsEdit = () => {
           project_exteriors: projectData.project_exteriors || [],
           project_emailer_templetes:
             projectData.project_emailer_templetes || [],
+          KnwYrApt_Technical: projectData.KnwYrApt_Technical || [],
           project_ppt: Array.isArray(projectData.ProjectPPT)
             ? projectData.ProjectPPT
             : projectData.ProjectPPT
@@ -1034,6 +1036,10 @@ const ProjectDetailsEdit = () => {
       const updatedFiles = [...formData.project_emailer_templetes];
       updatedFiles.splice(index, 1);
       setFormData({ ...formData, project_emailer_templetes: updatedFiles });
+    } else if (fileType === "KnwYrApt_Technical") {
+      const updatedFiles = [...formData.KnwYrApt_Technical];
+      updatedFiles.splice(index, 1);
+      setFormData({ ...formData, KnwYrApt_Technical: updatedFiles });
     } else if (fileType === "project_layout") {
       const updatedFiles = [...formData.project_layout];
       updatedFiles.splice(index, 1);
@@ -1509,6 +1515,42 @@ const ProjectDetailsEdit = () => {
     }
   };
 
+  const handleFileDiscardTechnical = async (key, index) => {
+    const file = formData[key][index]; // Get the selected file
+    if (!file.id) {
+      // If the file has no ID, it's a newly uploaded file. Just remove it locally.
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+      toast.success("File removed successfully!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseURL}projects/${id}/remove_technical_file/${file.id}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete Technical File");
+      }
+
+      // Remove the deleted file from the state
+      const updatedFiles = formData[key].filter((_, i) => i !== index);
+      setFormData({ ...formData, [key]: updatedFiles });
+
+      toast.success("Technical File deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting Technical File:", error);
+      alert("Failed to delete Technical File. Please try again.");
+    }
+  };
+
   const handleDiscardFilePpt = async (key, index) => {
     const Image = formData[key][index]; // Get the selected image
     if (!Image.id) {
@@ -1940,6 +1982,17 @@ const ProjectDetailsEdit = () => {
           const file = fileObj instanceof File ? fileObj : fileObj.file;
           if (file) {
             data.append("project[ProjectEmailerTempletes][]", file);
+          }
+        });
+      } else if (
+        key === "KnwYrApt_Technical" &&
+        Array.isArray(value) &&
+        value.length
+      ) {
+        value.forEach((fileObj) => {
+          const file = fileObj instanceof File ? fileObj : fileObj.file;
+          if (file) {
+            data.append("project[KnwYrApt_Technical][]", file);
           }
         });
       } else if (
@@ -2592,6 +2645,7 @@ const ProjectDetailsEdit = () => {
       project_interiors: MAX_IMAGE_SIZE, // 3MB
       project_exteriors: MAX_IMAGE_SIZE, // 3MB
       project_emailer_templetes: MAX_BROCHURE_SIZE,
+      KnwYrApt_Technical: MAX_BROCHURE_SIZE,
       project_layout: MAX_IMAGE_SIZE, // 3MB
     };
 
@@ -2621,6 +2675,10 @@ const ProjectDetailsEdit = () => {
         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
       ], // ✅ PPT & PPTX support
       project_emailer_templetes: [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ],
+      KnwYrApt_Technical: [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ],
@@ -2720,6 +2778,52 @@ const ProjectDetailsEdit = () => {
           return {
             ...prev,
             project_emailer_templetes: [...currentTemplates, ...validFiles],
+          };
+        });
+      }
+    }
+
+    if (name === "KnwYrApt_Technical") {
+      const newFiles = Array.from(files);
+      const validFiles = [];
+
+      newFiles.forEach((file) => {
+        if (!allowedTypes.KnwYrApt_Technical.includes(file.type)) {
+          toast.error(
+            "Only PDF and DOCX files are allowed for Project Technical Files."
+          );
+          return;
+        }
+
+        if (file.size > MAX_SIZES.KnwYrApt_Technical) {
+          toast.error(`File too large: ${file.name}. Max size is 20MB.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      if (validFiles.length > 0) {
+        setFormData((prev) => {
+          // Make sure we're properly handling all possible states of prev.KnwYrApt_Technical
+          let currentTechnicalFiles = [];
+
+          // If KnwYrApt_Technical exists and is an array, use it
+          if (
+            prev.KnwYrApt_Technical &&
+            Array.isArray(prev.KnwYrApt_Technical)
+          ) {
+            currentTechnicalFiles = [...prev.KnwYrApt_Technical];
+          }
+          // If KnwYrApt_Technical exists but is not an array (single file object), convert to array
+          else if (prev.KnwYrApt_Technical) {
+            currentTechnicalFiles = [prev.KnwYrApt_Technical];
+          }
+
+          // Return updated state with combined files
+          return {
+            ...prev,
+            KnwYrApt_Technical: [...currentTechnicalFiles, ...validFiles],
           };
         });
       }
@@ -6317,6 +6421,130 @@ const ProjectDetailsEdit = () => {
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_emailer_templetes",
+                                        0
+                                      )
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Project Know Your Apartment Files{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 20 MB
+                          </span>
+                        )}
+                      </span>
+                    </h5>
+
+                    <button
+                      className="purple-btn2 rounded-3"
+                      onClick={() =>
+                        document
+                          .getElementById("KnwYrApt_Technical")
+                          .click()
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      id="KnwYrApt_Technical"
+                      className="form-control"
+                      type="file"
+                      name="KnwYrApt_Technical"
+                      accept=".pdf,.docx"
+                      onChange={(e) =>
+                        handleFileUpload(
+                          "KnwYrApt_Technical",
+                          e.target.files
+                        )
+                      }
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                  </div>
+
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* Technical Files */}
+                          {formData.KnwYrApt_Technical &&
+                            (Array.isArray(
+                              formData.KnwYrApt_Technical
+                            ) ? (
+                              // If it's an array of files
+                              formData.KnwYrApt_Technical.map(
+                                (file, index) => (
+                                  <tr key={`technical-${index}`}>
+                                    <td>
+                                      {file?.name ||
+                                        file?.document_file_name ||
+                                        "No File"}
+                                    </td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        className="purple-btn2"
+                                        onClick={() =>
+                                          handleFileDiscardTechnical(
+                                            "KnwYrApt_Technical",
+                                            index
+                                          )
+                                        }
+                                      >
+                                        x
+                                      </button>
+                                    </td>
+                                  </tr>
+                                )
+                              )
+                            ) : (
+                              <tr>
+                                <td>
+                                  {formData.KnwYrApt_Technical?.name ||
+                                    formData.KnwYrApt_Technical
+                                      ?.document_file_name ||
+                                    "No File"}
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDiscardFile(
+                                        "KnwYrApt_Technical",
                                         0
                                       )
                                     }
