@@ -247,7 +247,7 @@ const TdsTutorialList = () => {
                       displayedTutorials.map((tutorial, index) => (
                         <tr key={tutorial.id || index}>
                           <td>
-                            <a
+                            {/* <a
                               href={`/setup-member/tds-tutorials-edit/${tutorial.id}`}
                               className="me-2"
                               title="Edit TDS Tutorial"
@@ -268,7 +268,7 @@ const TdsTutorialList = () => {
                                   fill="#667085"
                                 />
                               </svg>
-                            </a>
+                            </a> */}
                             <button
                               onClick={() => handleDelete(tutorial.id)}
                               className="me-2"
