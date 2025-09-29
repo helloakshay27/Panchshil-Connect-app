@@ -19,6 +19,7 @@ const CommonFileUpload = () => {
     competition_project_builders: [],
     possession_intimation: [],
     birthday_anniversary_emailers: [],
+    whatsapp_creatives: [],
   });
 
   const [showTooltip, setShowTooltip] = useState(false);
@@ -69,6 +70,12 @@ const CommonFileUpload = () => {
     birthday_anniversary_emailers: {
       label: "Birthday, Anniversary Emailers with Pictorials",
       accept: "image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.html",
+      maxSize: MAX_UPLOAD_SIZE.documents,
+      multiple: true,
+    },
+    whatsapp_creatives: {
+      label: "Creative Whatsapp (Tollfree/ Without Tollfree)",
+      accept: "image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx",
       maxSize: MAX_UPLOAD_SIZE.documents,
       multiple: true,
     },
@@ -127,6 +134,7 @@ const CommonFileUpload = () => {
 
       if (response.data && Array.isArray(response.data)) {
         // Transform API data to match component structure
+
         const transformedData = {
           instagram_photos_videos: [],
           site_photos_progress: [],
@@ -135,6 +143,7 @@ const CommonFileUpload = () => {
           competition_project_builders: [],
           possession_intimation: [],
           birthday_anniversary_emailers: [],
+          whatsapp_creatives: [],
         };
 
         // Map API relations to component categories
@@ -145,7 +154,8 @@ const CommonFileUpload = () => {
           'company_profile': 'company_profile',
           'competition_project': 'competition_project_builders',
           'possesion_intimation': 'possession_intimation',
-          'personal_emailers_pictorials': 'birthday_anniversary_emailers'
+          'personal_emailers_pictorials': 'birthday_anniversary_emailers',
+          'whatsapp_creatives': 'whatsapp_creatives',
         };
 
         response.data.forEach((fileItem) => {
@@ -293,7 +303,8 @@ const CommonFileUpload = () => {
         company_profile: 'company_profile',
         competition_project_builders: 'competition_project',
         possession_intimation: 'possesion_intimation',
-        birthday_anniversary_emailers: 'personal_emailers_pictorials'
+        birthday_anniversary_emailers: 'personal_emailers_pictorials',
+        whatsapp_creatives: 'whatsapp_creatives',
       };
       return mapping[key] || key;
     };
@@ -863,6 +874,7 @@ const CommonFileUpload = () => {
               {renderFileUploadSection("competition_project_builders")}
               {renderFileUploadSection("possession_intimation")}
               {renderFileUploadSection("birthday_anniversary_emailers")}
+              {renderFileUploadSection("whatsapp_creatives")}
             </div>
             <div className="row mt-4 justify-content-center">
               <div className="col-md-8">
