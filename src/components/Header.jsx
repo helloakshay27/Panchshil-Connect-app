@@ -28,7 +28,7 @@ const isRustomjee = hostname.includes("rustomjee");
     } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
       setCurrentLogo(Rustomji_URL_Black);
      } else if (baseURL === "https://kalpataru.lockated.com/") {
-      setCurrentLogo(Lokated_URL);
+      setCurrentLogo(LOGO_Kalpataru_URL);
      }else {
       setCurrentLogo(LOGO_URL);
     }
@@ -147,13 +147,15 @@ const isRustomjee = hostname.includes("rustomjee");
                 currentLogo === LOGO_URL ? "Panchshil Logo" : "Rustomjee Logo"
               }
             /> */}
-            <img
+           <img
   className={`logo ${
     currentLogo === Rustomji_URL_Black
       ? "rustomjee-logo"
       : currentLogo === Lokated_URL
         ? "lockated-logo"
-        : "panchshil-logo"
+        : currentLogo === LOGO_Kalpataru_URL
+          ? "kalpatru-logo"
+          : "panchshil-logo"
   }`}
   src={currentLogo}
   alt={
@@ -161,9 +163,12 @@ const isRustomjee = hostname.includes("rustomjee");
       ? "Panchshil Logo"
       : currentLogo === Lokated_URL
         ? "Lockated Logo"
-        : "Rustomjee Logo"
+        : currentLogo === LOGO_Kalpataru_URL
+          ? "Kalpataru Logo"
+          : "Rustomjee Logo"
   }
 />
+
 
             <div className="nav-links ms-4">
               <NavLink

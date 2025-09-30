@@ -74,7 +74,7 @@ const CommonFileUpload = () => {
       multiple: true,
     },
     whatsapp_creatives: {
-      label: "Creative Whatsapp (Tollfree/ Without Tollfree)",
+      label: "Whatsapp Creatives (Tollfree/ Without Tollfree)",
       accept: "image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx",
       maxSize: MAX_UPLOAD_SIZE.documents,
       multiple: true,

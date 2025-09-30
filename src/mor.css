@@ -5650,6 +5650,11 @@ ul.pagination.justify-content-center {
   max-width: 150px;
 }
 
+.logo.kalpatru-logo {
+  height: 55px;
+  max-width: 150px;
+}
+
 /* Navigation Links */
 .nav-links {
   display: flex;

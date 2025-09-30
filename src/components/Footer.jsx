@@ -1,6 +1,6 @@
 import React from "react";
 import "../mor.css";
-import { baseURL, Lokated_URL } from "../pages/baseurl/apiDomain";
+import { baseURL, LOGO_Kalpataru_URL, Lokated_URL } from "../pages/baseurl/apiDomain";
 const Footer = () => {
   const domain = baseURL;
   let logoUrl;
@@ -16,7 +16,7 @@ const Footer = () => {
   } 
   else if (domain === "https://kalpataru.lockated.com/") {
     // Lockated logo
-    logoUrl = Lokated_URL;
+    logoUrl = LOGO_Kalpataru_URL;
     logoStyle = { height: "35px", width: "120px" };
   }
   else {
