@@ -305,6 +305,7 @@ const ProjectDetailsEdit = () => {
       // Add file_name property with timestamp-based default name for gallery images
       if (type === "gallery") {
         img.file_name = `gallery_image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        img.order_no = ""; // Initialize order_no as empty string
       }
       
       updateFormData(key, [img]); // Append the new image
@@ -550,7 +551,9 @@ const ProjectDetailsEdit = () => {
               }).map((img) => ({
                 ...img,
                 // Add file_name property for existing images if not present
-                file_name: img.file_name || img.document_file_name || img.title || `existing_image_${img.id || Date.now()}`
+                file_name: img.file_name || img.document_file_name || img.title || `existing_image_${img.id || Date.now()}`,
+                // Preserve order_no field from existing images
+                order_no: img.order_no || ""
               }));
 
               galleryImages[key] = galleryImages[key].concat(uniqueImages);
@@ -569,7 +572,9 @@ const ProjectDetailsEdit = () => {
             }).map((img) => ({
               ...img,
               // Add file_name property for existing images if not present
-              file_name: img.file_name || img.document_file_name || img.title || `existing_image_${img.id || Date.now()}`
+              file_name: img.file_name || img.document_file_name || img.title || `existing_image_${img.id || Date.now()}`,
+              // Preserve order_no field from existing images
+              order_no: img.order_no || ""
             }));
 
             galleryImages[key] = galleryImages[key].concat(directImages);
@@ -1076,6 +1081,23 @@ const ProjectDetailsEdit = () => {
         updatedImages[index] = {
           ...updatedImages[index],
           file_name: newName,
+        };
+      }
+      return {
+        ...prev,
+        [key]: updatedImages,
+      };
+    });
+  };
+
+  // Function to handle gallery image order_no changes for different ratios
+  const handleGalleryImageOrderChange = (key, index, newOrderNo) => {
+    setFormData((prev) => {
+      const updatedImages = [...(prev[key] || [])];
+      if (updatedImages[index]) {
+        updatedImages[index] = {
+          ...updatedImages[index],
+          order_no: newOrderNo,
         };
       }
       return {
@@ -2207,10 +2229,12 @@ const ProjectDetailsEdit = () => {
             // New image upload - send as array without indices
             data.append(`project[${key}][][file]`, img.file);
             data.append(`project[${key}][][file_name]`, img.file_name || img.file.name);
+            data.append(`project[${key}][][order_no]`, img.order_no || "");
           } else if (img.id && img.file_name) {
             // Existing image with updated name - send id and file_name
             data.append(`project[${key}][][id]`, img.id);
             data.append(`project[${key}][][file_name]`, img.file_name);
+            data.append(`project[${key}][][order_no]`, img.order_no || "");
             
           }
         });
@@ -5208,6 +5232,7 @@ const ProjectDetailsEdit = () => {
                         <th>Image Name</th>
                         <th>Preview</th>
                         <th>Ratio</th>
+                        <th>Order No.</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -5231,6 +5256,22 @@ const ProjectDetailsEdit = () => {
                             </td>
                             <td>
                               N/A
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={attachment.order_no || ""}
+                                onChange={(e) => {
+                                  // Update fetched gallery image order_no
+                                  // Note: This would need backend support for persistence
+                                }}
+                                placeholder="Enter order no."
+                                style={{
+                                  minWidth: "100px",
+                                  fontSize: "14px",
+                                }}
+                              />
                             </td>
                             <td>
                               <button
@@ -5304,6 +5345,24 @@ const ProjectDetailsEdit = () => {
                                 )}
                               </td>
                               <td>{file.ratio || label}</td>
+                              <td>
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  value={file.order_no || ""}
+                                  onChange={(e) =>
+                                    handleGalleryImageOrderChange(key, index, e.target.value)
+                                  }
+                                  placeholder="Enter order no."
+                                 style={{
+                                    border: "1px solid #ddd",
+                                    borderRadius: "4px",
+                                    padding: "5px 8px",
+                                    fontSize: "14px",
+                                    width: "80px"
+                                  }}
+                                />
+                              </td>
                               <td>
                                 <button
                                   type="button"

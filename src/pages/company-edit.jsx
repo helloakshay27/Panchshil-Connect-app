@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
@@ -73,6 +74,7 @@ const CompanyEdit = () => {
   console.log(previeImage);
 
   const handleSubmit = async (e) => {
+    toast.dismiss();
     e.preventDefault();
     setLoading(true);
 
@@ -101,9 +103,26 @@ const CompanyEdit = () => {
         }
       );
       console.log(response);
+      // Show success message and navigate
+      toast.success("Company updated successfully!");
       navigate("/company-list");
     } catch (error) {
-      console.log("Error submitting form:");
+      console.log("Error submitting form:", error);
+      
+      // Handle specific error cases
+      if (error.response && error.response.status === 422) {
+        // Check if the error is related to duplicate company name
+        const errorData = error.response.data;
+        if (errorData.message && errorData.message.toLowerCase().includes('name')) {
+          toast.error("Company name already exists. Please choose a different name.");
+        } else {
+          toast.error("Company name already exists. Please choose a different name.");
+        }
+      } else {
+        // Handle other errors
+        const errorMessage = error.response?.data?.message || "Failed to update company.";
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -170,18 +189,20 @@ const CompanyEdit = () => {
                       "No Image Selected"
                     )}
                   </div>
-                  {/* <div className="col-md-3">
+                  <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Organization Id
-                        <span className="otp-asterisk">{" "}*</span>
+                        Organization
                       </label>
                       <SelectBox
-                        options={organization.map((org) => ({
-                          label: org.name,
-                          value: org.id,
-                        }))}
-                        defaultValue={formData.organizationId}
+                        options={[
+                          { value: "", label: "Select Organization" },
+                          ...organization.map((org) => ({
+                            label: org.name,
+                            value: org.id,
+                          }))
+                        ]}
+                        value={formData.organizationId}
                         onChange={(value) => {
                           setFormData({
                             ...formData,
@@ -190,7 +211,7 @@ const CompanyEdit = () => {
                         }}
                       />
                     </div>
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>

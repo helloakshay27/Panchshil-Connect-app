@@ -111,7 +111,18 @@ const CompanyCreate = () => {
       } else {
         const errorData = await response.json();
         console.error("API Error:", errorData);
-        toast.error(errorData.message || "Failed to create company.");
+        
+        // Handle specific error cases
+        if (response.status === 422) {
+          // Check if the error is related to duplicate company name
+          if (errorData.message && errorData.message.toLowerCase().includes('name')) {
+            toast.error("Company name already exists. Please choose a different name.");
+          } else {
+            toast.error("Company name already exists. Please choose a different name.");
+          }
+        } else {
+          toast.error(errorData.message || "Failed to create company.");
+        }
       }
     } catch (error) {
       console.error("Error submitting company:", error);
@@ -177,11 +188,11 @@ const CompanyCreate = () => {
                     </div>
                   </div>
 
-                  {/* Organization ID */}
-                  {/* <div className="col-md-3">
+                  {/* Organization */}
+                  <div className="col-md-3">
                     <div className="form-group">
                       <label>
-                        Organization ID <span className="otp-asterisk">{" "}*</span>
+                        Organization
                       </label>
                       <SelectBox
                         name="organizationId"
@@ -189,10 +200,13 @@ const CompanyCreate = () => {
                           loading
                             ? [{ value: "", label: "Loading..." }]
                             : organizations.length > 0
-                              ? organizations.map((org) => ({
-                                value: org.id,
-                                label: org.name,
-                              }))
+                              ? [
+                                  { value: "", label: "Select Organization" },
+                                  ...organizations.map((org) => ({
+                                    value: org.id,
+                                    label: org.name,
+                                  }))
+                                ]
                               : [{ value: "", label: "No organizations found" }]
                         }
                         value={formData.organizationId}
@@ -201,7 +215,7 @@ const CompanyCreate = () => {
                         }
                       />
                     </div>
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>

@@ -186,13 +186,13 @@ const ProjectDetailsCreate = () => {
     });
   };
 
-  // Function to handle gallery image name changes
-  const handleGalleryImageNameChange = (groupKey, imageIndex, newName) => {
+  // Function to handle gallery image name and order changes
+  const handleGalleryImageNameChange = (groupKey, imageIndex, newValue, fieldType = 'file_name') => {
     setFormData(prevData => ({
       ...prevData,
       [groupKey]: prevData[groupKey].map((img, index) =>
         index === imageIndex
-          ? { ...img, file_name: newName }
+          ? { ...img, [fieldType]: newValue }
           : img
       )
     }));
@@ -3227,6 +3227,7 @@ const ProjectDetailsCreate = () => {
                         <th>Image Name</th>
                         <th>Preview</th>
                         <th>Ratio</th>
+                        <th>Order no.</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -3277,6 +3278,22 @@ const ProjectDetailsCreate = () => {
                                 )}
                               </td>
                               <td>{file.ratio || label}</td>
+                              <td>
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  value={file.order_no || ""}
+                                  onChange={(e) => handleGalleryImageNameChange(key, index, e.target.value, 'order_no')}
+                                  placeholder="Order"
+                                  style={{
+                                    border: "1px solid #ddd",
+                                    borderRadius: "4px",
+                                    padding: "5px 8px",
+                                    fontSize: "14px",
+                                    width: "80px"
+                                  }}
+                                />
+                              </td>
                               <td>
                                 <button
                                   type="button"
