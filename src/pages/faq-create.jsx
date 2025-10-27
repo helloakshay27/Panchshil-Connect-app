@@ -153,7 +153,8 @@ const FaqCreate = () => {
 
      if (
     (baseURL === "https://dev-panchshil-super-app.lockated.com/" ||
-      baseURL === "https://kalpataru.lockated.com/")
+      baseURL === "https://kalpataru.lockated.com/" ||
+      baseURL === "https://rustomjee-live.lockated.com/")
   ) {
     if (!formData.faq_category_id) {
       toast.error("FAQ Category is required");
@@ -209,7 +210,7 @@ const FaqCreate = () => {
     //   return;
     // }
     if (
-  baseURL === "https://dev-panchshil-super-app.lockated.com/" &&
+  (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") &&
   !formData.faq_category_id
 ) {
   toast.error("FAQ Category is required");
@@ -267,7 +268,7 @@ const FaqCreate = () => {
                     <div className="form-group">
                       <label>
                         FAQ Category 
-                       {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") && (
+                       {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
                             <span className="otp-asterisk"> *</span>
                         )}
                       </label>
@@ -295,7 +296,7 @@ const FaqCreate = () => {
                     <div className="form-group">
                       <label>
                         FAQ Sub Category
-                        {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") && (
+                        {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
                           <span className="otp-asterisk"> *</span>
                         )}
                       </label>

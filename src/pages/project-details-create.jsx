@@ -2497,7 +2497,7 @@ const ProjectDetailsCreate = () => {
             </div>
           </div>
         </div>
-        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
           <>
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header3 d-flex justify-content-between align-items-center">
@@ -2814,7 +2814,7 @@ const ProjectDetailsCreate = () => {
             </div>
           </div>
         </div>
-        {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+        {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header3">
               <h3 className="card-title">Plans</h3>
@@ -3311,7 +3311,7 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
               </div>
-              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
                 <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
@@ -3481,7 +3481,7 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
               </div>
-              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
                 <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
@@ -4424,7 +4424,7 @@ const ProjectDetailsCreate = () => {
             </div>
           </div>
         </div>
-        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
           <>
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header3 d-flex justify-content-between align-items-center">

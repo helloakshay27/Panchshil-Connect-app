@@ -143,6 +143,9 @@ import LoanManagerAdd from "./pages/loan-manager-add";
 import LoanManagerList from "./pages/loan-manager-list";
 import LoanManagerEdit from "./pages/loan-manager-edit";
 import CommonFileUpload from "./pages/common-files";
+import SystemConstantsList from "./pages/system-constpage";
+import SystemConstantsCreate from "./pages/system-constants-create";
+import SystemConstantsEdit from "./pages/system-constants-edit";
 // import NoticeboardDetailsMinimal from "./pages/noticeboard-details-minimal";
 
 // // import EditGallery from './EditGallery';
@@ -161,7 +164,7 @@ import CommonFileUpload from "./pages/common-files";
 if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/" ) {
   console.log("Base URL is set to Panchshil Connect");
   document.body.classList.add("theme-connect");
-} else if (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") {
+} else if (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") {
   document.body.classList.add("theme-dev");
 }
 
@@ -193,7 +196,7 @@ function App() {
 
     if (baseURL.startsWith("https://api-connect.panchshil.com/")) {
       faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
-    } else if (baseURL.startsWith("https://dev-panchshil-super-app.lockated.com/")) {
+    } else if (baseURL.startsWith("https://dev-panchshil-super-app.lockated.com/") || baseURL.startsWith("https://rustomjee-live.lockated.com/")) {
       faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Rustomjee_icon.png";
     } else if (baseURL.startsWith("https://kalpataru.lockated.com/")) {
       faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/default_icon.png";
@@ -524,6 +527,19 @@ function App() {
            <Route
             path="/setup-member/image-config/:id"
             element={<EditImagesConfiguration />}
+          />
+
+           <Route
+            path="/setup-member/system-constant-config"
+            element={<SystemConstantsList />}
+          />
+          <Route
+            path="/system-constants-create"
+            element={<SystemConstantsCreate />}
+          />
+          <Route
+            path="/system-constants-edit/:id"
+            element={<SystemConstantsEdit />}
           />
 
             <Route path="/setup-member/bank-details-create" element={<BankDetailsCreate />} />

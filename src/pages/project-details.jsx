@@ -865,7 +865,7 @@ const ProjectDetails = () => {
             </div>
           </div>
         </div>
-         {baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+         {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
             <h3 className="card-title">Plans</h3>

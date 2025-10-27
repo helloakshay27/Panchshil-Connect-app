@@ -995,7 +995,7 @@ const Sidebar = () => {
                 </li>
               )}
               
-              {specificationActive && baseURL === "https://dev-panchshil-super-app.lockated.com/" &&  (
+              {specificationActive && (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") &&  (
                 <li className="menu-item d-flex">
                 
                   <NavLink
@@ -1084,7 +1084,7 @@ const Sidebar = () => {
                   </NavLink>
                 </li>
               )} */}
-              {organizationActive && baseURL === "https://dev-panchshil-super-app.lockated.com/" &&  (
+              {organizationActive && (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") &&  (
                 <li className="menu-item d-flex">
                   {/* <a
                   className="menu-link d-flex"
@@ -1131,7 +1131,7 @@ const Sidebar = () => {
                   </NavLink>
                 </li>
               )}
-              {companyActive && (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/") && (
+              {companyActive && (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
                 <li className="menu-item d-flex">
                   {/* <a
                   className="menu-link d-flex"
@@ -1269,7 +1269,7 @@ const Sidebar = () => {
                   </NavLink>
                 </li>
               )}
-              {supportServiceActive && baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+              {supportServiceActive && (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
                 <li className="menu-item d-flex">
                   {/* <a
                   className="menu-link d-flex"
@@ -1382,7 +1382,7 @@ const Sidebar = () => {
                   <span className="menu-link-text">Project <br /> Config</span>
                 </a>
               </li> */}
-              {pressReleasesActive && baseURL === "https://dev-panchshil-super-app.lockated.com/" && (
+              {pressReleasesActive && (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
                 <li className="menu-item d-flex">
                   {/* <a
                   className="menu-link d-flex"

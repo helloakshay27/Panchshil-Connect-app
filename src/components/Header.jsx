@@ -25,7 +25,7 @@ const isRustomjee = hostname.includes("rustomjee");
     // Determine which logo to display based on baseURL
     if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/") {
       setCurrentLogo(LOGO_URL);
-    } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/") {
+    } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") {
       setCurrentLogo(Rustomji_URL_Black);
      } else if (baseURL === "https://kalpataru.lockated.com/") {
       setCurrentLogo(LOGO_Kalpataru_URL);
