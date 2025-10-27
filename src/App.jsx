@@ -143,9 +143,9 @@ import LoanManagerAdd from "./pages/loan-manager-add";
 import LoanManagerList from "./pages/loan-manager-list";
 import LoanManagerEdit from "./pages/loan-manager-edit";
 import CommonFileUpload from "./pages/common-files";
-import SystemConstantsList from "./pages/system-constpage";
-import SystemConstantsCreate from "./pages/system-constants-create";
-import SystemConstantsEdit from "./pages/system-constants-edit";
+// import SystemConstantsList from "./pages/system-constpage";
+// import SystemConstantsCreate from "./pages/system-constants-create";
+// import SystemConstantsEdit from "./pages/system-constants-edit";
 // import NoticeboardDetailsMinimal from "./pages/noticeboard-details-minimal";
 
 // // import EditGallery from './EditGallery';
@@ -529,7 +529,7 @@ function App() {
             element={<EditImagesConfiguration />}
           />
 
-           <Route
+           {/* <Route
             path="/setup-member/system-constant-config"
             element={<SystemConstantsList />}
           />
@@ -540,7 +540,7 @@ function App() {
           <Route
             path="/system-constants-edit/:id"
             element={<SystemConstantsEdit />}
-          />
+          /> */}
 
             <Route path="/setup-member/bank-details-create" element={<BankDetailsCreate />} />
              <Route
