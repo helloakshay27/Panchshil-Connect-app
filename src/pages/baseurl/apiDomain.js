@@ -28,7 +28,7 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://rustomjee-live.lockated.com/"; 
+    baseURL = "https://dev-panchshil-super-app.lockated.com/"; 
     break;
 
   default:

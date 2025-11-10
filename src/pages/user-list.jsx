@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import Pagination from "../components/reusable/Pagination";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);

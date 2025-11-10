@@ -29,6 +29,14 @@ const SetupSidebar = () => {
   const [bankActive, setBankActive] = useState(false);
   const [loanManagerActive, setLoanManagerActive] = useState(false);
   const [isCommonFilesActive, setIsCommonFilesActive] = useState(false);
+  const [showLoyaltySection, setShowLoyaltySection] = useState(false);
+  const [membersActive, setMembersActive] = useState(false);
+  const [tiersActive, setTiersActive] = useState(false);
+  const [referralActive, setReferralActive] = useState(false);
+  const [lockPaymentsActive, setLockPaymentsActive] = useState(false);
+  const [demandNotesActive, setDemandNotesActive] = useState(false);
+  const [ordersActive, setOrdersActive] = useState(false);
+  const [encashActive, setEncashActive] = useState(false);
 
 
   useEffect(() => {
@@ -104,7 +112,36 @@ const SetupSidebar = () => {
         const CommonFilesPermission = hasPermission("common_files");
         setIsCommonFilesActive(CommonFilesPermission);
 
+        // Loyalty section permission - show if any loyalty feature is accessible
+        const LoyaltySectionPermission = hasPermission("referral");
+        setShowLoyaltySection(LoyaltySectionPermission);
+
+        // For loyalty features, using referral permission as base or setting to true
+        // Update these permission keys based on your backend permission structure
+        const MembersPermission = hasPermission("referral"); // Using referral permission for now
+        setMembersActive(MembersPermission);
+
+        const TiersPermission = hasPermission("referral"); // Using referral permission for now
+        setTiersActive(TiersPermission);
+
+        const ReferralPermission = hasPermission("referral");
+        setReferralActive(ReferralPermission);
+
+        const LockPaymentsPermission = hasPermission("referral"); // Using referral permission for now
+        setLockPaymentsActive(LockPaymentsPermission);
+
+        const DemandNotesPermission = hasPermission("referral"); // Using referral permission for now
+        setDemandNotesActive(DemandNotesPermission);
+
+        const OrdersPermission = hasPermission("referral"); // Using referral permission for now
+        setOrdersActive(OrdersPermission);
+
+        const EncashPermission = hasPermission("referral"); // Using referral permission for now
+        setEncashActive(EncashPermission);
+
     }, []);
+
+    console.log("LoyaltySectionPermission:-", showLoyaltySection)
 
   return (
     <>
@@ -171,6 +208,58 @@ const SetupSidebar = () => {
                 </NavLink>
               </li>
            )}
+           {/* Loyalty Section */}
+                {showLoyaltySection && (
+                <li className="main-section nav-item mt-2" id="loyalty">
+                <a
+                  className="text nav-link dropdown-toggle d-flex justify-content-between"
+                  data-bs-toggle="collapse"
+                  href="#loyaltyCollapse"
+                >
+                  <img alt="" src="../images/user.svg" />
+                  <span className="text">Loyalty</span>
+                  <i className="bi bi-caret-right-fill collapse-logo" />
+                </a>
+                
+                <ul className="p-0 collapse" id="loyaltyCollapse">
+                  {membersActive && (
+                  <li className="nav-item">
+                    <NavLink to="/setup-member/loyalty-members" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Members</span> </NavLink>
+                  </li>
+                  )}
+                  {tiersActive && (
+                  <li className="nav-item">
+                    <NavLink to="/setup-member/tiers" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Tiers</span> </NavLink>
+                  </li>
+                  )}
+                  {referralActive && (
+                  <li className="nav-item">
+                    <NavLink to="/setup-member/referral-list" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Referral</span> </NavLink>
+                  </li>
+                  )}
+                  {lockPaymentsActive && (
+                  <li className="nav-item">
+                    <NavLink to="/setup-member/lock-payments" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Lock Payments</span> </NavLink>
+                  </li>
+                  )}
+                  {demandNotesActive && (
+                  <li className="nav-item">
+                    <NavLink to="/setup-member/demand-notes" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Demand Notes</span> </NavLink>
+                  </li>
+                  )}
+                  {ordersActive && (
+                  <li className="nav-item">
+                    <NavLink to="/setup-member/orders" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Orders</span> </NavLink>
+                  </li>
+                  )}
+                  {encashActive && (
+                  <li className="nav-item">
+                    <NavLink to="/setup-member/encash-list" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Encash</span> </NavLink>
+                  </li>
+                  )}
+                </ul>
+              </li>
+              )}
            {userRoleActive && (
                 <li className="menu-item d-flex">
                 <NavLink

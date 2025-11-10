@@ -1,7 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./mor.css";
 import { Link, Navigate } from "react-router-dom";
-import Members from "./pages/members";
+import LoyaltyMembers from "./pages/loyalty-members";
+import Tiers from "./pages/tier";
+import LoyaltyReferralList from "./pages/loyalty-referral-list";
+import LockPayments from "./pages/lock-payments";
+import DemandNotes from "./pages/demand-notes";
+import Orders from "./pages/orders";
+import EncashList from "./pages/encash-list";
 import ProjectDetailsCreate from "./pages/project-details-create";
 import BannerList from "./pages/banner-list";
 import BannerAdd from "./pages/banner-add";
@@ -143,6 +149,7 @@ import LoanManagerAdd from "./pages/loan-manager-add";
 import LoanManagerList from "./pages/loan-manager-list";
 import LoanManagerEdit from "./pages/loan-manager-edit";
 import CommonFileUpload from "./pages/common-files";
+import Members from "./pages/members";
 // import SystemConstantsList from "./pages/system-constpage";
 // import SystemConstantsCreate from "./pages/system-constants-create";
 // import SystemConstantsEdit from "./pages/system-constants-edit";
@@ -242,8 +249,15 @@ function App() {
           }
         >
           <Route index element={<Navigate to="/members" />} />
-
+          
           <Route path="/members" element={<Members />} />
+          <Route path="/setup-member/loyalty-members" element={<LoyaltyMembers />} />
+          <Route path="/setup-member/tiers" element={<Tiers />} />
+          <Route path="/setup-member/referral-list" element={<LoyaltyReferralList />} />
+          <Route path="/setup-member/lock-payments" element={<LockPayments />} />
+          <Route path="/setup-member/demand-notes" element={<DemandNotes />} />
+          <Route path="/setup-member/orders" element={<Orders />} />
+          <Route path="/setup-member/encash-list" element={<EncashList />} />
           <Route path="/setup-member" element={<SetupMember />} />
           <Route path="/project-create" element={<ProjectDetailsCreate />} />
           <Route path="/project-edit/:id" element={<ProjectDetailsEdit />} />
