@@ -203,13 +203,13 @@ const Tiers = () => {
               <h3 className="card-title">Tiers List</h3>
             </div>
             <div className="card-body">
-              <p className="pointer">
+              {/* <p className="pointer">
                 <span style={{ fontSize: "16px !important" }}>Tiers</span> &gt; Tier
                 List
-              </p>
+              </p> */}
               <div className="loyalty-header">
                 <div className="d-flex justify-content-between align-items-center">
-                  <Link to="/new-tier">
+                  <Link to="/setup-member/new-tier">
                     <button
                       className="purple-btn1 rounded-1"
                       style={{ paddingRight: "50px" }}
@@ -228,74 +228,54 @@ const Tiers = () => {
                 </button>
               </Link>
               <div className="d-flex align-items-center">
-                <div className="d-flex align-items-center position-relative">
-                  <div
-                    className="position-relative me-3"
-                    style={{ width: "100%" }}
-                  >
-                    <input
-                      className="form-control"
-                      style={{
-                        height: "35px",
-                        paddingLeft: "30px",
-                        textAlign: "left",
-                      }}
-                      type="search"
-                      placeholder="Search"
-                      aria-label="Search"
-                      value={searchTerm}
-                      onChange={handleSearchInputChange}
-                    />
-                    <div
-                      className="position-absolute"
-                      style={{ top: "7px", left: "10px" }}
+                <div className="search-input-group me-3">
+                  <input
+                    className="form-control"
+                    type="search"
+                    placeholder="Search"
+                    aria-label="Search"
+                    value={searchTerm}
+                    onChange={handleSearchInputChange}
+                  />
+                  <span className="search-icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-search"
+                      viewBox="0 0 16 16"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        className="bi bi-search"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                      </svg>
-                    </div>
-                    {suggestions.length > 0 && (
-                      <ul
-                        className="suggestions-list position-absolute"
-                        style={{
-                          listStyle: "none",
-                          padding: "0",
-                          marginTop: "5px",
-                          border: "1px solid #ddd",
-                          maxHeight: "200px",
-                          overflowY: "auto",
-                          width: "100%", // Match width of input field
-                          zIndex: 1, // Ensure it appears on top of other elements
-                          backgroundColor: "#fff", // Set solid background color
-                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Optional shadow for visibility
-                        }}
-                      >
-                        {suggestions.map((member) => (
-                          <li
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                    </svg>
+                  </span>
+                  {searchTerm && (
+                    <button 
+                      className="clear-btn" 
+                      onClick={handleReset} 
+                      aria-label="Clear search"
+                      type="button"
+                    >
+                      ×
+                    </button>
+                  )}
+                  {suggestions.length > 0 && (
+                    <ul className="search-suggestions">
+                      {suggestions.map((member) => (
+                        <li
+                          // @ts-ignore
+                          key={member.id}
+                          className="search-suggestion-item"
+                          onClick={() => handleSuggestionClick(member)}
+                        >
+                          {
                             // @ts-ignore
-                            key={member.id}
-                            style={{
-                              padding: "8px",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => handleSuggestionClick(member)}
-                          >
-                            {
-                              // @ts-ignore
-                              member.name
-                            }
-                          </li>
+                            member.name
+                          }
+                        </li>
                         ))}
                       </ul>
                     )}
-                  </div>
                 </div>
                 <button
                   className="purple-btn1 rounded-3 px-3"
@@ -324,14 +304,14 @@ const Tiers = () => {
                 <p>Total Tiers</p>
               </div>
               <div
-                className="flex-grow-1 green p-1 px-2"
+                className="flex-grow-1 violet-red p-1 px-2"
                 style={{ borderRadius: "8px" }}
               >
                 <p>{yearlyTier}</p>
                 <p>Rolling Year Tiers</p>
               </div>
               <div
-                className="flex-grow-1 pink p-1 px-2"
+                className="flex-grow-1 violet-red p-1 px-2"
                 style={{ borderRadius: "8px" }}
               >
                 <p>{lifeTimeTier}</p>
@@ -343,8 +323,8 @@ const Tiers = () => {
             {error && <p className="text-danger">{error}</p>}
             {!loading && !error && (
               <>
-                <div className="table-responsive">
-                  <table className="custom-table">
+                <div className="tbl-container mt-4" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                  <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
                     <thead>
                       <tr>
                         <th>Tier Name</th>
@@ -364,7 +344,7 @@ const Tiers = () => {
                           <td>{tier.welcome_bonus} Points</td>
                           <td>
                             <button
-                              className="action-btn edit"
+                              className="action-btn"
                               onClick={() => handleEditClick(tier)}
                               title="Edit Tier"
                             >
@@ -386,9 +366,9 @@ const Tiers = () => {
                           </td>
                           <td>
                             <button
-                              className="action-btn view"
+                              className="action-btn"
                               onClick={() =>
-                                navigate(`/tier-details/${tier.id}`)
+                                navigate(`/setup-member/tier-details/${tier.id}`)
                               }
                               title="View Tier"
                             >
@@ -418,14 +398,14 @@ const Tiers = () => {
                       ))}
                     </tbody>
                   </table>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    totalEntries={filteredItems.length}
+                    itemsPerPage={itemsPerPage}
+                  />
                 </div>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  totalEntries={filteredItems.length}
-                  itemsPerPage={itemsPerPage}
-                />
               </>
             )}
 

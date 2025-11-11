@@ -3,6 +3,7 @@ import "./mor.css";
 import { Link, Navigate } from "react-router-dom";
 import LoyaltyMembers from "./pages/loyalty-members";
 import Tiers from "./pages/tier";
+import TierDetails from "./pages/tier-details";
 import LoyaltyReferralList from "./pages/loyalty-referral-list";
 import LockPayments from "./pages/lock-payments";
 import DemandNotes from "./pages/demand-notes";
@@ -150,6 +151,7 @@ import LoanManagerList from "./pages/loan-manager-list";
 import LoanManagerEdit from "./pages/loan-manager-edit";
 import CommonFileUpload from "./pages/common-files";
 import Members from "./pages/members";
+import NewTier from "./pages/new-tier";
 // import SystemConstantsList from "./pages/system-constpage";
 // import SystemConstantsCreate from "./pages/system-constants-create";
 // import SystemConstantsEdit from "./pages/system-constants-edit";
@@ -168,7 +170,7 @@ import Members from "./pages/members";
 
 // const baseURL = process.env.REACT_APP_BASE_URL; // or your const
 
-if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/" ) {
+if (baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://uatapi-connect.panchshil.com/") {
   console.log("Base URL is set to Panchshil Connect");
   document.body.classList.add("theme-connect");
 } else if (baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") {
@@ -182,7 +184,7 @@ let ForgotOtpComponent;
 let CreatePasswordComponent;
 let LoginWithOtpComponent;
 
-if (baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://uatapi-connect.panchshil.com/" ) {
+if (baseURL === "https://panchshil-super.lockated.com/" || baseURL === "https://api-connect.panchshil.com/" || baseURL === "https://uatapi-connect.panchshil.com/") {
   // if (baseURL === "https://api-connect.panchshil.com/") {
   // if (baseURL === "http://localhost:3000/") {
   LoginComponent = <SignIn />;
@@ -249,10 +251,12 @@ function App() {
           }
         >
           <Route index element={<Navigate to="/members" />} />
-          
+
           <Route path="/members" element={<Members />} />
           <Route path="/setup-member/loyalty-members" element={<LoyaltyMembers />} />
           <Route path="/setup-member/tiers" element={<Tiers />} />
+          <Route path="/setup-member/tier-details/:id" element={<TierDetails />} />
+          <Route path="/setup-member/new-tier" element={<NewTier />} />
           <Route path="/setup-member/referral-list" element={<LoyaltyReferralList />} />
           <Route path="/setup-member/lock-payments" element={<LockPayments />} />
           <Route path="/setup-member/demand-notes" element={<DemandNotes />} />
@@ -346,7 +350,7 @@ function App() {
           <Route path="/sitevisit-create" element={<SitevisitCreate />} />
           <Route path="/sitevisit-list" element={<SitevisitList />} />
           <Route path="/sitevisit-edit/:id" element={<SitevisitEdit />} />
-        
+
           <Route path="/site-create" element={<SiteCreate />} />
           <Route path="/site-list" element={<SiteList />} />
           <Route path="/site-edit/:id" element={<SiteEdit />} />
@@ -481,7 +485,7 @@ function App() {
             element={<SMTPSettingsEdit />}
           />
 
-           <Route
+          <Route
             path="/setup-member/user-groups-list"
             element={<UserGroupList />}
           />
@@ -494,11 +498,11 @@ function App() {
             element={<UserGroupEdit />}
           />
 
-           <Route
+          <Route
             path="/faq-create"
             element={<FaqCreate />}
           />
-           <Route
+          <Route
             path="/faq-list"
             element={<FaqList />}
           />
@@ -508,7 +512,7 @@ function App() {
           />
 
           <Route path="/setup-member/faq-category/create" element={<FaqCategoryForm />} />
-         <Route path="/setup-member/faq-category/:faqId/edit" element={<FaqCategoryForm />} />
+          <Route path="/setup-member/faq-category/:faqId/edit" element={<FaqCategoryForm />} />
           <Route path="/setup-member/faq-category-list" element={<FaqCategoryList />} />
 
           <Route path="/setup-member/faq-subcategory-list" element={<FaqSubCategoryList />} />
@@ -516,21 +520,21 @@ function App() {
           <Route path="/setup-member/faq-subcategory/:faqSubId/edit" element={<FaqSubCategory />} />
 
           <Route path="/setup-member/construction-updates-create" element={<ConstructionUpdatesCreate />} />
-           <Route
+          <Route
             path="/setup-member/construction-updates-edit/:id"
             element={<ConstructionUpdatesEdit />}
           />
-           <Route path="/setup-member/construction-updates-list" element={<ConstructionUpdatesList />} />
+          <Route path="/setup-member/construction-updates-list" element={<ConstructionUpdatesList />} />
 
-           <Route path="/setup-member/service-category/create" element={<ServiceCategoryForm />} />
+          <Route path="/setup-member/service-category/create" element={<ServiceCategoryForm />} />
           <Route path="/setup-member/service-category/:serviceId/edit" element={<ServiceCategoryForm />} />
           <Route path="/setup-member/service-category-list" element={<ServiceCategoryList />} />
 
-            <Route path="/setup-member/department-create" element={<DepartmentCreate />} />
+          <Route path="/setup-member/department-create" element={<DepartmentCreate />} />
           <Route path="/setup-member/department-list" element={<DepartmentList />} />
           <Route path="/setup-member/department-edit/:id" element={<DepartmentEdit />} />
 
-           <Route path="/setup-member/banks/create" element={<BankForm />} />
+          <Route path="/setup-member/banks/create" element={<BankForm />} />
           <Route path="/setup-member/banks/:bankId/edit" element={<BankForm />} />
           <Route path="/setup-member/banks-list" element={<BankList />} />
 
@@ -538,12 +542,12 @@ function App() {
             path="/setup-member/image-config-list"
             element={<ImageConfig />}
           />
-           <Route
+          <Route
             path="/setup-member/image-config/:id"
             element={<EditImagesConfiguration />}
           />
 
-           {/* <Route
+          {/* <Route
             path="/setup-member/system-constant-config"
             element={<SystemConstantsList />}
           />
@@ -556,8 +560,8 @@ function App() {
             element={<SystemConstantsEdit />}
           /> */}
 
-            <Route path="/setup-member/bank-details-create" element={<BankDetailsCreate />} />
-             <Route
+          <Route path="/setup-member/bank-details-create" element={<BankDetailsCreate />} />
+          <Route
             path="/setup-member/bank-details-list"
             element={<BankDetailsList />}
           />
@@ -597,7 +601,7 @@ function App() {
             element={<NoticeboardDetails />}
           />
 
-           <Route
+          <Route
             path="/setup-member/loan-manager-list"
             element={<LoanManagerList />}
           />
@@ -610,7 +614,7 @@ function App() {
             element={<LoanManagerEdit />}
           />
 
-           <Route
+          <Route
             path="/setup-member/common-files-upload"
             element={<CommonFileUpload />}
           />

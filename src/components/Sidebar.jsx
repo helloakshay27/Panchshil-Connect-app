@@ -1443,7 +1443,7 @@ const Sidebar = () => {
                     to="/faq-list"
                     style={{ flexDirection: "column" }}
                     className={({ isActive }) =>
-                      `sidebar-item menu-item d-flex  ${
+                      `sidebar-item menu-item d-flex ${
                         isActive ? "active" : ""
                       }`
                     }

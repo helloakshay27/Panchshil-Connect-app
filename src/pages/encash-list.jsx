@@ -191,17 +191,20 @@ const EncashList = () => {
     const startEntry = (currentPage - 1) * itemsPerPage + 1;
     const endEntry = Math.min(currentPage * itemsPerPage, totalEntries);
 
+    // Function to get the range of page numbers to display
     const getPageNumbers = () => {
       const pages = [];
-      const maxVisiblePages = 5;
+      const maxVisiblePages = 5; // Set the maximum number of visible pages
       const halfVisible = Math.floor(maxVisiblePages / 2);
 
       let startPage, endPage;
 
       if (totalPages <= maxVisiblePages) {
+        // If total pages are less than or equal to maxVisiblePages, show all
         startPage = 1;
         endPage = totalPages;
       } else {
+        // Otherwise, calculate the start and end pages
         if (currentPage <= halfVisible) {
           startPage = 1;
           endPage = maxVisiblePages;
@@ -223,8 +226,24 @@ const EncashList = () => {
 
     const pageNumbers = getPageNumbers();
 
+    const handleJumpForward = () => {
+      if (currentPage + 5 <= totalPages) {
+        onPageChange(currentPage + 5);
+      } else {
+        onPageChange(totalPages); // Go to last page if jump exceeds total pages
+      }
+    };
+
+    const handleJumpBackward = () => {
+      if (currentPage - 5 >= 1) {
+        onPageChange(currentPage - 5);
+      } else {
+        onPageChange(1); // Go to first page if jump goes below 1
+      }
+    };
+
     return (
-      <nav className="d-flex justify-content-between align-items-center">
+      <nav className="d-flex justify-content-between align-items-center m-4">
         <ul
           className="pagination justify-content-center align-items-center"
           style={{ listStyleType: "none", padding: "0" }}
@@ -271,7 +290,10 @@ const EncashList = () => {
             </li>
           ))}
 
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+          <li
+            className={`page-item ${currentPage === totalPages ? "disabled" : ""
+              }`}
+          >
             <button
               className="page-link"
               onClick={() => onPageChange(currentPage + 1)}
@@ -281,7 +303,10 @@ const EncashList = () => {
               ›
             </button>
           </li>
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+          <li
+            className={`page-item ${currentPage === totalPages ? "disabled" : ""
+              }`}
+          >
             <button
               className="page-link"
               onClick={() => onPageChange(totalPages)}
@@ -303,9 +328,9 @@ const EncashList = () => {
     <>
       <div className="w-100">
         <div className="module-data-section mt-2">
-          <p className="pointer">
+          {/* <p className="pointer">
             <span>Encash</span> &gt; Encash List
-          </p>
+          </p> */}
           <div className="card mt-3 mx-3">
             <div className="card-header">
               <h3 className="card-title">Encash Requests</h3>
@@ -314,71 +339,51 @@ const EncashList = () => {
 
           <div className="d-flex justify-content-end align-items-center">
             <div className="d-flex align-items-center">
-              <div className="position-relative me-3">
-                <div className="d-flex align-items-center position-relative">
-                  <div className="position-relative me-3" style={{ width: "100%" }}>
-                    <input
-                      className="form-control"
-                      style={{
-                        height: "35px",
-                        paddingLeft: "30px",
-                        textAlign: "left",
-                      }}
-                      type="search"
-                      placeholder="Search by name, account, status..."
-                      aria-label="Search"
-                      value={searchTerm}
-                      onChange={handleSearchInputChange}
-                      onKeyDown={handleKeyDown}
-                    />
-                    <div
-                      className="position-absolute"
-                      style={{ top: "7px", left: "10px" }}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        className="bi bi-search"
-                        viewBox="0 0 16 16"
+              <div className="search-input-group me-3">
+                <input
+                  className="form-control"
+                  type="search"
+                  placeholder="Search by name, account, status..."
+                  aria-label="Search"
+                  value={searchTerm}
+                  onChange={handleSearchInputChange}
+                  onKeyDown={handleKeyDown}
+                />
+                <span className="search-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    className="bi bi-search"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                  </svg>
+                </span>
+                {searchTerm && (
+                  <button 
+                    className="clear-btn" 
+                    onClick={handleReset} 
+                    aria-label="Clear search"
+                    type="button"
+                  >
+                    ×
+                  </button>
+                )}
+                {suggestions.length > 0 && (
+                  <ul className="search-suggestions">
+                    {suggestions.map((request, index) => (
+                      <li
+                        key={request.id}
+                        className={`search-suggestion-item ${selectedIndex === index ? "selected" : ""}`}
+                        onClick={() => handleSuggestionClick(request)}
                       >
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                      </svg>
-                    </div>
-                    {suggestions.length > 0 && (
-                      <ul
-                        className="suggestions-list position-absolute"
-                        style={{
-                          listStyle: "none",
-                          padding: "0",
-                          marginTop: "5px",
-                          border: "1px solid #ddd",
-                          maxHeight: "200px",
-                          overflowY: "auto",
-                          width: "100%",
-                          zIndex: 1,
-                          backgroundColor: "#fff",
-                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                        }}
-                      >
-                        {suggestions.map((request, index) => (
-                          <li
-                            key={request.id}
-                            style={{
-                              padding: "8px",
-                              cursor: "pointer",
-                            }}
-                            className={selectedIndex === index ? "highlight" : ""}
-                            onClick={() => handleSuggestionClick(request)}
-                          >
-                            {request.person_name} - {request.account_number}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
+                        {request.person_name} - {request.account_number}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <button className="purple-btn1 rounded-3 px-3" onClick={handleSearch}>
                 Go!
@@ -404,15 +409,7 @@ const EncashList = () => {
             ) : currentItems.length > 0 ? (
               <>
                 <div style={{ width: "100%", overflowX: "auto" }}>
-                  <table
-                    className="w-100"
-                    style={{
-                      color: "#000",
-                      fontWeight: "400",
-                      fontSize: "13px",
-                      tableLayout: "fixed",
-                    }}
-                  >
+                  <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
                     <colgroup>
                       <col style={{ width: "80px" }} />
                       <col style={{ width: "150px" }} />

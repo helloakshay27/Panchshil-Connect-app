@@ -135,16 +135,20 @@ export default function LockPayments() {
     const startEntry = totalEntries > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
     const endEntry = Math.min(currentPage * itemsPerPage, totalEntries);
 
+    // Function to get the range of page numbers to display
     const getPageNumbers = () => {
       const pages = [];
-      const maxVisiblePages = 5;
+      const maxVisiblePages = 5; // Set the maximum number of visible pages
       const halfVisible = Math.floor(maxVisiblePages / 2);
+
       let startPage, endPage;
 
       if (totalPages <= maxVisiblePages) {
+        // If total pages are less than or equal to maxVisiblePages, show all
         startPage = 1;
         endPage = totalPages;
       } else {
+        // Otherwise, calculate the start and end pages
         if (currentPage <= halfVisible) {
           startPage = 1;
           endPage = maxVisiblePages;
@@ -156,36 +160,110 @@ export default function LockPayments() {
           endPage = currentPage + halfVisible;
         }
       }
-      for (let i = startPage; i <= endPage; i++) pages.push(i);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
       return pages;
     };
 
     const pageNumbers = getPageNumbers();
 
+    const handleJumpForward = () => {
+      if (currentPage + 5 <= totalPages) {
+        onPageChange(currentPage + 5);
+      } else {
+        onPageChange(totalPages); // Go to last page if jump exceeds total pages
+      }
+    };
+
+    const handleJumpBackward = () => {
+      if (currentPage - 5 >= 1) {
+        onPageChange(currentPage - 5);
+      } else {
+        onPageChange(1); // Go to first page if jump goes below 1
+      }
+    };
+
     return (
-      <nav className="d-flex justify-content-between align-items-center mt-3">
-        <p className="text-center" style={{ color: "#555" }}>
-          Showing {startEntry} to {endEntry} of {totalEntries} entries
-        </p>
-        <ul className="pagination justify-content-center align-items-center" style={{ listStyleType: "none", padding: "0", margin: "0" }}>
+      <nav className="d-flex justify-content-between align-items-center m-4">
+        <ul
+          className="pagination justify-content-center align-items-center"
+          style={{ listStyleType: "none", padding: "0" }}
+        >
           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => onPageChange(1)} disabled={currentPage === 1} style={{ padding: "8px 12px", color: "#5e2750" }}>««</button>
+            <button
+              className="page-link"
+              onClick={() => onPageChange(1)} // Jump to first page
+              disabled={currentPage === 1}
+              style={{ padding: "8px 12px", color: "#5e2750" }}
+            >
+              «« {/* Double left arrow for jumping to the first page */}
+            </button>
           </li>
           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} style={{ padding: "8px 12px", color: "#5e2750" }}>‹</button>
+            <button
+              className="page-link"
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              style={{ padding: "8px 12px", color: "#5e2750" }}
+            >
+              ‹
+            </button>
           </li>
+
           {pageNumbers.map((page) => (
-            <li key={page} className={`page-item ${page === currentPage ? "active" : ""}`}>
-              <button className="page-link" onClick={() => onPageChange(page)} style={{ padding: "8px 12px", color: page === currentPage ? "#fff" : "#5e2750", backgroundColor: page === currentPage ? "#5e2750" : "#fff", border: "2px solid #5e2750", borderRadius: "3px" }}>{page}</button>
+            <li
+              key={page}
+              className={`page-item ${page === currentPage ? "active" : ""}`}
+            >
+              <button
+                className="page-link"
+                onClick={() => onPageChange(page)}
+                style={{
+                  padding: "8px 12px",
+                  color: page === currentPage ? "#fff" : "#5e2750",
+                  backgroundColor: page === currentPage ? "#5e2750" : "#fff",
+                  border: "2px solid #5e2750",
+                  borderRadius: "3px",
+                }}
+              >
+                {page}
+              </button>
             </li>
           ))}
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages} style={{ padding: "8px 12px", color: "#5e2750" }}>›</button>
+
+          <li
+            className={`page-item ${currentPage === totalPages ? "disabled" : ""
+              }`}
+          >
+            <button
+              className="page-link"
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              style={{ padding: "8px 12px", color: "#5e2750" }}
+            >
+              ›
+            </button>
           </li>
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages} style={{ padding: "8px 12px", color: "#5e2750" }}>»»</button>
+          <li
+            className={`page-item ${currentPage === totalPages ? "disabled" : ""
+              }`}
+          >
+            <button
+              className="page-link"
+              onClick={handleJumpForward} // Jump forward by 5 pages
+              disabled={currentPage === totalPages}
+              style={{ padding: "8px 12px", color: "#5e2750" }}
+            >
+              »» {/* Double right arrow for jumping to the last page */}
+            </button>
           </li>
         </ul>
+        <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
+          Showing {startEntry} to {endEntry} of {totalEntries} entries
+        </p>
       </nav>
     );
   };
@@ -193,9 +271,9 @@ export default function LockPayments() {
   return (
     <div className="w-100">
       <div className="module-data-section mt-2">
-        <p className="pointer">
+        {/* <p className="pointer">
           <span>Payments</span> &gt; Lock Payments
-        </p>
+        </p> */}
         <div className="card mt-3 mx-3">
           <div className="card-header">
             <h3 className="card-title">Lock Payments</h3>
@@ -204,10 +282,9 @@ export default function LockPayments() {
 
         <div className="d-flex justify-content-end align-items-center">
           <div className="d-flex align-items-center">
-            <div className="position-relative me-2">
+            <div className="search-input-group me-3">
               <input
                 className="form-control"
-                style={{ height: "35px", paddingLeft: "30px" }}
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
@@ -215,26 +292,40 @@ export default function LockPayments() {
                 onChange={handleSearchInputChange}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <div className="position-absolute" style={{ top: "7px", left: "10px" }}>
+              <span className="search-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
                   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                 </svg>
-              </div>
+              </span>
+              {searchTerm && (
+                <button 
+                  className="clear-btn" 
+                  onClick={handleReset} 
+                  aria-label="Clear search"
+                  type="button"
+                >
+                  ×
+                </button>
+              )}
             </div>
             <button className="purple-btn1 rounded-3 px-3" onClick={handleSearch}>Go!</button>
             <button className="purple-btn2 rounded-3 ms-2" onClick={handleReset}>Reset</button>
           </div>
         </div>
 
-        <div className="tbl-container mx-3 mt-4">
+        <div className="tbl-container mt-4" style={{
+          height: "100%",
+          overflowX: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}>
           {loading ? (
             <p>Loading...</p>
           ) : error ? (
             <p className="text-danger">{error}</p>
           ) : (
             <>
-              <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                <thead>
+<table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>                <thead>
                   <tr>
                     <th onClick={() => requestSort('id')} style={{ cursor: 'pointer' }}>ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
                     <th onClick={() => requestSort('payment_date')} style={{ cursor: 'pointer' }}>Payment Date {sortConfig.key === 'payment_date' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>

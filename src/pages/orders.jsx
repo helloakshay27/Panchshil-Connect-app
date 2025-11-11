@@ -166,16 +166,20 @@ const Orders = () => {
     const startEntry = (currentPage - 1) * perPage + 1;
     const endEntry = Math.min(currentPage * perPage, totalEntries);
 
+    // Function to get the range of page numbers to display
     const getPageNumbers = () => {
       const pages = [];
-      const maxVisiblePages = 5;
+      const maxVisiblePages = 5; // Set the maximum number of visible pages
       const halfVisible = Math.floor(maxVisiblePages / 2);
 
       let startPage, endPage;
+
       if (totalPages <= maxVisiblePages) {
+        // If total pages are less than or equal to maxVisiblePages, show all
         startPage = 1;
         endPage = totalPages;
       } else {
+        // Otherwise, calculate the start and end pages
         if (currentPage <= halfVisible) {
           startPage = 1;
           endPage = maxVisiblePages;
@@ -187,42 +191,105 @@ const Orders = () => {
           endPage = currentPage + halfVisible;
         }
       }
-      for (let i = startPage; i <= endPage; i++) pages.push(i);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
       return pages;
     };
 
     const pageNumbers = getPageNumbers();
 
-    const handleJumpForward = () => onPageChange(Math.min(currentPage + 5, totalPages));
-    const handleJumpBackward = () => onPageChange(Math.max(currentPage - 5, 1));
+    const handleJumpForward = () => {
+      if (currentPage + 5 <= totalPages) {
+        onPageChange(currentPage + 5);
+      } else {
+        onPageChange(totalPages); // Go to last page if jump exceeds total pages
+      }
+    };
+
+    const handleJumpBackward = () => {
+      if (currentPage - 5 >= 1) {
+        onPageChange(currentPage - 5);
+      } else {
+        onPageChange(1); // Go to first page if jump goes below 1
+      }
+    };
 
     return (
-      <nav className="d-flex justify-content-between align-items-center">
-        <ul className="pagination justify-content-center align-items-center" style={{ listStyleType: "none", padding: 0 }}>
+      <nav className="d-flex justify-content-between align-items-center m-4">
+        <ul
+          className="pagination justify-content-center align-items-center"
+          style={{ listStyleType: "none", padding: "0" }}
+        >
           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => onPageChange(1)} disabled={currentPage === 1} style={{ padding: "8px 12px", color: "#5e2750" }}>««</button>
+            <button
+              className="page-link"
+              onClick={() => onPageChange(1)} // Jump to first page
+              disabled={currentPage === 1}
+              style={{ padding: "8px 12px", color: "#5e2750" }}
+            >
+              «« {/* Double left arrow for jumping to the first page */}
+            </button>
           </li>
           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} style={{ padding: "8px 12px", color: "#5e2750" }}>‹</button>
+            <button
+              className="page-link"
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              style={{ padding: "8px 12px", color: "#5e2750" }}
+            >
+              ‹
+            </button>
           </li>
 
-          {pageNumbers.map(page => (
-            <li key={page} className={`page-item ${page === currentPage ? "active" : ""}`}>
-              <button className="page-link" onClick={() => onPageChange(page)} style={{
-                padding: "8px 12px",
-                color: page === currentPage ? "#fff" : "#5e2750",
-                backgroundColor: page === currentPage ? "#5e2750" : "#fff",
-                border: "2px solid #5e2750",
-                borderRadius: "3px",
-              }}>{page}</button>
+          {pageNumbers.map((page) => (
+            <li
+              key={page}
+              className={`page-item ${page === currentPage ? "active" : ""}`}
+            >
+              <button
+                className="page-link"
+                onClick={() => onPageChange(page)}
+                style={{
+                  padding: "8px 12px",
+                  color: page === currentPage ? "#fff" : "#5e2750",
+                  backgroundColor: page === currentPage ? "#5e2750" : "#fff",
+                  border: "2px solid #5e2750",
+                  borderRadius: "3px",
+                }}
+              >
+                {page}
+              </button>
             </li>
           ))}
 
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages} style={{ padding: "8px 12px", color: "#5e2750" }}>›</button>
+          <li
+            className={`page-item ${currentPage === totalPages ? "disabled" : ""
+              }`}
+          >
+            <button
+              className="page-link"
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              style={{ padding: "8px 12px", color: "#5e2750" }}
+            >
+              ›
+            </button>
           </li>
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-            <button className="page-link" onClick={handleJumpForward} disabled={currentPage === totalPages} style={{ padding: "8px 12px", color: "#5e2750" }}>»»</button>
+          <li
+            className={`page-item ${currentPage === totalPages ? "disabled" : ""
+              }`}
+          >
+            <button
+              className="page-link"
+              onClick={handleJumpForward} // Jump forward by 5 pages
+              disabled={currentPage === totalPages}
+              style={{ padding: "8px 12px", color: "#5e2750" }}
+            >
+              »» {/* Double right arrow for jumping to the last page */}
+            </button>
           </li>
         </ul>
         <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
@@ -321,9 +388,8 @@ const Orders = () => {
                           </div>
                           <div className="card-body">
                             {error && <div className="alert alert-danger" role="alert">{error}</div>}
-                            <div className="tbl-container mx-3 mt-4" style={{ height: "100%", overflowX: "hidden", display: "flex", flexDirection: "column" }}>
-                              <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                                <thead>
+                            <div className="tbl-container mt-4" style={{ height: "100%", overflowX: "hidden", display: "flex", flexDirection: "column" }}>
+<table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>                                <thead>
                                   <tr>
                                     <th>Order ID</th>
                                     <th>Order Number</th>

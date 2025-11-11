@@ -12,9 +12,9 @@ const TierSetting = () => {
       <div className="w-100">
         {/* <SubHeader /> */}
         <div className="module-data-section mt-2 flex-grow-1">
-          <p className="pointer">
+          {/* <p className="pointer">
             <span className="text-secondary">Tiers</span> &gt; Tier Setting
-          </p>
+          </p> */}
 
           {/* Tier setting */}
           <div className="mx-3 border-bottom">

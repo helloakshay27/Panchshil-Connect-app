@@ -103,46 +103,49 @@ const LoyaltyReferralList = () => {
             <h3 className="card-title">Loyalty Referrals</h3>
           </div>
           <div className="card-body">
-            <p className="pointer">
+            {/* <p className="pointer">
               <span>Referrals</span> &gt; Manage Referrals
-            </p>
+            </p> */}
             <div className="d-flex justify-content-between align-items-center">
           <div />
           <div className="d-flex align-items-center">
-            <div className="d-flex align-items-center position-relative">
-              <div className="position-relative me-3" style={{ width: "100%" }}>
-                <input
-                  className="form-control"
-                  style={{
-                    height: "35px",
-                    paddingLeft: "30px",
-                    textAlign: "left",
-                  }}
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setPagination((prev) => ({ ...prev, current_page: 1 }));
-                  }}
-                />
-                <div
-                  className="position-absolute"
-                  style={{ top: "7px", left: "10px" }}
+            <div className="search-input-group me-3">
+              <input
+                className="form-control"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setPagination((prev) => ({ ...prev, current_page: 1 }));
+                }}
+              />
+              <span className="search-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-search"
+                  viewBox="0 0 16 16"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-search"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                  </svg>
-                </div>
-              </div>
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                </svg>
+              </span>
+              {searchQuery && (
+                <button 
+                  className="clear-btn" 
+                  onClick={() => {
+                    setSearchQuery("");
+                    setPagination((prev) => ({ ...prev, current_page: 1 }));
+                  }} 
+                  aria-label="Clear search"
+                  type="button"
+                >
+                  ×
+                </button>
+              )}
             </div>
             <button
               className="purple-btn1 rounded-3 px-3"
@@ -162,7 +165,7 @@ const LoyaltyReferralList = () => {
           </div>
         </div>
         <div
-          className="tbl-container mx-3 mt-4"
+          className="tbl-container mt-4"
           style={{
             height: "100%",
             overflowX: "hidden",
@@ -210,15 +213,19 @@ const LoyaltyReferralList = () => {
               </table>
               {/* Pagination Controls */}
               {!loading && totalFiltered > 0 && (
-                <div className="d-flex align-items-center justify-content-between px-3 pagination-section mt-2">
-                  <ul className="pagination justify-content-center d-flex">
+                <nav className="d-flex justify-content-between align-items-center m-4">
+                  <ul
+                    className="pagination justify-content-center align-items-center"
+                    style={{ listStyleType: "none", padding: "0" }}
+                  >
                     <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
                       <button
                         className="page-link"
-                        onClick={() => handlePageChange(1)}
+                        onClick={() => handlePageChange(1)} // Jump to first page
                         disabled={pagination.current_page === 1}
+                        style={{ padding: "8px 12px", color: "#5e2750" }}
                       >
-                        First
+                        «« {/* Double left arrow for jumping to the first page */}
                       </button>
                     </li>
                     <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
@@ -226,61 +233,96 @@ const LoyaltyReferralList = () => {
                         className="page-link"
                         onClick={() => handlePageChange(pagination.current_page - 1)}
                         disabled={pagination.current_page === 1}
+                        style={{ padding: "8px 12px", color: "#5e2750" }}
                       >
-                        Prev
+                        ‹
                       </button>
                     </li>
-                    {Array.from(
-                      { length: totalPages },
-                      (_, idx) => idx + 1
-                    ).map((pageNumber) => (
-                      <li
-                        key={pageNumber}
-                        className={`page-item ${pagination.current_page === pageNumber ? "active" : ""}`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() => handlePageChange(pageNumber)}
+
+                    {/* Dynamic page numbers */}
+                    {(() => {
+                      const pages = [];
+                      const maxVisiblePages = 5;
+                      const halfVisible = Math.floor(maxVisiblePages / 2);
+                      let startPage, endPage;
+
+                      if (totalPages <= maxVisiblePages) {
+                        startPage = 1;
+                        endPage = totalPages;
+                      } else {
+                        if (pagination.current_page <= halfVisible) {
+                          startPage = 1;
+                          endPage = maxVisiblePages;
+                        } else if (pagination.current_page + halfVisible >= totalPages) {
+                          startPage = totalPages - maxVisiblePages + 1;
+                          endPage = totalPages;
+                        } else {
+                          startPage = pagination.current_page - halfVisible;
+                          endPage = pagination.current_page + halfVisible;
+                        }
+                      }
+
+                      for (let i = startPage; i <= endPage; i++) {
+                        pages.push(i);
+                      }
+
+                      return pages.map((page) => (
+                        <li
+                          key={page}
+                          className={`page-item ${page === pagination.current_page ? "active" : ""}`}
                         >
-                          {pageNumber}
-                        </button>
-                      </li>
-                    ))}
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(page)}
+                            style={{
+                              padding: "8px 12px",
+                              color: page === pagination.current_page ? "#fff" : "#5e2750",
+                              backgroundColor: page === pagination.current_page ? "#5e2750" : "#fff",
+                              border: "2px solid #5e2750",
+                              borderRadius: "3px",
+                            }}
+                          >
+                            {page}
+                          </button>
+                        </li>
+                      ));
+                    })()}
+
                     <li className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""}`}>
                       <button
                         className="page-link"
                         onClick={() => handlePageChange(pagination.current_page + 1)}
                         disabled={pagination.current_page === totalPages}
+                        style={{ padding: "8px 12px", color: "#5e2750" }}
                       >
-                        Next
+                        ›
                       </button>
                     </li>
                     <li className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""}`}>
                       <button
                         className="page-link"
-                        onClick={() => handlePageChange(totalPages)}
+                        onClick={() => handlePageChange(totalPages)} // Jump to last page
                         disabled={pagination.current_page === totalPages}
+                        style={{ padding: "8px 12px", color: "#5e2750" }}
                       >
-                        Last
+                        »» {/* Double right arrow for jumping to the last page */}
                       </button>
                     </li>
                   </ul>
-                  <div>
-                    <p>
-                      Showing{" "}
-                      {Math.min(
-                        (pagination.current_page - 1) * pageSize + 1 || 1,
-                        totalFiltered
-                      )}{" "}
-                      to{" "}
-                      {Math.min(
-                        pagination.current_page * pageSize,
-                        totalFiltered
-                      )}{" "}
-                      of {totalFiltered} entries
-                    </p>
-                  </div>
-                </div>
+                  <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
+                    Showing{" "}
+                    {Math.min(
+                      (pagination.current_page - 1) * pageSize + 1 || 1,
+                      totalFiltered
+                    )}{" "}
+                    to{" "}
+                    {Math.min(
+                      pagination.current_page * pageSize,
+                      totalFiltered
+                    )}{" "}
+                    of {totalFiltered} entries
+                  </p>
+                </nav>
               )}
             </>
           )}

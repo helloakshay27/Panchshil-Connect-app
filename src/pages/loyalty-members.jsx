@@ -279,7 +279,7 @@ const LoyaltyMembers = () => {
 
 
     return (
-      <nav className="d-flex justify-content-between align-items-center">
+      <nav className="d-flex justify-content-between align-items-center m-4">
         <ul
           className="pagination justify-content-center align-items-center"
           style={{ listStyleType: "none", padding: "0" }}
@@ -289,7 +289,7 @@ const LoyaltyMembers = () => {
               className="page-link"
               onClick={() => onPageChange(1)} // Jump to first page
               disabled={currentPage === 1}
-              style={{ padding: "8px 12px", color: "#5e2750" }}
+              style={{ padding: "8px 12px", color: "#A78847" }}
             >
               «« {/* Double left arrow for jumping to the first page */}
             </button>
@@ -299,7 +299,7 @@ const LoyaltyMembers = () => {
               className="page-link"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              style={{ padding: "8px 12px", color: "#5e2750" }}
+              style={{ padding: "8px 12px", color: "#A78847" }}
             >
               ‹
             </button>
@@ -315,9 +315,9 @@ const LoyaltyMembers = () => {
                 onClick={() => onPageChange(page)}
                 style={{
                   padding: "8px 12px",
-                  color: page === currentPage ? "#fff" : "#5e2750",
-                  backgroundColor: page === currentPage ? "#5e2750" : "#fff",
-                  border: "2px solid #5e2750",
+                  color: page === currentPage ? "#fff" : "#A78847",
+                  backgroundColor: page === currentPage ? "#A78847" : "#fff",
+                  border: "2px solid #A78847",
                   borderRadius: "3px",
                 }}
               >
@@ -334,7 +334,7 @@ const LoyaltyMembers = () => {
               className="page-link"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              style={{ padding: "8px 12px", color: "#5e2750" }}
+              style={{ padding: "8px 12px", color: "#A78847" }}
             >
               ›
             </button>
@@ -347,7 +347,7 @@ const LoyaltyMembers = () => {
               className="page-link"
               onClick={handleJumpForward} // Jump forward by 7 pages
               disabled={currentPage === totalPages}
-              style={{ padding: "8px 12px", color: "#5e2750" }}
+              style={{ padding: "8px 12px", color: "#A78847" }}
             >
               »» {/* Double right arrow for jumping to the last page */}
             </button>
@@ -374,13 +374,13 @@ const LoyaltyMembers = () => {
               <h3 className="card-title">Loyalty Members</h3>
             </div>
             <div className="card-body">
-              <p className="pointer">
+              {/* <p className="pointer">
                 <span>Members</span> &gt; Manage Members
-              </p>
+              </p> */}
 
               <div className="d-flex justify-content-between align-items-center">
-            <Link to="">
-              {/* <button className="purple-btn1" style={{ borderRadius: '5px' }}>
+                <Link to="">
+                  {/* <button className="purple-btn1" style={{ borderRadius: '5px' }}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="19"
@@ -393,197 +393,197 @@ const LoyaltyMembers = () => {
                 </svg>
                 <span>New Member</span>
               </button> */}
-            </Link>
-            <div className="d-flex align-items-center">
+                </Link>
+                <div className="d-flex align-items-center">
 
-              {/* search */}
+                  {/* search */}
 
-              <div className="d-flex align-items-center position-relative">
-                <div className="position-relative me-3" style={{ width: "100%" }}>
-                  <input
-                    className="form-control"
-                    style={{
-                      height: "35px",
-                      paddingLeft: "30px",
-                      textAlign: "left",
-                    }}
-                    type="search"
-                    placeholder="Search"
-                    aria-label="Search"
-                    value={searchTerm}
-                    onChange={handleSearchInputChange}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <div
-                    className="position-absolute"
-                    style={{ top: "7px", left: "10px" }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-search"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                    </svg>
-                  </div>
-                  {suggestions.length > 0 && (
-                    <ul
-                      className="suggestions-list position-absolute"
-                      style={{
-                        listStyle: "none",
-                        padding: "0",
-                        marginTop: "5px",
-                        border: "1px solid #ddd",
-                        maxHeight: "200px",
-                        overflowY: "auto",
-                        width: "100%",        // Match width of input field
-                        zIndex: 1,             // Ensure it appears on top of other elements
-                        backgroundColor: "#fff", // Set solid background color
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Optional shadow for visibility
-                      }}
-                    >
-                      {suggestions.map((member, index) => (
-                        <li
-                          // @ts-ignore
-                          key={member.id}
-                          style={{
-                            padding: "8px",
-                            cursor: "pointer",
-                          }}
-                          className={selectedIndex === index ? "highlight" : ""}
-                          onClick={() => handleSuggestionClick(member)}
+                  <div className="d-flex align-items-center position-relative">
+                    <div className="position-relative me-3" style={{ width: "100%" }}>
+                      <input
+                        className="form-control"
+                        style={{
+                          height: "35px",
+                          paddingLeft: "30px",
+                          textAlign: "left",
+                        }}
+                        type="search"
+                        placeholder="Search"
+                        aria-label="Search"
+                        value={searchTerm}
+                        onChange={handleSearchInputChange}
+                        onKeyDown={handleKeyDown}
+                      />
+                      <div
+                        className="position-absolute"
+                        style={{ top: "7px", left: "10px" }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-search"
+                          viewBox="0 0 16 16"
                         >
-                          {member.firstname} {member.lasttname}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                        </svg>
+                      </div>
+                      {suggestions.length > 0 && (
+                        <ul
+                          className="suggestions-list position-absolute"
+                          style={{
+                            listStyle: "none",
+                            padding: "0",
+                            marginTop: "5px",
+                            border: "1px solid #ddd",
+                            maxHeight: "200px",
+                            overflowY: "auto",
+                            width: "100%",        // Match width of input field
+                            zIndex: 1,             // Ensure it appears on top of other elements
+                            backgroundColor: "#fff", // Set solid background color
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Optional shadow for visibility
+                          }}
+                        >
+                          {suggestions.map((member, index) => (
+                            <li
+                              // @ts-ignore
+                              key={member.id}
+                              style={{
+                                padding: "8px",
+                                cursor: "pointer",
+                              }}
+                              className={selectedIndex === index ? "highlight" : ""}
+                              onClick={() => handleSuggestionClick(member)}
+                            >
+                              {member.firstname} {member.lasttname}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+
+
+
+                  <button
+                    className="purple-btn1 rounded-3 px-3"
+                    onClick={handleSearch}
+                  >
+                    Go!
+                  </button>
+                  <button
+                    className="purple-btn2 rounded-3 mt-2"
+                    onClick={handleReset} // Reset search
+                  >
+                    Reset
+                  </button>
                 </div>
               </div>
 
 
-
-              <button
-                className="purple-btn1 rounded-3 px-3"
-                onClick={handleSearch}
+              <div className="tbl-container mt-4"
+                // style={{
+                //   height: "100%", overflowY: "hidden", margin: "0 100px",
+                //   // textAlign: "center"
+                // }}
+                style={{
+                  height: "100%",
+                  // overflowY: "hidden",
+                  overflowX: "hidden",
+                  // textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  // justifyContent: "space-between",
+                }}
               >
-                Go!
-              </button>
-              <button
-                className="purple-btn2 rounded-3 mt-2"
-                onClick={handleReset} // Reset search
-              >
-                Reset
-              </button>
-            </div>
-          </div>
+                {loading ? (
+                  <p>Loading...</p>
+                ) : error ? (
+                  <p className="text-danger">{error}</p>
+                ) : (
+                  <>
+                    <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
+                      <thead>
+                        <tr>
+                          <th
+                            onClick={() => requestSort('id')}
+                            className="cursor-pointer"
+                            style={{ cursor: 'pointer' }}
+                          >
+                            Member ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                          </th>
+                          <th>Member Name</th>
+                          <th>Tier Level</th>
+                          <th>Current Balance</th>
+                          <th>Last Activity Date</th>
+                          <th>Tier Validity</th>
+                          <th>View</th>
+                        </tr>
+                      </thead>
+                      <tbody style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
+                        {currentItems.map((member) => (
+                          <tr key={member.id}>
+                            <td style={{ width: '14.2%' }}>{member.id}</td>
+                            <td style={{ width: '14.2%' }}>
+                              {member.firstname} {member.lasttname}
+                            </td>
+                            <td style={{ width: '14.2%' }}>{member.member_status.tier_level}</td>
+                            <td style={{ width: '14.2%' }}>{member.current_loyalty_points}</td>
+                            <td style={{ width: '14.2%' }}>{member.member_status.last_activity_date}</td>
+                            <td style={{ width: '14.2%' }}>{member.member_status.tier_validity}</td>
+                            <td style={{ width: '14.2%' }}>
+                              <Link to={`/member-details/${member.id}`}>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="#000000"
+                                  className="bi bi-eye"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                                </svg>
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
 
-
-          <div className="tbl-container mx-3 mt-4"
-            // style={{
-            //   height: "100%", overflowY: "hidden", margin: "0 100px",
-            //   // textAlign: "center"
-            // }}
-            style={{
-              height: "100%",
-              // overflowY: "hidden",
-              overflowX: "hidden",
-              // textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              // justifyContent: "space-between",
-            }}
-          >
-            {loading ? (
-              <p>Loading...</p>
-            ) : error ? (
-              <p className="text-danger">{error}</p>
-            ) : (
-              <>
-                <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                  <thead>
-                    <tr>
-                      <th
-                        onClick={() => requestSort('id')}
-                        className="cursor-pointer"
-                        style={{ cursor: 'pointer' }}
-                      >
-                        Member ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                      </th>
-                      <th>Member Name</th>
-                      <th>Tier Level</th>
-                      <th>Current Balance</th>
-                      <th>Last Activity Date</th>
-                      <th>Tier Validity</th>
-                      <th>View</th>
-                    </tr>
-                  </thead>
-                  <tbody style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                    {currentItems.map((member) => (
-                      <tr key={member.id}>
-                        <td style={{ width: '14.2%' }}>{member.id}</td>
-                        <td style={{ width: '14.2%' }}>
-                          {member.firstname} {member.lasttname}
-                        </td>
-                        <td style={{ width: '14.2%' }}>{member.member_status.tier_level}</td>
-                        <td style={{ width: '14.2%' }}>{member.current_loyalty_points}</td>
-                        <td style={{ width: '14.2%' }}>{member.member_status.last_activity_date}</td>
-                        <td style={{ width: '14.2%' }}>{member.member_status.tier_validity}</td>
-                        <td style={{ width: '14.2%' }}>
-                          <Link to={`/member-details/${member.id}`}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="#000000"
-                              className="bi bi-eye"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                              <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                            </svg>
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  totalEntries={sortedItems.length}
-                />
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Replace LoginModal with SignInRustomjee */}
-        {showModal && (
-          <div style={{
-            position: "fixed",
-            top: 0, left: 0, right: 0, bottom: 0,
-            background: "rgba(0,0,0,0.5)",
-            zIndex: 9999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-            <div style={{ background: "#fff", borderRadius: 8, overflow: "hidden" }}>
-              <SignInRustomjee />
-              <div className="text-center my-3">
-                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                  Close
-                </button>
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      totalEntries={sortedItems.length}
+                    />
+                  </>
+                )}
               </div>
             </div>
-          </div>
-        )}
+
+            {/* Replace LoginModal with SignInRustomjee */}
+            {showModal && (
+              <div style={{
+                position: "fixed",
+                top: 0, left: 0, right: 0, bottom: 0,
+                background: "rgba(0,0,0,0.5)",
+                zIndex: 9999,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}>
+                <div style={{ background: "#fff", borderRadius: 8, overflow: "hidden" }}>
+                  <SignInRustomjee />
+                  <div className="text-center my-3">
+                    <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         </div>

@@ -155,7 +155,7 @@
 }
 
 .custom-table thead th {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--red) 0%, var(--lightred) 100%);
   color: #ffffff;
   font-weight: 600;
   padding: 16px 12px;

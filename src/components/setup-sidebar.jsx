@@ -7,7 +7,7 @@ const SetupSidebar = () => {
 
   const [showUserModuleSidebar, setShowUserModuleSidebar] = useState(false);
   const [userRoleActive, setUserRoleActive] = useState(false);
-   const [userGroupsActive, setUserGroupsActive] = useState(false);
+  const [userGroupsActive, setUserGroupsActive] = useState(false);
   const [lockFunctionActive, setLockFunctionActive] = useState(false);
   const [propertyTypeActive, setPropertyTypeActive] = useState(false);
   const [projectBuildingActive, setProjectBuildingActive] = useState(false);
@@ -18,10 +18,10 @@ const SetupSidebar = () => {
   const [siteSlotActive, setSiteSlotActive] = useState(false);
   const [tdsTutorialsActive, setTdsTustorialsActive] = useState(false);
   const [plusServicesActive, setPlusServicesActive] = useState(false);
-   const [smtpSettingsActive, setSmtpSettingsActive] = useState(false);
-   const [faqCategoryActive, setFaqCategoryActive] = useState(false);
-   const [faqSubCategoryActive, setFaqSubCategoryActive] = useState(false);
-   const [serviceCategoryActive, setServiceCategoryActive] = useState(false);
+  const [smtpSettingsActive, setSmtpSettingsActive] = useState(false);
+  const [faqCategoryActive, setFaqCategoryActive] = useState(false);
+  const [faqSubCategoryActive, setFaqSubCategoryActive] = useState(false);
+  const [serviceCategoryActive, setServiceCategoryActive] = useState(false);
   const [imageConfigActive, setImageConfigActive] = useState(false);
   const [departmentActive, setDepartmentActive] = useState(false);
   const [bankDetailsActive, setBankDetailsActive] = useState(false);
@@ -40,108 +40,108 @@ const SetupSidebar = () => {
 
 
   useEffect(() => {
-     const userModulePermission = hasPermission("user_module");
-      setShowUserModuleSidebar(userModulePermission);
+    const userModulePermission = hasPermission("user_module");
+    setShowUserModuleSidebar(userModulePermission);
 
-       const UserRolePermission = hasPermission("user_role");
-        setUserRoleActive(UserRolePermission);
+    const UserRolePermission = hasPermission("user_role");
+    setUserRoleActive(UserRolePermission);
 
-         const UserGroupsPermission = hasPermission("user_Groups");
-        setUserGroupsActive(UserGroupsPermission);
+    const UserGroupsPermission = hasPermission("user_Groups");
+    setUserGroupsActive(UserGroupsPermission);
 
-        const lockFunctionPermission = hasPermission("lock_function");
-        setLockFunctionActive(lockFunctionPermission);
+    const lockFunctionPermission = hasPermission("lock_function");
+    setLockFunctionActive(lockFunctionPermission);
 
-        const PropertyTypePermission = hasPermission("property_type");
-        setPropertyTypeActive(PropertyTypePermission);
+    const PropertyTypePermission = hasPermission("property_type");
+    setPropertyTypeActive(PropertyTypePermission);
 
-        const ProjectBuildingPermission = hasPermission("project_building");
-        setProjectBuildingActive(ProjectBuildingPermission);
+    const ProjectBuildingPermission = hasPermission("project_building");
+    setProjectBuildingActive(ProjectBuildingPermission);
 
-        const ConstructionPermission = hasPermission("construction");
-        setConstructionActive(ConstructionPermission);
+    const ConstructionPermission = hasPermission("construction");
+    setConstructionActive(ConstructionPermission);
 
-        const ConstructionUpdatesPermission = hasPermission("construction_update");
-        setConstructionUpdatesActive(ConstructionUpdatesPermission);
+    const ConstructionUpdatesPermission = hasPermission("construction_update");
+    setConstructionUpdatesActive(ConstructionUpdatesPermission);
 
-        const ProjectConfigPermission = hasPermission("project_config");
-        setProjectConfigActive(ProjectConfigPermission);
+    const ProjectConfigPermission = hasPermission("project_config");
+    setProjectConfigActive(ProjectConfigPermission);
 
-        const AmenitiesPermission = hasPermission("amenities");
-        setAmenitiesActive(AmenitiesPermission);
+    const AmenitiesPermission = hasPermission("amenities");
+    setAmenitiesActive(AmenitiesPermission);
 
-        const SiteSlotPermission = hasPermission("visit_slot");
-        setSiteSlotActive(SiteSlotPermission);
+    const SiteSlotPermission = hasPermission("visit_slot");
+    setSiteSlotActive(SiteSlotPermission);
 
-         const TDSTutorialsPermission = hasPermission("tds_tutorials");
-        setTdsTustorialsActive(TDSTutorialsPermission);
+    const TDSTutorialsPermission = hasPermission("tds_tutorials");
+    setTdsTustorialsActive(TDSTutorialsPermission);
 
-        const PlusServicesPermission = hasPermission("plus_services");
-        setPlusServicesActive(PlusServicesPermission);
+    const PlusServicesPermission = hasPermission("plus_services");
+    setPlusServicesActive(PlusServicesPermission);
 
-        const SmtpSettingsPermission = hasPermission("smtp_settings");
-        setSmtpSettingsActive(SmtpSettingsPermission);
+    const SmtpSettingsPermission = hasPermission("smtp_settings");
+    setSmtpSettingsActive(SmtpSettingsPermission);
 
-        const FaqCategoryPermission = hasPermission("faq_category");
-        setFaqCategoryActive(FaqCategoryPermission);
+    const FaqCategoryPermission = hasPermission("faq_category");
+    setFaqCategoryActive(FaqCategoryPermission);
 
-        const FaqSubCategoryPermission = hasPermission("faq_subcategory");
-        setFaqSubCategoryActive(FaqSubCategoryPermission);
+    const FaqSubCategoryPermission = hasPermission("faq_subcategory");
+    setFaqSubCategoryActive(FaqSubCategoryPermission);
 
-        const ServiceCategoryPermission = hasPermission("service_category");
-        setServiceCategoryActive(ServiceCategoryPermission);
+    const ServiceCategoryPermission = hasPermission("service_category");
+    setServiceCategoryActive(ServiceCategoryPermission);
 
-        const ImageConfigPermission = hasPermission("image_config");
-        setImageConfigActive(ImageConfigPermission);
+    const ImageConfigPermission = hasPermission("image_config");
+    setImageConfigActive(ImageConfigPermission);
 
-         const departmentPermission = hasPermission("department");
-          setDepartmentActive(departmentPermission);
+    const departmentPermission = hasPermission("department");
+    setDepartmentActive(departmentPermission);
 
-        const BankDetailsPermission = hasPermission("bank_details");
-        setBankDetailsActive(BankDetailsPermission);
+    const BankDetailsPermission = hasPermission("bank_details");
+    setBankDetailsActive(BankDetailsPermission);
 
-        const HomeLoanPermission = hasPermission("home_loan");
-        setHomeLoanActive(HomeLoanPermission);
+    const HomeLoanPermission = hasPermission("home_loan");
+    setHomeLoanActive(HomeLoanPermission);
 
-        const BankPermission = hasPermission("banks");
-        setBankActive(BankPermission);
+    const BankPermission = hasPermission("banks");
+    setBankActive(BankPermission);
 
-        const LoanManagerPermission = hasPermission("loan_manager");
-        setLoanManagerActive(LoanManagerPermission);
+    const LoanManagerPermission = hasPermission("loan_manager");
+    setLoanManagerActive(LoanManagerPermission);
 
-        const CommonFilesPermission = hasPermission("common_files");
-        setIsCommonFilesActive(CommonFilesPermission);
+    const CommonFilesPermission = hasPermission("common_files");
+    setIsCommonFilesActive(CommonFilesPermission);
 
-        // Loyalty section permission - show if any loyalty feature is accessible
-        const LoyaltySectionPermission = hasPermission("referral");
-        setShowLoyaltySection(LoyaltySectionPermission);
+    // Loyalty section permission - show if any loyalty feature is accessible
+    const LoyaltySectionPermission = hasPermission("referral");
+    setShowLoyaltySection(LoyaltySectionPermission);
 
-        // For loyalty features, using referral permission as base or setting to true
-        // Update these permission keys based on your backend permission structure
-        const MembersPermission = hasPermission("referral"); // Using referral permission for now
-        setMembersActive(MembersPermission);
+    // For loyalty features, using referral permission as base or setting to true
+    // Update these permission keys based on your backend permission structure
+    const MembersPermission = hasPermission("referral"); // Using referral permission for now
+    setMembersActive(MembersPermission);
 
-        const TiersPermission = hasPermission("referral"); // Using referral permission for now
-        setTiersActive(TiersPermission);
+    const TiersPermission = hasPermission("referral"); // Using referral permission for now
+    setTiersActive(TiersPermission);
 
-        const ReferralPermission = hasPermission("referral");
-        setReferralActive(ReferralPermission);
+    const ReferralPermission = hasPermission("referral");
+    setReferralActive(ReferralPermission);
 
-        const LockPaymentsPermission = hasPermission("referral"); // Using referral permission for now
-        setLockPaymentsActive(LockPaymentsPermission);
+    const LockPaymentsPermission = hasPermission("referral"); // Using referral permission for now
+    setLockPaymentsActive(LockPaymentsPermission);
 
-        const DemandNotesPermission = hasPermission("referral"); // Using referral permission for now
-        setDemandNotesActive(DemandNotesPermission);
+    const DemandNotesPermission = hasPermission("referral"); // Using referral permission for now
+    setDemandNotesActive(DemandNotesPermission);
 
-        const OrdersPermission = hasPermission("referral"); // Using referral permission for now
-        setOrdersActive(OrdersPermission);
+    const OrdersPermission = hasPermission("referral"); // Using referral permission for now
+    setOrdersActive(OrdersPermission);
 
-        const EncashPermission = hasPermission("referral"); // Using referral permission for now
-        setEncashActive(EncashPermission);
+    const EncashPermission = hasPermission("referral"); // Using referral permission for now
+    setEncashActive(EncashPermission);
 
-    }, []);
+  }, []);
 
-    console.log("LoyaltySectionPermission:-", showLoyaltySection)
+  console.log("LoyaltySectionPermission:-", showLoyaltySection)
 
   return (
     <>
@@ -153,188 +153,8 @@ const SetupSidebar = () => {
               style={{ flexDirection: "column" }}
             >
               {showUserModuleSidebar && (
-              <li className="menu-item d-flex">
-                {/* <a
-                  className="menu-link d-flex"
-                  style={{ flexDirection: "column" }}
-                  href="/setup-member/project-building-type-list"
-                  data-section="Homee"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M4 4.4C4 3.76348 4.25286 3.15303 4.70294 2.70294C5.15303 2.25286 5.76348 2 6.4 2H16C16.6365 2 17.247 2.25286 17.6971 2.70294C18.1471 3.15303 18.4 3.76348 18.4 4.4V16.2596L17.2 17.4716V4.4C17.2 4.08174 17.0736 3.77652 16.8485 3.55147C16.6235 3.32643 16.3183 3.2 16 3.2H6.4C6.08174 3.2 5.77652 3.32643 5.55147 3.55147C5.32643 3.77652 5.2 4.08174 5.2 4.4V18.8C5.2 19.1183 5.32643 19.4235 5.55147 19.6485C5.77652 19.8736 6.08174 20 6.4 20H11.302C11.3872 20.24 11.524 20.4668 11.7148 20.66L12.244 21.2H6.4C5.76348 21.2 5.15303 20.9471 4.70294 20.4971C4.25286 20.047 4 19.4365 4 18.8V4.4ZM8.8 6.2C8.8 6.51826 8.67357 6.82348 8.44853 7.04853C8.22348 7.27357 7.91826 7.4 7.6 7.4C7.28174 7.4 6.97652 7.27357 6.75147 7.04853C6.52643 6.82348 6.4 6.51826 6.4 6.2C6.4 5.88174 6.52643 5.57652 6.75147 5.35147C6.97652 5.12643 7.28174 5 7.6 5C7.91826 5 8.22348 5.12643 8.44853 5.35147C8.67357 5.57652 8.8 5.88174 8.8 6.2ZM10.6 5.6C10.4409 5.6 10.2883 5.66321 10.1757 5.77574C10.0632 5.88826 10 6.04087 10 6.2C10 6.35913 10.0632 6.51174 10.1757 6.62426C10.2883 6.73679 10.4409 6.8 10.6 6.8H15.4C15.5591 6.8 15.7117 6.73679 15.8243 6.62426C15.9368 6.51174 16 6.35913 16 6.2C16 6.04087 15.9368 5.88826 15.8243 5.77574C15.7117 5.66321 15.5591 5.6 15.4 5.6H10.6ZM10.6 10.4C10.4409 10.4 10.2883 10.4632 10.1757 10.5757C10.0632 10.6883 10 10.8409 10 11C10 11.1591 10.0632 11.3117 10.1757 11.4243C10.2883 11.5368 10.4409 11.6 10.6 11.6H15.4C15.5591 11.6 15.7117 11.5368 15.8243 11.4243C15.9368 11.3117 16 11.1591 16 11C16 10.8409 15.9368 10.6883 15.8243 10.5757C15.7117 10.4632 15.5591 10.4 15.4 10.4H10.6ZM10 15.8C10 15.6409 10.0632 15.4883 10.1757 15.3757C10.2883 15.2632 10.4409 15.2 10.6 15.2H15.4C15.5591 15.2 15.7117 15.2632 15.8243 15.3757C15.9368 15.4883 16 15.6409 16 15.8C16 15.9591 15.9368 16.1117 15.8243 16.2243C15.7117 16.3368 15.5591 16.4 15.4 16.4H10.6C10.4409 16.4 10.2883 16.3368 10.1757 16.2243C10.0632 16.1117 10 15.9591 10 15.8ZM7.6 12.2C7.91826 12.2 8.22348 12.0736 8.44853 11.8485C8.67357 11.6235 8.8 11.3183 8.8 11C8.8 10.6817 8.67357 10.3765 8.44853 10.1515C8.22348 9.92643 7.91826 9.8 7.6 9.8C7.28174 9.8 6.97652 9.92643 6.75147 10.1515C6.52643 10.3765 6.4 10.6817 6.4 11C6.4 11.3183 6.52643 11.6235 6.75147 11.8485C6.97652 12.0736 7.28174 12.2 7.6 12.2ZM7.6 17C7.91826 17 8.22348 16.8736 8.44853 16.6485C8.67357 16.4235 8.8 16.1183 8.8 15.8C8.8 15.4817 8.67357 15.1765 8.44853 14.9515C8.22348 14.7264 7.91826 14.6 7.6 14.6C7.28174 14.6 6.97652 14.7264 6.75147 14.9515C6.52643 15.1765 6.4 15.4817 6.4 15.8C6.4 16.1183 6.52643 16.4235 6.75147 16.6485C6.97652 16.8736 7.28174 17 7.6 17ZM20.626 17.4224C20.7349 17.3088 20.7948 17.1569 20.7928 16.9996C20.7908 16.8422 20.7271 16.6919 20.6153 16.5811C20.5036 16.4703 20.3528 16.4078 20.1954 16.4072C20.038 16.4065 19.8867 16.4677 19.774 16.5776L15.4024 20.9936L13.4284 18.98C13.3736 18.9224 13.3078 18.8763 13.235 18.8444C13.1622 18.8125 13.0837 18.7953 13.0042 18.794C12.9247 18.7926 12.8457 18.8071 12.7719 18.8365C12.698 18.8659 12.6307 18.9098 12.574 18.9654C12.5172 19.0211 12.472 19.0875 12.4411 19.1608C12.4102 19.234 12.3942 19.3127 12.394 19.3922C12.3938 19.4717 12.4094 19.5505 12.4399 19.6239C12.4703 19.6974 12.5151 19.764 12.5716 19.82L14.8864 22.1816C14.9532 22.2498 15.033 22.304 15.121 22.3411C15.2089 22.3782 15.3034 22.3974 15.3989 22.3976C15.4944 22.3978 15.5889 22.3791 15.6771 22.3424C15.7653 22.3057 15.8452 22.2519 15.9124 22.184L20.626 17.4224Z"
-                      fill="#DD7007"
-                    ></path>
-                  </svg>
-                  <span className="menu-link-text">Project Building </span>
-                </a> */}
-                <NavLink
-                  to="/setup-member/user-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
-                    fill="#de7008"
-                  >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#de7008"
-                      stroke="none"
-                    >
-                      <path d="M293 639 c-46 -22 -83 -82 -83 -133 0 -69 79 -146 150 -146 73 0 150 76 150 146 0 51 -38 111 -84 133 -53 26 -80 26 -133 0z m112 -23 c78 -33 97 -133 36 -188 -54 -48 -104 -49 -160 -2 -59 49 -48 141 21 184 39 24 57 25 103 6z" />
-                      <path d="M174 280 c-74 -37 -111 -153 -64 -200 19 -19 33 -20 254 -20 231 0 235 0 250 22 39 56 2 164 -68 197 -37 18 -61 21 -187 21 -124 0 -150 -3 -185 -20z m357 -25 c55 -29 89 -121 57 -153 -17 -17 -439 -17 -456 0 -16 16 -15 66 1 98 7 13 28 35 46 47 31 21 45 23 178 23 110 0 151 -4 174 -15z" />
-                    </g>
-                  </svg>
-
-                  <span className="menu-link-text">User Module</span>
-                </NavLink>
-              </li>
-           )}
-           {/* Loyalty Section */}
-                {showLoyaltySection && (
-                <li className="main-section nav-item mt-2" id="loyalty">
-                <a
-                  className="text nav-link dropdown-toggle d-flex justify-content-between"
-                  data-bs-toggle="collapse"
-                  href="#loyaltyCollapse"
-                >
-                  <img alt="" src="../images/user.svg" />
-                  <span className="text">Loyalty</span>
-                  <i className="bi bi-caret-right-fill collapse-logo" />
-                </a>
-                
-                <ul className="p-0 collapse" id="loyaltyCollapse">
-                  {membersActive && (
-                  <li className="nav-item">
-                    <NavLink to="/setup-member/loyalty-members" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Members</span> </NavLink>
-                  </li>
-                  )}
-                  {tiersActive && (
-                  <li className="nav-item">
-                    <NavLink to="/setup-member/tiers" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Tiers</span> </NavLink>
-                  </li>
-                  )}
-                  {referralActive && (
-                  <li className="nav-item">
-                    <NavLink to="/setup-member/referral-list" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Referral</span> </NavLink>
-                  </li>
-                  )}
-                  {lockPaymentsActive && (
-                  <li className="nav-item">
-                    <NavLink to="/setup-member/lock-payments" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Lock Payments</span> </NavLink>
-                  </li>
-                  )}
-                  {demandNotesActive && (
-                  <li className="nav-item">
-                    <NavLink to="/setup-member/demand-notes" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Demand Notes</span> </NavLink>
-                  </li>
-                  )}
-                  {ordersActive && (
-                  <li className="nav-item">
-                    <NavLink to="/setup-member/orders" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Orders</span> </NavLink>
-                  </li>
-                  )}
-                  {encashActive && (
-                  <li className="nav-item">
-                    <NavLink to="/setup-member/encash-list" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Encash</span> </NavLink>
-                  </li>
-                  )}
-                </ul>
-              </li>
-              )}
-           {userRoleActive && (
                 <li className="menu-item d-flex">
-                <NavLink
-                  to="/setup-member/lock-role-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
-                    fill="#de7008"
-                  >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#de7008"
-                      stroke="none"
-                    >
-                      <path d="M293 639 c-46 -22 -83 -82 -83 -133 0 -69 79 -146 150 -146 73 0 150 76 150 146 0 51 -38 111 -84 133 -53 26 -80 26 -133 0z m112 -23 c78 -33 97 -133 36 -188 -54 -48 -104 -49 -160 -2 -59 49 -48 141 21 184 39 24 57 25 103 6z" />
-                      <path d="M174 280 c-74 -37 -111 -153 -64 -200 19 -19 33 -20 254 -20 231 0 235 0 250 22 39 56 2 164 -68 197 -37 18 -61 21 -187 21 -124 0 -150 -3 -185 -20z m357 -25 c55 -29 89 -121 57 -153 -17 -17 -439 -17 -456 0 -16 16 -15 66 1 98 7 13 28 35 46 47 31 21 45 23 178 23 110 0 151 -4 174 -15z" />
-                    </g>
-                  </svg>
-
-                  <span className="menu-link-text">User Role </span>
-                </NavLink>
-              </li>
-            )}
-             {userGroupsActive && (
-             <li className="menu-item d-flex">
-                <NavLink
-                  to="/setup-member/user-groups-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
-                    fill="#de7008"
-                  >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#de7008"
-                      stroke="none"
-                    >
-                      <path d="M293 639 c-46 -22 -83 -82 -83 -133 0 -69 79 -146 150 -146 73 0 150 76 150 146 0 51 -38 111 -84 133 -53 26 -80 26 -133 0z m112 -23 c78 -33 97 -133 36 -188 -54 -48 -104 -49 -160 -2 -59 49 -48 141 21 184 39 24 57 25 103 6z" />
-                      <path d="M174 280 c-74 -37 -111 -153 -64 -200 19 -19 33 -20 254 -20 231 0 235 0 250 22 39 56 2 164 -68 197 -37 18 -61 21 -187 21 -124 0 -150 -3 -185 -20z m357 -25 c55 -29 89 -121 57 -153 -17 -17 -439 -17 -456 0 -16 16 -15 66 1 98 7 13 28 35 46 47 31 21 45 23 178 23 110 0 151 -4 174 -15z" />
-                    </g>
-                  </svg>
-
-                  <span className="menu-link-text">User Groups</span>
-                </NavLink>
-              </li>
-             )}
-            {lockFunctionActive && (
-              <li className="menu-item d-flex">
-                {/* <a
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/project-building-type-list"
@@ -354,42 +174,115 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Project Building </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/lock-function-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/user-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
+                      fill="#de7008"
                     >
-                      <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
-                      <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#de7008"
+                        stroke="none"
+                      >
+                        <path d="M293 639 c-46 -22 -83 -82 -83 -133 0 -69 79 -146 150 -146 73 0 150 76 150 146 0 51 -38 111 -84 133 -53 26 -80 26 -133 0z m112 -23 c78 -33 97 -133 36 -188 -54 -48 -104 -49 -160 -2 -59 49 -48 141 21 184 39 24 57 25 103 6z" />
+                        <path d="M174 280 c-74 -37 -111 -153 -64 -200 19 -19 33 -20 254 -20 231 0 235 0 250 22 39 56 2 164 -68 197 -37 18 -61 21 -187 21 -124 0 -150 -3 -185 -20z m357 -25 c55 -29 89 -121 57 -153 -17 -17 -439 -17 -456 0 -16 16 -15 66 1 98 7 13 28 35 46 47 31 21 45 23 178 23 110 0 151 -4 174 -15z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text">Lock Function</span>
-                </NavLink>
-              </li>
+                    <span className="menu-link-text">User Module</span>
+                  </NavLink>
+                </li>
               )}
-            {bankActive && (
-               <li className="menu-item d-flex">
-                {/* <a
+              {userRoleActive && (
+                <li className="menu-item d-flex">
+                  <NavLink
+                    to="/setup-member/lock-role-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
+                      fill="#de7008"
+                    >
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#de7008"
+                        stroke="none"
+                      >
+                        <path d="M293 639 c-46 -22 -83 -82 -83 -133 0 -69 79 -146 150 -146 73 0 150 76 150 146 0 51 -38 111 -84 133 -53 26 -80 26 -133 0z m112 -23 c78 -33 97 -133 36 -188 -54 -48 -104 -49 -160 -2 -59 49 -48 141 21 184 39 24 57 25 103 6z" />
+                        <path d="M174 280 c-74 -37 -111 -153 -64 -200 19 -19 33 -20 254 -20 231 0 235 0 250 22 39 56 2 164 -68 197 -37 18 -61 21 -187 21 -124 0 -150 -3 -185 -20z m357 -25 c55 -29 89 -121 57 -153 -17 -17 -439 -17 -456 0 -16 16 -15 66 1 98 7 13 28 35 46 47 31 21 45 23 178 23 110 0 151 -4 174 -15z" />
+                      </g>
+                    </svg>
+
+                    <span className="menu-link-text">User Role </span>
+                  </NavLink>
+                </li>
+              )}
+              {userGroupsActive && (
+                <li className="menu-item d-flex">
+                  <NavLink
+                    to="/setup-member/user-groups-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
+                      fill="#de7008"
+                    >
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#de7008"
+                        stroke="none"
+                      >
+                        <path d="M293 639 c-46 -22 -83 -82 -83 -133 0 -69 79 -146 150 -146 73 0 150 76 150 146 0 51 -38 111 -84 133 -53 26 -80 26 -133 0z m112 -23 c78 -33 97 -133 36 -188 -54 -48 -104 -49 -160 -2 -59 49 -48 141 21 184 39 24 57 25 103 6z" />
+                        <path d="M174 280 c-74 -37 -111 -153 -64 -200 19 -19 33 -20 254 -20 231 0 235 0 250 22 39 56 2 164 -68 197 -37 18 -61 21 -187 21 -124 0 -150 -3 -185 -20z m357 -25 c55 -29 89 -121 57 -153 -17 -17 -439 -17 -456 0 -16 16 -15 66 1 98 7 13 28 35 46 47 31 21 45 23 178 23 110 0 151 -4 174 -15z" />
+                      </g>
+                    </svg>
+
+                    <span className="menu-link-text">User Groups</span>
+                  </NavLink>
+                </li>
+              )}
+              {lockFunctionActive && (
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/project-building-type-list"
@@ -409,77 +302,132 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Project Building </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/banks-list"
+                  <NavLink
+                    to="/setup-member/lock-function-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
+                    >
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
+                        <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
+                      </g>
+                    </svg>
+
+                    <span className="menu-link-text">Lock Function</span>
+                  </NavLink>
+                </li>
+              )}
+              {bankActive && (
+                <li className="menu-item d-flex">
+                  {/* <a
+                  className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
+                  href="/setup-member/project-building-type-list"
+                  data-section="Homee"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
-                    >
-                      <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
-                      <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
-                    </g>
+                    <path
+                      d="M4 4.4C4 3.76348 4.25286 3.15303 4.70294 2.70294C5.15303 2.25286 5.76348 2 6.4 2H16C16.6365 2 17.247 2.25286 17.6971 2.70294C18.1471 3.15303 18.4 3.76348 18.4 4.4V16.2596L17.2 17.4716V4.4C17.2 4.08174 17.0736 3.77652 16.8485 3.55147C16.6235 3.32643 16.3183 3.2 16 3.2H6.4C6.08174 3.2 5.77652 3.32643 5.55147 3.55147C5.32643 3.77652 5.2 4.08174 5.2 4.4V18.8C5.2 19.1183 5.32643 19.4235 5.55147 19.6485C5.77652 19.8736 6.08174 20 6.4 20H11.302C11.3872 20.24 11.524 20.4668 11.7148 20.66L12.244 21.2H6.4C5.76348 21.2 5.15303 20.9471 4.70294 20.4971C4.25286 20.047 4 19.4365 4 18.8V4.4ZM8.8 6.2C8.8 6.51826 8.67357 6.82348 8.44853 7.04853C8.22348 7.27357 7.91826 7.4 7.6 7.4C7.28174 7.4 6.97652 7.27357 6.75147 7.04853C6.52643 6.82348 6.4 6.51826 6.4 6.2C6.4 5.88174 6.52643 5.57652 6.75147 5.35147C6.97652 5.12643 7.28174 5 7.6 5C7.91826 5 8.22348 5.12643 8.44853 5.35147C8.67357 5.57652 8.8 5.88174 8.8 6.2ZM10.6 5.6C10.4409 5.6 10.2883 5.66321 10.1757 5.77574C10.0632 5.88826 10 6.04087 10 6.2C10 6.35913 10.0632 6.51174 10.1757 6.62426C10.2883 6.73679 10.4409 6.8 10.6 6.8H15.4C15.5591 6.8 15.7117 6.73679 15.8243 6.62426C15.9368 6.51174 16 6.35913 16 6.2C16 6.04087 15.9368 5.88826 15.8243 5.77574C15.7117 5.66321 15.5591 5.6 15.4 5.6H10.6ZM10.6 10.4C10.4409 10.4 10.2883 10.4632 10.1757 10.5757C10.0632 10.6883 10 10.8409 10 11C10 11.1591 10.0632 11.3117 10.1757 11.4243C10.2883 11.5368 10.4409 11.6 10.6 11.6H15.4C15.5591 11.6 15.7117 11.5368 15.8243 11.4243C15.9368 11.3117 16 11.1591 16 11C16 10.8409 15.9368 10.6883 15.8243 10.5757C15.7117 10.4632 15.5591 10.4 15.4 10.4H10.6ZM10 15.8C10 15.6409 10.0632 15.4883 10.1757 15.3757C10.2883 15.2632 10.4409 15.2 10.6 15.2H15.4C15.5591 15.2 15.7117 15.2632 15.8243 15.3757C15.9368 15.4883 16 15.6409 16 15.8C16 15.9591 15.9368 16.1117 15.8243 16.2243C15.7117 16.3368 15.5591 16.4 15.4 16.4H10.6C10.4409 16.4 10.2883 16.3368 10.1757 16.2243C10.0632 16.1117 10 15.9591 10 15.8ZM7.6 12.2C7.91826 12.2 8.22348 12.0736 8.44853 11.8485C8.67357 11.6235 8.8 11.3183 8.8 11C8.8 10.6817 8.67357 10.3765 8.44853 10.1515C8.22348 9.92643 7.91826 9.8 7.6 9.8C7.28174 9.8 6.97652 9.92643 6.75147 10.1515C6.52643 10.3765 6.4 10.6817 6.4 11C6.4 11.3183 6.52643 11.6235 6.75147 11.8485C6.97652 12.0736 7.28174 12.2 7.6 12.2ZM7.6 17C7.91826 17 8.22348 16.8736 8.44853 16.6485C8.67357 16.4235 8.8 16.1183 8.8 15.8C8.8 15.4817 8.67357 15.1765 8.44853 14.9515C8.22348 14.7264 7.91826 14.6 7.6 14.6C7.28174 14.6 6.97652 14.7264 6.75147 14.9515C6.52643 15.1765 6.4 15.4817 6.4 15.8C6.4 16.1183 6.52643 16.4235 6.75147 16.6485C6.97652 16.8736 7.28174 17 7.6 17ZM20.626 17.4224C20.7349 17.3088 20.7948 17.1569 20.7928 16.9996C20.7908 16.8422 20.7271 16.6919 20.6153 16.5811C20.5036 16.4703 20.3528 16.4078 20.1954 16.4072C20.038 16.4065 19.8867 16.4677 19.774 16.5776L15.4024 20.9936L13.4284 18.98C13.3736 18.9224 13.3078 18.8763 13.235 18.8444C13.1622 18.8125 13.0837 18.7953 13.0042 18.794C12.9247 18.7926 12.8457 18.8071 12.7719 18.8365C12.698 18.8659 12.6307 18.9098 12.574 18.9654C12.5172 19.0211 12.472 19.0875 12.4411 19.1608C12.4102 19.234 12.3942 19.3127 12.394 19.3922C12.3938 19.4717 12.4094 19.5505 12.4399 19.6239C12.4703 19.6974 12.5151 19.764 12.5716 19.82L14.8864 22.1816C14.9532 22.2498 15.033 22.304 15.121 22.3411C15.2089 22.3782 15.3034 22.3974 15.3989 22.3976C15.4944 22.3978 15.5889 22.3791 15.6771 22.3424C15.7653 22.3057 15.8452 22.2519 15.9124 22.184L20.626 17.4224Z"
+                      fill="#DD7007"
+                    ></path>
                   </svg>
+                  <span className="menu-link-text">Project Building </span>
+                </a> */}
+                  <NavLink
+                    to="/setup-member/banks-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
+                    >
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
+                        <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text">Banks</span>
-                </NavLink>
-              </li>
-            )}
+                    <span className="menu-link-text">Banks</span>
+                  </NavLink>
+                </li>
+              )}
               {bankDetailsActive && (
-              <li className="menu-item d-flex">
-                <NavLink
-                  to="/setup-member/bank-details-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                <li className="menu-item d-flex">
+                  <NavLink
+                    to="/setup-member/bank-details-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
-                      <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
+                        <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text">Bank Details</span>
-                </NavLink>
-              </li>
+                    <span className="menu-link-text">Bank Details</span>
+                  </NavLink>
+                </li>
               )}
-            {homeLoanActive && (
-               <li className="menu-item d-flex">
-                {/* <a
+              {homeLoanActive && (
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/project-building-type-list"
@@ -499,42 +447,42 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Project Building </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/home-loan-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/home-loan-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
-                      <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
+                        <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text">Home Loan</span>
-                </NavLink>
-              </li>
-            )}
-            {loanManagerActive && (
-              <li className="menu-item d-flex">
-                {/* <a
+                    <span className="menu-link-text">Home Loan</span>
+                  </NavLink>
+                </li>
+              )}
+              {loanManagerActive && (
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/project-building-type-list"
@@ -554,43 +502,43 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Project Building </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/loan-manager-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/loan-manager-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
-                      <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
+                        <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text">Loan Manager</span>
-                </NavLink>
-              </li>
-            )}
+                    <span className="menu-link-text">Loan Manager</span>
+                  </NavLink>
+                </li>
+              )}
 
               {propertyTypeActive && (
-              <li className="menu-item d-flex">
-                {/* <a
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/property-type-list"
@@ -610,44 +558,44 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Property Type</span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/property-type-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/property-type-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M140 640 c-19 -19 -20 -33 -20 -300 l0 -280 45 0 45 0 0 58 c0 32 5 63 12 70 17 17 259 17 276 0 7 -7 12 -38 12 -71 l0 -58 43 3 42 3 3 159 c3 191 -2 206 -73 206 l-45 0 0 95 c0 135 0 135 -180 135 -127 0 -142 -2 -160 -20z m298 -22 c7 -7 12 -43 12 -93 0 -90 9 -107 65 -121 54 -12 55 -16 55 -165 0 -76 -4 -140 -9 -143 -11 -7 -21 17 -21 53 0 17 -10 37 -26 52 -24 22 -33 24 -151 26 l-126 2 -28 -29 c-21 -21 -29 -38 -29 -64 0 -25 -4 -36 -15 -36 -13 0 -15 35 -15 253 0 183 3 256 12 265 17 17 259 17 276 0z" />
-                      <path d="M218 559 c-32 -18 -41 -48 -23 -75 15 -24 15 -27 -1 -51 -15 -24 -15 -28 0 -54 16 -27 16 -30 0 -54 -16 -25 -16 -27 3 -53 27 -36 45 -38 79 -9 l28 24 19 -23 c23 -30 44 -30 73 -3 l22 21 30 -22 c24 -18 33 -20 51 -11 47 26 47 76 0 102 -18 9 -27 7 -51 -11 -27 -20 -32 -20 -45 -7 -13 13 -13 18 3 42 16 25 16 28 0 56 -16 26 -16 30 -1 53 19 29 9 58 -26 77 -18 9 -27 7 -50 -11 l-30 -21 -26 20 c-29 24 -32 24 -55 10z m47 -49 c0 -18 -6 -26 -23 -28 -13 -2 -25 3 -28 12 -10 26 4 48 28 44 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -13 -2 -25 3 -28 12 -10 26 4 48 28 44 17 -2 23 -10 23 -28z m-66 -34 c13 -16 -1 -56 -19 -56 -18 0 -32 40 -19 56 6 8 15 14 19 14 4 0 13 -6 19 -14z m-55 -59 c16 -25 -16 -56 -38 -37 -19 15 -20 32 -4 48 15 15 28 11 42 -11z m120 0 c16 -25 -16 -56 -38 -37 -19 15 -20 32 -4 48 15 15 28 11 42 -11z m-63 -48 c9 -17 8 -25 -5 -37 -15 -15 -17 -15 -32 0 -13 12 -14 20 -5 37 7 11 16 21 21 21 5 0 14 -10 21 -21z m-56 -69 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z" />
-                      <path d="M250 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
-                      <path d="M380 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M140 640 c-19 -19 -20 -33 -20 -300 l0 -280 45 0 45 0 0 58 c0 32 5 63 12 70 17 17 259 17 276 0 7 -7 12 -38 12 -71 l0 -58 43 3 42 3 3 159 c3 191 -2 206 -73 206 l-45 0 0 95 c0 135 0 135 -180 135 -127 0 -142 -2 -160 -20z m298 -22 c7 -7 12 -43 12 -93 0 -90 9 -107 65 -121 54 -12 55 -16 55 -165 0 -76 -4 -140 -9 -143 -11 -7 -21 17 -21 53 0 17 -10 37 -26 52 -24 22 -33 24 -151 26 l-126 2 -28 -29 c-21 -21 -29 -38 -29 -64 0 -25 -4 -36 -15 -36 -13 0 -15 35 -15 253 0 183 3 256 12 265 17 17 259 17 276 0z" />
+                        <path d="M218 559 c-32 -18 -41 -48 -23 -75 15 -24 15 -27 -1 -51 -15 -24 -15 -28 0 -54 16 -27 16 -30 0 -54 -16 -25 -16 -27 3 -53 27 -36 45 -38 79 -9 l28 24 19 -23 c23 -30 44 -30 73 -3 l22 21 30 -22 c24 -18 33 -20 51 -11 47 26 47 76 0 102 -18 9 -27 7 -51 -11 -27 -20 -32 -20 -45 -7 -13 13 -13 18 3 42 16 25 16 28 0 56 -16 26 -16 30 -1 53 19 29 9 58 -26 77 -18 9 -27 7 -50 -11 l-30 -21 -26 20 c-29 24 -32 24 -55 10z m47 -49 c0 -18 -6 -26 -23 -28 -13 -2 -25 3 -28 12 -10 26 4 48 28 44 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -13 -2 -25 3 -28 12 -10 26 4 48 28 44 17 -2 23 -10 23 -28z m-66 -34 c13 -16 -1 -56 -19 -56 -18 0 -32 40 -19 56 6 8 15 14 19 14 4 0 13 -6 19 -14z m-55 -59 c16 -25 -16 -56 -38 -37 -19 15 -20 32 -4 48 15 15 28 11 42 -11z m120 0 c16 -25 -16 -56 -38 -37 -19 15 -20 32 -4 48 15 15 28 11 42 -11z m-63 -48 c9 -17 8 -25 -5 -37 -15 -15 -17 -15 -32 0 -13 12 -14 20 -5 37 7 11 16 21 21 21 5 0 14 -10 21 -21z m-56 -69 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z" />
+                        <path d="M250 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
+                        <path d="M380 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text">Property Type</span>
-                </NavLink>
-              </li>
+                    <span className="menu-link-text">Property Type</span>
+                  </NavLink>
+                </li>
               )}
               {projectBuildingActive && (
-              <li className="menu-item d-flex">
-                {/* <a
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/project-building-type-list"
@@ -667,44 +615,44 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Project Building </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/project-building-type-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/project-building-type-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M140 640 c-19 -19 -20 -33 -20 -300 l0 -280 45 0 45 0 0 58 c0 32 5 63 12 70 17 17 259 17 276 0 7 -7 12 -38 12 -71 l0 -58 43 3 42 3 3 159 c3 191 -2 206 -73 206 l-45 0 0 95 c0 135 0 135 -180 135 -127 0 -142 -2 -160 -20z m298 -22 c7 -7 12 -43 12 -93 0 -90 9 -107 65 -121 54 -12 55 -16 55 -165 0 -76 -4 -140 -9 -143 -11 -7 -21 17 -21 53 0 17 -10 37 -26 52 -24 22 -33 24 -151 26 l-126 2 -28 -29 c-21 -21 -29 -38 -29 -64 0 -25 -4 -36 -15 -36 -13 0 -15 35 -15 253 0 183 3 256 12 265 17 17 259 17 276 0z" />
-                      <path d="M218 559 c-32 -18 -41 -48 -23 -75 15 -24 15 -27 -1 -51 -15 -24 -15 -28 0 -54 16 -27 16 -30 0 -54 -16 -25 -16 -27 3 -53 27 -36 45 -38 79 -9 l28 24 19 -23 c23 -30 44 -30 73 -3 l22 21 30 -22 c24 -18 33 -20 51 -11 47 26 47 76 0 102 -18 9 -27 7 -51 -11 -27 -20 -32 -20 -45 -7 -13 13 -13 18 3 42 16 25 16 28 0 56 -16 26 -16 30 -1 53 19 29 9 58 -26 77 -18 9 -27 7 -50 -11 l-30 -21 -26 20 c-29 24 -32 24 -55 10z m47 -49 c0 -18 -6 -26 -23 -28 -13 -2 -25 3 -28 12 -10 26 4 48 28 44 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -13 -2 -25 3 -28 12 -10 26 4 48 28 44 17 -2 23 -10 23 -28z m-66 -34 c13 -16 -1 -56 -19 -56 -18 0 -32 40 -19 56 6 8 15 14 19 14 4 0 13 -6 19 -14z m-55 -59 c16 -25 -16 -56 -38 -37 -19 15 -20 32 -4 48 15 15 28 11 42 -11z m120 0 c16 -25 -16 -56 -38 -37 -19 15 -20 32 -4 48 15 15 28 11 42 -11z m-63 -48 c9 -17 8 -25 -5 -37 -15 -15 -17 -15 -32 0 -13 12 -14 20 -5 37 7 11 16 21 21 21 5 0 14 -10 21 -21z m-56 -69 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z" />
-                      <path d="M250 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
-                      <path d="M380 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M140 640 c-19 -19 -20 -33 -20 -300 l0 -280 45 0 45 0 0 58 c0 32 5 63 12 70 17 17 259 17 276 0 7 -7 12 -38 12 -71 l0 -58 43 3 42 3 3 159 c3 191 -2 206 -73 206 l-45 0 0 95 c0 135 0 135 -180 135 -127 0 -142 -2 -160 -20z m298 -22 c7 -7 12 -43 12 -93 0 -90 9 -107 65 -121 54 -12 55 -16 55 -165 0 -76 -4 -140 -9 -143 -11 -7 -21 17 -21 53 0 17 -10 37 -26 52 -24 22 -33 24 -151 26 l-126 2 -28 -29 c-21 -21 -29 -38 -29 -64 0 -25 -4 -36 -15 -36 -13 0 -15 35 -15 253 0 183 3 256 12 265 17 17 259 17 276 0z" />
+                        <path d="M218 559 c-32 -18 -41 -48 -23 -75 15 -24 15 -27 -1 -51 -15 -24 -15 -28 0 -54 16 -27 16 -30 0 -54 -16 -25 -16 -27 3 -53 27 -36 45 -38 79 -9 l28 24 19 -23 c23 -30 44 -30 73 -3 l22 21 30 -22 c24 -18 33 -20 51 -11 47 26 47 76 0 102 -18 9 -27 7 -51 -11 -27 -20 -32 -20 -45 -7 -13 13 -13 18 3 42 16 25 16 28 0 56 -16 26 -16 30 -1 53 19 29 9 58 -26 77 -18 9 -27 7 -50 -11 l-30 -21 -26 20 c-29 24 -32 24 -55 10z m47 -49 c0 -18 -6 -26 -23 -28 -13 -2 -25 3 -28 12 -10 26 4 48 28 44 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -13 -2 -25 3 -28 12 -10 26 4 48 28 44 17 -2 23 -10 23 -28z m-66 -34 c13 -16 -1 -56 -19 -56 -18 0 -32 40 -19 56 6 8 15 14 19 14 4 0 13 -6 19 -14z m-55 -59 c16 -25 -16 -56 -38 -37 -19 15 -20 32 -4 48 15 15 28 11 42 -11z m120 0 c16 -25 -16 -56 -38 -37 -19 15 -20 32 -4 48 15 15 28 11 42 -11z m-63 -48 c9 -17 8 -25 -5 -37 -15 -15 -17 -15 -32 0 -13 12 -14 20 -5 37 7 11 16 21 21 21 5 0 14 -10 21 -21z m-56 -69 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z m120 0 c0 -18 -6 -26 -23 -28 -24 -4 -38 18 -28 44 3 9 15 14 28 12 17 -2 23 -10 23 -28z" />
+                        <path d="M250 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
+                        <path d="M380 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text">Project Building </span>
-                </NavLink>
-              </li>
+                    <span className="menu-link-text">Project Building </span>
+                  </NavLink>
+                </li>
               )}
               {constructionActive && (
-              <li className="menu-item d-flex">
-                {/* <a
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/construction-status-list"
@@ -724,47 +672,47 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Construction </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/construction-status-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/construction-status-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text text-center d-block">
-                    Construction
-                    <br />
-                    <span style={{ display: "block" }}>Status</span>
-                  </span>
-                </NavLink>
-              </li>
+                    <span className="menu-link-text text-center d-block">
+                      Construction
+                      <br />
+                      <span style={{ display: "block" }}>Status</span>
+                    </span>
+                  </NavLink>
+                </li>
               )}
 
-               {constructionUpdatesActive && (
-                  <li className="menu-item d-flex">
-                {/* <a
+              {constructionUpdatesActive && (
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/construction-status-list"
@@ -784,46 +732,46 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Construction </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/construction-updates-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/construction-updates-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text text-center d-block">
-                    Construction
-                    <br />
-                    <span style={{ display: "block" }}>Updates</span>
-                  </span>
-                </NavLink>
-              </li>
-               )}
+                    <span className="menu-link-text text-center d-block">
+                      Construction
+                      <br />
+                      <span style={{ display: "block" }}>Updates</span>
+                    </span>
+                  </NavLink>
+                </li>
+              )}
               {projectConfigActive && (
-              <li className="menu-item d-flex">
-                {/* <a
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/project-configuration-list"
@@ -845,43 +793,43 @@ const SetupSidebar = () => {
                     Project <br /> Config
                   </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/project-configuration-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/project-configuration-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M89 631 l-29 -29 0 -242 0 -242 30 -29 c29 -29 31 -30 117 -27 86 3 88 3 88 28 0 24 -2 25 -85 30 l-85 5 -3 57 -3 57 133 3 133 3 0 25 0 25 -133 3 -133 3 3 147 3 147 57 3 57 3 3 -103 c3 -102 3 -103 28 -103 25 0 25 1 28 103 l3 103 147 -3 147 -3 3 -72 3 -73 -93 0 c-100 0 -122 -7 -116 -36 3 -17 15 -19 106 -22 l103 -3 -3 -132 -3 -132 -80 -3 c-111 -3 -127 -8 -123 -35 3 -21 8 -22 106 -25 102 -3 103 -3 132 27 l30 29 0 242 0 242 -29 29 -29 29 -242 0 -242 0 -29 -29z" />
-                    </g>
-                  </svg>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M89 631 l-29 -29 0 -242 0 -242 30 -29 c29 -29 31 -30 117 -27 86 3 88 3 88 28 0 24 -2 25 -85 30 l-85 5 -3 57 -3 57 133 3 133 3 0 25 0 25 -133 3 -133 3 3 147 3 147 57 3 57 3 3 -103 c3 -102 3 -103 28 -103 25 0 25 1 28 103 l3 103 147 -3 147 -3 3 -72 3 -73 -93 0 c-100 0 -122 -7 -116 -36 3 -17 15 -19 106 -22 l103 -3 -3 -132 -3 -132 -80 -3 c-111 -3 -127 -8 -123 -35 3 -21 8 -22 106 -25 102 -3 103 -3 132 27 l30 29 0 242 0 242 -29 29 -29 29 -242 0 -242 0 -29 -29z" />
+                      </g>
+                    </svg>
 
-                  <span className="menu-link-text">
-                    Project <br /> Config
-                  </span>
-                </NavLink>
-              </li>
+                    <span className="menu-link-text">
+                      Project <br /> Config
+                    </span>
+                  </NavLink>
+                </li>
               )}
               {amenitiesActive && (
-              <li className="menu-item d-flex">
-                {/* <a
+                <li className="menu-item d-flex">
+                  {/* <a
                 className="menu-link d-flex"
                 style={{ flexDirection: "column" }}
                 href="/setup-member/amenities-list"
@@ -901,41 +849,41 @@ const SetupSidebar = () => {
                 </svg>
                 <span className="menu-link-text">Amenities</span>
               </a> */}
-                <NavLink
-                  to="/setup-member/amenities-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="75.000000pt"
-                    height="75.000000pt"
-                    viewBox="0 0 75.000000 75.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/amenities-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,75.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="75.000000pt"
+                      height="75.000000pt"
+                      viewBox="0 0 75.000000 75.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M481 533 c0 -48 3 -106 7 -128 6 -34 12 -42 42 -51 l35 -12 3 -73 c2 -73 2 -74 -30 -96 l-33 -23 85 0 84 0 -32 27 c-32 27 -33 30 -30 97 3 70 3 70 36 78 44 12 53 40 55 163 l2 100 -112 3 -113 3 1 -88z m209 27 l0 -40 -93 0 c-52 0 -96 2 -98 5 -3 2 -3 20 -1 40 l4 35 94 0 94 0 0 -40z m-20 -108 c0 -42 -11 -60 -52 -85 -26 -16 -29 -16 -63 4 -19 12 -35 29 -35 39 0 10 -3 32 -6 49 l-6 31 81 0 81 0 0 -38z" />
-                      <path d="M20 566 c0 -2 36 -57 80 -122 l80 -118 0 -69 0 -70 -44 5 c-47 6 -68 -5 -59 -28 4 -11 34 -14 133 -14 129 0 154 7 131 34 -8 9 -26 12 -56 8 l-45 -5 0 70 0 69 80 118 c44 65 80 120 80 122 0 2 -85 4 -190 4 -104 0 -190 -2 -190 -4z m320 -32 c0 -8 -41 -76 -50 -84 -3 -3 -21 -29 -39 -57 -18 -29 -36 -53 -40 -53 -8 0 -131 181 -131 193 0 4 58 7 130 7 72 0 130 -3 130 -6z" />
-                    </g>
-                  </svg>
-                  Amenities
-                </NavLink>
-              </li>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,75.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M481 533 c0 -48 3 -106 7 -128 6 -34 12 -42 42 -51 l35 -12 3 -73 c2 -73 2 -74 -30 -96 l-33 -23 85 0 84 0 -32 27 c-32 27 -33 30 -30 97 3 70 3 70 36 78 44 12 53 40 55 163 l2 100 -112 3 -113 3 1 -88z m209 27 l0 -40 -93 0 c-52 0 -96 2 -98 5 -3 2 -3 20 -1 40 l4 35 94 0 94 0 0 -40z m-20 -108 c0 -42 -11 -60 -52 -85 -26 -16 -29 -16 -63 4 -19 12 -35 29 -35 39 0 10 -3 32 -6 49 l-6 31 81 0 81 0 0 -38z" />
+                        <path d="M20 566 c0 -2 36 -57 80 -122 l80 -118 0 -69 0 -70 -44 5 c-47 6 -68 -5 -59 -28 4 -11 34 -14 133 -14 129 0 154 7 131 34 -8 9 -26 12 -56 8 l-45 -5 0 70 0 69 80 118 c44 65 80 120 80 122 0 2 -85 4 -190 4 -104 0 -190 -2 -190 -4z m320 -32 c0 -8 -41 -76 -50 -84 -3 -3 -21 -29 -39 -57 -18 -29 -36 -53 -40 -53 -8 0 -131 181 -131 193 0 4 58 7 130 7 72 0 130 -3 130 -6z" />
+                      </g>
+                    </svg>
+                    Amenities
+                  </NavLink>
+                </li>
               )}
-               {departmentActive && (
-                              <li className="menu-item d-flex">
-                                {/* <a
+              {departmentActive && (
+                <li className="menu-item d-flex">
+                  {/* <a
                                 className="menu-link d-flex"
                                 style={{ flexDirection: "column" }}
                                 href="/company-list"
@@ -955,41 +903,40 @@ const SetupSidebar = () => {
                                 </svg>
                                 <span className="menu-link-text">Company</span>
                               </a> */}
-                                <NavLink
-                                  to="/setup-member/department-list"
-                                  style={{ flexDirection: "column" }}
-                                  className={({ isActive }) =>
-                                    `sidebar-item menu-item d-flex  ${
-                                      isActive ? "active" : ""
-                                    }`
-                                  }
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 28 24"
-                                    fill="none"
-                                  >
-                                    <g clipPath="url(#clip0_4054_21678)">
-                                      <path
-                                        d="M28 17.5V22.5C28 22.9167 27.8542 23.2708 27.5625 23.5625C27.2708 23.8542 26.9167 24 26.5 24H21.5C21.0833 24 20.7292 23.8542 20.4375 23.5625C20.1458 23.2708 20 22.9167 20 22.5V17.5C20 17.0833 20.1458 16.7292 20.4375 16.4375C20.7292 16.1458 21.0833 16 21.5 16H23V13H15V16H16.5C16.9167 16 17.2708 16.1458 17.5625 16.4375C17.8542 16.7292 18 17.0833 18 17.5V22.5C18 22.9167 17.8542 23.2708 17.5625 23.5625C17.2708 23.8542 16.9167 24 16.5 24H11.5C11.0833 24 10.7292 23.8542 10.4375 23.5625C10.1458 23.2708 10 22.9167 10 22.5V17.5C10 17.0833 10.1458 16.7292 10.4375 16.4375C10.7292 16.1458 11.0833 16 11.5 16H13V13H5V16H6.5C6.91667 16 7.27083 16.1458 7.5625 16.4375C7.85417 16.7292 8 17.0833 8 17.5V22.5C8 22.9167 7.85417 23.2708 7.5625 23.5625C7.27083 23.8542 6.91667 24 6.5 24H1.5C1.08333 24 0.729167 23.8542 0.4375 23.5625C0.145833 23.2708 0 22.9167 0 22.5V17.5C0 17.0833 0.145833 16.7292 0.4375 16.4375C0.729167 16.1458 1.08333 16 1.5 16H3V13C3 12.4583 3.19792 11.9896 3.59375 11.5938C3.98958 11.1979 4.45833 11 5 11H13V8H11.5C11.0833 8 10.7292 7.85417 10.4375 7.5625C10.1458 7.27083 10 6.91667 10 6.5V1.5C10 1.08333 10.1458 0.729167 10.4375 0.4375C10.7292 0.145833 11.0833 0 11.5 0H16.5C16.9167 0 17.2708 0.145833 17.5625 0.4375C17.8542 0.729167 18 1.08333 18 1.5V6.5C18 6.91667 17.8542 7.27083 17.5625 7.5625C17.2708 7.85417 16.9167 8 16.5 8H15V11H23C23.5417 11 24.0104 11.1979 24.4062 11.5938C24.8021 11.9896 25 12.4583 25 13V16H26.5C26.9167 16 27.2708 16.1458 27.5625 16.4375C27.8542 16.7292 28 17.0833 28 17.5Z"
-                                        fill="black"
-                                      />
-                                    </g>
-                                    <defs>
-                                      <clipPath id="clip0_4054_21678">
-                                        <rect width="28" height="24" fill="white" />
-                                      </clipPath>
-                                    </defs>
-                                  </svg>
-                                  <span className="menu-link-text">Department</span>
-                                </NavLink>
-                              </li>
-                            )}
+                  <NavLink
+                    to="/setup-member/department-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""
+                      }`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 28 24"
+                      fill="none"
+                    >
+                      <g clipPath="url(#clip0_4054_21678)">
+                        <path
+                          d="M28 17.5V22.5C28 22.9167 27.8542 23.2708 27.5625 23.5625C27.2708 23.8542 26.9167 24 26.5 24H21.5C21.0833 24 20.7292 23.8542 20.4375 23.5625C20.1458 23.2708 20 22.9167 20 22.5V17.5C20 17.0833 20.1458 16.7292 20.4375 16.4375C20.7292 16.1458 21.0833 16 21.5 16H23V13H15V16H16.5C16.9167 16 17.2708 16.1458 17.5625 16.4375C17.8542 16.7292 18 17.0833 18 17.5V22.5C18 22.9167 17.8542 23.2708 17.5625 23.5625C17.2708 23.8542 16.9167 24 16.5 24H11.5C11.0833 24 10.7292 23.8542 10.4375 23.5625C10.1458 23.2708 10 22.9167 10 22.5V17.5C10 17.0833 10.1458 16.7292 10.4375 16.4375C10.7292 16.1458 11.0833 16 11.5 16H13V13H5V16H6.5C6.91667 16 7.27083 16.1458 7.5625 16.4375C7.85417 16.7292 8 17.0833 8 17.5V22.5C8 22.9167 7.85417 23.2708 7.5625 23.5625C7.27083 23.8542 6.91667 24 6.5 24H1.5C1.08333 24 0.729167 23.8542 0.4375 23.5625C0.145833 23.2708 0 22.9167 0 22.5V17.5C0 17.0833 0.145833 16.7292 0.4375 16.4375C0.729167 16.1458 1.08333 16 1.5 16H3V13C3 12.4583 3.19792 11.9896 3.59375 11.5938C3.98958 11.1979 4.45833 11 5 11H13V8H11.5C11.0833 8 10.7292 7.85417 10.4375 7.5625C10.1458 7.27083 10 6.91667 10 6.5V1.5C10 1.08333 10.1458 0.729167 10.4375 0.4375C10.7292 0.145833 11.0833 0 11.5 0H16.5C16.9167 0 17.2708 0.145833 17.5625 0.4375C17.8542 0.729167 18 1.08333 18 1.5V6.5C18 6.91667 17.8542 7.27083 17.5625 7.5625C17.2708 7.85417 16.9167 8 16.5 8H15V11H23C23.5417 11 24.0104 11.1979 24.4062 11.5938C24.8021 11.9896 25 12.4583 25 13V16H26.5C26.9167 16 27.2708 16.1458 27.5625 16.4375C27.8542 16.7292 28 17.0833 28 17.5Z"
+                          fill="black"
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_4054_21678">
+                          <rect width="28" height="24" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    <span className="menu-link-text">Department</span>
+                  </NavLink>
+                </li>
+              )}
               {siteSlotActive && (
-              <li className="menu-item d-flex">
-                {/* <a
+                <li className="menu-item d-flex">
+                  {/* <a
                   className="menu-link d-flex"
                   style={{ flexDirection: "column" }}
                   href="/setup-member/siteslot-list"
@@ -1009,316 +956,368 @@ const SetupSidebar = () => {
                   </svg>
                   <span className="menu-link-text">Site Slot </span>
                 </a> */}
-                <NavLink
-                  to="/setup-member/visitslot-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                  <NavLink
+                    to="/setup-member/visitslot-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">Visit Slot </span>
-                </NavLink>
-              </li>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">Visit Slot </span>
+                  </NavLink>
+                </li>
               )}
               {tdsTutorialsActive && (
-               <li className="menu-item d-flex">
-                
-                <NavLink
-                  to="/setup-member/tds-tutorials-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                <li className="menu-item d-flex">
+
+                  <NavLink
+                    to="/setup-member/tds-tutorials-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">TDS Tutorials </span>
-                </NavLink>
-              </li>
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">TDS Tutorials </span>
+                  </NavLink>
+                </li>
               )}
-               {plusServicesActive && (
-               <li className="menu-item d-flex">
-                
-                <NavLink
-                  to="/setup-member/plus-services-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
-                  >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
-                    >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">Plus Services </span>
-                </NavLink>
-              </li>
-               )}
-                {smtpSettingsActive && (
+              {plusServicesActive && (
                 <li className="menu-item d-flex">
-                
-                <NavLink
-                  to="/setup-member/smtp-settings-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+
+                  <NavLink
+                    to="/setup-member/plus-services-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">SMTP Settings </span>
-                </NavLink>
-              </li>
-                )}
-                 {faqCategoryActive && (
-               <li className="menu-item d-flex">
-                
-                <NavLink
-                  to="/setup-member/faq-category-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
-                  >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
-                    >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">FAQ Category </span>
-                </NavLink>
-              </li>
-                 )}
-                  {faqSubCategoryActive && (
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">Plus Services </span>
+                  </NavLink>
+                </li>
+              )}
+              {smtpSettingsActive && (
                 <li className="menu-item d-flex">
-                
-                <NavLink
-                  to="/setup-member/faq-subcategory-list"
-                  style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+
+                  <NavLink
+                    to="/setup-member/smtp-settings-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">FAQ SubCategory </span>
-                </NavLink>
-              </li>
-                  )}
-                  {serviceCategoryActive && (
-                    <li className="menu-item d-flex">
-                      <NavLink
-                        to="/setup-member/service-category-list"
-                        style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">SMTP Settings </span>
+                  </NavLink>
+                </li>
+              )}
+              {faqCategoryActive && (
+                <li className="menu-item d-flex">
+
+                  <NavLink
+                    to="/setup-member/faq-category-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">Service Category </span>
-                </NavLink>
-              </li>
-                  )}
-                  {imageConfigActive && (
-                    <li className="menu-item d-flex">
-                      <NavLink
-                        to="/setup-member/service-category-list"
-                        style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">FAQ Category </span>
+                  </NavLink>
+                </li>
+              )}
+              {faqSubCategoryActive && (
+                <li className="menu-item d-flex">
+
+                  <NavLink
+                    to="/setup-member/faq-subcategory-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">Image Config </span>
-                </NavLink>
-              </li>
-                  )}
-                   {isCommonFilesActive && (
-                    <li className="menu-item d-flex">
-                      <NavLink
-                        to="/setup-member/common-files-upload"
-                        style={{ flexDirection: "column" }}
-                  className={({ isActive }) =>
-                    `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.0"
-                    width="72.000000pt"
-                    height="72.000000pt"
-                    viewBox="0 0 72.000000 72.000000"
-                    preserveAspectRatio="xMidYMid meet"
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">FAQ SubCategory </span>
+                  </NavLink>
+                </li>
+              )}
+              {/* Loyalty Section */}
+              {showLoyaltySection && (
+                <li className="mt-2" id="loyalty">
+                  <a
+                    className="text nav-link d-flex justify-content-between"
+                    data-bs-toggle="collapse"
+                    href="#loyaltyCollapse"
                   >
-                    <metadata>
-                      Created by potrace 1.10, written by Peter Selinger
-                      2001-2011
-                    </metadata>
-                    <g
-                      transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-                      fill="#000000"
-                      stroke="none"
+                    <img alt="" src="../images/user.svg" />
+                    <span className="text">Loyalty</span>
+                    <i className="bi bi-caret-right-fill collapse-logo" />
+                  </a>
+
+                  <ul className="p-0 collapse" id="loyaltyCollapse">
+                    {membersActive && (
+                      <li className="nav-item">
+                        <NavLink to="/setup-member/loyalty-members" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Members</span> </NavLink>
+                      </li>
+                    )}
+                    {tiersActive && (
+                      <li className="nav-item">
+                        <NavLink to="/setup-member/tiers" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Tiers</span> </NavLink>
+                      </li>
+                    )}
+                    {referralActive && (
+                      <li className="nav-item">
+                        <NavLink to="/setup-member/referral-list" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Referral</span> </NavLink>
+                      </li>
+                    )}
+                    {lockPaymentsActive && (
+                      <li className="nav-item">
+                        <NavLink to="/setup-member/lock-payments" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Lock Payments</span> </NavLink>
+                      </li>
+                    )}
+                    {demandNotesActive && (
+                      <li className="nav-item">
+                        <NavLink to="/setup-member/demand-notes" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Demand Notes</span> </NavLink>
+                      </li>
+                    )}
+                    {ordersActive && (
+                      <li className="nav-item">
+                        <NavLink to="/setup-member/orders" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Orders</span> </NavLink>
+                      </li>
+                    )}
+                    {encashActive && (
+                      <li className="nav-item">
+                        <NavLink to="/setup-member/encash-list" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Encash</span> </NavLink>
+                      </li>
+                    )}
+                  </ul>
+                </li>
+              )}
+              {serviceCategoryActive && (
+                <li className="menu-item d-flex">
+                  <NavLink
+                    to="/setup-member/service-category-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
                     >
-                      <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
-                      <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
-                    </g>
-                  </svg>
-                  <span className="menu-link-text">Common Files </span>
-                </NavLink>
-              </li>
-                  )}
-                         
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">Service Category </span>
+                  </NavLink>
+                </li>
+              )}
+              {imageConfigActive && (
+                <li className="menu-item d-flex">
+                  <NavLink
+                    to="/setup-member/service-category-list"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
+                    >
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">Image Config </span>
+                  </NavLink>
+                </li>
+              )}
+              {isCommonFilesActive && (
+                <li className="menu-item d-flex">
+                  <NavLink
+                    to="/setup-member/common-files-upload"
+                    style={{ flexDirection: "column" }}
+                    className={({ isActive }) =>
+                      `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.0"
+                      width="72.000000pt"
+                      height="72.000000pt"
+                      viewBox="0 0 72.000000 72.000000"
+                      preserveAspectRatio="xMidYMid meet"
+                    >
+                      <metadata>
+                        Created by potrace 1.10, written by Peter Selinger
+                        2001-2011
+                      </metadata>
+                      <g
+                        transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                        fill="#000000"
+                        stroke="none"
+                      >
+                        <path d="M264 610 c-137 -54 -206 -206 -155 -341 53 -141 205 -212 342 -160 141 53 212 205 160 342 -53 141 -211 213 -347 159z m173 -26 c129 -43 197 -193 142 -314 -55 -123 -191 -181 -305 -131 -58 26 -88 52 -120 107 -53 91 -37 208 40 282 68 66 153 86 243 56z" />
+                        <path d="M322 544 c-20 -14 -22 -24 -22 -110 0 -132 2 -134 103 -134 84 1 117 12 117 42 0 28 -35 48 -83 48 l-47 0 0 63 c0 53 -4 67 -23 85 -21 20 -25 21 -45 6z m38 -99 l0 -85 70 0 c64 0 70 -2 70 -20 0 -20 -5 -21 -87 -18 l-88 3 -3 103 c-3 97 -2 102 18 102 19 0 20 -6 20 -85z" />
+                      </g>
+                    </svg>
+                    <span className="menu-link-text">Common Files </span>
+                  </NavLink>
+                </li>
+              )}
+
             </ul>
           </div>
           <div className="left-2 mt-3" id="mySidebar">

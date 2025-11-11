@@ -90,203 +90,238 @@ export default function DemandNotes() {
   return (
     <div className="w-100">
       <div className="module-data-section mt-2">
-        <p className="pointer">
+        {/* <p className="pointer">
           <span>Demand Notes</span> &gt; Manage Demand Notes
-        </p>
+        </p> */}
         <div className="card mt-3 mx-3">
           <div className="card-header">
             <h3 className="card-title">Manage Demand Notes</h3>
           </div>
           <div className="card-body">
-        <div className="d-flex justify-content-between align-items-center">
-          <div />
-          <div className="d-flex align-items-center">
-            <div className="d-flex align-items-center position-relative">
-              <div className="position-relative me-3" style={{ width: "100%" }}>
-                <input
-                  className="form-control"
-                  style={{
-                    height: "35px",
-                    paddingLeft: "30px",
-                    textAlign: "left",
-                  }}
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-                <div
-                  className="position-absolute"
-                  style={{ top: "7px", left: "10px" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-search"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                  </svg>
+            <div className="d-flex justify-content-between align-items-center">
+              <div />
+              <div className="d-flex align-items-center">
+                <div className="search-input-group me-3">
+                  <input
+                    className="form-control"
+                    type="search"
+                    placeholder="Search"
+                    aria-label="Search"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
+                  <span className="search-icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-search"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                    </svg>
+                  </span>
+                  {searchQuery && (
+                    <button
+                      className="clear-btn"
+                      onClick={() => {
+                        setSearchQuery("");
+                        localStorage.setItem("demand_notes_currentPage", 1);
+                        navigate(location.pathname, { replace: true });
+                      }}
+                      aria-label="Clear search"
+                      type="button"
+                    >
+                      ×
+                    </button>
+                  )}
                 </div>
+                <button
+                  className="purple-btn1 rounded-3 px-3"
+                  onClick={handleSearchSubmit}
+                >
+                  Go!
+                </button>
+                <button
+                  className="purple-btn2 rounded-3 mt-2"
+                  onClick={() => {
+                    setSearchQuery("");
+                    localStorage.setItem("demand_notes_currentPage", 1);
+                    navigate(location.pathname, { replace: true });
+                  }}
+                >
+                  Reset
+                </button>
               </div>
             </div>
-            <button
-              className="purple-btn1 rounded-3 px-3"
-              onClick={handleSearchSubmit}
-            >
-              Go!
-            </button>
-            <button
-              className="purple-btn2 rounded-3 mt-2"
-              onClick={() => {
-                setSearchQuery("");
-                localStorage.setItem("demand_notes_currentPage", 1);
-                navigate(location.pathname, { replace: true });
+            <div
+              className="tbl-container mx-3 mt-4"
+              style={{
+                height: "100%",
+                overflowX: "hidden",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
-              Reset
-            </button>
-          </div>
-        </div>
-        <div
-          className="tbl-container mx-3 mt-4"
-          style={{
-            height: "100%",
-            overflowX: "hidden",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p className="text-danger">{error}</p>
-          ) : (
-            <>
-              <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                <thead>
-                  <tr>
-                    <th>Sr No</th>
-                    <th>Project ID</th>
-                    <th>Booking Number</th>
-                    <th>Customer Code</th>
-                    <th>Demand Number</th>
-                    <th>Percentage</th>
-                    <th>Amount</th>
-                    <th>Raised Date</th>
-                    <th>Expected Date</th>
-                    <th>CGST</th>
-                    <th>SGST</th>
-                    <th>Total Tax</th>
-                    <th>Total Amount</th>
-                  </tr>
-                </thead>
-                <tbody style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                  {displayedNotes.length > 0 ? (
-                    displayedNotes.map((note, idx) => (
-                      <tr key={note.id}>
-                        <td style={{ width: '7%' }}>{startIndex + idx + 1}</td>
-                        <td style={{ width: '7%' }}>{note.project_id ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.booking_number ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.customer_code ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.demand_number ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.percentage ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.amount ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.raised_date ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.expected_date ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.cgst ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.sgst ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.total_tax_amount ?? ""}</td>
-                        <td style={{ width: '7%' }}>{note.total_amount ?? ""}</td>
-                      </tr>
-                    ))
-                  ) : (
+              {loading ? (
+                <p>Loading...</p>
+              ) : error ? (
+                <p className="text-danger">{error}</p>
+              ) : (
+                <>
+                  <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>                <thead>
                     <tr>
-                      <td colSpan="13" className="text-center">
-                        No demand notes found.
-                      </td>
+                      <th>Sr No</th>
+                      <th>Project ID</th>
+                      <th>Booking Number</th>
+                      <th>Customer Code</th>
+                      <th>Demand Number</th>
+                      <th>Percentage</th>
+                      <th>Amount</th>
+                      <th>Raised Date</th>
+                      <th>Expected Date</th>
+                      <th>CGST</th>
+                      <th>SGST</th>
+                      <th>Total Tax</th>
+                      <th>Total Amount</th>
                     </tr>
+                  </thead>
+                    <tbody style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
+                      {displayedNotes.length > 0 ? (
+                        displayedNotes.map((note, idx) => (
+                          <tr key={note.id}>
+                            <td style={{ width: '7%' }}>{startIndex + idx + 1}</td>
+                            <td style={{ width: '7%' }}>{note.project_id ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.booking_number ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.customer_code ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.demand_number ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.percentage ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.amount ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.raised_date ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.expected_date ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.cgst ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.sgst ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.total_tax_amount ?? ""}</td>
+                            <td style={{ width: '7%' }}>{note.total_amount ?? ""}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="13" className="text-center">
+                            No demand notes found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                  {/* Pagination Controls */}
+                  {!loading && totalFiltered > 0 && (
+                    <nav className="d-flex justify-content-between align-items-center m-4">
+                      <ul
+                        className="pagination justify-content-center align-items-center"
+                        style={{ listStyleType: "none", padding: "0" }}
+                      >
+                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(1)}
+                            disabled={currentPage === 1}
+                            style={{ padding: "8px 12px", color: "#5e2750" }}
+                          >
+                            ««
+                          </button>
+                        </li>
+                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            style={{ padding: "8px 12px", color: "#5e2750" }}
+                          >
+                            ‹
+                          </button>
+                        </li>
+
+                        {/* Dynamic page numbers */}
+                        {(() => {
+                          const pages = [];
+                          const maxVisiblePages = 5;
+                          const halfVisible = Math.floor(maxVisiblePages / 2);
+                          let startPage, endPage;
+
+                          if (totalPages <= maxVisiblePages) {
+                            startPage = 1;
+                            endPage = totalPages;
+                          } else {
+                            if (currentPage <= halfVisible) {
+                              startPage = 1;
+                              endPage = maxVisiblePages;
+                            } else if (currentPage + halfVisible >= totalPages) {
+                              startPage = totalPages - maxVisiblePages + 1;
+                              endPage = totalPages;
+                            } else {
+                              startPage = currentPage - halfVisible;
+                              endPage = currentPage + halfVisible;
+                            }
+                          }
+
+                          for (let i = startPage; i <= endPage; i++) {
+                            pages.push(i);
+                          }
+
+                          return pages.map((pageNumber) => (
+                            <li
+                              key={pageNumber}
+                              className={`page-item ${currentPage === pageNumber ? "active" : ""}`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(pageNumber)}
+                                style={{
+                                  padding: "8px 12px",
+                                  color: pageNumber === currentPage ? "#fff" : "#5e2750",
+                                  backgroundColor: pageNumber === currentPage ? "#5e2750" : "#fff",
+                                  border: "2px solid #5e2750",
+                                  borderRadius: "3px",
+                                }}
+                              >
+                                {pageNumber}
+                              </button>
+                            </li>
+                          ));
+                        })()}
+
+                        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            style={{ padding: "8px 12px", color: "#5e2750" }}
+                          >
+                            ›
+                          </button>
+                        </li>
+                        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(totalPages)}
+                            disabled={currentPage === totalPages}
+                            style={{ padding: "8px 12px", color: "#5e2750" }}
+                          >
+                            »»
+                          </button>
+                        </li>
+                      </ul>
+                      <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
+                        Showing {totalFiltered > 0 ? startIndex + 1 : 0} to{" "}
+                        {Math.min(startIndex + pageSize, totalFiltered)} of{" "}
+                        {totalFiltered} entries
+                      </p>
+                    </nav>
                   )}
-                </tbody>
-              </table>
-              {/* Pagination Controls */}
-              {!loading && totalFiltered > 0 && (
-                <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
-                  <ul className="pagination" role="navigation" aria-label="pager">
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(1)}
-                        disabled={currentPage === 1}
-                      >
-                        First
-                      </button>
-                    </li>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                      >
-                        Prev
-                      </button>
-                    </li>
-                    {Array.from(
-                      { length: Math.min(5, totalPages) },
-                      (_, i) => {
-                        let pageToShow;
-                        if (totalPages <= 5) {
-                          pageToShow = i + 1;
-                        } else {
-                          const startPage = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
-                          pageToShow = startPage + i;
-                        }
-                        return pageToShow;
-                      }
-                    ).map((pageNumber) => (
-                      <li
-                        key={pageNumber}
-                        className={`page-item ${currentPage === pageNumber ? "active" : ""}`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() => handlePageChange(pageNumber)}
-                        >
-                          {pageNumber}
-                        </button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                      >
-                        Next
-                      </button>
-                    </li>
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(totalPages)}
-                        disabled={currentPage === totalPages}
-                      >
-                        Last
-                      </button>
-                    </li>
-                  </ul>
-                  <p>
-                    Showing {totalFiltered > 0 ? startIndex + 1 : 0} to{" "}
-                    {Math.min(startIndex + pageSize, totalFiltered)} of{" "}
-                    {totalFiltered} entries
-                  </p>
-                </div>
+                </>
               )}
-            </>
-          )}
             </div>
           </div>
         </div>
