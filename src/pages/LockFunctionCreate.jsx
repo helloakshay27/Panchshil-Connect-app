@@ -130,8 +130,7 @@ const LockFunctionCreate = () => {
     } catch (error) {
       console.error("Error creating lock function:", error);
       toast.error(
-        `Error creating lock function: ${
-          error.response?.data?.message || error.message
+        `Error creating lock function: ${error.response?.data?.message || error.message
         }`
       );
     } finally {
@@ -206,30 +205,30 @@ const LockFunctionCreate = () => {
       actionName = "faq_category";
     } else if (value === "FAQ SubCategory") {
       actionName = "faq_subcategory";
-    }  else if (value === "Construction Update") {
+    } else if (value === "Construction Update") {
       actionName = "construction_update";
     } else if (value === "User Groups") {
       actionName = "user_groups";
     } else if (value === "Service Category") {
       actionName = "service_category";
     } else if (value === "Image Config") {
-      actionName = "image_config";  
+      actionName = "image_config";
     } else if (value === "Bank Details") {
       actionName = "bank_details";
     } else if (value === "Home Loan") {
       actionName = "home_loan";
     } else if (value === "Banks") {
-      actionName = "banks"; 
+      actionName = "banks";
     } else if (value === "Loan Manager") {
       actionName = "loan_manager";
     } else if (value === "Common Files") {
       actionName = "common_files";
     } else if (value === "Demand Notes") {
-      actionName = "demand_notes";  
+      actionName = "demand_notes";
     } else if (value === "Orders") {
-      actionName = "orders";  
+      actionName = "orders";
     } else if (value === "Encash") {
-      actionName = "encash";  
+      actionName = "encash";
     } else if (value === "Lock Payments") {
       actionName = "lock_payments";
     } else if (value === "Loyalty Members") {
@@ -238,6 +237,8 @@ const LockFunctionCreate = () => {
       actionName = "loyalty_tiers";
     } else if (value === "Loyalty Section") {
       actionName = "loyalty_section";
+    } else if (value === "Referral List") {
+      actionName = "referral_list";
     }
 
     setFormData({
@@ -315,7 +316,7 @@ const LockFunctionCreate = () => {
                             label: "FAQ SubCategory",
                             value: "FAQ SubCategory",
                           },
-                            {
+                          {
                             label: "Service Category",
                             value: "Service Category",
                           },
@@ -332,7 +333,7 @@ const LockFunctionCreate = () => {
                           { label: "Loyalty Members", value: "Loyalty Members" },
                           { label: "Loyalty Tiers", value: "Loyalty Tiers" },
                           { label: "Loyalty Section", value: "Loyalty Section" },
-
+                          { label: "Referral List", value: "Referral List" },
                           // Add more if needed
                         ]}
                         Value={formData.name}

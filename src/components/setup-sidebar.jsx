@@ -30,6 +30,7 @@ const SetupSidebar = () => {
   const [loanManagerActive, setLoanManagerActive] = useState(false);
   const [isCommonFilesActive, setIsCommonFilesActive] = useState(false);
   const [showLoyaltySection, setShowLoyaltySection] = useState(false);
+  const [loyaltyCollapsed, setLoyaltyCollapsed] = useState(false);
   const [membersActive, setMembersActive] = useState(false);
   const [tiersActive, setTiersActive] = useState(false);
   const [referralActive, setReferralActive] = useState(false);
@@ -1167,16 +1168,56 @@ const SetupSidebar = () => {
               {showLoyaltySection && (
                 <li className="mt-2" id="loyalty">
                   <a
-                    className="text nav-link d-flex justify-content-between"
+                    className="text nav-link d-flex justify-content-between align-items-center"
                     data-bs-toggle="collapse"
-                    href="#loyaltyCollapse"
+                    data-bs-target="#loyaltyCollapse"
+                    aria-expanded={!loyaltyCollapsed}
+                    aria-controls="loyaltyCollapse"
+                    onClick={(e) => {
+                      // e.preventDefault();
+                      setLoyaltyCollapsed(!loyaltyCollapsed);
+                    }}
+                    style={{ cursor: 'pointer', textDecoration: 'none' }}
                   >
-                    <img alt="" src="../images/user.svg" />
-                    <span className="text">Loyalty</span>
-                    <i className="bi bi-caret-right-fill collapse-logo" />
+                    <div className="d-flex align-items-center">
+                      <img alt="" src="../images/user.svg" />
+                      <span className="text ms-2">Loyalty</span>
+                    </div>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      xmlns:xlink="http://www.w3.org/1999/xlink" 
+                      height="16px" 
+                      width="16px" 
+                      version="1.1" 
+                      id="Capa_1" 
+                      viewBox="0 0 185.343 185.343" 
+                      xmlSpace="preserve"
+                      className="collapse-logo"
+                      style={{ 
+                        transition: 'transform 0.3s ease',
+                        transform: loyaltyCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                        fill: '#a78847',
+                        border: 'none',
+                      }}
+                    >
+                      <g>
+                        <g>
+                          <path 
+                            style={{fill:"#a78847"}} 
+                            d="M51.707,185.343c-2.741,0-5.493-1.044-7.593-3.149c-4.194-4.194-4.194-10.981,0-15.175    l74.352-74.347L44.114,18.32c-4.194-4.194-4.194-10.987,0-15.175c4.194-4.194,10.987-4.194,15.18,0l81.934,81.934    c4.194,4.194,4.194,10.987,0,15.175l-81.934,81.939C57.201,184.293,54.454,185.343,51.707,185.343z"
+                          />
+                        </g>
+                      </g>
+                    </svg>
                   </a>
+                      {
+                        loyaltyCollapsed && (
 
-                  <ul className="p-0 collapse" id="loyaltyCollapse">
+                  <div 
+                    // className={`collapse ${!loyaltyCollapsed ? 'show' : ''}`}
+                    id="loyaltyCollapse"
+                  >
+                    <ul className="p-0">
                     {membersActive && (
                       <li className="menu-item d-flex">
                         <NavLink
@@ -1237,6 +1278,7 @@ const SetupSidebar = () => {
                               transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
                               fill="#000000"
                               stroke="none"
+                              
                             >
                               <path d="M140 640 c-19 -19 -20 -33 -20 -300 l0 -280 45 0 45 0 0 58 c0 32 5 63 12 70 17 17 259 17 276 0 7 -7 12 -38 12 -71 l0 -58 43 3 42 3 3 159 c3 191 -2 206 -73 206 l-45 0 0 95 c0 135 0 135 -180 135 -127 0 -142 -2 -160 -20z" />
                               <path d="M250 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
@@ -1333,6 +1375,7 @@ const SetupSidebar = () => {
                             height="24"
                             viewBox="0 0 24 24"
                             fill="none"
+                            strokeWidth={0}
                           >
                             <path
                               d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z"
@@ -1366,6 +1409,7 @@ const SetupSidebar = () => {
                             height="24"
                             viewBox="0 0 24 24"
                             fill="none"
+                            strokeWidth={0}
                           >
                             <path
                               d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"
@@ -1399,6 +1443,7 @@ const SetupSidebar = () => {
                             height="24"
                             viewBox="0 0 24 24"
                             fill="none"
+                            strokeWidth={0}
                           >
                             <path
                               d="M11.8 10.9C9.53 10.31 8.8 9.7 8.8 8.75C8.8 7.66 9.81 6.9 11.5 6.9C13.28 6.9 13.94 7.75 14 9H16.21C16.14 7.28 15.09 5.7 13 5.19V3H10V5.16C8.06 5.58 6.5 6.84 6.5 8.77C6.5 11.08 8.41 12.23 11.2 12.9C13.7 13.5 14.2 14.38 14.2 15.31C14.2 16 13.71 17.1 11.5 17.1C9.44 17.1 8.63 16.18 8.5 15H6.32C6.44 17.19 8.08 18.42 10 18.83V21H13V18.85C14.95 18.5 16.5 17.35 16.5 15.3C16.5 12.46 14.07 11.5 11.8 10.9Z"
@@ -1409,7 +1454,10 @@ const SetupSidebar = () => {
                         </NavLink>
                       </li>
                     )}
-                  </ul>
+                    </ul>
+                  </div>
+                        )
+                      }
                 </li>
               )}
               {serviceCategoryActive && (
