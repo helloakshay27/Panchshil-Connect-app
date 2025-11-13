@@ -192,99 +192,80 @@ const LoyaltyReferralList = () => {
               </table>
               {/* Pagination Controls */}
               {!loading && totalFiltered > 0 && (
-                <nav className="d-flex justify-content-between align-items-center m-4">
-                  <ul
-                    className="pagination justify-content-center align-items-center"
-                    style={{ listStyleType: "none", padding: "0" }}
-                  >
-                    <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
+                <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+                  <ul className="pagination justify-content-center d-flex">
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
+                    >
                       <button
                         className="page-link"
-                        onClick={() => handlePageChange(1)} // Jump to first page
+                        onClick={() => handlePageChange(1)}
                         disabled={pagination.current_page === 1}
-                        style={{ padding: "8px 12px", color: "#a78847" }}
                       >
-                        «« {/* Double left arrow for jumping to the first page */}
+                        First
                       </button>
                     </li>
-                    <li className={`page-item ${pagination.current_page === 1 ? "disabled" : ""}`}>
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === 1 ? "disabled" : ""
+                      }`}
+                    >
                       <button
                         className="page-link"
-                        onClick={() => handlePageChange(pagination.current_page - 1)}
-                        disabled={pagination.current_page === 1}
-                        style={{ padding: "8px 12px", color: "#a78847" }}
-                      >
-                        ‹
-                      </button>
-                    </li>
-
-                    {/* Dynamic page numbers */}
-                    {(() => {
-                      const pages = [];
-                      const maxVisiblePages = 5;
-                      const halfVisible = Math.floor(maxVisiblePages / 2);
-                      let startPage, endPage;
-
-                      if (totalPages <= maxVisiblePages) {
-                        startPage = 1;
-                        endPage = totalPages;
-                      } else {
-                        if (pagination.current_page <= halfVisible) {
-                          startPage = 1;
-                          endPage = maxVisiblePages;
-                        } else if (pagination.current_page + halfVisible >= totalPages) {
-                          startPage = totalPages - maxVisiblePages + 1;
-                          endPage = totalPages;
-                        } else {
-                          startPage = pagination.current_page - halfVisible;
-                          endPage = pagination.current_page + halfVisible;
+                        onClick={() =>
+                          handlePageChange(pagination.current_page - 1)
                         }
-                      }
-
-                      for (let i = startPage; i <= endPage; i++) {
-                        pages.push(i);
-                      }
-
-                      return pages.map((page) => (
-                        <li
-                          key={page}
-                          className={`page-item ${page === pagination.current_page ? "active" : ""}`}
-                        >
-                          <button
-                            className="page-link"
-                            onClick={() => handlePageChange(page)}
-                            style={{
-                              padding: "8px 12px",
-                              color: page === pagination.current_page ? "#fff" : "#a78847",
-                              backgroundColor: page === pagination.current_page ? "#a78847" : "#fff",
-                              border: "2px solid #a78847",
-                              borderRadius: "3px",
-                            }}
-                          >
-                            {page}
-                          </button>
-                        </li>
-                      ));
-                    })()}
-
-                    <li className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""}`}>
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(pagination.current_page + 1)}
-                        disabled={pagination.current_page === totalPages}
-                        style={{ padding: "8px 12px", color: "#a78847" }}
+                        disabled={pagination.current_page === 1}
                       >
-                        ›
+                        Prev
                       </button>
                     </li>
-                    <li className={`page-item ${pagination.current_page === totalPages ? "disabled" : ""}`}>
+                    {Array.from(
+                      { length: totalPages },
+                      (_, index) => index + 1
+                    ).map((pageNumber) => (
+                      <li
+                        key={pageNumber}
+                        className={`page-item ${
+                          pagination.current_page === pageNumber ? "active" : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      </li>
+                    ))}
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === totalPages ? "disabled" : ""
+                      }`}
+                    >
                       <button
                         className="page-link"
-                        onClick={() => handlePageChange(totalPages)} // Jump to last page
+                        onClick={() =>
+                          handlePageChange(pagination.current_page + 1)
+                        }
                         disabled={pagination.current_page === totalPages}
-                        style={{ padding: "8px 12px", color: "#a78847" }}
                       >
-                        »» {/* Double right arrow for jumping to the last page */}
+                        Next
+                      </button>
+                    </li>
+                    <li
+                      className={`page-item ${
+                        pagination.current_page === totalPages ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(totalPages)}
+                        disabled={pagination.current_page === totalPages}
+                      >
+                        Last
                       </button>
                     </li>
                   </ul>
@@ -301,7 +282,7 @@ const LoyaltyReferralList = () => {
                     )}{" "}
                     of {totalFiltered} entries
                   </p>
-                </nav>
+                </div>
               )}
             </>
           )}

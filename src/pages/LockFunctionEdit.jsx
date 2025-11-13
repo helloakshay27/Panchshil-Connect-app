@@ -329,6 +329,13 @@ const LockFunctionEdit = () => {
     { label: "Banks", value: "Banks" },
     { label: "Loan Manager", value: "Loan Manager" },
     { label: "Common Files", value: "Common Files" },
+    { label: "Demand Notes", value: "Demand Notes" },
+    { label: "Orders", value: "Orders" },
+    { label: "Encash", value: "Encash" },
+    { label: "Lock Payments", value: "Lock Payments" },
+    { label: "Loyalty Members", value: "Loyalty Members" },
+    { label: "Loyalty Tiers", value: "Loyalty Tiers" },
+    { label: "Loyalty Section", value: "Loyalty Section" },
   ];
 
   return (

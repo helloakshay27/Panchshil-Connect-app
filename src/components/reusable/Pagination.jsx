@@ -1,5 +1,4 @@
 import React from 'react';
-import './Pagination.css';
 
 const Pagination = ({ 
   currentPage, 
@@ -9,128 +8,88 @@ const Pagination = ({
   itemsPerPage = 10,
   showingText = "Showing"
 }) => {
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    const maxVisiblePages = 5;
-    
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
-    // Adjust start page if we're near the end
-    if (endPage - startPage < maxVisiblePages - 1) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-    
-    // First page and ellipsis
-    if (startPage > 1) {
-      pageNumbers.push(
-        <button
-          key={1}
-          onClick={() => onPageChange(1)}
-          className={`pagination-btn ${1 === currentPage ? 'active' : ''}`}
-        >
-          1
-        </button>
-      );
-      
-      if (startPage > 2) {
-        pageNumbers.push(
-          <span key="start-ellipsis" className="pagination-ellipsis">
-            ...
-          </span>
-        );
-      }
-    }
-    
-    // Visible page numbers
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          onClick={() => onPageChange(i)}
-          className={`pagination-btn ${i === currentPage ? 'active' : ''}`}
-        >
-          {i}
-        </button>
-      );
-    }
-    
-    // Last page and ellipsis
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
-        pageNumbers.push(
-          <span key="end-ellipsis" className="pagination-ellipsis">
-            ...
-          </span>
-        );
-      }
-      
-      pageNumbers.push(
-        <button
-          key={totalPages}
-          onClick={() => onPageChange(totalPages)}
-          className={`pagination-btn ${totalPages === currentPage ? 'active' : ''}`}
-        >
-          {totalPages}
-        </button>
-      );
-    }
-    
-    return pageNumbers;
-  };
-
-  const startEntry = (currentPage - 1) * itemsPerPage + 1;
+  const startEntry = totalEntries > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
   const endEntry = Math.min(currentPage * itemsPerPage, totalEntries);
 
   if (totalPages <= 1) return null;
 
   return (
-    <div className="pagination-container">
-      <div className="pagination-info">
-        <span>
-          {showingText} {startEntry} to {endEntry} of {totalEntries} entries
-        </span>
-      </div>
-      
-      <div className="pagination-controls">
-        <button
-          onClick={() => onPageChange(1)}
-          disabled={currentPage === 1}
-          className="pagination-btn pagination-nav"
-          title="First page"
+    <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+      <ul className="pagination justify-content-center d-flex">
+        <li
+          className={`page-item ${
+            currentPage === 1 ? "disabled" : ""
+          }`}
         >
-          <i className="bi bi-chevron-double-left"></i>
-        </button>
-        
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="pagination-btn pagination-nav"
-          title="Previous page"
+          <button
+            className="page-link"
+            onClick={() => onPageChange(1)}
+            disabled={currentPage === 1}
+          >
+            First
+          </button>
+        </li>
+        <li
+          className={`page-item ${
+            currentPage === 1 ? "disabled" : ""
+          }`}
         >
-          <i className="bi bi-chevron-left"></i>
-        </button>
-        
-        {renderPageNumbers()}
-        
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="pagination-btn pagination-nav"
-          title="Next page"
+          <button
+            className="page-link"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Prev
+          </button>
+        </li>
+        {Array.from(
+          { length: totalPages },
+          (_, index) => index + 1
+        ).map((pageNumber) => (
+          <li
+            key={pageNumber}
+            className={`page-item ${
+              currentPage === pageNumber ? "active" : ""
+            }`}
+          >
+            <button
+              className="page-link"
+              onClick={() => onPageChange(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          </li>
+        ))}
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
         >
-          <i className="bi bi-chevron-right"></i>
-        </button>
-        
-        <button
-          onClick={() => onPageChange(totalPages)}
-          disabled={currentPage === totalPages}
-          className="pagination-btn pagination-nav"
-          title="Last page"
+          <button
+            className="page-link"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </li>
+        <li
+          className={`page-item ${
+            currentPage === totalPages ? "disabled" : ""
+          }`}
         >
-          <i className="bi bi-chevron-double-right"></i>
-        </button>
-      </div>
+          <button
+            className="page-link"
+            onClick={() => onPageChange(totalPages)}
+            disabled={currentPage === totalPages}
+          >
+            Last
+          </button>
+        </li>
+      </ul>
+      <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
+        {showingText} {startEntry} to {endEntry} of {totalEntries} entries
+      </p>
     </div>
   );
 };

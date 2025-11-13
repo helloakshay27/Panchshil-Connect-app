@@ -4155,8 +4155,9 @@ ul#pills-tab {
 }
 
 .card-header {
-  background-color: transparent;
+  background-color: transparent !important;
   border-bottom: unset !important;
+  margin-bottom: 20px !important;
   padding: 1rem 1.25rem;
   position: relative;
   border-top-left-radius: 0.25rem;

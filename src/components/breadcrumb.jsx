@@ -9,7 +9,7 @@ const Breadcrumbs = () => {
   const last = pathnames[pathnames.length - 1];
 
   return (
-    <nav aria-label="breadcrumb" className="mx-2">
+    <nav aria-label="breadcrumb" className="mx-4 my-2">
       <ol className="breadcrumb">
         {last && (
           <li className="breadcrumb-item active" aria-current="page">

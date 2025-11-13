@@ -94,7 +94,7 @@ export default function DemandNotes() {
           <span>Demand Notes</span> &gt; Manage Demand Notes
         </p> */}
         <div className="card mt-3 mx-3">
-          <div className="card-header">
+          <div className="card-header mb-0">
             <h3 className="card-title">Manage Demand Notes</h3>
           </div>
           <div className="card-body">
@@ -133,7 +133,7 @@ export default function DemandNotes() {
               </div>
             </div>
             <div
-              className="tbl-container mx-3 mt-4"
+              className="tbl-container"
               style={{
                 height: "100%",
                 overflowX: "hidden",
@@ -192,114 +192,114 @@ export default function DemandNotes() {
                       )}
                     </tbody>
                   </table>
-                  {/* Pagination Controls */}
-                  {!loading && totalFiltered > 0 && (
-                    <nav className="d-flex justify-content-between align-items-center m-4">
-                      <ul
-                        className="pagination justify-content-center align-items-center"
-                        style={{ listStyleType: "none", padding: "0" }}
-                      >
-                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                          <button
-                            className="page-link"
-                            onClick={() => handlePageChange(1)}
-                            disabled={currentPage === 1}
-                            style={{ padding: "8px 12px", color: "#a78847" }}
-                          >
-                            ««
-                          </button>
-                        </li>
-                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                          <button
-                            className="page-link"
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            style={{ padding: "8px 12px", color: "#a78847" }}
-                          >
-                            ‹
-                          </button>
-                        </li>
-
-                        {/* Dynamic page numbers */}
-                        {(() => {
-                          const pages = [];
-                          const maxVisiblePages = 5;
-                          const halfVisible = Math.floor(maxVisiblePages / 2);
-                          let startPage, endPage;
-
-                          if (totalPages <= maxVisiblePages) {
-                            startPage = 1;
-                            endPage = totalPages;
-                          } else {
-                            if (currentPage <= halfVisible) {
-                              startPage = 1;
-                              endPage = maxVisiblePages;
-                            } else if (currentPage + halfVisible >= totalPages) {
-                              startPage = totalPages - maxVisiblePages + 1;
-                              endPage = totalPages;
-                            } else {
-                              startPage = currentPage - halfVisible;
-                              endPage = currentPage + halfVisible;
-                            }
-                          }
-
-                          for (let i = startPage; i <= endPage; i++) {
-                            pages.push(i);
-                          }
-
-                          return pages.map((pageNumber) => (
-                            <li
-                              key={pageNumber}
-                              className={`page-item ${currentPage === pageNumber ? "active" : ""}`}
-                            >
-                              <button
-                                className="page-link"
-                                onClick={() => handlePageChange(pageNumber)}
-                                style={{
-                                  padding: "8px 12px",
-                                  color: pageNumber === currentPage ? "#fff" : "#a78847",
-                                  backgroundColor: pageNumber === currentPage ? "#a78847" : "#fff",
-                                  border: "2px solid #a78847",
-                                  borderRadius: "3px",
-                                }}
-                              >
-                                {pageNumber}
-                              </button>
-                            </li>
-                          ));
-                        })()}
-
-                        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                          <button
-                            className="page-link"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            style={{ padding: "8px 12px", color: "#a78847" }}
-                          >
-                            ›
-                          </button>
-                        </li>
-                        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                          <button
-                            className="page-link"
-                            onClick={() => handlePageChange(totalPages)}
-                            disabled={currentPage === totalPages}
-                            style={{ padding: "8px 12px", color: "#a78847" }}
-                          >
-                            »»
-                          </button>
-                        </li>
-                      </ul>
-                      <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
-                        Showing {totalFiltered > 0 ? startIndex + 1 : 0} to{" "}
-                        {Math.min(startIndex + pageSize, totalFiltered)} of{" "}
-                        {totalFiltered} entries
-                      </p>
-                    </nav>
-                  )}
                 </>
               )}
             </div>
+              {/* Pagination Controls */}
+              {!loading && totalFiltered > 0 && (
+                <nav className="d-flex justify-content-between align-items-center m-4">
+                  <ul
+                    className="pagination justify-content-center align-items-center"
+                    style={{ listStyleType: "none", padding: "0" }}
+                  >
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(1)}
+                        disabled={currentPage === 1}
+                        style={{ padding: "8px 12px", color: "#a78847" }}
+                      >
+                        First
+                      </button>
+                    </li>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        style={{ padding: "8px 12px", color: "#a78847" }}
+                      >
+                        Prev
+                      </button>
+                    </li>
+
+                    {/* Dynamic page numbers */}
+                    {(() => {
+                      const pages = [];
+                      const maxVisiblePages = 5;
+                      const halfVisible = Math.floor(maxVisiblePages / 2);
+                      let startPage, endPage;
+
+                      if (totalPages <= maxVisiblePages) {
+                        startPage = 1;
+                        endPage = totalPages;
+                      } else {
+                        if (currentPage <= halfVisible) {
+                          startPage = 1;
+                          endPage = maxVisiblePages;
+                        } else if (currentPage + halfVisible >= totalPages) {
+                          startPage = totalPages - maxVisiblePages + 1;
+                          endPage = totalPages;
+                        } else {
+                          startPage = currentPage - halfVisible;
+                          endPage = currentPage + halfVisible;
+                        }
+                      }
+
+                      for (let i = startPage; i <= endPage; i++) {
+                        pages.push(i);
+                      }
+
+                      return pages.map((pageNumber) => (
+                        <li
+                          key={pageNumber}
+                          className={`page-item ${currentPage === pageNumber ? "active" : ""}`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(pageNumber)}
+                            style={{
+                              padding: "8px 12px",
+                              color: pageNumber === currentPage ? "#fff" : "#a78847",
+                              backgroundColor: pageNumber === currentPage ? "#a78847" : "#fff",
+                              border: "2px solid #a78847",
+                              borderRadius: "3px",
+                            }}
+                          >
+                            {pageNumber}
+                          </button>
+                        </li>
+                      ));
+                    })()}
+
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        style={{ padding: "8px 12px", color: "#a78847" }}
+                      >
+                        Next
+                      </button>
+                    </li>
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(totalPages)}
+                        disabled={currentPage === totalPages}
+                        style={{ padding: "8px 12px", color: "#a78847" }}
+                      >
+                        Last
+                      </button>
+                    </li>
+                  </ul>
+                  <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
+                    Showing {totalFiltered > 0 ? startIndex + 1 : 0} to{" "}
+                    {Math.min(startIndex + pageSize, totalFiltered)} of{" "}
+                    {totalFiltered} entries
+                  </p>
+                </nav>
+              )}
           </div>
         </div>
       </div>

@@ -199,7 +199,7 @@ const Tiers = () => {
         {/* <SubHeader /> */}
         <div className="module-data-section container-fluid">
           <div className="card mt-3 mx-3">
-            <div className="card-header">
+            <div className="card-header mb-0">
               <h3 className="card-title">Tiers List</h3>
             </div>
             <div className="card-body">

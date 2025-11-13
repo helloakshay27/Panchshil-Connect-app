@@ -188,139 +188,87 @@ const EncashList = () => {
   };
 
   const Pagination = ({ currentPage, totalPages, totalEntries, onPageChange }) => {
-    const startEntry = (currentPage - 1) * itemsPerPage + 1;
+    const startEntry = totalEntries > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
     const endEntry = Math.min(currentPage * itemsPerPage, totalEntries);
 
-    // Function to get the range of page numbers to display
-    const getPageNumbers = () => {
-      const pages = [];
-      const maxVisiblePages = 5; // Set the maximum number of visible pages
-      const halfVisible = Math.floor(maxVisiblePages / 2);
-
-      let startPage, endPage;
-
-      if (totalPages <= maxVisiblePages) {
-        // If total pages are less than or equal to maxVisiblePages, show all
-        startPage = 1;
-        endPage = totalPages;
-      } else {
-        // Otherwise, calculate the start and end pages
-        if (currentPage <= halfVisible) {
-          startPage = 1;
-          endPage = maxVisiblePages;
-        } else if (currentPage + halfVisible >= totalPages) {
-          startPage = totalPages - maxVisiblePages + 1;
-          endPage = totalPages;
-        } else {
-          startPage = currentPage - halfVisible;
-          endPage = currentPage + halfVisible;
-        }
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-
-      return pages;
-    };
-
-    const pageNumbers = getPageNumbers();
-
-    const handleJumpForward = () => {
-      if (currentPage + 5 <= totalPages) {
-        onPageChange(currentPage + 5);
-      } else {
-        onPageChange(totalPages); // Go to last page if jump exceeds total pages
-      }
-    };
-
-    const handleJumpBackward = () => {
-      if (currentPage - 5 >= 1) {
-        onPageChange(currentPage - 5);
-      } else {
-        onPageChange(1); // Go to first page if jump goes below 1
-      }
-    };
-
     return (
-      <nav className="d-flex justify-content-between align-items-center m-4">
-        <ul
-          className="pagination justify-content-center align-items-center"
-          style={{ listStyleType: "none", padding: "0" }}
-        >
-          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+      <div className="d-flex justify-content-between align-items-center px-3 mt-2">
+        <ul className="pagination justify-content-center d-flex">
+          <li
+            className={`page-item ${
+              currentPage === 1 ? "disabled" : ""
+            }`}
+          >
             <button
               className="page-link"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1}
-              style={{ padding: "8px 12px", color: "#a78847" }}
             >
-              ««
+              First
             </button>
           </li>
-          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <li
+            className={`page-item ${
+              currentPage === 1 ? "disabled" : ""
+            }`}
+          >
             <button
               className="page-link"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              style={{ padding: "8px 12px", color: "#a78847" }}
             >
-              ‹
+              Prev
             </button>
           </li>
-
-          {pageNumbers.map((page) => (
+          {Array.from(
+            { length: totalPages },
+            (_, index) => index + 1
+          ).map((pageNumber) => (
             <li
-              key={page}
-              className={`page-item ${page === currentPage ? "active" : ""}`}
+              key={pageNumber}
+              className={`page-item ${
+                currentPage === pageNumber ? "active" : ""
+              }`}
             >
               <button
                 className="page-link"
-                onClick={() => onPageChange(page)}
-                style={{
-                  padding: "8px 12px",
-                  color: page === currentPage ? "#fff" : "#a78847",
-                  backgroundColor: page === currentPage ? "#a78847" : "#fff",
-                  border: "2px solid #a78847",
-                  borderRadius: "3px",
-                }}
+                onClick={() => onPageChange(pageNumber)}
               >
-                {page}
+                {pageNumber}
               </button>
             </li>
           ))}
-
           <li
-            className={`page-item ${currentPage === totalPages ? "disabled" : ""
-              }`}
+            className={`page-item ${
+              currentPage === totalPages ? "disabled" : ""
+            }`}
           >
             <button
               className="page-link"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              style={{ padding: "8px 12px", color: "#a78847" }}
             >
-              ›
+              Next
             </button>
           </li>
           <li
-            className={`page-item ${currentPage === totalPages ? "disabled" : ""
-              }`}
+            className={`page-item ${
+              currentPage === totalPages ? "disabled" : ""
+            }`}
           >
             <button
               className="page-link"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages}
-              style={{ padding: "8px 12px", color: "#a78847" }}
             >
-              »»
+              Last
             </button>
           </li>
         </ul>
         <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
           Showing {startEntry} to {endEntry} of {totalEntries} entries
         </p>
-      </nav>
+      </div>
     );
   };
 
@@ -332,7 +280,7 @@ const EncashList = () => {
             <span>Encash</span> &gt; Encash List
           </p> */}
           <div className="card mt-3 mx-3">
-            <div className="card-header">
+            <div className="card-header mb-0">
               <h3 className="card-title">Encash Requests</h3>
             </div>
             <div className="card-body">
