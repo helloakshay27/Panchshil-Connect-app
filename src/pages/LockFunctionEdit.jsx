@@ -168,9 +168,9 @@ const LockFunctionEdit = () => {
     } else if (value === "Service Category") {
       actionName = "service_category";
     } else if (value === "Image Config") {
-      actionName = "image_config";  
+      actionName = "image_config";
     } else if (value === "Bank Details") {
-      actionName = "bank_details";  
+      actionName = "bank_details";
     } else if (value === "Home Loan") {
       actionName = "home_loan";
     } else if (value === "Banks") {
@@ -179,6 +179,20 @@ const LockFunctionEdit = () => {
       actionName = "loan_manager";
     } else if (value === "Common Files") {
       actionName = "common_files";
+    } else if (value === "Demand Notes") {
+      actionName = "demand_notes";
+    } else if (value === "Orders") {
+      actionName = "orders";
+    } else if (value === "Encash") {
+      actionName = "encash";
+    } else if (value === "Lock Payments") {
+      actionName = "lock_payments";
+    } else if (value === "Loyalty Members") {
+      actionName = "loyalty_members";
+    } else if (value === "Loyalty Tiers") {
+      actionName = "loyalty_tiers";
+    } else if (value === "Loyalty Section") {
+      actionName = "loyalty_section";
     }
 
     setFormData({
@@ -250,8 +264,7 @@ const LockFunctionEdit = () => {
     } catch (error) {
       console.error("Error updating lock function:", error);
       toast.error(
-        `Error updating lock function: ${
-          error.response?.data?.message || error.message
+        `Error updating lock function: ${error.response?.data?.message || error.message
         }`
       );
     } finally {
@@ -306,12 +319,12 @@ const LockFunctionEdit = () => {
     { label: "SMTP Settings", value: "SMTP Settings" },
     { label: "FAQ Category", value: "FAQ Category" },
     { label: "FAQ SubCategory", value: "FAQ SubCategory" },
-     {
-                            label: "Service Category",
-                            value: "Service Category",
-                          },
-      { label: "Image Config", value: "Image Config" },
-       { label: "Bank Details", value: "Bank Details" },
+    {
+      label: "Service Category",
+      value: "Service Category",
+    },
+    { label: "Image Config", value: "Image Config" },
+    { label: "Bank Details", value: "Bank Details" },
     { label: "Home Loan", value: "Home Loan" },
     { label: "Banks", value: "Banks" },
     { label: "Loan Manager", value: "Loan Manager" },

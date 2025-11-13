@@ -109,59 +109,38 @@ const LoyaltyReferralList = () => {
             <div className="d-flex justify-content-between align-items-center">
           <div />
           <div className="d-flex align-items-center">
-            <div className="search-input-group me-3">
+            <div className="input-group me-3">
               <input
-                className="form-control"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
+                type="text"
+                className="form-control tbl-search table_search"
+                placeholder="Search by name or description"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
                   setPagination((prev) => ({ ...prev, current_page: 1 }));
                 }}
               />
-              <span className="search-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  className="bi bi-search"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                </svg>
-              </span>
-              {searchQuery && (
-                <button 
-                  className="clear-btn" 
-                  onClick={() => {
-                    setSearchQuery("");
-                    setPagination((prev) => ({ ...prev, current_page: 1 }));
-                  }} 
-                  aria-label="Clear search"
-                  type="button"
-                >
-                  ×
+              <div className="input-group-append">
+                <button type="button" className="btn btn-md btn-default">
+                  <svg
+                    width={16}
+                    height={16}
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"
+                      fill="#8B0203"
+                    />
+                    <path
+                      d="M14.6676 14.5644C14.5409 14.5644 14.4143 14.5206 14.3143 14.4269L12.9809 13.1769C12.7876 12.9956 12.7876 12.6956 12.9809 12.5144C13.1743 12.3331 13.4943 12.3331 13.6876 12.5144L15.0209 13.7644C15.2143 13.9456 15.2143 14.2456 15.0209 14.4269C14.9209 14.5206 14.7943 14.5644 14.6676 14.5644Z"
+                      fill="#8B0203"
+                    />
+                  </svg>
                 </button>
-              )}
+              </div>
             </div>
-            <button
-              className="purple-btn1 rounded-3 px-3"
-              onClick={() => {/* search is live, so just keep focus */}}
-            >
-              Go!
-            </button>
-            <button
-              className="purple-btn2 rounded-3 mt-2"
-              onClick={() => {
-                setSearchQuery("");
-                setPagination((prev) => ({ ...prev, current_page: 1 }));
-              }}
-            >
-              Reset
-            </button>
           </div>
         </div>
         <div
@@ -223,7 +202,7 @@ const LoyaltyReferralList = () => {
                         className="page-link"
                         onClick={() => handlePageChange(1)} // Jump to first page
                         disabled={pagination.current_page === 1}
-                        style={{ padding: "8px 12px", color: "#5e2750" }}
+                        style={{ padding: "8px 12px", color: "#a78847" }}
                       >
                         «« {/* Double left arrow for jumping to the first page */}
                       </button>
@@ -233,7 +212,7 @@ const LoyaltyReferralList = () => {
                         className="page-link"
                         onClick={() => handlePageChange(pagination.current_page - 1)}
                         disabled={pagination.current_page === 1}
-                        style={{ padding: "8px 12px", color: "#5e2750" }}
+                        style={{ padding: "8px 12px", color: "#a78847" }}
                       >
                         ‹
                       </button>
@@ -276,9 +255,9 @@ const LoyaltyReferralList = () => {
                             onClick={() => handlePageChange(page)}
                             style={{
                               padding: "8px 12px",
-                              color: page === pagination.current_page ? "#fff" : "#5e2750",
-                              backgroundColor: page === pagination.current_page ? "#5e2750" : "#fff",
-                              border: "2px solid #5e2750",
+                              color: page === pagination.current_page ? "#fff" : "#a78847",
+                              backgroundColor: page === pagination.current_page ? "#a78847" : "#fff",
+                              border: "2px solid #a78847",
                               borderRadius: "3px",
                             }}
                           >
@@ -293,7 +272,7 @@ const LoyaltyReferralList = () => {
                         className="page-link"
                         onClick={() => handlePageChange(pagination.current_page + 1)}
                         disabled={pagination.current_page === totalPages}
-                        style={{ padding: "8px 12px", color: "#5e2750" }}
+                        style={{ padding: "8px 12px", color: "#a78847" }}
                       >
                         ›
                       </button>
@@ -303,7 +282,7 @@ const LoyaltyReferralList = () => {
                         className="page-link"
                         onClick={() => handlePageChange(totalPages)} // Jump to last page
                         disabled={pagination.current_page === totalPages}
-                        style={{ padding: "8px 12px", color: "#5e2750" }}
+                        style={{ padding: "8px 12px", color: "#a78847" }}
                       >
                         »» {/* Double right arrow for jumping to the last page */}
                       </button>

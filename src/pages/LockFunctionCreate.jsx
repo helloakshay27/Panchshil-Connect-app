@@ -224,6 +224,20 @@ const LockFunctionCreate = () => {
       actionName = "loan_manager";
     } else if (value === "Common Files") {
       actionName = "common_files";
+    } else if (value === "Demand Notes") {
+      actionName = "demand_notes";  
+    } else if (value === "Orders") {
+      actionName = "orders";  
+    } else if (value === "Encash") {
+      actionName = "encash";  
+    } else if (value === "Lock Payments") {
+      actionName = "lock_payments";
+    } else if (value === "Loyalty Members") {
+      actionName = "loyalty_members";
+    } else if (value === "Loyalty Tiers") {
+      actionName = "loyalty_tiers";
+    } else if (value === "Loyalty Section") {
+      actionName = "loyalty_section";
     }
 
     setFormData({

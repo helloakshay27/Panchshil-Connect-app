@@ -113,30 +113,30 @@ const SetupSidebar = () => {
     setIsCommonFilesActive(CommonFilesPermission);
 
     // Loyalty section permission - show if any loyalty feature is accessible
-    const LoyaltySectionPermission = hasPermission("referral");
+    const LoyaltySectionPermission = hasPermission("loyalty_section");
     setShowLoyaltySection(LoyaltySectionPermission);
 
     // For loyalty features, using referral permission as base or setting to true
     // Update these permission keys based on your backend permission structure
-    const MembersPermission = hasPermission("referral"); // Using referral permission for now
+    const MembersPermission = hasPermission("loyalty_members"); // Using loyalty_members permission for now
     setMembersActive(MembersPermission);
 
-    const TiersPermission = hasPermission("referral"); // Using referral permission for now
+    const TiersPermission = hasPermission("loyalty_tiers"); // Using loyalty_tiers permission for now
     setTiersActive(TiersPermission);
 
-    const ReferralPermission = hasPermission("referral");
+    const ReferralPermission = hasPermission("referral_list");
     setReferralActive(ReferralPermission);
 
-    const LockPaymentsPermission = hasPermission("referral"); // Using referral permission for now
+    const LockPaymentsPermission = hasPermission("lock_payments"); // Using lock_payments permission for now
     setLockPaymentsActive(LockPaymentsPermission);
 
-    const DemandNotesPermission = hasPermission("referral"); // Using referral permission for now
+    const DemandNotesPermission = hasPermission("demand_notes"); // Using demand_notes permission for now
     setDemandNotesActive(DemandNotesPermission);
 
-    const OrdersPermission = hasPermission("referral"); // Using referral permission for now
+    const OrdersPermission = hasPermission("orders"); // Using orders permission for now
     setOrdersActive(OrdersPermission);
 
-    const EncashPermission = hasPermission("referral"); // Using referral permission for now
+    const EncashPermission = hasPermission("encash"); // Using encash permission for now
     setEncashActive(EncashPermission);
 
   }, []);
@@ -1178,38 +1178,235 @@ const SetupSidebar = () => {
 
                   <ul className="p-0 collapse" id="loyaltyCollapse">
                     {membersActive && (
-                      <li className="nav-item">
-                        <NavLink to="/setup-member/loyalty-members" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Members</span> </NavLink>
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/loyalty-members"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            version="1.0"
+                            width="72.000000pt"
+                            height="72.000000pt"
+                            viewBox="0 0 72.000000 72.000000"
+                            preserveAspectRatio="xMidYMid meet"
+                            fill="#de7008"
+                          >
+                            <metadata>
+                              Created by potrace 1.10, written by Peter Selinger
+                              2001-2011
+                            </metadata>
+                            <g
+                              transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                              fill="#de7008"
+                              stroke="none"
+                            >
+                              <path d="M293 639 c-46 -22 -83 -82 -83 -133 0 -69 79 -146 150 -146 73 0 150 76 150 146 0 51 -38 111 -84 133 -53 26 -80 26 -133 0z m112 -23 c78 -33 97 -133 36 -188 -54 -48 -104 -49 -160 -2 -59 49 -48 141 21 184 39 24 57 25 103 6z" />
+                              <path d="M174 280 c-74 -37 -111 -153 -64 -200 19 -19 33 -20 254 -20 231 0 235 0 250 22 39 56 2 164 -68 197 -37 18 -61 21 -187 21 -124 0 -150 -3 -185 -20z m357 -25 c55 -29 89 -121 57 -153 -17 -17 -439 -17 -456 0 -16 16 -15 66 1 98 7 13 28 35 46 47 31 21 45 23 178 23 110 0 151 -4 174 -15z" />
+                            </g>
+                          </svg>
+                          <span className="menu-link-text">Members</span>
+                        </NavLink>
                       </li>
                     )}
                     {tiersActive && (
-                      <li className="nav-item">
-                        <NavLink to="/setup-member/tiers" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Tiers</span> </NavLink>
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/tiers"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            version="1.0"
+                            width="72.000000pt"
+                            height="72.000000pt"
+                            viewBox="0 0 72.000000 72.000000"
+                            preserveAspectRatio="xMidYMid meet"
+                          >
+                            <metadata>
+                              Created by potrace 1.10, written by Peter Selinger
+                              2001-2011
+                            </metadata>
+                            <g
+                              transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                              fill="#000000"
+                              stroke="none"
+                            >
+                              <path d="M140 640 c-19 -19 -20 -33 -20 -300 l0 -280 45 0 45 0 0 58 c0 32 5 63 12 70 17 17 259 17 276 0 7 -7 12 -38 12 -71 l0 -58 43 3 42 3 3 159 c3 191 -2 206 -73 206 l-45 0 0 95 c0 135 0 135 -180 135 -127 0 -142 -2 -160 -20z" />
+                              <path d="M250 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
+                              <path d="M380 110 l0 -50 45 0 45 0 0 50 0 50 -45 0 -45 0 0 -50z" />
+                            </g>
+                          </svg>
+                          <span className="menu-link-text">Tiers</span>
+                        </NavLink>
                       </li>
                     )}
                     {referralActive && (
-                      <li className="nav-item">
-                        <NavLink to="/setup-member/referral-list" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Referral</span> </NavLink>
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/referral-list"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M16 4C18.2091 4 20 5.79086 20 8C20 10.2091 18.2091 12 16 12C13.7909 12 12 10.2091 12 8C12 5.79086 13.7909 4 16 4Z"
+                              fill="#000000"
+                            />
+                            <path
+                              d="M8 6C9.65685 6 11 7.34315 11 9C11 10.6569 9.65685 12 8 12C6.34315 12 5 10.6569 5 9C5 7.34315 6.34315 6 8 6Z"
+                              fill="#000000"
+                            />
+                            <path
+                              d="M22 20C22 16.6863 19.3137 14 16 14C12.6863 14 10 16.6863 10 20V21H22V20Z"
+                              fill="#000000"
+                            />
+                            <path
+                              d="M2 18C2 15.7909 3.79086 14 6 14H10C10.3506 14 10.6872 14.0602 11 14.1707C9.83481 15.4045 9 17.0827 9 19V21H2V18Z"
+                              fill="#000000"
+                            />
+                          </svg>
+                          <span className="menu-link-text">Referral</span>
+                        </NavLink>
                       </li>
                     )}
                     {lockPaymentsActive && (
-                      <li className="nav-item">
-                        <NavLink to="/setup-member/lock-payments" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Lock Payments</span> </NavLink>
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/lock-payments"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            version="1.0"
+                            width="72.000000pt"
+                            height="72.000000pt"
+                            viewBox="0 0 72.000000 72.000000"
+                            preserveAspectRatio="xMidYMid meet"
+                          >
+                            <metadata>
+                              Created by potrace 1.10, written by Peter Selinger
+                              2001-2011
+                            </metadata>
+                            <g
+                              transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                              fill="#000000"
+                              stroke="none"
+                            >
+                              <path d="M293 639 c-50 -25 -83 -83 -83 -147 0 -40 -2 -42 -29 -42 -62 0 -61 3 -61 -172 l0 -160 29 -29 29 -29 182 0 182 0 29 29 30 30 -3 163 -3 163 -42 3 -43 3 0 41 c0 60 -32 120 -79 146 -48 27 -84 28 -138 1z m128 -68 c24 -24 29 -38 29 -75 l0 -46 -90 0 -90 0 0 46 c0 57 40 104 90 104 22 0 41 -9 61 -29z m-157 -136 c27 -21 164 -20 193 0 19 13 25 13 50 1 15 -8 36 -17 46 -20 15 -5 17 -20 17 -139 0 -121 -2 -137 -21 -161 l-20 -26 -163 0 c-151 0 -165 2 -190 21 l-27 21 3 141 3 142 27 3 c14 2 32 10 38 18 15 17 20 17 44 -1z" />
+                              <path d="M389 301 c-16 -16 -29 -37 -29 -46 0 -21 54 -75 75 -75 9 0 30 13 46 29 16 16 29 37 29 46 0 9 -13 30 -29 46 -16 16 -37 29 -46 29 -9 0 -30 -13 -46 -29z m79 -13 c28 -28 7 -78 -33 -78 -27 0 -45 18 -45 45 0 27 18 45 45 45 12 0 26 -5 33 -12z" />
+                            </g>
+                          </svg>
+                          <span className="menu-link-text">Lock Payments</span>
+                        </NavLink>
                       </li>
                     )}
                     {demandNotesActive && (
-                      <li className="nav-item">
-                        <NavLink to="/setup-member/demand-notes" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Demand Notes</span> </NavLink>
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/demand-notes"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z"
+                              fill="#000000"
+                            />
+                            <path
+                              d="M8 15H16V17H8V15Z"
+                              fill="#000000"
+                            />
+                            <path
+                              d="M8 11H16V13H8V11Z"
+                              fill="#000000"
+                            />
+                          </svg>
+                          <span className="menu-link-text">Demand Notes</span>
+                        </NavLink>
                       </li>
                     )}
                     {ordersActive && (
-                      <li className="nav-item">
-                        <NavLink to="/setup-member/orders" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Orders</span> </NavLink>
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/orders"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"
+                              fill="#000000"
+                            />
+                            <path
+                              d="M9 8H11V17H9V8Z"
+                              fill="#000000"
+                            />
+                            <path
+                              d="M13 8H15V17H13V8Z"
+                              fill="#000000"
+                            />
+                          </svg>
+                          <span className="menu-link-text">Orders</span>
+                        </NavLink>
                       </li>
                     )}
                     {encashActive && (
-                      <li className="nav-item">
-                        <NavLink to="/setup-member/encash-list" className={({ isActive }) => `nav-link d-flex justify-content-between${isActive ? ' active' : ''}`}> <span className="text">Encash</span> </NavLink>
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/encash-list"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M11.8 10.9C9.53 10.31 8.8 9.7 8.8 8.75C8.8 7.66 9.81 6.9 11.5 6.9C13.28 6.9 13.94 7.75 14 9H16.21C16.14 7.28 15.09 5.7 13 5.19V3H10V5.16C8.06 5.58 6.5 6.84 6.5 8.77C6.5 11.08 8.41 12.23 11.2 12.9C13.7 13.5 14.2 14.38 14.2 15.31C14.2 16 13.71 17.1 11.5 17.1C9.44 17.1 8.63 16.18 8.5 15H6.32C6.44 17.19 8.08 18.42 10 18.83V21H13V18.85C14.95 18.5 16.5 17.35 16.5 15.3C16.5 12.46 14.07 11.5 11.8 10.9Z"
+                              fill="#000000"
+                            />
+                          </svg>
+                          <span className="menu-link-text">Encash</span>
+                        </NavLink>
                       </li>
                     )}
                   </ul>

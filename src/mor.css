@@ -325,7 +325,7 @@ h5 {
 }
 
 .left-1 ul {
-  border-right: 1px solid var(--red);
+  /* border-right: 1px solid var(--red); */
 }
 
 .left-1 ul,
@@ -4156,7 +4156,7 @@ ul#pills-tab {
 
 .card-header {
   background-color: transparent;
-  border-bottom: unset;
+  border-bottom: unset !important;
   padding: 1rem 1.25rem;
   position: relative;
   border-top-left-radius: 0.25rem;
