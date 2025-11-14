@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 // import "../styles/style.css";
-import { Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -348,7 +347,7 @@ const Tiers = () => {
                           <td>{tier.welcome_bonus} Points</td>
                           <td>
                             <button
-                              className="action-btn"
+                              className="purple-btn1 rounded-1"
                               onClick={() => handleEditClick(tier)}
                               title="Edit Tier"
                             >
@@ -370,7 +369,7 @@ const Tiers = () => {
                           </td>
                           <td>
                             <button
-                              className="action-btn"
+                              className="purple-btn2 rounded-1"
                               onClick={() =>
                                 navigate(`/setup-member/tier-details/${tier.id}`)
                               }
@@ -413,11 +412,27 @@ const Tiers = () => {
               </>
             )}
 
-            <Modal show={showModal} onHide={handleCloseModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>Edit Tier</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
+            {/* Bootstrap Modal */}
+            <div 
+              className={`modal fade ${showModal ? 'show' : ''}`} 
+              style={{ display: showModal ? 'block' : 'none' }}
+              tabIndex="-1" 
+              role="dialog"
+              aria-labelledby="editTierModalLabel"
+              aria-hidden={!showModal}
+            >
+              <div className="modal-dialog" role="document">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="editTierModalLabel">Edit Tier</h5>
+                    <button 
+                      type="button" 
+                      className="btn-close" 
+                      onClick={handleCloseModal}
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div className="modal-body">
                 {selectedTier && (
                   <Formik
                     initialValues={{
@@ -587,8 +602,18 @@ const Tiers = () => {
                     )}
                   </Formik>
                 )}
-              </Modal.Body>
-            </Modal>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Modal backdrop */}
+            {showModal && (
+              <div 
+                className="modal-backdrop fade show" 
+                onClick={handleCloseModal}
+              ></div>
+            )}
             </div>
           </div>
           </div>
