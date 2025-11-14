@@ -349,9 +349,9 @@ const handleCropComplete = (validImages) => {
       }
     });
 
-    // ✅ Use actual URL if you have one
-    if (videoUrl) {
-      form.append("testimonial[video_preview_image_url]", videoUrl.trim());
+    // ✅ Append video URL if provided
+    if (videoUrl && videoUrl.trim()) {
+      form.append("testimonial[video_url]", videoUrl.trim());
     }
 
     console.log("data to be sent:", Array.from(form.entries()));
@@ -446,6 +446,20 @@ const handleCropComplete = (validImages) => {
                         placeholder="Enter Description"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Video URL</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="videoUrl"
+                        placeholder="Enter video URL"
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
                       />
                     </div>
                   </div>
