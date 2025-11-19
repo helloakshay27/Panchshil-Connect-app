@@ -266,7 +266,7 @@ const SetupSidebar = () => {
                       </g>
                     </svg>
 
-                    <span className="menu-link-text">Loyality Managers</span>
+                    <span className="menu-link-text">Loyalty Managers</span>
                   </NavLink>
                 </li>
                 )}
