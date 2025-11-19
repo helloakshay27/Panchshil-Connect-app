@@ -239,6 +239,8 @@ const LockFunctionCreate = () => {
       actionName = "loyalty_section";
     } else if (value === "Referral List") {
       actionName = "referral_list";
+    } else if (value === "Loyalty Manager" || value === "Loyalty Managers") {
+      actionName = "loyalty_manager";
     }
 
     setFormData({
@@ -334,6 +336,7 @@ const LockFunctionCreate = () => {
                           { label: "Loyalty Tiers", value: "Loyalty Tiers" },
                           { label: "Loyalty Section", value: "Loyalty Section" },
                           { label: "Referral List", value: "Referral List" },
+                          { label: "Loyalty Managers", value: "Loyalty Managers"}
                           // Add more if needed
                         ]}
                         Value={formData.name}

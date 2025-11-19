@@ -152,6 +152,9 @@ import LoanManagerEdit from "./pages/loan-manager-edit";
 import CommonFileUpload from "./pages/common-files";
 import Members from "./pages/members";
 import NewTier from "./pages/new-tier";
+import LoyaltyManager from "./pages/loyalty-managers-creatse";
+import LoyaltyManagerEdit from "./pages/loyalty-managers-edit";
+import LoyaltyManagerList from "./pages/loyalty-managers-list";
 // import SystemConstantsList from "./pages/system-constpage";
 // import SystemConstantsCreate from "./pages/system-constants-create";
 // import SystemConstantsEdit from "./pages/system-constants-edit";
@@ -304,6 +307,10 @@ function App() {
             path="/setup-member/construction-status-list"
             element={<ConstructionStatusList />}
           />
+
+          <Route path="/setup-member/loyalty-managers-create" element={<LoyaltyManager />} />
+          <Route path="/setup-member/loyalty-managers-edit/:id" element={<LoyaltyManagerEdit />} />
+          <Route path="/setup-member/loyalty-managers-list" element={<LoyaltyManagerList />}/>
 
           <Route path="/project-list" element={<ProjectDetailsList />} />
           <Route path="/banner-list" element={<BannerList />} />
