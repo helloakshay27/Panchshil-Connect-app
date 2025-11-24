@@ -163,7 +163,7 @@ const TdsTutorialList = () => {
               <input
                 type="text"
                 className="form-control tbl-search table_search"
-                placeholder="Search by name or descriptionljk kn"
+                placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
