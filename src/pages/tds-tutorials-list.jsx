@@ -134,7 +134,7 @@ const TdsTutorialList = () => {
 
 
 
-  
+
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this tutorial?")) {
@@ -155,6 +155,10 @@ const TdsTutorialList = () => {
       toast.error("Failed to delete tutorial.");
     }
   };
+
+
+
+  
 
   return (
     <div className="main-content">
