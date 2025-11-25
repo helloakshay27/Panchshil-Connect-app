@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 // import SubHeader from "../components/SubHeader";
 import axios from "axios";
 import { baseURL } from "../pages/baseurl/apiDomain";
@@ -61,19 +61,28 @@ export default function TierDetails() {
     <div className="w-100">
       {/* <SubHeader /> */}
       <div className="module-data-section mt-2 mb-6 p-4">
-        {/* <p className="pointer">
-          <span>Tiers</span> &gt; Tier Details
-        </p> */}
+        {/* Add proper breadcrumb navigation */}
+        <p className="pointer mb-3">
+          <Link
+            to="/setup-member/tiers"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <span> Tiers  </span>
+          </Link>
+          &gt; <span> Tier Details</span>
+        </p>
 
         <div className="card mt-3">
           <div className="card-header">
             <h3 className="card-title">Tier Details</h3>
           </div>
           <div className="card-body p-4">
-
             {/* personal details */}
             {loading ? (
-              <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ minHeight: "200px" }}
+              >
                 <div className="spinner-border text-primary" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </div>
@@ -87,57 +96,73 @@ export default function TierDetails() {
               <>
                 <div className="row">
                   <div className="col-12">
-                    <div className="card border-0 shadow-sm mb-4">
-                      <div className="card-header" style={{ background: "linear-gradient(135deg, var(--red, #de7008) 0%, var(--lightred, #de7008) 100%)", color: "white" }}>
-                        <h5 className="mb-0 fw-bold">
-                          <i className="fas fa-layer-group me-2"></i>
-                          TIER DETAILS
-                        </h5>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <div className="d-flex align-items-center p-3 bg-light rounded-3">
+                          <div className="flex-grow-1">
+                            <label className="form-label text-muted mb-1">
+                              Tier Name
+                            </label>
+                            <div className="fw-bold text-dark">
+                              {tierDetails?.display_name || "N/A"}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="card-body p-4">
-                        <div className="row g-3">
-                          <div className="col-md-6">
-                            <div className="d-flex align-items-center p-3 bg-light rounded-3">
-                              <div className="flex-grow-1">
-                                <label className="form-label text-muted mb-1">Tier Name</label>
-                                <div className="fw-bold text-dark">{tierDetails?.display_name || 'N/A'}</div>
-                              </div>
+                      <div className="col-md-6">
+                        <div className="d-flex align-items-center p-3 bg-light rounded">
+                          <div className="flex-grow-1">
+                            <label className="form-label text-muted mb-1">
+                              Exit Points
+                            </label>
+                            <div className="fw-bold text-dark">
+                              {tierDetails?.exit_points || "N/A"}
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="d-flex align-items-center p-3 bg-light rounded">
-                              <div className="flex-grow-1">
-                                <label className="form-label text-muted mb-1">Exit Points</label>
-                                <div className="fw-bold text-dark">{tierDetails?.exit_points || 'N/A'}</div>
-                              </div>
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="d-flex align-items-center p-3 bg-light rounded">
+                          <div className="flex-grow-1">
+                            <label className="form-label text-muted mb-1">
+                              Multipliers
+                            </label>
+                            <div className="fw-bold text-dark">
+                              {tierDetails?.multipliers || "N/A"}x
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="d-flex align-items-center p-3 bg-light rounded">
-                              <div className="flex-grow-1">
-                                <label className="form-label text-muted mb-1">Multipliers</label>
-                                <div className="fw-bold text-dark">{tierDetails?.multipliers || 'N/A'}x</div>
-                              </div>
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="d-flex align-items-center p-3 bg-light rounded">
+                          <div className="flex-grow-1">
+                            <label className="form-label text-muted mb-1">
+                              Welcome Bonus
+                            </label>
+                            <div className="fw-bold text-dark">
+                              {tierDetails?.welcome_bonus || "N/A"} Points
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="d-flex align-items-center p-3 bg-light rounded">
-                              <div className="flex-grow-1">
-                                <label className="form-label text-muted mb-1">Welcome Bonus</label>
-                                <div className="fw-bold text-dark">{tierDetails?.welcome_bonus || 'N/A'} Points</div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-md-6">
-                            <div className="d-flex align-items-center p-3 bg-light rounded">
-                              <div className="flex-grow-1">
-                                <label className="form-label text-muted mb-1">Point Type</label>
-                                <div className="fw-bold text-dark">
-                                  <span className={`badge ${tierDetails?.point_type === 'lifetime' ? 'bg-success' : 'bg-primary'}`}>
-                                    {tierDetails?.point_type === 'lifetime' ? 'Lifetime' : 'Rolling Year'}
-                                  </span>
-                                </div>
-                              </div>
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="d-flex align-items-center p-3 bg-light rounded">
+                          <div className="flex-grow-1">
+                            <label className="form-label text-muted mb-1">
+                              Point Type
+                            </label>
+                            <div className="fw-bold text-dark">
+                              <span
+                                className={`badge ${
+                                  tierDetails?.point_type === "lifetime"
+                                    ? "bg-success"
+                                    : "bg-primary"
+                                }`}
+                              >
+                                {tierDetails?.point_type === "lifetime"
+                                  ? "Lifetime"
+                                  : "Rolling Year"}
+                              </span>
                             </div>
                           </div>
                         </div>

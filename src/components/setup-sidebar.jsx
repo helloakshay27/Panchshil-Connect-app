@@ -33,6 +33,7 @@ const SetupSidebar = () => {
   const [loyaltyCollapsed, setLoyaltyCollapsed] = useState(false);
   const [membersActive, setMembersActive] = useState(false);
   const [tiersActive, setTiersActive] = useState(false);
+  const [ruleEngineActive, setRuleEngineActive] = useState(false);
   const [referralActive, setReferralActive] = useState(false);
   const [lockPaymentsActive, setLockPaymentsActive] = useState(false);
   const [demandNotesActive, setDemandNotesActive] = useState(false);
@@ -124,6 +125,9 @@ const SetupSidebar = () => {
 
     const TiersPermission = hasPermission("loyalty_tiers"); // Using loyalty_tiers permission for now
     setTiersActive(TiersPermission);
+
+    const RuleEnginePermission = hasPermission("rule_engine"); // Using rule_engine permission for now
+    setRuleEngineActive(RuleEnginePermission);
 
     const ReferralPermission = hasPermission("referral_list");
     setReferralActive(ReferralPermission);
@@ -1286,6 +1290,42 @@ const SetupSidebar = () => {
                             </g>
                           </svg>
                           <span className="menu-link-text">Tiers</span>
+                        </NavLink>
+                      </li>
+                    )}
+                    {ruleEngineActive && (
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/rule-engine"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            version="1.0"
+                            width="72.000000pt"
+                            height="72.000000pt"
+                            viewBox="0 0 72.000000 72.000000"
+                            preserveAspectRatio="xMidYMid meet"
+                          >
+                            <metadata>
+                              Created by potrace 1.10, written by Peter Selinger
+                              2001-2011
+                            </metadata>
+                            <g
+                              transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                              fill="#000000"
+                              stroke="none"
+                              
+                            >
+                              <path d="M120 640 c-22 -22 -20 -33 -20 -300 l0 -280 45 0 45 0 0 58 c0 32 5 63 12 70 17 17 259 17 276 0 7 -7 12 -38 12 -71 l0 -58 43 3 42 3 3 159 c3 191 -2 206 -73 206 l-45 0 0 95 c0 135 0 135 -180 135 -127 0 -142 -2 -160 -20z" />
+                              <path d="M300 400 l0 -120 120 0 120 0 0 120 0 120 -120 0 -120 0 0 -120z" />
+                              <path d="M340 360 l0 -40 40 0 40 0 0 40 0 40 -40 0 -40 0 0 -40z" />
+                            </g>
+                          </svg>
+                          <span className="menu-link-text">Rule Engine</span>
                         </NavLink>
                       </li>
                     )}

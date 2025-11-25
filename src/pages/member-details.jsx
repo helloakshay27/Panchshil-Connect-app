@@ -1,12 +1,4 @@
 import React, { useState, useEffect } from "react";
-// @ts-ignore
-import Header from "../components/Header";
-// @ts-ignore
-import Sidebar from "../components/Sidebar";
-// @ts-ignore
-import Footer from "../components/Footer";
-import "../styles/style.css";
-import SubHeader from "../components/SubHeader";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import {baseURL} from '../pages/baseurl/apiDomain';
@@ -90,10 +82,18 @@ const MemberDetails = () => {
     <>
       <div className="w-100">
         {/* <SubHeader /> */}
-        <div className="module-data-section mt-2 mb-2">
-          <p className="pointer flex items-center">
-            <Link to="/members">
+        <div className="module-data-section mt-2 mb-5">
+          <p className="pointer flex items-center mx-3 mb-2">
+            <Link to="/setup-member/loyalty-members">
+              <span>Home</span>
+            </Link>
+            <span className="mx-2" style={{ color: "#667080" }}>{'>'}</span>
+            <Link to="/setup-member/loyalty-members">
               <span>Members</span>
+            </Link>
+            <span className="mx-2" style={{ color: "#667080" }}>{'>'}</span>
+            <Link to="/setup-member/loyalty-members">
+              <span>Loyalty Members</span>
             </Link>
             <span className="mx-2" style={{ color: "#667080" }}>{'>'}</span>
             <span>Member Details</span>
@@ -110,7 +110,7 @@ const MemberDetails = () => {
             <>
               <div
                 // @ts-ignore
-                class="go-shadow mx-3 no-top-left-shadow "
+                class="go-shadow mx-3 no-top-left-shadow mb-4"
               >
                 <h5
                   // @ts-ignore
@@ -490,41 +490,130 @@ const MemberDetails = () => {
 
               <div>
                 <h5 className="m-3 title ps-2">TRANSACTION STATUS</h5>
-                <div className="tbl-container mx-5 ">
-                  <table className="w-100 border border-gray-300">
-                    <thead className="bg-gray-100">
+                <div className="tbl-container mx-3 mb-5" style={{ width: "calc(100% - 2rem)" }}>
+                  <table className="w-100" style={{ 
+                    borderCollapse: "collapse",
+                    border: "1px solid #dee2e6",
+                    fontSize: "14px"
+                  
+                  }}>
+                    <thead style={{ backgroundColor: "#B8860B" }}>
                       <tr>
-                        <th className="text-center py-2 px-3 border">Date</th>
-                        <th className="text-center py-2 px-3 border">Transaction Type</th>
-                        <th className="text-center py-2 px-3 border">Balanced Points</th>
-                        <th className="text-center py-2 px-3 border">Earned Points</th>
-                        <th className="text-center py-2 px-3 border">Redeem Points</th>
-
+                        <th style={{ 
+                          textAlign: "center", 
+                          padding: "12px 8px", 
+                          border: "1px solid #dee2e6",
+                          color: "white",
+                          fontWeight: "600",
+                          width: "20%"
+                        }}>
+                          Date
+                        </th>
+                        <th style={{ 
+                          textAlign: "center", 
+                          padding: "12px 8px", 
+                          border: "1px solid #dee2e6",
+                          color: "white",
+                          fontWeight: "600",
+                          width: "20%"
+                        }}>
+                          Transaction Type
+                        </th>
+                        <th style={{ 
+                          textAlign: "center", 
+                          padding: "12px 8px", 
+                          border: "1px solid #dee2e6",
+                          color: "white",
+                          fontWeight: "600",
+                          width: "20%"
+                        }}>
+                          Balanced Points
+                        </th>
+                        <th style={{ 
+                          textAlign: "center", 
+                          padding: "12px 8px", 
+                          border: "1px solid #dee2e6",
+                          color: "white",
+                          fontWeight: "600",
+                          width: "20%"
+                        }}>
+                          Earned Points
+                        </th>
+                        <th style={{ 
+                          textAlign: "center", 
+                          padding: "12px 8px", 
+                          border: "1px solid #dee2e6",
+                          color: "white",
+                          fontWeight: "600",
+                          width: "20%"
+                        }}>
+                          Redeem Points
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {transactionData?.member_transactions?.map((item, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="override-center py-2 px-3 border">
-                            {new Date(item.created_at).toLocaleDateString()}
+                      {transactionData?.member_transactions?.length > 0 ? 
+                        transactionData.member_transactions.map((item, index) => (
+                        <tr key={index} style={{ 
+                          backgroundColor: index % 2 === 0 ? "#f8f9fa" : "white",
+                          "&:hover": { backgroundColor: "#e9ecef" }
+                        }}>
+                          <td style={{ 
+                            textAlign: "center", 
+                            padding: "12px 8px", 
+                            border: "1px solid #dee2e6",
+                            width: "20%"
+                          }}>
+                            {new Date(item.created_at).toLocaleDateString('en-GB')}
                           </td>
-                          <td className="override-center py-2 px-3 border capitalize">
+                          <td style={{ 
+                            textAlign: "center", 
+                            padding: "12px 8px", 
+                            border: "1px solid #dee2e6",
+                            textTransform: "capitalize",
+                            width: "20%"
+                          }}>
                             {item.transaction_type}
                           </td>
-                          <td className="override-center py-2 px-3 border">
-                            {item.balanced_points}
+                          <td style={{ 
+                            textAlign: "center", 
+                            padding: "12px 8px", 
+                            border: "1px solid #dee2e6",
+                            width: "20%"
+                          }}>
+                            {item.balanced_points || "-"}
                           </td>
-                          <td className="override-center py-2 px-3 border">
+                          <td style={{ 
+                            textAlign: "center", 
+                            padding: "12px 8px", 
+                            border: "1px solid #dee2e6",
+                            width: "20%"
+                          }}>
                             {item.earned_points || "-"}
                           </td>
-                          <td className="override-center py-2 px-3 border">
+                          <td style={{ 
+                            textAlign: "center", 
+                            padding: "12px 8px", 
+                            border: "1px solid #dee2e6",
+                            width: "20%"
+                          }}>
                             {item.redeem || "-"}
                           </td>
                         </tr>
-                      ))}
+                      )) : (
+                        <tr>
+                          <td colSpan="5" style={{ 
+                            textAlign: "center", 
+                            padding: "20px", 
+                            border: "1px solid #dee2e6",
+                            color: "#6c757d",
+                            fontStyle: "italic"
+                          }}>
+                            No transaction data available
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
-
-
                   </table>
                 </div>
               </div>

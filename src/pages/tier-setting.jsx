@@ -7,14 +7,30 @@ import { Link } from "react-router-dom";
 import SubHeader from "../components/SubHeader";
 
 const TierSetting = () => {
+  const [selectedTimeframe, setSelectedTimeframe] = useState("");
+  const [error, setError] = useState("");
+
+  const handleNext = () => {
+    if (!selectedTimeframe) {
+      setError("Please select a timeframe option before proceeding.");
+      return;
+    }
+
+    // Store the selected timeframe in sessionStorage or pass it to the next component
+    sessionStorage.setItem("selectedTimeframe", selectedTimeframe);
+    window.location.href = "/setup-member/new-tier";
+  };
+
   return (
     <>
       <div className="w-100">
         {/* <SubHeader /> */}
         <div className="module-data-section mt-2 flex-grow-1">
-          {/* <p className="pointer">
-            <span className="text-secondary">Tiers</span> &gt; Tier Setting
-          </p> */}
+          {/* Add breadcrumb navigation */}
+          <p className="pointer mb-3">
+            <span>Home</span> &gt; <span>Tiers</span> &gt;{" "}
+            <span>Tier Setting</span>
+          </p>
 
           {/* Tier setting */}
           <div className="mx-3 border-bottom">
@@ -29,20 +45,37 @@ const TierSetting = () => {
               and time frame.
             </p>
           </div>
-          <RoundRadioButtonCard />
+          <RoundRadioButtonCard
+            onSelectionChange={setSelectedTimeframe}
+            error={error}
+          />
         </div>
 
         <div className="row mt-2 justify-content-center">
           <div className="col-md-2">
-            <Link to="/new-tier">
-              <button class="purple-btn1 w-100" fdprocessedid="u33pye">
-                Next
-              </button>
-            </Link>
+            <button
+              className="purple-btn1 w-100"
+              onClick={handleNext}
+              style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                minHeight: "40px",
+              }}
+            >
+              Next
+            </button>
           </div>
 
           <div className="col-md-2">
-            <button className="purple-btn2 w-100" fdprocessedid="af5l5g">
+            <button
+              className="purple-btn2 w-100"
+              onClick={() => window.history.back()}
+              style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                minHeight: "40px",
+              }}
+            >
               Cancel
             </button>
           </div>
@@ -52,7 +85,7 @@ const TierSetting = () => {
   );
 };
 
-const RoundRadioButtonCard = () => {
+const RoundRadioButtonCard = ({ onSelectionChange, error }) => {
   const [selected, setSelected] = useState(null);
 
   // Define options with descriptions
@@ -72,10 +105,17 @@ const RoundRadioButtonCard = () => {
 
   const handleClick = (value) => {
     setSelected(value);
+    onSelectionChange(value === "option1" ? "lifetime" : "yearly");
   };
 
   return (
     <div className="container">
+      {error && (
+        <div className="alert alert-danger mx-4" role="alert">
+          {error}
+        </div>
+      )}
+
       {options.map((option) => (
         <div className="card m-4 tier-setting-card" key={option.value}>
           <div className="card-body">

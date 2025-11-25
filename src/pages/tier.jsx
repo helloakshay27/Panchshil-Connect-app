@@ -32,7 +32,7 @@ const Tiers = () => {
   const [selectedTier, setSelectedTier] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5; // Reduced from 10 to 5 to test pagination better
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState([]); //filter
@@ -137,40 +137,45 @@ const Tiers = () => {
     setSuggestions([]);
   };
 
-  // Handle search input change
+  // Handle search input change with real-time filtering
   const handleSearchInputChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
 
-    if (term) {
-      const filteredSuggestions = tiers.filter((member) => {
+    if (term.trim()) {
+      const filtered = tiers.filter((tier) => {
         const q = term.toLowerCase();
-        const multipliersStr =
-          member.multipliers !== undefined && member.multipliers !== null
-            ? String(member.multipliers) + "x"
-            : "";
+        const multipliersStr = tier.multipliers !== undefined && tier.multipliers !== null
+          ? String(tier.multipliers) + "x"
+          : "";
+        
         return [
-          member.name,
-          member.exit_points,
+          tier.name,
+          tier.exit_points,
           multipliersStr,
-          member.multipliers,
-          member.welcome_bonus,
-          member.point_type,
+          tier.multipliers,
+          tier.welcome_bonus,
+          tier.point_type,
         ]
           .map((v) => (v !== null && v !== undefined ? String(v).toLowerCase() : ""))
           .some((v) => v.includes(q));
       });
-      setSuggestions(filteredSuggestions);
+      
+      setFilteredItems(filtered);
+      setSuggestions(filtered.slice(0, 10));
+      setCurrentPage(1);
     } else {
+      setFilteredItems(tiers);
       setSuggestions([]);
+      setCurrentPage(1);
     }
   };
 
-  const handleSuggestionClick = (member) => {
-    setSearchTerm(`${member.name}`);
-    setSuggestions([]); // Clear suggestions after selection
-    // @ts-ignore
-    setFilteredItems([member]); // Optionally, filter to show the selected member
+  const handleSuggestionClick = (tier) => {
+    setSearchTerm(tier.name);
+    setSuggestions([]);
+    setFilteredItems([tier]);
+    setCurrentPage(1);
   };
 
   const handleReset = () => {
@@ -202,10 +207,11 @@ const Tiers = () => {
               <h3 className="card-title">Tiers List</h3>
             </div>
             <div className="card-body">
-              {/* <p className="pointer">
-                <span style={{ fontSize: "16px !important" }}>Tiers</span> &gt; Tier
-                List
+              {/* Add breadcrumb navigation */}
+              {/* <p className="pointer mb-3">
+                <span>Home</span> &gt; <span>Tiers</span> &gt; <span>Tier List</span>
               </p> */}
+              
               <div className="loyalty-header">
                 <div className="d-flex justify-content-between align-items-center">
                   <Link to="/setup-member/new-tier">
@@ -231,15 +237,21 @@ const Tiers = () => {
                   <input
                     type="text"
                     className="form-control tbl-search table_search"
-                    placeholder="Search by name or description"
+                    placeholder="Search by Tier name"
                     value={searchTerm}
-                    onChange={(e) => {
-                      handleSearchInputChange(e);
-                      handleSearch();
+                    onChange={handleSearchInputChange}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch();
+                      }
                     }}
                   />
                   <div className="input-group-append">
-                    <button type="button" className="btn btn-md btn-default">
+                    <button 
+                      type="button" 
+                      className="btn btn-md btn-default"
+                      onClick={handleSearch}
+                    >
                       <svg
                         width={16}
                         height={16}
@@ -296,7 +308,7 @@ const Tiers = () => {
             </div>
 
             <div
-              className="d-flex justify-content-start gap-3 mt-2 mx-3 mt-4"
+              className="d-flex justify-content-start gap-3 mt-2 mt-4"
               style={{ color: "#fff", flexWrap: "nowrap" }}
             >
               <div
@@ -327,88 +339,221 @@ const Tiers = () => {
             {!loading && !error && (
               <>
                 <div className="tbl-container mt-4" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-                  <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                    <thead>
-                      <tr>
-                        <th>Tier Name</th>
-                        <th>Exit Points</th>
-                        <th>Multipliers</th>
-                        <th>Welcome Bonus</th>
-                        <th>Edit</th>
-                        <th>View</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentItems.map((tier) => (
-                        <tr key={tier.id}>
-                          <td>{tier.name}</td>
-                          <td>{tier.exit_points}</td>
-                          <td>{tier.multipliers}x</td>
-                          <td>{tier.welcome_bonus} Points</td>
-                          <td>
-                            <button
-                              className="purple-btn1 rounded-1"
-                              onClick={() => handleEditClick(tier)}
-                              title="Edit Tier"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-pencil-square"
-                                viewBox="0 0 16 16"
+                  {currentItems.length > 0 ? (
+                    <>
+                      <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
+                        <thead>
+                          <tr>
+                            <th>Tier Name</th>
+                            <th>Exit Points</th>
+                            <th>Multipliers</th>
+                            <th>Welcome Bonus</th>
+                            <th>Member Count</th>
+                            <th>Edit</th>
+                            <th>View</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {currentItems.map((tier) => (
+                            <tr key={tier.id}>
+                              <td>{tier.name}</td>
+                              <td>{tier.exit_points}</td>
+                              <td>{tier.multipliers}x</td>
+                              <td>{tier.welcome_bonus} Points</td>
+                              <td>{tier.member_count || 0}</td>
+                              <td>
+                                <button
+                                  className="purple-btn1 rounded-1"
+                                  onClick={() => handleEditClick(tier)}
+                                  title="Edit Tier"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    className="bi bi-pencil-square"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"
+                                    />
+                                  </svg>
+                                </button>
+                              </td>
+                              <td>
+                                <button
+                                  className="purple-btn2 rounded-1"
+                                  onClick={() =>
+                                    navigate(`/setup-member/tier-details/${tier.id}`)
+                                  }
+                                  title="View Tier"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M0.833008 10.0002C0.833008 10.0002 4.16634 3.3335 9.99967 3.3335C15.833 3.3335 19.1663 10.0002 19.1663 10.0002C19.1663 10.0002 15.833 16.6668 9.99967 16.6668C4.16634 16.6668 0.833008 10.0002 0.833008 10.0002Z"
+                                      stroke="currentColor"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                    <path
+                                      d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z"
+                                      stroke="currentColor"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                  </svg>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      
+                      {/* Remove the console.log and ensure pagination always shows when there are items */}
+                      
+                      
+                    </>
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "200px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        fontSize: "16px",
+                        color: "#6c757d",
+                        fontWeight: "400",
+                        backgroundColor: "#f8f9fa",
+                        borderRadius: "8px",
+                        border: "1px solid #dee2e6",
+                        textAlign: "center",
+                        flexDirection: "column"
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="48"
+                        height="48"
+                        fill="currentColor"
+                        className="bi bi-inbox mb-3"
+                        viewBox="0 0 16 16"
+                        style={{ opacity: 0.5 }}
+                      >
+                        <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4zm9.954 5H10.45a2.5 2.5 0 0 1-4.9 0H1.046A.5.5 0 0 1 .5 8.5V8a.5.5 0 0 1 .106-.294L4.14 2.894A1.5 1.5 0 0 1 5.338 2h5.324a1.5 1.5 0 0 1 1.198.894L15.394 7.7A.5.5 0 0 1 15.5 8v.5a.5.5 0 0 1-.546.5"/>
+                      </svg>
+                      <div>
+                        {searchTerm ? (
+                          <>
+                            <div style={{ marginBottom: "8px" }}>No tiers found matching your search.</div>
+                            <div style={{ fontSize: "14px", opacity: 0.7 }}>
+                              Try adjusting your search criteria or 
+                              <button 
+                                onClick={() => {
+                                  setSearchTerm("");
+                                  setFilteredItems(tiers);
+                                  setCurrentPage(1);
+                                }}
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  color: "#007bff",
+                                  textDecoration: "underline",
+                                  padding: "0 4px",
+                                  cursor: "pointer"
+                                }}
                               >
-                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                <path
-                                  fillRule="evenodd"
-                                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"
-                                />
-                              </svg>
-                            </button>
-                          </td>
-                          <td>
-                            <button
-                              className="purple-btn2 rounded-1"
-                              onClick={() =>
-                                navigate(`/setup-member/tier-details/${tier.id}`)
-                              }
-                              title="View Tier"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                              >
-                                <path
-                                  d="M0.833008 10.0002C0.833008 10.0002 4.16634 3.3335 9.99967 3.3335C15.833 3.3335 19.1663 10.0002 19.1663 10.0002C19.1663 10.0002 15.833 16.6668 9.99967 16.6668C4.16634 16.6668 0.833008 10.0002 0.833008 10.0002Z"
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                                <path
-                                  d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z"
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                    totalEntries={filteredItems.length}
-                    itemsPerPage={itemsPerPage}
-                  />
+                                clear filters
+                              </button>
+                              to see all tiers.
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div style={{ marginBottom: "8px" }}>No tiers found.</div>
+                            <div style={{ fontSize: "14px", opacity: 0.7 }}>
+                              Create your first tier to get started.
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      
+                    </div>
+                  )}
                 </div>
+                {/* Always show pagination when there are items, regardless of page count */}
+                      {filteredItems.length > 0 && (
+                        <div className="mt-3" style={{ borderTop: "1px solid #dee2e6", paddingTop: "1rem" }}>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <ul className="pagination justify-content-center d-flex mb-0">
+                              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                <button
+                                  className="page-link"
+                                  onClick={() => handlePageChange(1)}
+                                  disabled={currentPage === 1}
+                                >
+                                  First
+                                </button>
+                              </li>
+                              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                <button
+                                  className="page-link"
+                                  onClick={() => handlePageChange(currentPage - 1)}
+                                  disabled={currentPage === 1}
+                                >
+                                  Prev
+                                </button>
+                              </li>
+                              
+                              {/* Show page numbers */}
+                              {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                                <li
+                                  key={pageNumber}
+                                  className={`page-item ${currentPage === pageNumber ? "active" : ""}`}
+                                >
+                                  <button
+                                    className="page-link"
+                                    onClick={() => handlePageChange(pageNumber)}
+                                  >
+                                    {pageNumber}
+                                  </button>
+                                </li>
+                              ))}
+                              
+                              <li className={`page-item ${currentPage === totalPages || totalPages <= 1 ? "disabled" : ""}`}>
+                                <button
+                                  className="page-link"
+                                  onClick={() => handlePageChange(currentPage + 1)}
+                                  disabled={currentPage === totalPages || totalPages <= 1}
+                                >
+                                  Next
+                                </button>
+                              </li>
+                              <li className={`page-item ${currentPage === totalPages || totalPages <= 1 ? "disabled" : ""}`}>
+                                <button
+                                  className="page-link"
+                                  onClick={() => handlePageChange(totalPages)}
+                                  disabled={currentPage === totalPages || totalPages <= 1}
+                                >
+                                  Last
+                                </button>
+                              </li>
+                            </ul>
+                            <p className="text-center mb-0" style={{ color: "#555", fontSize: "14px" }}>
+                              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredItems.length)} of {filteredItems.length} entries
+                            </p>
+                          </div>
+                        </div>
+                      )}
               </>
             )}
 

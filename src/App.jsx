@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./mor.css";
 import { Link, Navigate } from "react-router-dom";
 import LoyaltyMembers from "./pages/loyalty-members";
+import MemberDetails from "./pages/member-details";
 import Tiers from "./pages/tier";
 import TierDetails from "./pages/tier-details";
 import LoyaltyReferralList from "./pages/loyalty-referral-list";
@@ -150,6 +151,10 @@ import LoanManagerAdd from "./pages/loan-manager-add";
 import LoanManagerList from "./pages/loan-manager-list";
 import LoanManagerEdit from "./pages/loan-manager-edit";
 import CommonFileUpload from "./pages/common-files";
+import RuleEngine from "./pages/RuleEngine";
+import CreateRuleEngine from "./pages/CreateRuleEngine";
+import ViewRuleEngine from "./pages/ViewRuleEngine";
+import EditRuleEngine from "./pages/EditRuleEngine";
 import Members from "./pages/members";
 import NewTier from "./pages/new-tier";
 // import SystemConstantsList from "./pages/system-constpage";
@@ -254,6 +259,7 @@ function App() {
 
           <Route path="/members" element={<Members />} />
           <Route path="/setup-member/loyalty-members" element={<LoyaltyMembers />} />
+          <Route path="/setup-member/member-details/:id" element={<MemberDetails />} />
           <Route path="/setup-member/tiers" element={<Tiers />} />
           <Route path="/setup-member/tier-details/:id" element={<TierDetails />} />
           <Route path="/setup-member/new-tier" element={<NewTier />} />
@@ -619,6 +625,23 @@ function App() {
             element={<CommonFileUpload />}
           />
 
+          {/* Rule Engine Routes */}
+          <Route
+            path="/setup-member/rule-engine"
+            element={<RuleEngine />}
+          />
+          <Route
+            path="/setup-member/create-rule-engine"
+            element={<CreateRuleEngine />}
+          />
+          <Route
+            path="/setup-member/view-rule-engine/:id"
+            element={<ViewRuleEngine />}
+          />
+          <Route
+            path="/setup-member/edit-rule-engine/:id"
+            element={<EditRuleEngine />}
+          />
 
         </Route>
       </Routes>

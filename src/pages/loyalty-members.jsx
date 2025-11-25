@@ -119,8 +119,8 @@ const LoyaltyMembers = () => {
     const term = e.target.value;
     setSearchTerm(term);
 
-    if (term) {
-      const filteredSuggestions = members.filter((member) => {
+    if (term.trim()) {
+      const filtered = members.filter((member) => {
         const q = term.toLowerCase();
         return [
           member.id,
@@ -134,60 +134,67 @@ const LoyaltyMembers = () => {
           .some((v) => v.includes(q));
       });
 
-      setSuggestions(filteredSuggestions);
+      setFilteredItems(filtered);
+      setSuggestions(filtered.slice(0, 10)); // Limit suggestions to 10
       setSelectedIndex(-1);
+      setCurrentPage(1); // Reset to first page when filtering
     } else {
+      setFilteredItems(members);
       setSuggestions([]);
+      setCurrentPage(1);
     }
   };
 
+  // Fix keyboard navigation
   const handleKeyDown = (e) => {
     if (e.key === "ArrowDown") {
-      // Move down in the suggestion list
+      e.preventDefault();
       setSelectedIndex((prev) =>
-        prev < suggestions.length - 1 ? prev + 1 : prev
+        prev < suggestions.length - 1 ? prev + 1 : 0
       );
     } else if (e.key === "ArrowUp") {
-      // Move up in the suggestion list
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-    } else if (e.key === "Enter" && selectedIndex >= 0) {
-      // Select the current suggestion
-      const selectedItem = suggestions[selectedIndex];
-      // handleSuggestionClick(selectedMember);
-      setSearchTerm(`${selectedItem.firstname} ${selectedItem.lasttname}`); // Update search term
-      setFilteredItems([selectedItem]); // Filter items
-      setSuggestions([]); // Clear suggestions
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+        const selectedItem = suggestions[selectedIndex];
+        setSearchTerm(`${selectedItem.firstname} ${selectedItem.lasttname}`);
+        setFilteredItems([selectedItem]);
+        setSuggestions([]);
+        setCurrentPage(1);
+      } else {
+        handleSearch();
+      }
+    } else if (e.key === "Escape") {
+      setSuggestions([]);
+      setSelectedIndex(-1);
     }
   };
 
-
+  // Fix suggestion click
   const handleSuggestionClick = (member) => {
     setSearchTerm(`${member.firstname} ${member.lasttname}`);
-    setSuggestions([]); // Clear suggestions after selection
-    // @ts-ignore
-    setFilteredItems([member]); // Optionally, filter to show the selected member
+    setSuggestions([]);
+    setFilteredItems([member]);
+    setCurrentPage(1);
   };
 
-
-
+  // Add missing handlePageChange function
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
-  // const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-  // const currentItems = filteredItems.slice(
-  //   (currentPage - 1) * itemsPerPage,
-  //   currentPage * itemsPerPage
-  // );
-
+  // Fix sorting functionality
   const requestSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
     }
     setSortConfig({ key, direction });
+    setCurrentPage(1); // Reset to first page when sorting
   };
 
   const sortedItems = useMemo(() => {
@@ -221,17 +228,13 @@ const LoyaltyMembers = () => {
     totalEntries,
     onPageChange,
   }) => {
-    const startEntry = (currentPage - 1) * itemsPerPage + 1;
+    const startEntry = totalEntries === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
     const endEntry = Math.min(currentPage * itemsPerPage, totalEntries);
 
     return (
       <div className="d-flex justify-content-between align-items-center px-3 mt-2">
         <ul className="pagination justify-content-center d-flex">
-          <li
-            className={`page-item ${
-              currentPage === 1 ? "disabled" : ""
-            }`}
-          >
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => onPageChange(1)}
@@ -240,11 +243,7 @@ const LoyaltyMembers = () => {
               First
             </button>
           </li>
-          <li
-            className={`page-item ${
-              currentPage === 1 ? "disabled" : ""
-            }`}
-          >
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => onPageChange(currentPage - 1)}
@@ -253,15 +252,10 @@ const LoyaltyMembers = () => {
               Prev
             </button>
           </li>
-          {Array.from(
-            { length: totalPages },
-            (_, index) => index + 1
-          ).map((pageNumber) => (
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
             <li
               key={pageNumber}
-              className={`page-item ${
-                currentPage === pageNumber ? "active" : ""
-              }`}
+              className={`page-item ${currentPage === pageNumber ? "active" : ""}`}
             >
               <button
                 className="page-link"
@@ -271,35 +265,30 @@ const LoyaltyMembers = () => {
               </button>
             </li>
           ))}
-          <li
-            className={`page-item ${
-              currentPage === totalPages ? "disabled" : ""
-            }`}
-          >
+          <li className={`page-item ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages === 0}
             >
               Next
             </button>
           </li>
-          <li
-            className={`page-item ${
-              currentPage === totalPages ? "disabled" : ""
-            }`}
-          >
+          <li className={`page-item ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages === 0}
             >
               Last
             </button>
           </li>
         </ul>
         <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
-          Showing {startEntry} to {endEntry} of {totalEntries} entries
+          {totalEntries === 0 
+            ? "Showing 0 to 0 of 0 entries"
+            : `Showing ${startEntry} to ${endEntry} of ${totalEntries} entries`
+          }
         </p>
       </div>
     );
@@ -319,9 +308,10 @@ const LoyaltyMembers = () => {
               <h3 className="card-title">Loyalty Members</h3>
             </div>
             <div className="card-body">
-              {/* <p className="pointer">
-                <span>Members</span> &gt; Manage Members
-              </p> */}
+              {/* Add breadcrumb navigation */}
+              <p className="pointer mb-3">
+                <span>Home</span> &gt; <span>Members</span> &gt; <span>Loyalty Members</span>
+              </p>
 
               <div className="d-flex justify-content-between align-items-center">
                 <Link to="">
@@ -344,13 +334,9 @@ const LoyaltyMembers = () => {
                     <input
                       type="text"
                       className="form-control tbl-search table_search"
-                      placeholder="Search by name or description"
+                      placeholder="Search by Member Name"
                       value={searchTerm}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setSearchTerm(value);
-                        handleSearchInputChange(e);
-                      }}
+                      onChange={handleSearchInputChange}
                       onKeyDown={handleKeyDown}
                     />
                     <div className="input-group-append">
@@ -397,8 +383,10 @@ const LoyaltyMembers = () => {
                             style={{
                               padding: "8px",
                               cursor: "pointer",
+                              backgroundColor: selectedIndex === index ? "#f8f9fa" : "transparent"
                             }}
                             className={selectedIndex === index ? "highlight" : ""}
+                            onMouseEnter={() => setSelectedIndex(index)}
                             onClick={() => handleSuggestionClick(member)}
                           >
                             {member.firstname} {member.lasttname}
@@ -412,18 +400,11 @@ const LoyaltyMembers = () => {
 
 
               <div className="tbl-container mt-4"
-                // style={{
-                //   height: "100%", overflowY: "hidden", margin: "0 100px",
-                //   // textAlign: "center"
-                // }}
                 style={{
                   height: "100%",
-                  // overflowY: "hidden",
                   overflowX: "hidden",
-                  // textAlign: "center",
                   display: "flex",
                   flexDirection: "column",
-                  // justifyContent: "space-between",
                 }}
               >
                 {loading ? (
@@ -437,32 +418,46 @@ const LoyaltyMembers = () => {
                         <tr>
                           <th
                             onClick={() => requestSort('id')}
-                            className="cursor-pointer"
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: 'pointer', width: '14.2%' }}
                           >
                             Member ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                           </th>
-                          <th>Member Name</th>
-                          <th>Tier Level</th>
-                          <th>Current Balance</th>
-                          <th>Last Activity Date</th>
-                          <th>Tier Validity</th>
-                          <th>View</th>
+                          <th
+                            onClick={() => requestSort('firstname')}
+                            style={{ cursor: 'pointer', width: '14.2%' }}
+                          >
+                            Member Name {sortConfig.key === 'firstname' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                          </th>
+                          <th style={{ width: '14.2%' }}>Tier Level</th>
+                          <th style={{ width: '14.2%' }}>Current Balance</th>
+                          <th
+                            onClick={() => requestSort('last_activity_date')}
+                            style={{ cursor: 'pointer', width: '14.2%' }}
+                          >
+                            Last Activity Date {sortConfig.key === 'last_activity_date' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                          </th>
+                          <th
+                            onClick={() => requestSort('tier_validity')}
+                            style={{ cursor: 'pointer', width: '14.2%' }}
+                          >
+                            Tier Validity {sortConfig.key === 'tier_validity' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                          </th>
+                          <th style={{ width: '14.2%' }}>View</th>
                         </tr>
                       </thead>
                       <tbody style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                        {currentItems.map((member) => (
+                        {currentItems.length > 0 ? currentItems.map((member) => (
                           <tr key={member.id}>
                             <td style={{ width: '14.2%' }}>{member.id}</td>
                             <td style={{ width: '14.2%' }}>
                               {member.firstname} {member.lasttname}
                             </td>
-                            <td style={{ width: '14.2%' }}>{member.member_status.tier_level}</td>
-                            <td style={{ width: '14.2%' }}>{member.current_loyalty_points}</td>
-                            <td style={{ width: '14.2%' }}>{member.member_status.last_activity_date}</td>
-                            <td style={{ width: '14.2%' }}>{member.member_status.tier_validity}</td>
+                            <td style={{ width: '14.2%' }}>{member.member_status?.tier_level || 'N/A'}</td>
+                            <td style={{ width: '14.2%' }}>{member.current_loyalty_points || '0'}</td>
+                            <td style={{ width: '14.2%' }}>{member.member_status?.last_activity_date || 'N/A'}</td>
+                            <td style={{ width: '14.2%' }}>{member.member_status?.tier_validity || 'N/A'}</td>
                             <td style={{ width: '14.2%' }}>
-                              <Link to={`/member-details/${member.id}`}>
+                              <Link to={`/setup-member/member-details/${member.id}`}>
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
@@ -477,19 +472,24 @@ const LoyaltyMembers = () => {
                               </Link>
                             </td>
                           </tr>
-                        ))}
+                        )) : (
+                          <tr>
+                            <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
+                              No members found matching your search criteria.
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
-
                   </>
                 )}
               </div>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  totalEntries={sortedItems.length}
-                />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalEntries={sortedItems.length}
+              />
             </div>
           </div>
         </div>
