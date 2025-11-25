@@ -1598,7 +1598,7 @@ const SetupSidebar = () => {
               {imageConfigActive && (
                 <li className="menu-item d-flex">
                   <NavLink
-                    to="/setup-member/service-category-list"
+                    to="/setup-member/image-config-list"
                     style={{ flexDirection: "column" }}
                     className={({ isActive }) =>
                       `sidebar-item menu-item d-flex  ${isActive ? "active" : ""}`
