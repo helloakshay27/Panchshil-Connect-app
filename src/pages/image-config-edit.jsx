@@ -239,10 +239,12 @@ const EditImagesConfiguration = () => {
                     <label>
                       Name <span className="otp-asterisk">*</span>
                     </label>
-                    <SelectBox
-                      options={nameOptions}
-                      defaultValue={selectedName}
-                      onChange={handleNameChange}
+                    <input
+                      className="form-control"
+                      type="text"
+                      value={selectedName}
+                      disabled
+                      style={{ backgroundColor: '#f7f8f9', cursor: 'not-allowed' }}
                     />
                   </div>
                 </div>
