@@ -128,6 +128,11 @@ const ProjectDetailsEdit = () => {
   const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
   const [showBannerModal, setShowBannerModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageConfigurations, setImageConfigurations] = useState({});
+  const [showTooltipBanner, setShowTooltipBanner] = useState(false);
+  const [showTooltipCover, setShowTooltipCover] = useState(false);
+  const [showTooltipGallery, setShowTooltipGallery] = useState(false);
+  const [showTooltipFloor, setShowTooltipFloor] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState({
     image: false,
@@ -455,6 +460,62 @@ const ProjectDetailsEdit = () => {
 
     fetchCategoryTypes();
   }, []);
+
+  // Fetch image configurations for dynamic tooltips
+  useEffect(() => {
+    const fetchImageConfigurations = async () => {
+      try {
+        const configNames = [
+          "ProjectImage",
+          "ProjectCoverImage",
+          "ProjectGallery",
+          "Project2DImage"
+        ];
+        
+        const configs = {};
+        
+        for (const name of configNames) {
+          const response = await axios.get(
+            `${baseURL}system_constants.json?q[description_eq]=ImagesConfiguration&q[name_eq]=${name}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+            }
+          );
+          
+          if (response.data && Array.isArray(response.data)) {
+            configs[name] = response.data.map(item => item.value);
+          }
+        }
+        
+        setImageConfigurations(configs);
+      } catch (error) {
+        console.error("Error fetching image configurations:", error);
+      }
+    };
+    
+    fetchImageConfigurations();
+  }, []);
+
+  // Helper function to format ratio from value like "image_16_by_9" to "16:9"
+  const formatRatio = (value) => {
+    if (!value) return "";
+    const match = value.match(/(\d+)_by_(\d+)/);
+    if (match) {
+      return `${match[1]}:${match[2]}`;
+    }
+    return value;
+  };
+
+  // Get dynamic ratios text for tooltips
+  const getDynamicRatiosText = (configName) => {
+    const ratios = imageConfigurations[configName];
+    if (!ratios || ratios.length === 0) return "No ratios configured";
+    
+    const formattedRatios = ratios.map(formatRatio).join(", ");
+    return `Required ratio${ratios.length > 1 ? 's' : ''}: ${formattedRatios}`;
+  };
 
   // console.log("data", projectsType);
 
@@ -4816,13 +4877,13 @@ const ProjectDetailsEdit = () => {
                   Project Banner{" "}
                   <span
                     className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
+                    onMouseEnter={() => setShowTooltipBanner(true)}
+                    onMouseLeave={() => setShowTooltipBanner(false)}
                   >
                     [i]
-                    {showTooltip && (
+                    {showTooltipBanner && (
                       <span className="tooltip-text">
-                        Max Upload Size 3 MB and Required ratio is 9:16 and 1:1
+                        Max Upload Size 3 MB and {getDynamicRatiosText("ProjectImage")}
                       </span>
                     )}
                   </span>
@@ -4962,13 +5023,13 @@ const ProjectDetailsEdit = () => {
                   Project Cover Images{" "}
                   <span
                     className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
+                    onMouseEnter={() => setShowTooltipCover(true)}
+                    onMouseLeave={() => setShowTooltipCover(false)}
                   >
                     [i]
-                    {showTooltip && (
+                    {showTooltipCover && (
                       <span className="tooltip-text">
-                        Max Upload Size 5 MB and Required ratio is 16:9
+                        Max Upload Size 5 MB and {getDynamicRatiosText("ProjectCoverImage")}
                       </span>
                     )}
                   </span>
@@ -5169,13 +5230,13 @@ const ProjectDetailsEdit = () => {
                   Gallery Images{" "}
                   <span
                     className="tooltip-container"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
+                    onMouseEnter={() => setShowTooltipGallery(true)}
+                    onMouseLeave={() => setShowTooltipGallery(false)}
                   >
                     [i]
-                    {showTooltip && (
+                    {showTooltipGallery && (
                       <span className="tooltip-text">
-                        Max Upload Size 3 MB and Required ratio is 16:9
+                        Max Upload Size 3 MB and {getDynamicRatiosText("ProjectGallery")}
                       </span>
                     )}
                   </span>
@@ -5394,13 +5455,13 @@ const ProjectDetailsEdit = () => {
                       Floor Plan{" "}
                       <span
                         className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
+                        onMouseEnter={() => setShowTooltipFloor(true)}
+                        onMouseLeave={() => setShowTooltipFloor(false)}
                       >
                         [i]
-                        {showTooltip && (
+                        {showTooltipFloor && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB and Required ratio is 16:9
+                            Max Upload Size 3 MB and {getDynamicRatiosText("Project2DImage")}
                           </span>
                         )}
                       </span>

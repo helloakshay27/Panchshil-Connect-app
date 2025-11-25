@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../mor.css";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
 
-const EditImagesConfiguration = () => {
+const CreateImageConfiguration = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // Get the ID from URL parameters
-  const [configuration, setConfiguration] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedName, setSelectedName] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
@@ -92,52 +90,6 @@ const EditImagesConfiguration = () => {
     ]
   };
 
-  // Fetch specific configuration data by ID
-  useEffect(() => {
-    const fetchConfiguration = async () => {
-      if (!id) {
-        toast.error("Configuration ID is required.");
-        navigate(-1);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `${baseURL}system_constants/${id}.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          }
-        );
-        console.log("Configuration data:", response.data);
-        
-        // Check if it's an ImagesConfiguration
-        if (response.data && response.data.description === "ImagesConfiguration") {
-          setConfiguration(response.data);
-          setSelectedName(response.data.name || "");
-          setSelectedValue(response.data.value || "");
-        } else {
-          toast.error("Invalid configuration type.");
-          navigate(-1);
-        }
-      } catch (error) {
-        console.error("Error fetching configuration:", error);
-        if (error.response?.status === 404) {
-          toast.error("Configuration not found.");
-        } else {
-          toast.error("Failed to load configuration.");
-        }
-        navigate(-1);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchConfiguration();
-  }, [id, navigate]);
-
   // Handle name change
   const handleNameChange = (value) => {
     setSelectedName(value);
@@ -149,9 +101,9 @@ const EditImagesConfiguration = () => {
     setSelectedValue(value);
   };
 
-  // Handle update API call
-  const handleUpdate = async () => {
-    if (!configuration) return;
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     if (!selectedName) {
       toast.error("Please select a name");
@@ -166,16 +118,17 @@ const EditImagesConfiguration = () => {
     setLoading(true);
 
     try {
-      const updateData = {
+      const createData = {
         system_constant: {
           name: selectedName,
-          value: selectedValue
+          value: selectedValue,
+          description: "ImagesConfiguration"
         }
       };
 
-      await axios.put(
-        `${baseURL}system_constants/${configuration.id}.json`,
-        updateData,
+      await axios.post(
+        `${baseURL}system_constants.json`,
+        createData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -184,16 +137,12 @@ const EditImagesConfiguration = () => {
         }
       );
 
-      toast.success(`${selectedName} updated successfully!`);
-      navigate("/setup-member/image-config-list"); // Redirect to the list page after successful update
-      
-      // Update the configuration state
-      setConfiguration(prev => ({ ...prev, name: selectedName, value: selectedValue }));
-      
+      toast.success("Image configuration created successfully!");
+      navigate("/setup-member/image-config-list");
     } catch (error) {
       console.error("API Error:", error.response?.data || error.message);
       toast.error(
-        `Failed to update configuration: ${
+        `Failed to create image configuration: ${
           error.response?.data?.error || "Unknown error"
         }`
       );
@@ -203,105 +152,91 @@ const EditImagesConfiguration = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    navigate("/setup-member/image-config-list");
   };
-
-
-  if (!configuration) {
-    return (
-      <div className="main-content">
-        <div className="website-content overflow-auto">
-          <div className="module-data-section container-fluid">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-body text-center">
-                <p className="text-muted">Configuration not found.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="main-content">
-       <div className="website-content overflow-auto">
-         <div className="module-data-section container-fluid">
-             <form onSubmit={handleUpdate}>
-                <div className="card mt-4 pb-4 mx-4">
-                 <div className="card-header">
-                   <h3 className="card-title">Edit Images Configuration</h3>
-                 </div>
-                 <div className="card-body">
-              <div className="row">
-                <div className="col-md-3 mb-4">
-                  <div className="form-group">
-                    <label>
-                      Name <span className="otp-asterisk">*</span>
-                    </label>
-                    <SelectBox
-                      options={nameOptions}
-                      defaultValue={selectedName}
-                      onChange={handleNameChange}
-                    />
+      <div className="website-content overflow-auto">
+        <div className="module-data-section container-fluid">
+          <form onSubmit={handleSubmit}>
+            <div className="card mt-4 pb-4 mx-4">
+              <div className="card-header">
+                <h3 className="card-title">Add Image Configuration</h3>
+              </div>
+              <div className="card-body">
+                <div className="row">
+                  <div className="col-md-3 mb-4">
+                    <div className="form-group">
+                      <label>
+                        Name <span className="otp-asterisk">*</span>
+                      </label>
+                      <SelectBox
+                        options={nameOptions}
+                        defaultValue={selectedName}
+                        onChange={handleNameChange}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="col-md-3 mb-4">
-                  <div className="form-group">
-                    <label>
-                      Value <span className="otp-asterisk">*</span>
-                    </label>
-                    <SelectBox
-                      options={selectedName ? valueOptionsMap[selectedName] : []}
-                      defaultValue={selectedValue}
-                      onChange={handleValueChange}
-                    />
-                    {!selectedName && (
-                      <small className="text-muted">
-                        Please select a name first
-                      </small>
-                    )}
+                  <div className="col-md-3 mb-4">
+                    <div className="form-group">
+                      <label>
+                        Value <span className="otp-asterisk">*</span>
+                      </label>
+                      <SelectBox
+                        options={selectedName ? valueOptionsMap[selectedName] : []}
+                        defaultValue={selectedValue}
+                        onChange={handleValueChange}
+                      />
+                      {!selectedName && (
+                        <small className="text-muted">
+                          Please select a name first
+                        </small>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          </form>
 
-          {/* Update and Cancel Buttons */}
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={handleUpdate}
-                disabled={loading || !configuration}
-              >
-                {loading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Submitting...
-                  </>
-                ) : (
-                  'Submit'
-                )}
-              </button>
+            {/* Submit and Cancel Buttons */}
+            <div className="row mt-2 justify-content-center">
+              <div className="col-md-2">
+                <button
+                  type="submit"
+                  className="purple-btn2 w-100"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
+                </button>
+              </div>
+              <div className="col-md-2">
+                <button
+                  type="button"
+                  className="purple-btn2 w-100"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
   );
 };
 
-export default EditImagesConfiguration;
+export default CreateImageConfiguration;

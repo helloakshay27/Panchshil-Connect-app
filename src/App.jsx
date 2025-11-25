@@ -160,6 +160,7 @@ import NewTier from "./pages/new-tier";
 import LoyaltyManager from "./pages/loyalty-managers-creatse";
 import LoyaltyManagerEdit from "./pages/loyalty-managers-edit";
 import LoyaltyManagerList from "./pages/loyalty-managers-list";
+import CreateImageConfiguration from "./pages/image-config-create";
 // import SystemConstantsList from "./pages/system-constpage";
 // import SystemConstantsCreate from "./pages/system-constants-create";
 // import SystemConstantsEdit from "./pages/system-constants-edit";
@@ -555,6 +556,12 @@ function App() {
             path="/setup-member/image-config-list"
             element={<ImageConfig />}
           />
+
+           <Route
+            path="/setup-member/image-config-create"
+            element={<CreateImageConfiguration />}
+          />
+          
           <Route
             path="/setup-member/image-config/:id"
             element={<EditImagesConfiguration />}

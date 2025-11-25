@@ -197,11 +197,11 @@ const ImageConfig = () => {
               </div>
             </form>
           </div>
-          {/* {imageConfigPermissions.create === "true" && (
+          {/* {imageConfigPermissions.create === "true" && ( */}
             <div className="card-tools mt-1">
               <button
                 className="purple-btn2 rounded-3"
-                onClick={() => navigate("/setup-member/image-config/create")}
+                onClick={() => navigate("/setup-member/image-config-create")}
                 aria-label="Add a new image configuration"
               >
                 <svg
@@ -217,7 +217,7 @@ const ImageConfig = () => {
                 <span>Add</span>
               </button>
             </div>
-          )} */}
+          {/* )} */}
         </div>
         <div className="module-data-section container-fluid">
           <div className="card mt-4 pb-4 mx-3">
@@ -255,7 +255,7 @@ const ImageConfig = () => {
                         displayedConfigs.map((config, index) => (
                           <tr key={config.id}>
                             <td>
-                              {imageConfigPermissions.update === "true" && (
+                              {/* {imageConfigPermissions.update === "true" && ( */}
                                 <div
                                   style={{
                                     display: "flex",
@@ -322,7 +322,7 @@ const ImageConfig = () => {
                                     </button>
                                   )} */}
                                 </div>
-                               )} 
+                               {/* )}  */}
                             </td>
                             <td>
                               {(pagination.current_page - 1) * pageSize +
