@@ -132,6 +132,10 @@ const TdsTutorialList = () => {
     }
   };
 
+
+
+
+
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this tutorial?")) {
       return;
@@ -152,6 +156,10 @@ const TdsTutorialList = () => {
     }
   };
 
+
+
+  
+
   return (
     <div className="main-content">
       <div className="module-data-section container-fluid">
@@ -163,7 +171,7 @@ const TdsTutorialList = () => {
               <input
                 type="text"
                 className="form-control tbl-search table_search"
-                placeholder="Search by name or descriptionljk kn"
+                placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);

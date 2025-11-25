@@ -2156,25 +2156,25 @@ const ProjectDetailsEdit = () => {
           
           if (fileObj.isNew) {
             // Title for new image
-            newTitles.push(fileObj.title || "");
-          } else if (fileObj.id && fileObj.title) {
+            newTitles.push(fileObj.file_name || "");
+          } else if (fileObj.id && fileObj.file_name) {
             // Existing image with updated title
             existingUpdates.push({
               id: fileObj.id,
-              title: fileObj.title
+              file_name: fileObj.file_name
             });
           }
         });
         
         // Send titles for new images
-        newTitles.forEach((title) => {
-          data.append("project[project_qrcode_image_titles][]", title);
+        newTitles.forEach((file_name) => {
+          data.append("project[project_qrcode_image_titles][]", file_name);
         });
         
         // Send updates for existing images
         existingUpdates.forEach((update, index) => {
           data.append(`project[project_qrcode_image_updates][${index}][id]`, update.id);
-          data.append(`project[project_qrcode_image_updates][${index}][title]`, update.title);
+          data.append(`project[project_qrcode_image_updates][${index}][file_name]`, update.file_name);
         });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
@@ -2561,7 +2561,7 @@ const ProjectDetailsEdit = () => {
     const files = Array.from(e.target.files);
     const newImages = files.map((file) => ({
       project_qrcode_image: file, // Store the file
-      title: file.name, // Default title is the file name
+      file_name: file.name, // Default title is the file name
       isNew: true, // Mark as a new image
     }));
 
@@ -2579,7 +2579,7 @@ const ProjectDetailsEdit = () => {
   const handleQRCodeImageNameChange = (index, newName) => {
     setFormData((prev) => {
       const updatedImages = [...prev.project_qrcode_image];
-      updatedImages[index].title = newName; // Update the title
+      updatedImages[index].file_name = newName; // Update the title
       return { ...prev, project_qrcode_image: updatedImages };
     });
   };
@@ -4164,7 +4164,7 @@ const ProjectDetailsEdit = () => {
                           type="text"
                           className="form-control me-2"
                           placeholder="Enter image name"
-                          value={image.title || ""} // Always use title, don't fallback to file_name
+                          value={image.file_name || ""} // Always use title, don't fallback to file_name
                           onChange={(e) =>
                             handleQRCodeImageNameChange(index, e.target.value)
                           }

@@ -198,6 +198,9 @@ const LockFunctionEdit = () => {
     } else if (value === "Rule Engine") {
       actionName = "rule_engine";
     } 
+     else if (value === "Loyalty Manager") {
+      actionName = "loyalty_manager";
+    }
 
     setFormData({
       ...formData,
@@ -342,6 +345,8 @@ const LockFunctionEdit = () => {
     { label: "Loyalty Section", value: "Loyalty Section" },
     { label: "Referral List", value: "Referral List" },
     { label: "Rule Engine", value: "Rule Engine" },
+     { label: "Loyalty Managers", value: "Loyalty Managers"}
+                          // Add more if needed
   ];
 
   return (
