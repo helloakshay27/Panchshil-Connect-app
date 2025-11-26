@@ -40,6 +40,7 @@ const SetupSidebar = () => {
   const [ordersActive, setOrdersActive] = useState(false);
   const [encashActive, setEncashActive] = useState(false);
   const [loyaltyActive, setLoyaltyActive] = useState(false);
+  const [homeLoanRequestActive, setHomeLoanRequestActive] = useState(false); // Add this missing state variable
 
 
   useEffect(() => {
@@ -148,9 +149,12 @@ const SetupSidebar = () => {
     const LoyaltyPermission = hasPermission("loyalty_manager");
     setLoyaltyActive(LoyaltyPermission);
 
+    const HomeLoanRequestPermission = hasPermission("home_loan_request"); // Add this permission check
+    setHomeLoanRequestActive(HomeLoanRequestPermission);
+
   }, []);
 
-  console.log("LoyaltySectionPermission:-", showLoyaltySection)
+  console.log("LoyaltySectionPermission:-", showLoyaltySection, homeLoanRequestActive, hasPermission)
 
   return (
     <>
@@ -1458,6 +1462,41 @@ const SetupSidebar = () => {
                             </g>
                           </svg>
                           <span className="menu-link-text">Lock Payments</span>
+                        </NavLink>
+                      </li>
+                    )}
+                    {homeLoanRequestActive && (
+                      <li className="menu-item d-flex">
+                        <NavLink
+                          to="/setup-member/home-loan-requests"
+                          style={{ flexDirection: "column" }}
+                          className={({ isActive }) =>
+                            `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            version="1.0"
+                            width="72.000000pt"
+                            height="72.000000pt"
+                            viewBox="0 0 72.000000 72.000000"
+                            preserveAspectRatio="xMidYMid meet"
+                          >
+                            <metadata>
+
+                              Created by potrace 1.10, written by Peter Selinger
+                              2001-2011
+                            </metadata>
+                            <g
+                              transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
+                              fill="#000000"
+                              stroke="none"
+                            >
+                              <path d="M320 631 c-83 -40 -140 -119 -154 -213 -7 -48 1 -126 16 -161 7 -16 25 -40 40 -53 l27 -24 0 -131 0 -131 45 0 45 0 0 105 c0 91 2 108 20 130 17 21 20 36 20 95 l0 70 70 0 c83 0 107 14 107 60 0 46 -24 60 -107 60 l-70 0 0 70 c0 59 -3 74
+                              -20 95 -18 22 -20 39 -20 130 l0 105 -45 0 -45 0 0 -121 c0 -107 -2 -123 -20 -145 -17 -21 -20 -36 -20 -95 l0 -70 -35 0 c-19 0 -50 7 -69 15 -66 28 -101 96 -88 166 10 54 50 104 102 128 40 18 60 20 150 16 l100 -3 0 45 0 45 -145 0 c- eighty-five point five two 0 -145.6 -3.5 -190.6 -13.5z" />
+                            </g>
+                          </svg>
+                          <span className="menu-link-text">Home Loan Requests</span>
                         </NavLink>
                       </li>
                     )}

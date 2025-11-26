@@ -160,6 +160,7 @@ import NewTier from "./pages/new-tier";
 import LoyaltyManager from "./pages/loyalty-managers-creatse";
 import LoyaltyManagerEdit from "./pages/loyalty-managers-edit";
 import LoyaltyManagerList from "./pages/loyalty-managers-list";
+import HomeLoanRequest from "./pages/home-loan-request";
 // import SystemConstantsList from "./pages/system-constpage";
 // import SystemConstantsCreate from "./pages/system-constants-create";
 // import SystemConstantsEdit from "./pages/system-constants-edit";
@@ -268,6 +269,7 @@ function App() {
           <Route path="/setup-member/new-tier" element={<NewTier />} />
           <Route path="/setup-member/referral-list" element={<LoyaltyReferralList />} />
           <Route path="/setup-member/lock-payments" element={<LockPayments />} />
+          <Route path="/setup-member/home-loan-request" element={<HomeLoanRequest />} />
           <Route path="/setup-member/demand-notes" element={<DemandNotes />} />
           <Route path="/setup-member/orders" element={<Orders />} />
           <Route path="/setup-member/encash-list" element={<EncashList />} />
