@@ -270,7 +270,7 @@ function App() {
           <Route path="/setup-member/new-tier" element={<NewTier />} />
           <Route path="/setup-member/referral-list" element={<LoyaltyReferralList />} />
           <Route path="/setup-member/lock-payments" element={<LockPayments />} />
-          <Route path="/setup-member/home-loan-request" element={<HomeLoanRequest />} />
+          <Route path="/setup-member/home-loan-requests" element={<HomeLoanRequest />} />
           <Route path="/setup-member/demand-notes" element={<DemandNotes />} />
           <Route path="/setup-member/orders" element={<Orders />} />
           <Route path="/setup-member/encash-list" element={<EncashList />} />
