@@ -42,7 +42,6 @@ const SetupSidebar = () => {
   const [loyaltyActive, setLoyaltyActive] = useState(false);
   const [homeLoanRequestActive, setHomeLoanRequestActive] = useState(false); // Add this missing state variable
 
-
   useEffect(() => {
     const userModulePermission = hasPermission("user_module");
     setShowUserModuleSidebar(userModulePermission);
@@ -1285,8 +1284,9 @@ const SetupSidebar = () => {
                   <div 
                     // className={`collapse ${!loyaltyCollapsed ? 'show' : ''}`}
                     id="loyaltyCollapse"
+                    style={{ maxHeight: 'none', overflow: 'visible' }}
                   >
-                    <ul className="p-0">
+                    <ul className="p-0" style={{ maxHeight: 'none', overflow: 'visible' }}>
                     {membersActive && (
                       <li className="menu-item d-flex">
                         <NavLink
@@ -1572,7 +1572,7 @@ const SetupSidebar = () => {
                       <li className="menu-item d-flex">
                         <NavLink
                           to="/setup-member/encash-list"
-                          style={{ flexDirection: "column" }}
+                          style={{ flexDirection: "column", marginBottom: '20px' }}
                           className={({ isActive }) =>
                             `sidebar-item menu-item d-flex ${isActive ? "active" : ""}`
                           }
