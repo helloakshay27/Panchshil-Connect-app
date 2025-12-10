@@ -17,11 +17,27 @@
     ></script>
     <link
       rel="icon"
-      type="image/png+xml"
+      type="image/png"
+      id="favicon"
       href="https://lockated-public.s3.ap-south-1.amazonaws.com/Group+1000006503.png"
-      style="width: 100%; height: 100%"
     />
-    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <script>
+      // Dynamically set favicon based on hostname
+      (function() {
+        const hostname = window.location.hostname;
+        const favicon = document.getElementById('favicon');
+        
+        // Check if hostname is for Panchshil
+        if (hostname.includes('panchshil') || 
+            hostname === 'ui-panchshil-super.lockated.com' ||
+            hostname === 'uat-connect.panchshil.com' ||
+            hostname === 'connect.panchshil.com') {
+          favicon.href = 'https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png';
+        } else {
+          favicon.href = 'https://lockated-public.s3.ap-south-1.amazonaws.com/Group+1000006503.png';
+        }
+      })();
+    </script>
     <title>Lockated</title>
   </head>
 
