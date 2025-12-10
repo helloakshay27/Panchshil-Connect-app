@@ -218,7 +218,7 @@ function App() {
     } else if (baseURL.startsWith("https://dev-panchshil-super-app.lockated.com/") || baseURL.startsWith("https://rustomjee-live.lockated.com/")) {
       faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Rustomjee_icon.png";
     } else if (baseURL.startsWith("https://kalpataru.lockated.com/")) {
-      faviconPath = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/default_icon.png";
+      faviconPath = "https://lockated-public.s3.ap-south-1.amazonaws.com/Group+1000006503.png";
     }
 
     const link = document.querySelector("link[rel~='icon']");
