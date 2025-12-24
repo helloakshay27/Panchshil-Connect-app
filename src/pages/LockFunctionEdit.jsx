@@ -202,6 +202,8 @@ const LockFunctionEdit = () => {
       actionName = "loyalty_manager";
     } else if (value === "home_loan_request") {
       actionName = "home_loan_request";
+    } else if (value === "Other Services") {
+      actionName = "other_service";
     }
 
     setFormData({
@@ -349,6 +351,7 @@ const LockFunctionEdit = () => {
     { label: "Rule Engine", value: "Rule Engine" },
      { label: "Loyalty Managers", value: "Loyalty Managers"},
     { label: "Home Loan Request", value: "home_loan_request" },
+    { label: "Other Services", value: "Other Services" },
                           // Add more if needed
   ];
 

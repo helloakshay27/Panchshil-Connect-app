@@ -40,7 +40,8 @@ const SetupSidebar = () => {
   const [ordersActive, setOrdersActive] = useState(false);
   const [encashActive, setEncashActive] = useState(false);
   const [loyaltyActive, setLoyaltyActive] = useState(false);
-  const [homeLoanRequestActive, setHomeLoanRequestActive] = useState(false); // Add this missing state variable
+  const [homeLoanRequestActive, setHomeLoanRequestActive] = useState(false); 
+  const [otherServiceActive, setOtherServiceActive] = useState(false);
 
   useEffect(() => {
     const userModulePermission = hasPermission("user_module");
@@ -150,6 +151,9 @@ const SetupSidebar = () => {
 
     const HomeLoanRequestPermission = hasPermission("home_loan_request"); // Add this permission check
     setHomeLoanRequestActive(HomeLoanRequestPermission);
+
+    const OtherServicePermission = hasPermission("other_service"); // Add this permission check
+    setOtherServiceActive(OtherServicePermission);
 
   }, []);
 
@@ -1127,7 +1131,7 @@ const SetupSidebar = () => {
                   </NavLink>
                 </li>
               )}
-                 {/* {plusServicesActive && ( */}
+                 {otherServiceActive && (
                 <li className="menu-item d-flex">
 
                   <NavLink
@@ -1161,7 +1165,7 @@ const SetupSidebar = () => {
                     <span className="menu-link-text">Other Services </span>
                   </NavLink>
                 </li>
-              {/* // )} */}
+              )} 
               {smtpSettingsActive && (
                 <li className="menu-item d-flex">
 
