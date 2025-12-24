@@ -114,6 +114,9 @@ import TdsTutorialEdit from "./pages/tds-tutorials-edit";
 import PlusServicesList from "./pages/plus-service-list";
 import PlusServiceCreate from "./pages/plus-service-create";
 import PlusServiceEdit from "./pages/plus-service-edit";
+import OtherServicesList from "./pages/other-service-list";
+import OtherServiceCreate from "./pages/other-service-create";
+import OtherServiceEdit from "./pages/other-service-edit";
 import SMTPSettingsList from "./pages/smtp-settings-list";
 import SMTPSettingsEdit from "./pages/smtp-settings-edit";
 import { useEffect } from "react";
@@ -490,6 +493,19 @@ function App() {
           <Route
             path="/setup-member/plus-services-edit/:id"
             element={<PlusServiceEdit />}
+          />
+
+          <Route
+            path="/setup-member/other-services-list"
+            element={<OtherServicesList />}
+          />
+          <Route
+            path="/setup-member/other-services-create"
+            element={<OtherServiceCreate />}
+          />
+          <Route
+            path="/setup-member/other-services-edit/:id"
+            element={<OtherServiceEdit />}
           />
 
           <Route

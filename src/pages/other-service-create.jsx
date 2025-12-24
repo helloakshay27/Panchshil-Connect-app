@@ -1,0 +1,313 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import SelectBox from "../components/base/SelectBox";
+import { baseURL } from "./baseurl/apiDomain";
+
+const OtherServiceCreate = () => {
+  const [plusServices, setPlusServices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const [serviceData, setServiceData] = useState({
+    name: "",
+    description: "",
+    attachment: null,
+    plus_service_id: "",
+  });
+
+  console.log("formData", serviceData);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPlusServices = async () => {
+      try {
+        const response = await axios.get(`${baseURL}plus_services.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+        setPlusServices(response.data.plus_services || response.data || []);
+      } catch (error) {
+        console.error(
+          "Error fetching plus services:",
+          error.response?.data || error.message
+        );
+        toast.error("Failed to load plus services");
+      }
+    };
+
+    fetchPlusServices();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setServiceData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) {
+      setServiceData((prev) => ({ ...prev, attachment: null }));
+      return;
+    }
+
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+
+    if (!validTypes.includes(file.type)) {
+      toast.error("Please select only image files (JPEG, PNG, GIF, WebP).");
+      e.target.value = "";
+      return;
+    }
+
+    const maxSize = 3 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error("Image must be less than 3MB.");
+      e.target.value = "";
+      return;
+    }
+
+    setServiceData((prev) => ({ ...prev, attachment: file }));
+  };
+
+  const removeImage = () => {
+    setServiceData((prev) => ({ ...prev, attachment: null }));
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = "";
+  };
+
+  const validateForm = () => {
+    if (!serviceData.plus_service_id) {
+      toast.error("Plus service is required");
+      return false;
+    }
+    if (!serviceData.name.trim()) {
+      toast.error("Service name is required");
+      return false;
+    }
+    if (!serviceData.description.trim()) {
+      toast.error("Description is required");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+    toast.dismiss();
+
+    try {
+      const formData = new FormData();
+
+      formData.append("other_service[plus_service_id]", serviceData.plus_service_id);
+      formData.append("other_service[name]", serviceData.name);
+      formData.append("other_service[description]", serviceData.description);
+
+      if (serviceData.attachment) {
+        formData.append("other_service[attachment]", serviceData.attachment);
+      }
+
+      const response = await axios.post(
+        `${baseURL}other_services.json`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      toast.success("Other Service created successfully!");
+
+      setServiceData({
+        name: "",
+        description: "",
+        attachment: null,
+        plus_service_id: "",
+      });
+
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) fileInput.value = "";
+
+      navigate("/setup-member/other-services-list");
+    } catch (error) {
+      console.error("Error creating other service:", error);
+
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message ||
+          error.response.data?.error ||
+          `Server error: ${error.response.status}`;
+        toast.error(errorMessage);
+      } else if (error.request) {
+        toast.error("Network error. Please check your connection.");
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
+  return (
+    <div className="">
+      <div className="module-data-section p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card mt-4 pb-4 mx-4">
+            <div className="card-header">
+              <h3 className="card-title">Create Other Service</h3>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Plus Service<span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={plusServices.map((service) => ({
+                        label: service.name,
+                        value: service.id,
+                      }))}
+                      value={serviceData.plus_service_id}
+                      onChange={(value) =>
+                        setServiceData({
+                          ...serviceData,
+                          plus_service_id: value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Name <span className="otp-asterisk"> *</span>
+                    </label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Enter Name"
+                      name="name"
+                      value={serviceData.name}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Description <span className="otp-asterisk"> *</span>
+                    </label>
+                    <textarea
+                      className="form-control"
+                      rows={1}
+                      placeholder="Enter Description"
+                      name="description"
+                      value={serviceData.description}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3 mt-1">
+                  <div className="form-group">
+                    <label>
+                      Service Image{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Single image, max 3MB
+                          </span>
+                        )}
+                      </span>
+                    </label>
+                    <input
+                      className="form-control"
+                      type="file"
+                      name="attachment"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+
+                    {serviceData.attachment && (
+                      <div className="mt-3">
+                        <div className="position-relative d-inline-block">
+                          <img
+                            src={URL.createObjectURL(serviceData.attachment)}
+                            alt="Service Preview"
+                            className="img-thumbnail"
+                            style={{
+                              width: "150px",
+                              height: "150px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="row mt-2 justify-content-center">
+            <div className="col-md-2">
+              <button
+                type="submit"
+                className="purple-btn2 purple-btn2-shadow w-100"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            </div>
+            <div className="col-md-2">
+              <button
+                type="button"
+                className="purple-btn2 purple-btn2-shadow w-100"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default OtherServiceCreate;
