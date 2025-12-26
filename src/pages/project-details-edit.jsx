@@ -87,6 +87,7 @@ const ProjectDetailsEdit = () => {
     is_sold: false,
     bannerPreviewImage: "",
     coverPreviewImage: "",
+    project_videos_attributes: [],
   });
 
   const [projectsType, setProjectsType] = useState([]);
@@ -101,6 +102,8 @@ const ProjectDetailsEdit = () => {
   const [reraUrl, setReraUrl] = useState("");
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const [virtualTourName, setVirtualTourName] = useState("");
+  const [videoName, setVideoName] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [selectedType, setSelectedType] = useState(null);
   // const [filteredAmenities, setFilteredAmenities] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -730,6 +733,12 @@ const ProjectDetailsEdit = () => {
           project_qrcode_image: projectData.project_qrcode_images || [],
           rera_url: projectData.rera_url || "",
           cover_images: projectData.cover_images || [],
+          project_videos_attributes:
+            projectData.project_videos_urls?.map((video) => ({
+              id: video.id,
+              name: video.name,
+              video_url: video.video_url,
+            })) || [],
 
           // ✅ Dynamically spread image ratios
           ...dynamicImageData,
@@ -2269,6 +2278,40 @@ const ProjectDetailsEdit = () => {
             );
           }
         });
+      } else if (key === "project_videos_attributes" && Array.isArray(value)) {
+        value.forEach((video, index) => {
+          if (video.id) {
+            // Existing video
+            data.append(
+              `project[project_videos_attributes][${index}][id]`,
+              video.id
+            );
+            data.append(
+              `project[project_videos_attributes][${index}][name]`,
+              video.name
+            );
+            data.append(
+              `project[project_videos_attributes][${index}][video_url]`,
+              video.video_url
+            );
+            if (video._destroy) {
+              data.append(
+                `project[project_videos_attributes][${index}][_destroy]`,
+                "true"
+              );
+            }
+          } else {
+            // New video
+            data.append(
+              `project[project_videos_attributes][${index}][name]`,
+              video.name
+            );
+            data.append(
+              `project[project_videos_attributes][${index}][video_url]`,
+              video.video_url
+            );
+          }
+        });
       } else if (key.startsWith("image") && Array.isArray(value)) {
         value.forEach((img) => {
           const backendField = key.replace("image", "project[image") + "]";
@@ -2570,6 +2613,58 @@ const ProjectDetailsEdit = () => {
     }));
 
     toast.success("Virtual tour removed!");
+  };
+
+  const handleVideoNameChange = (e) => {
+    setVideoName(e.target.value);
+  };
+
+  const handleVideoUrlChange = (e) => {
+    setVideoUrl(e.target.value);
+  };
+
+  const handleAddVideo = () => {
+    if (!videoName.trim() || !videoUrl.trim()) {
+      toast.error("Please enter both video name and URL");
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      project_videos_attributes: [
+        ...prev.project_videos_attributes,
+        { name: videoName, video_url: videoUrl },
+      ],
+    }));
+    setVideoName("");
+    setVideoUrl("");
+    toast.success("Video added successfully!");
+  };
+
+  const handleEditVideo = (index, field, value) => {
+    const updatedVideos = [...formData.project_videos_attributes];
+    updatedVideos[index][field] = value;
+    setFormData({ ...formData, project_videos_attributes: updatedVideos });
+  };
+
+  const handleDeleteVideo = (index) => {
+    const video = formData.project_videos_attributes[index];
+    if (video.id) {
+      // For existing videos, mark for deletion
+      const updatedVideos = [...formData.project_videos_attributes];
+      updatedVideos[index] = { ...video, _destroy: true };
+      setFormData({ ...formData, project_videos_attributes: updatedVideos });
+      toast.success("Video marked for deletion!");
+    } else {
+      // For new videos, just remove from array
+      setFormData((prev) => ({
+        ...prev,
+        project_videos_attributes: prev.project_videos_attributes.filter(
+          (_, i) => i !== index
+        ),
+      }));
+      toast.success("Video removed!");
+    }
   };
 
   const amenityTypes = [
@@ -5677,6 +5772,9 @@ const ProjectDetailsEdit = () => {
                 </div>
               </div>
 
+              {/* Project Videos Section */}
+              
+
              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
                   <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
@@ -6787,6 +6885,103 @@ const ProjectDetailsEdit = () => {
                       value={formData.video_preview_image_url}
                       onChange={handleChange}
                     />
+                  </div>
+                </>
+              )}
+              {baseURL === "https://kalpataru.lockated.com/" && (
+                <>
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">Project Video urls</h5>
+                  </div>
+                  <div className="row mt-2">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>Video Name</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Enter Video Name"
+                          value={videoName}
+                          onChange={handleVideoNameChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>Video URL</label>
+                        <input
+                          className="form-control"
+                          type="url"
+                          placeholder="Enter Video URL"
+                          value={videoUrl}
+                          onChange={handleVideoUrlChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label style={{ visibility: "hidden" }}>Action</label>
+                        <button
+                          type="button"
+                          className="purple-btn2 w-100"
+                          onClick={handleAddVideo}
+                        >
+                          Add Video url
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>Video Name</th>
+                            <th>Video URL</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.project_videos_attributes.length > 0 ? (
+                            formData.project_videos_attributes
+                              .filter(video => !video._destroy)
+                              .map((video, index) => (
+                              <tr key={`video-${index}`}>
+                                <td>
+                                  <input
+                                    className="form-control"
+                                    type="text"
+                                    value={video.name}
+                                    onChange={(e) => handleEditVideo(index, 'name', e.target.value)}
+                                  />
+                                </td>
+                                <td>
+                                  <input
+                                    className="form-control"
+                                    type="url"
+                                    value={video.video_url}
+                                    onChange={(e) => handleEditVideo(index, 'video_url', e.target.value)}
+                                  />
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() => handleDeleteVideo(index)}
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="3" className="text-center">No videos added</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </>
               )}

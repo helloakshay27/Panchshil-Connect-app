@@ -81,6 +81,7 @@ const ProjectDetailsCreate = () => {
     cover_images: [],
     is_sold: false,
     plans: [],
+    project_videos_attributes: [],
   });
 
   useEffect(() => {
@@ -97,6 +98,8 @@ const ProjectDetailsCreate = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [virtualTourUrl, setVirtualTourUrl] = useState("");
   const [virtualTourName, setVirtualTourName] = useState("");
+  const [videoName, setVideoName] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [towerName, setTowerName] = useState("");
   const [reraNumber, setReraNumber] = useState("");
   const [reraUrl, setReraUrl] = useState("");
@@ -1332,6 +1335,17 @@ const ProjectDetailsCreate = () => {
             );
           }
         });
+      } else if (key === "project_videos_attributes" && Array.isArray(value)) {
+        value.forEach((video, index) => {
+          data.append(
+            `project[project_videos_attributes][${index}][name]`,
+            video.name
+          );
+          data.append(
+            `project[project_videos_attributes][${index}][video_url]`,
+            video.video_url
+          );
+        });
       } else if (key === "project_ppt" && Array.isArray(value)) {
         value.forEach((file) => {
           if (file instanceof File) {
@@ -1683,6 +1697,40 @@ const ProjectDetailsCreate = () => {
     setFormData((prev) => ({
       ...prev,
       virtual_tour_url_multiple: prev.virtual_tour_url_multiple.filter(
+        (_, i) => i !== index
+      ),
+    }));
+  };
+
+  const handleVideoNameChange = (e) => {
+    setVideoName(e.target.value);
+  };
+
+  const handleVideoUrlChange = (e) => {
+    setVideoUrl(e.target.value);
+  };
+
+  const handleAddVideo = () => {
+    if (!videoName.trim() || !videoUrl.trim()) {
+      toast.error("Please enter both video name and URL");
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      project_videos_attributes: [
+        ...prev.project_videos_attributes,
+        { name: videoName, video_url: videoUrl },
+      ],
+    }));
+    setVideoName("");
+    setVideoUrl("");
+  };
+
+  const handleDeleteVideo = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      project_videos_attributes: prev.project_videos_attributes.filter(
         (_, i) => i !== index
       ),
     }));
@@ -3542,6 +3590,8 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
               </div>
+              {/* Project Videos Section */}
+             
               {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
                 <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
@@ -4478,6 +4528,91 @@ const ProjectDetailsCreate = () => {
                           />
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </>
+              )}
+              {baseURL === "https://kalpataru.lockated.com/" && (
+                <>
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">Project Video urls</h5>
+                  </div>
+                  <div className="row mt-2">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>Video Name</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="Enter Video Name"
+                          value={videoName}
+                          onChange={handleVideoNameChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>Video URL</label>
+                        <input
+                          className="form-control"
+                          type="url"
+                          placeholder="Enter Video URL"
+                          value={videoUrl}
+                          onChange={handleVideoUrlChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label style={{ visibility: "hidden" }}>Action</label>
+                        <button
+                          type="button"
+                          className="purple-btn2 w-100"
+                          onClick={handleAddVideo}
+                        >
+                          Add Video url
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>Video Name</th>
+                            <th>Video URL</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.project_videos_attributes.length > 0 ? (
+                            formData.project_videos_attributes.map((video, index) => (
+                              <tr key={`video-${index}`}>
+                                <td>{video.name}</td>
+                                <td>
+                                  <a href={video.video_url} target="_blank" rel="noopener noreferrer">
+                                    {video.video_url}
+                                  </a>
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() => handleDeleteVideo(index)}
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="3" className="text-center">No videos added</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </>
