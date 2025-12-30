@@ -25,10 +25,12 @@ const BannerEdit = () => {
   const [originalBannerVideo, setOriginalBannerVideo] = useState(null); // Store original preview
   const [showUploader, setShowUploader] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent multiple submissions
+  const [imageConfigurations, setImageConfigurations] = useState({});
 
   const [formData, setFormData] = useState({
     title: "",
     project_id: "",
+    banner_type: "",
     banner_video: null,
     active: true,
     banner_video_1_by_1: null,
@@ -48,6 +50,50 @@ const BannerEdit = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchImageConfigurations = async () => {
+      try {
+        const response = await axios.get(
+          `${baseURL}system_constants.json?q[description_eq]=ImagesConfiguration&q[name_eq]=BannerAttachment`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+        if (response.data && response.data.system_constants) {
+          const configs = {};
+          response.data.system_constants.forEach((config) => {
+            configs[config.name] = config.value;
+          });
+          setImageConfigurations(configs);
+        }
+      } catch (error) {
+        console.error("Failed to fetch image configurations:", error);
+      }
+    };
+
+    fetchImageConfigurations();
+  }, []);
+
+  const formatRatio = (ratioString) => {
+    if (!ratioString) return "";
+    const match = ratioString.match(/image_(\d+)_by_(\d+)/);
+    return match ? `${match[1]}:${match[2]}` : ratioString;
+  };
+
+  const getDynamicRatiosText = (configName) => {
+    const config = imageConfigurations[configName];
+    if (!config || !Array.isArray(config)) {
+      return "9:16 or 1:1 Format Should Only Be Allowed";
+    }
+    const ratios = config.map(formatRatio).filter(Boolean);
+    if (ratios.length === 0) {
+      return "9:16 or 1:1 Format Should Only Be Allowed";
+    }
+    return `${ratios.join(" or ")} Format Should Only Be Allowed`;
+  };
+
   const fetchBanner = async () => {
     try {
       const response = await axios.get(`${baseURL}banners/${id}.json`);
@@ -56,6 +102,7 @@ const BannerEdit = () => {
         setFormData({
           title: bannerData.title,
           project_id: bannerData.project_id,
+          banner_type: bannerData.banner_type || "",
           banner_video: bannerData.banner_video?.document_url || null,
           banner_video_1_by_1: bannerData.banner_video_1_by_1 || null,
           banner_video_9_by_16: bannerData.banner_video_9_by_16 || null,
@@ -214,6 +261,7 @@ const BannerEdit = () => {
     let newErrors = {};
     if (!formData.title.trim()) newErrors.title = "Title is mandatory";
     if (!formData.project_id) newErrors.project_id = "Project is mandatory";
+    if (!formData.banner_type) newErrors.banner_type = "Banner Type is mandatory";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -370,6 +418,7 @@ const BannerEdit = () => {
 
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
+      sendData.append("banner[banner_type]", formData.banner_type);
 
       // Append the main video if it's a File
       if (formData.banner_video instanceof File) {
@@ -766,6 +815,29 @@ const BannerEdit = () => {
                   </div>
                 </div>
 
+                {/* Banner Type Select */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Banner Type<span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={[
+                        { label: "Home Loan", value: "home_loan" },
+                        { label: "Project", value: "project" },
+                        { label: "Common", value: "common" },
+                      ]}
+                      defaultValue={formData.banner_type}
+                      onChange={(value) =>
+                        setFormData({ ...formData, banner_type: value })
+                      }
+                    />
+                    {errors.banner_type && (
+                      <span className="text-danger">{errors.banner_type}</span>
+                    )}
+                  </div>
+                </div>
+
                 {/* Banner Attachment Upload */}
                 <div className="col-md-3 col-sm-6 col-12">
                   <div className="form-group d-flex flex-column">
@@ -779,7 +851,7 @@ const BannerEdit = () => {
                         [i]
                         {showVideoTooltip && (
                           <span className="tooltip-text">
-                            9:16 or 1:1 Format Should Only Be Allowed
+                            {getDynamicRatiosText("BannerImage")}
                           </span>
                         )}
                       </span>
@@ -814,53 +886,19 @@ const BannerEdit = () => {
                 </div>
               </div>
 
-              {/* Scrollable Image Table */}
-              <div className="col-md-12 mt-4">
-                <div className="scrollable-table tbl-container">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Ratio</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    {/* <tbody>
-                      {project_banner.map(({ key, label }) => {
-                        const files = Array.isArray(formData[key]) ? formData[key] : formData[key] ? [formData[key]] : [];
-  
-                        return files.map((file, index) => {
-                          const preview = file.preview || file.document_url || '';
-                          const name = file.name || file.document_file_name || 'Unnamed';
-  
-                          return (
-                            <tr key={`${key}-${index}`}>
-                              <td>{name}</td>
-                              <td>
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={preview}
-                                  alt={name}
-                                />
-                              </td>
-                              <td>{file.ratio || label}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() => handleFetchedDiscardGallery(key, index,file.id)}
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        });
-                      })}
-                    </tbody> */}
-                    <tbody>
+{/* Scrollable Image Table */}
+<div className="col-md-12 mt-4">
+  <div className="scrollable-table tbl-container">
+    <table>
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Preview</th>
+          <th>Ratio</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
                       {(previewVideo ||
                         previewImg ||
                         formData.banner_video?.document_url) && (
@@ -1050,3 +1088,5 @@ const BannerEdit = () => {
 };
 
 export default BannerEdit;
+                {/* Sticky Footer Buttons */}
+            

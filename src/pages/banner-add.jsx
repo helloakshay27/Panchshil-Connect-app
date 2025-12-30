@@ -21,6 +21,7 @@ const BannerAdd = () => {
   const [formData, setFormData] = useState({
     title: "",
     project_id: "",
+    banner_type: "",
     banner_video: null,
     active: true,
     banner_video_1_by_1: null,
@@ -62,6 +63,7 @@ const BannerAdd = () => {
     let newErrors = {};
     if (!formData.title.trim()) newErrors.title = "Title is mandatory";
     if (!formData.project_id) newErrors.project_id = "Project is mandatory";
+    if (!formData.banner_type) newErrors.banner_type = "Banner Type is mandatory";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -305,6 +307,7 @@ const BannerAdd = () => {
       const sendData = new FormData();
       sendData.append("banner[title]", formData.title);
       sendData.append("banner[project_id]", formData.project_id);
+      sendData.append("banner[banner_type]", formData.banner_type);
 
       // Handle banner video/image fields
       Object.entries(formData).forEach(([key, images]) => {
@@ -433,6 +436,29 @@ const BannerAdd = () => {
                     />
                     {errors.project_id && (
                       <span className="text-danger">{errors.project_id}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Banner Type Select */}
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Banner Type<span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={[
+                        { label: "Home Loan", value: "home_loan" },
+                        { label: "Project", value: "project" },
+                        { label: "Common", value: "common" },
+                      ]}
+                      value={formData.banner_type}
+                      onChange={(value) =>
+                        setFormData({ ...formData, banner_type: value })
+                      }
+                    />
+                    {errors.banner_type && (
+                      <span className="text-danger">{errors.banner_type}</span>
                     )}
                   </div>
                 </div>
