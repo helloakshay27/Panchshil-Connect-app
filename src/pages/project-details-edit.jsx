@@ -2510,7 +2510,18 @@ const ProjectDetailsEdit = () => {
   };
 
   const handleReraNumberChange = (e) => {
-    setReraNumber(e.target.value);
+    const { value } = e.target;
+    // No max length restriction for Kalpataru baseURL
+    if (baseURL === "https://kalpataru.lockated.com/") {
+      if (/^[a-zA-Z0-9]*$/.test(value)) {
+        setReraNumber(value);
+      }
+    } else {
+      // 12 character max length for other baseURLs
+      if (/^[a-zA-Z0-9]{0,12}$/.test(value)) {
+        setReraNumber(value);
+      }
+    }
   };
 
   const handleReraUrlChange = (e) => {
@@ -4506,7 +4517,7 @@ const ProjectDetailsEdit = () => {
                     placeholder="Enter RERA Number"
                     value={reraNumber}
                     onChange={handleReraNumberChange}
-                    maxLength={12}
+                    {...(baseURL !== "https://kalpataru.lockated.com/" && { maxLength: 12 })}
                   />
                 </div>
               </div>

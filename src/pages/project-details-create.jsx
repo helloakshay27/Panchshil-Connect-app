@@ -1619,8 +1619,16 @@ const ProjectDetailsCreate = () => {
 
   const handleReraNumberChange = (e) => {
     const { value } = e.target;
-    if (/^[a-zA-Z0-9]{0,12}$/.test(value)) {
-      setReraNumber(value);
+    // No max length restriction for Kalpataru baseURL
+    if (baseURL === "https://kalpataru.lockated.com/") {
+      if (/^[a-zA-Z0-9]*$/.test(value)) {
+        setReraNumber(value);
+      }
+    } else {
+      // 12 character max length for other baseURLs
+      if (/^[a-zA-Z0-9]{0,12}$/.test(value)) {
+        setReraNumber(value);
+      }
     }
   };
 
@@ -1629,6 +1637,10 @@ const ProjectDetailsCreate = () => {
   };
 
   const handleReraNumberBlur = () => {
+    // Skip length validation for Kalpataru baseURL
+    if (baseURL === "https://kalpataru.lockated.com/") {
+      return;
+    }
     if (reraNumber.length !== 12) {
       toast.error("RERA Number must be exactly 12 alphanumeric characters!", {
         position: "top-right",
@@ -2637,7 +2649,8 @@ const ProjectDetailsCreate = () => {
                         placeholder="Enter RERA Number"
                         value={reraNumber}
                         onChange={handleReraNumberChange}
-                        maxLength={12}
+                        onBlur={handleReraNumberBlur}
+                        {...(baseURL !== "https://kalpataru.lockated.com/" && { maxLength: 12 })}
                       />
                     </div>
                   </div>
