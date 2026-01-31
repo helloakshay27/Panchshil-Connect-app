@@ -183,7 +183,7 @@ const LoyaltyManagerList = () => {
             </form>
           </div>
           <div className="card-tools">
-            {loyaltyManagers.length < 1 && (
+            {/* {loyaltyManagers.length < 1 && ( */}
               <button
                 className="purple-btn2 rounded-3"
                 onClick={() => navigate("/setup-member/loyalty-managers-create")}
@@ -201,7 +201,7 @@ const LoyaltyManagerList = () => {
                 </svg>
                 <span>Add</span>
               </button>
-            )}
+            {/* // )} */}
           </div>
         </div>
         {/* Table Content */}
@@ -230,6 +230,7 @@ const LoyaltyManagerList = () => {
                       <th>Name</th>
                       <th>Email</th>
                       <th>Mobile</th>
+                      <th>Project</th>
                       {/* <th>Status</th> */}
                     </tr>
                   </thead>
@@ -302,6 +303,7 @@ const LoyaltyManagerList = () => {
                           <td>{manager.name || "-"}</td>
                           <td>{manager.email || "-"}</td>
                           <td>{manager.mobile || "-"}</td>
+                          <td>{manager.project_name || "-"}</td>
                           {/* <td>
                           { loyaltyManagerPermission.show === "true" && (
                             <button
@@ -347,7 +349,7 @@ const LoyaltyManagerList = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6" className="text-center">
+                        <td colSpan="7" className="text-center">
                           No loyalty managers found.
                         </td>
                       </tr>

@@ -1,15 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 
 const LoyaltyManager = () => {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
+  const [projectId, setProjectId] = useState("");
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // ✅ Fetch Projects
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(`${baseURL}projects.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+        setProjects(response.data.projects || []);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        toast.error("Failed to load projects");
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   // ✅ Handle Form Submission
   const handleSubmit = async (e) => {
@@ -45,6 +68,7 @@ const LoyaltyManager = () => {
           name: name,
           mobile: mobile,
           email: email || undefined, // Only include if provided
+          project_id: projectId || undefined,
         }
       };
 
@@ -62,6 +86,7 @@ const LoyaltyManager = () => {
       setName("");
       setMobile("");
       setEmail("");
+      setProjectId("");
       navigate("/setup-member/loyalty-managers-list");
     } catch (error) {
       console.error("Error submitting loyalty manager:", error);
@@ -132,6 +157,23 @@ const LoyaltyManager = () => {
                         placeholder="Enter email (optional)"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Project Field */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>
+                        Project<span className="otp-asterisk"> *</span>
+                      </label>
+                      <SelectBox
+                        options={projects.map((project) => ({
+                          label: project.project_name,
+                          value: project.id,
+                        }))}
+                        value={projectId}
+                        onChange={(value) => setProjectId(value)}
                       />
                     </div>
                   </div>
