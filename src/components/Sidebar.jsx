@@ -38,7 +38,7 @@ const Sidebar = () => {
     const EventPermission = hasPermission("event");
     setEventActive(EventPermission);
 
-    const BroadcastPermission = hasPermission("noticeboard");
+    const BroadcastPermission = hasPermission("broadcast");
     setBroadcastActive(BroadcastPermission);
 
     const amenitiesPermission = hasPermission("amenities");
