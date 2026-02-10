@@ -259,8 +259,13 @@ const BannerEdit = () => {
 
   const validateForm = () => {
     let newErrors = {};
-    if (!formData.title.trim()) newErrors.title = "Title is mandatory";
-    if (!formData.project_id) newErrors.project_id = "Project is mandatory";
+    
+    // Skip title and project validation for home_loan banner type
+    if (formData.banner_type !== "home_loan") {
+      if (!formData.title.trim()) newErrors.title = "Title is mandatory";
+      if (!formData.project_id) newErrors.project_id = "Project is mandatory";
+    }
+    
     if (!formData.banner_type) newErrors.banner_type = "Banner Type is mandatory";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -774,10 +779,38 @@ const BannerEdit = () => {
             <div className="card-body">
               <div className="row">
                 {/* Title Input */}
+               
+
+                {/* Project Select */}
+               
+
+                {/* Banner Type Select */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
-                      Title<span className="otp-asterisk"> *</span>
+                      Banner Type<span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={[
+                        { label: "Home Loan", value: "home_loan" },
+                        { label: "Homescreen Hero Banner", value: "project" },
+                        // { label: "Common", value: "common" },
+                      ]}
+                      defaultValue={formData.banner_type}
+                      onChange={(value) =>
+                        setFormData({ ...formData, banner_type: value })
+                      }
+                    />
+                    {errors.banner_type && (
+                      <span className="text-danger">{errors.banner_type}</span>
+                    )}
+                  </div>
+                </div>
+
+                 <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Title{formData.banner_type !== "home_loan" && <span className="otp-asterisk"> *</span>}
                     </label>
                     <input
                       className="form-control"
@@ -793,11 +826,10 @@ const BannerEdit = () => {
                   </div>
                 </div>
 
-                {/* Project Select */}
-                <div className="col-md-3">
+                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
-                      Project <span className="text-danger">*</span>
+                      Project{formData.banner_type !== "home_loan" && <span className="text-danger"> *</span>}
                     </label>
                     <SelectBox
                       options={projects.map((p) => ({
@@ -811,29 +843,6 @@ const BannerEdit = () => {
                     />
                     {errors.project_id && (
                       <span className="text-danger">{errors.project_id}</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Banner Type Select */}
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Banner Type<span className="otp-asterisk"> *</span>
-                    </label>
-                    <SelectBox
-                      options={[
-                        { label: "Home Loan", value: "home_loan" },
-                        { label: "Project", value: "project" },
-                        { label: "Common", value: "common" },
-                      ]}
-                      defaultValue={formData.banner_type}
-                      onChange={(value) =>
-                        setFormData({ ...formData, banner_type: value })
-                      }
-                    />
-                    {errors.banner_type && (
-                      <span className="text-danger">{errors.banner_type}</span>
                     )}
                   </div>
                 </div>
@@ -899,72 +908,7 @@ const BannerEdit = () => {
         </tr>
       </thead>
       <tbody>
-                      {(previewVideo ||
-                        previewImg ||
-                        formData.banner_video?.document_url) && (
-                        <tr>
-                          <td>
-                            {/* Try to fetch name in proper fallback order */}
-                            {previewVideo?.name ||
-                              previewImg?.name ||
-                              formData.banner_video?.document_file_name ||
-                              formData.banner_video?.file_name ||
-                              (typeof formData.banner_video === "object"
-                                ? formData.banner_video?.document_url
-                                    ?.split("/")
-                                    ?.pop()
-                                : formData.banner_video?.split("/")?.pop()) ||
-                              "Video/Image"}
-                          </td>
-                          <td>
-                            {isImageFile(
-                              previewVideo ||
-                                previewImg ||
-                                formData.banner_video?.document_url
-                            ) ? (
-                              <img
-                                src={
-                                  previewImg ||
-                                  formData.banner_video?.document_url
-                                }
-                                className="img-fluid rounded"
-                                alt="Preview"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "150px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            ) : (
-                              <video
-                                src={
-                                  previewVideo ||
-                                  formData.banner_video?.document_url
-                                }
-                                controls
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "200px",
-                                  maxHeight: "150px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            )}
-                          </td>
-                          <td>N/A</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() =>
-                                handleFetchedDiscardGallery("banner_video")
-                              }
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      )}
+                      {/* Removed the banner_video row without ratio - only show ratio-specific images */}
 
                       {project_banner.map(({ key, label }) => {
                         const files = Array.isArray(formData[key])

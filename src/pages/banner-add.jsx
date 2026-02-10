@@ -61,8 +61,13 @@ const BannerAdd = () => {
 
   const validateForm = () => {
     let newErrors = {};
-    if (!formData.title.trim()) newErrors.title = "Title is mandatory";
-    if (!formData.project_id) newErrors.project_id = "Project is mandatory";
+    
+    // Skip title and project validation for home_loan banner type
+    if (formData.banner_type !== "home_loan") {
+      if (!formData.title.trim()) newErrors.title = "Title is mandatory";
+      if (!formData.project_id) newErrors.project_id = "Project is mandatory";
+    }
+    
     if (!formData.banner_type) newErrors.banner_type = "Banner Type is mandatory";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -398,11 +403,34 @@ const BannerAdd = () => {
 
             <div className="card-body">
               <div className="row">
-                {/* Title Input */}
+              
+                {/* Banner Type Select */}
                 <div className="col-md-3">
                   <div className="form-group">
                     <label>
-                      Title<span className="otp-asterisk"> *</span>
+                      Banner Type<span className="otp-asterisk"> *</span>
+                    </label>
+                    <SelectBox
+                      options={[
+                        { label: "Home Loan", value: "home_loan" },
+                        { label: "Homescreen Hero Banner", value: "project" },
+                        // { label: "Common", value: "common" },
+                      ]}
+                      value={formData.banner_type}
+                      onChange={(value) =>
+                        setFormData({ ...formData, banner_type: value })
+                      }
+                    />
+                    {errors.banner_type && (
+                      <span className="text-danger">{errors.banner_type}</span>
+                    )}
+                  </div>
+                </div>
+
+                 <div className="col-md-3">
+                  <div className="form-group">
+                    <label>
+                      Title{formData.banner_type !== "home_loan" && <span className="otp-asterisk"> *</span>}
                     </label>
                     <input
                       className="form-control"
@@ -418,11 +446,10 @@ const BannerAdd = () => {
                   </div>
                 </div>
 
-                {/* Project Select */}
-                <div className="col-md-3">
+                  <div className="col-md-3">
                   <div className="form-group">
                     <label>
-                      Project<span className="otp-asterisk"> *</span>
+                      Project{formData.banner_type !== "home_loan" && <span className="otp-asterisk"> *</span>}
                     </label>
                     <SelectBox
                       options={projects.map((project) => ({
@@ -436,29 +463,6 @@ const BannerAdd = () => {
                     />
                     {errors.project_id && (
                       <span className="text-danger">{errors.project_id}</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Banner Type Select */}
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Banner Type<span className="otp-asterisk"> *</span>
-                    </label>
-                    <SelectBox
-                      options={[
-                        { label: "Home Loan", value: "home_loan" },
-                        { label: "Project", value: "project" },
-                        { label: "Common", value: "common" },
-                      ]}
-                      value={formData.banner_type}
-                      onChange={(value) =>
-                        setFormData({ ...formData, banner_type: value })
-                      }
-                    />
-                    {errors.banner_type && (
-                      <span className="text-danger">{errors.banner_type}</span>
                     )}
                   </div>
                 </div>
