@@ -80,7 +80,7 @@ const BannerList = () => {
       }
     } catch (error) {
       console.error("Error toggling banner status:", error);
-      toast.error("Limit reached: only 5 active banners allowed. Please deactivate one before activating another.");
+      toast.error("Limit reached: only 6 active banners allowed. Please deactivate one before activating another.");
     } finally {
       setLoading(false);
     }

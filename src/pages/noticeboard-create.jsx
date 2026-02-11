@@ -36,17 +36,13 @@ const NoticeboardForm = () => {
     of_atype_id: "",
     is_important: "",
     email_trigger_enabled: "",
+    frequency: "",
     set_reminders_attributes: [],
     cover_image: [],
-    noticeboard_images: [],
     cover_image_1_by_1: [],
     cover_image_9_by_16: [],
     cover_image_3_by_2: [],
     cover_image_16_by_9: [],
-    noticeboard_images_1_by_1: [],
-    noticeboard_images_9_by_16: [],
-    noticeboard_images_3_by_2: [],
-    noticeboard_images_16_by_9: [],
   });
 
   console.log("formData", formData);
@@ -57,6 +53,7 @@ const NoticeboardForm = () => {
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [selectedProject, setSelectedProject] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [groups, setGroups] = useState([]);
 
@@ -88,11 +85,15 @@ const NoticeboardForm = () => {
   };
 
   const noticeTypeOptions = [
-    { value: "maintenance", label: "Maintenance" },
+    { value: "maintenance", label: "App Maintenance" },
     { value: "general", label: "General" },
-    { value: "emergency", label: "Emergency" },
     { value: "announcement", label: "Announcement" },
-    { value: "event", label: "Event" },
+    { value: "roadblock", label: "Roadblock" },
+  ];
+
+  const frequencyOptions = [
+    { value: "once_per_session", label: "Once per session" },
+    { value: "every_time", label: "Every time Home opens" },
   ];
 
   const phaseOptions = [
@@ -113,13 +114,6 @@ const NoticeboardForm = () => {
     { key: "cover_image_16_by_9", label: "16:9" },
     { key: "cover_image_9_by_16", label: "9:16" },
     { key: "cover_image_3_by_2", label: "3:2" },
-  ];
-
-  const noticeboardImageRatios = [
-    { key: "noticeboard_images_1_by_1", label: "1:1" },
-    { key: "noticeboard_images_16_by_9", label: "16:9" },
-    { key: "noticeboard_images_9_by_16", label: "9:16" },
-    { key: "noticeboard_images_3_by_2", label: "3:2" },
   ];
 
   const eventUploadConfig = {
@@ -548,20 +542,23 @@ const NoticeboardForm = () => {
     toast.dismiss();
     const errors = [];
 
-    if (!formData.notice_heading) {
-      errors.push("Broadcast Heading is required.");
-      return errors;
+    const isRoadblock = formData.notice_type === "roadblock";
+
+    // For non-roadblock types, heading and text are mandatory
+    if (!isRoadblock) {
+      if (!formData.notice_heading) {
+        errors.push("Broadcast Heading is required.");
+        return errors;
+      }
+      if (!formData.notice_text) {
+        errors.push("Broadcast Text is required.");
+        return errors;
+      }
+      if (!formData.comment) {
+        errors.push("Comment is required.");
+      }
     }
-    if (!formData.notice_text) {
-      errors.push("Broadcast Text is required.");
-      return errors;
-    }
-    // if (!selectedProjectId) {
-    //   errors.push("Project selection is required.");
-    // }
-    if (!formData.comment) {
-      errors.push("Comment is required.");
-    }
+
     if (!formData.expire_time) {
       errors.push("Expire Time is required.");
     }
@@ -607,6 +604,9 @@ const NoticeboardForm = () => {
     data.append("noticeboard[of_atype_id]", formData.of_atype_id);
     data.append("noticeboard[is_important]", formData.is_important);
     data.append("noticeboard[email_trigger_enabled]", formData.email_trigger_enabled);
+    if (formData.frequency) {
+      data.append("noticeboard[frequency]", formData.frequency);
+    }
 
     // Handle cover image
     // if (formData.cover_image && formData.cover_image.length > 0) {
@@ -634,17 +634,6 @@ const NoticeboardForm = () => {
     //     }
     //   });
     // }
-
-    // Handle ratio-wise noticeboard images
-    noticeboardImageRatios.forEach(({ key }) => {
-      if (formData[key] && formData[key].length > 0) {
-        formData[key].forEach((img) => {
-          if (img?.file instanceof File) {
-            data.append(`noticeboard[${key}][]`, img.file);
-          }
-        });
-      }
-    });
 
     // Handle group IDs
     if (Array.isArray(formData.group_id)) {
@@ -729,18 +718,14 @@ const NoticeboardForm = () => {
           of_atype_id: "",
           is_important: "",
           email_trigger_enabled: "",
+          frequency: "",
           user_ids: [],
           set_reminders_attributes: [],
           cover_image: [],
-          noticeboard_images: [],
           cover_image_1_by_1: [],
           cover_image_9_by_16: [],
           cover_image_3_by_2: [],
           cover_image_16_by_9: [],
-          noticeboard_images_1_by_1: [],
-          noticeboard_images_9_by_16: [],
-          noticeboard_images_3_by_2: [],
-          noticeboard_images_16_by_9: [],
         });
         
         // Reset additional states
@@ -829,6 +814,16 @@ const NoticeboardForm = () => {
 
     fetchProjects();
   }, [navigate]);
+
+  // Track selected project details
+  useEffect(() => {
+    if (selectedProjectId && projects.length > 0) {
+      const project = projects.find(p => p.id === selectedProjectId);
+      setSelectedProject(project || null);
+    } else {
+      setSelectedProject(null);
+    }
+  }, [selectedProjectId, projects]);
 
   // Fetch noticeboard data for edit mode
   useEffect(() => {
@@ -1078,6 +1073,28 @@ const NoticeboardForm = () => {
                   )}
                   {error && <p className="text-danger">{error}</p>}
                   <div className="row">
+                    {/* Notice Type Field - First */}
+                    <div className="col-md-3 mt-1">
+                      <div className="form-group">
+                        <label>
+                          Notice Type<span className="otp-asterisk"> *</span>
+                        </label>
+                        <SelectBox
+                          options={noticeTypeOptions}
+                          value={formData.notice_type || ""}
+                          onChange={(value) => {
+                            const isRoadblock = value === "roadblock";
+                            setFormData(prev => ({
+                              ...prev, 
+                              notice_type: value,
+                              is_important: isRoadblock ? "1" : prev.is_important
+                            }));
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Project Field */}
                     <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Project</label>
@@ -1091,11 +1108,13 @@ const NoticeboardForm = () => {
                         />
                       </div>
                     </div>
+
+                    {/* Notice Heading - Mandatory unless Roadblock */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Notice Heading
-                          <span className="otp-asterisk"> *</span>
+                          {formData.notice_type !== "roadblock" && <span className="otp-asterisk"> *</span>}
                         </label>
                         <input
                           className="form-control"
@@ -1104,15 +1123,17 @@ const NoticeboardForm = () => {
                           placeholder="Enter Notice Heading"
                           value={formData.notice_heading}
                           onChange={handleChange}
-                          required
+                          required={formData.notice_type !== "roadblock"}
                         />
                       </div>
                     </div>
+
+                    {/* Notice Text - Mandatory unless Roadblock */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Notice Text
-                          <span className="otp-asterisk"> *</span>
+                          {formData.notice_type !== "roadblock" && <span className="otp-asterisk"> *</span>}
                         </label>
                         <textarea
                           className="form-control"
@@ -1121,20 +1142,26 @@ const NoticeboardForm = () => {
                           placeholder="Enter Notice Text"
                           value={formData.notice_text}
                           onChange={handleChange}
-                          required
+                          required={formData.notice_type !== "roadblock"}
                         />
                       </div>
                     </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Notice Type</label>
-                        <SelectBox
-                          options={noticeTypeOptions}
-                          value={formData.notice_type || ""}
-                          onChange={(value) => setFormData(prev => ({...prev, notice_type: value}))}
-                        />
+
+                    {/* Frequency - Show only for Roadblock */}
+                    {formData.notice_type === "roadblock" && (
+                      <div className="col-md-3">
+                        <div className="form-group">
+                          <label>
+                            Home Screen Display Frequency<span className="otp-asterisk"> *</span>
+                          </label>
+                          <SelectBox
+                            options={frequencyOptions}
+                            value={formData.frequency || ""}
+                            onChange={(value) => setFormData(prev => ({...prev, frequency: value}))}
+                          />
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div className="col-md-3">
                       <div className="form-group">
@@ -1152,11 +1179,11 @@ const NoticeboardForm = () => {
                       </div>
                     </div>
 
-
+                    {/* Comment - Mandatory unless Roadblock */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Comment
-                           <span className="otp-asterisk"> *</span>
+                           {formData.notice_type !== "roadblock" && <span className="otp-asterisk"> *</span>}
                         </label>
                         <textarea
                           className="form-control"
@@ -1169,6 +1196,7 @@ const NoticeboardForm = () => {
                       </div>
                     </div>
 
+                    {/* Mark Important - Default Yes for Roadblock */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Mark Important</label>
@@ -1181,6 +1209,7 @@ const NoticeboardForm = () => {
                               value="1"
                               checked={formData.is_important === "1"}
                               onChange={handleChange}
+                              disabled={formData.notice_type === "roadblock"}
                             />
                             <label
                               className="form-check-label"
@@ -1197,6 +1226,7 @@ const NoticeboardForm = () => {
                               value="0"
                               checked={formData.is_important === "0"}
                               onChange={handleChange}
+                              disabled={formData.notice_type === "roadblock"}
                             />
                             <label
                               className="form-check-label"
@@ -1289,6 +1319,9 @@ const NoticeboardForm = () => {
                       </div>
                     </div>
 
+                    {/* Hide Set Reminders for Kalpataru projects */}
+                    {/* {!(selectedProject?.base_url === "https://kalpataru.lockated.com/" || 
+                       selectedProject?.project_base_url === "https://kalpataru.lockated.com/") && (
                     <div className="col-md-6">
                       <label className="form-label">Set Reminders</label>
                       <div className="row mb-2">
@@ -1394,7 +1427,11 @@ const NoticeboardForm = () => {
                           </div>
                         ))}
                     </div>
+                    )} */}
 
+                    {/* Hide Share With for Kalpataru projects */}
+                    {/* {!(selectedProject?.base_url === "https://kalpataru.lockated.com/" || 
+                       selectedProject?.project_base_url === "https://kalpataru.lockated.com/") && (
                     <div className="col-md-4">
                       <div className="form-group">
                         <label>Share With</label>
@@ -1540,6 +1577,7 @@ const NoticeboardForm = () => {
                         </div>
                       )}
                     </div>
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -1562,7 +1600,7 @@ const NoticeboardForm = () => {
                         [i]
                         {showTooltip && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB. Single image per aspect ratio (16:9, 1:1, 9:16, 3:2)
+                            Max Upload Size 5 MB. Single image per aspect ratio (16:9, 1:1, 9:16, 3:2)
                           </span>
                         )}
                       </span>
@@ -1687,151 +1725,6 @@ const NoticeboardForm = () => {
                             <tr>
                               <td colSpan="4" className="text-center">
                                 No cover images uploaded
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Broadcast Images{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowAttachmentTooltip(true)}
-                        onMouseLeave={() => setShowAttachmentTooltip(false)}
-                      >
-                        [i]
-                        {showAttachmentTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB. Multiple images per aspect ratio (16:9, 1:1, 9:16, 3:2)
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      type="button"
-                      onClick={() => setShowEventUploader(true)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    {showEventUploader && (
-                      <ProjectImageVideoUpload
-                        onClose={() => setShowEventUploader(false)}
-                        includeInvalidRatios={false}
-                        selectedRatioProp={selectedNoticeRatios}
-                        showAsModal={true}
-                        label={noticeImageLabel}
-                        description={dynamicNoticeDescription}
-                        onContinue={(validImages) =>
-                          handleCroppedImages(validImages, "notice")
-                        }
-                        allowVideos={false}
-                      />
-                    )}
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <p className="text-muted mb-2">
-                      <i className="bi bi-info-circle"></i> Broadcast images: Multiple images per aspect ratio are allowed
-                    </p>
-                    <div
-                      className="mt-4 tbl-container"
-                      style={{ maxHeight: "300px", overflowY: "auto" }}
-                    >
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Ratio</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {noticeboardImageRatios.flatMap(({ key, label }) => {
-                            const files = Array.isArray(formData[key])
-                              ? formData[key]
-                              : formData[key]
-                              ? [formData[key]]
-                              : [];
-
-                            if (files.length === 0) return [];
-
-                            return files.map((file, index) => {
-                              const preview =
-                                file.preview || file.document_url || file.url || file.file_url || "";
-                              const name =
-                                file.name ||
-                                file.document_file_name ||
-                                file.filename ||
-                                `Broadcast Image ${index + 1}`;
-                              const ratio = file.ratio || label;
-
-                              return (
-                                <tr key={`${key}-${index}`}>
-                                  <td>{name}</td>
-                                  <td>
-                                    {preview ? (
-                                      <img
-                                        src={preview}
-                                        alt="Preview"
-                                        style={{
-                                          width: "50px",
-                                          height: "50px",
-                                          objectFit: "cover",
-                                        }}
-                                        onError={(e) => {
-                                          console.error(`Failed to load broadcast image: ${preview}`);
-                                          e.target.style.display = "none";
-                                          e.target.nextSibling.style.display = "block";
-                                        }}
-                                      />
-                                    ) : null}
-                                    <span 
-                                      style={{ 
-                                        display: preview ? "none" : "block",
-                                        fontSize: "12px",
-                                        color: "#666"
-                                      }}
-                                    >
-                                      No Preview
-                                    </span>
-                                  </td>
-                                  <td>{ratio}</td>
-                                  <td>
-                                    <button
-                                      type="button"
-                                      className="btn btn-danger btn-sm"
-                                      disabled={removingImageId === file.id}
-                                      onClick={async () => await handleImageRemoval(key, index)}
-                                    >
-                                      {removingImageId === file.id ? 'Removing...' : 'Remove'}
-                                    </button>
-                                  </td>
-                                </tr>
-                              );
-                            });
-                          })}
-                          {noticeboardImageRatios.every(({ key }) => {
-                            const files = Array.isArray(formData[key]) ? formData[key] : [];
-                            return files.length === 0;
-                          }) && (
-                            <tr>
-                              <td colSpan="4" className="text-center">
-                                No broadcast images uploaded
                               </td>
                             </tr>
                           )}
