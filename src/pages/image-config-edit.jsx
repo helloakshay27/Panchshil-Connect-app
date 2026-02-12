@@ -25,7 +25,8 @@ const EditImagesConfiguration = () => {
     { value: "TestimonialPreviewImage", label: "TestimonialPreviewImage" },
     { value: "BannerAttachment", label: "BannerAttachment" },
     { value: "EventImage", label: "EventImage" },
-    { value: "EventCoverImage", label: "EventCoverImage" }
+    { value: "EventCoverImage", label: "EventCoverImage" },
+    { value: "BroadcastImage", label: "BroadcastImage" }
   ];
 
   // Define value options for each name
@@ -89,6 +90,12 @@ const EditImagesConfiguration = () => {
       { value: "cover_image_3_by_2", label: "cover_image_3_by_2" },
       { value: "cover_image_9_by_16", label: "cover_image_9_by_16" },
       { value: "cover_image_16_by_9", label: "cover_image_16_by_9" }
+    ],
+     BroadcastImage: [
+      { value: "noticeboard_images_1_by_1", label: "noticeboard_images_1_by_1" },
+      { value: "noticeboard_images_3_by_2", label: "noticeboard_images_3_by_2" },
+      { value: "noticeboard_images_9_by_16", label: "noticeboard_images_9_by_16" },
+      { value: "noticeboard_images_16_by_9", label: "noticeboard_images_16_by_9" }
     ]
   };
 

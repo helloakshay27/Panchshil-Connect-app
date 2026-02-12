@@ -335,7 +335,7 @@ if (loading) {
                 </div>
                 <div className="card-body">
                   <div className="row">
-                    <div className="col-md-12 mt-2">
+                    {/* <div className="col-md-12 mt-2">
                       <h5>Cover Images</h5>
                       <div className="mt-4 tbl-container">
                         <table className="w-100">
@@ -456,7 +456,7 @@ if (loading) {
                           </tbody>
                         </table>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="col-md-12 mt-4">
                       <h5>Broadcast Images</h5>
