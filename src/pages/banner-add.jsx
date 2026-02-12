@@ -413,7 +413,7 @@ const BannerAdd = () => {
                     <SelectBox
                       options={[
                         { label: "Home Loan", value: "home_loan" },
-                        { label: "Homescreen Hero Banner", value: "homescreen_hero_banner" },
+                        { label: "Homescreen Hero Banner", value: "project" },
                         // { label: "Common", value: "common" },
                       ]}
                       value={formData.banner_type}
