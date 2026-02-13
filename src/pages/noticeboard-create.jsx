@@ -36,7 +36,7 @@ const NoticeboardForm = () => {
     of_atype_id: "",
     is_important: "",
     email_trigger_enabled: "",
-    frequency: "",
+    home_screen_frequency: "",
     set_reminders_attributes: [],
     cover_image: [],
     cover_image_1_by_1: [],
@@ -604,8 +604,8 @@ const NoticeboardForm = () => {
     data.append("noticeboard[of_atype_id]", formData.of_atype_id);
     data.append("noticeboard[is_important]", formData.is_important);
     data.append("noticeboard[email_trigger_enabled]", formData.email_trigger_enabled);
-    if (formData.frequency) {
-      data.append("noticeboard[frequency]", formData.frequency);
+    if (formData.home_screen_frequency) {
+      data.append("noticeboard[home_screen_frequency]", formData.home_screen_frequency);
     }
 
     // Handle cover image
@@ -718,7 +718,7 @@ const NoticeboardForm = () => {
           of_atype_id: "",
           is_important: "",
           email_trigger_enabled: "",
-          frequency: "",
+          home_screen_frequency: "",
           user_ids: [],
           set_reminders_attributes: [],
           cover_image: [],
@@ -1156,8 +1156,8 @@ const NoticeboardForm = () => {
                           </label>
                           <SelectBox
                             options={frequencyOptions}
-                            value={formData.frequency || ""}
-                            onChange={(value) => setFormData(prev => ({...prev, frequency: value}))}
+                            value={formData.home_screen_frequency || ""}
+                            onChange={(value) => setFormData(prev => ({...prev, home_screen_frequency: value}))}
                           />
                         </div>
                       </div>
