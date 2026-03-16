@@ -546,14 +546,14 @@ const NoticeboardForm = () => {
 
     // For non-roadblock types, heading and text are mandatory
     if (!isRoadblock) {
-      if (!formData.notice_heading) {
-        errors.push("Broadcast Heading is required.");
-        return errors;
-      }
-      if (!formData.notice_text) {
-        errors.push("Broadcast Text is required.");
-        return errors;
-      }
+      // if (!formData.notice_heading) {
+      //   errors.push("Broadcast Heading is required.");
+      //   return errors;
+      // }
+      // if (!formData.notice_text) {
+      //   errors.push("Broadcast Text is required.");
+      //   return errors;
+      // }
       if (!formData.comment) {
         errors.push("Comment is required.");
       }
@@ -1114,7 +1114,7 @@ const NoticeboardForm = () => {
                       <div className="form-group">
                         <label>
                           Notice Heading
-                          {formData.notice_type !== "roadblock" && <span className="otp-asterisk"> *</span>}
+                          {/* {formData.notice_type !== "roadblock" && <span className="otp-asterisk"> *</span>} */}
                         </label>
                         <input
                           className="form-control"
@@ -1133,7 +1133,7 @@ const NoticeboardForm = () => {
                       <div className="form-group">
                         <label>
                           Notice Text
-                          {formData.notice_type !== "roadblock" && <span className="otp-asterisk"> *</span>}
+                          {/* {formData.notice_type !== "roadblock" && <span className="otp-asterisk"> *</span>} */}
                         </label>
                         <textarea
                           className="form-control"
