@@ -45,6 +45,18 @@ svg path{
   stroke: var(--red);
 }
 
+/* For icons that are stroke-only (no fill) — prevent fill from being applied */
+.sidebar .icon-stroke-only path {
+  fill: none;
+  stroke: var(--red);
+}
+
+/* For icons that are fill-only (no stroke) — prevent stroke from being applied */
+.sidebar .icon-fill-only path {
+  fill: var(--red);
+  stroke: none;
+}
+
 table path {
   fill: var(--red);
 }
