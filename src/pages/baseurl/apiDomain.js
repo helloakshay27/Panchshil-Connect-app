@@ -15,6 +15,10 @@ switch (hostname) {
     baseURL = "https://kalpataru.lockated.com/";
     break;  
 
+  case "web-kalpataru.lockated.com":
+    baseURL = "https://kalpataru.lockated.com/";
+    break;  
+
   case "ui-panchshil-super.lockated.com":
     baseURL = "https://panchshil-super.lockated.com/";
     break;
@@ -28,7 +32,7 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://dev-panchshil-super-app.lockated.com/"; 
+    baseURL = "https://kalpataru.lockated.com/"; 
     break;
 
   default:
