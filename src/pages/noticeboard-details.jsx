@@ -88,7 +88,7 @@ const NoticeboardDetails = () => {
   }, [noticeboardId, navigate]);
 
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "-";
     try {
       return new Date(dateString).toLocaleString();
     } catch (error) {
@@ -164,7 +164,7 @@ if (loading) {
                               <span className="text-dark">:</span>
                               <span className="text-black">
                                 {" "}
-                                {noticeboardData.notice_heading || "N/A"}{" "}
+                                {noticeboardData.notice_heading || "-"}{" "}
                               </span>
                             </span>
                           </label>
@@ -199,7 +199,9 @@ if (loading) {
                               <span className="text-dark">:</span>
                               <span className="text-dark">
                                 {" "}
-                                {noticeboardData.project_name || "N/A"}{" "}
+                                {Array.isArray(noticeboardData.shared_notices) && noticeboardData.shared_notices.length > 0
+                                  ? noticeboardData.shared_notices.map((sn) => sn.project_name).filter(Boolean).join(", ")
+                                  : noticeboardData.project_name || "-"}{" "}
                               </span>
                             </span>
                           </label>
@@ -269,7 +271,7 @@ if (loading) {
                           <label className="text">
                             <span className="me-3">
                               <span className="text-dark">
-                                : {noticeboardData.comment || "N/A"}
+                                : {noticeboardData.comment || "-"}
                               </span>
                             </span>
                           </label>
@@ -298,7 +300,7 @@ if (loading) {
                               whiteSpace: "pre-wrap"
                             }}
                           >
-                            {noticeboardData.notice_text || "N/A"}
+                            {noticeboardData.notice_text || "-"}
                           </div>
                           {noticeboardData.notice_text && noticeboardData.notice_text.length > 200 && (
                             <button 
@@ -506,7 +508,7 @@ if (loading) {
                                         document_url: imageUrl,
                                         document_file_name: img.document_file_name || img.name || img.filename || `Broadcast Image`,
                                         document_content_type: img.document_content_type || img.content_type || img.type || "image/*",
-                                        document_updated_at: img.document_updated_at || img.updated_at || img.created_at || "N/A"
+                                        document_updated_at: img.document_updated_at || img.updated_at || img.created_at || "-"
                                       });
                                     }
                                   }

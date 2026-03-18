@@ -15,7 +15,7 @@ const NoticeboardForm = () => {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const [formData, setFormData] = useState({
-    project_id: "",
+    project_ids: [],
     notice_heading: "",
     notice_text: "",
     active: "1",
@@ -52,7 +52,6 @@ const NoticeboardForm = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [groups, setGroups] = useState([]);
@@ -584,7 +583,12 @@ const NoticeboardForm = () => {
     }
 
     const data = new FormData();
-    data.append("noticeboard[project_id]", selectedProjectId);
+    // Append multiple project IDs as shared_notices
+    if (Array.isArray(formData.project_ids) && formData.project_ids.length > 0) {
+      formData.project_ids.forEach((pid) => {
+        data.append("noticeboard[project_ids][]", pid);
+      });
+    }
     data.append("noticeboard[notice_heading]", formData.notice_heading);
     data.append("noticeboard[notice_text]", formData.notice_text);
     data.append("noticeboard[active]", formData.active);
@@ -698,7 +702,7 @@ const NoticeboardForm = () => {
       if (!isEdit) {
         // Reset form only for create mode
         setFormData({
-          project_id: "",
+          project_ids: [],
           notice_heading: "",
           notice_text: "",
           active: "1",
@@ -729,7 +733,6 @@ const NoticeboardForm = () => {
         });
         
         // Reset additional states
-        setSelectedProjectId("");
         setReminderValue("");
         setReminderUnit("");
         
@@ -815,15 +818,15 @@ const NoticeboardForm = () => {
     fetchProjects();
   }, [navigate]);
 
-  // Track selected project details
+  // Track selected project details (use first selected project for feature checks)
   useEffect(() => {
-    if (selectedProjectId && projects.length > 0) {
-      const project = projects.find(p => p.id === selectedProjectId);
+    if (formData.project_ids?.length > 0 && projects.length > 0) {
+      const project = projects.find(p => p.id === formData.project_ids[0]);
       setSelectedProject(project || null);
     } else {
       setSelectedProject(null);
     }
-  }, [selectedProjectId, projects]);
+  }, [formData.project_ids, projects]);
 
   // Fetch noticeboard data for edit mode
   useEffect(() => {
@@ -901,9 +904,16 @@ const NoticeboardForm = () => {
           }];
         };
 
+        // Build project_ids from shared_notices array
+        const projectIds = Array.isArray(noticeboardData.shared_notices)
+          ? noticeboardData.shared_notices.map((sn) => sn.project_id).filter(Boolean)
+          : noticeboardData.project_id
+          ? [noticeboardData.project_id]
+          : [];
+
         // Set form data from fetched noticeboard
         const newFormData = {
-          project_id: noticeboardData.project_id || "",
+          project_ids: projectIds,
           notice_heading: noticeboardData.notice_heading || "",
           notice_text: noticeboardData.notice_text || "",
           active: noticeboardData.active?.toString() || "1",
@@ -940,7 +950,6 @@ const NoticeboardForm = () => {
 
         console.log("Setting form data:", newFormData);
         setFormData(newFormData);
-        setSelectedProjectId(noticeboardData.project_id || "");
         
         toast.success("Broadcast data loaded successfully!");
 
@@ -1074,7 +1083,7 @@ const NoticeboardForm = () => {
                   {error && <p className="text-danger">{error}</p>}
                   <div className="row">
                     {/* Notice Type Field - First */}
-                    <div className="col-md-3 mt-1">
+                    <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Notice Type<span className="otp-asterisk"> *</span>
@@ -1094,17 +1103,33 @@ const NoticeboardForm = () => {
                       </div>
                     </div>
                     
-                    {/* Project Field */}
-                    <div className="col-md-3 mt-1">
+                    {/* Project Field - Multi Select */}
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Project</label>
-                        <SelectBox
-                          options={projects.map((proj) => ({
-                            value: proj.id,
-                            label: proj.project_name,
+                        <label>
+                          Project<span className="otp-asterisk"> *</span>
+                        </label>
+                        <MultiSelectBox
+                          options={projects.map((project) => ({
+                            label: project.project_name,
+                            value: project.id,
                           }))}
-                          value={selectedProjectId || ""}
-                          onChange={(value) => setSelectedProjectId(value)}
+                          value={
+                            Array.isArray(formData.project_ids)
+                              ? formData.project_ids
+                                  .map((pid) => {
+                                    const proj = projects.find((p) => p.id === pid || p.id?.toString() === pid?.toString());
+                                    return proj ? { value: proj.id, label: proj.project_name } : null;
+                                  })
+                                  .filter(Boolean)
+                              : []
+                          }
+                          onChange={(selectedOptions) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              project_ids: selectedOptions.map((opt) => opt.value),
+                            }))
+                          }
                         />
                       </div>
                     </div>
