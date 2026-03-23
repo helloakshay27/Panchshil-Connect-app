@@ -9,6 +9,66 @@ import {
   LOGO_Kalpataru_URL,
   Lokated_URL,
 } from "../pages/baseurl/apiDomain";
+import { hasPermission } from "../utils/permission";
+
+// Ordered list of Home sidebar modules (matches Sidebar.jsx render order)
+const HOME_ROUTES = [
+  { permission: "project", route: "/project-list" },
+  { permission: "banner", route: "/banner-list" },
+  { permission: "event", route: "/event-list" },
+  { permission: "broadcast", route: "/noticeboard-list" },
+  { permission: "testimonial", route: "/testimonial-list" },
+  { permission: "referral", route: "/referral-list" },
+  { permission: "enquiry", route: "/enquiry-list" },
+  { permission: "specification", route: "/specification-list" },
+  { permission: "site_visit", route: "/sitevisit-list" },
+  { permission: "organization", route: "/organization-list" },
+  { permission: "company", route: "/company-list" },
+  { permission: "site", route: "/site-list" },
+  { permission: "support_service", route: "/support-service-list" },
+  { permission: "press_releases", route: "/pressreleases-list" },
+  { permission: "faq", route: "/faq-list" },
+  { permission: "referral_program", route: "/referral-program-list" },
+];
+
+// Ordered list of Setup sidebar modules (matches setup-sidebar.jsx render order)
+const SETUP_ROUTES = [
+  { permission: "user_module", route: "/setup-member/user-list" },
+  { permission: "loyalty_manager", route: "/setup-member/loyalty-managers-list" },
+  { permission: "user_role", route: "/setup-member/lock-role-list" },
+  { permission: "user_Groups", route: "/setup-member/user-groups-list" },
+  { permission: "lock_function", route: "/setup-member/lock-function-list" },
+  { permission: "banks", route: "/setup-member/banks-list" },
+  { permission: "bank_details", route: "/setup-member/bank-details-list" },
+  { permission: "home_loan", route: "/setup-member/home-loan-list" },
+  { permission: "loan_manager", route: "/setup-member/loan-manager-list" },
+  { permission: "property_type", route: "/setup-member/property-type-list" },
+  { permission: "project_building", route: "/setup-member/project-building-type-list" },
+  { permission: "construction", route: "/setup-member/construction-status-list" },
+  { permission: "construction_update", route: "/setup-member/construction-updates-list" },
+  { permission: "project_config", route: "/setup-member/project-configuration-list" },
+  { permission: "amenities", route: "/setup-member/amenities-list" },
+  { permission: "department", route: "/setup-member/department-list" },
+  { permission: "visit_slot", route: "/setup-member/visitslot-list" },
+  { permission: "tds_tutorials", route: "/setup-member/tds-tutorials-list" },
+  { permission: "plus_services", route: "/setup-member/plus-services-list" },
+  { permission: "other_service", route: "/setup-member/other-services-list" },
+  { permission: "smtp_settings", route: "/setup-member/smtp-settings-list" },
+  { permission: "faq_category", route: "/setup-member/faq-category-list" },
+  { permission: "faq_subcategory", route: "/setup-member/faq-subcategory-list" },
+  { permission: "loyalty_members", route: "/setup-member/loyalty-members" },
+  { permission: "loyalty_tiers", route: "/setup-member/tiers" },
+  { permission: "rule_engine", route: "/setup-member/rule-engine" },
+  { permission: "referral_list", route: "/setup-member/referral-list" },
+  { permission: "lock_payments", route: "/setup-member/lock-payments" },
+  { permission: "home_loan_request", route: "/setup-member/home-loan-requests" },
+  { permission: "demand_notes", route: "/setup-member/demand-notes" },
+  { permission: "orders", route: "/setup-member/orders" },
+  { permission: "encash", route: "/setup-member/encash-list" },
+  { permission: "service_category", route: "/setup-member/service-category-list" },
+  { permission: "image_config", route: "/setup-member/image-config-list" },
+  { permission: "common_files", route: "/setup-member/common-files-upload" },
+];
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
@@ -20,6 +80,14 @@ const Header = () => {
 
 const isPanchshil = hostname.includes("panchshil");
 const isRustomjee = hostname.includes("rustomjee"); 
+
+  // Compute first accessible route for Home and Setup
+  const firstHomeRoute =
+    HOME_ROUTES.find((item) => hasPermission(item.permission))?.route ||
+    "/project-list";
+  const firstSetupRoute =
+    SETUP_ROUTES.find((item) => hasPermission(item.permission))?.route ||
+    "/setup-member/user-list";
 
   useEffect(() => {
     // Determine which logo to display based on baseURL
@@ -173,13 +241,13 @@ const isRustomjee = hostname.includes("rustomjee");
             <div className="nav-links ms-4">
               <NavLink
                 className="nav-link px-4 d-flex align-items-center"
-                to="/project-list"
+                to={firstHomeRoute}
               >
                 Home
               </NavLink>
               <NavLink
                 className="nav-link px-4 d-flex align-items-center"
-                to="/setup-member/user-list"
+                to={firstSetupRoute}
               >
                 Setup
               </NavLink>

@@ -1103,13 +1103,14 @@ const NoticeboardForm = () => {
                       </div>
                     </div>
                     
-                    {/* Project Field - Multi Select */}
+                    {/* Project Field - Multi Select with checkboxes */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
                           Project<span className="otp-asterisk"> *</span>
                         </label>
                         <MultiSelectBox
+                          isCheckbox
                           options={projects.map((project) => ({
                             label: project.project_name,
                             value: project.id,

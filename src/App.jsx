@@ -165,6 +165,7 @@ import LoyaltyManagerEdit from "./pages/loyalty-managers-edit";
 import LoyaltyManagerList from "./pages/loyalty-managers-list";
 import HomeLoanRequest from "./pages/home-loan-request";
 import CreateImageConfiguration from "./pages/image-config-create";
+import NoticeboardEdit from "./pages/noticeboard-edit";
 // import SystemConstantsList from "./pages/system-constpage";
 // import SystemConstantsCreate from "./pages/system-constants-create";
 // import SystemConstantsEdit from "./pages/system-constants-edit";
@@ -637,6 +638,10 @@ function App() {
           <Route
             path="/noticeboard-details/:id"
             element={<NoticeboardDetails />}
+          />
+           <Route
+            path="/noticeboard-edit/:id"
+            element={<NoticeboardEdit />}
           />
 
           <Route

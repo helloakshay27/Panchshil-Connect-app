@@ -6,7 +6,21 @@ export default function MultiSelectBox({
   value,
   onChange,
   placeholder,
+  isCheckbox = false,
 }) {
+  const selectedValues = Array.isArray(value) ? value.map((v) => v.value) : [];
+
+  const checkboxFormatOptionLabel = (option) => (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+      <input
+        type="checkbox"
+        readOnly
+        checked={selectedValues.includes(option.value)}
+        style={{ accentColor: "var(--red)", width: "15px", height: "15px", cursor: "pointer" }}
+      />
+      <span style={{ fontSize: "14px" }}>{option.label}</span>
+    </div>
+  );
   const customStyles = {
     control: (base, state) => ({
       ...base,
@@ -94,6 +108,9 @@ export default function MultiSelectBox({
       className="basic-multi-select"
       classNamePrefix="select"
       styles={customStyles}
+      closeMenuOnSelect={!isCheckbox}
+      hideSelectedOptions={!isCheckbox}
+      formatOptionLabel={isCheckbox ? checkboxFormatOptionLabel : undefined}
     />
   );
 }
