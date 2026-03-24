@@ -285,6 +285,14 @@ const NoticeboardList = () => {
                           displayedNoticeboards.map((noticeboard, index) => (
                             <tr key={noticeboard.id}>
                               <td>
+                                 <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "1px",
+                                padding: "2px"
+                              }}
+                              >
                                 {/* <a
                                   href=""
                                   onClick={(e) => {
@@ -349,6 +357,7 @@ const NoticeboardList = () => {
                                       />
                                     </svg>
                                   </a>
+                                  </div>
                               </td>
                               <td>
                                 {(pagination.current_page - 1) * pageSize +
