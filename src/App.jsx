@@ -629,7 +629,7 @@ function App() {
           />
           <Route
             path="/noticeboard-edit/:id"
-            element={<NoticeboardForm />}
+            element={<NoticeboardEdit />}
           />
           <Route
             path="/noticeboard-list"
