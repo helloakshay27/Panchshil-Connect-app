@@ -18,7 +18,7 @@ const NoticeboardEdit = () => {
     active: "1",
     IsDelete: "0",
     expire_time: "",
-    user_id: "",
+    // user_id: "",
     publish: "1",
     notice_type: "",
     deny: "0",
@@ -43,7 +43,6 @@ const NoticeboardEdit = () => {
   });
 
   const [noticeTypes] = useState([]);
-  const [eventUserID, setEventUserID] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -297,7 +296,7 @@ const NoticeboardEdit = () => {
     data.append("noticeboard[active]", formData.active);
     data.append("noticeboard[IsDelete]", formData.IsDelete);
     data.append("noticeboard[expire_time]", formData.expire_time);
-    data.append("noticeboard[user_id]", formData.user_id);
+    // data.append("noticeboard[user_id]", formData.user_id);
     data.append("noticeboard[publish]", formData.publish);
     data.append("noticeboard[notice_type]", formData.notice_type);
     data.append("noticeboard[deny]", formData.deny);
@@ -383,24 +382,6 @@ const NoticeboardEdit = () => {
     }
   }, [id, navigate]);
 
-  // Fetch users
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(`${baseURL}users/get_users.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        });
-        setEventUserID(response?.data.users || []);
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      }
-    };
-    fetchUsers();
-  }, []);
-
   // Track selected project — also resolves project_name fallback
   useEffect(() => {
     if (formData.project_ids?.length > 0 && projects.length > 0) {
@@ -422,7 +403,7 @@ const NoticeboardEdit = () => {
     }
   }, [formData.project_ids, projects, projectNameFallback]);
 
-  // Fetch noticeboard by ID
+  // Fetch noticeboard by ID — same pattern as event-edit
   useEffect(() => {
     const fetchNoticeboardData = async () => {
       if (!id) return;
@@ -435,95 +416,103 @@ const NoticeboardEdit = () => {
           return;
         }
 
-        // Fetch projects and noticeboard in parallel
-        const [nbRes, projRes] = await Promise.all([
-          axios.get(`${baseURL}noticeboards/${id}.json`, {
-            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-          }),
-          axios.get(`${baseURL}projects.json`, {
-            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-          }),
-        ]);
+        // Step 1: fetch noticeboard (response.data is the flat object)
+        const response = await axios.get(`${baseURL}noticeboards/${id}.json`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-        // Always update projects from the parallel fetch
-        const fetchedProjects = projRes.data.projects || [];
-        projectsRef.current = fetchedProjects;
-        setProjects(fetchedProjects);
+        const data = response.data;
+        console.log("Noticeboard data fetched:", data);
 
-        // API returns a flat object directly (not wrapped in { noticeboard: {...} })
-        const d = nbRes.data.noticeboard ?? nbRes.data;
-
-        if (!d || !d.id) {
-          toast.error("No data returned from server.");
+        if (!data || !data.id) {
+          toast.error("Invalid data received from server.");
           return;
         }
 
-        // Convert boolean/number/string → "1" or "0"
-        const toBoolStr = (val, def = "") => {
-          if (val === true || val === 1 || val === "1") return "1";
-          if (val === false || val === 0 || val === "0") return "0";
-          return def;
+        // Step 2: fetch projects
+        const projRes = await axios.get(`${baseURL}projects.json`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const fetchedProjects = projRes.data?.projects || [];
+        projectsRef.current = fetchedProjects;
+        setProjects(fetchedProjects);
+
+        // Helper: local datetime string for datetime-local input (same as event-edit)
+        const formatDateForInput = (isoString) => {
+          if (!isoString) return "";
+          const date = new Date(isoString);
+          const pad = (n) => n.toString().padStart(2, "0");
+          return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
         };
 
-        // Map backend shared → frontend
-        let frontendSharedValue = "all";
-        if (d.shared === 1 || d.shared === "1" || d.shared === true) {
-          frontendSharedValue = d.group_ids?.length > 0 ? "group" : "individual";
+        // Helper: convert boolean/null → "1" or "0" string
+        const toBoolStr = (val) => {
+          if (val === true || val === 1 || val === "1") return "1";
+          if (val === false || val === 0 || val === "0") return "0";
+          return "";
+        };
+
+        // Map backend shared → frontend string ("all" / "group" / "individual")
+        let sharedValue = "all";
+        if (data.shared === 1 || data.shared === true) {
+          sharedValue = data.group_id?.length > 0 ? "group" : "individual";
         }
 
-        // Build project_ids:
-        // Priority 1: shared_notices array (multi-project)
-        // Priority 2: root project_id (single project)
-        // Priority 3: match project_name against projects list
+        // Build project_ids from shared_notices (multi-project) or project_id (single)
         let projectIds = [];
-        if (Array.isArray(d.shared_notices) && d.shared_notices.length > 0) {
-          projectIds = d.shared_notices.map((sn) => sn.project_id).filter(Boolean);
-        } else if (d.project_id) {
-          projectIds = [d.project_id];
-        } else if (d.project_name) {
-          const allProjects = projRes
-            ? projRes.data.projects || []
-            : projectsRef.current;
-          const matched = allProjects.find((p) => p.project_name === d.project_name);
-          if (matched) projectIds = [matched.id];
+        if (Array.isArray(data.shared_notices) && data.shared_notices.length > 0) {
+          projectIds = data.shared_notices.map((sn) => sn.project_id).filter(Boolean);
+        } else if (data.project_id) {
+          projectIds = [data.project_id];
         }
 
-        setFormData({
-          project_ids: projectIds,
-          notice_heading: d.notice_heading || "",
-          notice_text: d.notice_text || "",
-          active: toBoolStr(d.active, "1"),
-          IsDelete: toBoolStr(d.IsDelete, "0"),
-          expire_time: d.expire_time
-            ? new Date(d.expire_time).toISOString().slice(0, 16)
-            : "",
-          user_id: Array.isArray(d.user_ids)
-            ? d.user_ids.join(",")
-            : d.user_id?.toString() || "",
-          publish: d.publish?.toString() || "1",
-          notice_type: d.notice_type || "",
-          deny: d.deny?.toString() || "0",
-          flag_expire: toBoolStr(d.flag_expire, "1"),
-          canceled_by: d.canceled_by || "",
-          canceler_id: d.canceler_id?.toString() || "",
-          comment: d.comment || "",
-          shared: frontendSharedValue,
-          group_id: d.group_ids || [],
-          of_phase: d.of_phase || "",
-          of_atype: d.of_atype || "",
-          of_atype_id: d.of_atype_id?.toString() || "",
-          is_important: toBoolStr(d.is_important, ""),
-          email_trigger_enabled: d.email_trigger_enabled != null
-            ? toBoolStr(d.email_trigger_enabled, "")
-            : "",
-          home_screen_frequency: d.home_screen_frequency || "",
-          set_reminders_attributes: d.reminders || d.set_reminders_attributes || [],
-          cover_image: processImageData(d.cover_image),
-          cover_image_1_by_1: processImageData(d.cover_image_1_by_1),
-          cover_image_9_by_16: processImageData(d.cover_image_9_by_16),
-          cover_image_3_by_2: processImageData(d.cover_image_3_by_2),
-          cover_image_16_by_9: processImageData(d.cover_image_16_by_9),
+        // Format reminders same as event-edit
+        const formattedReminders = (data.reminders || []).map((reminder) => {
+          if (reminder.days != null) return { id: reminder.id, value: reminder.days, unit: "days", _destroy: false };
+          if (reminder.hours != null) return { id: reminder.id, value: reminder.hours, unit: "hours", _destroy: false };
+          if (reminder.minutes != null) return { id: reminder.id, value: reminder.minutes, unit: "minutes", _destroy: false };
+          if (reminder.weeks != null) return { id: reminder.id, value: reminder.weeks, unit: "weeks", _destroy: false };
+          return reminder;
         });
+
+        // Spread data directly (same as event-edit) then override the fields we need to transform
+        setFormData((prev) => ({
+          ...prev,
+          ...data,
+          project_ids: projectIds,
+          notice_heading: data.notice_heading || "",
+          notice_text: data.notice_text || "",
+          notice_type: data.notice_type || "",
+          comment: data.comment || "",
+          of_phase: data.of_phase || "",
+          of_atype: data.of_atype || "",
+          of_atype_id: data.of_atype_id?.toString() || "",
+          canceled_by: data.canceled_by || "",
+          canceler_id: data.canceler_id?.toString() || "",
+          home_screen_frequency: data.home_screen_frequency || "",
+          publish: data.publish?.toString() || "1",
+          deny: data.deny?.toString() || "0",
+          expire_time: formatDateForInput(data.expire_time),
+          active: toBoolStr(data.active),
+          IsDelete: toBoolStr(data.IsDelete),
+          flag_expire: toBoolStr(data.flag_expire),
+          is_important: toBoolStr(data.is_important),
+          email_trigger_enabled: toBoolStr(data.email_trigger_enabled),
+          shared: sharedValue,
+          group_id: data.group_id || [],
+          set_reminders_attributes: formattedReminders,
+          cover_image: processImageData(data.cover_image),
+          cover_image_1_by_1: processImageData(data.cover_image_1_by_1),
+          cover_image_9_by_16: processImageData(data.cover_image_9_by_16),
+          cover_image_3_by_2: processImageData(data.cover_image_3_by_2),
+          cover_image_16_by_9: processImageData(data.cover_image_16_by_9),
+        }));
 
       } catch (err) {
         console.error("Error fetching noticeboard data:", err);

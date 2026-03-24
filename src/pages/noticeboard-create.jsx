@@ -594,7 +594,7 @@ const NoticeboardForm = () => {
     data.append("noticeboard[active]", formData.active);
     data.append("noticeboard[IsDelete]", formData.IsDelete);
     data.append("noticeboard[expire_time]", formData.expire_time);
-    data.append("noticeboard[user_id]", formData.user_id);
+    // data.append("noticeboard[user_id]", formData.user_id);
     data.append("noticeboard[publish]", formData.publish);
     data.append("noticeboard[notice_type]", formData.notice_type);
     data.append("noticeboard[deny]", formData.deny);
@@ -723,7 +723,7 @@ const NoticeboardForm = () => {
           is_important: "",
           email_trigger_enabled: "",
           home_screen_frequency: "",
-          user_ids: [],
+          // user_ids: [],
           set_reminders_attributes: [],
           cover_image: [],
           cover_image_1_by_1: [],
@@ -756,27 +756,27 @@ const NoticeboardForm = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(
-          `${baseURL}users/get_users.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${baseURL}users/get_users.json`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
 
-        setEventUserID(response?.data.users || []);
-        console.log("eventUserID", eventUserID);
-      } catch (error) {
-        console.error("Error fetching Users:", error);
-      }
-    };
-    fetchUsers();
-  }, []);
+  //       setEventUserID(response?.data.users || []);
+  //       console.log("eventUserID", eventUserID);
+  //     } catch (error) {
+  //       console.error("Error fetching Users:", error);
+  //     }
+  //   };
+  //   fetchUsers();
+  // }, []);
 
   useEffect(() => {
     const fetchProjects = async () => {

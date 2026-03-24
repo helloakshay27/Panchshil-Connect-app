@@ -328,7 +328,7 @@ const NoticeboardList = () => {
                                     <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"></path>
                                   </svg>
                                 </a>
-                                 {/* <a
+                                 <a
                                     href={`/noticeboard-edit/${noticeboard.id}`}
                                     className="me-2"
                                   >
@@ -348,7 +348,7 @@ const NoticeboardList = () => {
                                         fill="#667085"
                                       />
                                     </svg>
-                                  </a> */}
+                                  </a>
                               </td>
                               <td>
                                 {(pagination.current_page - 1) * pageSize +
