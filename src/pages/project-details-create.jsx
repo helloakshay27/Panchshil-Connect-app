@@ -1619,11 +1619,12 @@ const ProjectDetailsCreate = () => {
 
   const handleReraNumberChange = (e) => {
     const { value } = e.target;
-    // No max length restriction for Kalpataru baseURL
-    if (baseURL === "https://kalpataru.lockated.com/") {
-      if (/^[a-zA-Z0-9]*$/.test(value)) {
-        setReraNumber(value);
-      }
+    // No max length restriction for Kalpataru or api-connect baseURL
+    if (
+      baseURL === "https://kalpataru.lockated.com/" ||
+      baseURL === "https://api-connect.panchshil.com/"
+    ) {
+      setReraNumber(value);
     } else {
       // 12 character max length for other baseURLs
       if (/^[a-zA-Z0-9]{0,12}$/.test(value)) {
@@ -1637,8 +1638,11 @@ const ProjectDetailsCreate = () => {
   };
 
   const handleReraNumberBlur = () => {
-    // Skip length validation for Kalpataru baseURL
-    if (baseURL === "https://kalpataru.lockated.com/") {
+    // Skip length validation for Kalpataru or api-connect baseURL
+    if (
+      baseURL === "https://kalpataru.lockated.com/" ||
+      baseURL === "https://api-connect.panchshil.com/"
+    ) {
       return;
     }
     if (reraNumber.length !== 12) {
