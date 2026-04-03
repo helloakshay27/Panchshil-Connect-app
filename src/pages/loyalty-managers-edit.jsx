@@ -40,7 +40,8 @@ const LoyaltyManagerEdit = () => {
     const fetchLoyaltyManager = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}loyalty_managers/${id}.json`
+          `${baseURL}loyalty_managers/${id}.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         const data = response.data;
         setName(data.name || "");
@@ -97,6 +98,7 @@ const LoyaltyManagerEdit = () => {
         },
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
           },
         }

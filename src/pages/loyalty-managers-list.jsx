@@ -48,7 +48,8 @@ const LoyaltyManagerList = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${baseURL}loyalty_managers.json`
+          `${baseURL}loyalty_managers.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setLoyaltyManagers(response.data);
         setPagination({
@@ -98,7 +99,7 @@ const LoyaltyManagerList = () => {
       await axios.put(
         `${baseURL}loyalty_managers/${id}.json`,
         { loyalty_manager: { active: updatedStatus } },
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}`, "Content-Type": "application/json" } }
       );
       setLoyaltyManagers((prev) =>
         prev.map((item) =>
