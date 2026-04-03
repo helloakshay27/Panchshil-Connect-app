@@ -31,7 +31,7 @@ const TdsTutorialList = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`${baseURL}/tds_tutorials.json`, {
+      const response = await fetch(`${baseURL}tds_tutorials.json`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -108,7 +108,7 @@ const TdsTutorialList = () => {
 
     try {
       await axios.put(
-        `${baseURL}/tds_tutorials/${id}.json`,
+        `${baseURL}tds_tutorials/${id}.json`,
         { tds_tutorial: { active: updatedStatus } },
         {
           headers: {
@@ -142,7 +142,7 @@ const TdsTutorialList = () => {
     }
 
     try {
-      await axios.delete(`${baseURL}/tds_tutorials/${id}.json`, {
+      await axios.delete(`${baseURL}tds_tutorials/${id}.json`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },

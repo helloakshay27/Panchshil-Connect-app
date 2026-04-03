@@ -23,7 +23,9 @@ const ProjectBuildingType = () => {
       const url = `${baseURL}property_types.json`; // Corrected API endpoint
 
       try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
         // Handle the response format
         const fetchedPropertyTypes = response.data || [];
 
@@ -68,6 +70,7 @@ const ProjectBuildingType = () => {
         },
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
           },
         }

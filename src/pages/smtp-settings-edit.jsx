@@ -38,7 +38,7 @@ const SMTPSettingsEdit = () => {
         console.log("Base URL:", baseURL);
 
         const response = await axios.get(
-          `${baseURL}/smtp_settings/${id}.json`,
+          `${baseURL}smtp_settings/${id}.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -160,7 +160,7 @@ const SMTPSettingsEdit = () => {
       console.log("Sending payload:", jsonPayload);
 
       const response = await axios.put(
-        `${baseURL}/smtp_settings/${id}.json`,
+        `${baseURL}smtp_settings/${id}.json`,
         jsonPayload,
         {
           headers: {
@@ -254,7 +254,7 @@ const SMTPSettingsEdit = () => {
 
       // Assuming there's a test endpoint - adjust URL as needed
       const response = await axios.post(
-        `${baseURL}/smtp_settings/test_connection.json`,
+        `${baseURL}smtp_settings/test_connection.json`,
         testPayload,
         {
           headers: {

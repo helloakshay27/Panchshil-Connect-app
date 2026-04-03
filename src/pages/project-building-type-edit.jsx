@@ -24,7 +24,9 @@ const ProjectBuildingTypeEdit = () => {
     
     const fetchPropertyTypes = async () => {
       try {
-        const response = await axios.get(`${baseURL}property_types.json`);
+        const response = await axios.get(`${baseURL}property_types.json`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
         // API returns array directly
         const fetchedPropertyTypes = Array.isArray(response.data) ? response.data : [];
 
@@ -45,7 +47,9 @@ const ProjectBuildingTypeEdit = () => {
 
     const fetchBuildingType = async (options) => {
       try {
-        const response = await axios.get(`${baseURL}building_types/${id}.json`);
+        const response = await axios.get(`${baseURL}building_types/${id}.json`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
         const data = response.data;
 
         // Set the building type name
@@ -112,6 +116,8 @@ const ProjectBuildingTypeEdit = () => {
           building_type: buildingType,
           property_type_id: formData.Property_Type_ID,
         },
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}`, "Content-Type": "application/json" },
       });
       toast.success("Building type updated successfully");
       navigate("/setup-member/project-building-type-list");

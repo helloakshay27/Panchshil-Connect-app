@@ -48,7 +48,8 @@ const PropertyTypeList = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${baseURL}property_types.json`
+          `${baseURL}property_types.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setPropertyTypes(response.data);
         setPagination({
@@ -94,7 +95,7 @@ const PropertyTypeList = () => {
       await axios.put(
         `${baseURL}property_types/${id}.json`,
         { property_type: { active: updatedStatus } },
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}`, "Content-Type": "application/json" } }
       );
       setPropertyTypes((prev) =>
         prev.map((item) =>

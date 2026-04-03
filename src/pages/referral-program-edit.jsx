@@ -53,7 +53,7 @@ const ReferralProgramEdit = () => {
         console.log("ID:", id);
         console.log("Base URL:", baseURL);
         
-        const response = await axios.get(`${baseURL}/referral_configs/${id}.json`, {
+        const response = await axios.get(`${baseURL}referral_configs/${id}.json`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
@@ -274,7 +274,7 @@ const ReferralProgramEdit = () => {
 
         console.log("Sending with FormData (has new images)");
         response = await axios.put(
-          `${baseURL}/referral_configs/${id}.json`,
+          `${baseURL}referral_configs/${id}.json`,
           formDataPayload,
           {
             headers: {
@@ -294,7 +294,7 @@ const ReferralProgramEdit = () => {
 
         console.log("Sending as JSON (no new images):", jsonPayload);
         response = await axios.put(
-          `${baseURL}/referral_configs/${id}.json`,
+          `${baseURL}referral_configs/${id}.json`,
           jsonPayload,
           {
             headers: {

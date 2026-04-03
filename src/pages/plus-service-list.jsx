@@ -33,7 +33,7 @@ const PlusServicesList = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`${baseURL}/plus_services.json`, {
+      const response = await fetch(`${baseURL}plus_services.json`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -108,7 +108,7 @@ const PlusServicesList = () => {
 
     try {
       await axios.put(
-        `${baseURL}/plus_services/${id}.json`,
+        `${baseURL}plus_services/${id}.json`,
         { plus_service: { active: updatedStatus } },
         {
           headers: {

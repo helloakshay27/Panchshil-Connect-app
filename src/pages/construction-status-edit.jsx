@@ -19,7 +19,8 @@ const ConstructionStatusEdit = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${baseURL}construction_statuses/${id}.json`
+          `${baseURL}construction_statuses/${id}.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setFormData({
           construction_status: response.data.construction_status,
@@ -48,7 +49,8 @@ const ConstructionStatusEdit = () => {
     try {
       await axios.put(
         `${baseURL}construction_statuses/${id}.json`,
-        { construction_status: formData }
+        { construction_status: formData },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
       );
       toast.success("Construction status updated successfully!");
       navigate("/setup-member/construction-status-list");

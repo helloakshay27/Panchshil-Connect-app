@@ -365,7 +365,9 @@ const ProjectDetailsEdit = () => {
   };
   useEffect(() => {
     axios
-      .get(`${baseURL}/property_types.json`)
+      .get(`${baseURL}property_types.json`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
       .then((response) => {
         const options = response.data
           .filter((item) => item.active) // Ensure only active types are included
@@ -384,7 +386,9 @@ const ProjectDetailsEdit = () => {
   const fetchBuildingTypes = async () => {
     // setLoading(tru/e);
     try {
-      const response = await axios.get(`${baseURL}/building_types.json`);
+      const response = await axios.get(`${baseURL}building_types.json`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      });
       const options = response.data
         .filter((item) => item.active) // optional: only include active types
         .map((type) => ({
@@ -424,7 +428,8 @@ const ProjectDetailsEdit = () => {
     const fetchConstructionStatuses = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}construction_statuses.json`
+          `${baseURL}construction_statuses.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         const options = response.data
           .filter((status) => status.active) // Filter only active statuses
@@ -445,7 +450,9 @@ const ProjectDetailsEdit = () => {
   useEffect(() => {
     const fetchCategoryTypes = async () => {
       try {
-        const response = await axios.get(`${baseURL}category_types.json`);
+        const response = await axios.get(`${baseURL}category_types.json`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
 
         if (response.data) {
           // Extract only category_type from each object
@@ -3378,7 +3385,8 @@ const ProjectDetailsEdit = () => {
     try {
       // Fetch building types based on the selected property type
       const response = await axios.get(
-        `${baseURL}/building_types.json?q[property_type_id_eq]=${id}`
+        `${baseURL}building_types.json?q[property_type_id_eq]=${id}`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
       );
 
       const formattedBuildingTypes = response.data.map((item) => ({
@@ -3418,9 +3426,10 @@ const ProjectDetailsEdit = () => {
 
     for (const amenity of removed) {
       try {
-        await axios.delete(`${baseURL}amenities/${amenity.id}.json`);
-        console.log(`Deleted amenity with ID: ${amenity.id}`);
-      } catch (error) {
+        await axios.delete(`${baseURL}amenities/${amenity.id}.json`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
+        console.log(`Deleted amenity with ID: ${amenity.id}`);      } catch (error) {
         console.error("Error deleting amenity:", error);
       }
     }

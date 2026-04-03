@@ -23,7 +23,8 @@ const EditAmenities = () => {
     const fetchAmenity = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}amenity_setups/${id}.json`
+          `${baseURL}amenity_setups/${id}.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         console.log(response.data);
 
@@ -105,6 +106,7 @@ const EditAmenities = () => {
         formData,
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "multipart/form-data",
           },
         }

@@ -96,7 +96,11 @@ const BannerEdit = () => {
 
   const fetchBanner = async () => {
     try {
-      const response = await axios.get(`${baseURL}banners/${id}.json`);
+      const response = await axios.get(`${baseURL}banners/${id}.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
       if (response.data) {
         const bannerData = response.data;
         setFormData({

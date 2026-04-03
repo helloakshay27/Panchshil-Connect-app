@@ -50,7 +50,8 @@ const ConstructionStatusList = () => {
       setLoading(true); // Ensure loading starts before API call
       try {
         const response = await axios.get(
-          `${baseURL}construction_statuses.json`
+          `${baseURL}construction_statuses.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setStatuses(response.data);
         setPagination((prevState) => ({
@@ -98,6 +99,8 @@ const ConstructionStatusList = () => {
     try {
       await axios.put(`${baseURL}construction_statuses/${id}.json`, {
         construction_status: { active: updatedStatus },
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       });
       setStatuses((prev) =>
         prev.map((item) =>

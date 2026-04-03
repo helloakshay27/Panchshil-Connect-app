@@ -73,7 +73,8 @@ const ProjectBuildingTypeList = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${baseURL}/building_types.json`
+        `${baseURL}building_types.json`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
       );
       setBuildingTypes(response.data);
       setPagination({
@@ -137,7 +138,8 @@ const ProjectBuildingTypeList = () => {
         `${baseURL}building_types/${id}.json`,
         {
           building_type: { active: !currentStatus },
-        }
+        },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}`, "Content-Type": "application/json" } }
       );
       toast.success("Status updated successfully");
       fetchBuildingTypes(); // Refresh the list

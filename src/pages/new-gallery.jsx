@@ -123,6 +123,7 @@ const NewGallery = () => {
         data,
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "multipart/form-data",
           },
         }

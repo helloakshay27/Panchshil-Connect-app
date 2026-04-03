@@ -23,7 +23,8 @@ const GalleryList = () => {
     setLoading(true); // Start loading
     try {
       const response = await axios.get(
-        `${baseURL}galleries/get_galleries.json`
+        `${baseURL}galleries/get_galleries.json`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
       );
       setGalleries(response.data.galleries);
       setPagination((prev) => ({

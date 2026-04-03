@@ -17,7 +17,8 @@ const SpecificationUpdate = () => {
       try {
         // Fetching data from LIST API to get the icon_url
         const listResponse = await axios.get(
-          `${baseURL}specification_setups.json`
+          `${baseURL}specification_setups.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
 
         // Find the specific item by ID
@@ -76,7 +77,10 @@ const SpecificationUpdate = () => {
         `${baseURL}specification_setups/${id}.json`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 

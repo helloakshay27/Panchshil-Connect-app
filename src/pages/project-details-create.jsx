@@ -1445,7 +1445,9 @@ const ProjectDetailsCreate = () => {
     const fetchProjects = async () => {
       const url = `${baseURL}get_property_types.json`;
       try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
         setprojectsType(response.data?.property_types);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -1458,7 +1460,9 @@ const ProjectDetailsCreate = () => {
     const fetchConfigurations = async () => {
       const url = `${baseURL}configuration_setups.json`;
       try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
         setConfigurations(response.data);
       } catch (error) {
         console.error("Error fetching configurations:", error);
@@ -1514,7 +1518,9 @@ const ProjectDetailsCreate = () => {
     const fetchSpecifications = async () => {
       const url = `${baseURL}specification_setups.json`;
       try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
         if (response.data && response.data.specification_setups) {
           setSpecifications(response.data.specification_setups);
         }
@@ -1546,7 +1552,9 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     const fetchCategoryTypes = async () => {
       try {
-        const response = await axios.get(`${baseURL}category_types.json`);
+        const response = await axios.get(`${baseURL}category_types.json`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
         if (response.data) {
           const formattedCategories = response.data.map((item) => ({
             value: item.category_type,
@@ -1835,7 +1843,9 @@ const ProjectDetailsCreate = () => {
 
   useEffect(() => {
     axios
-      .get(`${baseURL}/property_types.json`)
+      .get(`${baseURL}property_types.json`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
       .then((response) => {
         const options = response.data
           .filter((item) => item.active)
@@ -1875,7 +1885,8 @@ const ProjectDetailsCreate = () => {
     }));
     try {
       const response = await axios.get(
-        `${baseURL}building_types.json?q[property_type_id_eq]=${id}`
+        `${baseURL}building_types.json?q[property_type_id_eq]=${id}`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
       );
       const buildingTypes = response.data || [];
       const formattedOptions = buildingTypes.map((item) => ({
@@ -1893,7 +1904,8 @@ const ProjectDetailsCreate = () => {
     const fetchConstructionStatuses = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}construction_statuses.json`
+          `${baseURL}construction_statuses.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         const options = response.data
           .filter((status) => status.active)

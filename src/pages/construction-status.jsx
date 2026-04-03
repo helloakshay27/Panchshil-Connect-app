@@ -22,7 +22,9 @@ const ConstructionStatus = () => {
     formData.append("construction_status[construction_status]", name); // ✅ Correct format
 
     try {
-      await axios.post(`${baseURL}construction_statuses.json`, formData);
+      await axios.post(`${baseURL}construction_statuses.json`, formData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      });
 
       toast.success("Construction status added successfully!");
       setName(""); // Reset form

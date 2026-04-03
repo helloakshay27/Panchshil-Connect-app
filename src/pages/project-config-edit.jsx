@@ -19,7 +19,8 @@ const ProjectConfigEdit = () => {
     const fetchConfiguration = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}configuration_setups/${id}.json`
+          `${baseURL}configuration_setups/${id}.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setFormData({
           name: response.data.name,

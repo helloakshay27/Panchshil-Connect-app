@@ -85,6 +85,8 @@ const ImageConfig = () => {
     try {
       const response = await axios.put(`${baseURL}system_constants/${id}.json`, {
         system_constant: { value: newValue },
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}`, "Content-Type": "application/json" },
       });
 
       if (response.status === 200) {
@@ -113,7 +115,9 @@ const ImageConfig = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${baseURL}system_constants/${id}.json`);
+      await axios.delete(`${baseURL}system_constants/${id}.json`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      });
       toast.success("Image configuration deleted successfully!");
 
       setImageConfigs((prevConfigs) =>

@@ -45,7 +45,9 @@ const AmenitiesList = () => {
     const fetchAmenities = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${baseURL}amenity_setups.json`);
+        const response = await axios.get(`${baseURL}amenity_setups.json`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        });
         const data = response.data.amenities_setups || [];
 
         setAmenities(data);
@@ -75,6 +77,8 @@ const AmenitiesList = () => {
     try {
       const response = await axios.put(`${baseURL}amenity_setups/${id}.json`, {
         amenity_setup: { active: updatedStatus },
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       });
 
       if (response.status === 200) {
@@ -134,7 +138,9 @@ const AmenitiesList = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${baseURL}amenity_setups/${id}.json`);
+      await axios.delete(`${baseURL}amenity_setups/${id}.json`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      });
       toast.success("Amenity deleted successfully!");
 
       setAmenities((prevAmenities) =>

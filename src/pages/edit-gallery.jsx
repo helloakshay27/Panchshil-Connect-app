@@ -28,7 +28,8 @@ const EditGallery = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${baseURL}galleries/${id}.json`
+          `${baseURL}galleries/${id}.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         const data = response.data;
 

@@ -47,7 +47,8 @@ const ProjectConfigurationList = () => {
     const fetchConfigurations = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}configuration_setups.json`
+          `${baseURL}configuration_setups.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setConfigurations(response.data);
         setPagination((prev) => ({
@@ -73,10 +74,11 @@ const ProjectConfigurationList = () => {
     toast.dismiss();
     try {
       await axios.patch(
-        `${baseURL}/configuration_setups/${id}.json`,
+        `${baseURL}configuration_setups/${id}.json`,
         {
           active: !currentStatus,
-        }
+        },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}`, "Content-Type": "application/json" } }
       );
       setConfigurations((prev) =>
         prev.map((config) =>

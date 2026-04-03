@@ -26,8 +26,9 @@ const SpecificationList = () => {
             params: {
               page: pagination.current_page,
               per_page: pageSize,
-              search: searchQuery, // Include search filter
+              search: searchQuery,
             },
+            headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
           }
         );
         if (
@@ -60,7 +61,9 @@ const SpecificationList = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${baseURL}specification_setups/${id}.json`);
+      await axios.delete(`${baseURL}specification_setups/${id}.json`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      });
       alert("Specification deleted successfully!");
 
       setSpecifications((prevSpecs) =>

@@ -30,7 +30,7 @@ const UserDetails = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/user_details/${id}.json`, {
+        const response = await axios.get(`${baseURL}user_details/${id}.json`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",

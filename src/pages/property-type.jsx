@@ -29,6 +29,7 @@ const PropertyType = () => {
         payload,
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "multipart/form-data", // ✅ Required for FormData
           },
         }

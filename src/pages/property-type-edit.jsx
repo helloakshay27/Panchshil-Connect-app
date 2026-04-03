@@ -15,7 +15,8 @@ const PropertyTypeEdit = () => {
     const fetchPropertyType = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}property_types/${id}.json`
+          `${baseURL}property_types/${id}.json`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setName(response.data.property_type || ""); // ✅ Ensure correct field
       } catch (error) {
@@ -43,6 +44,7 @@ const PropertyTypeEdit = () => {
         { property_type: { property_type: name } }, // ✅ Correct backend format
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
           },
         }

@@ -33,7 +33,7 @@ const LockRoleCreate = () => {
     const fetchLockFunctions = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}/lock_functions.json`,
+          `${baseURL}lock_functions.json`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -161,7 +161,7 @@ const LockRoleCreate = () => {
       };
 
       await axios.post(
-        `${baseURL}/lock_roles.json`,
+        `${baseURL}lock_roles.json`,
         payload,
         {
           headers: {
