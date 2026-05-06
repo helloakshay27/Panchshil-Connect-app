@@ -1162,12 +1162,12 @@ const EventEdit = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Title</label>
+                        <label>EventTitle</label>
                         <input
                           className="form-control"
                           type="text"
                           name="title"
-                          placeholder="Enter Title"
+                          placeholder="Enter Event Title"
                           value={formData.title || ""}
                           onChange={handleChange}
                         />
