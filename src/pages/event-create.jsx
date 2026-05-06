@@ -14,6 +14,7 @@ const EventCreate = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     event_type: "",
+    title: "",
     event_name: "",
     event_at: "",
     from_time: "",
@@ -472,6 +473,7 @@ const EventCreate = () => {
     const data = new FormData();
     data.append("event[event_type]", formData.event_type);
     data.append("event[event_name]", formData.event_name);
+    data.append("event[event_title]", formData.title || "");
     data.append("event[event_at]", formData.event_at);
     data.append("event[from_time]", formData.from_time);
     data.append("event[to_time]", formData.to_time);
@@ -589,6 +591,7 @@ const EventCreate = () => {
       });
       toast.success("Event created successfully!");
       setFormData({
+        title: "",
         event_type: "",
         event_name: "",
         event_at: "",
@@ -834,6 +837,20 @@ const EventCreate = () => {
                           value={formData.event_name}
                           onChange={handleChange}
                           required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Title</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="title"
+                          placeholder="Enter Title"
+                          value={formData.title}
+                          onChange={handleChange}
                         />
                       </div>
                     </div>

@@ -21,6 +21,7 @@ const EventEdit = () => {
   const [formData, setFormData] = useState({
     project_id: "",
     event_type: "",
+    title: "",
     event_name: "",
     event_at: "",
     from_time: "",
@@ -495,6 +496,7 @@ const EventEdit = () => {
         setFormData((prev) => ({
           ...prev,
           ...data,
+          title: data.event_title || data.title || "",
           user_id: userIds,
           group_id: groupIds, // Store as array
           shared: shared,
@@ -996,6 +998,11 @@ const EventEdit = () => {
     removedIds.forEach((id) => data.append("event[removed_image_ids][]", id));
 
     // === EVERYTHING ELSE (Primitive values only) ===
+    // Explicitly send event_title mapped from UI `title` field
+    if (typeof formData.title !== "undefined") {
+      data.append("event[event_title]", formData.title || "");
+    }
+
     Object.entries(formData).forEach(([key, value]) => {
       if (
         [
@@ -1008,6 +1015,7 @@ const EventEdit = () => {
           "set_reminders_attributes",
           "user_id",
           "group_id", // Add group_id to skipped keys
+          "title",
           "rsvp_name",
           "rsvp_number",
           "event_images",
@@ -1147,6 +1155,20 @@ const EventEdit = () => {
                           name="event_name"
                           placeholder="Enter Event Name"
                           value={formData.event_name}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Title</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="title"
+                          placeholder="Enter Title"
+                          value={formData.title || ""}
                           onChange={handleChange}
                         />
                       </div>
