@@ -496,7 +496,7 @@ const EventEdit = () => {
         setFormData((prev) => ({
           ...prev,
           ...data,
-          title: data.event_title || data.title || "",
+          title: data.event_title || data.event_title || "",
           user_id: userIds,
           group_id: groupIds, // Store as array
           shared: shared,
