@@ -52,7 +52,11 @@ const TestimonialList = () => {
       try {
         const response = await axios.get(
           `${baseURL}testimonials.json?company_id=1`,
-          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
+          { 
+            headers: { 
+              Authorization: `Bearer ${localStorage.getItem("access_token")}` 
+            } 
+          }
         );
         setTestimonials(response.data.testimonials || []);
         setPagination((prevState) => ({
