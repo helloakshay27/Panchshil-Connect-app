@@ -50,7 +50,7 @@ const SetupSidebar = () => {
     const UserRolePermission = hasPermission("user_role");
     setUserRoleActive(UserRolePermission);
 
-    const UserGroupsPermission = hasPermission("user_Groups");
+    const UserGroupsPermission = hasPermission("user_groups");
     setUserGroupsActive(UserGroupsPermission);
 
     const lockFunctionPermission = hasPermission("lock_function");
