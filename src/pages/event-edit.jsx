@@ -1500,7 +1500,8 @@ const EventEdit = () => {
                                     e.target.value === "true", // Convert to boolean
                                 }))
                               }
-                              required
+                              // required
+                              disabled
                             />
                             <label
                               className="form-check-label"
@@ -1525,7 +1526,8 @@ const EventEdit = () => {
                                     e.target.value === "true", // Convert to boolean
                                 }))
                               }
-                              required
+                              // required
+                              disabled
                             />
                             <label
                               className="form-check-label"
@@ -1760,6 +1762,7 @@ const EventEdit = () => {
                                   group_id: "",
                                 }))
                               }
+                              disabled
                             />
                             <label
                               className="form-check-label"
@@ -1783,9 +1786,10 @@ const EventEdit = () => {
                                   group_id: "",
                                 }))
                               }
-                              disabled={
-                                !eventUserID || eventUserID.length === 0
-                              }
+                              // disabled={
+                              //   !eventUserID || eventUserID.length === 0
+                              // }
+                              disabled
                             />
                             <label
                               className="form-check-label"
