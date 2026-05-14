@@ -17,6 +17,8 @@ const PlusServiceCreate = () => {
     description: "",
     attachment: null,
     service_category_id: "",
+    mobile: "",
+    address: "",
     order_no: "",
   });
 
@@ -145,6 +147,14 @@ const PlusServiceCreate = () => {
         "plus_service[service_category_id]",
         serviceData.service_category_id
       );
+
+      if (serviceData.mobile) {
+        formData.append("plus_service[mobile]", serviceData.mobile);
+      }
+
+      if (serviceData.address) {
+        formData.append("plus_service[address]", serviceData.address);
+      }
       
       if (serviceData.order_no) {
         formData.append("plus_service[order_no]", serviceData.order_no);
@@ -170,6 +180,8 @@ const PlusServiceCreate = () => {
         name: "",
         description: "",
         attachment: null,
+        mobile: "",
+        address: "",
         order_no: "",
       });
       setSelectedProjectId("");
@@ -262,6 +274,34 @@ const PlusServiceCreate = () => {
                           service_category_id: value,
                         })
                       }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Mobile</label>
+                    <input
+                      className="form-control"
+                      type="tel"
+                      placeholder="Enter Mobile"
+                      name="mobile"
+                      value={serviceData.mobile}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      className="form-control"
+                      type="email"
+                      placeholder="Enter Email"
+                      name="address"
+                      value={serviceData.address}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>

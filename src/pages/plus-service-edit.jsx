@@ -18,6 +18,8 @@ const PlusServiceEdit = () => {
     attachment: null,
     service_category_id: "",
     existingImageUrl: "",
+    mobile: "",
+    address: "",
     order_no: "",
   });
 
@@ -87,6 +89,8 @@ const PlusServiceEdit = () => {
           attachment: null,
           existingImageUrl: existingImageUrl,
           service_category_id: serviceInfo.service_category_id || "",
+          mobile: serviceInfo.mobile || "",
+          address: serviceInfo.address || "",
           order_no: serviceInfo.order_no || "",
         });
       } catch (error) {
@@ -199,6 +203,14 @@ const PlusServiceEdit = () => {
         serviceData.service_category_id
       );
 
+      if (serviceData.mobile) {
+        formData.append("plus_service[mobile]", serviceData.mobile);
+      }
+
+      if (serviceData.address) {
+        formData.append("plus_service[address]", serviceData.address);
+      }
+
       if (serviceData.order_no) {
         formData.append("plus_service[order_no]", serviceData.order_no);
       }
@@ -307,6 +319,34 @@ const PlusServiceEdit = () => {
                           service_category_id: value,
                         })
                       }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Mobile</label>
+                    <input
+                      className="form-control"
+                      type="tel"
+                      placeholder="Enter Mobile"
+                      name="mobile"
+                      value={serviceData.mobile}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      className="form-control"
+                      type="email"
+                      placeholder="Enter Email"
+                      name="address"
+                      value={serviceData.address}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>

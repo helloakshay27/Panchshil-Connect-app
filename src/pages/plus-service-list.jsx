@@ -235,6 +235,8 @@ const PlusServicesList = () => {
                       <th>Action</th>
                       <th>Sr No</th>
                       <th>Name</th>
+                      <th>Mobile</th>
+                      <th>Email Address</th>
                       <th>Description</th>
                       <th>Attachment</th>
                     </tr>
@@ -336,7 +338,10 @@ const PlusServicesList = () => {
                               1}
                           </td>
                           <td>{service.name || "-"}</td>
+                           <td>{service.mobile || "-"}</td>
+                          <td>{service.address || "-"}</td>
                           <td>{service.description || "-"}</td>
+                         
                           <td className="text-center">
                             {service.attachment &&
                             Object.keys(service.attachment).length > 0

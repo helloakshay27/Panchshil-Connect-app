@@ -33,6 +33,8 @@ const EventEdit = () => {
     publish: "",
     user_id: [],
     comment: "",
+    pay_at: "",
+    payment_link: "",
     shared: "",
     group_id: [], // Changed to array
     attachfile: [],
@@ -64,6 +66,7 @@ const EventEdit = () => {
   const [eventUserID, setEventUserID] = useState([]);
   const [groups, setGroups] = useState([]); // State to store groups
   const [loading, setLoading] = useState(false);
+  const [isEmailLocked, setIsEmailLocked] = useState(false);
 
   const [reminderValue, setReminderValue] = useState("");
   const [reminderUnit, setReminderUnit] = useState("");
@@ -501,6 +504,8 @@ const EventEdit = () => {
           group_id: groupIds, // Store as array
           shared: shared,
           // attachfile: data.attachfile || [],
+          pay_at: data.pay_at || "",
+          payment_link: data.payment_link || "",
           attachfile: attachfileData,
           newImages: [],
           existingImages: existingImages,
@@ -517,6 +522,8 @@ const EventEdit = () => {
           event_images_3_by_2: data.event_images_3_by_2 || [],
           event_images_16_by_9: data.event_images_16_by_9 || [],
         }));
+
+        setIsEmailLocked(data.email_trigger_enabled === true);
 
         console.log("project_id: ", data.project_id);
       } catch (error) {
@@ -1142,6 +1149,43 @@ const EventEdit = () => {
                         />
                       </div>
                     </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Event Type (Internal/External)</label>
+                        <SelectBox
+                          options={[
+                            { value: "", label: "Select Event Type" },
+                            { value: "internal", label: "Internal" },
+                            { value: "external", label: "External" },
+                          ]}
+                          value={formData.pay_at || ""}
+                          onChange={(val) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              pay_at: val,
+                              payment_link: "",
+                            }));
+                          }}
+                          isDisableFirstOption={true}
+                        />
+                      </div>
+                    </div>
+
+                    {formData.pay_at === "external" && (
+                      <div className="col-md-3">
+                        <div className="form-group">
+                          <label>Event Link</label>
+                          <input
+                            className="form-control"
+                            type="url"
+                            name="payment_link"
+                            placeholder="Enter Event Link"
+                            value={formData.payment_link || ""}
+                            onChange={handleChange}
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     <div className="col-md-3">
                       <div className="form-group">
@@ -1500,8 +1544,7 @@ const EventEdit = () => {
                                     e.target.value === "true", // Convert to boolean
                                 }))
                               }
-                              // required
-                              disabled
+                              disabled={isEmailLocked}
                             />
                             <label
                               className="form-check-label"
@@ -1526,8 +1569,7 @@ const EventEdit = () => {
                                     e.target.value === "true", // Convert to boolean
                                 }))
                               }
-                              // required
-                              disabled
+                              disabled={isEmailLocked}
                             />
                             <label
                               className="form-check-label"
@@ -1762,7 +1804,7 @@ const EventEdit = () => {
                                   group_id: "",
                                 }))
                               }
-                              disabled
+                              disabled={isEmailLocked}
                             />
                             <label
                               className="form-check-label"
@@ -1786,10 +1828,7 @@ const EventEdit = () => {
                                   group_id: "",
                                 }))
                               }
-                              // disabled={
-                              //   !eventUserID || eventUserID.length === 0
-                              // }
-                              disabled
+                              disabled={isEmailLocked}
                             />
                             <label
                               className="form-check-label"
@@ -1870,6 +1909,7 @@ const EventEdit = () => {
                                 ),
                               }))
                             }
+                            isDisabled={isEmailLocked}
                           />
                         </div>
                       )}

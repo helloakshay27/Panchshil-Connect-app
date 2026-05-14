@@ -339,7 +339,7 @@ const ConstructionUpdatesList = () => {
                         <th>Description</th>
                         <th>Date</th>
                         {/* <th>Status</th> */}
-                        <th>Project ID</th>
+                        <th>Project Name</th>
                         <th>Site ID</th>
                         <th>Building ID</th>
                         <th>Attachment</th>

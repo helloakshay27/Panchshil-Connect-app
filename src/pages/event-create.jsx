@@ -24,6 +24,8 @@ const EventCreate = () => {
     publish: "",
     user_id: "",
     comment: "",
+    pay_at: "",
+    payment_link: "",
     shared: 1,
     group_id: [],
     attachfile: [],
@@ -428,6 +430,10 @@ const EventCreate = () => {
       errors.push("Event Name is required.");
       return errors; // Return the first error immediately
     }
+    if (!formData.email_trigger_enabled) {
+      errors.push("Send Email is required.");
+      return errors;
+    }
     return errors;
   };
 
@@ -471,8 +477,9 @@ const EventCreate = () => {
     }
 
     const data = new FormData();
-    data.append("event[event_type]", formData.event_type);
+    data.append("event[pay_at]", formData.pay_at);
     data.append("event[event_name]", formData.event_name);
+    data.append("event[payment_link]", formData.payment_link || "");
     data.append("event[event_title]", formData.title || "");
     data.append("event[event_at]", formData.event_at);
     data.append("event[from_time]", formData.from_time);
@@ -592,7 +599,8 @@ const EventCreate = () => {
       toast.success("Event created successfully!");
       setFormData({
         title: "",
-        event_type: "",
+        pay_at: "",
+        payment_link: "",
         event_name: "",
         event_at: "",
         from_time: "",
@@ -823,6 +831,43 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
+                    <div className="col-md-3 mt-1">
+                      <div className="form-group">
+                        <label>Event Type (Internal/External)</label>
+                        <SelectBox
+                          options={[
+                            { value: "", label: "Select Event Type" },
+                            { value: "internal", label: "Internal" },
+                            { value: "external", label: "External" },
+                          ]}
+                          value={formData.pay_at}
+                          onChange={(val) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              pay_at: val,
+                              payment_link: "",
+                            }));
+                          }}
+                          isDisableFirstOption={true}
+                        />
+                      </div>
+                    </div>
+
+                    {formData.pay_at === "external" && (
+                      <div className="col-md-3 mt-1">
+                        <div className="form-group">
+                          <label>Event Link</label>
+                          <input
+                            className="form-control"
+                            type="url"
+                            name="payment_link"
+                            placeholder="Enter Event Link"
+                            value={formData.payment_link}
+                            onChange={handleChange}
+                          />
+                        </div>
+                      </div>
+                    )}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>
@@ -1086,7 +1131,9 @@ const EventCreate = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Send Email</label>
+                        <label>Send Email
+                            <span className="otp-asterisk"> *</span>
+                        </label>
                         <div className="d-flex">
                           <div className="form-check me-3">
                             <input
