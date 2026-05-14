@@ -340,6 +340,7 @@ const ConstructionUpdatesList = () => {
                         <th>Date</th>
                         {/* <th>Status</th> */}
                         <th>Project Name</th>
+                        <th>SFDC ID</th>
                         <th>Site ID</th>
                         <th>Building ID</th>
                         <th>Attachment</th>
@@ -468,6 +469,7 @@ const ConstructionUpdatesList = () => {
                             <td>{formatDate(update.on_date)}</td>
 
                             <td>{update.project_name || "-"}</td>
+                            <td>{update.sfdc_id || "-"}</td>
                             <td>{update.site_name || "-"}</td>
                             <td>{update.building_name || "-"}</td>
 
