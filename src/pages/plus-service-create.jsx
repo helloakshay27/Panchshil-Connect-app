@@ -288,6 +288,7 @@ const PlusServiceCreate = () => {
                       name="mobile"
                       value={serviceData.mobile}
                       onChange={handleInputChange}
+                      maxLength={10}
                     />
                   </div>
                 </div>
