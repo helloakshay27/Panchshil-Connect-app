@@ -44,7 +44,12 @@ const RuleEngine = () => {
     const fetchRuleEngine = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}rule_engine/rules.json?access_token=${token}`
+          `${baseURL}rule_engine/rules.json`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setRuleEngine(response.data);
         setFilteredItems(response.data);
@@ -266,7 +271,12 @@ const RuleEngine = () => {
       const queryString = query.length > 0 ? `?${query.join("&")}` : "";
 
       const response = await axios.get(
-        `${baseURL}rule_engine/rules.json${queryString}&access_token=${token}`
+        `${baseURL}rule_engine/rules.json${queryString}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       
       if (response.data) {
@@ -429,8 +439,13 @@ const RuleEngine = () => {
   const handleToggle = async (id, isActive) => {
     try {
       const response = await axios.patch(
-        `${baseURL}rule_engine/rules/${id}.json?access_token=${token}`,
-        { rule_engine_rule: { active: isActive } }
+        `${baseURL}rule_engine/rules/${id}.json`,
+        { rule_engine_rule: { active: isActive } },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       setRuleEngine((prevRules) =>

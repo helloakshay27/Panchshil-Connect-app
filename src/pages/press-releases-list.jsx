@@ -56,7 +56,12 @@ const PressReleasesList = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${baseURL}/press_releases.json`
+        `${baseURL}/press_releases.json`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
       );
 
       const data = await response.json();

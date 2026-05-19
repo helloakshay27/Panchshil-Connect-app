@@ -333,7 +333,12 @@ const ViewRuleEngine = () => {
     const storedValue = sessionStorage.getItem("selectedId");
     try {
       const response = await axios.get(
-        `${baseURL}rule_engine/rules/${id}.json?access_token=${token}&&q[loyalty_type_id_eq]=${storedValue}`
+        `${baseURL}rule_engine/rules/${id}.json?q[loyalty_type_id_eq]=${storedValue}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("data for id", response.data);
       return response.data;

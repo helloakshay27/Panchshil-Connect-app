@@ -19,7 +19,12 @@ const validationSchema = Yup.object().shape({
         
         // Call the tiers API to check for existing names
         const response = await axios.get(
-          `${baseURL}loyalty/tiers.json?access_token=${token}&&q[loyalty_type_id_eq]=${storedValue}`
+          `${baseURL}loyalty/tiers.json?q[loyalty_type_id_eq]=${storedValue}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         
         if (response.data) {
@@ -80,7 +85,12 @@ const validationSchema = Yup.object().shape({
             
             // Call the tiers API to check for existing names
             const response = await axios.get(
-              `${baseURL}loyalty/tiers.json?access_token=${token}&&q[loyalty_type_id_eq]=${storedValue}`
+              `${baseURL}loyalty/tiers.json?q[loyalty_type_id_eq]=${storedValue}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
             );
             
             if (response.data) {
@@ -189,7 +199,12 @@ const NewTier = () => {
       
       // Get existing tiers from API
       const existingTiersResponse = await axios.get(
-        `${baseURL}loyalty/tiers.json?access_token=${token}&&q[loyalty_type_id_eq]=${storedValue}`
+        `${baseURL}loyalty/tiers.json?q[loyalty_type_id_eq]=${storedValue}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       
       const existingTiers = existingTiersResponse.data || [];
@@ -247,8 +262,8 @@ const NewTier = () => {
         // const token = "bfa5004e7b0175622be8f7e69b37d01290b737f82e078414"; // Ensure to replace with your token
         const url =
           formattedTiers?.length > 0
-            ? `${baseURL}loyalty/tiers/bulk_create?token=${token}`
-            : `${baseURL}loyalty/tiers.json?access_token=${token}`;
+            ? `${baseURL}loyalty/tiers/bulk_create`
+            : `${baseURL}loyalty/tiers.json`;
 
         console.log("Final URL:", url);
         console.log("Data Sent:", JSON.stringify(data, null, 2));
@@ -257,6 +272,7 @@ const NewTier = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(data),
         });

@@ -22,7 +22,12 @@ export default function DemandNotes() {
       setLoading(true);
       try {
         const response = await axios.get(
-          "https://piramal-loyalty-dev.lockated.com/demand_notes"
+          "https://piramal-loyalty-dev.lockated.com/demand_notes",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
         );
         setDemandNotes(response.data.demand_notes || []);
       } catch (error) {

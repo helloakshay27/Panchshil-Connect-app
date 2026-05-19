@@ -542,10 +542,13 @@ const CreateRuleEngine = () => {
 
     try {
       const response = await fetch(
-        `${baseURL}rule_engine/rules/loyalty_re?token=${token}`,
+        `${baseURL}rule_engine/rules/loyalty_re`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(data),
         }
       );

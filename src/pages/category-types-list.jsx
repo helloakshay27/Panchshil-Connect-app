@@ -28,7 +28,11 @@ const CategoryTypeList = () => {
   const fetchCategories = () => {
     setLoading(true);
     axios
-      .get(`${baseURL}category_types.json`)
+      .get(`${baseURL}category_types.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      })
       .then((response) => {
         setLoading(false);
         if (response.data && Array.isArray(response.data)) {
@@ -75,6 +79,10 @@ const CategoryTypeList = () => {
     axios
       .put(`${baseURL}category_types/${id}.json`, {
         category_type: { active: newStatus },
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       })
       .then(() => fetchCategories())
       .catch((error) => console.error("Error updating status:", error));

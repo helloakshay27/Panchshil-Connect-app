@@ -44,7 +44,12 @@ const Tiers = () => {
   const fetchTiers = async () => {
     try {
       const response = await axios.get(
-        `${baseURL}loyalty/tiers.json?access_token=${token}&&q[loyalty_type_id_eq]=${storedValue}`
+        `${baseURL}loyalty/tiers.json?q[loyalty_type_id_eq]=${storedValue}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response && response.data) {
         setTiers(response.data);
@@ -72,9 +77,9 @@ const Tiers = () => {
       try {
         const response = await axios.put(
           // @ts-ignore
-          `${baseURL}loyalty/tiers/${selectedTier.id}.json?access_token=${token}`,
+          `${baseURL}loyalty/tiers/${selectedTier.id}.json`,
           { loyalty_tier: values },
-          { headers: { "Content-Type": "application/json" } }
+          { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
         );
 
         if (response && response.data) {

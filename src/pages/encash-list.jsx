@@ -71,7 +71,7 @@ const EncashList = () => {
 
     try {
       await axios.put(
-        `${baseURL}encash_requests/${selectedRequest.id}.json?access_token=${token}`,
+        `${baseURL}encash_requests/${selectedRequest.id}.json`,
         {
           encash_request: {
             status: "completed",
