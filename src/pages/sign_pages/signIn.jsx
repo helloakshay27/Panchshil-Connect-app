@@ -88,7 +88,7 @@ const SignIn = () => {
         sessionStorage.setItem("user_id", response.data?.id);
         sessionStorage.setItem(
           "profile_icon",
-          response?.data?.profile_icon_url
+          response?.data?.profile_icon_url,
         );
 
         // Duplicate in localStorage
@@ -122,7 +122,7 @@ const SignIn = () => {
           localStorage.setItem("lock_role_name", lockRole.name);
           localStorage.setItem(
             "lock_role_permissions",
-            lockRole.permissions_hash
+            lockRole.permissions_hash,
           );
         }
         // console.log("Lock Roles:", lockRole);
@@ -299,7 +299,7 @@ const SignIn = () => {
             mobile: mobile,
             otp: otp,
           },
-        }
+        },
       );
 
       const { verified, message, user, access_token } = response.data;
@@ -363,17 +363,16 @@ const SignIn = () => {
             Email ID
           </label>
           <div className="panchshil-password-input">
-
-          <input
-            // style={{height:"44px"}}
-            type="email"
-            id="email"
-            className="panchshil-password-field"
-            placeholder="Enter email id here..."
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+            <input
+              // style={{height:"44px"}}
+              type="email"
+              id="email"
+              className="panchshil-password-field"
+              placeholder="Enter email id here..."
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
         </div>
         {/* <div className="form-group position-relative">
@@ -434,37 +433,37 @@ const SignIn = () => {
             </button>
           </div>
         </div> */}
-     <div className="form-group position-relative">
-  <label
-    className={`mb-1 text-white ${config.formTextColor}`}
-    htmlFor="password"
-  >
-    Password
-  </label>
-  <div className="panchshil-password-input">
-    <input
-      type={showPassword ? "text" : "password"}
-      id="password"
-      className="panchshil-password-field"
-      placeholder="Enter password here..."
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      required
-    />
-    <button
-      type="button"
-      className="panchshil-password-toggle"
-      onClick={() => setShowPassword(!showPassword)}
-      aria-label={showPassword ? "Hide password" : "Show password"}
-    >
-      {showPassword ? (
-        <EyeOff size={18} color="var(--red)" />
-      ) : (
-        <Eye size={18} color="var(--red)" />
-      )}
-    </button>
-  </div>
-</div>
+        <div className="form-group position-relative">
+          <label
+            className={`mb-1 text-white ${config.formTextColor}`}
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <div className="panchshil-password-input">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              className="panchshil-password-field"
+              placeholder="Enter password here..."
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="panchshil-password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? (
+                <EyeOff size={18} color="var(--red)" />
+              ) : (
+                <Eye size={18} color="var(--red)" />
+              )}
+            </button>
+          </div>
+        </div>
         {/* <div className="form-group">
           <label
             className={`mb-1 text-white ${config.formTextColor}`}
@@ -587,26 +586,25 @@ const SignIn = () => {
           >
             Mobile Number
           </label>
-            <div className="panchshil-password-input">
-
-          <input
-            type="tel"
-            id="mobile"
-            className="panchshil-password-field"
-            placeholder="Enter registered mobile number..."
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            required
-          />
-          <button
-            type="button"
-            className="btn-panchshil btn-danger mt-5"
-            onClick={handleSendOtp}
-            disabled={loading}
-          >
-            {loading ? "Sending..." : "SEND OTP"}
-          </button>
-        </div>
+          <div className="panchshil-password-input">
+            <input
+              type="tel"
+              id="mobile"
+              className="panchshil-password-field"
+              placeholder="Enter registered mobile number..."
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="btn-panchshil btn-danger mt-5"
+              onClick={handleSendOtp}
+              disabled={loading}
+            >
+              {loading ? "Sending..." : "SEND OTP"}
+            </button>
+          </div>
         </div>
       )}
 
@@ -624,17 +622,17 @@ const SignIn = () => {
               OTP
             </label>
             <div className="panchshil-password-input">
-            <input
-              type="text"
-              id="otp"
-              className="panchshil-password-field"
-              placeholder="Enter 6 digit OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-              maxLength={6}
-            />
-          </div>
+              <input
+                type="text"
+                id="otp"
+                className="panchshil-password-field"
+                placeholder="Enter 6 digit OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+                maxLength={6}
+              />
+            </div>
           </div>
 
           {error && <p className="text-danger">{error}</p>}

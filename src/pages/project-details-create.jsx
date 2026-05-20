@@ -159,29 +159,29 @@ const ProjectDetailsCreate = () => {
   const selectedBannerRatios = projectUploadConfig[bannerImageType] || [];
 
   const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) =>
-    m.toUpperCase()
+    m.toUpperCase(),
   );
   const galleryImageLabel = galleryImageType.replace(/(^\w|\s\w)/g, (m) =>
-    m.toUpperCase()
+    m.toUpperCase(),
   );
   const floorImageLabel = floorImageType.replace(/(^\w|\s\w)/g, (m) =>
-    m.toUpperCase()
+    m.toUpperCase(),
   );
   const bannerImageLabel = bannerImageType.replace(/(^\w|\s\w)/g, (m) =>
-    m.toUpperCase()
+    m.toUpperCase(),
   );
 
   const dynamicDescription = `Supports ${selectedCoverRatios.join(
-    ", "
+    ", ",
   )} aspect ratios`;
   const dynamicDescription1 = `Supports ${selectedGalleryRatios.join(
-    ", "
+    ", ",
   )} aspect ratios`;
   const dynamicDescription2 = `Supports ${selectedFloorRatios.join(
-    ", "
+    ", ",
   )} aspect ratios`;
   const dynamicDescription3 = `Supports ${selectedBannerRatios.join(
-    ", "
+    ", ",
   )} aspect ratios`;
 
   const updateFormData = (key, files) => {
@@ -195,21 +195,24 @@ const ProjectDetailsCreate = () => {
   };
 
   // Function to handle gallery image name and order changes
-  const handleGalleryImageNameChange = (groupKey, imageIndex, newValue, fieldType = 'file_name') => {
-    setFormData(prevData => ({
+  const handleGalleryImageNameChange = (
+    groupKey,
+    imageIndex,
+    newValue,
+    fieldType = "file_name",
+  ) => {
+    setFormData((prevData) => ({
       ...prevData,
       [groupKey]: prevData[groupKey].map((img, index) =>
-        index === imageIndex
-          ? { ...img, [fieldType]: newValue }
-          : img
-      )
+        index === imageIndex ? { ...img, [fieldType]: newValue } : img,
+      ),
     }));
   };
 
   const handleCroppedCoverImages = (
     validImages,
     type = "cover",
-    videoFiles = []
+    videoFiles = [],
   ) => {
     // Handle video files first (including GIFs)
     if (videoFiles && videoFiles.length > 0) {
@@ -248,7 +251,7 @@ const ProjectDetailsCreate = () => {
       toast.error(
         `No valid ${type} image${
           ["cover", "banner"].includes(type) ? "" : "s"
-        } selected.`
+        } selected.`,
       );
       closeModal(type);
       return;
@@ -288,7 +291,7 @@ const ProjectDetailsCreate = () => {
       toast.error(
         `No valid ${type} image${
           ["cover", "banner"].includes(type) ? "" : "s"
-        } selected.`
+        } selected.`,
       );
       closeModal(type);
       return;
@@ -321,7 +324,7 @@ const ProjectDetailsCreate = () => {
       // Add file_name property to the image object
       const imageWithName = {
         ...img,
-        file_name: img.name || `${type} Image ${Date.now()}`
+        file_name: img.name || `${type} Image ${Date.now()}`,
       };
 
       updateFormData(key, [imageWithName]);
@@ -352,7 +355,7 @@ const ProjectDetailsCreate = () => {
   const discardImage = (key, imageToRemove) => {
     setFormData((prev) => {
       const updatedArray = (prev[key] || []).filter(
-        (img) => img.id !== imageToRemove.id
+        (img) => img.id !== imageToRemove.id,
       );
 
       // Remove the key if the array becomes empty
@@ -458,7 +461,7 @@ const ProjectDetailsCreate = () => {
     if (selectedType) {
       Area;
       setFilteredAmenities(
-        amenities.filter((ammit) => ammit.amenity_type === selectedType.value)
+        amenities.filter((ammit) => ammit.amenity_type === selectedType.value),
       );
     } else {
       setFilteredAmenities([]);
@@ -669,7 +672,7 @@ const ProjectDetailsCreate = () => {
       newFiles.forEach((file) => {
         if (!allowedTypes.project_emailer_templetes.includes(file.type)) {
           toast.error(
-            "Only PDF and DOCX files are allowed for project emailer templetes."
+            "Only PDF and DOCX files are allowed for project emailer templetes.",
           );
           return;
         }
@@ -697,7 +700,7 @@ const ProjectDetailsCreate = () => {
       newFiles.forEach((file) => {
         if (!allowedTypes.KnwYrApt_Technical.includes(file.type)) {
           toast.error(
-            "Only PDF and DOCX files are allowed for project technical files."
+            "Only PDF and DOCX files are allowed for project technical files.",
           );
           return;
         }
@@ -709,10 +712,7 @@ const ProjectDetailsCreate = () => {
       if (validFiles.length > 0) {
         setFormData((prev) => ({
           ...prev,
-          KnwYrApt_Technical: [
-            ...prev.KnwYrApt_Technical,
-            ...validFiles,
-          ],
+          KnwYrApt_Technical: [...prev.KnwYrApt_Technical, ...validFiles],
         }));
       }
     }
@@ -945,8 +945,8 @@ const ProjectDetailsCreate = () => {
           toast.error(
             `Only supported ${fileType} formats are allowed for ${name.replace(
               "_",
-              " "
-            )}.`
+              " ",
+            )}.`,
           );
           return;
         }
@@ -989,7 +989,7 @@ const ProjectDetailsCreate = () => {
         toast.error(
           `File too large: ${sizeCheck.name} (${
             sizeCheck.size
-          }). Max size: ${formatFileSize(MAX_SIZES.image)}`
+          }). Max size: ${formatFileSize(MAX_SIZES.image)}`,
         );
         return;
       }
@@ -1005,13 +1005,13 @@ const ProjectDetailsCreate = () => {
 
       const sizeCheck = isFileSizeValid(
         file,
-        MAX_SIZES.video_preview_image_url
+        MAX_SIZES.video_preview_image_url,
       );
       if (!sizeCheck.valid) {
         toast.error(
           `File too large: ${sizeCheck.name} (${
             sizeCheck.size
-          }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
+          }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`,
         );
         return;
       }
@@ -1029,7 +1029,7 @@ const ProjectDetailsCreate = () => {
         toast.error(
           `File too large: ${sizeCheck.name} (${
             sizeCheck.size
-          }). Max size: ${formatFileSize(maxSize)}`
+          }). Max size: ${formatFileSize(maxSize)}`,
         );
       }
       return false;
@@ -1205,11 +1205,9 @@ const ProjectDetailsCreate = () => {
       return;
     }
 
-
     const data = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
-
       if (key === "plans" && Array.isArray(value)) {
         value.forEach((plan, index) => {
           data.append(`project[plans][${index}][name]`, plan.name);
@@ -1245,25 +1243,25 @@ const ProjectDetailsCreate = () => {
         value.forEach((file) => data.append("project[Project2DImage][]", file));
       } else if (key === "project_creatives" && Array.isArray(value)) {
         value.forEach((file) =>
-          data.append("project[ProjectCreatives][]", file)
+          data.append("project[ProjectCreatives][]", file),
         );
       } else if (key === "cover_images" && Array.isArray(value)) {
         value.forEach((file) => data.append("project[cover_images][]", file));
       } else if (key === "project_creative_generics" && Array.isArray(value)) {
         value.forEach((file) =>
-          data.append("project[ProjectCreativeGenerics][]", file)
+          data.append("project[ProjectCreativeGenerics][]", file),
         );
       } else if (key === "project_creative_offers" && Array.isArray(value)) {
         value.forEach((file) =>
-          data.append("project[ProjectCreativeOffers][]", file)
+          data.append("project[ProjectCreativeOffers][]", file),
         );
       } else if (key === "project_interiors" && Array.isArray(value)) {
         value.forEach((file) =>
-          data.append("project[ProjectInteriors][]", file)
+          data.append("project[ProjectInteriors][]", file),
         );
       } else if (key === "project_exteriors" && Array.isArray(value)) {
         value.forEach((file) =>
-          data.append("project[ProjectExteriors][]", file)
+          data.append("project[ProjectExteriors][]", file),
         );
       } else if (key === "project_layout" && Array.isArray(value)) {
         value.forEach((file) => data.append("project[ProjectLayout][]", file));
@@ -1275,15 +1273,15 @@ const ProjectDetailsCreate = () => {
             data.append("project[gallery_image][]", fileObj.gallery_image);
             data.append(
               `project[gallery_image_file_name][${index}]`,
-              fileObj.gallery_image_file_name
+              fileObj.gallery_image_file_name,
             );
             data.append(
               `project[gallery_type]`,
-              fileObj.gallery_image_file_type
+              fileObj.gallery_image_file_type,
             );
             data.append(
               `project[gallery_image_is_day][${index}]`,
-              fileObj.isDay
+              fileObj.isDay,
             );
           }
         });
@@ -1291,17 +1289,16 @@ const ProjectDetailsCreate = () => {
         data.append("project[image]", mainImageUpload[0]?.file);
       } else if (key === "video_preview_image_url" && value instanceof File) {
         data.append("project[video_preview_image_url]", value);
-      }
-      else if (key === "project_qrcode_image" && Array.isArray(value)) {
+      } else if (key === "project_qrcode_image" && Array.isArray(value)) {
         value.forEach((fileObj) => {
           if (fileObj.project_qrcode_image instanceof File) {
             data.append(
               "project[project_qrcode_image][]",
-              fileObj.project_qrcode_image
+              fileObj.project_qrcode_image,
             );
             data.append(
               "project[project_qrcode_image_titles][]",
-              fileObj.title || ""
+              fileObj.title || "",
             );
           }
         });
@@ -1310,11 +1307,11 @@ const ProjectDetailsCreate = () => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
             data.append(
               `project[virtual_tour_url_multiple][${index}][virtual_tour_url]`,
-              item.virtual_tour_url
+              item.virtual_tour_url,
             );
             data.append(
               `project[virtual_tour_url_multiple][${index}][virtual_tour_name]`,
-              item.virtual_tour_name
+              item.virtual_tour_name,
             );
           }
         });
@@ -1323,15 +1320,15 @@ const ProjectDetailsCreate = () => {
           if (item.tower_name && item.rera_number) {
             data.append(
               `project[Rera_Number_multiple][${index}][tower_name]`,
-              item.tower_name
+              item.tower_name,
             );
             data.append(
               `project[Rera_Number_multiple][${index}][rera_number]`,
-              item.rera_number
+              item.rera_number,
             );
             data.append(
               `project[Rera_Number_multiple][${index}][rera_url]`,
-              item.rera_url
+              item.rera_url,
             );
           }
         });
@@ -1339,11 +1336,11 @@ const ProjectDetailsCreate = () => {
         value.forEach((video, index) => {
           data.append(
             `project[project_videos_attributes][${index}][name]`,
-            video.name
+            video.name,
           );
           data.append(
             `project[project_videos_attributes][${index}][video_url]`,
-            video.video_url
+            video.video_url,
           );
         });
       } else if (key === "project_ppt" && Array.isArray(value)) {
@@ -1388,7 +1385,10 @@ const ProjectDetailsCreate = () => {
           if (img.file instanceof File) {
             // Send as array without indices
             data.append(`project[${key}][][file]`, img.file);
-            data.append(`project[${key}][][file_name]`, img.file_name || img.file.name);
+            data.append(
+              `project[${key}][][file_name]`,
+              img.file_name || img.file.name,
+            );
           }
         });
       } else if (key.startsWith("floor_plans_") && Array.isArray(value)) {
@@ -1446,7 +1446,9 @@ const ProjectDetailsCreate = () => {
       const url = `${baseURL}get_property_types.json`;
       try {
         const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         });
         setprojectsType(response.data?.property_types);
       } catch (error) {
@@ -1461,7 +1463,9 @@ const ProjectDetailsCreate = () => {
       const url = `${baseURL}configuration_setups.json`;
       try {
         const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         });
         setConfigurations(response.data);
       } catch (error) {
@@ -1519,7 +1523,9 @@ const ProjectDetailsCreate = () => {
       const url = `${baseURL}specification_setups.json`;
       try {
         const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         });
         if (response.data && response.data.specification_setups) {
           setSpecifications(response.data.specification_setups);
@@ -1553,7 +1559,9 @@ const ProjectDetailsCreate = () => {
     const fetchCategoryTypes = async () => {
       try {
         const response = await axios.get(`${baseURL}category_types.json`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         });
         if (response.data) {
           const formattedCategories = response.data.map((item) => ({
@@ -1688,7 +1696,7 @@ const ProjectDetailsCreate = () => {
     setFormData((prev) => ({
       ...prev,
       Rera_Number_multiple: prev.Rera_Number_multiple.filter(
-        (_, i) => i !== index
+        (_, i) => i !== index,
       ),
     }));
   };
@@ -1721,7 +1729,7 @@ const ProjectDetailsCreate = () => {
     setFormData((prev) => ({
       ...prev,
       virtual_tour_url_multiple: prev.virtual_tour_url_multiple.filter(
-        (_, i) => i !== index
+        (_, i) => i !== index,
       ),
     }));
   };
@@ -1755,7 +1763,7 @@ const ProjectDetailsCreate = () => {
     setFormData((prev) => ({
       ...prev,
       project_videos_attributes: prev.project_videos_attributes.filter(
-        (_, i) => i !== index
+        (_, i) => i !== index,
       ),
     }));
   };
@@ -1796,7 +1804,7 @@ const ProjectDetailsCreate = () => {
         isValid = true;
       } else {
         toast.error(
-          `Invalid file type: ${file.name}. Only images (JPG, PNG, GIF, WebP) and videos (MP4, WebM, QuickTime, AVI) are allowed.`
+          `Invalid file type: ${file.name}. Only images (JPG, PNG, GIF, WebP) and videos (MP4, WebM, QuickTime, AVI) are allowed.`,
         );
         invalidFiles.push(file);
         return;
@@ -1844,7 +1852,9 @@ const ProjectDetailsCreate = () => {
   useEffect(() => {
     axios
       .get(`${baseURL}property_types.json`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       })
       .then((response) => {
         const options = response.data
@@ -1886,7 +1896,11 @@ const ProjectDetailsCreate = () => {
     try {
       const response = await axios.get(
         `${baseURL}building_types.json?q[property_type_id_eq]=${id}`,
-        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        },
       );
       const buildingTypes = response.data || [];
       const formattedOptions = buildingTypes.map((item) => ({
@@ -1905,7 +1919,11 @@ const ProjectDetailsCreate = () => {
       try {
         const response = await axios.get(
           `${baseURL}construction_statuses.json`,
-          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          },
         );
         const options = response.data
           .filter((status) => status.active)
@@ -1930,11 +1948,11 @@ const ProjectDetailsCreate = () => {
           "ProjectImage",
           "ProjectCoverImage",
           "ProjectGallery",
-          "Project2DImage"
+          "Project2DImage",
         ];
-        
+
         const configs = {};
-        
+
         for (const name of configNames) {
           const response = await axios.get(
             `${baseURL}system_constants.json?q[description_eq]=ImagesConfiguration&q[name_eq]=${name}`,
@@ -1942,20 +1960,20 @@ const ProjectDetailsCreate = () => {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               },
-            }
+            },
           );
-          
+
           if (response.data && Array.isArray(response.data)) {
-            configs[name] = response.data.map(item => item.value);
+            configs[name] = response.data.map((item) => item.value);
           }
         }
-        
+
         setImageConfigurations(configs);
       } catch (error) {
         console.error("Error fetching image configurations:", error);
       }
     };
-    
+
     fetchImageConfigurations();
   }, []);
 
@@ -1973,9 +1991,9 @@ const ProjectDetailsCreate = () => {
   const getDynamicRatiosText = (configName) => {
     const ratios = imageConfigurations[configName];
     if (!ratios || ratios.length === 0) return "No ratios configured";
-    
+
     const formattedRatios = ratios.map(formatRatio).join(", ");
-    return `Required ratio${ratios.length > 1 ? 's' : ''}: ${formattedRatios}`;
+    return `Required ratio${ratios.length > 1 ? "s" : ""}: ${formattedRatios}`;
   };
 
   const handleToggle = async (id, currentStatus) => {
@@ -1992,12 +2010,12 @@ const ProjectDetailsCreate = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
       setProjects((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, published: updatedStatus } : item
-        )
+          item.id === id ? { ...item, published: updatedStatus } : item,
+        ),
       );
       const newToastId = toast.success("Status updated successfully!", {
         duration: 3000,
@@ -2055,7 +2073,7 @@ const ProjectDetailsCreate = () => {
     setFormData((prev) => ({
       ...prev,
       project_qrcode_image: prev.project_qrcode_image.filter(
-        (_, i) => i !== index
+        (_, i) => i !== index,
       ),
     }));
   };
@@ -2157,7 +2175,7 @@ const ProjectDetailsCreate = () => {
                       setFormData((prev) => ({
                         ...prev,
                         Configuration_Type: selectedOptions.map(
-                          (option) => option.value
+                          (option) => option.value,
                         ),
                       }))
                     }
@@ -2260,9 +2278,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Project Size (Sq. Mtr.) (For Residential)
-                  </label>
+                  <label>Project Size (Sq. Mtr.) (For Residential)</label>
                   <input
                     className="form-control"
                     type="number"
@@ -2275,9 +2291,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Project Size (Sq. Ft.) (For Residential)
-                  </label>
+                  <label>Project Size (Sq. Ft.) (For Residential)</label>
                   <input
                     className="form-control"
                     type="number"
@@ -2290,9 +2304,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Development Area (Sq. Mtr.) (For Office Park)
-                  </label>
+                  <label>Development Area (Sq. Mtr.) (For Office Park)</label>
                   <input
                     className="form-control"
                     type="number"
@@ -2305,9 +2317,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Development Area (Sq. Ft.) (For Office Park)
-                  </label>
+                  <label>Development Area (Sq. Ft.) (For Office Park)</label>
                   <input
                     className="form-control"
                     type="number"
@@ -2346,9 +2356,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Number of Towers
-                  </label>
+                  <label>Number of Towers</label>
                   <input
                     className="form-control"
                     type="number"
@@ -2361,9 +2369,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Number of Floors
-                  </label>
+                  <label>Number of Floors</label>
                   <input
                     className="form-control"
                     type="number"
@@ -2634,154 +2640,160 @@ const ProjectDetailsCreate = () => {
             </div>
           </div>
         </div>
-        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
-          <>
-            <div className="card mt-3 pb-4 mx-4">
-              <div className="card-header3 d-flex justify-content-between align-items-center">
-                <h3 className="card-title">RERA Number</h3>
-              </div>
-              <div className="card-body mt-0 pb-0">
-                <div className="row align-items-center">
-                  <div className="col-md-3 mt-2">
-                    <div className="form-group">
-                      <label>Tower </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="tower_name"
-                        placeholder="Enter Tower Name"
-                        value={towerName}
-                        onChange={handleTowerChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-3 mt-2">
-                    <div className="form-group">
-                      <label>RERA Number </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="rera_number"
-                        placeholder="Enter RERA Number"
-                        value={reraNumber}
-                        onChange={handleReraNumberChange}
-                        onBlur={handleReraNumberBlur}
-                        {...(baseURL !== "https://kalpataru.lockated.com/" && { maxLength: 12 })}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-3 mt-2">
-                    <div className="form-group">
-                      <label>RERA URL </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="rera_url"
-                        placeholder="Enter RERA URL"
-                        value={reraUrl}
-                        onChange={handleReraUrlChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-3 mt-2">
-                    <button
-                      className="purple-btn2 rounded-3"
-                      style={{ marginTop: "23px" }}
-                      onClick={handleAddRera}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={26}
-                        height={20}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span> Add</span>
-                    </button>
-                  </div>
+        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" &&
+          baseURL !== "https://rustomjee-live.lockated.com/" && (
+            <>
+              <div className="card mt-3 pb-4 mx-4">
+                <div className="card-header3 d-flex justify-content-between align-items-center">
+                  <h3 className="card-title">RERA Number</h3>
                 </div>
-                {formData.Rera_Number_multiple.length > 0 && (
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container w-100">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>Sr No</th>
-                            <th>Tower Name</th>
-                            <th>RERA Number</th>
-                            <th>Rera URL</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.Rera_Number_multiple.map((item, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  value={item.tower_name}
-                                  onChange={(e) =>
-                                    handleEditRera(
-                                      index,
-                                      "tower_name",
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  value={item.rera_number}
-                                  onChange={(e) =>
-                                    handleEditRera(
-                                      index,
-                                      "rera_number",
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  value={item.rera_url}
-                                  onChange={(e) =>
-                                    handleEditRera(
-                                      index,
-                                      "rera_url",
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() => handleDeleteRera(index)}
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                <div className="card-body mt-0 pb-0">
+                  <div className="row align-items-center">
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Tower </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="tower_name"
+                          placeholder="Enter Tower Name"
+                          value={towerName}
+                          onChange={handleTowerChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>RERA Number </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="rera_number"
+                          placeholder="Enter RERA Number"
+                          value={reraNumber}
+                          onChange={handleReraNumberChange}
+                          onBlur={handleReraNumberBlur}
+                          {...(baseURL !==
+                            "https://kalpataru.lockated.com/" && {
+                            maxLength: 12,
+                          })}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>RERA URL </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="rera_url"
+                          placeholder="Enter RERA URL"
+                          value={reraUrl}
+                          onChange={handleReraUrlChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <button
+                        className="purple-btn2 rounded-3"
+                        style={{ marginTop: "23px" }}
+                        onClick={handleAddRera}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={26}
+                          height={20}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span> Add</span>
+                      </button>
                     </div>
                   </div>
-                )}
+                  {formData.Rera_Number_multiple.length > 0 && (
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container w-100">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>Sr No</th>
+                              <th>Tower Name</th>
+                              <th>RERA Number</th>
+                              <th>Rera URL</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.Rera_Number_multiple.map(
+                              (item, index) => (
+                                <tr key={index}>
+                                  <td>{index + 1}</td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={item.tower_name}
+                                      onChange={(e) =>
+                                        handleEditRera(
+                                          index,
+                                          "tower_name",
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={item.rera_number}
+                                      onChange={(e) =>
+                                        handleEditRera(
+                                          index,
+                                          "rera_number",
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={item.rera_url}
+                                      onChange={(e) =>
+                                        handleEditRera(
+                                          index,
+                                          "rera_url",
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() => handleDeleteRera(index)}
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ),
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header3">
             <h3 className="card-title">Amenities</h3>
@@ -2790,9 +2802,7 @@ const ProjectDetailsCreate = () => {
             <div className="row">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Amenities
-                  </label>
+                  <label>Amenities</label>
                   <MultiSelectBox
                     options={amenities.map((ammit) => ({
                       value: ammit.id,
@@ -2808,7 +2818,7 @@ const ProjectDetailsCreate = () => {
                       setFormData((prev) => ({
                         ...prev,
                         Amenities: selectedOptions.map(
-                          (option) => option.value
+                          (option) => option.value,
                         ),
                       }))
                     }
@@ -2827,9 +2837,7 @@ const ProjectDetailsCreate = () => {
             <div className="row">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Address Line 1
-                  </label>
+                  <label>Address Line 1</label>
                   <input
                     className="form-control"
                     type="text"
@@ -2842,9 +2850,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Address Line 2
-                  </label>
+                  <label>Address Line 2</label>
                   <input
                     className="form-control"
                     type="text"
@@ -2857,9 +2863,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    City
-                  </label>
+                  <label>City</label>
                   <input
                     className="form-control"
                     type="text"
@@ -2872,9 +2876,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    State
-                  </label>
+                  <label>State</label>
                   <input
                     className="form-control"
                     type="text"
@@ -2887,9 +2889,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Pin Code
-                  </label>
+                  <label>Pin Code</label>
                   <input
                     className="form-control"
                     type="text"
@@ -2921,9 +2921,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Country
-                  </label>
+                  <label>Country</label>
                   <input
                     className="form-control"
                     type="text"
@@ -2936,9 +2934,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Map URL
-                  </label>
+                  <label>Map URL</label>
                   <input
                     className="form-control"
                     type="url"
@@ -2952,7 +2948,8 @@ const ProjectDetailsCreate = () => {
             </div>
           </div>
         </div>
-        {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
+        {(baseURL === "https://dev-panchshil-super-app.lockated.com/" ||
+          baseURL === "https://rustomjee-live.lockated.com/") && (
           <div className="card mt-3 pb-4 mx-4">
             <div className="card-header3">
               <h3 className="card-title">Plans</h3>
@@ -3001,7 +2998,7 @@ const ProjectDetailsCreate = () => {
                     onClick={() => {
                       if (!planName || planImages.length === 0) {
                         toast.error(
-                          "Please enter plan name and select images."
+                          "Please enter plan name and select images.",
                         );
                         return;
                       }
@@ -3099,7 +3096,8 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltipBanner && (
                       <span className="tooltip-text">
-                        Max Upload Size 3 MB and {getDynamicRatiosText("ProjectImage")}
+                        Max Upload Size 3 MB and{" "}
+                        {getDynamicRatiosText("ProjectImage")}
                       </span>
                     )}
                   </span>
@@ -3190,7 +3188,8 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltipCover && (
                       <span className="tooltip-text">
-                        Max Upload Size 5 MB and {getDynamicRatiosText("ProjectCoverImage")}
+                        Max Upload Size 5 MB and{" "}
+                        {getDynamicRatiosText("ProjectCoverImage")}
                       </span>
                     )}
                   </span>
@@ -3307,7 +3306,7 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
-                  Gallery Images {" "}
+                  Gallery Images{" "}
                   <span
                     className="tooltip-container"
                     onMouseEnter={() => setShowTooltipGallery(true)}
@@ -3316,7 +3315,8 @@ const ProjectDetailsCreate = () => {
                     [i]
                     {showTooltipGallery && (
                       <span className="tooltip-text">
-                        Max Upload Size 3 MB (Images), 10 MB (Videos) and {getDynamicRatiosText("ProjectGallery")}
+                        Max Upload Size 3 MB (Images), 10 MB (Videos) and{" "}
+                        {getDynamicRatiosText("ProjectGallery")}
                       </span>
                     )}
                   </span>
@@ -3348,7 +3348,11 @@ const ProjectDetailsCreate = () => {
                     label={galleryImageLabel}
                     description={dynamicDescription1}
                     onContinue={(validImages, videoFiles) =>
-                      handleCroppedCoverImages(validImages, "gallery", videoFiles)
+                      handleCroppedCoverImages(
+                        validImages,
+                        "gallery",
+                        videoFiles,
+                      )
                     }
                     allowVideos={true}
                   />
@@ -3372,11 +3376,17 @@ const ProjectDetailsCreate = () => {
                     {/* MODIFICATION: Render video or image in the gallery table */}
                     <tbody>
                       {gallery_images.map(({ key, label }) => {
-                        const files = Array.isArray(formData[key]) ? formData[key] : [];
+                        const files = Array.isArray(formData[key])
+                          ? formData[key]
+                          : [];
                         return files.map((file, index) => {
-                          const isVideo = file.type === "video" || file.file?.type?.startsWith("video/");
-                          const previewUrl = file.preview || file.document_url || "";
-                          const name = file.file_name || file.name || `Image ${index + 1}`;
+                          const isVideo =
+                            file.type === "video" ||
+                            file.file?.type?.startsWith("video/");
+                          const previewUrl =
+                            file.preview || file.document_url || "";
+                          const name =
+                            file.file_name || file.name || `Image ${index + 1}`;
 
                           return (
                             <tr key={`${key}-${index}`}>
@@ -3385,14 +3395,20 @@ const ProjectDetailsCreate = () => {
                                   type="text"
                                   className="form-control"
                                   value={file.file_name || ""}
-                                  onChange={(e) => handleGalleryImageNameChange(key, index, e.target.value)}
+                                  onChange={(e) =>
+                                    handleGalleryImageNameChange(
+                                      key,
+                                      index,
+                                      e.target.value,
+                                    )
+                                  }
                                   placeholder={`Image ${index + 1}`}
                                   style={{
                                     border: "1px solid #ddd",
                                     borderRadius: "4px",
                                     padding: "5px 8px",
                                     fontSize: "14px",
-                                    width: "100%"
+                                    width: "100%",
                                   }}
                                 />
                               </td>
@@ -3403,7 +3419,10 @@ const ProjectDetailsCreate = () => {
                                     style={{ maxWidth: 100, maxHeight: 100 }}
                                     className="img-fluid rounded"
                                   >
-                                    <source src={previewUrl} type={file.file?.type || 'video/mp4'} />
+                                    <source
+                                      src={previewUrl}
+                                      type={file.file?.type || "video/mp4"}
+                                    />
                                     Your browser does not support the video tag.
                                   </video>
                                 ) : (
@@ -3421,14 +3440,21 @@ const ProjectDetailsCreate = () => {
                                   type="number"
                                   className="form-control"
                                   value={file.order_no || ""}
-                                  onChange={(e) => handleGalleryImageNameChange(key, index, e.target.value, 'order_no')}
+                                  onChange={(e) =>
+                                    handleGalleryImageNameChange(
+                                      key,
+                                      index,
+                                      e.target.value,
+                                      "order_no",
+                                    )
+                                  }
                                   placeholder="Order"
                                   style={{
                                     border: "1px solid #ddd",
                                     borderRadius: "4px",
                                     padding: "5px 8px",
                                     fontSize: "14px",
-                                    width: "80px"
+                                    width: "80px",
                                   }}
                                 />
                               </td>
@@ -3449,99 +3475,101 @@ const ProjectDetailsCreate = () => {
                   </table>
                 </div>
               </div>
-              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
-                <>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Floor Plan{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltipFloor(true)}
-                        onMouseLeave={() => setShowTooltipFloor(false)}
+              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" &&
+                baseURL !== "https://rustomjee-live.lockated.com/" && (
+                  <>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Floor Plan{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltipFloor(true)}
+                          onMouseLeave={() => setShowTooltipFloor(false)}
+                        >
+                          [i]
+                          {showTooltipFloor && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB and{" "}
+                              {getDynamicRatiosText("Project2DImage")}
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        fdprocessedid="xn3e6n"
+                        type="button"
+                        onClick={() => setShowFloorPlanModal(true)}
                       >
-                        [i]
-                        {showTooltipFloor && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB and {getDynamicRatiosText("Project2DImage")}
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      fdprocessedid="xn3e6n"
-                      type="button"
-                      onClick={() => setShowFloorPlanModal(true)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    {showFloorPlanModal && (
-                      <ProjectBannerUpload
-                        onClose={() => setShowFloorPlanModal(false)}
-                        selectedRatioProp={selectedFloorRatios}
-                        showAsModal={true}
-                        label={floorImageLabel}
-                        description={dynamicDescription2}
-                        onContinue={(validImages) =>
-                          handleCroppedImages(validImages, "floor")
-                        }
-                      />
-                    )}
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Ratio</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {floorPlanRatios.map(({ key, label }) => {
-                            const files = formData[key] || [];
-                            return files.map((file, index) => (
-                              <tr key={`${key}-${index}`}>
-                                <td>{file.name}</td>
-                                <td>
-                                  <img
-                                    style={{ maxWidth: 100, maxHeight: 100 }}
-                                    className="img-fluid rounded"
-                                    src={file.preview}
-                                    alt={file.name}
-                                  />
-                                </td>
-                                <td>{file.ratio || label}</td>
-                                <td>
-                                  <button
-                                    type="button"
-                                    className="purple-btn2"
-                                    onClick={() => discardImage(key, file)}
-                                  >
-                                    x
-                                  </button>
-                                </td>
-                              </tr>
-                            ));
-                          })}
-                        </tbody>
-                      </table>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      {showFloorPlanModal && (
+                        <ProjectBannerUpload
+                          onClose={() => setShowFloorPlanModal(false)}
+                          selectedRatioProp={selectedFloorRatios}
+                          showAsModal={true}
+                          label={floorImageLabel}
+                          description={dynamicDescription2}
+                          onContinue={(validImages) =>
+                            handleCroppedImages(validImages, "floor")
+                          }
+                        />
+                      )}
                     </div>
-                  </div>
-                </>
-              )}
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Preview</th>
+                              <th>Ratio</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {floorPlanRatios.map(({ key, label }) => {
+                              const files = formData[key] || [];
+                              return files.map((file, index) => (
+                                <tr key={`${key}-${index}`}>
+                                  <td>{file.name}</td>
+                                  <td>
+                                    <img
+                                      style={{ maxWidth: 100, maxHeight: 100 }}
+                                      className="img-fluid rounded"
+                                      src={file.preview}
+                                      alt={file.name}
+                                    />
+                                  </td>
+                                  <td>{file.ratio || label}</td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() => discardImage(key, file)}
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ));
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </>
+                )}
               <div className="d-flex justify-content-between align-items-end mx-1">
                 <h5 className="mt-3">
                   Brochure{" "}
@@ -3612,955 +3640,950 @@ const ProjectDetailsCreate = () => {
                           </tr>
                         ))
                       ) : (
-                        <tr>
-                        </tr>
+                        <tr></tr>
                       )}
                     </tbody>
                   </table>
                 </div>
               </div>
               {/* Project Videos Section */}
-             
-              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
-                <>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project PPT{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
+
+              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" &&
+                baseURL !== "https://rustomjee-live.lockated.com/" && (
+                  <>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Project PPT{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 5 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        onClick={() =>
+                          document.getElementById("project_ppt").click()
+                        }
                       >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 5 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      onClick={() =>
-                        document.getElementById("project_ppt").click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="project_ppt"
-                      className="form-control"
-                      type="file"
-                      name="project_ppt"
-                      accept=".ppt, .pptx"
-                      onChange={(e) =>
-                        handleFileUpload("project_ppt", e.target.files)
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.project_ppt.map((file, index) => (
-                            <tr key={index}>
-                              <td>{file.name}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleDiscardPpt("project_ppt", index)
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="project_ppt"
+                        className="form-control"
+                        type="file"
+                        name="project_ppt"
+                        accept=".ppt, .pptx"
+                        onChange={(e) =>
+                          handleFileUpload("project_ppt", e.target.files)
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
                     </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project Layout{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      fdprocessedid="xn3e6n"
-                      onClick={() =>
-                        document.getElementById("project_layout").click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="project_layout"
-                      className="form-control"
-                      type="file"
-                      name="project_layout"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileUpload("project_layout", e.target.files)
-                      }
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.project_layout.map((file, index) => (
-                            <tr key={index}>
-                              <td> {file.name}</td>
-                              <td>
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={
-                                    file.type.startsWith("image")
-                                      ? URL.createObjectURL(file)
-                                      : null
-                                  }
-                                  alt=""
-                                />
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleDiscardFile("project_layout", index)
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Action</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project Creatives{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      fdprocessedid="xn3e6n"
-                      onClick={() =>
-                        document.getElementById("project_creatives").click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="project_creatives"
-                      className="form-control"
-                      type="file"
-                      name="project_creatives"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileUpload("project_creatives", e.target.files)
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.project_creatives.map((file, index) => (
-                            <tr key={index}>
-                              <td> {file.name}</td>
-                              <td>
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={
-                                    file.type.startsWith("image")
-                                      ? URL.createObjectURL(file)
-                                      : null
-                                  }
-                                  alt=""
-                                />
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleDiscardFile(
-                                      "project_creatives",
-                                      index
-                                    )
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project Creative Generics{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      fdprocessedid="xn3e6n"
-                      onClick={() =>
-                        document
-                          .getElementById("project_creative_generics")
-                          .click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="project_creative_generics"
-                      className="form-control"
-                      type="file"
-                      name="project_creative_generics"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileUpload(
-                          "project_creative_generics",
-                          e.target.files
-                        )
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.project_creative_generics.map(
-                            (file, index) => (
+                          </thead>
+                          <tbody>
+                            {formData.project_ppt.map((file, index) => (
                               <tr key={index}>
-                                <td> {file.name}</td>
-                                <td>
-                                  <img
-                                    style={{ maxWidth: 100, maxHeight: 100 }}
-                                    className="img-fluid rounded"
-                                    src={
-                                      file.type.startsWith("image")
-                                        ? URL.createObjectURL(file)
-                                        : null
-                                    }
-                                    alt=""
-                                  />
-                                </td>
+                                <td>{file.name}</td>
                                 <td>
                                   <button
                                     type="button"
                                     className="purple-btn2"
                                     onClick={() =>
-                                      handleDiscardFile(
-                                        "project_creative_generics",
-                                        index
-                                      )
+                                      handleDiscardPpt("project_ppt", index)
                                     }
                                   >
                                     x
                                   </button>
                                 </td>
                               </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project Creative Offers{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      fdprocessedid="xn3e6n"
-                      onClick={() =>
-                        document
-                          .getElementById("project_creative_offers")
-                          .click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="project_creative_offers"
-                      className="form-control"
-                      type="file"
-                      name="project_creative_offers"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileUpload(
-                          "project_creative_offers",
-                          e.target.files
-                        )
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.project_creative_offers.map(
-                            (file, index) => (
-                              <tr key={index}>
-                                <td> {file.name}</td>
-                                <td>
-                                  <img
-                                    style={{ maxWidth: 100, maxHeight: 100 }}
-                                    className="img-fluid rounded"
-                                    src={
-                                      file.type.startsWith("image")
-                                        ? URL.createObjectURL(file)
-                                        : null
-                                    }
-                                    alt=""
-                                  />
-                                </td>
-                                <td>
-                                  <button
-                                    type="button"
-                                    className="purple-btn2"
-                                    onClick={() =>
-                                      handleDiscardFile(
-                                        "project_creative_offers",
-                                        index
-                                      )
-                                    }
-                                  >
-                                    x
-                                  </button>
-                                </td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project Interiors{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      fdprocessedid="xn3e6n"
-                      onClick={() =>
-                        document.getElementById("project_interiors").click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="project_interiors"
-                      className="form-control"
-                      type="file"
-                      name="project_interiors"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileUpload("project_interiors", e.target.files)
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.project_interiors.map((file, index) => (
-                            <tr key={index}>
-                              <td> {file.name}</td>
-                              <td>
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={
-                                    file.type.startsWith("image")
-                                      ? URL.createObjectURL(file)
-                                      : null
-                                  }
-                                  alt=""
-                                />
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleDiscardFile(
-                                      "project_interiors",
-                                      index
-                                    )
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project Exteriors{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      fdprocessedid="xn3e6n"
-                      onClick={() =>
-                        document.getElementById("project_exteriors").click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="project_exteriors"
-                      className="form-control"
-                      type="file"
-                      name="project_exteriors"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileUpload("project_exteriors", e.target.files)
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.project_exteriors.map((file, index) => (
-                            <tr key={index}>
-                              <td> {file.name}</td>
-                              <td>
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  src={
-                                    file.type.startsWith("image")
-                                      ? URL.createObjectURL(file)
-                                      : null
-                                  }
-                                  alt=""
-                                />
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleDiscardFile(
-                                      "project_exteriors",
-                                      index
-                                    )
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project Emailer Template{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 5 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      fdprocessedid="xn3e6n"
-                      onClick={() =>
-                        document
-                          .getElementById("project_emailer_templetes")
-                          .click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="project_emailer_templetes"
-                      className="form-control"
-                      type="file"
-                      name="project_emailer_templetes"
-                      accept=".pdf,.docx"
-                      onChange={(e) =>
-                        handleFileUpload(
-                          "project_emailer_templetes",
-                          e.target.files
-                        )
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.project_emailer_templetes.length > 0 ? (
-                            formData.project_emailer_templetes.map(
-                              (brochure, index) => (
-                                <tr key={`brochure-${index}`}>
-                                  <td>{brochure.name}</td>
-                                  <td>
-                                    <button
-                                      type="button"
-                                      className="purple-btn2"
-                                      onClick={() =>
-                                        handleDiscardFile(
-                                          "project_emailer_templetes",
-                                          index
-                                        )
-                                      }
-                                    >
-                                      x
-                                    </button>
-                                  </td>
-                                </tr>
-                              )
-                            )
-                          ) : (
-                            <tr>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Project Know Your Apartment Files{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 20 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      onClick={() =>
-                        document
-                          .getElementById("KnwYrApt_Technical")
-                          .click()
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="KnwYrApt_Technical"
-                      className="form-control"
-                      type="file"
-                      name="KnwYrApt_Technical"
-                      accept=".pdf,.docx"
-                      onChange={(e) =>
-                        handleFileUpload(
-                          "KnwYrApt_Technical",
-                          e.target.files
-                        )
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.KnwYrApt_Technical.length > 0 ? (
-                            formData.KnwYrApt_Technical.map(
-                              (technicalFile, index) => (
-                                <tr key={`technical-${index}`}>
-                                  <td>{technicalFile.name}</td>
-                                  <td>
-                                    <button
-                                      type="button"
-                                      className="purple-btn2"
-                                      onClick={() =>
-                                        handleDiscardFile(
-                                          "KnwYrApt_Technical",
-                                          index
-                                        )
-                                      }
-                                    >
-                                      x
-                                    </button>
-                                  </td>
-                                </tr>
-                              )
-                            )
-                          ) : (
-                            <tr>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-end mx-1">
-                    <h5 className="mt-3">
-                      Videos{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 10 MB
-                          </span>
-                        )}
-                      </span>
-                    </h5>
-                    <button
-                      className="purple-btn2 rounded-3"
-                      onClick={() => document.getElementById("videos").click()}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span>Add</span>
-                    </button>
-                    <input
-                      id="videos"
-                      className="form-control"
-                      type="file"
-                      name="videos"
-                      accept="video/*"
-                      onChange={(e) =>
-                        handleFileUpload("videos", e.target.files)
-                      }
-                      multiple
-                      style={{ display: "none" }}
-                    />
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>File Name</th>
-                            <th>Preview</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.videos.map((file, index) => (
-                            <tr key={index}>
-                              <td>{file.name}</td>
-                              <td>
-                                <video
-                                  style={{ maxWidth: 100, maxHeight: 100 }}
-                                  className="img-fluid rounded"
-                                  autoPlay
-                                  muted
-                                  src={URL.createObjectURL(file)}
-                                />
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleDiscardFile("videos", index)
-                                  }
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                     <div className="d-flex justify-content-between align-items-end mx-1">
-                      <div className="col-md-12 mt-2">
-                        <div className="form-group">
-                          <label>Video Preview Image Url</label>
-                          <input
-                            className="form-control"
-                            rows={1}
-                            name="video_preview_image_url"
-                            placeholder="Enter Video Url"
-                            value={formData.video_preview_image_url}
-                            onChange={handleChange}
-                          />
+                      <h5 className="mt-3">
+                        Project Layout{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        fdprocessedid="xn3e6n"
+                        onClick={() =>
+                          document.getElementById("project_layout").click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="project_layout"
+                        className="form-control"
+                        type="file"
+                        name="project_layout"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileUpload("project_layout", e.target.files)
+                        }
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Preview</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.project_layout.map((file, index) => (
+                              <tr key={index}>
+                                <td> {file.name}</td>
+                                <td>
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={
+                                      file.type.startsWith("image")
+                                        ? URL.createObjectURL(file)
+                                        : null
+                                    }
+                                    alt=""
+                                  />
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDiscardFile("project_layout", index)
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Project Creatives{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        fdprocessedid="xn3e6n"
+                        onClick={() =>
+                          document.getElementById("project_creatives").click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="project_creatives"
+                        className="form-control"
+                        type="file"
+                        name="project_creatives"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileUpload("project_creatives", e.target.files)
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Preview</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.project_creatives.map((file, index) => (
+                              <tr key={index}>
+                                <td> {file.name}</td>
+                                <td>
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={
+                                      file.type.startsWith("image")
+                                        ? URL.createObjectURL(file)
+                                        : null
+                                    }
+                                    alt=""
+                                  />
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDiscardFile(
+                                        "project_creatives",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Project Creative Generics{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        fdprocessedid="xn3e6n"
+                        onClick={() =>
+                          document
+                            .getElementById("project_creative_generics")
+                            .click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="project_creative_generics"
+                        className="form-control"
+                        type="file"
+                        name="project_creative_generics"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileUpload(
+                            "project_creative_generics",
+                            e.target.files,
+                          )
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Preview</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.project_creative_generics.map(
+                              (file, index) => (
+                                <tr key={index}>
+                                  <td> {file.name}</td>
+                                  <td>
+                                    <img
+                                      style={{ maxWidth: 100, maxHeight: 100 }}
+                                      className="img-fluid rounded"
+                                      src={
+                                        file.type.startsWith("image")
+                                          ? URL.createObjectURL(file)
+                                          : null
+                                      }
+                                      alt=""
+                                    />
+                                  </td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        handleDiscardFile(
+                                          "project_creative_generics",
+                                          index,
+                                        )
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ),
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Project Creative Offers{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        fdprocessedid="xn3e6n"
+                        onClick={() =>
+                          document
+                            .getElementById("project_creative_offers")
+                            .click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="project_creative_offers"
+                        className="form-control"
+                        type="file"
+                        name="project_creative_offers"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileUpload(
+                            "project_creative_offers",
+                            e.target.files,
+                          )
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Preview</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.project_creative_offers.map(
+                              (file, index) => (
+                                <tr key={index}>
+                                  <td> {file.name}</td>
+                                  <td>
+                                    <img
+                                      style={{ maxWidth: 100, maxHeight: 100 }}
+                                      className="img-fluid rounded"
+                                      src={
+                                        file.type.startsWith("image")
+                                          ? URL.createObjectURL(file)
+                                          : null
+                                      }
+                                      alt=""
+                                    />
+                                  </td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        handleDiscardFile(
+                                          "project_creative_offers",
+                                          index,
+                                        )
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ),
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Project Interiors{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        fdprocessedid="xn3e6n"
+                        onClick={() =>
+                          document.getElementById("project_interiors").click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="project_interiors"
+                        className="form-control"
+                        type="file"
+                        name="project_interiors"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileUpload("project_interiors", e.target.files)
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Preview</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.project_interiors.map((file, index) => (
+                              <tr key={index}>
+                                <td> {file.name}</td>
+                                <td>
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={
+                                      file.type.startsWith("image")
+                                        ? URL.createObjectURL(file)
+                                        : null
+                                    }
+                                    alt=""
+                                  />
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDiscardFile(
+                                        "project_interiors",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Project Exteriors{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 3 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        fdprocessedid="xn3e6n"
+                        onClick={() =>
+                          document.getElementById("project_exteriors").click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="project_exteriors"
+                        className="form-control"
+                        type="file"
+                        name="project_exteriors"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileUpload("project_exteriors", e.target.files)
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Preview</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.project_exteriors.map((file, index) => (
+                              <tr key={index}>
+                                <td> {file.name}</td>
+                                <td>
+                                  <img
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    src={
+                                      file.type.startsWith("image")
+                                        ? URL.createObjectURL(file)
+                                        : null
+                                    }
+                                    alt=""
+                                  />
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDiscardFile(
+                                        "project_exteriors",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Project Emailer Template{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 5 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        fdprocessedid="xn3e6n"
+                        onClick={() =>
+                          document
+                            .getElementById("project_emailer_templetes")
+                            .click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="project_emailer_templetes"
+                        className="form-control"
+                        type="file"
+                        name="project_emailer_templetes"
+                        accept=".pdf,.docx"
+                        onChange={(e) =>
+                          handleFileUpload(
+                            "project_emailer_templetes",
+                            e.target.files,
+                          )
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.project_emailer_templetes.length > 0 ? (
+                              formData.project_emailer_templetes.map(
+                                (brochure, index) => (
+                                  <tr key={`brochure-${index}`}>
+                                    <td>{brochure.name}</td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        className="purple-btn2"
+                                        onClick={() =>
+                                          handleDiscardFile(
+                                            "project_emailer_templetes",
+                                            index,
+                                          )
+                                        }
+                                      >
+                                        x
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ),
+                              )
+                            ) : (
+                              <tr></tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Project Know Your Apartment Files{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 20 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        onClick={() =>
+                          document.getElementById("KnwYrApt_Technical").click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="KnwYrApt_Technical"
+                        className="form-control"
+                        type="file"
+                        name="KnwYrApt_Technical"
+                        accept=".pdf,.docx"
+                        onChange={(e) =>
+                          handleFileUpload("KnwYrApt_Technical", e.target.files)
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.KnwYrApt_Technical.length > 0 ? (
+                              formData.KnwYrApt_Technical.map(
+                                (technicalFile, index) => (
+                                  <tr key={`technical-${index}`}>
+                                    <td>{technicalFile.name}</td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        className="purple-btn2"
+                                        onClick={() =>
+                                          handleDiscardFile(
+                                            "KnwYrApt_Technical",
+                                            index,
+                                          )
+                                        }
+                                      >
+                                        x
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ),
+                              )
+                            ) : (
+                              <tr></tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-end mx-1">
+                      <h5 className="mt-3">
+                        Videos{" "}
+                        <span
+                          className="tooltip-container"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                        >
+                          [i]
+                          {showTooltip && (
+                            <span className="tooltip-text">
+                              Max Upload Size 10 MB
+                            </span>
+                          )}
+                        </span>
+                      </h5>
+                      <button
+                        className="purple-btn2 rounded-3"
+                        onClick={() =>
+                          document.getElementById("videos").click()
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                      <input
+                        id="videos"
+                        className="form-control"
+                        type="file"
+                        name="videos"
+                        accept="video/*"
+                        onChange={(e) =>
+                          handleFileUpload("videos", e.target.files)
+                        }
+                        multiple
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>Preview</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.videos.map((file, index) => (
+                              <tr key={index}>
+                                <td>{file.name}</td>
+                                <td>
+                                  <video
+                                    style={{ maxWidth: 100, maxHeight: 100 }}
+                                    className="img-fluid rounded"
+                                    autoPlay
+                                    muted
+                                    src={URL.createObjectURL(file)}
+                                  />
+                                </td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="purple-btn2"
+                                    onClick={() =>
+                                      handleDiscardFile("videos", index)
+                                    }
+                                  >
+                                    x
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className="d-flex justify-content-between align-items-end mx-1">
+                        <div className="col-md-12 mt-2">
+                          <div className="form-group">
+                            <label>Video Preview Image Url</label>
+                            <input
+                              className="form-control"
+                              rows={1}
+                              name="video_preview_image_url"
+                              placeholder="Enter Video Url"
+                              value={formData.video_preview_image_url}
+                              onChange={handleChange}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
               {baseURL === "https://kalpataru.lockated.com/" && (
                 <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
@@ -4616,28 +4639,36 @@ const ProjectDetailsCreate = () => {
                         </thead>
                         <tbody>
                           {formData.project_videos_attributes.length > 0 ? (
-                            formData.project_videos_attributes.map((video, index) => (
-                              <tr key={`video-${index}`}>
-                                <td>{video.name}</td>
-                                <td>
-                                  <a href={video.video_url} target="_blank" rel="noopener noreferrer">
-                                    {video.video_url}
-                                  </a>
-                                </td>
-                                <td>
-                                  <button
-                                    type="button"
-                                    className="purple-btn2"
-                                    onClick={() => handleDeleteVideo(index)}
-                                  >
-                                    x
-                                  </button>
-                                </td>
-                              </tr>
-                            ))
+                            formData.project_videos_attributes.map(
+                              (video, index) => (
+                                <tr key={`video-${index}`}>
+                                  <td>{video.name}</td>
+                                  <td>
+                                    <a
+                                      href={video.video_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {video.video_url}
+                                    </a>
+                                  </td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() => handleDeleteVideo(index)}
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ),
+                            )
                           ) : (
                             <tr>
-                              <td colSpan="3" className="text-center">No videos added</td>
+                              <td colSpan="3" className="text-center">
+                                No videos added
+                              </td>
                             </tr>
                           )}
                         </tbody>
@@ -4649,102 +4680,103 @@ const ProjectDetailsCreate = () => {
             </div>
           </div>
         </div>
-        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && baseURL !== "https://rustomjee-live.lockated.com/" && (
-          <>
-            <div className="card mt-3 pb-4 mx-4">
-              <div className="card-header3 d-flex justify-content-between align-items-center">
-                <h3 className="card-title">Virtual Tour</h3>
-              </div>
-              <div className="card-body mt-0 pb-0">
-                <div className="row align-items-center">
-                  <div className="col-md-3 mt-2">
-                    <div className="form-group">
-                      <label>Virtual Tour Name </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="virtual_tour_name"
-                        placeholder="Enter Virtual Tour Name"
-                        value={virtualTourName}
-                        onChange={handleVirtualTourNameChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-3 mt-2">
-                    <div className="form-group">
-                      <label>Virtual Tour URL </label>
-                      <input
-                        className="form-control"
-                        type="url"
-                        name="virtual_tour_url"
-                        placeholder="Enter Virtual Tour URL"
-                        value={virtualTourUrl}
-                        onChange={handleVirtualTourChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-3 mt-2">
-                    <button
-                      className="purple-btn2 rounded-3"
-                      style={{ marginTop: "23px" }}
-                      onClick={handleAddVirtualTour}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={26}
-                        height={20}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span> Add</span>
-                    </button>
-                  </div>
+        {baseURL !== "https://dev-panchshil-super-app.lockated.com/" &&
+          baseURL !== "https://rustomjee-live.lockated.com/" && (
+            <>
+              <div className="card mt-3 pb-4 mx-4">
+                <div className="card-header3 d-flex justify-content-between align-items-center">
+                  <h3 className="card-title">Virtual Tour</h3>
                 </div>
-                {formData.virtual_tour_url_multiple.length > 0 && (
-                  <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container w-100">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>Sr No</th>
-                            <th>Tour Name</th>
-                            <th>Tour URL</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.virtual_tour_url_multiple.map(
-                            (tour, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{tour.virtual_tour_name}</td>
-                                <td>{tour.virtual_tour_url}</td>
-                                <td>
-                                  <button
-                                    type="button"
-                                    className="purple-btn2"
-                                    onClick={() =>
-                                      handleDeleteVirtualTour(index)
-                                    }
-                                  >
-                                    x
-                                  </button>
-                                </td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
+                <div className="card-body mt-0 pb-0">
+                  <div className="row align-items-center">
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Virtual Tour Name </label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="virtual_tour_name"
+                          placeholder="Enter Virtual Tour Name"
+                          value={virtualTourName}
+                          onChange={handleVirtualTourNameChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <div className="form-group">
+                        <label>Virtual Tour URL </label>
+                        <input
+                          className="form-control"
+                          type="url"
+                          name="virtual_tour_url"
+                          placeholder="Enter Virtual Tour URL"
+                          value={virtualTourUrl}
+                          onChange={handleVirtualTourChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3 mt-2">
+                      <button
+                        className="purple-btn2 rounded-3"
+                        style={{ marginTop: "23px" }}
+                        onClick={handleAddVirtualTour}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={26}
+                          height={20}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span> Add</span>
+                      </button>
                     </div>
                   </div>
-                )}
+                  {formData.virtual_tour_url_multiple.length > 0 && (
+                    <div className="col-md-12 mt-2">
+                      <div className="mt-4 tbl-container w-100">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>Sr No</th>
+                              <th>Tour Name</th>
+                              <th>Tour URL</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.virtual_tour_url_multiple.map(
+                              (tour, index) => (
+                                <tr key={index}>
+                                  <td>{index + 1}</td>
+                                  <td>{tour.virtual_tour_name}</td>
+                                  <td>{tour.virtual_tour_url}</td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        handleDeleteVirtualTour(index)
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ),
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
         <div className="card-body mt-0 pb-0"></div>
         <div className="row mt-2 justify-content-center">
           <div className="col-md-2">

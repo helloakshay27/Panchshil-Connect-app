@@ -161,29 +161,29 @@ const ProjectDetailsEdit = () => {
   const selectedBannerRatios = projectUploadConfig[bannerImageType] || [];
 
   const coverImageLabel = coverImageType.replace(/(^\w|\s\w)/g, (m) =>
-    m.toUpperCase()
+    m.toUpperCase(),
   );
   const galleryImageLabel = galleryImageType.replace(/(^\w|\s\w)/g, (m) =>
-    m.toUpperCase()
+    m.toUpperCase(),
   );
   const floorImageLabel = floorImageType.replace(/(^\w|\s\w)/g, (m) =>
-    m.toUpperCase()
+    m.toUpperCase(),
   );
   const bannerImageLabel = bannerImageType.replace(/(^\w|\s\w)/g, (m) =>
-    m.toUpperCase()
+    m.toUpperCase(),
   );
 
   const dynamicDescription = `Supports ${selectedCoverRatios.join(
-    ", "
+    ", ",
   )} aspect ratios`;
   const dynamicDescription1 = `Supports ${selectedGalleryRatios.join(
-    ", "
+    ", ",
   )} aspect ratios`;
   const dynamicDescription2 = `Supports ${selectedFloorRatios.join(
-    ", "
+    ", ",
   )} aspect ratios`;
   const dynamicDescription3 = `Supports ${selectedBannerRatios.join(
-    ", "
+    ", ",
   )} aspect ratios`;
 
   const updateFormData = (key, files) => {
@@ -196,7 +196,7 @@ const ProjectDetailsEdit = () => {
   const handleCroppedCoverImages = (
     validImages,
     videoFiles = [],
-    type = "cover"
+    type = "cover",
   ) => {
     // Handle video files first
     if (videoFiles && videoFiles.length > 0) {
@@ -280,7 +280,7 @@ const ProjectDetailsEdit = () => {
       toast.error(
         `No valid ${type} image${
           ["cover", "banner"].includes(type) ? "" : "s"
-        } selected.`
+        } selected.`,
       );
       closeModal(type);
       return;
@@ -309,13 +309,15 @@ const ProjectDetailsEdit = () => {
       const key = `${prefix}_${formattedRatio}`
         .replace(/\s+/g, "_")
         .toLowerCase();
-      
+
       // Add file_name property with timestamp-based default name for gallery images
       if (type === "gallery") {
-        img.file_name = `gallery_image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        img.file_name = `gallery_image_${Date.now()}_${Math.random()
+          .toString(36)
+          .substr(2, 9)}`;
         img.order_no = ""; // Initialize order_no as empty string
       }
-      
+
       updateFormData(key, [img]); // Append the new image
     });
 
@@ -366,7 +368,9 @@ const ProjectDetailsEdit = () => {
   useEffect(() => {
     axios
       .get(`${baseURL}property_types.json`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       })
       .then((response) => {
         const options = response.data
@@ -387,7 +391,9 @@ const ProjectDetailsEdit = () => {
     // setLoading(tru/e);
     try {
       const response = await axios.get(`${baseURL}building_types.json`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       });
       const options = response.data
         .filter((item) => item.active) // optional: only include active types
@@ -413,13 +419,13 @@ const ProjectDetailsEdit = () => {
     //   setProjectsType(data?.property_types || [])
     // );
     fetchData("configuration_setups.json", (data) =>
-      setConfigurations(data || [])
+      setConfigurations(data || []),
     );
     fetchData("specification_setups.json", (data) =>
-      setSpecifications(data?.specification_setups || [])
+      setSpecifications(data?.specification_setups || []),
     );
     fetchData("amenity_setups.json", (data) =>
-      setAmenities(data?.amenities_setups || [])
+      setAmenities(data?.amenities_setups || []),
     );
   }, []);
 
@@ -429,7 +435,11 @@ const ProjectDetailsEdit = () => {
       try {
         const response = await axios.get(
           `${baseURL}construction_statuses.json`,
-          { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          },
         );
         const options = response.data
           .filter((status) => status.active) // Filter only active statuses
@@ -451,7 +461,9 @@ const ProjectDetailsEdit = () => {
     const fetchCategoryTypes = async () => {
       try {
         const response = await axios.get(`${baseURL}category_types.json`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         });
 
         if (response.data) {
@@ -479,11 +491,11 @@ const ProjectDetailsEdit = () => {
           "ProjectImage",
           "ProjectCoverImage",
           "ProjectGallery",
-          "Project2DImage"
+          "Project2DImage",
         ];
-        
+
         const configs = {};
-        
+
         for (const name of configNames) {
           const response = await axios.get(
             `${baseURL}system_constants.json?q[description_eq]=ImagesConfiguration&q[name_eq]=${name}`,
@@ -491,20 +503,20 @@ const ProjectDetailsEdit = () => {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               },
-            }
+            },
           );
-          
+
           if (response.data && Array.isArray(response.data)) {
-            configs[name] = response.data.map(item => item.value);
+            configs[name] = response.data.map((item) => item.value);
           }
         }
-        
+
         setImageConfigurations(configs);
       } catch (error) {
         console.error("Error fetching image configurations:", error);
       }
     };
-    
+
     fetchImageConfigurations();
   }, []);
 
@@ -522,9 +534,9 @@ const ProjectDetailsEdit = () => {
   const getDynamicRatiosText = (configName) => {
     const ratios = imageConfigurations[configName];
     if (!ratios || ratios.length === 0) return "No ratios configured";
-    
+
     const formattedRatios = ratios.map(formatRatio).join(", ");
-    return `Required ratio${ratios.length > 1 ? 's' : ''}: ${formattedRatios}`;
+    return `Required ratio${ratios.length > 1 ? "s" : ""}: ${formattedRatios}`;
   };
 
   // console.log("data", projectsType);
@@ -571,9 +583,9 @@ const ProjectDetailsEdit = () => {
             id: plan.id, // ✅ include this
             name: plan.name,
             images: (plan.images || []).map((img) =>
-              img.document_url ? { ...img, isApi: true } : img
+              img.document_url ? { ...img, isApi: true } : img,
             ),
-          }))
+          })),
         );
 
         // Step 1: Combine all image ratio keys
@@ -614,39 +626,51 @@ const ProjectDetailsEdit = () => {
         (projectData.gallery_image || []).forEach((item) => {
           Object.keys(galleryImages).forEach((key) => {
             if (Array.isArray(item[key])) {
-              const uniqueImages = item[key].filter((img) => {
-                const id = img.id || img.document_url;
-                if (seenImages.has(id)) return false;
-                seenImages.add(id);
-                return true;
-              }).map((img) => ({
-                ...img,
-                // Add file_name property for existing images if not present
-                file_name: img.file_name || img.document_file_name || img.title || `existing_image_${img.id || Date.now()}`,
-                // Preserve order_no field from existing images
-                order_no: img.order_no || ""
-              }));
+              const uniqueImages = item[key]
+                .filter((img) => {
+                  const id = img.id || img.document_url;
+                  if (seenImages.has(id)) return false;
+                  seenImages.add(id);
+                  return true;
+                })
+                .map((img) => ({
+                  ...img,
+                  // Add file_name property for existing images if not present
+                  file_name:
+                    img.file_name ||
+                    img.document_file_name ||
+                    img.title ||
+                    `existing_image_${img.id || Date.now()}`,
+                  // Preserve order_no field from existing images
+                  order_no: img.order_no || "",
+                }));
 
               galleryImages[key] = galleryImages[key].concat(uniqueImages);
             }
           });
         });
 
-        // Also process gallery images that are directly in the projectData structure  
+        // Also process gallery images that are directly in the projectData structure
         Object.keys(galleryImages).forEach((key) => {
           if (Array.isArray(projectData[key])) {
-            const directImages = projectData[key].filter((img) => {
-              const id = img.id || img.document_url;
-              if (seenImages.has(id)) return false;
-              seenImages.add(id);
-              return true;
-            }).map((img) => ({
-              ...img,
-              // Add file_name property for existing images if not present
-              file_name: img.file_name || img.document_file_name || img.title || `existing_image_${img.id || Date.now()}`,
-              // Preserve order_no field from existing images
-              order_no: img.order_no || ""
-            }));
+            const directImages = projectData[key]
+              .filter((img) => {
+                const id = img.id || img.document_url;
+                if (seenImages.has(id)) return false;
+                seenImages.add(id);
+                return true;
+              })
+              .map((img) => ({
+                ...img,
+                // Add file_name property for existing images if not present
+                file_name:
+                  img.file_name ||
+                  img.document_file_name ||
+                  img.title ||
+                  `existing_image_${img.id || Date.now()}`,
+                // Preserve order_no field from existing images
+                order_no: img.order_no || "",
+              }));
 
             galleryImages[key] = galleryImages[key].concat(directImages);
           }
@@ -757,9 +781,9 @@ const ProjectDetailsEdit = () => {
           (projectData.plans || []).map((plan) => ({
             name: plan.name,
             images: (plan.images || []).map((img) =>
-              img.document_url ? { ...img, isApi: true } : img
+              img.document_url ? { ...img, isApi: true } : img,
             ),
-          }))
+          })),
         );
 
         setProject(projectData);
@@ -815,7 +839,7 @@ const ProjectDetailsEdit = () => {
           toast.error(
             `Brochure file too large: ${sizeCheck.name} (${
               sizeCheck.size
-            }). Maximum allowed size is ${formatFileSize(MAX_BROCHURE_SIZE)}.`
+            }). Maximum allowed size is ${formatFileSize(MAX_BROCHURE_SIZE)}.`,
           );
           e.target.value = ""; // Reset input
           return;
@@ -904,7 +928,7 @@ const ProjectDetailsEdit = () => {
 
         // First check file type
         const validTypeFiles = files.filter((file) =>
-          allowedTypes.includes(file.type)
+          allowedTypes.includes(file.type),
         );
 
         if (validTypeFiles.length !== files.length) {
@@ -921,7 +945,7 @@ const ProjectDetailsEdit = () => {
           toast.error(
             `Image file too large: ${sizeCheck.name} (${
               sizeCheck.size
-            }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
+            }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`,
           );
           e.target.value = ""; // Reset input
           return;
@@ -943,7 +967,7 @@ const ProjectDetailsEdit = () => {
 
       // First check file type
       const validTypeFiles = files.filter((file) =>
-        allowedTypes.includes(file.type)
+        allowedTypes.includes(file.type),
       );
 
       if (validTypeFiles.length !== files.length) {
@@ -960,7 +984,7 @@ const ProjectDetailsEdit = () => {
         toast.error(
           `Image file too large: ${sizeCheck.name} (${
             sizeCheck.size
-          }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
+          }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`,
         );
         e.target.value = ""; // Reset input
         return;
@@ -1008,7 +1032,7 @@ const ProjectDetailsEdit = () => {
       ];
 
       const validTypeFiles = files.filter((file) =>
-        allowedTypes.includes(file.type)
+        allowedTypes.includes(file.type),
       );
 
       if (validTypeFiles.length !== files.length) {
@@ -1025,7 +1049,7 @@ const ProjectDetailsEdit = () => {
         toast.error(
           `Image file too large: ${sizeCheck.name} (${
             sizeCheck.size
-          }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`
+          }). Maximum allowed size is ${formatFileSize(MAX_IMAGE_SIZE)}.`,
         );
         e.target.value = ""; // Reset input
         return;
@@ -1056,7 +1080,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1205,7 +1229,7 @@ const ProjectDetailsEdit = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1263,7 +1287,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1297,7 +1321,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1334,7 +1358,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1403,7 +1427,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1447,7 +1471,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1484,7 +1508,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1521,7 +1545,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1558,7 +1582,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1595,7 +1619,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1632,7 +1656,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1668,7 +1692,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1705,7 +1729,7 @@ const ProjectDetailsEdit = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -2206,31 +2230,31 @@ const ProjectDetailsEdit = () => {
             data.append("project[gallery_image_][]", fileObj.gallery_image_);
             data.append(
               `project[gallery_image_file_name]`,
-              fileObj.gallery_image_file_name
+              fileObj.gallery_image_file_name,
             );
             data.append(
               `project[gallery_type]`,
-              fileObj.gallery_image_file_type
+              fileObj.gallery_image_file_type,
             );
             data.append(
               `project[gallery_image_is_day][${index}]`,
-              fileObj.isDay
+              fileObj.isDay,
             );
           }
         });
       } else if (key === "project_qrcode_image" && Array.isArray(value)) {
         const newTitles = [];
         const existingUpdates = [];
-        
+
         value.forEach((fileObj) => {
           if (fileObj.project_qrcode_image instanceof File) {
             // New QR code image
             data.append(
               "project[project_qrcode_image][]",
-              fileObj.project_qrcode_image
+              fileObj.project_qrcode_image,
             );
           }
-          
+
           if (fileObj.isNew) {
             // Title for new image
             newTitles.push(fileObj.file_name || "");
@@ -2238,31 +2262,37 @@ const ProjectDetailsEdit = () => {
             // Existing image with updated title
             existingUpdates.push({
               id: fileObj.id,
-              file_name: fileObj.file_name
+              file_name: fileObj.file_name,
             });
           }
         });
-        
+
         // Send titles for new images
         newTitles.forEach((file_name) => {
           data.append("project[project_qrcode_image_titles][]", file_name);
         });
-        
+
         // Send updates for existing images
         existingUpdates.forEach((update, index) => {
-          data.append(`project[project_qrcode_image_updates][${index}][id]`, update.id);
-          data.append(`project[project_qrcode_image_updates][${index}][file_name]`, update.file_name);
+          data.append(
+            `project[project_qrcode_image_updates][${index}][id]`,
+            update.id,
+          );
+          data.append(
+            `project[project_qrcode_image_updates][${index}][file_name]`,
+            update.file_name,
+          );
         });
       } else if (key === "virtual_tour_url_multiple" && Array.isArray(value)) {
         value.forEach((item, index) => {
           if (item.virtual_tour_url && item.virtual_tour_name) {
             data.append(
               `project[virtual_tour_url_multiple][${index}][virtual_tour_url]`,
-              item.virtual_tour_url
+              item.virtual_tour_url,
             );
             data.append(
               `project[virtual_tour_url_multiple][${index}][virtual_tour_name]`,
-              item.virtual_tour_name
+              item.virtual_tour_name,
             );
             console.log("Virtual Tour URL:", item.virtual_tour_url);
             console.log("Virtual Tour Name:", item.virtual_tour_name);
@@ -2273,15 +2303,15 @@ const ProjectDetailsEdit = () => {
           if (item.tower_name && item.rera_number) {
             data.append(
               `project[Rera_Number_multiple][${index}][tower_name]`,
-              item.tower_name
+              item.tower_name,
             );
             data.append(
               `project[Rera_Number_multiple][${index}][rera_number]`,
-              item.rera_number
+              item.rera_number,
             );
             data.append(
               `project[Rera_Number_multiple][${index}][rera_url]`,
-              item.rera_url
+              item.rera_url,
             );
           }
         });
@@ -2291,31 +2321,31 @@ const ProjectDetailsEdit = () => {
             // Existing video
             data.append(
               `project[project_videos_attributes][${index}][id]`,
-              video.id
+              video.id,
             );
             data.append(
               `project[project_videos_attributes][${index}][name]`,
-              video.name
+              video.name,
             );
             data.append(
               `project[project_videos_attributes][${index}][video_url]`,
-              video.video_url
+              video.video_url,
             );
             if (video._destroy) {
               data.append(
                 `project[project_videos_attributes][${index}][_destroy]`,
-                "true"
+                "true",
               );
             }
           } else {
             // New video
             data.append(
               `project[project_videos_attributes][${index}][name]`,
-              video.name
+              video.name,
             );
             data.append(
               `project[project_videos_attributes][${index}][video_url]`,
-              video.video_url
+              video.video_url,
             );
           }
         });
@@ -2339,14 +2369,16 @@ const ProjectDetailsEdit = () => {
           if (img.file instanceof File) {
             // New image upload - send as array without indices
             data.append(`project[${key}][][file]`, img.file);
-            data.append(`project[${key}][][file_name]`, img.file_name || img.file.name);
+            data.append(
+              `project[${key}][][file_name]`,
+              img.file_name || img.file.name,
+            );
             data.append(`project[${key}][][order_no]`, img.order_no || "");
           } else if (img.id && img.file_name) {
             // Existing image with updated name - send id and file_name
             data.append(`project[${key}][][id]`, img.id);
             data.append(`project[${key}][][file_name]`, img.file_name);
             data.append(`project[${key}][][order_no]`, img.order_no || "");
-            
           }
         });
       } else if (key.startsWith("project_2d_image_") && Array.isArray(value)) {
@@ -2368,9 +2400,12 @@ const ProjectDetailsEdit = () => {
       gallery_16_by_9: formData.gallery_image_16_by_9,
       gallery_1_by_1: formData.gallery_image_1_by_1,
       gallery_9_by_16: formData.gallery_image_9_by_16,
-      gallery_3_by_2: formData.gallery_image_3_by_2
+      gallery_3_by_2: formData.gallery_image_3_by_2,
     });
-    console.log("QR code image data being sent:", formData.project_qrcode_image);
+    console.log(
+      "QR code image data being sent:",
+      formData.project_qrcode_image,
+    );
     console.log("Gallery images structure: Arrays without numeric indices");
 
     try {
@@ -2570,7 +2605,7 @@ const ProjectDetailsEdit = () => {
     setFormData((prevData) => ({
       ...prevData,
       Rera_Number_multiple: prevData.Rera_Number_multiple.filter(
-        (_, i) => i !== index
+        (_, i) => i !== index,
       ),
     }));
   };
@@ -2627,7 +2662,7 @@ const ProjectDetailsEdit = () => {
     setFormData((prev) => ({
       ...prev,
       virtual_tour_url_multiple: prev.virtual_tour_url_multiple.filter(
-        (_, i) => i !== index
+        (_, i) => i !== index,
       ),
     }));
 
@@ -2679,7 +2714,7 @@ const ProjectDetailsEdit = () => {
       setFormData((prev) => ({
         ...prev,
         project_videos_attributes: prev.project_videos_attributes.filter(
-          (_, i) => i !== index
+          (_, i) => i !== index,
         ),
       }));
       toast.success("Video removed!");
@@ -2782,13 +2817,13 @@ const ProjectDetailsEdit = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(
-          `Failed to delete image. Server response: ${errorText}`
+          `Failed to delete image. Server response: ${errorText}`,
         );
       }
 
@@ -2943,7 +2978,7 @@ const ProjectDetailsEdit = () => {
       newFiles.forEach((file) => {
         if (!allowedTypes.project_emailer_templetes.includes(file.type)) {
           toast.error(
-            "Only PDF and DOCX files are allowed for Project Email Templates."
+            "Only PDF and DOCX files are allowed for Project Email Templates.",
           );
           return;
         }
@@ -2989,7 +3024,7 @@ const ProjectDetailsEdit = () => {
       newFiles.forEach((file) => {
         if (!allowedTypes.KnwYrApt_Technical.includes(file.type)) {
           toast.error(
-            "Only PDF and DOCX files are allowed for Project Technical Files."
+            "Only PDF and DOCX files are allowed for Project Technical Files.",
           );
           return;
         }
@@ -3263,8 +3298,8 @@ const ProjectDetailsEdit = () => {
           toast.error(
             `Only supported ${fileType} formats are allowed for ${name.replace(
               "_",
-              " "
-            )}.`
+              " ",
+            )}.`,
           );
           return;
         }
@@ -3283,7 +3318,7 @@ const ProjectDetailsEdit = () => {
           toast.error(
             `File too large: ${file.name} (${
               file.size
-            }). Max size: ${formatFileSize(MAX_SIZES[name])}`
+            }). Max size: ${formatFileSize(MAX_SIZES[name])}`,
           );
         });
       }
@@ -3307,7 +3342,7 @@ const ProjectDetailsEdit = () => {
         toast.error(
           `File too large: ${sizeCheck.name} (${
             sizeCheck.size
-          }). Max size: ${formatFileSize(MAX_SIZES.image)}`
+          }). Max size: ${formatFileSize(MAX_SIZES.image)}`,
         );
         return;
       }
@@ -3323,13 +3358,13 @@ const ProjectDetailsEdit = () => {
 
       const sizeCheck = isFileSizeValid(
         file,
-        MAX_SIZES.video_preview_image_url
+        MAX_SIZES.video_preview_image_url,
       );
       if (!sizeCheck.valid) {
         toast.error(
           `File too large: ${sizeCheck.name} (${
             sizeCheck.size
-          }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`
+          }). Max size: ${formatFileSize(MAX_SIZES.video_preview_image_url)}`,
         );
         return;
       }
@@ -3386,7 +3421,11 @@ const ProjectDetailsEdit = () => {
       // Fetch building types based on the selected property type
       const response = await axios.get(
         `${baseURL}building_types.json?q[property_type_id_eq]=${id}`,
-        { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        },
       );
 
       const formattedBuildingTypes = response.data.map((item) => ({
@@ -3421,15 +3460,18 @@ const ProjectDetailsEdit = () => {
     // Detect removed amenities
     const removed = formData.Amenities1.filter(
       (oldAmenity) =>
-        !newAmenities.some((newAmenity) => newAmenity.id === oldAmenity.id)
+        !newAmenities.some((newAmenity) => newAmenity.id === oldAmenity.id),
     );
 
     for (const amenity of removed) {
       try {
         await axios.delete(`${baseURL}amenities/${amenity.id}.json`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         });
-        console.log(`Deleted amenity with ID: ${amenity.id}`);      } catch (error) {
+        console.log(`Deleted amenity with ID: ${amenity.id}`);
+      } catch (error) {
         console.error("Error deleting amenity:", error);
       }
     }
@@ -3443,7 +3485,7 @@ const ProjectDetailsEdit = () => {
   const selectedAmenityNames = formData.Amenities1.map((a) => a.name);
 
   const filteredAmenities = amenities.filter(
-    (ammit) => !selectedAmenityNames.includes(ammit.name)
+    (ammit) => !selectedAmenityNames.includes(ammit.name),
   );
 
   const handleConfigurationChange = async (selectedOptions) => {
@@ -3457,7 +3499,7 @@ const ProjectDetailsEdit = () => {
     // Detect removed configurations
     const removed = formData.Configuration_Type1.filter(
       (oldConfig) =>
-        !newConfigurations.some((newConfig) => newConfig.id === oldConfig.id)
+        !newConfigurations.some((newConfig) => newConfig.id === oldConfig.id),
     );
 
     for (const config of removed) {
@@ -3468,7 +3510,7 @@ const ProjectDetailsEdit = () => {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
-          }
+          },
         );
         console.log(`Deleted configuration with ID: ${config.id}`);
       } catch (error) {
@@ -3483,11 +3525,11 @@ const ProjectDetailsEdit = () => {
   };
 
   const selectedConfigurationNames = formData.Configuration_Type1.map(
-    (c) => c.name
+    (c) => c.name,
   );
 
   const filteredConfigurations = configurations.filter(
-    (config) => !selectedConfigurationNames.includes(config.name)
+    (config) => !selectedConfigurationNames.includes(config.name),
   );
 
   return (
@@ -3658,7 +3700,7 @@ const ProjectDetailsEdit = () => {
                       defaultValue={formData.Property_Type}
                       value={
                         propertyTypeOptions.find(
-                          (type) => type.value === formData.Property_Type
+                          (type) => type.value === formData.Property_Type,
                         ) || null // Ensure defaultValue is set correctly
                       }
                       // defaultValue={propertyTypeOptions.find(
@@ -4354,7 +4396,7 @@ const ProjectDetailsEdit = () => {
                             handleRemoveQRCodeImage(
                               "project_qrcode_image",
                               index,
-                              image.id
+                              image.id,
                             )
                           }
                         >
@@ -4495,158 +4537,158 @@ const ProjectDetailsEdit = () => {
           </div>
         </div>
         {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
-                  <>
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3 d-flex justify-content-between align-items-center">
-            <h3 className="card-title">RERA Number</h3>
-          </div>
-          <div className="card-body mt-0 pb-0">
-            {/* Input Fields for New Entry */}
-            <div className="row align-items-center">
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>Tower </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="tower_name"
-                    placeholder="Enter Tower Name"
-                    value={towerName}
-                    onChange={handleTowerChange}
-                  />
-                </div>
+          <>
+            <div className="card mt-3 pb-4 mx-4">
+              <div className="card-header3 d-flex justify-content-between align-items-center">
+                <h3 className="card-title">RERA Number</h3>
               </div>
+              <div className="card-body mt-0 pb-0">
+                {/* Input Fields for New Entry */}
+                <div className="row align-items-center">
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>Tower </label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="tower_name"
+                        placeholder="Enter Tower Name"
+                        value={towerName}
+                        onChange={handleTowerChange}
+                      />
+                    </div>
+                  </div>
 
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>RERA Number </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="rera_number"
-                    placeholder="Enter RERA Number"
-                    value={reraNumber}
-                    onChange={handleReraNumberChange}
-                    // {...(baseURL !== "https://kalpataru.lockated.com/" && { maxLength: 12 })}
-                  />
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>RERA Number </label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="rera_number"
+                        placeholder="Enter RERA Number"
+                        value={reraNumber}
+                        onChange={handleReraNumberChange}
+                        // {...(baseURL !== "https://kalpataru.lockated.com/" && { maxLength: 12 })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3 mt-2">
+                    <div className="form-group">
+                      <label>RERA URL </label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="rera_url"
+                        placeholder="Enter RERA URL"
+                        value={reraUrl}
+                        onChange={handleReraUrlChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Add Button */}
+                  <div className="col-md-3 mt-2">
+                    <button
+                      className="purple-btn2 rounded-3"
+                      style={{ marginTop: "23px" }}
+                      onClick={handleAddRera}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={26}
+                        height={20}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span> Add</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>RERA URL </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="rera_url"
-                    placeholder="Enter RERA URL"
-                    value={reraUrl}
-                    onChange={handleReraUrlChange}
-                  />
-                </div>
-              </div>
-
-              {/* Add Button */}
-              <div className="col-md-3 mt-2">
-                <button
-                  className="purple-btn2 rounded-3"
-                  style={{ marginTop: "23px" }}
-                  onClick={handleAddRera}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={26}
-                    height={20}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span> Add</span>
-                </button>
+                {/* Editable RERA List Table */}
+                {formData.Rera_Number_multiple.length > 0 && (
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container w-100">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>Sr No</th>
+                            <th>Tower Name</th>
+                            <th>RERA Number</th>
+                            <th>Rera URL</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.Rera_Number_multiple.map((item, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={item.tower_name}
+                                  onChange={(e) =>
+                                    handleEditRera(
+                                      index,
+                                      "tower_name",
+                                      e.target.value,
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={item.rera_number}
+                                  onChange={(e) =>
+                                    handleEditRera(
+                                      index,
+                                      "rera_number",
+                                      e.target.value,
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={item.rera_url}
+                                  onChange={(e) =>
+                                    handleEditRera(
+                                      index,
+                                      "rera_url",
+                                      e.target.value,
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() => handleDeleteRera(index)}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-
-            {/* Editable RERA List Table */}
-            {formData.Rera_Number_multiple.length > 0 && (
-              <div className="col-md-12 mt-2">
-                <div className="mt-4 tbl-container w-100">
-                  <table className="w-100">
-                    <thead>
-                      <tr>
-                        <th>Sr No</th>
-                        <th>Tower Name</th>
-                        <th>RERA Number</th>
-                        <th>Rera URL</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {formData.Rera_Number_multiple.map((item, index) => (
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>
-                            <input
-                              type="text"
-                              className="form-control"
-                              value={item.tower_name}
-                              onChange={(e) =>
-                                handleEditRera(
-                                  index,
-                                  "tower_name",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              className="form-control"
-                              value={item.rera_number}
-                              onChange={(e) =>
-                                handleEditRera(
-                                  index,
-                                  "rera_number",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              className="form-control"
-                              value={item.rera_url}
-                              onChange={(e) =>
-                                handleEditRera(
-                                  index,
-                                  "rera_url",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="purple-btn2"
-                              onClick={() => handleDeleteRera(index)}
-                            >
-                              x
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        </>
+          </>
         )}
 
         <div className="card mt-3 pb-4 mx-4">
@@ -4910,7 +4952,7 @@ const ProjectDetailsEdit = () => {
                     onClick={() => {
                       if (!planName || planImages.length === 0) {
                         toast.error(
-                          "Please enter plan name and select images."
+                          "Please enter plan name and select images.",
                         );
                         return;
                       }
@@ -4999,7 +5041,8 @@ const ProjectDetailsEdit = () => {
                     [i]
                     {showTooltipBanner && (
                       <span className="tooltip-text">
-                        Max Upload Size 3 MB and {getDynamicRatiosText("ProjectImage")}
+                        Max Upload Size 3 MB and{" "}
+                        {getDynamicRatiosText("ProjectImage")}
                       </span>
                     )}
                   </span>
@@ -5145,7 +5188,8 @@ const ProjectDetailsEdit = () => {
                     [i]
                     {showTooltipCover && (
                       <span className="tooltip-text">
-                        Max Upload Size 5 MB and {getDynamicRatiosText("ProjectCoverImage")}
+                        Max Upload Size 5 MB and{" "}
+                        {getDynamicRatiosText("ProjectCoverImage")}
                       </span>
                     )}
                   </span>
@@ -5229,7 +5273,7 @@ const ProjectDetailsEdit = () => {
                               onClick={() =>
                                 handleFileDiscardCoverImage(
                                   "cover_images",
-                                  index
+                                  index,
                                 )
                               }
                             >
@@ -5265,11 +5309,11 @@ const ProjectDetailsEdit = () => {
                               file.file.type.startsWith("video/")) ||
                             (file.document_url &&
                               [".mp4", ".webm", ".ogg"].some((ext) =>
-                                file.document_url.toLowerCase().endsWith(ext)
+                                file.document_url.toLowerCase().endsWith(ext),
                               )) ||
                             (preview &&
                               [".mp4", ".webm", ".ogg"].some((ext) =>
-                                preview.toLowerCase().endsWith(ext)
+                                preview.toLowerCase().endsWith(ext),
                               ));
 
                           return (
@@ -5352,15 +5396,15 @@ const ProjectDetailsEdit = () => {
                     [i]
                     {showTooltipGallery && (
                       <span className="tooltip-text">
-                        Max Upload Size 3 MB and {getDynamicRatiosText("ProjectGallery")}
+                        Max Upload Size 3 MB and{" "}
+                        {getDynamicRatiosText("ProjectGallery")}
                       </span>
                     )}
                   </span>
                   {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
                 </h5>
 
-                <div className="d-flex align-items-center">
-                </div>
+                <div className="d-flex align-items-center"></div>
 
                 <button
                   className="purple-btn2 rounded-3"
@@ -5380,7 +5424,7 @@ const ProjectDetailsEdit = () => {
                   </svg>
                   <span>Add</span>
                 </button>
-                
+
                 {/* MODIFIED: Replaced ProjectBannerUpload with ProjectImageVideoUpload for Gallery */}
                 {showGalleryModal && (
                   <ProjectImageVideoUpload
@@ -5390,7 +5434,11 @@ const ProjectDetailsEdit = () => {
                     label={galleryImageLabel}
                     description={dynamicDescription1}
                     onContinue={(validImages, videoFiles) =>
-                      handleCroppedCoverImages(validImages, videoFiles, "gallery")
+                      handleCroppedCoverImages(
+                        validImages,
+                        videoFiles,
+                        "gallery",
+                      )
                     }
                     allowVideos={true}
                   />
@@ -5431,9 +5479,7 @@ const ProjectDetailsEdit = () => {
                                 />
                               )}
                             </td>
-                            <td>
-                              N/A
-                            </td>
+                            <td>N/A</td>
                             <td>
                               <input
                                 type="text"
@@ -5458,7 +5504,7 @@ const ProjectDetailsEdit = () => {
                                   handleFetchedDiscardGallery(
                                     "fetched_gallery_image",
                                     index,
-                                    attachment.id
+                                    attachment.id,
                                   )
                                 }
                               >
@@ -5466,15 +5512,36 @@ const ProjectDetailsEdit = () => {
                               </button>
                             </td>
                           </tr>
-                        ))
+                        )),
                       )}
                       {/* MODIFIED: Updated gallery table to render videos */}
                       {gallery_images.map(({ key, label }) => {
                         const files = formData[key] || [];
                         return files.map((file, index) => {
-                          const preview = file.preview || (file.file ? URL.createObjectURL(file.file) : null) || file.document_url || "";
-                          const name = file.file_name || file.document_file_name || file.name || "Unnamed";
-                          const isVideo = file.type === "video" || (file.file && file.file.type.startsWith("video/")) || (file.document_url && [".mp4", ".webm", ".ogg"].some(ext => file.document_url.toLowerCase().endsWith(ext))) || (preview && [".mp4", ".webm", ".ogg"].some(ext => preview.toLowerCase().endsWith(ext)));
+                          const preview =
+                            file.preview ||
+                            (file.file
+                              ? URL.createObjectURL(file.file)
+                              : null) ||
+                            file.document_url ||
+                            "";
+                          const name =
+                            file.file_name ||
+                            file.document_file_name ||
+                            file.name ||
+                            "Unnamed";
+                          const isVideo =
+                            file.type === "video" ||
+                            (file.file &&
+                              file.file.type.startsWith("video/")) ||
+                            (file.document_url &&
+                              [".mp4", ".webm", ".ogg"].some((ext) =>
+                                file.document_url.toLowerCase().endsWith(ext),
+                              )) ||
+                            (preview &&
+                              [".mp4", ".webm", ".ogg"].some((ext) =>
+                                preview.toLowerCase().endsWith(ext),
+                              ));
 
                           return (
                             <tr key={`${key}-${index}`}>
@@ -5484,7 +5551,11 @@ const ProjectDetailsEdit = () => {
                                   className="form-control"
                                   value={file.file_name || ""}
                                   onChange={(e) =>
-                                    handleGalleryImageNameChange(key, index, e.target.value)
+                                    handleGalleryImageNameChange(
+                                      key,
+                                      index,
+                                      e.target.value,
+                                    )
                                   }
                                   placeholder="Enter image name"
                                   style={{
@@ -5506,7 +5577,9 @@ const ProjectDetailsEdit = () => {
                                       type={
                                         file.file?.type ||
                                         (file.document_url
-                                          ? `video/${file.document_url.split(".").pop()}`
+                                          ? `video/${file.document_url
+                                              .split(".")
+                                              .pop()}`
                                           : "video/mp4")
                                       }
                                     />
@@ -5528,15 +5601,19 @@ const ProjectDetailsEdit = () => {
                                   className="form-control"
                                   value={file.order_no || ""}
                                   onChange={(e) =>
-                                    handleGalleryImageOrderChange(key, index, e.target.value)
+                                    handleGalleryImageOrderChange(
+                                      key,
+                                      index,
+                                      e.target.value,
+                                    )
                                   }
                                   placeholder="Enter order no."
-                                 style={{
+                                  style={{
                                     border: "1px solid #ddd",
                                     borderRadius: "4px",
                                     padding: "5px 8px",
                                     fontSize: "14px",
-                                    width: "80px"
+                                    width: "80px",
                                   }}
                                 />
                               </td>
@@ -5548,7 +5625,7 @@ const ProjectDetailsEdit = () => {
                                     handleFetchedDiscardGallery(
                                       key,
                                       index,
-                                      file.id
+                                      file.id,
                                     );
                                   }}
                                 >
@@ -5565,7 +5642,7 @@ const ProjectDetailsEdit = () => {
               </div>
 
               {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
-                  <>
+                <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
                       Floor Plan{" "}
@@ -5577,7 +5654,8 @@ const ProjectDetailsEdit = () => {
                         [i]
                         {showTooltipFloor && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB and {getDynamicRatiosText("Project2DImage")}
+                            Max Upload Size 3 MB and{" "}
+                            {getDynamicRatiosText("Project2DImage")}
                           </span>
                         )}
                       </span>
@@ -5660,7 +5738,7 @@ const ProjectDetailsEdit = () => {
                                   onClick={() =>
                                     handleDiscardTwoDImage(
                                       "two_d_images",
-                                      index
+                                      index,
                                     )
                                   }
                                 >
@@ -5794,10 +5872,9 @@ const ProjectDetailsEdit = () => {
               </div>
 
               {/* Project Videos Section */}
-              
 
-             {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
-                  <>
+              {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
+                <>
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
                       Project PPT{" "}
@@ -5986,7 +6063,7 @@ const ProjectDetailsEdit = () => {
                                   onClick={() =>
                                     handleFileDiscardLayout(
                                       "project_layout",
-                                      index
+                                      index,
                                     )
                                   }
                                 >
@@ -6093,7 +6170,7 @@ const ProjectDetailsEdit = () => {
                                   onClick={() =>
                                     handleFileDiscardCreative(
                                       "project_creatives",
-                                      index
+                                      index,
                                     )
                                   }
                                 >
@@ -6155,7 +6232,7 @@ const ProjectDetailsEdit = () => {
                       onChange={(e) =>
                         handleFileUpload(
                           "project_creative_generics",
-                          e.target.files
+                          e.target.files,
                         )
                       }
                       multiple
@@ -6206,7 +6283,7 @@ const ProjectDetailsEdit = () => {
                                     onClick={() =>
                                       handleFileDiscardCreativeGenerics(
                                         "project_creative_generics",
-                                        index
+                                        index,
                                       )
                                     }
                                   >
@@ -6214,7 +6291,7 @@ const ProjectDetailsEdit = () => {
                                   </button>
                                 </td>
                               </tr>
-                            )
+                            ),
                           )}
                         </tbody>
                       </table>
@@ -6269,7 +6346,7 @@ const ProjectDetailsEdit = () => {
                       onChange={(e) =>
                         handleFileUpload(
                           "project_creative_offers",
-                          e.target.files
+                          e.target.files,
                         )
                       }
                       multiple
@@ -6320,7 +6397,7 @@ const ProjectDetailsEdit = () => {
                                     onClick={() =>
                                       handleFileDiscardCreativeOffers(
                                         "project_creative_offers",
-                                        index
+                                        index,
                                       )
                                     }
                                   >
@@ -6328,7 +6405,7 @@ const ProjectDetailsEdit = () => {
                                   </button>
                                 </td>
                               </tr>
-                            )
+                            ),
                           )}
                         </tbody>
                       </table>
@@ -6428,7 +6505,7 @@ const ProjectDetailsEdit = () => {
                                   onClick={() =>
                                     handleFileDiscardInteriors(
                                       "project_interiors",
-                                      index
+                                      index,
                                     )
                                   }
                                 >
@@ -6535,7 +6612,7 @@ const ProjectDetailsEdit = () => {
                                   onClick={() =>
                                     handleFileDiscardExteriors(
                                       "project_exteriors",
-                                      index
+                                      index,
                                     )
                                   }
                                 >
@@ -6596,7 +6673,7 @@ const ProjectDetailsEdit = () => {
                       onChange={(e) =>
                         handleFileUpload(
                           "project_emailer_templetes",
-                          e.target.files
+                          e.target.files,
                         )
                       }
                       multiple
@@ -6617,7 +6694,7 @@ const ProjectDetailsEdit = () => {
                           {/* Project PPT Files */}
                           {formData.project_emailer_templetes &&
                             (Array.isArray(
-                              formData.project_emailer_templetes
+                              formData.project_emailer_templetes,
                             ) ? (
                               // If it's an array of files
                               formData.project_emailer_templetes.map(
@@ -6635,7 +6712,7 @@ const ProjectDetailsEdit = () => {
                                         onClick={() =>
                                           handleFileDiscardEmailerTemplate(
                                             "project_emailer_templetes",
-                                            index
+                                            index,
                                           )
                                         }
                                       >
@@ -6643,7 +6720,7 @@ const ProjectDetailsEdit = () => {
                                       </button>
                                     </td>
                                   </tr>
-                                )
+                                ),
                               )
                             ) : (
                               <tr>
@@ -6660,7 +6737,7 @@ const ProjectDetailsEdit = () => {
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_emailer_templetes",
-                                        0
+                                        0,
                                       )
                                     }
                                   >
@@ -6694,9 +6771,7 @@ const ProjectDetailsEdit = () => {
                     <button
                       className="purple-btn2 rounded-3"
                       onClick={() =>
-                        document
-                          .getElementById("KnwYrApt_Technical")
-                          .click()
+                        document.getElementById("KnwYrApt_Technical").click()
                       }
                     >
                       <svg
@@ -6718,10 +6793,7 @@ const ProjectDetailsEdit = () => {
                       name="KnwYrApt_Technical"
                       accept=".pdf,.docx"
                       onChange={(e) =>
-                        handleFileUpload(
-                          "KnwYrApt_Technical",
-                          e.target.files
-                        )
+                        handleFileUpload("KnwYrApt_Technical", e.target.files)
                       }
                       multiple
                       style={{ display: "none" }}
@@ -6740,35 +6812,31 @@ const ProjectDetailsEdit = () => {
                         <tbody>
                           {/* Technical Files */}
                           {formData.KnwYrApt_Technical &&
-                            (Array.isArray(
-                              formData.KnwYrApt_Technical
-                            ) ? (
+                            (Array.isArray(formData.KnwYrApt_Technical) ? (
                               // If it's an array of files
-                              formData.KnwYrApt_Technical.map(
-                                (file, index) => (
-                                  <tr key={`technical-${index}`}>
-                                    <td>
-                                      {file?.name ||
-                                        file?.document_file_name ||
-                                        "No File"}
-                                    </td>
-                                    <td>
-                                      <button
-                                        type="button"
-                                        className="purple-btn2"
-                                        onClick={() =>
-                                          handleFileDiscardTechnical(
-                                            "KnwYrApt_Technical",
-                                            index
-                                          )
-                                        }
-                                      >
-                                        x
-                                      </button>
-                                    </td>
-                                  </tr>
-                                )
-                              )
+                              formData.KnwYrApt_Technical.map((file, index) => (
+                                <tr key={`technical-${index}`}>
+                                  <td>
+                                    {file?.name ||
+                                      file?.document_file_name ||
+                                      "No File"}
+                                  </td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        handleFileDiscardTechnical(
+                                          "KnwYrApt_Technical",
+                                          index,
+                                        )
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
                             ) : (
                               <tr>
                                 <td>
@@ -6782,10 +6850,7 @@ const ProjectDetailsEdit = () => {
                                     type="button"
                                     className="purple-btn2"
                                     onClick={() =>
-                                      handleDiscardFile(
-                                        "KnwYrApt_Technical",
-                                        0
-                                      )
+                                      handleDiscardFile("KnwYrApt_Technical", 0)
                                     }
                                   >
                                     x
@@ -6965,39 +7030,53 @@ const ProjectDetailsEdit = () => {
                         <tbody>
                           {formData.project_videos_attributes.length > 0 ? (
                             formData.project_videos_attributes
-                              .filter(video => !video._destroy)
+                              .filter((video) => !video._destroy)
                               .map((video, index) => (
-                              <tr key={`video-${index}`}>
-                                <td>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={video.name}
-                                    onChange={(e) => handleEditVideo(index, 'name', e.target.value)}
-                                  />
-                                </td>
-                                <td>
-                                  <input
-                                    className="form-control"
-                                    type="url"
-                                    value={video.video_url}
-                                    onChange={(e) => handleEditVideo(index, 'video_url', e.target.value)}
-                                  />
-                                </td>
-                                <td>
-                                  <button
-                                    type="button"
-                                    className="purple-btn2"
-                                    onClick={() => handleDeleteVideo(index)}
-                                  >
-                                    x
-                                  </button>
-                                </td>
-                              </tr>
-                            ))
+                                <tr key={`video-${index}`}>
+                                  <td>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={video.name}
+                                      onChange={(e) =>
+                                        handleEditVideo(
+                                          index,
+                                          "name",
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      className="form-control"
+                                      type="url"
+                                      value={video.video_url}
+                                      onChange={(e) =>
+                                        handleEditVideo(
+                                          index,
+                                          "video_url",
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() => handleDeleteVideo(index)}
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
                           ) : (
                             <tr>
-                              <td colSpan="3" className="text-center">No videos added</td>
+                              <td colSpan="3" className="text-center">
+                                No videos added
+                              </td>
                             </tr>
                           )}
                         </tbody>
@@ -7011,7 +7090,7 @@ const ProjectDetailsEdit = () => {
         </div>
 
         {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
-                  <>
+          <>
             <div className="card mt-3 pb-4 mx-4">
               <div className="card-header3 d-flex justify-content-between align-items-center">
                 <h3 className="card-title">Virtual Tour</h3>
@@ -7021,9 +7100,7 @@ const ProjectDetailsEdit = () => {
                 <div className="row align-items-center">
                   <div className="col-md-3 mt-2">
                     <div className="form-group">
-                      <label>
-                        Virtual Tour Name{" "}
-                      </label>
+                      <label>Virtual Tour Name </label>
                       <input
                         className="form-control"
                         type="text"
@@ -7037,9 +7114,7 @@ const ProjectDetailsEdit = () => {
 
                   <div className="col-md-3 mt-2">
                     <div className="form-group">
-                      <label>
-                        Virtual Tour URL{" "}
-                      </label>
+                      <label>Virtual Tour URL </label>
                       <input
                         className="form-control"
                         type="url"
@@ -7099,7 +7174,7 @@ const ProjectDetailsEdit = () => {
                                       handleEditVirtualTour(
                                         index,
                                         "virtual_tour_name",
-                                        e.target.value
+                                        e.target.value,
                                       )
                                     }
                                   />
@@ -7114,7 +7189,7 @@ const ProjectDetailsEdit = () => {
                                       handleEditVirtualTour(
                                         index,
                                         "virtual_tour_url",
-                                        e.target.value
+                                        e.target.value,
                                       )
                                     }
                                   />
@@ -7132,7 +7207,7 @@ const ProjectDetailsEdit = () => {
                                   </button>
                                 </td>
                               </tr>
-                            )
+                            ),
                           )}
                         </tbody>
                       </table>
