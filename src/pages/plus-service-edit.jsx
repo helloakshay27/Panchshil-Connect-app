@@ -19,6 +19,8 @@ const PlusServiceEdit = () => {
     service_category_id: "",
     existingImageUrl: "",
     mobile: "",
+    mobile2: "",
+    mobile3: "",
     address: "",
     order_no: "",
   });
@@ -90,6 +92,8 @@ const PlusServiceEdit = () => {
           existingImageUrl: existingImageUrl,
           service_category_id: serviceInfo.service_category_id || "",
           mobile: serviceInfo.mobile || "",
+          mobile2: serviceInfo.mobile2 || "",
+          mobile3: serviceInfo.mobile3 || "",
           address: serviceInfo.address || "",
           order_no: serviceInfo.order_no || "",
         });
@@ -205,6 +209,14 @@ const PlusServiceEdit = () => {
 
       if (serviceData.mobile) {
         formData.append("plus_service[mobile]", serviceData.mobile);
+      }
+
+      if (serviceData.mobile2) {
+        formData.append("plus_service[mobile2]", serviceData.mobile2);
+      }
+
+      if (serviceData.mobile3) {
+        formData.append("plus_service[mobile3]", serviceData.mobile3);
       }
 
       if (serviceData.address) {
@@ -332,6 +344,36 @@ const PlusServiceEdit = () => {
                       placeholder="Enter Mobile"
                       name="mobile"
                       value={serviceData.mobile}
+                      onChange={handleInputChange}
+                      maxLength={10}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Mobile 2</label>
+                    <input
+                      className="form-control"
+                      type="tel"
+                      placeholder="Enter Mobile 2"
+                      name="mobile2"
+                      value={serviceData.mobile2}
+                      onChange={handleInputChange}
+                      maxLength={10}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Mobile 3</label>
+                    <input
+                      className="form-control"
+                      type="tel"
+                      placeholder="Enter Mobile 3"
+                      name="mobile3"
+                      value={serviceData.mobile3}
                       onChange={handleInputChange}
                       maxLength={10}
                     />
