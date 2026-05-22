@@ -352,11 +352,11 @@ const PlusServiceEdit = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>Mobile 2</label>
+                    <label>Alternate Mobile 1</label>
                     <input
                       className="form-control"
                       type="tel"
-                      placeholder="Enter Mobile 2"
+                      placeholder="Enter Alternate Mobile 1"
                       name="mobile2"
                       value={serviceData.mobile2}
                       onChange={handleInputChange}
@@ -367,11 +367,11 @@ const PlusServiceEdit = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>Mobile 3</label>
+                    <label>Alternate Mobile 2</label>
                     <input
                       className="form-control"
                       type="tel"
-                      placeholder="Enter Mobile 3"
+                      placeholder="Enter Alternate Mobile 2"
                       name="mobile3"
                       value={serviceData.mobile3}
                       onChange={handleInputChange}
