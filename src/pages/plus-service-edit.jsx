@@ -211,13 +211,8 @@ const PlusServiceEdit = () => {
         formData.append("plus_service[mobile]", serviceData.mobile);
       }
 
-      if (serviceData.mobile2) {
-        formData.append("plus_service[mobile2]", serviceData.mobile2);
-      }
-
-      if (serviceData.mobile3) {
-        formData.append("plus_service[mobile3]", serviceData.mobile3);
-      }
+      formData.append("plus_service[mobile2]", serviceData.mobile2);
+      formData.append("plus_service[mobile3]", serviceData.mobile3);
 
       if (serviceData.address) {
         formData.append("plus_service[address]", serviceData.address);
