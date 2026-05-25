@@ -207,20 +207,11 @@ const PlusServiceEdit = () => {
         serviceData.service_category_id
       );
 
-      if (serviceData.mobile) {
-        formData.append("plus_service[mobile]", serviceData.mobile);
-      }
-
+      formData.append("plus_service[mobile]", serviceData.mobile);
       formData.append("plus_service[mobile2]", serviceData.mobile2);
       formData.append("plus_service[mobile3]", serviceData.mobile3);
-
-      if (serviceData.address) {
-        formData.append("plus_service[address]", serviceData.address);
-      }
-
-      if (serviceData.order_no) {
-        formData.append("plus_service[order_no]", serviceData.order_no);
-      }
+      formData.append("plus_service[address]", serviceData.address);
+      formData.append("plus_service[order_no]", serviceData.order_no);
 
       if (imageChanged) {
         if (serviceData.attachment) {
