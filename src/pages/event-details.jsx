@@ -7,6 +7,8 @@ const EventDetails = () => {
   const { id } = useParams();
   const [eventData, setEventData] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [emailTriggerEnabled, setEmailTriggerEnabled] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   const eventId = id;
   console.log("ID", eventData);
@@ -21,6 +23,7 @@ const EventDetails = () => {
           },
         });
         setEventData(response.data);
+        setEmailTriggerEnabled(response.data.email_trigger_enabled === true);
       } catch (error) {
         //console.error("Error fetching event data", error);
       }
@@ -28,6 +31,27 @@ const EventDetails = () => {
 
     fetchEventData();
   }, [eventId]);
+
+  const handleSendEmail = async () => {
+    setIsSendingEmail(true);
+    try {
+      await axios.patch(
+        `${baseURL}events/${eventId}.json`,
+        { email_trigger_enabled: true },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setEmailTriggerEnabled(true);
+    } catch (error) {
+      // handle silently
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
 
   // If event data is not yet loaded, show a loading state
   if (!eventData) {
@@ -307,25 +331,7 @@ const EventDetails = () => {
                         </div>
                       </div>
 
-                      <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
-                        <div className="col-6">
-                          <label>Send Email</label>
-                        </div>
-                        <div className="col-6">
-                          <label className="text">
-                            <span className="me-3">
-                              <span className="text-dark">
-                                :{" "}
-                                {eventData.email_trigger_enabled === true
-                                  ? "Yes"
-                                  : eventData.email_trigger_enabled === false
-                                  ? "No"
-                                  : "N/A"}
-                              </span>
-                            </span>
-                          </label>
-                        </div>
-                      </div>
+                    
 
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6">
@@ -352,6 +358,24 @@ const EventDetails = () => {
                               <span className="text-dark">N/A</span>
                             </label>
                           )}
+                        </div>
+                      </div>
+                        <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                        <div className="col-6">
+                          <label>Send Email</label>
+                        </div>
+                        <div className="col-6">
+                          <button
+                            className=" purple-btn2 btn-sm"
+                            onClick={handleSendEmail}
+                            disabled={isSendingEmail || emailTriggerEnabled}
+                          >
+                            {isSendingEmail
+                              ? "Sending..."
+                              : emailTriggerEnabled
+                              ? "Email Sent"
+                              : "Send Email"}
+                          </button>
                         </div>
                       </div>
                     </div>

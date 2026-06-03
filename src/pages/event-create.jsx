@@ -430,10 +430,10 @@ const EventCreate = () => {
       errors.push("Event Name is required.");
       return errors; // Return the first error immediately
     }
-    if (!formData.email_trigger_enabled) {
-      errors.push("Send Email is required.");
-      return errors;
-    }
+    // if (!formData.email_trigger_enabled) {
+    //   errors.push("Send Email is required.");
+    //   return errors;
+    // }
     return errors;
   };
 
@@ -1129,7 +1129,7 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>Send Email
                             <span className="otp-asterisk"> *</span>
@@ -1185,7 +1185,7 @@ const EventCreate = () => {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>RSVP Action</label>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
@@ -67,6 +67,7 @@ const EventEdit = () => {
   const [groups, setGroups] = useState([]); // State to store groups
   const [loading, setLoading] = useState(false);
   const [isEmailLocked, setIsEmailLocked] = useState(false);
+  const originalDataRef = useRef(null);
 
   const [reminderValue, setReminderValue] = useState("");
   const [reminderUnit, setReminderUnit] = useState("");
@@ -525,6 +526,29 @@ const EventEdit = () => {
 
         setIsEmailLocked(data.email_trigger_enabled === true);
 
+        originalDataRef.current = {
+          project_id: data.project_id,
+          event_type: data.event_type || "",
+          title: data.event_title || "",
+          event_name: data.event_name || "",
+          event_at: data.event_at || "",
+          from_time: data.from_time || "",
+          to_time: data.to_time || "",
+          rsvp_action: data.rsvp_action || "",
+          rsvp_name: data.rsvp_name || "",
+          rsvp_number: data.rsvp_number || "",
+          description: data.description || "",
+          is_important: data.is_important,
+          email_trigger_enabled: data.email_trigger_enabled,
+          pay_at: data.pay_at || "",
+          payment_link: data.payment_link || "",
+          shared: shared,
+          user_id: userIds,
+          publish: data.publish || "",
+          comment: data.comment || "",
+          had_cover_image: !!(data.cover_image && data.cover_image.document_url),
+        };
+
         console.log("project_id: ", data.project_id);
       } catch (error) {
         console.error("Error fetching event:", error);
@@ -867,13 +891,27 @@ const EventEdit = () => {
 
     const preparedReminders = prepareRemindersForSubmission();
 
+    const orig = originalDataRef.current || {};
+
+    const hasChanged = (key, currentVal) => {
+      if (!(key in orig)) return false; // unknown/system fields are never sent
+      const origVal = orig[key];
+      if (Array.isArray(currentVal) || Array.isArray(origVal)) {
+        return JSON.stringify(currentVal) !== JSON.stringify(origVal);
+      }
+      return String(currentVal ?? "") !== String(origVal ?? "");
+    };
+
     const backendSharedValue = formData.shared === "all" ? 0 : 1;
-    data.append("event[shared]", backendSharedValue);
+    if (hasChanged("shared", formData.shared)) {
+      data.append("event[shared]", backendSharedValue);
+    }
 
     // === COVER IMAGE ===
     if (formData.cover_image && formData.cover_image instanceof File) {
       data.append("event[cover_image]", formData.cover_image);
-    } else if (!formData.cover_image && !formData.existingCoverImage) {
+    } else if (!formData.cover_image && !formData.existingCoverImage && orig.had_cover_image) {
+      // Only send removal if there was an existing cover image that the user explicitly removed
       data.append("event[remove_cover_image]", "1");
     }
 
@@ -970,11 +1008,13 @@ const EventEdit = () => {
     });
 
     // === USERS ===
-    if (Array.isArray(formData.user_id)) {
-      if (formData.user_id.length > 0) {
-        formData.user_id.forEach((id) => data.append("event[user_ids][]", id));
-      } else {
-        data.append("event[user_ids][]", "");
+    if (hasChanged("user_id", formData.user_id)) {
+      if (Array.isArray(formData.user_id)) {
+        if (formData.user_id.length > 0) {
+          formData.user_id.forEach((id) => data.append("event[user_ids][]", id));
+        } else {
+          data.append("event[user_ids][]", "");
+        }
       }
     }
 
@@ -989,9 +1029,16 @@ const EventEdit = () => {
     // }
 
     // === RSVP FIELDS ===
+    if (hasChanged("rsvp_action", formData.rsvp_action)) {
+      data.append("event[rsvp_action]", formData.rsvp_action || "");
+    }
     if (formData.rsvp_action === "yes") {
-      data.append("event[rsvp_name]", formData.rsvp_name || "");
-      data.append("event[rsvp_number]", formData.rsvp_number || "");
+      if (hasChanged("rsvp_name", formData.rsvp_name)) {
+        data.append("event[rsvp_name]", formData.rsvp_name || "");
+      }
+      if (hasChanged("rsvp_number", formData.rsvp_number)) {
+        data.append("event[rsvp_number]", formData.rsvp_number || "");
+      }
     }
 
     // === REMOVED EXISTING IMAGES ===
@@ -1004,35 +1051,46 @@ const EventEdit = () => {
     const removedIds = originalIds.filter((id) => !currentIds.includes(id));
     removedIds.forEach((id) => data.append("event[removed_image_ids][]", id));
 
-    // === EVERYTHING ELSE (Primitive values only) ===
+    // === EVERYTHING ELSE (Primitive values only, only if changed) ===
     // Explicitly send event_title mapped from UI `title` field
-    if (typeof formData.title !== "undefined") {
+    if (hasChanged("title", formData.title)) {
       data.append("event[event_title]", formData.title || "");
     }
 
+    const skippedKeys = [
+      "cover_image",
+      "attachfile",
+      "existingImages",
+      "newImages",
+      "previewImage",
+      "shared",
+      "set_reminders_attributes",
+      "user_id",
+      "group_id",
+      "title",
+      "event_title", // handled explicitly via the title → event_title mapping above
+      "rsvp_action",
+      "rsvp_name",
+      "rsvp_number",
+      "event_images",
+      "existingCoverImage",
+      "cover_image_1_by_1",
+      "cover_image_9_by_16",
+      "cover_image_3_by_2",
+      "cover_image_16_by_9",
+      "event_images_1_by_1",
+      "event_images_9_by_16",
+      "event_images_3_by_2",
+      "event_images_16_by_9",
+    ];
+
     Object.entries(formData).forEach(([key, value]) => {
-      if (
-        [
-          "cover_image",
-          "attachfile",
-          "existingImages",
-          "newImages",
-          "previewImage",
-          "shared",
-          "set_reminders_attributes",
-          "user_id",
-          "group_id", // Add group_id to skipped keys
-          "title",
-          "rsvp_name",
-          "rsvp_number",
-          "event_images",
-        ].includes(key)
-      ) {
-        return; // Skip handled keys
-      }
+      if (skippedKeys.includes(key)) return;
 
       if (value !== null && value !== undefined && typeof value !== "object") {
-        data.append(`event[${key}]`, value);
+        if (hasChanged(key, value)) {
+          data.append(`event[${key}]`, value);
+        }
       }
     });
 
@@ -1525,11 +1583,11 @@ const EventEdit = () => {
 
                     {/* Share With Radio Buttons */}
 
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group mt-3">
                         <label>Send Email</label>
                         <div className="d-flex">
-                          {/* Yes Option */}
+                          
                           <div className="form-check me-3">
                             <input
                               className="form-check-input"
@@ -1554,7 +1612,7 @@ const EventEdit = () => {
                             </label>
                           </div>
 
-                          {/* No Option */}
+                       
                           <div className="form-check">
                             <input
                               className="form-check-input"
@@ -1580,7 +1638,7 @@ const EventEdit = () => {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="col-md-3 mt-3">
                       <div className="form-group">
