@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import toast from "react-hot-toast";
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -33,6 +34,11 @@ const EventDetails = () => {
   }, [eventId]);
 
   const handleSendEmail = async () => {
+    if (eventData.status === "inactive" || eventData.status === "deactivated" || eventData.active === false) {
+      toast.error("Event is deactivated.");
+      return;
+    }
+
     setIsSendingEmail(true);
     try {
       await axios.patch(
@@ -47,7 +53,7 @@ const EventDetails = () => {
       );
       setEmailTriggerEnabled(true);
     } catch (error) {
-      // handle silently
+      toast.error("Failed to send the email.");
     } finally {
       setIsSendingEmail(false);
     }
