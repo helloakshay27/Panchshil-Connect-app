@@ -1200,7 +1200,7 @@ const EventEdit = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Type</label>
                         <input
@@ -1212,7 +1212,7 @@ const EventEdit = () => {
                           onChange={handleChange}
                         />
                       </div>
-                    </div>
+                    </div> */}
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event Type (Internal/External)</label>

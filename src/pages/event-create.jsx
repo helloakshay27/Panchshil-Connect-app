@@ -821,7 +821,7 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-1">
+                    {/* <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Event Type</label>
                         <input
@@ -834,7 +834,7 @@ const EventCreate = () => {
                           required
                         />
                       </div>
-                    </div>
+                    </div> */}
                     <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Event Type (Internal/External)</label>

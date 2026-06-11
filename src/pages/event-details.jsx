@@ -9,7 +9,11 @@ const EventDetails = () => {
   const [eventData, setEventData] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [emailTriggerEnabled, setEmailTriggerEnabled] = useState(false);
+  const [emailsTriggered, setEmailsTriggered] = useState(false);
+  const [reminderTriggerEnabled, setReminderTriggerEnabled] = useState(false);
+  const [remindersTriggered, setRemindersTriggered] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [isSendingReminder, setIsSendingReminder] = useState(false);
 
   const eventId = id;
   console.log("ID", eventData);
@@ -25,6 +29,9 @@ const EventDetails = () => {
         });
         setEventData(response.data);
         setEmailTriggerEnabled(response.data.email_trigger_enabled === true);
+        setEmailsTriggered(response.data.emails_triggered === true);
+        setReminderTriggerEnabled(response.data.reminder_trigger_enabled === true);
+        setRemindersTriggered(response.data.reminders_triggered === true);
       } catch (error) {
         //console.error("Error fetching event data", error);
       }
@@ -55,7 +62,7 @@ const EventDetails = () => {
 
     setIsSendingEmail(true);
     try {
-      await axios.patch(
+      const response = await axios.patch(
         `${baseURL}events/${eventId}.json`,
         { email_trigger_enabled: true },
         {
@@ -65,11 +72,58 @@ const EventDetails = () => {
           },
         }
       );
-      setEmailTriggerEnabled(true);
+      setEmailTriggerEnabled(response.data.email_trigger_enabled === true);
+      setEmailsTriggered(response.data.emails_triggered === true);
     } catch (error) {
       toast.error("Failed to send the email.");
     } finally {
       setIsSendingEmail(false);
+    }
+  };
+
+  const handleSendReminder = async () => {
+    if (eventData.status === "inactive" || eventData.status === "deactivated" || eventData.active === false) {
+      toast.error("Event is deactivated.");
+      return;
+    }
+
+    if (!eventData.reminders || eventData.reminders.length === 0) {
+      toast.error("Please set the reminder first and then send the reminder email.");
+      return;
+    }
+
+    const hasRecipients =
+      eventData.shared === 0 ||
+      (eventData.user_id && (
+        Array.isArray(eventData.user_id) ? eventData.user_id.length > 0 : true
+      )) ||
+      (eventData.group_id && (
+        Array.isArray(eventData.group_id) ? eventData.group_id.length > 0 : true
+      ));
+
+    if (!hasRecipients) {
+      toast.error("No users added or selected to send reminders via email.");
+      return;
+    }
+
+    setIsSendingReminder(true);
+    try {
+      const response = await axios.patch(
+        `${baseURL}events/${eventId}.json`,
+        { reminder_trigger_enabled: true },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setReminderTriggerEnabled(response.data.reminder_trigger_enabled === true);
+      setRemindersTriggered(response.data.reminders_triggered === true);
+    } catch (error) {
+      toast.error("Failed to send the reminder.");
+    } finally {
+      setIsSendingReminder(false);
     }
   };
 
@@ -85,8 +139,36 @@ const EventDetails = () => {
           <div className="module-data-section container-fluid">
             <div className="module-data-section p-3">
               <div className="card mt-4 pb-4 mx-4">
-                <div className="card-header3">
-                  <h3 className="card-title">Event Details</h3>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", paddingRight: "16px" }}>
+                  <div className="card-header3">
+                    <h3 className="card-title" style={{ whiteSpace: "nowrap" }}>Event Details</h3>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                    <button
+                      className="purple-btn2 btn-sm"
+                      onClick={handleSendEmail}
+                      disabled={isSendingEmail || (emailTriggerEnabled && emailsTriggered)}
+                    >
+                      {isSendingEmail
+                        ? "Sending..."
+                        : emailTriggerEnabled && emailsTriggered
+                        ? "Email Sent"
+                        : "Send Email"}
+                    </button>
+                    <button
+                      className="purple-btn2 btn-sm"
+                      onClick={handleSendReminder}
+                      disabled={isSendingReminder || (reminderTriggerEnabled && remindersTriggered)}
+                    >
+                      {isSendingReminder
+                        ? "Sending..."
+                        : reminderTriggerEnabled && remindersTriggered
+                        ? "Reminder Sent"
+                        : "Send Reminder"}
+                    </button>
+                  </div>
+                </div>
+                <div className="card-body-wrapper">
                   <div className="card-body">
                     <div className="row px-3">
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
@@ -105,7 +187,7 @@ const EventDetails = () => {
                           </label>
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                      {/* <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6 ">
                           <label>Event Type</label>
                         </div>
@@ -120,7 +202,7 @@ const EventDetails = () => {
                             </span>
                           </label>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6 ">
                           <label>Project Name</label>
@@ -378,24 +460,6 @@ const EventDetails = () => {
                               <span className="text-dark">N/A</span>
                             </label>
                           )}
-                        </div>
-                      </div>
-                        <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
-                        <div className="col-6">
-                          <label>Send Email</label>
-                        </div>
-                        <div className="col-6">
-                          <button
-                            className=" purple-btn2 btn-sm"
-                            onClick={handleSendEmail}
-                            disabled={isSendingEmail || emailTriggerEnabled}
-                          >
-                            {isSendingEmail
-                              ? "Sending..."
-                              : emailTriggerEnabled
-                              ? "Email Sent"
-                              : "Send Email"}
-                          </button>
                         </div>
                       </div>
                     </div>
