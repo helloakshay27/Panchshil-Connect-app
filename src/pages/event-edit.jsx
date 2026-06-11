@@ -834,13 +834,19 @@ const EventEdit = () => {
     if (!formData.event_name) {
       errors.event_name = "Event Name is required.";
     }
-    setFormErrors(errors); // Update state with errors
+    if (!formData.from_time) {
+      errors.from_time = "Event From date/time is required.";
+    }
+    if (!formData.to_time) {
+      errors.to_time = "Event To date/time is required.";
+    }
+    setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) {
       toast.error(Object.values(errors)[0]);
       return false;
     }
-    return true; // Return true if no errors
+    return true;
   };
 
   const handleSubmit = async (e) => {

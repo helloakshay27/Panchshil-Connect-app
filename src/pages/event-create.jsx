@@ -428,12 +428,16 @@ const EventCreate = () => {
 
     if (!formData.event_name) {
       errors.push("Event Name is required.");
-      return errors; // Return the first error immediately
+      return errors;
     }
-    // if (!formData.email_trigger_enabled) {
-    //   errors.push("Send Email is required.");
-    //   return errors;
-    // }
+    if (!formData.from_time) {
+      errors.push("Event From date/time is required.");
+      return errors;
+    }
+    if (!formData.to_time) {
+      errors.push("Event To date/time is required.");
+      return errors;
+    }
     return errors;
   };
 
@@ -481,9 +485,9 @@ const EventCreate = () => {
     data.append("event[event_name]", formData.event_name);
     data.append("event[payment_link]", formData.payment_link || "");
     data.append("event[event_title]", formData.title || "");
-    data.append("event[event_at]", formData.event_at);
-    data.append("event[from_time]", formData.from_time);
-    data.append("event[to_time]", formData.to_time);
+    if (formData.event_at) data.append("event[event_at]", formData.event_at);
+    if (formData.from_time) data.append("event[from_time]", formData.from_time);
+    if (formData.to_time) data.append("event[to_time]", formData.to_time);
     data.append("event[rsvp_action]", formData.rsvp_action);
     data.append("event[description]", formData.description);
     data.append("event[publish]", formData.publish);
@@ -915,7 +919,10 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event From</label>
+                        <label>Event From
+                          <span className="otp-asterisk"> *</span>
+
+                        </label>
                         <input
                           className="form-control"
                           type="datetime-local"
@@ -930,7 +937,9 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event To</label>
+                        <label>Event To
+                          <span className="otp-asterisk"> *</span>
+                        </label>
                         <input
                           className="form-control"
                           type="datetime-local"

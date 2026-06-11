@@ -39,6 +39,20 @@ const EventDetails = () => {
       return;
     }
 
+    const hasRecipients =
+      eventData.shared === 0 ||
+      (eventData.user_id && (
+        Array.isArray(eventData.user_id) ? eventData.user_id.length > 0 : true
+      )) ||
+      (eventData.group_id && (
+        Array.isArray(eventData.group_id) ? eventData.group_id.length > 0 : true
+      ));
+
+    if (!hasRecipients) {
+      toast.error("No users added or selected to publish the event via email.");
+      return;
+    }
+
     setIsSendingEmail(true);
     try {
       await axios.patch(
