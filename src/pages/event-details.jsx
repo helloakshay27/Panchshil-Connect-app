@@ -620,6 +620,72 @@ const EventDetails = () => {
                         </table>
                       </div>
                     </div>
+
+                    <div className="col-md-12 mt-4">
+                      <h5>Thumbnail Images</h5>
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>File Name</th>
+                              <th>File Type</th>
+                              <th>Updated At</th>
+                              <th>Image</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(() => {
+                              const thumbnailGroups = [
+                                eventData.thumbnail_image_1_by_1,
+                                eventData.thumbnail_image_16_by_9,
+                                eventData.thumbnail_image_9_by_16,
+                                eventData.thumbnail_image_3_by_2,
+                              ];
+
+                              const normalizedThumbnails = thumbnailGroups
+                                .map((group) =>
+                                  Array.isArray(group)
+                                    ? group
+                                    : group && typeof group === "object"
+                                    ? [group]
+                                    : []
+                                )
+                                .flat()
+                                .filter((img) => img?.document_url);
+
+                              return normalizedThumbnails.length > 0 ? (
+                                normalizedThumbnails.map((file, index) => (
+                                  <tr key={`thumbnail-${index}`}>
+                                    <td>{file.document_file_name}</td>
+                                    <td>{file.document_content_type}</td>
+                                    <td>{file.document_updated_at}</td>
+                                    <td>
+                                      <img
+                                        src={file.document_url}
+                                        alt={`Thumbnail ${index}`}
+                                        style={{
+                                          width: "100px",
+                                          height: "100px",
+                                          objectFit: "contain",
+                                          display: "block",
+                                        }}
+                                        className="img-fluid rounded"
+                                      />
+                                    </td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan="4" className="text-center">
+                                    No Thumbnail Images
+                                  </td>
+                                </tr>
+                              );
+                            })()}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

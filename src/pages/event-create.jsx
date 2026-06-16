@@ -41,6 +41,10 @@ const EventCreate = () => {
     event_images_9_by_16: [],
     event_images_3_by_2: [],
     event_images_16_by_9: [],
+    thumbnail_image_1_by_1: [],
+    thumbnail_image_9_by_16: [],
+    thumbnail_image_3_by_2: [],
+    thumbnail_image_16_by_9: [],
   });
 
   console.log("formData", formData);
@@ -64,6 +68,7 @@ const EventCreate = () => {
   const [showAttachmentTooltip, setShowAttachmentTooltip] = useState(false);
   const [showCoverUploader, setShowCoverUploader] = useState(false);
   const [showEventUploader, setShowEventUploader] = useState(false);
+  const [showThumbnailUploader, setShowThumbnailUploader] = useState(false);
   const previewUrlsRef = useRef(new Map()); // Store preview URLs for cleanup
 
   const timeOptions = [
@@ -95,9 +100,17 @@ const EventCreate = () => {
     { key: "event_images_3_by_2", label: "3:2" },
   ];
 
+  const thumbnailImageRatios = [
+    { key: "thumbnail_image_1_by_1", label: "1:1" },
+    { key: "thumbnail_image_16_by_9", label: "16:9" },
+    { key: "thumbnail_image_9_by_16", label: "9:16" },
+    { key: "thumbnail_image_3_by_2", label: "3:2" },
+  ];
+
   const eventUploadConfig = {
     "cover image": ["16:9", "1:1", "9:16", "3:2"],
     "event images": ["16:9", "1:1", "9:16", "3:2"],
+    "thumbnail image": ["16:9", "1:1", "9:16", "3:2"],
   };
 
   const coverImageType = "cover image";
@@ -115,6 +128,15 @@ const EventCreate = () => {
     m.toUpperCase()
   );
   const dynamicEventDescription = `Supports ${selectedEventRatios.join(
+    ", "
+  )} aspect ratios`;
+
+  const thumbnailImageType = "thumbnail image";
+  const selectedThumbnailRatios = eventUploadConfig[thumbnailImageType] || [];
+  const thumbnailImageLabel = thumbnailImageType.replace(/(^\w|\s\w)/g, (m) =>
+    m.toUpperCase()
+  );
+  const dynamicThumbnailDescription = `Supports ${selectedThumbnailRatios.join(
     ", "
   )} aspect ratios`;
 
@@ -216,6 +238,29 @@ const EventCreate = () => {
     } else {
       setShowEventUploader(false);
     }
+  };
+
+  const handleThumbnailCroppedImages = (validImages) => {
+    if (!validImages || validImages.length === 0) {
+      toast.error("No valid thumbnail images selected.");
+      return;
+    }
+
+    validImages.forEach((img) => {
+      const formattedRatio = img.ratio.replace(":", "_by_");
+      const key = `thumbnail_image_${formattedRatio}`;
+      updateFormData(key, [
+        {
+          file: img.file,
+          name: img.file.name,
+          preview: URL.createObjectURL(img.file),
+          ratio: img.ratio,
+          id: `${key}-${Date.now()}-${Math.random()}`,
+        },
+      ]);
+    });
+
+    setShowThumbnailUploader(false);
   };
 
   const closeModal = (type) => {
@@ -430,14 +475,6 @@ const EventCreate = () => {
       errors.push("Event Name is required.");
       return errors;
     }
-    if (!formData.from_time) {
-      errors.push("Event From date/time is required.");
-      return errors;
-    }
-    if (!formData.to_time) {
-      errors.push("Event To date/time is required.");
-      return errors;
-    }
     return errors;
   };
 
@@ -531,6 +568,17 @@ const EventCreate = () => {
             data.append(`event[${key}][]`, img.file);
           }
         });
+      }
+    });
+
+    // For thumbnailImageRatios
+    thumbnailImageRatios.forEach(({ key }) => {
+      const images = formData[key];
+      if (Array.isArray(images) && images.length > 0) {
+        const img = images[0];
+        if (img?.file instanceof File) {
+          data.append(`event[${key}]`, img.file);
+        }
       }
     });
 
@@ -629,6 +677,10 @@ const EventCreate = () => {
         event_images_9_by_16: [],
         event_images_3_by_2: [],
         event_images_16_by_9: [],
+        thumbnail_image_1_by_1: [],
+        thumbnail_image_9_by_16: [],
+        thumbnail_image_3_by_2: [],
+        thumbnail_image_16_by_9: [],
       });
 
       navigate("/event-list");
@@ -919,17 +971,13 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event From
-                          <span className="otp-asterisk"> *</span>
-
-                        </label>
+                        <label>Event From</label>
                         <input
                           className="form-control"
                           type="datetime-local"
                           name="from_time"
                           placeholder="Enter Event From "
                           value={formData.from_time}
-                          required
                           // min={new Date().toISOString().slice(0, 16)}
                           onChange={handleChange}
                         />
@@ -937,15 +985,12 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event To
-                          <span className="otp-asterisk"> *</span>
-                        </label>
+                        <label>Event To</label>
                         <input
                           className="form-control"
                           type="datetime-local"
                           name="to_time"
                           placeholder="Enter Event To"
-                          required
                           value={formData.to_time}
                           onChange={handleChange}
                         />
@@ -1868,6 +1913,140 @@ const EventCreate = () => {
                                   );
                                 })
                               : null
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Event Thumbnail Image{" "}
+                      <span
+                        className="tooltip-container"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                      >
+                        [i]
+                        {showTooltip && (
+                          <span className="tooltip-text">
+                            Max Upload Size 3 MB
+                          </span>
+                        )}
+                      </span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      type="button"
+                      onClick={() => setShowThumbnailUploader(true)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    {showThumbnailUploader && (
+                      <ProjectBannerUpload
+                        onClose={() => setShowThumbnailUploader(false)}
+                        includeInvalidRatios={false}
+                        selectedRatioProp={selectedThumbnailRatios}
+                        showAsModal={true}
+                        label={thumbnailImageLabel}
+                        description={dynamicThumbnailDescription}
+                        onContinue={(validImages) =>
+                          handleThumbnailCroppedImages(validImages)
+                        }
+                      />
+                    )}
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div
+                      className="mt-4 tbl-container"
+                      style={{ maxHeight: "300px", overflowY: "auto" }}
+                    >
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {thumbnailImageRatios.flatMap(({ key, label }) => {
+                            const files = Array.isArray(formData[key])
+                              ? formData[key]
+                              : formData[key]
+                              ? [formData[key]]
+                              : [];
+
+                            if (files.length === 0) return [];
+
+                            return files.map((file, index) => {
+                              const preview =
+                                file.preview || file.document_url || "";
+                              const name =
+                                file.name ||
+                                file.document_file_name ||
+                                `Image ${index + 1}`;
+                              const ratio = file.ratio || label;
+
+                              return (
+                                <tr key={`${key}-${file.id || index}`}>
+                                  <td>{name}</td>
+                                  <td>
+                                    {preview ? (
+                                      <img
+                                        style={{
+                                          maxWidth: 100,
+                                          maxHeight: 100,
+                                          objectFit: "cover",
+                                        }}
+                                        className="img-fluid rounded"
+                                        src={preview}
+                                        alt={name}
+                                        onError={(e) => {
+                                          console.error(
+                                            `Failed to load image: ${preview}`
+                                          );
+                                          e.target.src =
+                                            "https://via.placeholder.com/100?text=Preview+Failed";
+                                        }}
+                                      />
+                                    ) : (
+                                      <span>No Preview Available</span>
+                                    )}
+                                  </td>
+                                  <td>{ratio}</td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="purple-btn2"
+                                      onClick={() =>
+                                        handleImageRemoval(key, index, file.id)
+                                      }
+                                    >
+                                      x
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            });
+                          })}
+
+                          {thumbnailImageRatios.every(
+                            ({ key }) =>
+                              !(formData[key] && formData[key].length > 0)
+                          ) && (
+                            <tr></tr>
                           )}
                         </tbody>
                       </table>
