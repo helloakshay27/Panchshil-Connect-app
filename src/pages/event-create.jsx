@@ -24,6 +24,7 @@ const EventCreate = () => {
     publish: "",
     user_id: "",
     comment: "",
+    location_url: "",
     pay_at: "",
     payment_link: "",
     shared: 1,
@@ -41,10 +42,10 @@ const EventCreate = () => {
     event_images_9_by_16: [],
     event_images_3_by_2: [],
     event_images_16_by_9: [],
-    thumbnail_image_1_by_1: [],
-    thumbnail_image_9_by_16: [],
-    thumbnail_image_3_by_2: [],
-    thumbnail_image_16_by_9: [],
+    thumbnail_images_1_by_1: [],
+    thumbnail_images_9_by_16: [],
+    thumbnail_images_3_by_2: [],
+    thumbnail_images_16_by_9: [],
   });
 
   console.log("formData", formData);
@@ -101,10 +102,10 @@ const EventCreate = () => {
   ];
 
   const thumbnailImageRatios = [
-    { key: "thumbnail_image_1_by_1", label: "1:1" },
-    { key: "thumbnail_image_16_by_9", label: "16:9" },
-    { key: "thumbnail_image_9_by_16", label: "9:16" },
-    { key: "thumbnail_image_3_by_2", label: "3:2" },
+    { key: "thumbnail_images_1_by_1", label: "1:1" },
+    { key: "thumbnail_images_16_by_9", label: "16:9" },
+    { key: "thumbnail_images_9_by_16", label: "9:16" },
+    { key: "thumbnail_images_3_by_2", label: "3:2" },
   ];
 
   const eventUploadConfig = {
@@ -248,7 +249,7 @@ const EventCreate = () => {
 
     validImages.forEach((img) => {
       const formattedRatio = img.ratio.replace(":", "_by_");
-      const key = `thumbnail_image_${formattedRatio}`;
+      const key = `thumbnail_images_${formattedRatio}`;
       updateFormData(key, [
         {
           file: img.file,
@@ -529,7 +530,7 @@ const EventCreate = () => {
     data.append("event[description]", formData.description);
     data.append("event[publish]", formData.publish);
     data.append("event[user_ids]", formData.user_id);
-    data.append("event[comment]", formData.comment);
+    data.append("event[comment]", formData.location_url);
     data.append("event[shared]", backendSharedValue); // <-- use backend value here
     // data.append("event[group_id]", formData.group_id);
     data.append("event[is_important]", formData.is_important);
@@ -575,10 +576,11 @@ const EventCreate = () => {
     thumbnailImageRatios.forEach(({ key }) => {
       const images = formData[key];
       if (Array.isArray(images) && images.length > 0) {
-        const img = images[0];
-        if (img?.file instanceof File) {
-          data.append(`event[${key}]`, img.file);
-        }
+        images.forEach((img) => {
+          if (img?.file instanceof File) {
+            data.append(`event[${key}][]`, img.file);
+          }
+        });
       }
     });
 
@@ -662,6 +664,7 @@ const EventCreate = () => {
         publish: "",
         user_id: "",
         comment: "",
+        location_url: "",
         shared: "",
         group_id: "",
         attachfile: [],
@@ -677,10 +680,10 @@ const EventCreate = () => {
         event_images_9_by_16: [],
         event_images_3_by_2: [],
         event_images_16_by_9: [],
-        thumbnail_image_1_by_1: [],
-        thumbnail_image_9_by_16: [],
-        thumbnail_image_3_by_2: [],
-        thumbnail_image_16_by_9: [],
+        thumbnail_images_1_by_1: [],
+        thumbnail_images_9_by_16: [],
+        thumbnail_images_3_by_2: [],
+        thumbnail_images_16_by_9: [],
       });
 
       navigate("/event-list");
@@ -852,7 +855,7 @@ const EventCreate = () => {
         <div className="">
           <div className="module-data-section container-fluid">
             <div className="module-data-section p-3">
-              <div className="card mt-4 pb-4 mx-4">
+              <div className="card mt-4 pb-2 mx-4">
                 <div className="card-header">
                   <h3 className="card-title">Create Event</h3>
                 </div>
@@ -955,6 +958,7 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
+                   
                     <div className="col-md-3 mt-1">
                       <div className="form-group">
                         <label>Event At</label>
@@ -965,6 +969,19 @@ const EventCreate = () => {
                           placeholder="Enter Event At"
                           value={formData.event_at}
                           required
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                     <div className="col-md-3 mt-1">
+                      <div className="form-group">
+                        <label>Location URL</label>
+                        <input
+                          className="form-control"
+                          type="url"
+                          name="location_url"
+                          placeholder="Enter Location URL"
+                          value={formData.location_url}
                           onChange={handleChange}
                         />
                       </div>

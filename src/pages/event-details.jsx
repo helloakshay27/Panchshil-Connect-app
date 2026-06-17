@@ -354,9 +354,9 @@ const EventDetails = () => {
                           </label>
                         </div>
                       </div> */}
-                      {/* <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+                      <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6 ">
-                          <label>Event Comment</label>
+                          <label>Location URL</label>
                         </div>
                         <div className="col-6">
                           <label className="text">
@@ -367,7 +367,7 @@ const EventDetails = () => {
                             </span>
                           </label>
                         </div>
-                      </div> */}
+                      </div>
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6 ">
                           <label>Event Shared</label>
@@ -636,10 +636,10 @@ const EventDetails = () => {
                           <tbody>
                             {(() => {
                               const thumbnailGroups = [
-                                eventData.thumbnail_image_1_by_1,
-                                eventData.thumbnail_image_16_by_9,
-                                eventData.thumbnail_image_9_by_16,
-                                eventData.thumbnail_image_3_by_2,
+                                eventData.thumbnail_images_1_by_1,
+                                eventData.thumbnail_images_16_by_9,
+                                eventData.thumbnail_images_9_by_16,
+                                eventData.thumbnail_images_3_by_2,
                               ];
 
                               const normalizedThumbnails = thumbnailGroups

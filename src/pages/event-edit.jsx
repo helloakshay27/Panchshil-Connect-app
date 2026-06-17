@@ -33,6 +33,7 @@ const EventEdit = () => {
     publish: "",
     user_id: [],
     comment: "",
+    location_url: "",
     pay_at: "",
     payment_link: "",
     shared: "",
@@ -58,10 +59,10 @@ const EventEdit = () => {
     event_images_9_by_16: [],
     event_images_3_by_2: [],
     event_images_16_by_9: [],
-    thumbnail_image_1_by_1: [],
-    thumbnail_image_9_by_16: [],
-    thumbnail_image_3_by_2: [],
-    thumbnail_image_16_by_9: [],
+    thumbnail_images_1_by_1: [],
+    thumbnail_images_9_by_16: [],
+    thumbnail_images_3_by_2: [],
+    thumbnail_images_16_by_9: [],
   });
 
   console.log("Data", formData);
@@ -116,10 +117,10 @@ const EventEdit = () => {
   ];
 
   const thumbnailImageRatios = [
-    { key: "thumbnail_image_1_by_1", label: "1:1" },
-    { key: "thumbnail_image_16_by_9", label: "16:9" },
-    { key: "thumbnail_image_9_by_16", label: "9:16" },
-    { key: "thumbnail_image_3_by_2", label: "3:2" },
+    { key: "thumbnail_images_1_by_1", label: "1:1" },
+    { key: "thumbnail_images_16_by_9", label: "16:9" },
+    { key: "thumbnail_images_9_by_16", label: "9:16" },
+    { key: "thumbnail_images_3_by_2", label: "3:2" },
   ];
 
   const eventUploadConfig = {
@@ -309,8 +310,8 @@ const EventEdit = () => {
 
     validImages.forEach((img) => {
       const formattedRatio = img.ratio.replace(":", "_by_");
-      const key = `thumbnail_image_${formattedRatio}`;
-      updateFormData(key, [
+      const key = `thumbnail_images_${formattedRatio}`;
+      updateEventFormData(key, [
         {
           file: img.file,
           name: img.file.name,
@@ -568,10 +569,11 @@ const EventEdit = () => {
           event_images_9_by_16: data.event_images_9_by_16 || [],
           event_images_3_by_2: data.event_images_3_by_2 || [],
           event_images_16_by_9: data.event_images_16_by_9 || [],
-          thumbnail_image_1_by_1: data.thumbnail_image_1_by_1 || [],
-          thumbnail_image_9_by_16: data.thumbnail_image_9_by_16 || [],
-          thumbnail_image_3_by_2: data.thumbnail_image_3_by_2 || [],
-          thumbnail_image_16_by_9: data.thumbnail_image_16_by_9 || [],
+          thumbnail_images_1_by_1: data.thumbnail_images_1_by_1 || [],
+          thumbnail_images_9_by_16: data.thumbnail_images_9_by_16 || [],
+          thumbnail_images_3_by_2: data.thumbnail_images_3_by_2 || [],
+          thumbnail_images_16_by_9: data.thumbnail_images_16_by_9 || [],
+          location_url: data.comment || "",
         }));
 
         setIsEmailLocked(data.email_trigger_enabled === true);
@@ -596,6 +598,7 @@ const EventEdit = () => {
           user_id: userIds,
           publish: data.publish || "",
           comment: data.comment || "",
+          location_url: data.comment || "",
           had_cover_image: !!(data.cover_image && data.cover_image.document_url),
         };
 
@@ -1019,10 +1022,11 @@ const EventEdit = () => {
     thumbnailImageRatios.forEach(({ key }) => {
       const images = formData[key];
       if (Array.isArray(images) && images.length > 0) {
-        const img = images[0];
-        if (img?.file instanceof File) {
-          data.append(`event[${key}]`, img.file);
-        }
+        images.forEach((img) => {
+          if (img?.file instanceof File) {
+            data.append(`event[${key}][]`, img.file);
+          }
+        });
       }
     });
 
@@ -1143,13 +1147,18 @@ const EventEdit = () => {
       "event_images_9_by_16",
       "event_images_3_by_2",
       "event_images_16_by_9",
-      "thumbnail_image_1_by_1",
-      "thumbnail_image_9_by_16",
-      "thumbnail_image_3_by_2",
-      "thumbnail_image_16_by_9",
+      "thumbnail_images_1_by_1",
+      "thumbnail_images_9_by_16",
+      "thumbnail_images_3_by_2",
+      "thumbnail_images_16_by_9",
       "from_time",
       "to_time",
+      "location_url",
     ];
+
+    if (hasChanged("location_url", formData.location_url)) {
+      data.append("event[comment]", formData.location_url);
+    }
 
     if (formData.from_time && hasChanged("from_time", formData.from_time)) {
       data.append("event[from_time]", formData.from_time);
@@ -1349,6 +1358,7 @@ const EventEdit = () => {
                         />
                       </div>
                     </div>
+                    
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event At</label>
@@ -1358,6 +1368,19 @@ const EventEdit = () => {
                           name="event_at"
                           placeholder="Enter Event At"
                           value={formData.event_at}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Location URL</label>
+                        <input
+                          className="form-control"
+                          type="url"
+                          name="location_url"
+                          placeholder="Enter Location URL"
+                          value={formData.location_url || ""}
                           onChange={handleChange}
                         />
                       </div>
