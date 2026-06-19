@@ -27,7 +27,7 @@ const EventCreate = () => {
     location_url: "",
     pay_at: "",
     payment_link: "",
-    shared: 1,
+    shared: "",
     group_id: [],
     attachfile: [],
     cover_image: [],
@@ -509,7 +509,7 @@ const EventCreate = () => {
     const preparedReminders = prepareRemindersForSubmission();
 
     // Use backend value for shared
-    const backendSharedValue = formData.shared === "all" ? 0 : 1;
+    const backendSharedValue = formData.shared === "all" ? 0 : formData.shared === "individual" || formData.shared === "group" ? 1 : null;
 
     const validationErrors = validateForm(formData);
     if (validationErrors.length > 0) {
@@ -531,7 +531,9 @@ const EventCreate = () => {
     data.append("event[publish]", formData.publish);
     data.append("event[user_ids]", formData.user_id);
     data.append("event[comment]", formData.location_url);
-    data.append("event[shared]", backendSharedValue); // <-- use backend value here
+    if (backendSharedValue !== null) {
+      data.append("event[shared]", backendSharedValue);
+    }
     // data.append("event[group_id]", formData.group_id);
     data.append("event[is_important]", formData.is_important);
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);

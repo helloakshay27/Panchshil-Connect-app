@@ -955,8 +955,8 @@ const EventEdit = () => {
       return String(currentVal ?? "") !== String(origVal ?? "");
     };
 
-    const backendSharedValue = formData.shared === "all" ? 0 : 1;
-    if (hasChanged("shared", formData.shared)) {
+    const backendSharedValue = formData.shared === "all" ? 0 : formData.shared === "individual" || formData.shared === "group" ? 1 : null;
+    if (backendSharedValue !== null && hasChanged("shared", formData.shared)) {
       data.append("event[shared]", backendSharedValue);
     }
 

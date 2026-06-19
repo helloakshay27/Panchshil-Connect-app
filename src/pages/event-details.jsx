@@ -181,7 +181,7 @@ const EventDetails = () => {
                               <span className="text-dark">:</span>
                               <span className="text-black">
                                 {" "}
-                                {eventData.event_name}{" "}
+                                {eventData.event_name || "-"}{" "}
                               </span>
                             </span>
                           </label>
@@ -213,7 +213,7 @@ const EventDetails = () => {
                               <span className="text-dark">:</span>
                               <span className="text-dark">
                                 {" "}
-                                {eventData.project_name || "N/A"}{" "}
+                                {eventData.project_name || "-"}{" "}
                               </span>
                             </span>
                           </label>
@@ -242,7 +242,9 @@ const EventDetails = () => {
                             <span className="me-3">
                               <span className="text-dark">
                                 :{" "}
-                                {new Date(eventData.from_time).toLocaleString()}
+                                {eventData.from_time
+                                  ? new Date(eventData.from_time).toLocaleString()
+                                  : "-"}
                               </span>
                             </span>
                           </label>
@@ -256,7 +258,10 @@ const EventDetails = () => {
                           <label className="text">
                             <span className="me-3">
                               <span className="text-dark">
-                                : {new Date(eventData.to_time).toLocaleString()}
+                                :{" "}
+                                {eventData.to_time
+                                  ? new Date(eventData.to_time).toLocaleString()
+                                  : "-"}
                               </span>
                             </span>
                           </label>
@@ -270,7 +275,7 @@ const EventDetails = () => {
                           <label className="text">
                             <span className="me-3">
                               <span className="text-dark">
-                                : {eventData.is_important || "N/A"}
+                                : {eventData.is_important || "-"}
                               </span>
                             </span>
                           </label>
@@ -284,7 +289,7 @@ const EventDetails = () => {
                           <label className="text">
                             <span className="me-3">
                               <span className="text-dark">
-                                : {eventData.rsvp_action || "N/A"}
+                                : {eventData.rsvp_action || "-"}
                               </span>
                             </span>
                           </label>
@@ -302,7 +307,7 @@ const EventDetails = () => {
                               <label className="text">
                                 <span className="me-3">
                                   <span className="text-dark">
-                                    : {eventData.rsvp_name || "N/A"}
+                                    : {eventData.rsvp_name || "-"}
                                   </span>
                                 </span>
                               </label>
@@ -316,7 +321,7 @@ const EventDetails = () => {
                               <label className="text">
                                 <span className="me-3">
                                   <span className="text-dark">
-                                    : {eventData.rsvp_number || "N/A"}
+                                    : {eventData.rsvp_number || "-"}
                                   </span>
                                 </span>
                               </label>
@@ -362,7 +367,7 @@ const EventDetails = () => {
                           <label className="text">
                             <span className="me-3">
                               <span className="text-dark">
-                                : {eventData.comment}
+                                : {eventData.comment || "-"}
                               </span>
                             </span>
                           </label>
@@ -376,7 +381,7 @@ const EventDetails = () => {
                           <label className="text">
                             <span className="me-3">
                               <span className="text-dark">
-                                : {eventData.shared}
+                                : {eventData.shared === null || eventData.shared === undefined ? "-" : eventData.shared === 0 ? "No" : "Yes"}
                               </span>
                             </span>
                           </label>
@@ -457,7 +462,7 @@ const EventDetails = () => {
                             ))
                           ) : (
                             <label className="text">
-                              <span className="text-dark">N/A</span>
+                              <span className="text-dark">: -</span>
                             </label>
                           )}
                         </div>
