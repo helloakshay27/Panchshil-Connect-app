@@ -127,6 +127,31 @@ const EventDetails = () => {
     }
   };
 
+  const isVideo = (file) => {
+    if (!file) return false;
+    if (file.document_content_type?.startsWith("video/")) return true;
+    const videoExts = ["mp4", "mov", "avi", "mkv", "webm", "m4v", "ogg"];
+    const ext = file.document_file_name?.split(".").pop()?.toLowerCase();
+    return videoExts.includes(ext);
+  };
+
+  const renderMedia = (file, alt, style) =>
+    isVideo(file) ? (
+      <video
+        src={file.document_url}
+        controls
+        style={style}
+        className="rounded"
+      />
+    ) : (
+      <img
+        src={file.document_url}
+        alt={alt}
+        style={style}
+        className="img-fluid rounded"
+      />
+    );
+
   // If event data is not yet loaded, show a loading state
   if (!eventData) {
     return <div>Loading...</div>;
@@ -518,17 +543,7 @@ const EventDetails = () => {
                                     <td>{file.document_content_type}</td>
                                     <td>{file.document_updated_at}</td>
                                     <td>
-                                      <img
-                                        src={file.document_url}
-                                        alt={`Cover ${index}`}
-                                        style={{
-                                          width: "100px",
-                                          height: "100px",
-                                          objectFit: "contain",
-                                          display: "block",
-                                        }}
-                                        className="img-fluid rounded"
-                                      />
+                                      {renderMedia(file, `Cover ${index}`, { width: "100px", height: "100px", objectFit: "contain", display: "block" })}
                                     </td>
                                   </tr>
                                 ))
@@ -582,17 +597,7 @@ const EventDetails = () => {
                                     <td>{file.document_content_type}</td>
                                     <td>{file.document_updated_at}</td>
                                     <td>
-                                      <img
-                                        src={file.document_url}
-                                        alt={`Event ${index}`}
-                                        style={{
-                                          width: "100px",
-                                          height: "100px",
-                                          objectFit: "contain",
-                                          display: "block",
-                                        }}
-                                        className="img-fluid rounded"
-                                      />
+                                      {renderMedia(file, `Event ${index}`, { width: "100px", height: "100px", objectFit: "contain", display: "block" })}
                                     </td>
                                     {/* <td>
                                 <a href={`${file.document_url}`}>
@@ -665,17 +670,7 @@ const EventDetails = () => {
                                     <td>{file.document_content_type}</td>
                                     <td>{file.document_updated_at}</td>
                                     <td>
-                                      <img
-                                        src={file.document_url}
-                                        alt={`Thumbnail ${index}`}
-                                        style={{
-                                          width: "100px",
-                                          height: "100px",
-                                          objectFit: "contain",
-                                          display: "block",
-                                        }}
-                                        className="img-fluid rounded"
-                                      />
+                                      {renderMedia(file, `Thumbnail ${index}`, { width: "100px", height: "100px", objectFit: "contain", display: "block" })}
                                     </td>
                                   </tr>
                                 ))
