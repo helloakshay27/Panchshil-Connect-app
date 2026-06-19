@@ -59,7 +59,7 @@ const Rustomji_Favicon_URL =
 const Panchshil_Favicon_URL =
   "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Panchshil_logo.png";
 
-const LOGO_Kalpataru_URL = "https://kalpataru-s3.s3.ap-south-1.amazonaws.com/Kalpataru+Logo.png"
+const LOGO_Kalpataru_URL = "https://kalpataru.lockated.com/kalpataru_logo.png"
 
 const Lokated_URL = "https://panchshil-s3.s3.ap-south-1.amazonaws.com/attachfiles/documents/Logo121.png"
 
