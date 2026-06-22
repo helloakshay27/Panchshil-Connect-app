@@ -561,7 +561,7 @@ const EventDetails = () => {
                     </div>
 
                     <div className="col-md-12 mt-4">
-                      <h5>Event Images</h5>
+                      <h5>Event Attachments</h5>
                       <div className="mt-4 tbl-container">
                         <table className="w-100">
                           <thead>

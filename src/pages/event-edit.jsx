@@ -864,7 +864,7 @@ const EventEdit = () => {
       // Remove from UI after successful delete
       setFormData((prev) => ({
         ...prev,
-        [key]: null,
+        [key]: (prev[key] || []).filter((_, i) => i !== index),
       }));
 
       toast.success("Image deleted successfully!");
