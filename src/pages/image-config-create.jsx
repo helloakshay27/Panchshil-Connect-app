@@ -24,6 +24,7 @@ const CreateImageConfiguration = () => {
     { value: "BannerAttachment", label: "BannerAttachment" },
     { value: "EventImage", label: "EventImage" },
     { value: "EventCoverImage", label: "EventCoverImage" },
+    { value: "EvenetThumbnailImage", label: "EvenetThumbnailImage" },
     { value: "BroadcastImage", label: "BroadcastImage" }
   ];
 
@@ -88,6 +89,12 @@ const CreateImageConfiguration = () => {
       { value: "cover_image_3_by_2", label: "cover_image_3_by_2" },
       { value: "cover_image_9_by_16", label: "cover_image_9_by_16" },
       { value: "cover_image_16_by_9", label: "cover_image_16_by_9" }
+    ],
+    EvenetThumbnailImage: [
+      { value: "thumbnail_images_1_by_1", label: "thumbnail_images_1_by_1" },
+      { value: "thumbnail_images_3_by_2", label: "thumbnail_images_3_by_2" },
+      { value: "thumbnail_images_9_by_16", label: "thumbnail_images_9_by_16" },
+      { value: "thumbnail_images_16_by_9", label: "thumbnail_images_16_by_9" }
     ],
     BroadcastImage: [
       { value: "noticeboard_images_1_by_1", label: "noticeboard_images_1_by_1" },

@@ -80,6 +80,7 @@ const EventEdit = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [imageConfigurations, setImageConfigurations] = useState({});
   const [showUploader, setShowUploader] = useState(false);
   // const [showCoverUploader, setShowCoverUploader] = useState(false);
   const [showAttachmentTooltip, setShowAttachmentTooltip] = useState(false);
@@ -711,6 +712,46 @@ const EventEdit = () => {
       fetchGroups();
     }
   }, [formData.shared]);
+
+  useEffect(() => {
+    const fetchImageConfigurations = async () => {
+      try {
+        const configNames = ["EventCoverImage", "EventImage", "EvenetThumbnailImage"];
+        const configs = {};
+        for (const name of configNames) {
+          const response = await axios.get(
+            `${baseURL}system_constants.json?q[description_eq]=ImagesConfiguration&q[name_eq]=${name}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+            }
+          );
+          if (response.data && Array.isArray(response.data)) {
+            configs[name] = response.data.map((item) => item.value);
+          }
+        }
+        setImageConfigurations(configs);
+      } catch (error) {
+        console.error("Error fetching image configurations:", error);
+      }
+    };
+    fetchImageConfigurations();
+  }, []);
+
+  const formatRatio = (value) => {
+    if (!value) return "";
+    const match = value.match(/(\d+)_by_(\d+)/);
+    if (match) return `${match[1]}:${match[2]}`;
+    return value;
+  };
+
+  const getDynamicRatiosText = (configName) => {
+    const ratios = imageConfigurations[configName];
+    if (!ratios || ratios.length === 0) return "";
+    const formattedRatios = ratios.map(formatRatio).join(", ");
+    return ` and Required ratio${ratios.length > 1 ? "s are" : " is"} ${formattedRatios}`;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -2123,7 +2164,7 @@ const EventEdit = () => {
                         [i]
                         {showTooltip && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB and Required ratio is 16:9
+                            Max Upload Size 3 MB{getDynamicRatiosText("EventCoverImage")}
                           </span>
                         )}
                       </span>
@@ -2299,7 +2340,7 @@ const EventEdit = () => {
                         [i]
                         {showAttachmentTooltip && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB and Required ratio is 16:9
+                            Max Upload Size 3 MB{getDynamicRatiosText("EventImage")}
                           </span>
                         )}
                       </span>
@@ -2438,7 +2479,7 @@ const EventEdit = () => {
                         [i]
                         {showAttachmentTooltip && (
                           <span className="tooltip-text">
-                            Max Upload Size for video 10 MB and for image 3 MB
+                            Max Upload Size for video 10 MB and for image 3 MB{getDynamicRatiosText("EventImage")}
                           </span>
                         )}
                       </span>
@@ -2633,7 +2674,7 @@ const EventEdit = () => {
                         [i]
                         {showTooltip && (
                           <span className="tooltip-text">
-                            Max Upload Size 3 MB
+                            Max Upload Size 3 MB{getDynamicRatiosText("EvenetThumbnailImage")}
                           </span>
                         )}
                       </span>
