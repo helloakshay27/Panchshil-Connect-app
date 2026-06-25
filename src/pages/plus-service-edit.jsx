@@ -368,11 +368,11 @@ const PlusServiceEdit = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>Email</label>
+                    <label>Address</label>
                     <input
                       className="form-control"
-                      type="email"
-                      placeholder="Enter Email"
+                      type="text"
+                      placeholder="Enter Address"
                       name="address"
                       value={serviceData.address}
                       onChange={handleInputChange}

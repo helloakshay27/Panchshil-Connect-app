@@ -236,7 +236,7 @@ const PlusServicesList = () => {
                       <th>Sr No</th>
                       <th>Name</th>
                       <th>Mobile</th>
-                      <th>Email Address</th>
+                      <th>Address</th>
                      <th>Service Category</th>
                       <th>Description</th>
                       <th>Attachment</th>
