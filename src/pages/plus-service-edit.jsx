@@ -380,7 +380,7 @@ const PlusServiceEdit = () => {
                   </div>
                 </div>
 
-                <div className="col-md-3">
+                {/* <div className="col-md-3">
                   <div className="form-group">
                     <label>
                       Order No
@@ -394,7 +394,7 @@ const PlusServiceEdit = () => {
                       onChange={handleInputChange}
                     />
                   </div>
-                </div>
+                </div> */}
 
                 <div className="col-md-3">
                   <div className="form-group">
