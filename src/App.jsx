@@ -112,6 +112,9 @@ import ReferralProgramEdit from "./pages/referral-program-edit";
 import TdsTutorialCreate from "./pages/tds-tutorials-create";
 import TdsTutorialList from "./pages/tds-tutorials-list";
 import TdsTutorialEdit from "./pages/tds-tutorials-edit";
+import VideoTutorialCreate from "./pages/video-tutorials-create";
+import VideoTutorialList from "./pages/video-tutorials-list";
+import VideoTutorialEdit from "./pages/video-tutorials-edit";
 import PlusServicesList from "./pages/plus-service-list";
 import PlusServiceCreate from "./pages/plus-service-create";
 import PlusServiceEdit from "./pages/plus-service-edit";
@@ -505,6 +508,19 @@ function App() {
           <Route
             path="/setup-member/tds-tutorials-edit/:id"
             element={<TdsTutorialEdit />}
+          />
+
+          <Route
+            path="/setup-member/video-tutorials-create"
+            element={<VideoTutorialCreate />}
+          />
+          <Route
+            path="/setup-member/video-tutorials-list"
+            element={<VideoTutorialList />}
+          />
+          <Route
+            path="/setup-member/video-tutorials-edit/:id"
+            element={<VideoTutorialEdit />}
           />
 
           <Route

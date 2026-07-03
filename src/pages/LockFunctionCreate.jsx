@@ -197,6 +197,8 @@ const LockFunctionCreate = () => {
       actionName = "visit_slot";
     } else if (value === "TDS Tutorials") {
       actionName = "tds_tutorials";
+    } else if (value === "Video Tutorials") {
+      actionName = "video_tutorials";
     } else if (value === "Plus Services") {
       actionName = "plus_services";
     } else if (value === "SMTP Settings") {
@@ -319,6 +321,7 @@ const LockFunctionCreate = () => {
                           { label: "Amenities", value: "Amenities" },
                           { label: "Visit Slot", value: "Visit Slot" },
                           { label: "TDS Tutorials", value: "TDS Tutorials" },
+                          { label: "Video Tutorials", value: "Video Tutorials" },
                           { label: "Plus Services", value: "Plus Services" },
                           { label: "SMTP Settings", value: "SMTP Settings" },
                           { label: "FAQ Category", value: "FAQ Category" },

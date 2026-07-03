@@ -51,6 +51,7 @@ const SETUP_ROUTES = [
   { permission: "department", route: "/setup-member/department-list" },
   { permission: "visit_slot", route: "/setup-member/visitslot-list" },
   { permission: "tds_tutorials", route: "/setup-member/tds-tutorials-list" },
+  { permission: "video_tutorials", route: "/setup-member/video-tutorials-list" },
   { permission: "plus_services", route: "/setup-member/plus-services-list" },
   { permission: "other_service", route: "/setup-member/other-services-list" },
   { permission: "smtp_settings", route: "/setup-member/smtp-settings-list" },
