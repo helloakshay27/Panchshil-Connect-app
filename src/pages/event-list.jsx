@@ -136,7 +136,18 @@ const Eventlist = () => {
 
   function formatDateTimeManual(datetime) {
     if (!datetime) return "-";
-    const date = new Date(datetime);
+    const normalized = datetime.replace(" ", "T");
+    const date = new Date(normalized);
+    if (isNaN(date.getTime())) return "-";
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    if (hours === 0 && minutes === 0) {
+      return date.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    }
     return date.toLocaleString("en-GB", {
       day: "2-digit",
       month: "2-digit",

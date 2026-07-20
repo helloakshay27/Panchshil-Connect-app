@@ -761,6 +761,38 @@ const EventEdit = () => {
     });
   };
 
+  // from_time / to_time hold either the server's ISO string, a local
+  // "YYYY-MM-DDTHH:MM" value, or "YYYY-MM-DD" (date only) after the
+  // user clears the time — so removing the time keeps the date.
+  const normalizeDateTime = (value) => {
+    if (!value) return "";
+    const normalized = value.replace(" ", "T");
+    if (/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(normalized)) return normalized;
+    return formatDateForInput(normalized);
+  };
+
+  const getDatePart = (value) => normalizeDateTime(value).slice(0, 10);
+  const getTimePart = (value) => {
+    const normalized = normalizeDateTime(value);
+    if (normalized.length > 10) {
+      const time = normalized.slice(11, 16);
+      if (time === "00:00") return "";
+      return time;
+    }
+    return "";
+  };
+
+  const handleDateTimeChange = (field, part, partValue) => {
+    setFormData((prev) => {
+      const date = part === "date" ? partValue : getDatePart(prev[field]);
+      const time = part === "time" ? partValue : getTimePart(prev[field]);
+      let combined = "";
+      if (date && time) combined = `${date}T${time}`;
+      else if (date) combined = date;
+      return { ...prev, [field]: combined };
+    });
+  };
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
 
@@ -1202,10 +1234,12 @@ const EventEdit = () => {
     }
 
     if (formData.from_time && hasChanged("from_time", formData.from_time)) {
-      data.append("event[from_time]", formData.from_time);
+      const fromTimeValue = formData.from_time.includes("T") ? formData.from_time : `${formData.from_time}T00:00`;
+      data.append("event[from_time]", fromTimeValue);
     }
     if (formData.to_time && hasChanged("to_time", formData.to_time)) {
-      data.append("event[to_time]", formData.to_time);
+      const toTimeValue = formData.to_time.includes("T") ? formData.to_time : `${formData.to_time}T00:00`;
+      data.append("event[to_time]", toTimeValue);
     }
 
     Object.entries(formData).forEach(([key, value]) => {
@@ -1239,7 +1273,7 @@ const EventEdit = () => {
 
   const formatDateForInput = (isoString) => {
     if (!isoString) return "";
-    const date = new Date(isoString);
+    const date = new Date(isoString.replace(" ", "T"));
     // Get local date and time in "YYYY-MM-DDTHH:MM" format
     const pad = (n) => n.toString().padStart(2, "0");
     const year = date.getFullYear();
@@ -1429,28 +1463,70 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event From</label>
-                        <input
-                          className="form-control"
-                          type="datetime-local"
-                          name="from_time"
-                          placeholder="Enter Event From"
-                          value={formatDateForInput(formData.from_time) || ""}
-                          onChange={handleChange}
-                        />
+                        <div className="d-flex gap-2">
+                          <input
+                            className="form-control"
+                            type="date"
+                            name="from_date"
+                            value={getDatePart(formData.from_time)}
+                            onChange={(e) =>
+                              handleDateTimeChange(
+                                "from_time",
+                                "date",
+                                e.target.value
+                              )
+                            }
+                          />
+                          <input
+                            className="form-control"
+                            type="time"
+                            name="from_time_part"
+                            value={getTimePart(formData.from_time)}
+                            onChange={(e) =>
+                              handleDateTimeChange(
+                                "from_time",
+                                "time",
+                                e.target.value
+                              )
+                            }
+                            disabled={!getDatePart(formData.from_time)}
+                          />
+                        </div>
                       </div>
                     </div>
 
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event To</label>
-                        <input
-                          className="form-control"
-                          type="datetime-local"
-                          name="to_time"
-                          placeholder="Enter Event To"
-                          value={formatDateForInput(formData.to_time)}
-                          onChange={handleChange}
-                        />
+                        <div className="d-flex gap-2">
+                          <input
+                            className="form-control"
+                            type="date"
+                            name="to_date"
+                            value={getDatePart(formData.to_time)}
+                            onChange={(e) =>
+                              handleDateTimeChange(
+                                "to_time",
+                                "date",
+                                e.target.value
+                              )
+                            }
+                          />
+                          <input
+                            className="form-control"
+                            type="time"
+                            name="to_time_part"
+                            value={getTimePart(formData.to_time)}
+                            onChange={(e) =>
+                              handleDateTimeChange(
+                                "to_time",
+                                "time",
+                                e.target.value
+                              )
+                            }
+                            disabled={!getDatePart(formData.to_time)}
+                          />
+                        </div>
                       </div>
                     </div>
 

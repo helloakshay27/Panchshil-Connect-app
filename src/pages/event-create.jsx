@@ -398,6 +398,24 @@ const EventCreate = () => {
     });
   };
 
+  // from_time / to_time are stored as "YYYY-MM-DD" (date only) or
+  // "YYYY-MM-DDTHH:MM" (date + time), so the date survives when the
+  // time is cleared.
+  const getDatePart = (value) => (value ? value.slice(0, 10) : "");
+  const getTimePart = (value) =>
+    value && value.length > 10 ? value.slice(11, 16) : "";
+
+  const handleDateTimeChange = (field, part, partValue) => {
+    setFormData((prev) => {
+      const date = part === "date" ? partValue : getDatePart(prev[field]);
+      const time = part === "time" ? partValue : getTimePart(prev[field]);
+      let combined = "";
+      if (date && time) combined = `${date}T${time}`;
+      else if (date) combined = date;
+      return { ...prev, [field]: combined };
+    });
+  };
+
   //for files into array
   const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
   const MAX_VIDEO_SIZE = 10 * 1024 * 1024; // 10MB
@@ -525,8 +543,14 @@ const EventCreate = () => {
     data.append("event[payment_link]", formData.payment_link || "");
     data.append("event[event_title]", formData.title || "");
     if (formData.event_at) data.append("event[event_at]", formData.event_at);
-    if (formData.from_time) data.append("event[from_time]", formData.from_time);
-    if (formData.to_time) data.append("event[to_time]", formData.to_time);
+    if (formData.from_time) {
+      const fromTimeValue = formData.from_time.includes("T") ? formData.from_time : `${formData.from_time}T00:00`;
+      data.append("event[from_time]", fromTimeValue);
+    }
+    if (formData.to_time) {
+      const toTimeValue = formData.to_time.includes("T") ? formData.to_time : `${formData.to_time}T00:00`;
+      data.append("event[to_time]", toTimeValue);
+    }
     data.append("event[rsvp_action]", formData.rsvp_action);
     data.append("event[description]", formData.description);
     data.append("event[publish]", formData.publish);
@@ -1032,28 +1056,69 @@ const EventCreate = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event From</label>
-                        <input
-                          className="form-control"
-                          type="datetime-local"
-                          name="from_time"
-                          placeholder="Enter Event From "
-                          value={formData.from_time}
-                          // min={new Date().toISOString().slice(0, 16)}
-                          onChange={handleChange}
-                        />
+                        <div className="d-flex gap-2">
+                          <input
+                            className="form-control"
+                            type="date"
+                            name="from_date"
+                            value={getDatePart(formData.from_time)}
+                            onChange={(e) =>
+                              handleDateTimeChange(
+                                "from_time",
+                                "date",
+                                e.target.value
+                              )
+                            }
+                          />
+                          <input
+                            className="form-control"
+                            type="time"
+                            name="from_time_part"
+                            value={getTimePart(formData.from_time)}
+                            onChange={(e) =>
+                              handleDateTimeChange(
+                                "from_time",
+                                "time",
+                                e.target.value
+                              )
+                            }
+                            disabled={!getDatePart(formData.from_time)}
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event To</label>
-                        <input
-                          className="form-control"
-                          type="datetime-local"
-                          name="to_time"
-                          placeholder="Enter Event To"
-                          value={formData.to_time}
-                          onChange={handleChange}
-                        />
+                        <div className="d-flex gap-2">
+                          <input
+                            className="form-control"
+                            type="date"
+                            name="to_date"
+                            value={getDatePart(formData.to_time)}
+                            onChange={(e) =>
+                              handleDateTimeChange(
+                                "to_time",
+                                "date",
+                                e.target.value
+                              )
+                            }
+                          />
+                          <input
+                            className="form-control"
+                            type="time"
+                            name="to_time_part"
+                            value={getTimePart(formData.to_time)}
+                            onChange={(e) =>
+                              handleDateTimeChange(
+                                "to_time",
+                                "time",
+                                e.target.value
+                              )
+                            }
+                            disabled={!getDatePart(formData.to_time)}
+                          />
+                        </div>
                       </div>
                     </div>
 

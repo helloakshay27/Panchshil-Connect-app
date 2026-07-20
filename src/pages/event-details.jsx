@@ -267,9 +267,19 @@ const EventDetails = () => {
                             <span className="me-3">
                               <span className="text-dark">
                                 :{" "}
-                                {eventData.from_time
-                                  ? new Date(eventData.from_time).toLocaleString()
-                                  : "-"}
+                                {(() => {
+                                  if (!eventData.from_time) return "-";
+                                  const d = new Date(eventData.from_time.replace(" ", "T"));
+                                  if (isNaN(d.getTime())) return "-";
+                                  if (d.getHours() === 0 && d.getMinutes() === 0) {
+                                    return d.toLocaleDateString("en-GB", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    });
+                                  }
+                                  return d.toLocaleString();
+                                })()}
                               </span>
                             </span>
                           </label>
@@ -284,9 +294,19 @@ const EventDetails = () => {
                             <span className="me-3">
                               <span className="text-dark">
                                 :{" "}
-                                {eventData.to_time
-                                  ? new Date(eventData.to_time).toLocaleString()
-                                  : "-"}
+                                {(() => {
+                                  if (!eventData.to_time) return "-";
+                                  const d = new Date(eventData.to_time.replace(" ", "T"));
+                                  if (isNaN(d.getTime())) return "-";
+                                  if (d.getHours() === 0 && d.getMinutes() === 0) {
+                                    return d.toLocaleDateString("en-GB", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    });
+                                  }
+                                  return d.toLocaleString();
+                                })()}
                               </span>
                             </span>
                           </label>
