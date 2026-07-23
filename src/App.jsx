@@ -170,6 +170,7 @@ import LoyaltyManagerList from "./pages/loyalty-managers-list";
 import HomeLoanRequest from "./pages/home-loan-request";
 import CreateImageConfiguration from "./pages/image-config-create";
 import NoticeboardEdit from "./pages/noticeboard-edit";
+import PanchshilConnectDashboard from "./pages/panchshil-connect-dashboard";
 
 if (
   baseURL === "https://api-connect.panchshil.com/" ||
@@ -255,6 +256,17 @@ function App() {
         <Route path="/verify-otp" element={<LoginWithOtpRustomjee />} />
 
         <Route path="/referral-page" element={<ReferralProcess />} />
+
+        {/* Standalone full-page dashboard - authenticated, but deliberately
+            outside RootLayout so it can use the entire viewport. */}
+        <Route
+          path="/panchshil_connect_dashboard"
+          element={
+            <ProtectedRoute>
+              <PanchshilConnectDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/"
