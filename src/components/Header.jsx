@@ -79,8 +79,11 @@ const Header = () => {
 
   const hostname = window.location.hostname; // like dev-panchshil-super-app.lockated.com
 
-const isPanchshil = hostname.includes("panchshil");
-const isRustomjee = hostname.includes("rustomjee"); 
+const isPanchshil =
+  baseURL === "https://api-connect.panchshil.com/" ||
+  baseURL === "https://panchshil-super.lockated.com/" ||
+  baseURL === "https://uatapi-connect.panchshil.com/";
+const isRustomjee = hostname.includes("rustomjee");
 
   // Compute first accessible route for Home and Setup
   const firstHomeRoute =
@@ -89,6 +92,7 @@ const isRustomjee = hostname.includes("rustomjee");
   const firstSetupRoute =
     SETUP_ROUTES.find((item) => hasPermission(item.permission))?.route ||
     "/setup-member/user-list";
+  const firstDashboardRoute = "/panchshil_connect_dashboard";
 
   useEffect(() => {
     // Determine which logo to display based on baseURL
@@ -252,6 +256,14 @@ const isRustomjee = hostname.includes("rustomjee");
               >
                 Setup
               </NavLink>
+               {isPanchshil && (
+                <NavLink
+                  className="nav-link px-4 d-flex align-items-center"
+                  to={firstDashboardRoute}
+                >
+                  Dashboard
+                </NavLink>
+              )}
             </div>
           </div>
 
