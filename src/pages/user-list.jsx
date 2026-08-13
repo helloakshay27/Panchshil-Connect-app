@@ -250,6 +250,8 @@ const UserList = () => {
                           <th>Last Name</th>
                           <th>Email</th>
                           <th>Mobile</th>
+                          <th>Role</th>
+                          <th>Created On</th>
                           {/* <th>Role ID</th>
                           <th>Company ID</th> */}
                           <th>Status</th>
@@ -259,7 +261,7 @@ const UserList = () => {
                       <tbody>
                         {displayedUsers.length === 0 ? (
                           <tr>
-                            <td colSpan="8">No users found.</td>
+                            <td colSpan="9">No users found.</td>
                           </tr>
                         ) : (
                           displayedUsers.map((user, index) => (
@@ -328,6 +330,14 @@ const UserList = () => {
                                   ? `+${user.country_code} `
                                   : ""}
                                 {user.mobile || "-"}
+                              </td>
+                              <td>{user.lock_role_name || "-"}</td>
+                              <td>
+                                {user.created_at
+                                  ? new Date(
+                                      user.created_at
+                                    ).toLocaleDateString("en-GB")
+                                  : "-"}
                               </td>
                               {/* <td>{user.role_id || "-"}</td>
                               <td>{user.company_id || "-"}</td> */}
