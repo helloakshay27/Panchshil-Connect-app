@@ -2,8 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const BankDetailsList = () => {
+  const connectEvents = useConnectEvents();
   const [bankDetailsList, setBankDetailsList] = useState([]);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,6 +61,7 @@ const BankDetailsList = () => {
         
         console.log("Bank Details data:", bankDetails);
         setBankDetailsList(bankDetails);
+        connectEvents.onModuleLoaded({ record_count: bankDetails.length });
         setPagination({
           current_page: getPageFromStorage(),
           total_count: bankDetails.length,
@@ -76,6 +80,7 @@ const BankDetailsList = () => {
   console.log(bankDetailsList);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -99,6 +104,8 @@ const BankDetailsList = () => {
   const totalPages = Math.ceil(totalFiltered / pageSize);
 
   const startIndex = (pagination.current_page - 1) * pageSize;
+
+  useSearchTracking(searchQuery, filteredData.length);
 
   const displayedBankDetails = filteredData.slice(
     (pagination.current_page - 1) * pageSize,

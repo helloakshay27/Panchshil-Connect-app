@@ -3,9 +3,12 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 
 const ProjectBuildingTypeList = () => {
+  const connectEvents = useConnectEvents();
   const [buildingTypes, setBuildingTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,6 +80,7 @@ const ProjectBuildingTypeList = () => {
         { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
       );
       setBuildingTypes(response.data);
+      connectEvents.onModuleLoaded({ record_count: response.data.length });
       setPagination({
         current_page: getPageFromStorage(),
         total_count: response.data.length,
@@ -116,6 +120,7 @@ const ProjectBuildingTypeList = () => {
   // }, []);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prev) => ({ ...prev, current_page: pageNumber }));
     localStorage.setItem("building_type_currentPage", pageNumber);
   };
@@ -125,6 +130,8 @@ const ProjectBuildingTypeList = () => {
   );
   const totalFiltered = filteredBuildingTypes.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  useSearchTracking(searchQuery, filteredBuildingTypes.length);
 
   const displayedBuildingTypes = filteredBuildingTypes.slice(
     (pagination.current_page - 1) * pageSize,
@@ -141,6 +148,10 @@ const ProjectBuildingTypeList = () => {
         },
         { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}`, "Content-Type": "application/json" } }
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully");
       fetchBuildingTypes(); // Refresh the list
     } catch (error) {

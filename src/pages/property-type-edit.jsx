@@ -3,8 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const PropertyTypeEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams(); // ✅ Get ID from URL
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -50,6 +52,7 @@ const PropertyTypeEdit = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Property Type updated successfully!");
       navigate("/setup-member/property-type-list"); // ✅ Navigate after success
     } catch (error) {

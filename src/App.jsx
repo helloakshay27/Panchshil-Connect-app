@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./mor.css";
 import "./utils/apiInterceptor";
+import PostHogPageView from "./components/PostHogPageView";
+import ConnectModuleTracker from "./components/ConnectModuleTracker";
 import { Link, Navigate } from "react-router-dom";
 import LoyaltyMembers from "./pages/loyalty-members";
 import MemberDetails from "./pages/member-details";
@@ -243,6 +245,9 @@ function App() {
   return (
     <BrowserRouter>
       <Toaster />
+      {/* Analytics — must sit inside BrowserRouter to observe navigation. */}
+      <PostHogPageView />
+      <ConnectModuleTracker />
       <Routes>
         <Route path="/login" element={LoginComponent} />
         {/* <Route path="/login" element={<SignIn />} /> */}

@@ -3,8 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ProjectConfigEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams(); // ✅ Get ID from URL
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -92,6 +94,7 @@ const ProjectConfigEdit = () => {
           },
         }
       );
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Project configuration updated successfully!");
       navigate("/setup-member/project-configuration-list");
     } catch (error) {

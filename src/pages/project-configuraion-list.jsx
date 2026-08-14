@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 
 const getPageFromStorage = () => {
@@ -10,6 +12,7 @@ const getPageFromStorage = () => {
 };
 
 const ProjectConfigurationList = () => {
+  const connectEvents = useConnectEvents();
   const [configurations, setConfigurations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,6 +54,7 @@ const ProjectConfigurationList = () => {
           { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setConfigurations(response.data);
+        connectEvents.onModuleLoaded({ record_count: response.data.length });
         setPagination((prev) => ({
           ...prev,
           total_count: response.data.length,
@@ -66,6 +70,7 @@ const ProjectConfigurationList = () => {
   }, []);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prev) => ({ ...prev, current_page: pageNumber }));
     localStorage.setItem("project_config_currentPage", pageNumber);
   };
@@ -85,6 +90,10 @@ const ProjectConfigurationList = () => {
           config.id === id ? { ...config, active: !currentStatus } : config
         )
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully!");
     } catch (err) {
       setError("Failed to update status");
@@ -93,6 +102,8 @@ const ProjectConfigurationList = () => {
   const filteredConfigurations = configurations.filter((config) =>
     config.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useSearchTracking(searchQuery, filteredConfigurations.length);
 
   const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
 

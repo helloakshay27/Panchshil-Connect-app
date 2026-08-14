@@ -3,12 +3,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const getPageFromStorage = () => {
   return parseInt(localStorage.getItem("siteSlotVisitCurrentPage")) || 1;
 };
 
 const SiteVisitSlotConfigList = () => {
+  const connectEvents = useConnectEvents();
   const [slots, setSlots] = useState([]);
   const [siteSlotsPermissions, setSiteSlotsPermissions] = useState({});
   const [loading, setLoading] = useState(false);
@@ -64,6 +67,7 @@ const SiteVisitSlotConfigList = () => {
       const fetchedSlots = response.data.slots || [];
       setSlots(fetchedSlots);
 
+      connectEvents.onModuleLoaded({ record_count: fetchedSlots.length });
       setPagination({
         current_page: getPageFromStorage(),
         total_count: fetchedSlots.length,
@@ -78,6 +82,7 @@ const SiteVisitSlotConfigList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -91,6 +96,8 @@ const SiteVisitSlotConfigList = () => {
 
   const totalFiltered = filteredSlots.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+  useSearchTracking(searchQuery, filteredSlots.length);
+
   const displayedSlots = filteredSlots.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
@@ -156,6 +163,10 @@ const SiteVisitSlotConfigList = () => {
       );
 
       console.log("Status updated successfully!");
+      connectEvents.onRecordStatusChanged({
+        record_id: slotId,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully!");
       
     } catch (error) {

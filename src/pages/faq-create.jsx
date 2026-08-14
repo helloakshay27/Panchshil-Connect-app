@@ -4,8 +4,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const FaqCreate = () => {
+  const connectEvents = useConnectEvents();
   const [formData, setFormData] = useState({
     faq_category_id: "",
     faq_sub_category_id: "",
@@ -240,6 +242,7 @@ const FaqCreate = () => {
         headers: getAuthHeaders(),
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("FAQs created successfully!");
       navigate("/faq-list"); // Adjust navigation path as needed
     } catch (error) {

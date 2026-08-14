@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const ReferralProgramList = () => {
+  const connectEvents = useConnectEvents();
   const [referrals, setReferrals] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -58,6 +61,7 @@ const ReferralProgramList = () => {
         data.referrals || data.referral_configs || data || [];
 
       setReferrals(referralList);
+      connectEvents.onModuleLoaded({ record_count: referralList.length });
       setPagination((prevState) => ({
         ...prevState,
         total_count: referralList.length,
@@ -74,6 +78,7 @@ const ReferralProgramList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -93,6 +98,8 @@ const ReferralProgramList = () => {
 
   const totalFiltered = filteredReferrals.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  useSearchTracking(searchQuery, filteredReferrals.length);
 
   const displayedReferrals = filteredReferrals.slice(
     (pagination.current_page - 1) * pageSize,
@@ -198,6 +205,10 @@ const ReferralProgramList = () => {
       )
     );
 
+    connectEvents.onRecordStatusChanged({
+      record_id: id,
+      new_status: updatedStatus ? "active" : "inactive",
+    });
     toast.success("Status updated successfully!");
   } catch (error) {
     console.error("Error updating status:", error);

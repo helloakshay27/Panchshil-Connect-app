@@ -4,8 +4,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const DepartmentEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams();
   const navigate = useNavigate();
   const [organizations, setOrganizations] = useState([]);
@@ -140,6 +142,7 @@ const DepartmentEdit = () => {
       );
 
       console.log("Update response:", response);
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Department updated successfully!");
       navigate("/setup-member/department-list");
     } catch (error) {

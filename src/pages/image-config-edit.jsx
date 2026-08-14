@@ -5,8 +5,10 @@ import "../mor.css";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const EditImagesConfiguration = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams(); // Get the ID from URL parameters
   const [configuration, setConfiguration] = useState(null);
@@ -198,6 +200,7 @@ const EditImagesConfiguration = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success(`${selectedName} updated successfully!`);
       navigate("/setup-member/image-config-list"); // Redirect to the list page after successful update
       

@@ -8,8 +8,10 @@ import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const PressReleasesEdit = () => {
+  const connectEvents = useConnectEvents();
   const [company, setCompany] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -327,6 +329,7 @@ const PressReleasesEdit = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Press release updated successfully!");
       navigate("/pressreleases-list");
     } catch (error) {

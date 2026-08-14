@@ -7,8 +7,10 @@ import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const TestimonialEdit = () => {
+  const connectEvents = useConnectEvents();
   const { state } = useLocation();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -408,6 +410,7 @@ const TestimonialEdit = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Testimonial updated successfully!");
       sessionStorage.removeItem("editTestimonialId");
       navigate("/testimonial-list");

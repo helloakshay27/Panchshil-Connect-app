@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const FaqList = () => {
+  const connectEvents = useConnectEvents();
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -68,6 +71,7 @@ useEffect(() => {
 }, [location.search]);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     // Ensure page is within valid range
     const validPage = Math.max(1, Math.min(pageNumber, totalPages));
     setCurrentPage(validPage);
@@ -170,6 +174,8 @@ useEffect(() => {
 
   // Get current page data
   const startIndex = (currentPage - 1) * pageSize;
+  useSearchTracking(searchQuery, filteredData.length);
+
   const displayedFaqs = filteredData.slice(
     startIndex,
     startIndex + pageSize

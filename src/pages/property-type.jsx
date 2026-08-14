@@ -3,8 +3,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const PropertyType = () => {
+  const connectEvents = useConnectEvents();
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -35,6 +37,7 @@ const PropertyType = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Property Type added successfully!");
       setName(""); // Reset form
       navigate("/setup-member/property-type-list"); // ✅ Navigate after success

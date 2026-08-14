@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const ConstructionStatusList = () => {
+  const connectEvents = useConnectEvents();
   const [statuses, setStatuses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,6 +57,7 @@ const ConstructionStatusList = () => {
           { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setStatuses(response.data);
+        connectEvents.onModuleLoaded({ record_count: response.data.length });
         setPagination((prevState) => ({
           ...prevState,
           total_count: response.data.length,
@@ -71,6 +75,7 @@ const ConstructionStatusList = () => {
     fetchStatuses();
   }, []);
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -86,6 +91,8 @@ const ConstructionStatusList = () => {
   
   const totalFiltered = filteredStatuses.length;
   const totalPages = Math.ceil(totalFiltered / itemsPerPage);
+
+  useSearchTracking(searchQuery, filteredStatuses.length);
 
   const displayedStatuses = filteredStatuses.slice(
     (pagination.current_page - 1) * itemsPerPage,
@@ -107,6 +114,10 @@ const ConstructionStatusList = () => {
           item.id === id ? { ...item, active: updatedStatus } : item
         )
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully!");
     } catch (error) {
       console.error("Error updating status:", error);

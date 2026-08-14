@@ -5,8 +5,10 @@ import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const HomeLoanAdd = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
 
   const [projects, setProjects] = useState([]);
@@ -178,6 +180,7 @@ const HomeLoanAdd = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Home loan application created successfully");
       navigate("/setup-member/home-loan-list");
     } catch (error) {

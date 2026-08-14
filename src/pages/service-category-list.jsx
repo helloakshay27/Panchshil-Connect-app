@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const ServiceCategoryList = () => {
+  const connectEvents = useConnectEvents();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,6 +65,7 @@ const ServiceCategoryList = () => {
         }
         
         setCategories(categoriesData);
+        connectEvents.onModuleLoaded({ record_count: categoriesData.length });
         setPagination((prevState) => ({
           ...prevState,
           total_count: categoriesData.length,
@@ -98,6 +102,10 @@ const ServiceCategoryList = () => {
           item.id === id ? { ...item, active: updatedStatus } : item
         )
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Service category status updated successfully!");
     } catch (error) {
       console.error("Error updating service category status:", error);
@@ -106,6 +114,7 @@ const ServiceCategoryList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -123,6 +132,8 @@ const ServiceCategoryList = () => {
 
   const totalFiltered = filteredCategories.length;
   const totalPages = Math.ceil(totalFiltered / itemsPerPage) || 1;
+
+  useSearchTracking(searchQuery, filteredCategories.length);
 
   const displayedCategories = filteredCategories.slice(
     (pagination.current_page - 1) * itemsPerPage,

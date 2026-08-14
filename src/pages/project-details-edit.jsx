@@ -15,8 +15,10 @@ import { ImageUploadingButton } from "../components/reusable/ImageUploadingButto
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ProjectDetailsEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -2415,6 +2417,7 @@ const ProjectDetailsEdit = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Project updated successfully");
       sessionStorage.removeItem("cached_projects");
       navigate("/project-list");

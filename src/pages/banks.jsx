@@ -3,8 +3,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const BankForm = () => {
+  const connectEvents = useConnectEvents();
   const [formData, setFormData] = useState({
     bank_name: "",
     interest_rate: "",
@@ -143,6 +145,7 @@ const BankForm = () => {
           payload,
           requestConfig
         );
+        connectEvents.onRecordSaved({ mode: "updated" });
         toast.success("Bank updated successfully!");
       } else {
         await axios.post(
@@ -150,6 +153,7 @@ const BankForm = () => {
           payload,
           requestConfig
         );
+        connectEvents.onRecordSaved({ mode: "added" });
         toast.success("Bank created successfully!");
       }
 

@@ -5,8 +5,10 @@ import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const HomeLoanEdit = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams(); // Get the ID from URL parameters
 
@@ -188,6 +190,7 @@ const HomeLoanEdit = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Home loan application updated successfully");
       navigate("/setup-member/home-loan-list");
     } catch (error) {

@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const NoticeboardList = () => {
+  const connectEvents = useConnectEvents();
   const [noticeboards, setNoticeboards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,6 +76,7 @@ const NoticeboardList = () => {
         console.log("Number of noticeboards:", noticeboardsData.length);
         setNoticeboards(noticeboardsData);
 
+        connectEvents.onModuleLoaded({ record_count: noticeboardsData.length });
         setPagination({
           current_page: getPageFromStorage(),
           total_count: noticeboardsData.length,
@@ -107,6 +111,8 @@ const NoticeboardList = () => {
   console.log("Filtered noticeboards:", filteredNoticeboards.length);
   console.log("Search query:", searchQuery);
 
+  useSearchTracking(searchQuery, filteredNoticeboards.length);
+
   const displayedNoticeboards = filteredNoticeboards
     .slice(
       (pagination.current_page - 1) * pageSize,
@@ -114,6 +120,7 @@ const NoticeboardList = () => {
     );
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,

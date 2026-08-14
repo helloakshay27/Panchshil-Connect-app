@@ -9,8 +9,10 @@ import { ImageUploadingButton } from "../components/reusable/ImageUploadingButto
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const NoticeboardForm = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
@@ -697,6 +699,7 @@ const NoticeboardForm = () => {
         },
       });
       
+      connectEvents.onRecordSaved({ mode: isEdit ? "updated" : "added" });
       toast.success(`Broadcast ${isEdit ? 'updated' : 'created'} successfully!`);
       
       if (!isEdit) {

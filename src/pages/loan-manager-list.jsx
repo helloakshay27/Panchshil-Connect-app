@@ -11,8 +11,11 @@ import { toast } from "react-hot-toast";
 import SearchIcon from "../components/Icons/SearchIcon";
 import axios from "axios";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const LoanManagerList = () => {
+  const connectEvents = useConnectEvents();
   const [error, setError] = useState(null);
   const [loanManagers, setLoanManagers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -76,6 +79,10 @@ const LoanManagerList = () => {
               : loanManager
           )
         );
+        connectEvents.onRecordStatusChanged({
+          record_id: loanManagerId,
+          new_status: !currentStatus ? "active" : "inactive",
+        });
         toast.success("Loan Manager status updated successfully!");
       }
     } catch (error) {
@@ -114,6 +121,8 @@ const LoanManagerList = () => {
   }, [filteredLoanManagers.length, pageSize, searchQuery]);
 
   // Get current page's loan managers
+  useSearchTracking(searchQuery, filteredLoanManagers.length);
+
   const displayedLoanManagers = filteredLoanManagers.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
@@ -145,6 +154,7 @@ const LoanManagerList = () => {
   console.log(loanManagers);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,

@@ -9,8 +9,10 @@ import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const Testimonials = () => {
+  const connectEvents = useConnectEvents();
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
   const [companySetupId, setCompanySetupId] = useState("");
   const [userName, setUserName] = useState("");
@@ -365,6 +367,7 @@ const handleCropComplete = (validImages) => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Data saved successfully!");
       // reset all
       setUserName("");

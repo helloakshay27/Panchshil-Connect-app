@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const BankList = () => {
+  const connectEvents = useConnectEvents();
   const [banks, setBanks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,6 +65,7 @@ const BankList = () => {
         }
         
         setBanks(banksData);
+        connectEvents.onModuleLoaded({ record_count: banksData.length });
         setPagination((prevState) => ({
           ...prevState,
           total_count: banksData.length,
@@ -98,6 +102,10 @@ const BankList = () => {
           item.id === id ? { ...item, active: updatedStatus } : item
         )
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Bank status updated successfully!");
     } catch (error) {
       console.error("Error updating bank status:", error);
@@ -106,6 +114,7 @@ const BankList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -123,6 +132,8 @@ const BankList = () => {
 
   const totalFiltered = filteredBanks.length;
   const totalPages = Math.ceil(totalFiltered / itemsPerPage) || 1;
+
+  useSearchTracking(searchQuery, filteredBanks.length);
 
   const displayedBanks = filteredBanks.slice(
     (pagination.current_page - 1) * itemsPerPage,

@@ -16,8 +16,10 @@ import { ImageCropper } from "../components/reusable/ImageCropper";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ProjectDetailsCreate = () => {
+  const connectEvents = useConnectEvents();
   const [formData, setFormData] = useState({
     Property_Type: "",
     Property_type_id: "",
@@ -1421,6 +1423,7 @@ const ProjectDetailsCreate = () => {
       });
 
       console.log("data to be sent:", Array.from(data.entries()));
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Project submitted successfully");
       sessionStorage.removeItem("cached_projects");
       Navigate("/project-list");

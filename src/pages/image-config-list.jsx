@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const ImageConfig = () => {
+  const connectEvents = useConnectEvents();
   const [imageConfigs, setImageConfigs] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -55,6 +58,7 @@ const ImageConfig = () => {
 
       if (Array.isArray(data)) {
         setImageConfigs(data);
+        connectEvents.onModuleLoaded({ record_count: data.length });
         setPagination({
           total_count: data.length,
           total_pages: Math.ceil(data.length / pageSize),
@@ -77,6 +81,7 @@ const ImageConfig = () => {
 
 
   const handlePageChange = (page) => {
+    connectEvents.onModulePaginated({ page: page });
     setPagination((prev) => ({ ...prev, current_page: page }));
     localStorage.setItem("image_config_currentPage", page);
   };
@@ -118,6 +123,7 @@ const ImageConfig = () => {
       await axios.delete(`${baseURL}system_constants/${id}.json`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       });
+      connectEvents.onRecordDeleted({ record_id: id });
       toast.success("Image configuration deleted successfully!");
 
       setImageConfigs((prevConfigs) =>
@@ -147,6 +153,8 @@ const ImageConfig = () => {
   );
   const totalFiltered = filteredConfigs.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  useSearchTracking(searchQuery, filteredConfigs.length);
 
   const displayedConfigs = filteredConfigs
     .slice(

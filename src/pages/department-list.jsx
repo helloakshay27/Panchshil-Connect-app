@@ -2,8 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const DepartmentList = () => {
+  const connectEvents = useConnectEvents();
   const [departmentList, setDepartmentList] = useState([]);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,6 +61,7 @@ const DepartmentList = () => {
         
         console.log("Departments data:", departments);
         setDepartmentList(departments);
+        connectEvents.onModuleLoaded({ record_count: departments.length });
         setPagination({
           current_page: getPageFromStorage(),
           total_count: departments.length,
@@ -76,6 +80,7 @@ const DepartmentList = () => {
   console.log(departmentList);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -96,6 +101,8 @@ const DepartmentList = () => {
   const totalPages = Math.ceil(totalFiltered / pageSize);
 
   const startIndex = (pagination.current_page - 1) * pageSize;
+
+  useSearchTracking(searchQuery, filteredData.length);
 
   const displayedDepartments = filteredData.slice(
     (pagination.current_page - 1) * pageSize,

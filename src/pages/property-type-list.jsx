@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const PropertyTypeList = () => {
+  const connectEvents = useConnectEvents();
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -52,6 +55,7 @@ const PropertyTypeList = () => {
           { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setPropertyTypes(response.data);
+        connectEvents.onModuleLoaded({ record_count: response.data.length });
         setPagination({
           current_page: getPageFromStorage(),
           total_count: response.data.length,
@@ -68,6 +72,7 @@ const PropertyTypeList = () => {
     fetchPropertyTypes();
   }, []);
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prev) => ({
       ...prev,
       current_page: pageNumber,
@@ -83,6 +88,8 @@ const PropertyTypeList = () => {
   const totalPages = Math.ceil(totalFiltered / pageSize);
 
   // ✅ Paginate data
+  useSearchTracking(searchQuery, filteredPropertyTypes.length);
+
   const displayedPropertyTypes = filteredPropertyTypes.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
@@ -102,6 +109,10 @@ const PropertyTypeList = () => {
           item.id === id ? { ...item, active: updatedStatus } : item
         )
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully!");
       
     } catch (error) {

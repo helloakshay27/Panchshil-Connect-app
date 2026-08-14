@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import "../mor.css"; // Assuming you want to reuse your existing styles
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const MAX_UPLOAD_SIZE = {
   images: 3 * 1024 * 1024, // 3MB
@@ -11,6 +12,7 @@ const MAX_UPLOAD_SIZE = {
 };
 
 const CommonFileUpload = () => {
+  const connectEvents = useConnectEvents();
   const [filesData, setFilesData] = useState({
     instagram_photos_videos: [],
     site_photos_progress: [],
@@ -263,6 +265,7 @@ const CommonFileUpload = () => {
 
       // Check for successful response
       if (response.status >= 200 && response.status < 300) {
+        connectEvents.onRecordDeleted({ record_id: fileId });
         toast.success(`File "${fileName}" deleted successfully.`);
         
         // Remove from local state

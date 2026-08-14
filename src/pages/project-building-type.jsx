@@ -4,8 +4,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ProjectBuildingType = () => {
+  const connectEvents = useConnectEvents();
   const [buildingType, setBuildingType] = useState("");
   const [loading, setLoading] = useState(false);
   const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
@@ -75,6 +77,7 @@ const ProjectBuildingType = () => {
           },
         }
       );
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Building type added successfully");
       setBuildingType("");
       navigate("/setup-member/project-building-type-list");

@@ -4,8 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
 import { Eye, EyeOff } from "lucide-react";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const SMTPSettingsEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -171,6 +173,7 @@ const SMTPSettingsEdit = () => {
       );
 
       console.log("Update response:", response.data);
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("SMTP settings updated successfully!");
       navigate("/setup-member/smtp-settings-list");
     } catch (error) {

@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ReferralProgramCreate = () => {
+  const connectEvents = useConnectEvents();
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -191,6 +193,7 @@ const ReferralProgramCreate = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Referral created successfully!");
 
       // Reset form

@@ -10,6 +10,8 @@ import {
   Lokated_URL,
 } from "../pages/baseurl/apiDomain";
 import { hasPermission } from "../utils/permission";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { resetIdentity } from "../utils/posthogHelpers";
 
 // Ordered list of Home sidebar modules (matches Sidebar.jsx render order)
 const HOME_ROUTES = [
@@ -76,6 +78,7 @@ const Header = () => {
   const [currentLogo, setCurrentLogo] = useState(LOGO_URL);
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
+  const connectEvents = useConnectEvents();
 
   const hostname = window.location.hostname; // like dev-panchshil-super-app.lockated.com
 
@@ -150,6 +153,11 @@ const isRustomjee = hostname.includes("rustomjee");
   const userInitial = firstname ? firstname.charAt(0).toUpperCase() : "";
 
   const signout = () => {
+    // Fire before the storage wipe — capturePostHogEvent reads identity out of
+    // localStorage, so afterwards the event would go out anonymous.
+    connectEvents.onLogout();
+    resetIdentity();
+
     localStorage.clear();
     sessionStorage.clear();
     setUserData(null);

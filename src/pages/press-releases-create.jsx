@@ -7,8 +7,10 @@ import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const PressReleasesCreate = () => {
+  const connectEvents = useConnectEvents();
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
@@ -349,6 +351,7 @@ const PressReleasesCreate = () => {
 
 
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Press release created successfully!");
       // navigate("/pressreleases-list");
     } catch (error) {

@@ -4,8 +4,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const LoyaltyManager = () => {
+  const connectEvents = useConnectEvents();
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
@@ -83,6 +85,7 @@ const LoyaltyManager = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Loyalty Manager added successfully!");
       setName("");
       setMobile("");

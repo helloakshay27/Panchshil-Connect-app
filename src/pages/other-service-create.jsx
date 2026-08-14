@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const OtherServiceCreate = () => {
+  const connectEvents = useConnectEvents();
   const [plusServices, setPlusServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -136,6 +138,7 @@ const OtherServiceCreate = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Other Service created successfully!");
 
       setServiceData({

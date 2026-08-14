@@ -4,8 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const BankDetailsEdit = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams();
   const [countries, setCountries] = useState([]);
@@ -313,6 +315,7 @@ const BankDetailsEdit = () => {
       });
 
       if (response.status === 200) {
+        connectEvents.onRecordSaved({ mode: "updated" });
         toast.success("Bank Details updated successfully!");
         navigate("/setup-member/bank-details-list");
       } else {

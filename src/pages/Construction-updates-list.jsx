@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const ConstructionUpdatesList = () => {
+  const connectEvents = useConnectEvents();
   const [constructionUpdates, setConstructionUpdates] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -150,6 +153,7 @@ const ConstructionUpdatesList = () => {
   }, [baseURL, pageSize]);
 
   const handlePageChange = (page) => {
+    connectEvents.onModulePaginated({ page: page });
     setPagination((prev) => ({ ...prev, current_page: page }));
     localStorage.setItem("construction_updates_list_currentPage", page);
   };
@@ -170,6 +174,10 @@ const ConstructionUpdatesList = () => {
             item.id === id ? { ...item, status: updatedStatus } : item
           )
         );
+        connectEvents.onRecordStatusChanged({
+          record_id: id,
+          new_status: !currentStatus ? "active" : "inactive",
+        });
         toast.success("Status updated successfully!");
       }
     } catch (error) {
@@ -228,6 +236,8 @@ const ConstructionUpdatesList = () => {
   );
   const totalFiltered = filteredUpdates.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  useSearchTracking(searchQuery, filteredUpdates.length);
 
   const displayedUpdates = filteredUpdates
     .slice(

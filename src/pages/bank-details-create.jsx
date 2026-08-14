@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const BankDetailsCreate = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -259,6 +261,7 @@ const BankDetailsCreate = () => {
 
       if (response.ok) {
         const responseData = await response.json();
+        connectEvents.onRecordSaved({ mode: "added" });
         toast.success("Bank Details created successfully!");
 
         // Reset form

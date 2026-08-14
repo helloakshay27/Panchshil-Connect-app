@@ -11,8 +11,11 @@ import { toast } from "react-hot-toast";
 import SearchIcon from "../components/Icons/SearchIcon";
 import axios from "axios";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const PressReleasesList = () => {
+  const connectEvents = useConnectEvents();
   const [pressReleases, setPressReleases] = useState([]);
   const [filteredReleases, setFilteredReleases] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -71,6 +74,7 @@ const PressReleasesList = () => {
         setPressReleases(data.press_releases);
         setFilteredReleases(data.press_releases);
 
+        connectEvents.onModuleLoaded({ record_count: data.press_releases.length });
         setPagination({
           current_page: getPageFromStorage(),
           total_count: data.press_releases.length,
@@ -127,6 +131,8 @@ const PressReleasesList = () => {
     localStorage.setItem("press_list_currentPage", 1);
   }, [searchQuery, pressReleases, pageSize]);
 
+  useSearchTracking(searchQuery, filteredReleases.length);
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -137,6 +143,7 @@ const PressReleasesList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     if (pageNumber < 1 || pageNumber > pagination.total_pages) return;
 
     setPagination((prev) => ({

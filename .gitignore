@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Local env files — these hold the PostHog project token. `.env.example` is
+# committed as the template; the real values must never be.
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

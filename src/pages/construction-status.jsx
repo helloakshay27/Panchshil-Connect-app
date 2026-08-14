@@ -3,8 +3,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ConstructionStatus = () => {
+  const connectEvents = useConnectEvents();
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,6 +28,7 @@ const ConstructionStatus = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Construction status added successfully!");
       setName(""); // Reset form
       navigate("/setup-member/construction-status-list"); // Redirect after success

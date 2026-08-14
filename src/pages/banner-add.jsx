@@ -5,8 +5,10 @@ import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const BannerAdd = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
 
   const [projects, setProjects] = useState([]);
@@ -338,6 +340,7 @@ const BannerAdd = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Banner created successfully");
       navigate("/banner-list");
     } catch (error) {

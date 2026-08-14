@@ -5,8 +5,11 @@ import "./login.css";
 import toast from "react-hot-toast";
 import { baseURL, LOGO_URL } from "../baseurl/apiDomain";
 import { Eye, EyeOff } from "lucide-react";
+import { useConnectEvents } from "../../hooks/useConnectEvents";
+import { establishAnalyticsIdentity } from "../../utils/analyticsIdentity";
 
 const SignIn = () => {
+  const connectEvents = useConnectEvents();
   // State management
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -126,12 +129,38 @@ const SignIn = () => {
           );
         }
         // console.log("Lock Roles:", lockRole);
+
+        // Analytics identity + company backfill. Awaited so the company context
+        // is in localStorage before the first page's events fire; it swallows
+        // its own errors and never blocks the redirect.
+        await establishAnalyticsIdentity(
+          {
+            id: response.data?.id,
+            email: response.data?.email,
+            firstname: response.data?.firstname,
+            lastname: response.data?.lastname,
+            lock_role_name: lockRole?.name,
+          },
+          response.data?.access_token,
+        );
+        connectEvents.onLoginSucceeded({ method: "password" });
+
         navigate("/project-list");
         toast.success("Login successful");
       } else {
+        connectEvents.onLoginFailed({
+          method: "password",
+          reason: "no_access_token",
+        });
         toast.error("Login failed. Please check your credentials.");
       }
     } catch (err) {
+      connectEvents.onLoginFailed({
+        method: "password",
+        reason: err?.response?.status
+          ? `http_${err.response.status}`
+          : "network_error",
+      });
       toast.error("Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
@@ -317,6 +346,23 @@ const SignIn = () => {
         sessionStorage.setItem("mobile", user.mobile);
         sessionStorage.setItem("userId", user.id);
 
+        // This path stored identity only in sessionStorage; mirror the keys the
+        // password path writes so analytics (and anything else reading
+        // localStorage) sees the same user on an OTP login.
+        localStorage.setItem("email", user.email ?? "");
+        localStorage.setItem("user_id", user.id ?? "");
+
+        await establishAnalyticsIdentity(
+          {
+            id: user.id,
+            email: user.email,
+            firstname: user.firstname,
+            lastname: user.lastname,
+          },
+          access_token,
+        );
+        connectEvents.onLoginSucceeded({ method: "otp" });
+
         toast.success(message || "OTP verified successfully");
 
         // Navigate after a slight delay to ensure state is updated
@@ -324,6 +370,7 @@ const SignIn = () => {
           navigate("/project-list", { replace: true });
         }, 100);
       } else {
+        connectEvents.onLoginFailed({ method: "otp", reason: "invalid_otp" });
         setError(message || "Invalid OTP. Please try again.");
         setOtp(""); // Clear OTP field on failure
       }

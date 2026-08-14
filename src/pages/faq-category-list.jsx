@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const FaqCategoryList = () => {
+  const connectEvents = useConnectEvents();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,6 +65,7 @@ const FaqCategoryList = () => {
         }
         
         setCategories(categoriesData);
+        connectEvents.onModuleLoaded({ record_count: categoriesData.length });
         setPagination((prevState) => ({
           ...prevState,
           total_count: categoriesData.length,
@@ -99,6 +103,10 @@ const FaqCategoryList = () => {
           item.id === id ? { ...item, active: updatedStatus } : item
         )
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Category status updated successfully!");
     } catch (error) {
       console.error("Error updating category status:", error);
@@ -108,6 +116,7 @@ const FaqCategoryList = () => {
 
   // Rest of your component remains the same...
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -125,6 +134,8 @@ const FaqCategoryList = () => {
 
   const totalFiltered = filteredCategories.length;
   const totalPages = Math.ceil(totalFiltered / itemsPerPage) || 1;
+
+  useSearchTracking(searchQuery, filteredCategories.length);
 
   const displayedCategories = filteredCategories.slice(
     (pagination.current_page - 1) * itemsPerPage,

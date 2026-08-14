@@ -360,8 +360,11 @@ import axios from "axios";
 import "./login.css";
 import toast from "react-hot-toast";
 import { Lokated_URL, Rustomji_URL, baseURL } from "../baseurl/apiDomain";
+import { useConnectEvents } from "../../hooks/useConnectEvents";
+import { establishAnalyticsIdentity } from "../../utils/analyticsIdentity";
 
 const LoginWithOtpRustomjee = () => {
+  const connectEvents = useConnectEvents();
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
@@ -553,12 +556,26 @@ const config = {
       sessionStorage.setItem("mobile", user.mobile);
       sessionStorage.setItem("userId", user.id);
 
+      // Analytics identity + company backfill; swallows its own errors.
+      await establishAnalyticsIdentity(
+        {
+          id: user.id,
+          email: user.email,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          lock_role_name: roleData?.name,
+        },
+        access_token
+      );
+      connectEvents.onLoginSucceeded({ method: "otp" });
+
       toast.success(message || "OTP verified successfully");
 
       setTimeout(() => {
         navigate("/project-list", { replace: true });
       }, 100);
     } else {
+      connectEvents.onLoginFailed({ method: "otp", reason: "invalid_otp" });
       setError(message || "Invalid OTP. Please try again.");
       setOtp("");
     }

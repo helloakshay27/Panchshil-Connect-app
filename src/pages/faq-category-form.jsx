@@ -4,8 +4,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const FaqCategoryForm = () => {
+  const connectEvents = useConnectEvents();
   const [formData, setFormData] = useState({
     name: "",
     active: true,
@@ -115,6 +117,7 @@ const FaqCategoryForm = () => {
           payload,
           { headers: getAuthHeaders() }
         );
+        connectEvents.onRecordSaved({ mode: "updated" });
         toast.success("FAQ Category updated successfully!");
       } else {
         await axios.post(
@@ -122,6 +125,7 @@ const FaqCategoryForm = () => {
           payload,
           { headers: getAuthHeaders() }
         );
+        connectEvents.onRecordSaved({ mode: "added" });
         toast.success("FAQ Category created successfully!");
       }
 

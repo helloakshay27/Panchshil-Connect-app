@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const SiteVisitSlotConfig = () => {
+  const connectEvents = useConnectEvents();
   const [startHour, setStartHour] = useState("");
   const [startMinute, setStartMinute] = useState("");
   const [endHour, setEndHour] = useState("");
@@ -65,6 +67,7 @@ const SiteVisitSlotConfig = () => {
         }
       );
   
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Slot created successfully!");
       console.log("Data successfully submitted:", response.data);
       navigate("/setup-member/visitslot-list");

@@ -3,8 +3,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const DepartmentCreate = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const [organizations, setOrganizations] = useState([]);
   const [company, setCompany] = useState([]);
@@ -133,6 +135,7 @@ const DepartmentCreate = () => {
       });
 
       if (response.ok) {
+        connectEvents.onRecordSaved({ mode: "added" });
         toast.success("Department created successfully!");
         navigate("/setup-member/department-list");
       } else {

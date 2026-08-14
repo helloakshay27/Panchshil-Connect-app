@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const Eventlist = () => {
+  const connectEvents = useConnectEvents();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,6 +57,7 @@ const Eventlist = () => {
         if (Array.isArray(data.events)) {
           setEvents(data.events);
 
+          connectEvents.onModuleLoaded({ record_count: data.events.length });
           setPagination({
             current_page: getPageFromStorage(),
             total_count: data.events.length,
@@ -83,6 +87,8 @@ const Eventlist = () => {
       event.event_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+  useSearchTracking(searchQuery, filteredEvents.length);
+
   const displayedEvents = filteredEvents
     //.sort((a, b) => (b.id || 0) - (a.id || 0))
 
@@ -92,6 +98,7 @@ const Eventlist = () => {
     );
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,

@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const OtherServicesList = () => {
+  const connectEvents = useConnectEvents();
   const [otherServices, setOtherServices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -43,6 +46,7 @@ const OtherServicesList = () => {
       const servicesData = response.data.other_services || response.data || [];
       setOtherServices(servicesData);
 
+      connectEvents.onModuleLoaded({ record_count: servicesData.length });
       setPagination((prev) => ({
         ...prev,
         total_count: servicesData.length,
@@ -58,6 +62,7 @@ const OtherServicesList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -75,6 +80,8 @@ const OtherServicesList = () => {
 
   const totalFiltered = filteredServices.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  useSearchTracking(searchQuery, filteredServices.length);
 
   const displayedServices = filteredServices.slice(
     (pagination.current_page - 1) * pageSize,
@@ -107,6 +114,10 @@ const OtherServicesList = () => {
         )
       );
 
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       const newToastId = toast.success(
         `Other service ${updatedStatus ? "activated" : "deactivated"} successfully`
       );

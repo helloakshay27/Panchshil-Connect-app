@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const TdsTutorialList = () => {
+  const connectEvents = useConnectEvents();
   const [tutorials, setTutorials] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -57,6 +60,7 @@ const TdsTutorialList = () => {
       const tutorialList = data.tds_tutorials || data || [];
 
       setTutorials(tutorialList);
+      connectEvents.onModuleLoaded({ record_count: tutorialList.length });
       setPagination((prevState) => ({
         ...prevState,
         total_count: tutorialList.length,
@@ -73,6 +77,7 @@ const TdsTutorialList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -92,6 +97,8 @@ const TdsTutorialList = () => {
 
   const totalFiltered = filteredTutorials.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  useSearchTracking(searchQuery, filteredTutorials.length);
 
   const displayedTutorials = filteredTutorials.slice(
     (pagination.current_page - 1) * pageSize,
@@ -125,6 +132,10 @@ const TdsTutorialList = () => {
       );
 
       console.log("Status updated successfully!");
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully!");
     } catch (error) {
       console.error("Error updating status:", error);
@@ -149,6 +160,7 @@ const TdsTutorialList = () => {
       });
 
       setTutorials((prev) => prev.filter((item) => item.id !== id));
+      connectEvents.onRecordDeleted({ record_id: id });
       toast.success("Tutorial deleted successfully!");
     } catch (error) {
       console.error("Error deleting tutorial:", error);

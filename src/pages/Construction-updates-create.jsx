@@ -6,8 +6,10 @@ import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ConstructionUpdatesCreate = () => {
+  const connectEvents = useConnectEvents();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("active");
@@ -196,6 +198,7 @@ const ConstructionUpdatesCreate = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Construction update added successfully");
       resetForm();
       navigate("/setup-member/construction-updates-list");

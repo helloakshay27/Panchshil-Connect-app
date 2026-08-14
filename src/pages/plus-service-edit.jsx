@@ -4,8 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const PlusServiceEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -231,6 +233,7 @@ const PlusServiceEdit = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Plus Service updated successfully!");
       navigate("/setup-member/plus-services-list");
     } catch (error) {

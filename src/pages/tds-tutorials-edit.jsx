@@ -3,8 +3,10 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const TdsTutorialEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams(); // Get tutorial ID from URL
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -267,6 +269,7 @@ const TdsTutorialEdit = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("TDS Tutorial updated successfully!");
       navigate("/setup-member/tds-tutorials-list");
     } catch (error) {

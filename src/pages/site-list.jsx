@@ -2,8 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const SiteList = () => {
+  const connectEvents = useConnectEvents();
   const [siteList, setSiteList] = useState([]);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,6 +61,7 @@ const SiteList = () => {
                      (response.data.sites ? response.data.sites : []);
         
         setSiteList(sites);
+        connectEvents.onModuleLoaded({ record_count: sites.length });
         setPagination({
           current_page: getPageFromStorage(),
           total_count: sites.length,
@@ -74,6 +78,7 @@ const SiteList = () => {
   }, []);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -94,6 +99,8 @@ const SiteList = () => {
   const totalPages = Math.ceil(totalFiltered / pageSize);
 
   const startIndex = (pagination.current_page - 1) * pageSize;
+
+  useSearchTracking(searchQuery, filteredData.length);
 
   const displayedSites = filteredData.slice(
     (pagination.current_page - 1) * pageSize,

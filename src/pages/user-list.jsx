@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
 import Pagination from "../components/reusable/Pagination";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const UserList = () => {
+  const connectEvents = useConnectEvents();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -55,6 +58,7 @@ const UserList = () => {
         if (Array.isArray(data.users)) {
           setUsers(data.users);
 
+          connectEvents.onModuleLoaded({ record_count: data.users.length });
           setPagination({
             current_page: getPageFromStorage(),
             total_count: data.users.length,
@@ -85,12 +89,15 @@ const UserList = () => {
       user.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  useSearchTracking(searchQuery, filteredUsers.length);
+
   const displayedUsers = filteredUsers.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
   );
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,

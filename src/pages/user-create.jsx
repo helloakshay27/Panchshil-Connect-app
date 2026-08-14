@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const UserCreate = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -237,6 +239,9 @@ const UserCreate = () => {
 
     // If all required fields are empty, show a general message
     if (emptyFields.length === requiredFields.length) {
+      connectEvents.onFormValidationFailed({
+        fields: emptyFields.map(({ field }) => field),
+      });
       toast.dismiss();
       toast.error("Please fill in all the required fields.");
       return false;
@@ -247,6 +252,7 @@ const UserCreate = () => {
       if (!formData[field] || String(formData[field]).trim() === "") {
         newErrors[field] = `${label} is mandatory`;
         setErrors(newErrors);
+        connectEvents.onFormValidationFailed({ fields: [field] });
         toast.dismiss();
         toast.error(`${label} is mandatory`);
         return false;
@@ -336,6 +342,7 @@ const UserCreate = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("User created successfully");
       console.log("Response from API:", response.data);
       navigate("/setup-member/user-list"); // Adjust this navigation path as needed

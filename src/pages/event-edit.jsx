@@ -9,8 +9,10 @@ import { ImageUploadingButton } from "../components/reusable/ImageUploadingButto
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const EventEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams();
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState({});
@@ -1261,6 +1263,7 @@ const EventEdit = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Event updated successfully!");
       navigate("/event-list");
     } catch (error) {

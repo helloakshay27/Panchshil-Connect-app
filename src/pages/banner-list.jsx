@@ -11,8 +11,11 @@ import { toast } from "react-hot-toast";
 import SearchIcon from "../components/Icons/SearchIcon";
 import axios from "axios";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const BannerList = () => {
+  const connectEvents = useConnectEvents();
   const [error, setError] = useState(null);
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -76,6 +79,10 @@ const BannerList = () => {
               : banner
           )
         );
+        connectEvents.onRecordStatusChanged({
+          record_id: bannerId,
+          new_status: !currentStatus ? "active" : "inactive",
+        });
         toast.success("Banner status updated successfully!");
       }
     } catch (error) {
@@ -107,6 +114,8 @@ const BannerList = () => {
     }));
   }, [filteredBanners.length, pageSize, searchQuery]);
 
+  useSearchTracking(searchQuery, filteredBanners.length);
+
   // Get current page's banners
   const displayedBanners = filteredBanners.slice(
     (pagination.current_page - 1) * pageSize,
@@ -132,7 +141,9 @@ const BannerList = () => {
         });
 
         // Update to use banners_list from the response
-        setBanners(response.data.banners_list || []);
+        const list = response.data.banners_list || [];
+        setBanners(list);
+        connectEvents.onModuleLoaded({ record_count: list.length });
         setLoading(false);
       } catch (error) {
         setError("Failed to fetch banners. Please try again later.");
@@ -152,6 +163,7 @@ const BannerList = () => {
       current_page: pageNumber,
     }));
     localStorage.setItem("banner_list_currentPage", pageNumber);
+    connectEvents.onModulePaginated({ page: pageNumber });
   };
 
   const handleSearchChange = (e) => {

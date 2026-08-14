@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const LoyaltyManagerList = () => {
+  const connectEvents = useConnectEvents();
   const [loyaltyManagers, setLoyaltyManagers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -52,6 +55,7 @@ const LoyaltyManagerList = () => {
           { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
         setLoyaltyManagers(response.data);
+        connectEvents.onModuleLoaded({ record_count: response.data.length });
         setPagination({
           current_page: getPageFromStorage(),
           total_count: response.data.length,
@@ -69,6 +73,7 @@ const LoyaltyManagerList = () => {
   }, []);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prev) => ({
       ...prev,
       current_page: pageNumber,
@@ -86,6 +91,8 @@ const LoyaltyManagerList = () => {
   const totalPages = Math.ceil(totalFiltered / pageSize);
 
   // ✅ Paginate data
+  useSearchTracking(searchQuery, filteredLoyaltyManagers.length);
+
   const displayedLoyaltyManagers = filteredLoyaltyManagers.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
@@ -106,6 +113,10 @@ const LoyaltyManagerList = () => {
           item.id === id ? { ...item, active: updatedStatus } : item
         )
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully!");
       
     } catch (error) {
@@ -128,6 +139,7 @@ const LoyaltyManagerList = () => {
       });
 
       setLoyaltyManagers((prev) => prev.filter((item) => item.id !== id));
+      connectEvents.onRecordDeleted({ record_id: id });
       toast.success("Loyalty manager deleted successfully!");
     } catch (error) {
       console.error("Error deleting loyalty manager:", error);

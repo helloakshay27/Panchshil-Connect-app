@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const LockRoleCreate = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
@@ -171,6 +173,7 @@ const LockRoleCreate = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Lock role created successfully");
       navigate("/setup-member/lock-role-list");
     } catch (error) {

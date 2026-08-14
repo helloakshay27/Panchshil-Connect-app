@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const PlusServiceCreate = () => {
+  const connectEvents = useConnectEvents();
   const [projects, setProjects] = useState([]);
   const [services, setServices] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
@@ -184,6 +186,7 @@ const PlusServiceCreate = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Plus Service created successfully!");
 
       setServiceData({

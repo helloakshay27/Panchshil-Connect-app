@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const UserEdit = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams(); // Get user ID from URL params
   const [loading, setLoading] = useState(false);
@@ -324,6 +326,9 @@ const UserEdit = () => {
       ({ field }) => !formData[field] || String(formData[field]).trim() === ""
     );
     if (emptyFields.length === requiredFields.length) {
+      connectEvents.onFormValidationFailed({
+        fields: emptyFields.map(({ field }) => field),
+      });
       toast.dismiss();
       toast.error("Please fill in all the required fields.");
       return false;
@@ -333,6 +338,7 @@ const UserEdit = () => {
       if (!formData[field] || String(formData[field]).trim() === "") {
         newErrors[field] = `${label} is mandatory`;
         setErrors(newErrors);
+        connectEvents.onFormValidationFailed({ fields: [field] });
         toast.dismiss();
         toast.error(`${label} is mandatory`);
         return false;
@@ -445,6 +451,7 @@ const UserEdit = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("User updated successfully");
       console.log("Response from API:", response.data);
       navigate("/setup-member/user-list");

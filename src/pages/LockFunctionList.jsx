@@ -3,12 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const getPageFromStorage = () => {
   return parseInt(localStorage.getItem("organization_currentPage")) || 1;
 };
 
 const LockFunctionList = () => {
+  const connectEvents = useConnectEvents();
   const [lockFunctions, setLockFunctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -73,6 +76,10 @@ const LockFunctionList = () => {
         }
       );
 
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: currentStatus === 1 ? "inactive" : "active",
+      });
       toast.success("Lock function status updated successfully");
       fetchLockFunctions(); // Refresh the list
     } catch (error) {
@@ -94,6 +101,7 @@ const LockFunctionList = () => {
           }
         );
 
+        connectEvents.onRecordDeleted({ record_id: id });
         toast.success("Lock function deleted successfully");
         fetchLockFunctions(); // Refresh the list
       } catch (error) {
@@ -114,6 +122,8 @@ const LockFunctionList = () => {
       func.parent_function?.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
+  useSearchTracking(searchTerm, filteredFunctions.length);
+
   // Calculate pagination for filtered results
   const totalFiltered = filteredFunctions.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
@@ -135,6 +145,7 @@ const LockFunctionList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,

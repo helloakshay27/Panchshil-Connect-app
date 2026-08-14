@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const AmenitiesList = () => {
+  const connectEvents = useConnectEvents();
   const [amenities, setAmenities] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -51,6 +54,7 @@ const AmenitiesList = () => {
         const data = response.data.amenities_setups || [];
 
         setAmenities(data);
+        connectEvents.onModuleLoaded({ record_count: data.length });
         setPagination({
           total_count: data.length,
           total_pages: Math.ceil(data.length / pageSize),
@@ -68,6 +72,7 @@ const AmenitiesList = () => {
   }, []);
 
   const handlePageChange = (page) => {
+    connectEvents.onModulePaginated({ page: page });
     setPagination((prev) => ({ ...prev, current_page: page }));
     localStorage.setItem("amenities_list_currentPage", page);
   };
@@ -87,6 +92,10 @@ const AmenitiesList = () => {
             item.id === id ? { ...item, active: updatedStatus } : item
           )
         );
+        connectEvents.onRecordStatusChanged({
+          record_id: id,
+          new_status: !currentStatus ? "active" : "inactive",
+        });
         toast.success("Status updated successfully!");
       }
     } catch (error) {
@@ -141,6 +150,7 @@ const AmenitiesList = () => {
       await axios.delete(`${baseURL}amenity_setups/${id}.json`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       });
+      connectEvents.onRecordDeleted({ record_id: id });
       toast.success("Amenity deleted successfully!");
 
       setAmenities((prevAmenities) =>
@@ -170,6 +180,8 @@ const AmenitiesList = () => {
   );
   const totalFiltered = filteredAmenities.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  useSearchTracking(searchQuery, filteredAmenities.length);
 
   const displayedAmenities = filteredAmenities
     .slice(

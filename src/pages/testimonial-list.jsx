@@ -6,10 +6,13 @@ import { useNavigate } from "react-router-dom";
 import "../mor.css";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 // Import toast if using react-hot-toast
 // import toast from 'react-hot-toast';
 
 const TestimonialList = () => {
+  const connectEvents = useConnectEvents();
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,6 +62,7 @@ const TestimonialList = () => {
           }
         );
         setTestimonials(response.data.testimonials || []);
+        connectEvents.onModuleLoaded({ record_count: response.data.testimonials.length });
         setPagination((prevState) => ({
           ...prevState,
           total_count: response.data.testimonials.length,
@@ -90,12 +94,15 @@ const TestimonialList = () => {
     : testimonials;
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
     }));
     localStorage.setItem("testimonial_list_currentPage", pageNumber);
   };
+
+  useSearchTracking(searchQuery, filteredTestimonials.length);
 
   const displayedTestimonials = filteredTestimonials
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -140,6 +147,10 @@ const TestimonialList = () => {
       //   id: `toggle-${id}`,
       // });
       // setActiveToastId(newToastId);
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully!");
       console.log("Status updated successfully!");
     } catch (error) {

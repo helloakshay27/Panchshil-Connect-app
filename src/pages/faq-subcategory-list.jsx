@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios"; // Add axios import
 import { toast } from "react-toastify"; // Add toast import
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const FaqSubCategoryList = () => {
+  const connectEvents = useConnectEvents();
   const [subCategories, setSubCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -126,6 +129,10 @@ const FaqSubCategoryList = () => {
           item.id === id ? { ...item, active: updatedStatus } : item
         )
       );
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Sub category status updated successfully!");
     } catch (error) {
       console.error("Error updating sub category status:", error);
@@ -134,6 +141,7 @@ const FaqSubCategoryList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination(prev => ({
       ...prev,
       current_page: pageNumber,
@@ -149,6 +157,8 @@ const FaqSubCategoryList = () => {
 
   const totalFiltered = filteredSubCategories.length;
   const totalPages = Math.ceil(totalFiltered / itemsPerPage) || 1;
+
+  useSearchTracking(searchQuery, filteredSubCategories.length);
 
   const displayedSubCategories = filteredSubCategories.slice(
     (pagination.current_page - 1) * itemsPerPage,

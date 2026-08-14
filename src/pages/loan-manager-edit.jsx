@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const LoanManagerEdit = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
@@ -133,6 +135,7 @@ const LoanManagerEdit = () => {
       );
 
       if (response.status === 200) {
+        connectEvents.onRecordSaved({ mode: "updated" });
         toast.success("Loan Manager updated successfully");
         navigate("/setup-member/loan-manager-list");
       }

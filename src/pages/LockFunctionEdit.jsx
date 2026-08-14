@@ -4,8 +4,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const LockFunctionEdit = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams(); // Get the ID from URL parameters
   const [loading, setLoading] = useState(true);
@@ -274,6 +276,7 @@ const LockFunctionEdit = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Lock function updated successfully");
       navigate("/setup-member/lock-function-list");
     } catch (error) {

@@ -9,8 +9,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const ProjectDetailsList = () => {
+  const connectEvents = useConnectEvents();
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -85,6 +88,7 @@ const ProjectDetailsList = () => {
       sessionStorage.setItem("cached_projects", JSON.stringify(projectsData));
       
 
+      connectEvents.onModuleLoaded({ record_count: projectsData.length });
       setPagination({
         current_page: getPageFromStorage(),
         total_count: projectsData.length,
@@ -131,6 +135,7 @@ const ProjectDetailsList = () => {
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= pagination.total_pages) {
+      connectEvents.onModulePaginated({ page: pageNumber });
       setPagination({
         ...pagination,
         current_page: pageNumber,
@@ -168,6 +173,10 @@ const ProjectDetailsList = () => {
       sessionStorage.removeItem("cached_projects");
 
       // Show new toast and store its ID
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       const newToastId = toast.success("Status updated successfully!", {
         duration: 3000, // Toast will auto-dismiss after 3 seconds
         position: "top-center", // Position the toast at the top center
@@ -202,6 +211,8 @@ const ProjectDetailsList = () => {
   const totalFilteredPages = Math.ceil(filteredProjects.length / pageSize);
 
   // Get the current page of projects to display
+  useSearchTracking(searchQuery, filteredProjects.length);
+
   const displayedProjects = filteredProjects.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize

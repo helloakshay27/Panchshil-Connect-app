@@ -4,8 +4,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ProjectBuildingTypeEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams();
   const navigate = useNavigate();
   const [buildingType, setBuildingType] = useState("");
@@ -119,6 +121,7 @@ const ProjectBuildingTypeEdit = () => {
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}`, "Content-Type": "application/json" },
       });
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Building type updated successfully");
       navigate("/setup-member/project-building-type-list");
     } catch (error) {

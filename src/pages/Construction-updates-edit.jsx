@@ -6,8 +6,10 @@ import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ConstructionUpdatesEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
@@ -241,6 +243,7 @@ const ConstructionUpdatesEdit = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Construction update updated successfully");
       navigate("/setup-member/construction-updates-list");
     } catch (err) {

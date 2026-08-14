@@ -3,8 +3,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ServiceCategoryForm = () => {
+  const connectEvents = useConnectEvents();
   const [formData, setFormData] = useState({
     service_cat_name: "",
     service_image: "",
@@ -138,6 +140,7 @@ const ServiceCategoryForm = () => {
           payload,
           { headers }
         );
+        connectEvents.onRecordSaved({ mode: "updated" });
         toast.success("Service Category updated successfully!");
       } else {
         await axios.post(
@@ -145,6 +148,7 @@ const ServiceCategoryForm = () => {
           payload,
           { headers }
         );
+        connectEvents.onRecordSaved({ mode: "added" });
         toast.success("Service Category created successfully!");
       }
 

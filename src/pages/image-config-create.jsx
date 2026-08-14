@@ -5,8 +5,10 @@ import "../mor.css";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const CreateImageConfiguration = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedName, setSelectedName] = useState("");
@@ -151,6 +153,7 @@ const CreateImageConfiguration = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Image configuration created successfully!");
       navigate("/setup-member/image-config-list");
     } catch (error) {

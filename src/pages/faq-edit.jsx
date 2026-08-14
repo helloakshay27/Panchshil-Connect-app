@@ -4,8 +4,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const FaqEdit = () => {
+  const connectEvents = useConnectEvents();
   const [formData, setFormData] = useState({
     faq_category_id: "",
     faq_sub_category_id: "",
@@ -406,6 +408,7 @@ const FaqEdit = () => {
       headers: getAuthHeaders(),
     });
 
+    connectEvents.onRecordSaved({ mode: "updated" });
     toast.success("FAQ updated successfully!");
     navigate("/faq-list");
   } catch (error) {

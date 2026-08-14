@@ -4,8 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ReferralProgramEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams();
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState("");
@@ -306,6 +308,7 @@ const ReferralProgramEdit = () => {
       }
 
       console.log("Update response:", response.data);
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Referral updated successfully!");
       navigate("/referral-program-list");
       

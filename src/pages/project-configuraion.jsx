@@ -4,8 +4,10 @@ import SelectBox from "../components/base/SingleSelect";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const ProjectConfiguration = () => {
+  const connectEvents = useConnectEvents();
   const [iconPreview, setIconPreview] = useState(null); // ✅ Holds icon preview
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -75,6 +77,7 @@ const ProjectConfiguration = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Project configuration created successfully!");
       navigate("/setup-member/project-configuration-list");
     } catch (error) {

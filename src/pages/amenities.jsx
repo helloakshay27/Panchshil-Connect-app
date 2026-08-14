@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const Amenities = () => {
+  const connectEvents = useConnectEvents();
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
@@ -81,6 +83,7 @@ const Amenities = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Amenity added successfully");
       setName("");
       setAmenityType("");

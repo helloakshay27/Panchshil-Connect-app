@@ -4,8 +4,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const SiteEdit = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams(); // Get the site ID from URL params
   const [organizations, setOrganizations] = useState([]);
@@ -240,6 +242,7 @@ const SiteEdit = () => {
       );
 
       if (response.status === 200) {
+        connectEvents.onRecordSaved({ mode: "updated" });
         toast.success("Site updated successfully!");
         navigate("/site-list");
       } else {

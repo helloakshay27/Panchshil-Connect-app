@@ -9,8 +9,10 @@ import { ImageUploadingButton } from "../components/reusable/ImageUploadingButto
 import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const EventCreate = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     event_type: "",
@@ -677,6 +679,7 @@ const EventCreate = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Event created successfully!");
       setFormData({
         title: "",

@@ -4,8 +4,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const LockFunctionCreate = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
@@ -125,6 +127,7 @@ const LockFunctionCreate = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Lock function created successfully");
       navigate("/setup-member/lock-function-list");
     } catch (error) {

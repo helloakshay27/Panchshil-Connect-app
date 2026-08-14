@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const PlusServicesList = () => {
+  const connectEvents = useConnectEvents();
   const [plusServices, setPlusServices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -59,6 +62,7 @@ const PlusServicesList = () => {
       const servicesList = data.plus_services || data || [];
 
       setPlusServices(servicesList);
+      connectEvents.onModuleLoaded({ record_count: servicesList.length });
       setPagination((prevState) => ({
         ...prevState,
         total_count: servicesList.length,
@@ -75,6 +79,7 @@ const PlusServicesList = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,
@@ -92,6 +97,8 @@ const PlusServicesList = () => {
 
   const totalFiltered = filteredServices.length;
   const totalPages = Math.ceil(totalFiltered / pageSize);
+
+  useSearchTracking(searchQuery, filteredServices.length);
 
   const displayedServices = filteredServices.slice(
     (pagination.current_page - 1) * pageSize,
@@ -126,6 +133,10 @@ const PlusServicesList = () => {
       );
 
       console.log("Status updated successfully!");
+      connectEvents.onRecordStatusChanged({
+        record_id: id,
+        new_status: !currentStatus ? "active" : "inactive",
+      });
       toast.success("Status updated successfully!");
     } catch (error) {
       console.error("Error updating status:", error);
@@ -145,6 +156,7 @@ const PlusServicesList = () => {
       });
       // Optionally update your list here, e.g.:
       setPlusServices((prev) => prev.filter((service) => service.id !== id));
+      connectEvents.onRecordDeleted({ record_id: id });
       toast.success("Plus service deleted successfully!");
     } catch (error) {
       console.error("Error deleting plus service:", error);

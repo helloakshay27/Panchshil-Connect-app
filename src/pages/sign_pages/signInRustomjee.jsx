@@ -5,8 +5,11 @@ import "./login.css";
 import toast from "react-hot-toast";
 import { baseURL, Rustomji_URL, Lokated_URL } from "../baseurl/apiDomain";
 import { Eye, EyeOff } from "lucide-react";
+import { useConnectEvents } from "../../hooks/useConnectEvents";
+import { establishAnalyticsIdentity } from "../../utils/analyticsIdentity";
 
 const SignInRustomjee = () => {
+  const connectEvents = useConnectEvents();
   // State management
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -95,12 +98,36 @@ const config = {
         // localStorage.setItem("access_token", response.data.access_token);
         // sessionStorage.setItem("email", response.data.email);
         // sessionStorage.setItem("firstname", response.data.firstname);
+
+        // Analytics identity + company backfill; swallows its own errors.
+        await establishAnalyticsIdentity(
+          {
+            id: response.data?.id,
+            email: response.data?.email,
+            firstname: response.data?.firstname,
+            lastname: response.data?.lastname,
+            lock_role_name: lockRole?.name,
+          },
+          response.data?.access_token
+        );
+        connectEvents.onLoginSucceeded({ method: "password" });
+
         navigate("/project-list");
         toast.success("Login successful", { id: "login-success" });
       } else {
+        connectEvents.onLoginFailed({
+          method: "password",
+          reason: "no_access_token",
+        });
         setError("Login failed. Please check your credentials.");
       }
     } catch (err) {
+      connectEvents.onLoginFailed({
+        method: "password",
+        reason: err?.response?.status
+          ? `http_${err.response.status}`
+          : "network_error",
+      });
       toast.error("Login failed. Please check your credentials.", { id: "login-error" });
       // setError("An error occurred during login. Please try again.");
     } finally {

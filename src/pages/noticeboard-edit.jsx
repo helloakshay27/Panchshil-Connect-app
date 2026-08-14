@@ -6,8 +6,10 @@ import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const NoticeboardEdit = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -351,6 +353,7 @@ const NoticeboardEdit = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Broadcast updated successfully!");
       navigate("/noticeboard-list");
     } catch (err) {

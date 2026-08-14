@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const SMTPSettingsList = () => {
+  const connectEvents = useConnectEvents();
   const [smtpSetting, setSmtpSetting] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -89,9 +91,13 @@ const SMTPSettingsList = () => {
         ) {
           console.log("SMTP setting found:", settingData);
           setSmtpSetting(settingData);
+          // 1 or 0 rather than a list length — this page holds a single
+          // setting, so the count answers "is SMTP configured for this tenant?"
+          connectEvents.onModuleLoaded({ record_count: 1 });
         } else {
           console.log("No valid SMTP setting found in response");
           setSmtpSetting(null);
+          connectEvents.onModuleLoaded({ record_count: 0 });
         }
       } else {
         console.log("Invalid response structure");

@@ -5,8 +5,10 @@ import "../mor.css";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const EditAmenities = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
   const { id } = useParams();
   const [name, setName] = useState("");
@@ -112,6 +114,7 @@ const EditAmenities = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Amenity updated successfully!");
       navigate("/setup-member/amenities-list");
     } catch (error) {

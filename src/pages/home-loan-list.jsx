@@ -11,8 +11,11 @@ import { toast } from "react-hot-toast";
 import SearchIcon from "../components/Icons/SearchIcon";
 import axios from "axios";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const HomeLoanList = () => {
+  const connectEvents = useConnectEvents();
   const [error, setError] = useState(null);
   const [homeLoans, setHomeLoans] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -78,6 +81,10 @@ const HomeLoanList = () => {
               : loan
           )
         );
+        connectEvents.onRecordStatusChanged({
+          record_id: loanId,
+          new_status: !currentStatus ? "active" : "inactive",
+        });
         toast.success("Home loan status updated successfully!");
       }
     } catch (error) {
@@ -114,6 +121,8 @@ const HomeLoanList = () => {
   }, [filteredHomeLoans.length, pageSize, searchQuery]);
 
   // Get current page's home loans
+  useSearchTracking(searchQuery, filteredHomeLoans.length);
+
   const displayedHomeLoans = filteredHomeLoans.slice(
     (pagination.current_page - 1) * pageSize,
     pagination.current_page * pageSize
@@ -144,6 +153,7 @@ const HomeLoanList = () => {
   console.log(homeLoans);
 
   const handlePageChange = (pageNumber) => {
+    connectEvents.onModulePaginated({ page: pageNumber });
     setPagination((prevState) => ({
       ...prevState,
       current_page: pageNumber,

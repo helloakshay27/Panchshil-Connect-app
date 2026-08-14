@@ -4,8 +4,10 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const LoanManagerAdd = () => {
+  const connectEvents = useConnectEvents();
   const navigate = useNavigate();
 
   const [projects, setProjects] = useState([]);
@@ -108,6 +110,7 @@ const LoanManagerAdd = () => {
         },
       });
 
+      connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Loan Manager created successfully");
       navigate("/setup-member/loan-manager-list");
     } catch (error) {

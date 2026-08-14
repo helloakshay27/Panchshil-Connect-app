@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useSearchTracking } from "../hooks/useSearchTracking";
 
 const LockRoleList = () => {
+  const connectEvents = useConnectEvents();
   const [lockRoles, setLockRoles] = useState([]);
   const [lockFunctions, setLockFunctions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -221,6 +224,10 @@ const LockRoleList = () => {
       );
 
       setLockRoles(updatedRoles);
+      connectEvents.onRecordSaved({
+        mode: "updated",
+        record_id: selectedRole.id,
+      });
       toast.success("Role Updated successfully!");
     } catch (error) {
       console.error("Error saving permissions:", error);
@@ -234,6 +241,8 @@ const LockRoleList = () => {
       (role.display_name &&
         role.display_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  useSearchTracking(searchTerm, filteredRoles.length);
 
   const formatFunctionName = (name) => {
     return name

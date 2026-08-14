@@ -4,8 +4,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
+import { useConnectEvents } from "../hooks/useConnectEvents";
 
 const LoyaltyManagerEdit = () => {
+  const connectEvents = useConnectEvents();
   const { id } = useParams(); // ✅ Get ID from URL
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -104,6 +106,7 @@ const LoyaltyManagerEdit = () => {
         }
       );
 
+      connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Loyalty Manager updated successfully!");
       navigate("/setup-member/loyalty-managers-list"); // ✅ Navigate after success
     } catch (error) {
