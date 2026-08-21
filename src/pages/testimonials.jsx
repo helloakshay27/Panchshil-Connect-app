@@ -16,6 +16,7 @@ const Testimonials = () => {
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
   const [companySetupId, setCompanySetupId] = useState("");
   const [userName, setUserName] = useState("");
+  const [customerCode, setCustomerCode] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [userProfile, setUserProfile] = useState(""); // State for user profile
@@ -311,6 +312,7 @@ const handleCropComplete = (validImages) => {
 
     const form = new FormData();
     form.append("testimonial[user_name]", userName.trim());
+    form.append("testimonial[customer_code]", customerCode.trim());
     form.append("testimonial[content]", content.trim());
     form.append("testimonial[building_id]", buildingTypeId?.toString() || "");
     form.append(
@@ -371,6 +373,7 @@ const handleCropComplete = (validImages) => {
       toast.success("Data saved successfully!");
       // reset all
       setUserName("");
+      setCustomerCode("");
       setVideoUrl("");
       setImagePreview("");
       setUserProfile("");
@@ -420,6 +423,21 @@ const handleCropComplete = (validImages) => {
                         placeholder="Enter user name"
                         value={userName}
                         onChange={(e) => setUserName(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Customer Code */}
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Customer Code</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="customerCode"
+                        placeholder="Enter customer code"
+                        value={customerCode}
+                        onChange={(e) => setCustomerCode(e.target.value)}
                       />
                     </div>
                   </div>

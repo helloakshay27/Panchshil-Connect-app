@@ -19,6 +19,7 @@ const TestimonialEdit = () => {
 
   const [formData, setFormData] = useState({
     user_name: testimonial?.user_name || "",
+    customer_code: testimonial?.customer_code || "",
     user_profile: testimonial?.profile_of_user || "",
     building_id: testimonial?.building_id ?? null,
     content: testimonial?.content || "",
@@ -61,6 +62,7 @@ const TestimonialEdit = () => {
 
         setFormData({
           user_name: response.data.user_name || "",
+          customer_code: response.data.customer_code || "",
           user_profile: response.data.profile_of_user || "",
           building_id: response.data.building_id ?? null,
           content: response.data.content || "",
@@ -341,6 +343,7 @@ const TestimonialEdit = () => {
     try {
       const sendData = new FormData();
       sendData.append("testimonial[user_name]", formData.user_name);
+      sendData.append("testimonial[customer_code]", formData.customer_code);
       sendData.append("testimonial[profile_of_user]", formData.user_profile);
       sendData.append("testimonial[building_id]", formData.building_id);
       sendData.append("testimonial[content]", formData.content);
@@ -588,6 +591,19 @@ const TestimonialEdit = () => {
                       className="form-control"
                       name="user_name"
                       value={formData.user_name}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <label>Customer Code</label>
+                    <input
+                      className="form-control"
+                      name="customer_code"
+                      placeholder="Enter customer code"
+                      value={formData.customer_code}
                       onChange={handleChange}
                     />
                   </div>
