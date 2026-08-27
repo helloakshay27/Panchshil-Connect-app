@@ -1,0 +1,62 @@
+/* Step tabs for the Event Create/Edit wizard - pill boxes connected by a
+   dashed line, active step filled with the app's brand colour. */
+
+.efs-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 4px 16px 22px;
+}
+
+.efs-connector {
+  flex: 1 1 40px;
+  min-width: 24px;
+  height: 0;
+  border-top: 2px dashed #d9d6ce;
+  margin: 0 10px;
+}
+
+.efs-step {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px solid #e7e5e4;
+  background: #fff;
+  color: #667085;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 14px 18px;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.efs-step:hover {
+  border-color: var(--red, #de7008);
+  color: var(--red, #de7008);
+}
+.efs-step.is-active {
+  background: var(--red, #de7008);
+  border-color: var(--red, #de7008);
+  color: #fff;
+}
+.efs-step.is-done {
+  color: var(--red, #de7008);
+  border-color: var(--red, #de7008);
+}
+
+.efs-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+@media (max-width: 720px) {
+  .efs-steps { flex-wrap: wrap; }
+  .efs-connector { display: none; }
+  .efs-step { flex: 1 1 auto; }
+}

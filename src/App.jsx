@@ -173,6 +173,8 @@ import HomeLoanRequest from "./pages/home-loan-request";
 import CreateImageConfiguration from "./pages/image-config-create";
 import NoticeboardEdit from "./pages/noticeboard-edit";
 import PanchshilConnectDashboard from "./pages/panchshil-connect-dashboard";
+import PanchshilConnectUsageDashboard from "./pages/panchshil-connect-usage-dashboard";
+import RustomjeeConnectUsageDashboard from "./pages/rustomjee-connect-usage-dashboard";
 
 if (
   baseURL === "https://api-connect.panchshil.com/" ||
@@ -269,6 +271,22 @@ function App() {
           element={
             <ProtectedRoute>
               <PanchshilConnectDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/panchshil_connect_dashboard/usage"
+          element={
+            <ProtectedRoute>
+              <PanchshilConnectUsageDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rustomjee_circle_dashboard"
+          element={
+            <ProtectedRoute>
+              <RustomjeeConnectUsageDashboard />
             </ProtectedRoute>
           }
         />

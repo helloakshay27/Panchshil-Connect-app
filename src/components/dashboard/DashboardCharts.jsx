@@ -200,7 +200,7 @@ export const GroupedHBar = ({ rows }) => {
 /* STACKED BAR (part-to-whole) - the right form for 2 segments.       */
 /* A 2-slice pie is an anti-pattern; this reads the share directly.   */
 /* ================================================================== */
-export const StackedShareBar = ({ rows }) => {
+export const StackedShareBar = ({ rows, colors = VIZ.cat }) => {
   const total = rows.reduce((s, r) => s + r.value, 0);
   return (
     <div className="pcd-share">
@@ -211,7 +211,7 @@ export const StackedShareBar = ({ rows }) => {
             className="pcd-share-seg"
             style={{
               width: `${pct(r.value, total)}%`,
-              background: VIZ.cat[i % VIZ.cat.length],
+              background: colors[i % colors.length],
             }}
             title={`${r.label}: ${nf.format(r.value)} (${pct(r.value, total)}%)`}
           />
@@ -220,7 +220,7 @@ export const StackedShareBar = ({ rows }) => {
       <ul className="pcd-share-keys">
         {rows.map((r, i) => (
           <li key={r.label}>
-            <span className="pcd-legend-dot" style={{ background: VIZ.cat[i % VIZ.cat.length] }} />
+            <span className="pcd-legend-dot" style={{ background: colors[i % colors.length] }} />
             <span className="pcd-share-name" title={r.label}>
               {r.label}
             </span>
@@ -236,7 +236,7 @@ export const StackedShareBar = ({ rows }) => {
 /* ================================================================== */
 /* DONUT - part-to-whole at a glance, legal at 3..6 segments          */
 /* ================================================================== */
-export const DonutChart = ({ rows, centerLabel = "Total" }) => {
+export const DonutChart = ({ rows, centerLabel = "Total", colors = VIZ.cat }) => {
   const [hover, setHover] = useState(null);
   const total = rows.reduce((s, r) => s + r.value, 0);
   const R = 60;
@@ -248,7 +248,7 @@ export const DonutChart = ({ rows, centerLabel = "Total" }) => {
     const len = total > 0 ? (r.value / total) * C : 0;
     const seg = {
       ...r,
-      color: VIZ.cat[i % VIZ.cat.length],
+      color: colors[i % colors.length],
       dash: Math.max(len - GAP, 0),
       offset,
       percent: pct(r.value, total),

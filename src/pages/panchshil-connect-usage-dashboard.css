@@ -1,0 +1,246 @@
+/* Panchshil Connect · Usage Dashboard (analytics layers).
+   Reuses .pcd-page's colour tokens and the .pcd-card / .pcd-tile / .pcd-note
+   etc. classes from panchshil-connect-dashboard.css verbatim, so the visual
+   language matches the main Engagement Dashboard exactly. Only the
+   sidebar-shell/nav and the key-questions box below are new. */
+
+.pud-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  align-items: start;
+}
+
+.pud-sidebar {
+  position: sticky;
+  top: 57px; /* sits just under the sticky topbar */
+  align-self: start;
+  padding: 24px 12px 40px;
+  border-right: 1px solid var(--pcd-line);
+  min-height: calc(100vh - 57px);
+}
+
+.pud-sidebar-back {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--pcd-muted);
+  text-decoration: none;
+  padding: 7px 10px;
+  margin: 0 0 18px;
+  border-radius: 8px;
+}
+.pud-sidebar-back:hover { background: #f5f4f1; color: var(--pcd-brand); }
+.pud-sidebar-back svg { width: 15px; height: 15px; flex: 0 0 auto; }
+
+.pud-sidebar-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pcd-muted);
+  padding: 0 10px 8px;
+}
+
+.pud-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pud-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--pcd-ink);
+  background: none;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 10px;
+  cursor: pointer;
+}
+.pud-nav-item:hover { background: #f5f4f1; }
+.pud-nav-item.is-on { background: #fdf1e4; color: var(--pcd-brand); font-weight: 700; }
+.pud-nav-item .pud-nav-ic {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: var(--pcd-muted);
+}
+.pud-nav-item.is-on .pud-nav-ic { color: var(--pcd-brand); }
+.pud-nav-item .pud-nav-ic svg { width: 17px; height: 17px; display: block; }
+
+.pud-main { padding: 26px 28px 60px; min-width: 0; }
+
+.pud-page-head h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--pcd-ink);
+  letter-spacing: -0.01em;
+}
+.pud-page-head p {
+  font-size: 13px;
+  color: var(--pcd-muted);
+  margin: 5px 0 0;
+}
+
+.pud-qbox {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--pcd-muted);
+  background: #faf9f8;
+  border: 1px solid var(--pcd-line);
+  border-radius: 10px;
+  padding: 12px 15px;
+  margin: 16px 0 20px;
+}
+.pud-qbox b { color: var(--pcd-ink); }
+.pud-qbox ul { margin: 6px 0 0; padding-left: 18px; }
+.pud-qbox li { margin: 2px 0; }
+
+/* ---------------- disclosure notes (sample vs real data) ---------------- */
+.pud-note-live {
+  font-size: 12px;
+  color: #1c6b3f;
+  background: #e8f3ec;
+  border: 1px solid #b7ddc3;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 10px 0;
+}
+.pud-note-live b { color: #14532d; }
+
+/* ---------------- module nav (bucket tabs + module chips) ---------------- */
+.pud-modnav { margin: 4px 0 18px; }
+.pud-modnav-buckets {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--pcd-line);
+  padding: 0 2px;
+}
+.pud-modnav-buckets button {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 0 9px;
+  margin-bottom: -1px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--pcd-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pud-modnav-buckets button:hover { color: var(--pcd-ink); }
+.pud-modnav-buckets button.is-on { color: var(--pcd-brand); border-bottom-color: var(--pcd-brand); }
+.pud-modnav-buckets .pud-mcount { font-size: 11px; color: var(--pcd-muted); margin-left: 4px; }
+.pud-modnav-mods { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 0 0; }
+.pud-modnav-mods button {
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 13px;
+  border: 1px solid var(--pcd-line);
+  border-radius: 20px;
+  background: #fff;
+  color: var(--pcd-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pud-modnav-mods button:hover { border-color: var(--pcd-brand); color: var(--pcd-brand); }
+.pud-modnav-mods button.is-on { background: var(--pcd-ink); border-color: var(--pcd-ink); color: #fff; }
+
+/* ---------------- funnel ---------------- */
+.pud-funnel { display: flex; flex-direction: column; gap: 9px; margin-top: 4px; }
+.pud-funnel-drop { font-size: 11.5px; color: var(--pcd-brand-2); font-weight: 600; padding-left: 2px; }
+.pud-funnel-step {
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--pcd-brand);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pud-funnel-sub { display: block; font-size: 11px; font-weight: 400; opacity: 0.86; margin-top: 2px; }
+
+/* ---------------- crash search ---------------- */
+.pud-search {
+  width: 100%;
+  max-width: 280px;
+  font-size: 13px;
+  color: var(--pcd-ink);
+  border: 1px solid var(--pcd-line);
+  border-radius: 6px;
+  padding: 7px 11px;
+  background: #fff;
+  margin-bottom: 10px;
+}
+.pud-search:focus { outline: 2px solid var(--pcd-brand); outline-offset: 1px; border-color: var(--pcd-brand); }
+
+/* ---------------- crash issue table extras ---------------- */
+.pud-crash-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  background: #f4f4f5;
+  border: 1px solid var(--pcd-line);
+  border-radius: 20px;
+  padding: 1px 8px;
+  color: var(--pcd-ink);
+  white-space: nowrap;
+}
+.pud-crash-tag {
+  font-size: 10px;
+  font-weight: 700;
+  background: #fdecec;
+  color: #a81e20;
+  border-radius: 20px;
+  padding: 1px 7px;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+.pud-crash-sub { display: block; font-size: 11px; color: var(--pcd-muted); font-weight: 400; white-space: normal; margin-top: 2px; }
+
+/* ---------------- cohort heat table ---------------- */
+.pud-cohort { border-collapse: separate; border-spacing: 3px; width: 100%; font-variant-numeric: tabular-nums; }
+.pud-cohort th {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--pcd-muted);
+  padding: 2px 3px;
+}
+.pud-cohort td {
+  text-align: center;
+  font-size: 12px;
+  border-radius: 5px;
+  padding: 9px 4px;
+}
+.pud-cohort td.pud-cohort-label { background: none; text-align: left; color: var(--pcd-muted); white-space: nowrap; }
+.pud-cohort td.pud-cohort-empty { background: #f4f4f5; color: #98a2b3; }
+
+@media (max-width: 960px) {
+  .pud-shell { grid-template-columns: 1fr; }
+  .pud-sidebar {
+    position: static;
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--pcd-line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 16px;
+  }
+  .pud-sidebar-label { display: none; }
+  .pud-nav { flex-direction: row; flex-wrap: wrap; }
+  .pud-nav-item { width: auto; border: 1px solid var(--pcd-line); }
+  .pud-main { padding: 20px 16px 48px; }
+}

@@ -80,13 +80,13 @@ const Header = () => {
   const navigate = useNavigate();
   const connectEvents = useConnectEvents();
 
-  const hostname = window.location.hostname; // like dev-panchshil-super-app.lockated.com
-
 const isPanchshil =
   baseURL === "https://api-connect.panchshil.com/" ||
   baseURL === "https://panchshil-super.lockated.com/" ||
   baseURL === "https://uatapi-connect.panchshil.com/";
-const isRustomjee = hostname.includes("rustomjee");
+const isRustomjee =
+  baseURL === "https://dev-panchshil-super-app.lockated.com/" ||
+  baseURL === "https://rustomjee-live.lockated.com/";
 
   // Compute first accessible route for Home and Setup
   const firstHomeRoute =
@@ -268,6 +268,14 @@ const isRustomjee = hostname.includes("rustomjee");
                 <NavLink
                   className="nav-link px-4 d-flex align-items-center"
                   to={firstDashboardRoute}
+                >
+                  Dashboard
+                </NavLink>
+              )}
+              {isRustomjee && (
+                <NavLink
+                  className="nav-link px-4 d-flex align-items-center"
+                  to="/rustomjee_circle_dashboard"
                 >
                   Dashboard
                 </NavLink>

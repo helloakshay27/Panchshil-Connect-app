@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import ShareSalesforceCustomersModal from "../components/events/ShareSalesforceCustomersModal";
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -14,6 +15,12 @@ const EventDetails = () => {
   const [remindersTriggered, setRemindersTriggered] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [isSendingReminder, setIsSendingReminder] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showTestEmailModal, setShowTestEmailModal] = useState(false);
+  const [testEmailType, setTestEmailType] = useState("creation");
+  const [testEmailName, setTestEmailName] = useState("");
+  const [testEmailAddress, setTestEmailAddress] = useState("");
+  const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
 
   const eventId = id;
   console.log("ID", eventData);
@@ -21,7 +28,7 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const response = await axios.get(`${baseURL}events/${eventId}}.json`, {
+        const response = await axios.get(`${baseURL}events/${eventId}.json`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
@@ -55,16 +62,16 @@ const EventDetails = () => {
         Array.isArray(eventData.group_id) ? eventData.group_id.length > 0 : true
       ));
 
-    if (!hasRecipients) {
-      toast.error("No users added or selected to publish the event via email.");
-      return;
-    }
+    // if (!hasRecipients) {
+    //   toast.error("No users added or selected to publish the event via email.");
+    //   return;
+    // }
 
     setIsSendingEmail(true);
     try {
       const response = await axios.patch(
-        `${baseURL}events/${eventId}.json`,
-        { email_trigger_enabled: true },
+        `${baseURL}events/${eventId}/update_event.json`,
+        { event: { email_trigger_enabled: true } },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -72,8 +79,9 @@ const EventDetails = () => {
           },
         }
       );
-      setEmailTriggerEnabled(response.data.email_trigger_enabled === true);
-      setEmailsTriggered(response.data.emails_triggered === true);
+      const data = response.data.event || response.data;
+      setEmailTriggerEnabled(data.email_trigger_enabled === true);
+      setEmailsTriggered(data.emails_triggered === true);
     } catch (error) {
       toast.error("Failed to send the email.");
     } finally {
@@ -87,10 +95,10 @@ const EventDetails = () => {
       return;
     }
 
-    if (!eventData.reminders || eventData.reminders.length === 0) {
-      toast.error("Please set the reminder first and then send the reminder email.");
-      return;
-    }
+    // if (!eventData.reminders || eventData.reminders.length === 0) {
+    //   toast.error("Please set the reminder first and then send the reminder email.");
+    //   return;
+    // }
 
     const hasRecipients =
       eventData.shared === 0 ||
@@ -101,16 +109,16 @@ const EventDetails = () => {
         Array.isArray(eventData.group_id) ? eventData.group_id.length > 0 : true
       ));
 
-    if (!hasRecipients) {
-      toast.error("No users added or selected to send reminders via email.");
-      return;
-    }
+    // if (!hasRecipients) {
+    //   toast.error("No users added or selected to send reminders via email.");
+    //   return;
+    // }
 
     setIsSendingReminder(true);
     try {
       const response = await axios.patch(
-        `${baseURL}events/${eventId}.json`,
-        { reminder_trigger_enabled: true },
+        `${baseURL}events/${eventId}/update_event.json`,
+        { event: { reminder_trigger_enabled: true } },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -118,12 +126,47 @@ const EventDetails = () => {
           },
         }
       );
-      setReminderTriggerEnabled(response.data.reminder_trigger_enabled === true);
-      setRemindersTriggered(response.data.reminders_triggered === true);
+      const data = response.data.event || response.data;
+      setReminderTriggerEnabled(data.reminder_trigger_enabled === true);
+      setRemindersTriggered(data.reminders_triggered === true);
     } catch (error) {
       toast.error("Failed to send the reminder.");
     } finally {
       setIsSendingReminder(false);
+    }
+  };
+
+  const handleSendTestEmail = async () => {
+    if (!testEmailName.trim() || !testEmailAddress.trim()) {
+      toast.error("Please enter a name and email address.");
+      return;
+    }
+
+    setIsSendingTestEmail(true);
+    try {
+      await axios.post(
+        `${baseURL}events/${eventId}/emails/test.json`,
+        {
+          email_type: testEmailType,
+          name: testEmailName.trim(),
+          email: testEmailAddress.trim(),
+          mark_as_test: false,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      toast.success("Test email sent.");
+      setShowTestEmailModal(false);
+      setTestEmailName("");
+      setTestEmailAddress("");
+    } catch (error) {
+      toast.error("Failed to send the test email.");
+    } finally {
+      setIsSendingTestEmail(false);
     }
   };
 
@@ -190,6 +233,20 @@ const EventDetails = () => {
                         : reminderTriggerEnabled && remindersTriggered
                         ? "Reminder Sent"
                         : "Send Reminder"}
+                    </button>
+                    {eventData.salesforce_fetch_status === "done" && (
+                      <button
+                        className="purple-btn2 btn-sm"
+                        onClick={() => setShowShareModal(true)}
+                      >
+                        Select Members to Share
+                      </button>
+                    )}
+                    <button
+                      className="purple-btn2 btn-sm"
+                      onClick={() => setShowTestEmailModal(true)}
+                    >
+                      Send Test Email
                     </button>
                   </div>
                 </div>
@@ -706,6 +763,51 @@ const EventDetails = () => {
                         </table>
                       </div>
                     </div>
+
+                    <div className="col-md-12 mt-4">
+                      <h5>Email Attachments</h5>
+                      <div className="mt-4 tbl-container">
+                        <table className="w-100">
+                          <thead>
+                            <tr>
+                              <th>Attachment</th>
+                              <th>File Name</th>
+                              <th>File Type</th>
+                              <th>Updated At</th>
+                              <th>Preview</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(() => {
+                              const emailAttachments = [
+                                { label: "Event Creation Email Attachment", file: eventData.creation_email_attachment },
+                                { label: "Event Reminder Email Attachment", file: eventData.reminder_email_attachment },
+                              ].filter((a) => a.file?.document_url);
+
+                              return emailAttachments.length > 0 ? (
+                                emailAttachments.map(({ label, file }, index) => (
+                                  <tr key={`email-attachment-${index}`}>
+                                    <td>{label}</td>
+                                    <td>{file.document_file_name}</td>
+                                    <td>{file.document_content_type}</td>
+                                    <td>{file.document_updated_at}</td>
+                                    <td>
+                                      {renderMedia(file, label, { width: "100px", height: "100px", objectFit: "contain", display: "block" })}
+                                    </td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan="5" className="text-center">
+                                    No Email Attachments
+                                  </td>
+                                </tr>
+                              );
+                            })()}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -713,6 +815,87 @@ const EventDetails = () => {
           </div>
         </div>
       </div>
+
+      {showShareModal && (
+        <ShareSalesforceCustomersModal
+          eventId={eventId}
+          eventProjects={eventData.event_projects || []}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {showTestEmailModal && (
+        <>
+          <div className="modal fade show" style={{ display: "block" }} tabIndex="-1">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Send Test Email</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowTestEmailModal(false)}
+                  />
+                </div>
+                <div className="modal-body">
+                  <div className="form-group mb-3">
+                    <label>Email Type</label>
+                    <select
+                      className="form-control"
+                      value={testEmailType}
+                      onChange={(e) => setTestEmailType(e.target.value)}
+                    >
+                      <option value="creation">Creation</option>
+                      <option value="reminder">Reminder</option>
+                    </select>
+                  </div>
+                  <div className="form-group mb-3">
+                    <label>Name</label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Enter name"
+                      value={testEmailName}
+                      onChange={(e) => setTestEmailName(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group mb-3">
+                    <label>Email</label>
+                    <input
+                      className="form-control"
+                      type="email"
+                      placeholder="Enter email"
+                      value={testEmailAddress}
+                      onChange={(e) => setTestEmailAddress(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="purple-btn1"
+                    onClick={() => setShowTestEmailModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="purple-btn2"
+                    onClick={handleSendTestEmail}
+                    disabled={isSendingTestEmail}
+                  >
+                    {isSendingTestEmail ? "Sending..." : "Send Test Email"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="modal-backdrop fade show"
+            onClick={() => setShowTestEmailModal(false)}
+          />
+        </>
+      )}
     </>
   );
 };

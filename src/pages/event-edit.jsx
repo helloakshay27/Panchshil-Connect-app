@@ -10,18 +10,24 @@ import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import EventFormSteps from "../components/events/EventFormSteps";
+
+const DATA_TYPE_OPTIONS = [
+  { value: "bookedClients", label: "Booked Clients" },
+  { value: "visitDoneLostClients", label: "Visit Done Lost Clients" },
+  { value: "lostLeads", label: "Lost Leads" },
+  { value: "cp", label: "CP" },
+];
 
 const EventEdit = () => {
   const connectEvents = useConnectEvents();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formErrors, setFormErrors] = useState({});
   const [errors, setErrors] = useState({});
 
   console.log("id", id);
 
   const [formData, setFormData] = useState({
-    project_id: "",
     event_type: "",
     title: "",
     event_name: "",
@@ -33,22 +39,18 @@ const EventEdit = () => {
     rsvp_number: "",
     description: "",
     publish: "",
-    user_id: [],
     comment: "",
     location_url: "",
     pay_at: "",
     payment_link: "",
-    shared: "",
-    group_id: [], // Changed to array
     attachfile: [],
     previewImage: [],
     is_important: "false",
     email_trigger_enabled: "false",
+    salesforce_data_retention_days: "",
+    creation_email_attachment: null,
+    reminder_email_attachment: null,
     set_reminders_attributes: [],
-    existingImages: [],
-    newImages: [],
-    cover_image: null,
-    existingCoverImage: null,
     existingImages: [], // for previously uploaded images
     newImages: [], // for newly selected images
     cover_image: null, // Changed from array to single value
@@ -70,11 +72,12 @@ const EventEdit = () => {
   console.log("Data", formData);
 
   const [eventType, setEventType] = useState([]);
-  const [eventUserID, setEventUserID] = useState([]);
-  const [groups, setGroups] = useState([]); // State to store groups
   const [loading, setLoading] = useState(false);
-  const [isEmailLocked, setIsEmailLocked] = useState(false);
+  const [selectedProjectIds, setSelectedProjectIds] = useState([]);
+  const [dataType, setDataType] = useState([]);
   const originalDataRef = useRef(null);
+  const creationAttachmentInputRef = useRef(null);
+  const reminderAttachmentInputRef = useRef(null);
 
   const [reminderValue, setReminderValue] = useState("");
   const [reminderUnit, setReminderUnit] = useState("");
@@ -86,6 +89,7 @@ const EventEdit = () => {
   const [showUploader, setShowUploader] = useState(false);
   // const [showCoverUploader, setShowCoverUploader] = useState(false);
   const [showAttachmentTooltip, setShowAttachmentTooltip] = useState(false);
+  const [step, setStep] = useState("details");
   const [showCoverUploader, setShowCoverUploader] = useState(false);
   const [showEventUploader, setShowEventUploader] = useState(false);
   const [showThumbnailUploader, setShowThumbnailUploader] = useState(false);
@@ -383,9 +387,17 @@ const EventEdit = () => {
     });
   };
 
-  // Convert reminders to API format before submission
+  // Convert reminders to API format before submission. Also folds in
+  // whatever is currently typed into the Unit/Value inputs but was never
+  // committed with "+ Add" — without this, filling those fields and going
+  // straight to Submit silently drops the reminder, since it never made it
+  // into formData.set_reminders_attributes.
   const prepareRemindersForSubmission = () => {
-    return formData.set_reminders_attributes
+    const pending =
+      reminderValue && reminderUnit
+        ? [{ value: reminderValue, unit: reminderUnit }]
+        : [];
+    return [...formData.set_reminders_attributes, ...pending]
       .map((reminder) => {
         if (reminder._destroy) {
           return { id: reminder.id, _destroy: true };
@@ -494,31 +506,24 @@ const EventEdit = () => {
           return reminder;
         });
 
-        // Normalize user_id
-        const userIds = Array.isArray(data.user_id)
-          ? data.user_id
-          : data.user_id
-          ? [data.user_id]
-          : [];
-
-        // Normalize group_id
-        const groupIds = Array.isArray(data.group_id)
-          ? data.group_id
-          : data.group_id
-          ? [data.group_id]
-          : [];
-
-        // Determine share type
-        let shared = "";
-        if (data.shared === 0) {
-          shared = "all";
-        } else if (data.shared === 1) {
-          if (data.group_id && data.group_id.length > 0) {
-            shared = "group";
-          } else if (data.user_id && data.user_id.length > 0) {
-            shared = "individual";
-          }
+        // Hydrate the selected projects + single data type from
+        // event_projects, if the API returns them; otherwise fall back to
+        // the single legacy project_id so there is still one selected
+        // project. All projects share one data type in this UI, so take it
+        // from the first entry that has one.
+        let initialProjectIds = [];
+        let initialDataTypes = [];
+        if (Array.isArray(data.event_projects) && data.event_projects.length > 0) {
+          initialProjectIds = data.event_projects.map((ep) => ep.project_id ?? "");
+          const firstWithDataType = data.event_projects.find(
+            (ep) => Array.isArray(ep.data_types) && ep.data_types.length > 0
+          );
+          initialDataTypes = firstWithDataType?.data_types || [];
+        } else if (data.project_id) {
+          initialProjectIds = [data.project_id];
         }
+        setSelectedProjectIds(initialProjectIds);
+        setDataType(initialDataTypes);
 
         // Prepare cover image preview
         const existingCoverImage =
@@ -551,12 +556,12 @@ const EventEdit = () => {
           ...prev,
           ...data,
           title: data.event_title || data.event_title || "",
-          user_id: userIds,
-          group_id: groupIds, // Store as array
-          shared: shared,
           // attachfile: data.attachfile || [],
           pay_at: data.pay_at || "",
           payment_link: data.payment_link || "",
+          salesforce_data_retention_days: data.salesforce_data_retention_days || "",
+          creation_email_attachment: data.creation_email_attachment || null,
+          reminder_email_attachment: data.reminder_email_attachment || null,
           attachfile: attachfileData,
           newImages: [],
           existingImages: existingImages,
@@ -579,10 +584,7 @@ const EventEdit = () => {
           location_url: data.comment || "",
         }));
 
-        setIsEmailLocked(data.email_trigger_enabled === true);
-
         originalDataRef.current = {
-          project_id: data.project_id,
           event_type: data.event_type || "",
           title: data.event_title || "",
           event_name: data.event_name || "",
@@ -597,12 +599,13 @@ const EventEdit = () => {
           email_trigger_enabled: data.email_trigger_enabled,
           pay_at: data.pay_at || "",
           payment_link: data.payment_link || "",
-          shared: shared,
-          user_id: userIds,
+          salesforce_data_retention_days: data.salesforce_data_retention_days || "",
           publish: data.publish || "",
           comment: data.comment || "",
           location_url: data.comment || "",
           had_cover_image: !!(data.cover_image && data.cover_image.document_url),
+          project_ids: initialProjectIds,
+          data_types: initialDataTypes,
         };
 
         console.log("project_id: ", data.project_id);
@@ -655,16 +658,21 @@ const EventEdit = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(`${baseURL}get_all_projects.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.get(
+          `${baseURL}projects/projects_for_events.json`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-        console.log("Fetched Projects:", response.data);
-
-        setProjects(response.data.projects || []); // Ensure data structure is correct
+        setProjects(
+          Array.isArray(response.data)
+            ? response.data
+            : response.data.projects || []
+        ); // Ensure data structure is correct
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
@@ -672,48 +680,6 @@ const EventEdit = () => {
 
     fetchProjects();
   }, []);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(`${baseURL}users/get_users`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        });
-        setEventUserID(response.data.users || []);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-    fetchUsers();
-  }, []);
-
-  // Fetch groups
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await axios.get(`${baseURL}usergroups.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        });
-        const groupsData = Array.isArray(response.data)
-          ? response.data
-          : response.data.usergroups || [];
-        setGroups(groupsData);
-      } catch (error) {
-        console.error("Error fetching Groups:", error);
-        setGroups([]);
-      }
-    };
-
-    if (formData.shared === "group" && (!groups || groups.length === 0)) {
-      fetchGroups();
-    }
-  }, [formData.shared]);
 
   useEffect(() => {
     const fetchImageConfigurations = async () => {
@@ -957,18 +923,81 @@ const EventEdit = () => {
     }));
   };
 
-  const validateForm = () => {
-    const errors = {};
-    if (!formData.event_name) {
-      errors.event_name = "Event Name is required.";
-    }
-    setFormErrors(errors);
+  const handleProjectsMultiSelectChange = (selectedOptions) => {
+    setSelectedProjectIds(selectedOptions.map((opt) => opt.value));
+  };
 
-    if (Object.keys(errors).length > 0) {
-      toast.error(Object.values(errors)[0]);
+  const handleCreationEmailAttachmentChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFormData((prev) => ({
+      ...prev,
+      creation_email_attachment: {
+        file,
+        name: file.name,
+        preview: URL.createObjectURL(file),
+      },
+    }));
+  };
+
+  const handleReminderEmailAttachmentChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFormData((prev) => ({
+      ...prev,
+      reminder_email_attachment: {
+        file,
+        name: file.name,
+        preview: URL.createObjectURL(file),
+      },
+    }));
+  };
+
+  const validateDetailsStep = () => {
+    const errors = [];
+    if (!formData.event_name) errors.push("Event Name is required.");
+    if (selectedProjectIds.length === 0) errors.push("Please select at least one project.");
+    else if (dataType.length === 0) errors.push("Please select at least one data type.");
+    return errors;
+  };
+
+  const validateImagesStep = () => {
+    const errors = [];
+    if (!formData.creation_email_attachment) {
+      errors.push("Event Creation Email Attachment is required.");
+    }
+    if (!formData.reminder_email_attachment) {
+      errors.push("Event Reminder Email Attachment is required.");
+    }
+    return errors;
+  };
+
+  const validateForm = () => {
+    const errors = [...validateDetailsStep(), ...validateImagesStep()];
+    if (errors.length > 0) {
+      toast.error(errors[0]);
       return false;
     }
     return true;
+  };
+
+  const goToStep = (nextStep) => {
+    if (nextStep === "images" || nextStep === "preview") {
+      const errors = validateDetailsStep();
+      if (errors.length > 0) {
+        errors.forEach((err) => toast.error(err));
+        return;
+      }
+    }
+    if (nextStep === "preview") {
+      const errors = validateImagesStep();
+      if (errors.length > 0) {
+        errors.forEach((err) => toast.error(err));
+        return;
+      }
+    }
+    setStep(nextStep);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubmit = async (e) => {
@@ -1030,9 +1059,60 @@ const EventEdit = () => {
       return String(currentVal ?? "") !== String(origVal ?? "");
     };
 
-    const backendSharedValue = formData.shared === "all" ? 0 : formData.shared === "individual" || formData.shared === "group" ? 1 : null;
-    if (backendSharedValue !== null && hasChanged("shared", formData.shared)) {
-      data.append("event[shared]", backendSharedValue);
+    // === PROJECTS & DATA TYPES (only if actually changed) ===
+    // Primary project is the first selected one; every selected project
+    // (with its Salesforce project id) goes into event_projects_attributes,
+    // all sharing the same set of data types chosen above. Compared as
+    // sorted sets, not array order, since re-selecting the same values in a
+    // different order isn't a real change.
+    const origProjectIds = orig.project_ids || [];
+    const projectsChanged =
+      JSON.stringify([...selectedProjectIds].map(String).sort()) !==
+      JSON.stringify([...origProjectIds].map(String).sort());
+    const origDataTypes = orig.data_types || [];
+    const dataTypesChanged =
+      JSON.stringify([...dataType].sort()) !== JSON.stringify([...origDataTypes].sort());
+
+    if (projectsChanged || dataTypesChanged) {
+      data.append("event[project_id]", selectedProjectIds[0] || "");
+      selectedProjectIds.forEach((projectId, index) => {
+        const projectMeta = projects.find(
+          (p) => String(p.id) === String(projectId)
+        );
+        const projectSfdcId =
+          projectMeta?.sfdc_id ||
+          projectMeta?.SFDC_Project_Id ||
+          projectMeta?.project_sfdc_id ||
+          "";
+        data.append(
+          `event[event_projects_attributes][${index}][project_id]`,
+          projectId
+        );
+        data.append(
+          `event[event_projects_attributes][${index}][project_sfdc_id]`,
+          projectSfdcId
+        );
+        dataType.forEach((dt) => {
+          data.append(
+            `event[event_projects_attributes][${index}][data_types][]`,
+            dt
+          );
+        });
+      });
+    }
+
+    // === EMAIL ATTACHMENTS (only resend if the user picked a new file) ===
+    if (formData.creation_email_attachment?.file) {
+      data.append(
+        "event[creation_email_attachment]",
+        formData.creation_email_attachment.file
+      );
+    }
+    if (formData.reminder_email_attachment?.file) {
+      data.append(
+        "event[reminder_email_attachment]",
+        formData.reminder_email_attachment.file
+      );
     }
 
     // === COVER IMAGE ===
@@ -1147,27 +1227,6 @@ const EventEdit = () => {
       }
     });
 
-    // === USERS ===
-    if (hasChanged("user_id", formData.user_id)) {
-      if (Array.isArray(formData.user_id)) {
-        if (formData.user_id.length > 0) {
-          formData.user_id.forEach((id) => data.append("event[user_ids][]", id));
-        } else {
-          data.append("event[user_ids][]", "");
-        }
-      }
-    }
-
-    // For groups
-    // if (formData.group_id) {
-    //   const groupIds = formData.group_id.split(",").filter(Boolean);
-    //   if (groupIds.length > 0) {
-    //     groupIds.forEach((id) => data.append("event[group_id][]", id));
-    //   } else {
-    //     data.append("event[group_id][]", ""); // to clear groups
-    //   }
-    // }
-
     // === RSVP FIELDS ===
     if (hasChanged("rsvp_action", formData.rsvp_action)) {
       data.append("event[rsvp_action]", formData.rsvp_action || "");
@@ -1203,10 +1262,10 @@ const EventEdit = () => {
       "existingImages",
       "newImages",
       "previewImage",
-      "shared",
       "set_reminders_attributes",
-      "user_id",
-      "group_id",
+      "project_id",
+      "creation_email_attachment",
+      "reminder_email_attachment",
       "title",
       "event_title", // handled explicitly via the title → event_title mapping above
       "rsvp_action",
@@ -1256,7 +1315,7 @@ const EventEdit = () => {
 
     // === SEND REQUEST ===
     try {
-      const response = await axios.put(`${baseURL}events/${id}.json`, data, {
+      const response = await axios.put(`${baseURL}events/${id}/update_event.json`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "multipart/form-data",
@@ -1326,9 +1385,12 @@ const EventEdit = () => {
   return (
     <>
       <div className="main-content">
-        <div className="">
+        <div className="" style={{ width: "100%" }}>
           <div className="module-data-section container-fluid">
             <div className="module-data-section p-3">
+              <EventFormSteps current={step} onStepClick={goToStep} />
+
+              {step === "details" && (
               <div className="card mt-4 pb-4 mx-4">
                 <div className="card-header">
                   <h3 className="card-title">Edit Event</h3>
@@ -1336,20 +1398,47 @@ const EventEdit = () => {
 
                 <div className="card-body">
                   <div className="row">
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>
+                          Projects
+                          <span className="otp-asterisk"> *</span>
+                        </label>
+                        <MultiSelectBox
+                          options={projects.map((project) => ({
+                            value: project.id,
+                            label: project.name || project.project_name,
+                          }))}
+                          value={selectedProjectIds.map((id) => {
+                            const projectMeta = projects.find(
+                              (p) => String(p.id) === String(id)
+                            );
+                            return {
+                              value: id,
+                              label:
+                                projectMeta?.name ||
+                                projectMeta?.project_name ||
+                                `Project ${id}`,
+                            };
+                          })}
+                          onChange={handleProjectsMultiSelectChange}
+                        />
+                      </div>
+                    </div>
+
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Project</label>
-                        <SelectBox
-                          options={projects.map((project) => ({
-                            value: project.id, // Ensure this matches API response field
-                            label: project.project_name, // Ensure correct field name
-                          }))}
-                          defaultValue={formData.project_id || ""}
-                          onChange={(value) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              project_id: value,
-                            }))
+                        <label>
+                          Data Type
+                          <span className="otp-asterisk"> *</span>
+                        </label>
+                        <MultiSelectBox
+                          options={DATA_TYPE_OPTIONS}
+                          value={DATA_TYPE_OPTIONS.filter((o) =>
+                            dataType.includes(o.value)
+                          )}
+                          onChange={(selectedOptions) =>
+                            setDataType((selectedOptions || []).map((opt) => opt.value))
                           }
                         />
                       </div>
@@ -1466,7 +1555,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event From</label>
-                        <div className="d-flex gap-2">
+                        <div className="d-flex gap-2" style={{ flexWrap: "wrap" }}>
                           <input
                             className="form-control"
                             type="date"
@@ -1479,6 +1568,7 @@ const EventEdit = () => {
                                 e.target.value
                               )
                             }
+                            style={{ flex: "1 1 130px", minWidth: 0 }}
                           />
                           <input
                             className="form-control"
@@ -1493,6 +1583,7 @@ const EventEdit = () => {
                               )
                             }
                             disabled={!getDatePart(formData.from_time)}
+                            style={{ flex: "1 1 110px", minWidth: 0 }}
                           />
                         </div>
                       </div>
@@ -1501,7 +1592,7 @@ const EventEdit = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event To</label>
-                        <div className="d-flex gap-2">
+                        <div className="d-flex gap-2" style={{ flexWrap: "wrap" }}>
                           <input
                             className="form-control"
                             type="date"
@@ -1514,6 +1605,7 @@ const EventEdit = () => {
                                 e.target.value
                               )
                             }
+                            style={{ flex: "1 1 130px", minWidth: 0 }}
                           />
                           <input
                             className="form-control"
@@ -1528,8 +1620,24 @@ const EventEdit = () => {
                               )
                             }
                             disabled={!getDatePart(formData.to_time)}
+                            style={{ flex: "1 1 110px", minWidth: 0 }}
                           />
                         </div>
+                      </div>
+                    </div>
+
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <label>Salesforce Data Retention Days</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          min="0"
+                          name="salesforce_data_retention_days"
+                          placeholder="e.g. 30"
+                          value={formData.salesforce_data_retention_days}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
@@ -2009,11 +2117,16 @@ const EventEdit = () => {
                         </div>
                       </div>
 
-                      {/* Display added reminders */}
+                      {/* Display added reminders. Map to {reminder, originalIndex}
+                          before filtering, so handleRemoveReminder(originalIndex)
+                          still targets the right entry in the unfiltered
+                          set_reminders_attributes array once an earlier reminder
+                          has been soft-deleted (_destroy: true, but left in place). */}
                       {formData.set_reminders_attributes
-                        .filter((reminder) => !reminder._destroy)
-                        .map((reminder, index) => (
-                          <div className="row mb-2" key={index}>
+                        .map((reminder, originalIndex) => ({ reminder, originalIndex }))
+                        .filter(({ reminder }) => !reminder._destroy)
+                        .map(({ reminder, originalIndex }) => (
+                          <div className="row mb-2" key={originalIndex}>
                             <div className="col-md-4">
                               <select
                                 className="form-control"
@@ -2045,7 +2158,7 @@ const EventEdit = () => {
                               <button
                                 type="button"
                                 className="btn btn-danger w-100"
-                                onClick={() => handleRemoveReminder(index)}
+                                onClick={() => handleRemoveReminder(originalIndex)}
                                 style={{
                                   height: "35px",
                                   display: "flex",
@@ -2059,172 +2172,12 @@ const EventEdit = () => {
                           </div>
                         ))}
                     </div>
-                    <div className="col-md-4">
-                      <div className="form-group mt-3">
-                        <label>Share With</label>
-                        <div className="d-flex gap-3">
-                          {/* All */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="all"
-                              checked={formData.shared === "all"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "all",
-                                  user_id: [],
-                                  group_id: "",
-                                }))
-                              }
-                              disabled={isEmailLocked}
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              All
-                            </label>
-                          </div>
-                          {/* Individuals */}
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="individual"
-                              checked={formData.shared === "individual"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "individual",
-                                  group_id: "",
-                                }))
-                              }
-                              disabled={isEmailLocked}
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{
-                                color:
-                                  !eventUserID || eventUserID.length === 0
-                                    ? "gray"
-                                    : "black",
-                              }}
-                            >
-                              Individuals
-                            </label>
-                          </div>
-                          {/* Groups */}
-                          {/* <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="group"
-                              checked={formData.shared === "group"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "group",
-                                  user_id: [],
-                                  group_id: [], // Reset to empty array
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{
-                                color:
-                                  !groups || groups.length === 0
-                                    ? "black"
-                                    : "black",
-                              }}
-                            >
-                              Groups
-                            </label>
-                          </div> */}
-                        </div>
-                      </div>
-
-                      {/* Individuals MultiSelect */}
-                      {formData.shared === "individual" && (
-                        <div className="form-group">
-                          <label>Event User ID</label>
-                          <MultiSelectBox
-                            options={eventUserID?.map((user) => ({
-                              value: user.id,
-                              label: `${user.firstname} ${user.lastname}`,
-                            }))}
-                            value={
-                              Array.isArray(formData.user_id)
-                                ? formData.user_id.map((userId) => {
-                                    const user = eventUserID.find(
-                                      (u) => u.id === userId
-                                    );
-                                    return user
-                                      ? {
-                                          value: userId,
-                                          label: `${user.firstname} ${user.lastname}`,
-                                        }
-                                      : {
-                                          value: userId,
-                                          label: `User ${userId}`,
-                                        };
-                                  })
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                user_id: selectedOptions.map(
-                                  (option) => option.value
-                                ),
-                              }))
-                            }
-                            isDisabled={isEmailLocked}
-                          />
-                        </div>
-                      )}
-
-                      {/* Groups MultiSelect */}
-                      {/* {formData.shared === "group" && (
-                        <div className="form-group">
-                          <label>Share with Groups</label>
-                          <MultiSelectBox
-                            options={groups?.map((group) => ({
-                              value: group.id,
-                              label: group.name,
-                            }))}
-                            value={
-                              formData.group_id
-                                ? formData.group_id.split(",").map((id) => ({
-                                  value: id,
-                                  label:
-                                    groups.find(
-                                      (group) => group.id.toString() === id
-                                    )?.name || `Group ${id}`,
-                                }))
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                group_id: selectedOptions.map(
-                                  (option) => option.value
-                                ),
-                              }))
-                            }
-                          />
-                        </div>
-                      )} */}
-                    </div>
                   </div>
                 </div>
               </div>
+              )}
 
+              {step === "images" && (
               <div className="card mt-3 pb-4 mx-4">
                 <div className="card-header3">
                   <h3 className="card-title">File Upload</h3>
@@ -2879,31 +2832,377 @@ const EventEdit = () => {
                       </table>
                     </div>
                   </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Event Creation Email Attachment
+                      <span className="otp-asterisk"> *</span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      type="button"
+                      onClick={() => creationAttachmentInputRef.current?.click()}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      ref={creationAttachmentInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleCreationEmailAttachmentChange}
+                    />
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.creation_email_attachment ? (
+                            <tr>
+                              <td>
+                                {formData.creation_email_attachment.name ||
+                                  formData.creation_email_attachment.document_file_name ||
+                                  "Attachment"}
+                              </td>
+                              <td>
+                                <img
+                                  src={
+                                    formData.creation_email_attachment.preview ||
+                                    formData.creation_email_attachment.document_url
+                                  }
+                                  alt="Creation email attachment"
+                                  className="img-fluid rounded"
+                                  style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+                                />
+                              </td>
+                              <td>N/A</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      creation_email_attachment: null,
+                                    }))
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ) : (
+                            <tr></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Event Reminder Email Attachment
+                      <span className="otp-asterisk"> *</span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      type="button"
+                      onClick={() => reminderAttachmentInputRef.current?.click()}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      ref={reminderAttachmentInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleReminderEmailAttachmentChange}
+                    />
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.reminder_email_attachment ? (
+                            <tr>
+                              <td>
+                                {formData.reminder_email_attachment.name ||
+                                  formData.reminder_email_attachment.document_file_name ||
+                                  "Attachment"}
+                              </td>
+                              <td>
+                                <img
+                                  src={
+                                    formData.reminder_email_attachment.preview ||
+                                    formData.reminder_email_attachment.document_url
+                                  }
+                                  alt="Reminder email attachment"
+                                  className="img-fluid rounded"
+                                  style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+                                />
+                              </td>
+                              <td>N/A</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      reminder_email_attachment: null,
+                                    }))
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ) : (
+                            <tr></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
+              )}
 
-              <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    onClick={handleSubmit}
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    Submit
-                  </button>
+              {step === "preview" && (
+              <div className="card mt-4 pb-4 mx-4">
+                <div className="card-header">
+                  <h3 className="card-title">Preview</h3>
                 </div>
+                <div className="card-body">
+                  <div className="row px-3">
+                    {[
+                      ["Event Name", formData.event_name],
+                      ["Event Title", formData.title],
+                      ["Event Type", formData.pay_at],
+                      ["Event At", formData.event_at],
+                      ["Location URL", formData.location_url],
+                      ["Event From", formData.from_time],
+                      ["Event To", formData.to_time],
+                      ["Description", formData.description],
+                      ["Mark Important", formData.is_important === true ? "Yes" : formData.is_important === false ? "No" : "-"],
+                      ["RSVP Action", formData.rsvp_action],
+                      ["RSVP Name", formData.rsvp_action === "yes" ? formData.rsvp_name : null],
+                      ["RSVP Number", formData.rsvp_action === "yes" ? formData.rsvp_number : null],
+                      ["Salesforce Data Retention Days", formData.salesforce_data_retention_days],
+                    ].map(([label, value]) =>
+                      value === null ? null : (
+                        <div className="col-lg-6 col-md-6 col-sm-12 row px-3" key={label}>
+                          <div className="col-6">
+                            <label>{label}</label>
+                          </div>
+                          <div className="col-6">
+                            <span className="text-dark">: {value || "-"}</span>
+                          </div>
+                        </div>
+                      )
+                    )}
 
-                <div className="col-md-2">
+                    <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                      <div className="col-6">
+                        <label>Projects</label>
+                      </div>
+                      <div className="col-6">
+                        <span className="text-dark">
+                          :{" "}
+                          {selectedProjectIds
+                            .map(
+                              (id) =>
+                                projects.find((p) => String(p.id) === String(id))?.name ||
+                                projects.find((p) => String(p.id) === String(id))?.project_name ||
+                                `Project ${id}`
+                            )
+                            .join(", ") || "-"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                      <div className="col-6">
+                        <label>Data Type</label>
+                      </div>
+                      <div className="col-6">
+                        <span className="text-dark">
+                          :{" "}
+                          {DATA_TYPE_OPTIONS.filter((o) => dataType.includes(o.value))
+                            .map((o) => o.label)
+                            .join(", ") || "-"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                      <div className="col-6">
+                        <label>Set Reminders</label>
+                      </div>
+                      <div className="col-6">
+                        {formData.set_reminders_attributes.filter((r) => !r._destroy).length > 0 ? (
+                          formData.set_reminders_attributes
+                            .filter((r) => !r._destroy)
+                            .map((r, i) => (
+                              <div key={i}>
+                                <span className="text-dark">
+                                  : {r.value} {r.unit}
+                                </span>
+                              </div>
+                            ))
+                        ) : (
+                          <span className="text-dark">: -</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr className="my-4" />
+
+                  <div className="row px-3">
+                    <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
+                      <label className="d-block mb-1">
+                        Event Creation Email Attachment
+                      </label>
+                      {formData.creation_email_attachment ? (
+                        <div className="d-flex align-items-center gap-2">
+                          <img
+                            src={
+                              formData.creation_email_attachment.preview ||
+                              formData.creation_email_attachment.document_url
+                            }
+                            alt="Creation email attachment"
+                            style={{ width: 60, height: 60, objectFit: "cover" }}
+                            className="img-fluid rounded"
+                          />
+                          <span className="text-dark">
+                            {formData.creation_email_attachment.name ||
+                              formData.creation_email_attachment.document_file_name}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-dark">-</span>
+                      )}
+                    </div>
+                    <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
+                      <label className="d-block mb-1">
+                        Event Reminder Email Attachment
+                      </label>
+                      {formData.reminder_email_attachment ? (
+                        <div className="d-flex align-items-center gap-2">
+                          <img
+                            src={
+                              formData.reminder_email_attachment.preview ||
+                              formData.reminder_email_attachment.document_url
+                            }
+                            alt="Reminder email attachment"
+                            style={{ width: 60, height: 60, objectFit: "cover" }}
+                            className="img-fluid rounded"
+                          />
+                          <span className="text-dark">
+                            {formData.reminder_email_attachment.name ||
+                              formData.reminder_email_attachment.document_file_name}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-dark">-</span>
+                      )}
+                    </div>
+
+                    {[
+                      ["Cover Images", coverImageRatios],
+                      ["Event Attachments", eventImageRatios],
+                      ["Thumbnail Images", thumbnailImageRatios],
+                    ].map(([label, ratios]) => {
+                      const count = ratios.reduce(
+                        (sum, { key }) => sum + (formData[key]?.length || 0),
+                        0
+                      );
+                      return (
+                        <div className="col-lg-4 col-md-6 col-sm-12 mb-3" key={label}>
+                          <label className="d-block mb-1">{label}</label>
+                          <span className="text-dark">{count} file{count === 1 ? "" : "s"} added</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+              )}
+            </div>
+
+            <div className="efs-nav">
+              {step !== "details" && (
+                <button
+                  type="button"
+                  className="purple-btn1"
+                  onClick={() => goToStep(step === "preview" ? "images" : "details")}
+                >
+                  Back
+                </button>
+              )}
+              {step !== "preview" ? (
+                <button
+                  type="button"
+                  className="purple-btn2"
+                  onClick={() => goToStep(step === "details" ? "images" : "preview")}
+                >
+                  Proceed to save
+                </button>
+              ) : (
+                <>
                   <button
                     type="button"
-                    className="purple-btn2 w-100"
+                    className="purple-btn1"
                     onClick={handleCancel}
                   >
                     Cancel
                   </button>
-                </div>
-              </div>
+                  <button
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="purple-btn2"
+                    disabled={loading}
+                  >
+                    Submit
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

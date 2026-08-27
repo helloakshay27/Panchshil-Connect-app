@@ -10,6 +10,14 @@ import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import EventFormSteps from "../components/events/EventFormSteps";
+
+const DATA_TYPE_OPTIONS = [
+  { value: "bookedClients", label: "Booked Clients" },
+  { value: "visitDoneLostClients", label: "Visit Done Lost Clients" },
+  { value: "lostLeads", label: "Lost Leads" },
+  { value: "cp", label: "CP" },
+];
 
 const EventCreate = () => {
   const connectEvents = useConnectEvents();
@@ -24,17 +32,17 @@ const EventCreate = () => {
     rsvp_action: "",
     description: "",
     publish: "",
-    user_id: "",
     comment: "",
     location_url: "",
     pay_at: "",
     payment_link: "",
-    shared: "",
-    group_id: [],
     attachfile: [],
     cover_image: [],
     is_important: "",
     email_trigger_enabled: "",
+    salesforce_data_retention_days: "",
+    creation_email_attachment: null,
+    reminder_email_attachment: null,
     set_reminders_attributes: [],
     cover_image_1_by_1: [],
     cover_image_9_by_16: [],
@@ -52,14 +60,14 @@ const EventCreate = () => {
 
   console.log("formData", formData);
   const [eventType, setEventType] = useState([]);
-  const [eventUserID, setEventUserID] = useState([]);
   const [files, setFiles] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [selectedProjectIds, setSelectedProjectIds] = useState([]);
+  const [dataType, setDataType] = useState([]);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [groups, setGroups] = useState([]);
+  const [step, setStep] = useState("details");
   const [imageConfigurations, setImageConfigurations] = useState({});
 
   // Enhanced reminder state
@@ -74,6 +82,8 @@ const EventCreate = () => {
   const [showEventUploader, setShowEventUploader] = useState(false);
   const [showThumbnailUploader, setShowThumbnailUploader] = useState(false);
   const previewUrlsRef = useRef(new Map()); // Store preview URLs for cleanup
+  const creationAttachmentInputRef = useRef(null);
+  const reminderAttachmentInputRef = useRef(null);
 
   const timeOptions = [
     // { value: "", label: "Select Unit" },
@@ -366,9 +376,17 @@ const EventCreate = () => {
     });
   };
 
-  // Convert reminders to API format before submission
+  // Convert reminders to API format before submission. Also folds in
+  // whatever is currently typed into the Unit/Value inputs but was never
+  // committed with "+ Add" — without this, filling those fields and going
+  // straight to Submit silently drops the reminder, since it never made it
+  // into formData.set_reminders_attributes.
   const prepareRemindersForSubmission = () => {
-    return formData.set_reminders_attributes
+    const pending =
+      reminderValue && reminderUnit
+        ? [{ value: reminderValue, unit: reminderUnit }]
+        : [];
+    return [...formData.set_reminders_attributes, ...pending]
       .map((reminder) => {
         if (reminder._destroy) {
           return { id: reminder.id, _destroy: true };
@@ -387,9 +405,6 @@ const EventCreate = () => {
       })
       .filter((r) => !r._destroy || r.id);
   };
-
-  console.log("bb", eventUserID);
-  console.log("groups", groups);
 
   // Handle input change for form fields
   const handleChange = (e) => {
@@ -490,14 +505,74 @@ const EventCreate = () => {
     setFiles([...files, ...fileData]);
   };
 
-  const validateForm = (formData) => {
-    const errors = [];
+  const handleProjectsMultiSelectChange = (selectedOptions) => {
+    setSelectedProjectIds(selectedOptions.map((opt) => opt.value));
+  };
 
-    if (!formData.event_name) {
-      errors.push("Event Name is required.");
-      return errors;
+  const handleCreationEmailAttachmentChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFormData((prev) => ({
+      ...prev,
+      creation_email_attachment: {
+        file,
+        name: file.name,
+        preview: URL.createObjectURL(file),
+      },
+    }));
+  };
+
+  const handleReminderEmailAttachmentChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFormData((prev) => ({
+      ...prev,
+      reminder_email_attachment: {
+        file,
+        name: file.name,
+        preview: URL.createObjectURL(file),
+      },
+    }));
+  };
+
+  const validateDetailsStep = () => {
+    const errors = [];
+    if (!formData.event_name) errors.push("Event Name is required.");
+    if (selectedProjectIds.length === 0) errors.push("Please select at least one project.");
+    if (dataType.length === 0) errors.push("Please select at least one data type.");
+    return errors;
+  };
+
+  const validateImagesStep = () => {
+    const errors = [];
+    if (!formData.creation_email_attachment) {
+      errors.push("Event Creation Email Attachment is required.");
+    }
+    if (!formData.reminder_email_attachment) {
+      errors.push("Event Reminder Email Attachment is required.");
     }
     return errors;
+  };
+
+  const validateForm = () => [...validateDetailsStep(), ...validateImagesStep()];
+
+  const goToStep = (nextStep) => {
+    if (nextStep === "images" || nextStep === "preview") {
+      const errors = validateDetailsStep();
+      if (errors.length > 0) {
+        errors.forEach((err) => toast.error(err));
+        return;
+      }
+    }
+    if (nextStep === "preview") {
+      const errors = validateImagesStep();
+      if (errors.length > 0) {
+        errors.forEach((err) => toast.error(err));
+        return;
+      }
+    }
+    setStep(nextStep);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubmit = async (e) => {
@@ -529,10 +604,7 @@ const EventCreate = () => {
 
     const preparedReminders = prepareRemindersForSubmission();
 
-    // Use backend value for shared
-    const backendSharedValue = formData.shared === "all" ? 0 : formData.shared === "individual" || formData.shared === "group" ? 1 : null;
-
-    const validationErrors = validateForm(formData);
+    const validationErrors = validateForm();
     if (validationErrors.length > 0) {
       validationErrors.forEach((error) => toast.error(error));
       setLoading(false);
@@ -556,15 +628,57 @@ const EventCreate = () => {
     data.append("event[rsvp_action]", formData.rsvp_action);
     data.append("event[description]", formData.description);
     data.append("event[publish]", formData.publish);
-    data.append("event[user_ids]", formData.user_id);
     data.append("event[comment]", formData.location_url);
-    if (backendSharedValue !== null) {
-      data.append("event[shared]", backendSharedValue);
-    }
-    // data.append("event[group_id]", formData.group_id);
     data.append("event[is_important]", formData.is_important);
     data.append("event[email_trigger_enabled]", formData.email_trigger_enabled);
-    data.append("event[project_id]", selectedProjectId);
+    if (formData.salesforce_data_retention_days) {
+      data.append(
+        "event[salesforce_data_retention_days]",
+        formData.salesforce_data_retention_days
+      );
+    }
+
+    // Primary project is the first selected one; every selected project
+    // (with its Salesforce project id) goes into event_projects_attributes,
+    // all sharing the single data type chosen above.
+    data.append("event[project_id]", selectedProjectIds[0] || "");
+    selectedProjectIds.forEach((projectId, index) => {
+      const projectMeta = projects.find(
+        (p) => String(p.id) === String(projectId)
+      );
+      const projectSfdcId =
+        projectMeta?.sfdc_id ||
+        projectMeta?.SFDC_Project_Id ||
+        projectMeta?.project_sfdc_id ||
+        "";
+      data.append(
+        `event[event_projects_attributes][${index}][project_id]`,
+        projectId
+      );
+      data.append(
+        `event[event_projects_attributes][${index}][project_sfdc_id]`,
+        projectSfdcId
+      );
+      dataType.forEach((dt) => {
+        data.append(
+          `event[event_projects_attributes][${index}][data_types][]`,
+          dt
+        );
+      });
+    });
+
+    if (formData.creation_email_attachment?.file) {
+      data.append(
+        "event[creation_email_attachment]",
+        formData.creation_email_attachment.file
+      );
+    }
+    if (formData.reminder_email_attachment?.file) {
+      data.append(
+        "event[reminder_email_attachment]",
+        formData.reminder_email_attachment.file
+      );
+    }
 
     if (formData.cover_image && formData.cover_image.length > 0) {
       const file = formData.cover_image[0];
@@ -660,20 +774,12 @@ const EventCreate = () => {
     //   return;
     // }
 
-    if (Array.isArray(formData.group_id)) {
-      formData.group_id.forEach((id) => {
-        data.append("event[group_id][]", id);
-      });
-    } else if (formData.group_id) {
-      data.append("event[group_id][]", formData.group_id);
-    }
-
     console.log("dta to be sent:", Array.from(data.entries()));
 
     try {
       console.log("dta to be sent:", Array.from(data.entries()));
 
-      const response = await axios.post(`${baseURL}events.json`, data, {
+      const response = await axios.post(`${baseURL}events/create_event.json`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           "Content-Type": "multipart/form-data",
@@ -681,6 +787,9 @@ const EventCreate = () => {
       });
       connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Event created successfully!");
+      setStep("details");
+      setSelectedProjectIds([]);
+      setDataType([]);
       setFormData({
         title: "",
         pay_at: "",
@@ -692,15 +801,15 @@ const EventCreate = () => {
         rsvp_action: "",
         description: "",
         publish: "",
-        user_id: "",
         comment: "",
         location_url: "",
-        shared: "",
-        group_id: "",
         attachfile: [],
         cover_image: [],
         is_important: "",
         email_trigger_enabled: "",
+        salesforce_data_retention_days: "",
+        creation_email_attachment: null,
+        reminder_email_attachment: null,
         set_reminders_attributes: [],
         cover_image_1_by_1: [],
         cover_image_9_by_16: [],
@@ -737,7 +846,7 @@ const EventCreate = () => {
 
       try {
         const response = await axios.get(
-          `${baseURL}events.json`,
+          `${baseURL}events/create_event.json`,
 
           {
             headers: {
@@ -758,34 +867,10 @@ const EventCreate = () => {
   }, []);
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const response = await axios.get(
-          `${baseURL}users/get_users.json`,
-
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        setEventUserID(response?.data.users || []);
-        // console.log("User", response)
-        console.log("eventUserID", eventUserID);
-      } catch (error) {
-        console.error("Error fetching Event:", error);
-      }
-    };
-    fetchEvent();
-  }, []);
-
-  useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}projects.json`,
+          `${baseURL}projects/projects_for_events.json`,
 
           {
             headers: {
@@ -794,7 +879,11 @@ const EventCreate = () => {
             },
           }
         );
-        setProjects(response.data.projects || []);
+        setProjects(
+          Array.isArray(response.data)
+            ? response.data
+            : response.data.projects || []
+        );
       } catch (error) {
         console.error(
           "Error fetching projects:",
@@ -850,32 +939,6 @@ const EventCreate = () => {
     return ` and Required ratio${ratios.length > 1 ? "s are" : " is"} ${formattedRatios}`;
   };
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await axios.get(`${baseURL}usergroups.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        // If response.data is an array, use it directly
-        const groupsData = Array.isArray(response.data)
-          ? response.data
-          : response.data.usergroups || [];
-        setGroups(groupsData);
-        console.log("Fetched Groups:", groupsData);
-      } catch (error) {
-        console.error("Error fetching Groups:", error);
-      }
-    };
-
-    if (formData.shared === "group" && groups.length === 0) {
-      fetchGroups();
-    }
-  }, [formData.shared]);
-
   const handleCoverImageUpload = (newImageList) => {
     if (!newImageList || newImageList.length === 0) return;
 
@@ -922,9 +985,12 @@ const EventCreate = () => {
   return (
     <>
       <div className="main-content">
-        <div className="">
+        <div className="" style={{ width: "100%" }}>
           <div className="module-data-section container-fluid">
             <div className="module-data-section p-3">
+              <EventFormSteps current={step} onStepClick={goToStep} />
+
+              {step === "details" && (
               <div className="card mt-4 pb-2 mx-4">
                 <div className="card-header">
                   <h3 className="card-title">Create Event</h3>
@@ -933,16 +999,48 @@ const EventCreate = () => {
                 <div className="card-body">
                   {error && <p className="text-danger">{error}</p>}
                   <div className="row">
-                    <div className="col-md-3 mt-1">
+                    <div className="col-md-6 mt-1">
                       <div className="form-group">
-                        <label>Project</label>
-                        <SelectBox
+                        <label>
+                          Projects
+                          <span className="otp-asterisk"> *</span>
+                        </label>
+                        <MultiSelectBox
                           options={projects.map((proj) => ({
                             value: proj.id,
-                            label: proj.project_name,
+                            label: proj.name || proj.project_name,
                           }))}
-                          value={selectedProjectId || ""}
-                          onChange={(value) => setSelectedProjectId(value)}
+                          value={selectedProjectIds.map((id) => {
+                            const projectMeta = projects.find(
+                              (p) => String(p.id) === String(id)
+                            );
+                            return {
+                              value: id,
+                              label:
+                                projectMeta?.name ||
+                                projectMeta?.project_name ||
+                                `Project ${id}`,
+                            };
+                          })}
+                          onChange={handleProjectsMultiSelectChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-3 mt-1">
+                      <div className="form-group">
+                        <label>
+                          Data Type
+                          <span className="otp-asterisk"> *</span>
+                        </label>
+                        <MultiSelectBox
+                          options={DATA_TYPE_OPTIONS}
+                          value={DATA_TYPE_OPTIONS.filter((o) =>
+                            dataType.includes(o.value)
+                          )}
+                          onChange={(selectedOptions) =>
+                            setDataType((selectedOptions || []).map((opt) => opt.value))
+                          }
                         />
                       </div>
                     </div>
@@ -1059,7 +1157,7 @@ const EventCreate = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event From</label>
-                        <div className="d-flex gap-2">
+                        <div className="d-flex gap-2" style={{ flexWrap: "wrap" }}>
                           <input
                             className="form-control"
                             type="date"
@@ -1072,6 +1170,7 @@ const EventCreate = () => {
                                 e.target.value
                               )
                             }
+                            style={{ flex: "1 1 130px", minWidth: 0 }}
                           />
                           <input
                             className="form-control"
@@ -1086,6 +1185,7 @@ const EventCreate = () => {
                               )
                             }
                             disabled={!getDatePart(formData.from_time)}
+                            style={{ flex: "1 1 110px", minWidth: 0 }}
                           />
                         </div>
                       </div>
@@ -1093,7 +1193,7 @@ const EventCreate = () => {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Event To</label>
-                        <div className="d-flex gap-2">
+                        <div className="d-flex gap-2" style={{ flexWrap: "wrap" }}>
                           <input
                             className="form-control"
                             type="date"
@@ -1106,6 +1206,7 @@ const EventCreate = () => {
                                 e.target.value
                               )
                             }
+                            style={{ flex: "1 1 130px", minWidth: 0 }}
                           />
                           <input
                             className="form-control"
@@ -1120,8 +1221,24 @@ const EventCreate = () => {
                               )
                             }
                             disabled={!getDatePart(formData.to_time)}
+                            style={{ flex: "1 1 110px", minWidth: 0 }}
                           />
                         </div>
+                      </div>
+                    </div>
+
+                    <div className="col-md-3 mt-1">
+                      <div className="form-group">
+                        <label>Salesforce Data Retention Days</label>
+                        <input
+                          className="form-control"
+                          type="number"
+                          min="0"
+                          name="salesforce_data_retention_days"
+                          placeholder="e.g. 30"
+                          value={formData.salesforce_data_retention_days}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
@@ -1507,11 +1624,16 @@ const EventCreate = () => {
                         </div>
                       </div>
 
-                      {/* Display added reminders */}
+                      {/* Display added reminders. Map to {reminder, originalIndex}
+                          before filtering, so handleRemoveReminder(originalIndex)
+                          still targets the right entry in the unfiltered
+                          set_reminders_attributes array if a reminder is ever
+                          soft-deleted (_destroy: true, but left in place). */}
                       {formData.set_reminders_attributes
-                        .filter((reminder) => !reminder._destroy)
-                        .map((reminder, index) => (
-                          <div className="row mb-2" key={index}>
+                        .map((reminder, originalIndex) => ({ reminder, originalIndex }))
+                        .filter(({ reminder }) => !reminder._destroy)
+                        .map(({ reminder, originalIndex }) => (
+                          <div className="row mb-2" key={originalIndex}>
                             <div className="col-md-4">
                               <select
                                 className="form-control"
@@ -1543,7 +1665,7 @@ const EventCreate = () => {
                               <button
                                 type="button"
                                 className="btn btn-danger w-100"
-                                onClick={() => handleRemoveReminder(index)}
+                                onClick={() => handleRemoveReminder(originalIndex)}
                                 style={{
                                   height: "35px",
                                   display: "flex",
@@ -1558,155 +1680,12 @@ const EventCreate = () => {
                         ))}
                     </div>
 
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label>Share With</label>
-                        <div className="d-flex gap-3">
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="all"
-                              checked={formData.shared === "all"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "all",
-                                  user_id: "",
-                                  group_id: "",
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              All
-                            </label>
-                          </div>
-
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="individual"
-                              checked={formData.shared === "individual"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "individual",
-                                  group_id: "", // clear other
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              Individuals
-                            </label>
-                          </div>
-
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="shared"
-                              value="group"
-                              checked={formData.shared === "group"}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  shared: "group",
-                                  user_id: "", // clear other
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              Groups
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-
-                      {formData.shared === "individual" && (
-                        <div className="form-group">
-                          <label>Event User ID</label>
-                          <MultiSelectBox
-                            options={eventUserID.map((user) => ({
-                              value: user.id,
-                              label: `${user.firstname} ${user.lastname}`,
-                            }))}
-                            value={
-                              formData.user_id
-                                ? formData.user_id.split(",").map((id) => {
-                                    const user = eventUserID.find(
-                                      (u) => u.id.toString() === id
-                                    );
-                                    return {
-                                      value: id,
-                                      label: `${user?.firstname} ${user?.lastname}`,
-                                    };
-                                  })
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                user_id: selectedOptions
-                                  .map((option) => option.value)
-                                  .join(","),
-                              }))
-                            }
-                          />
-                        </div>
-                      )}
-
-                      {formData.shared === "group" && (
-                        <div className="form-group">
-                          <label>Share with Groups</label>
-                          <MultiSelectBox
-                            options={groups.map((group) => ({
-                              value: group.id,
-                              label: group.name,
-                            }))}
-                            value={
-                              Array.isArray(formData.group_id)
-                                ? formData.group_id
-                                    .map((id) => {
-                                      const group = groups.find(
-                                        (g) =>
-                                          g.id === id ||
-                                          g.id.toString() === id.toString()
-                                      );
-                                      return group
-                                        ? { value: group.id, label: group.name }
-                                        : null;
-                                    })
-                                    .filter(Boolean)
-                                : []
-                            }
-                            onChange={(selectedOptions) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                group_id: selectedOptions.map(
-                                  (option) => option.value
-                                ),
-                              }))
-                            }
-                          />
-                        </div>
-                      )}
-                    </div>
                   </div>
                 </div>
               </div>
+              )}
 
+              {step === "images" && (
               <div className="card mt-3 pb-4 mx-4">
                 <div className="card-header3">
                   <h3 className="card-title">File Upload</h3>
@@ -2180,29 +2159,349 @@ const EventCreate = () => {
                       </table>
                     </div>
                   </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Event Creation Email Attachment
+                      <span className="otp-asterisk"> *</span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      type="button"
+                      onClick={() => creationAttachmentInputRef.current?.click()}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      ref={creationAttachmentInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleCreationEmailAttachmentChange}
+                    />
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.creation_email_attachment ? (
+                            <tr>
+                              <td>{formData.creation_email_attachment.name}</td>
+                              <td>
+                                <img
+                                  src={formData.creation_email_attachment.preview}
+                                  alt={formData.creation_email_attachment.name}
+                                  className="img-fluid rounded"
+                                  style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+                                />
+                              </td>
+                              <td>N/A</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      creation_email_attachment: null,
+                                    }))
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ) : (
+                            <tr></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-end mx-1">
+                    <h5 className="mt-3">
+                      Event Reminder Email Attachment
+                      <span className="otp-asterisk"> *</span>
+                    </h5>
+                    <button
+                      className="purple-btn2 rounded-3"
+                      type="button"
+                      onClick={() => reminderAttachmentInputRef.current?.click()}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={16}
+                        height={16}
+                        fill="currentColor"
+                        className="bi bi-plus"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                      </svg>
+                      <span>Add</span>
+                    </button>
+                    <input
+                      ref={reminderAttachmentInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleReminderEmailAttachmentChange}
+                    />
+                  </div>
+                  <div className="col-md-12 mt-2">
+                    <div className="mt-4 tbl-container">
+                      <table className="w-100">
+                        <thead>
+                          <tr>
+                            <th>File Name</th>
+                            <th>Preview</th>
+                            <th>Ratio</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.reminder_email_attachment ? (
+                            <tr>
+                              <td>{formData.reminder_email_attachment.name}</td>
+                              <td>
+                                <img
+                                  src={formData.reminder_email_attachment.preview}
+                                  alt={formData.reminder_email_attachment.name}
+                                  className="img-fluid rounded"
+                                  style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
+                                />
+                              </td>
+                              <td>N/A</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      reminder_email_attachment: null,
+                                    }))
+                                  }
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          ) : (
+                            <tr></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="row justify-content-center">
-              <div className="col-md-2">
-                <button
-                  onClick={handleSubmit}
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={loading}
-                >
-                  Submit
-                </button>
+              )}
+
+              {step === "preview" && (
+              <div className="card mt-4 pb-4 mx-4">
+                <div className="card-header">
+                  <h3 className="card-title">Preview</h3>
+                </div>
+                <div className="card-body">
+                  <div className="row px-3">
+                    {[
+                      ["Event Name", formData.event_name],
+                      ["Event Title", formData.title],
+                      ["Event Type", formData.pay_at],
+                      ["Event At", formData.event_at],
+                      ["Location URL", formData.location_url],
+                      ["Event From", formData.from_time],
+                      ["Event To", formData.to_time],
+                      ["Description", formData.description],
+                      ["Mark Important", formData.is_important === true ? "Yes" : formData.is_important === false ? "No" : "-"],
+                      ["RSVP Action", formData.rsvp_action],
+                      ["RSVP Name", formData.rsvp_action === "yes" ? formData.rsvp_name : null],
+                      ["RSVP Number", formData.rsvp_action === "yes" ? formData.rsvp_number : null],
+                      ["Salesforce Data Retention Days", formData.salesforce_data_retention_days],
+                    ].map(([label, value]) =>
+                      value === null ? null : (
+                        <div className="col-lg-6 col-md-6 col-sm-12 row px-3" key={label}>
+                          <div className="col-6">
+                            <label>{label}</label>
+                          </div>
+                          <div className="col-6">
+                            <span className="text-dark">: {value || "-"}</span>
+                          </div>
+                        </div>
+                      )
+                    )}
+
+                    <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                      <div className="col-6">
+                        <label>Projects</label>
+                      </div>
+                      <div className="col-6">
+                        <span className="text-dark">
+                          :{" "}
+                          {selectedProjectIds
+                            .map(
+                              (id) =>
+                                projects.find((p) => String(p.id) === String(id))?.name ||
+                                projects.find((p) => String(p.id) === String(id))?.project_name ||
+                                `Project ${id}`
+                            )
+                            .join(", ") || "-"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                      <div className="col-6">
+                        <label>Data Type</label>
+                      </div>
+                      <div className="col-6">
+                        <span className="text-dark">
+                          :{" "}
+                          {DATA_TYPE_OPTIONS.filter((o) => dataType.includes(o.value))
+                            .map((o) => o.label)
+                            .join(", ") || "-"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
+                      <div className="col-6">
+                        <label>Set Reminders</label>
+                      </div>
+                      <div className="col-6">
+                        {formData.set_reminders_attributes.length > 0 ? (
+                          formData.set_reminders_attributes.map((r, i) => (
+                            <div key={i}>
+                              <span className="text-dark">
+                                : {r.value} {r.unit}
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          <span className="text-dark">: -</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr className="my-4" />
+
+                  <div className="row px-3">
+                    <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
+                      <label className="d-block mb-1">
+                        Event Creation Email Attachment
+                      </label>
+                      {formData.creation_email_attachment ? (
+                        <div className="d-flex align-items-center gap-2">
+                          <img
+                            src={formData.creation_email_attachment.preview}
+                            alt={formData.creation_email_attachment.name}
+                            style={{ width: 60, height: 60, objectFit: "cover" }}
+                            className="img-fluid rounded"
+                          />
+                          <span className="text-dark">{formData.creation_email_attachment.name}</span>
+                        </div>
+                      ) : (
+                        <span className="text-dark">-</span>
+                      )}
+                    </div>
+                    <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
+                      <label className="d-block mb-1">
+                        Event Reminder Email Attachment
+                      </label>
+                      {formData.reminder_email_attachment ? (
+                        <div className="d-flex align-items-center gap-2">
+                          <img
+                            src={formData.reminder_email_attachment.preview}
+                            alt={formData.reminder_email_attachment.name}
+                            style={{ width: 60, height: 60, objectFit: "cover" }}
+                            className="img-fluid rounded"
+                          />
+                          <span className="text-dark">{formData.reminder_email_attachment.name}</span>
+                        </div>
+                      ) : (
+                        <span className="text-dark">-</span>
+                      )}
+                    </div>
+
+                    {[
+                      ["Cover Images", coverImageRatios],
+                      ["Event Attachments", eventImageRatios],
+                      ["Thumbnail Images", thumbnailImageRatios],
+                    ].map(([label, ratios]) => {
+                      const count = ratios.reduce(
+                        (sum, { key }) => sum + (formData[key]?.length || 0),
+                        0
+                      );
+                      return (
+                        <div className="col-lg-4 col-md-6 col-sm-12 mb-3" key={label}>
+                          <label className="d-block mb-1">{label}</label>
+                          <span className="text-dark">{count} file{count === 1 ? "" : "s"} added</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-              <div className="col-md-2">
+              )}
+            </div>
+
+            <div className="efs-nav">
+              {step !== "details" && (
                 <button
                   type="button"
-                  className="purple-btn2 w-100"
-                  onClick={handleCancel}
+                  className="purple-btn1"
+                  onClick={() => goToStep(step === "preview" ? "images" : "details")}
                 >
-                  Cancel
+                  Back
                 </button>
-              </div>
+              )}
+              {step !== "preview" ? (
+                <button
+                  type="button"
+                  className="purple-btn2"
+                  onClick={() => goToStep(step === "details" ? "images" : "preview")}
+                >
+                  Proceed to save
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="purple-btn1"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="purple-btn2"
+                    disabled={loading}
+                  >
+                    Submit
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

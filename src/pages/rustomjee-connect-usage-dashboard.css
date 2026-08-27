@@ -1,0 +1,8 @@
+/* Rustomjee Circle brand override for the shared Usage Dashboard visual
+   system (panchshil-connect-dashboard.css / panchshil-connect-usage-dashboard.css).
+   Almost all brand colour there is driven by the --pcd-brand/-2/-3 CSS
+   variables, which are overridden inline on the page root (see
+   rustomjee-connect-usage-dashboard.jsx). These two rules cover the only
+   spots that use a hardcoded Panchshil-orange tint instead of the variable. */
+.rj-usage-page .pud-nav-item.is-on { background: #f8f3e6; }
+.rj-usage-page .pcd-cell-neutral { background: #f8f3e6; color: #7c6435; }

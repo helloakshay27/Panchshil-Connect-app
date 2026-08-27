@@ -302,17 +302,26 @@
   gap: 8px;
 }
 .pcd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   height: 38px;
   padding: 0 18px;
   border-radius: 6px;
   font-size: 13px;
+  line-height: 1;
   font-weight: 600;
   border: 1px solid var(--pcd-brand);
   cursor: pointer;
   white-space: nowrap;
+  text-decoration: none;
 }
 .pcd-btn-primary {
   background: var(--pcd-brand);
+  color: #fff;
+}
+.pcd-btn-primary:hover {
   color: #fff;
 }
 .pcd-btn-primary:disabled {
@@ -321,6 +330,9 @@
 }
 .pcd-btn-ghost {
   background: #fff;
+  color: var(--pcd-brand);
+}
+.pcd-btn-ghost:hover {
   color: var(--pcd-brand);
 }
 

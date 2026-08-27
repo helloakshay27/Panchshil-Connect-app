@@ -1,0 +1,231 @@
+/* Salesforce customer share modal - layout modeled on the "Add Members"
+   picker pattern (search + filter panel + select-all + checkbox list), but
+   colours come from the app's own palette (var(--red) etc, mor.css) rather
+   than the reference design. */
+
+.ssc-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+
+.ssc-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ssc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 8px;
+}
+.ssc-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2933;
+}
+.ssc-close {
+  border: none;
+  background: none;
+  font-size: 22px;
+  line-height: 1;
+  color: #667085;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.ssc-close:hover { color: var(--red, #de7008); }
+
+.ssc-toolbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px 20px 0;
+  position: relative;
+}
+.ssc-search-wrap { flex: 1; position: relative; }
+.ssc-search-label {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  background: #fff;
+  padding: 0 4px;
+  font-size: 11px;
+  color: #667085;
+}
+.ssc-search-input {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 14px;
+  color: #1f2933;
+}
+.ssc-search-input:focus {
+  outline: none;
+  border-color: var(--red, #de7008);
+  box-shadow: 0 0 0 2px rgba(222, 112, 8, 0.12);
+}
+
+.ssc-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--red, #de7008);
+  background: #fff;
+  color: var(--red, #de7008);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ssc-filter-btn.is-open,
+.ssc-filter-btn:hover {
+  background: #fdf1e4;
+}
+
+.ssc-filter-panel {
+  position: absolute;
+  top: 48px;
+  right: 20px;
+  width: 260px;
+  max-height: 360px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  z-index: 20;
+  padding: 14px 0;
+}
+.ssc-filter-panel h6 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #98a2b3;
+  padding: 0 16px;
+  margin: 10px 0 6px;
+}
+.ssc-filter-panel h6:first-child { margin-top: 0; }
+.ssc-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #1f2933;
+}
+.ssc-filter-row:hover { background: #faf9f8; }
+.ssc-filter-row.is-on { background: #fdf1e4; font-weight: 600; }
+.ssc-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.ssc-filter-empty {
+  padding: 4px 16px 2px;
+  font-size: 12.5px;
+  color: #98a2b3;
+}
+
+.ssc-selectall {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 20px 0;
+  padding: 12px 14px;
+  background: #f4f4f5;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2933;
+}
+.ssc-selectall input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--red, #de7008);
+}
+
+.ssc-list {
+  flex: 1;
+  overflow-y: auto;
+  margin: 12px 20px 0;
+  border: 1px solid #efe6d8;
+  border-radius: 10px;
+  padding: 4px 0;
+  min-height: 120px;
+}
+.ssc-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f4f4f5;
+}
+.ssc-row:last-child { border-bottom: none; }
+.ssc-row input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--red, #de7008);
+  flex: 0 0 auto;
+}
+.ssc-row-name { font-weight: 700; font-size: 14.5px; color: #1f2933; }
+.ssc-row-contact { font-size: 13px; color: #667085; margin-top: 2px; }
+.ssc-row-meta { font-size: 12px; color: #9b9990; margin-top: 2px; }
+.ssc-badge-shared {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #1c6b3f;
+  background: #e8f3ec;
+  border-radius: 20px;
+  padding: 2px 8px;
+  vertical-align: middle;
+}
+
+.ssc-loadmore-wrap { text-align: center; padding: 12px 0; }
+.ssc-loadmore {
+  border: 1px solid var(--red, #de7008);
+  background: #fff;
+  color: var(--red, #de7008);
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ssc-loadmore:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.ssc-empty,
+.ssc-loading {
+  text-align: center;
+  color: #667085;
+  padding: 30px 14px;
+  font-size: 13.5px;
+}
+
+.ssc-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #f0efec;
+  margin-top: 14px;
+}
