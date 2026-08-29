@@ -211,42 +211,68 @@ const EventDetails = () => {
                   <div className="card-header3">
                     <h3 className="card-title" style={{ whiteSpace: "nowrap" }}>Event Details</h3>
                   </div>
-                  <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "8px", flexWrap: "wrap" }}>
                     <button
                       className="purple-btn2 btn-sm"
-                      onClick={handleSendEmail}
-                      disabled={isSendingEmail || (emailTriggerEnabled && emailsTriggered)}
+                      style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                      onClick={() => setShowTestEmailModal(true)}
                     >
-                      {isSendingEmail
-                        ? "Sending..."
-                        : emailTriggerEnabled && emailsTriggered
-                        ? "Email Sent"
-                        : "Send Email"}
-                    </button>
-                    <button
-                      className="purple-btn2 btn-sm"
-                      onClick={handleSendReminder}
-                      disabled={isSendingReminder || (reminderTriggerEnabled && remindersTriggered)}
-                    >
-                      {isSendingReminder
-                        ? "Sending..."
-                        : reminderTriggerEnabled && remindersTriggered
-                        ? "Reminder Sent"
-                        : "Send Reminder"}
+                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M8 2.5h4M8.5 2.5v4.4L4.9 13a2.2 2.2 0 0 0 1.9 3.3h6.4a2.2 2.2 0 0 0 1.9-3.3l-3.6-6.1V2.5" />
+                        <path d="M6.3 11.5h7.4" />
+                      </svg>
+                      <span>Send Test Email</span>
                     </button>
                     {eventData.salesforce_fetch_status === "done" && (
                       <button
                         className="purple-btn2 btn-sm"
+                        style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
                         onClick={() => setShowShareModal(true)}
                       >
-                        Select Members to Share
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="7.2" cy="6.5" r="2.6" />
+                          <path d="M2.8 16c0-2.4 2-4.1 4.4-4.1s4.4 1.7 4.4 4.1" />
+                          <path d="M13 4.4a2.6 2.6 0 0 1 0 4.9M14 11.9c1.6.5 2.7 1.7 2.7 3.8" />
+                        </svg>
+                        <span>Select Members to Share</span>
                       </button>
                     )}
                     <button
                       className="purple-btn2 btn-sm"
-                      onClick={() => setShowTestEmailModal(true)}
+                      style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                      onClick={handleSendEmail}
+                      disabled={isSendingEmail || (emailTriggerEnabled && emailsTriggered)}
                     >
-                      Send Test Email
+                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2.5" y="4.5" width="15" height="11" rx="1.8" />
+                        <path d="M3 5.5l7 5.5 7-5.5" />
+                      </svg>
+                      <span>
+                        {isSendingEmail
+                          ? "Sending..."
+                          : emailTriggerEnabled && emailsTriggered
+                          ? "Email Sent"
+                          : "Send Email"}
+                      </span>
+                    </button>
+                    <button
+                      className="purple-btn2 btn-sm"
+                      style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                      onClick={handleSendReminder}
+                      disabled={isSendingReminder || (reminderTriggerEnabled && remindersTriggered)}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 15.5h10M6.5 15.5v-6a3.5 3.5 0 0 1 7 0v6" />
+                        <path d="M8.5 17.8a1.5 1.5 0 0 0 3 0" />
+                        <path d="M10 3v1.3" />
+                      </svg>
+                      <span>
+                        {isSendingReminder
+                          ? "Sending..."
+                          : reminderTriggerEnabled && remindersTriggered
+                          ? "Reminder Sent"
+                          : "Send Reminder"}
+                      </span>
                     </button>
                   </div>
                 </div>

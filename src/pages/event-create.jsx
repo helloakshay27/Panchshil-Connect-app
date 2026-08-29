@@ -505,8 +505,15 @@ const EventCreate = () => {
     setFiles([...files, ...fileData]);
   };
 
+  const MAX_SELECTABLE_PROJECTS = 2;
+
   const handleProjectsMultiSelectChange = (selectedOptions) => {
-    setSelectedProjectIds(selectedOptions.map((opt) => opt.value));
+    const opts = selectedOptions || [];
+    if (opts.length > MAX_SELECTABLE_PROJECTS) {
+      toast.error(`You can select up to ${MAX_SELECTABLE_PROJECTS} projects only.`);
+      return;
+    }
+    setSelectedProjectIds(opts.map((opt) => opt.value));
   };
 
   const handleCreationEmailAttachmentChange = (e) => {
@@ -539,6 +546,8 @@ const EventCreate = () => {
     const errors = [];
     if (!formData.event_name) errors.push("Event Name is required.");
     if (selectedProjectIds.length === 0) errors.push("Please select at least one project.");
+    else if (selectedProjectIds.length > MAX_SELECTABLE_PROJECTS)
+      errors.push(`You can select up to ${MAX_SELECTABLE_PROJECTS} projects only.`);
     if (dataType.length === 0) errors.push("Please select at least one data type.");
     return errors;
   };
@@ -1023,6 +1032,7 @@ const EventCreate = () => {
                             };
                           })}
                           onChange={handleProjectsMultiSelectChange}
+                          maxSelected={MAX_SELECTABLE_PROJECTS}
                         />
                       </div>
                     </div>

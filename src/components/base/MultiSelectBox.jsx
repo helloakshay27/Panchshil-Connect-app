@@ -7,8 +7,11 @@ export default function MultiSelectBox({
   onChange,
   placeholder,
   isCheckbox = false,
+  maxSelected, // optional cap - once reached, un-selected options grey out and stop responding to clicks
 }) {
   const selectedValues = Array.isArray(value) ? value.map((v) => v.value) : [];
+  const atMax = maxSelected != null && selectedValues.length >= maxSelected;
+  const isOptionDisabled = (option) => atMax && !selectedValues.includes(option.value);
 
   const checkboxFormatOptionLabel = (option) => (
     <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
@@ -55,13 +58,15 @@ export default function MultiSelectBox({
     option: (base, state) => ({
       ...base,
       zIndex: 9999,
-      backgroundColor: state.isSelected
-        ? "#D3D3D3"
-        : state.isFocused
-          ? "var(--red)"
-          : "transparent",
-      color: state.isSelected ? "#333" : state.isFocused ? "white" : "black",
-      cursor: "pointer",
+      backgroundColor: state.isDisabled
+        ? "transparent"
+        : state.isSelected
+          ? "#D3D3D3"
+          : state.isFocused
+            ? "var(--red)"
+            : "transparent",
+      color: state.isDisabled ? "#b5b3b0" : state.isSelected ? "#333" : state.isFocused ? "white" : "black",
+      cursor: state.isDisabled ? "not-allowed" : "pointer",
       padding: "10px",
       borderRadius: "4px",
     }),
@@ -111,6 +116,7 @@ export default function MultiSelectBox({
       closeMenuOnSelect={!isCheckbox}
       hideSelectedOptions={!isCheckbox}
       formatOptionLabel={isCheckbox ? checkboxFormatOptionLabel : undefined}
+      isOptionDisabled={maxSelected != null ? isOptionDisabled : undefined}
     />
   );
 }

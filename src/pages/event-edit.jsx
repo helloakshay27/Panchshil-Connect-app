@@ -19,6 +19,8 @@ const DATA_TYPE_OPTIONS = [
   { value: "cp", label: "CP" },
 ];
 
+const MAX_SELECTABLE_PROJECTS = 2;
+
 const EventEdit = () => {
   const connectEvents = useConnectEvents();
   const { id } = useParams();
@@ -522,6 +524,17 @@ const EventEdit = () => {
         } else if (data.project_id) {
           initialProjectIds = [data.project_id];
         }
+        // Events created before the 2-project cap can still carry more than
+        // that; trim the selection down so the form never opens already
+        // over the new limit (submitting without touching Projects leaves
+        // the extra ones untouched server-side, since the "changed?" check
+        // below is diffed against this same trimmed list).
+        if (initialProjectIds.length > MAX_SELECTABLE_PROJECTS) {
+          toast.error(
+            `This event has ${initialProjectIds.length} projects linked; only the first ${MAX_SELECTABLE_PROJECTS} are shown here.`
+          );
+          initialProjectIds = initialProjectIds.slice(0, MAX_SELECTABLE_PROJECTS);
+        }
         setSelectedProjectIds(initialProjectIds);
         setDataType(initialDataTypes);
 
@@ -924,7 +937,12 @@ const EventEdit = () => {
   };
 
   const handleProjectsMultiSelectChange = (selectedOptions) => {
-    setSelectedProjectIds(selectedOptions.map((opt) => opt.value));
+    const opts = selectedOptions || [];
+    if (opts.length > MAX_SELECTABLE_PROJECTS) {
+      toast.error(`You can select up to ${MAX_SELECTABLE_PROJECTS} projects only.`);
+      return;
+    }
+    setSelectedProjectIds(opts.map((opt) => opt.value));
   };
 
   const handleCreationEmailAttachmentChange = (e) => {
@@ -957,6 +975,8 @@ const EventEdit = () => {
     const errors = [];
     if (!formData.event_name) errors.push("Event Name is required.");
     if (selectedProjectIds.length === 0) errors.push("Please select at least one project.");
+    else if (selectedProjectIds.length > MAX_SELECTABLE_PROJECTS)
+      errors.push(`You can select up to ${MAX_SELECTABLE_PROJECTS} projects only.`);
     else if (dataType.length === 0) errors.push("Please select at least one data type.");
     return errors;
   };
@@ -1422,6 +1442,7 @@ const EventEdit = () => {
                             };
                           })}
                           onChange={handleProjectsMultiSelectChange}
+                          maxSelected={MAX_SELECTABLE_PROJECTS}
                         />
                       </div>
                     </div>
