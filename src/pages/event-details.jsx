@@ -25,27 +25,33 @@ const EventDetails = () => {
   const eventId = id;
   console.log("ID", eventData);
 
-  useEffect(() => {
-    const fetchEventData = async () => {
-      try {
-        const response = await axios.get(`${baseURL}events/${eventId}.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        });
-        setEventData(response.data);
-        setEmailTriggerEnabled(response.data.email_trigger_enabled === true);
-        setEmailsTriggered(response.data.emails_triggered === true);
-        setReminderTriggerEnabled(response.data.reminder_trigger_enabled === true);
-        setRemindersTriggered(response.data.reminders_triggered === true);
-      } catch (error) {
-        //console.error("Error fetching event data", error);
-      }
-    };
+  const fetchEventData = async () => {
+    try {
+      const response = await axios.get(`${baseURL}events/${eventId}.json`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setEventData(response.data);
+      setEmailTriggerEnabled(response.data.email_trigger_enabled === true);
+      setEmailsTriggered(response.data.emails_triggered === true);
+      setReminderTriggerEnabled(response.data.reminder_trigger_enabled === true);
+      setRemindersTriggered(response.data.reminders_triggered === true);
+    } catch (error) {
+      //console.error("Error fetching event data", error);
+    }
+  };
 
+  useEffect(() => {
     fetchEventData();
   }, [eventId]);
+
+  // Whether anyone has actually been selected/shared for this event yet -
+  // populated via the Share modal (POST .../salesforce_customers/create_event_users.json),
+  // which bumps event_users_count. Sending an email/reminder with nobody
+  // shared would just go nowhere, so both actions are gated on this.
+  const hasSharedMembers = (eventData?.event_users_count ?? 0) > 0;
 
   const handleSendEmail = async () => {
     if (eventData.status === "inactive" || eventData.status === "deactivated" || eventData.active === false) {
@@ -53,19 +59,10 @@ const EventDetails = () => {
       return;
     }
 
-    const hasRecipients =
-      eventData.shared === 0 ||
-      (eventData.user_id && (
-        Array.isArray(eventData.user_id) ? eventData.user_id.length > 0 : true
-      )) ||
-      (eventData.group_id && (
-        Array.isArray(eventData.group_id) ? eventData.group_id.length > 0 : true
-      ));
-
-    // if (!hasRecipients) {
-    //   toast.error("No users added or selected to publish the event via email.");
-    //   return;
-    // }
+    if (!hasSharedMembers) {
+      toast.error("Please select members to share before sending the email.");
+      return;
+    }
 
     setIsSendingEmail(true);
     try {
@@ -95,24 +92,10 @@ const EventDetails = () => {
       return;
     }
 
-    // if (!eventData.reminders || eventData.reminders.length === 0) {
-    //   toast.error("Please set the reminder first and then send the reminder email.");
-    //   return;
-    // }
-
-    const hasRecipients =
-      eventData.shared === 0 ||
-      (eventData.user_id && (
-        Array.isArray(eventData.user_id) ? eventData.user_id.length > 0 : true
-      )) ||
-      (eventData.group_id && (
-        Array.isArray(eventData.group_id) ? eventData.group_id.length > 0 : true
-      ));
-
-    // if (!hasRecipients) {
-    //   toast.error("No users added or selected to send reminders via email.");
-    //   return;
-    // }
+    if (!hasSharedMembers) {
+      toast.error("Please select members to share before sending the reminder.");
+      return;
+    }
 
     setIsSendingReminder(true);
     try {
@@ -847,6 +830,7 @@ const EventDetails = () => {
           eventId={eventId}
           eventProjects={eventData.event_projects || []}
           onClose={() => setShowShareModal(false)}
+          onShared={fetchEventData}
         />
       )}
 
