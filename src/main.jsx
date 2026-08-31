@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { PostHogProvider } from '@posthog/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import './index.css'
 import App from './App.jsx'
@@ -31,10 +32,22 @@ if (!posthogToken || posthogToken === 'phc_replace_me') {
   })
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 30 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <PostHogProvider client={posthog}>
-      <App />
-    </PostHogProvider>
+    <QueryClientProvider client={queryClient}>
+      <PostHogProvider client={posthog}>
+        <App />
+      </PostHogProvider>
+    </QueryClientProvider>
   </StrictMode>,
 )

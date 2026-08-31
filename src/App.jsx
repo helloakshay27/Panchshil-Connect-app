@@ -175,6 +175,7 @@ import NoticeboardEdit from "./pages/noticeboard-edit";
 import PanchshilConnectDashboard from "./pages/panchshil-connect-dashboard";
 import PanchshilConnectUsageDashboard from "./pages/panchshil-connect-usage-dashboard";
 import RustomjeeConnectUsageDashboard from "./pages/rustomjee-connect-usage-dashboard";
+import PosthogDashboardPage from "./features/posthog-dashboard/PosthogDashboardPage";
 
 if (
   baseURL === "https://api-connect.panchshil.com/" ||
@@ -282,6 +283,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/posthog-dashboard"
+          element={
+            <ProtectedRoute>
+              <PosthogDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/rustomjee_circle_dashboard"
           element={
