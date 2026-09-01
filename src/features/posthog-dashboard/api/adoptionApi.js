@@ -1,10 +1,18 @@
 import axios from "axios";
+import { FM_ADOPTION_TENANT_URL } from "../../../config/fmAdoptionTenant";
 
 /* ---------------------------------------------------------------------------
  * FM Adoption Analytics API client.
  *
+ * The client mirrors the reference usage-analytics dashboard architecture:
+ * the API host comes from VITE_FM_ADOPTION_API_URL and the tenant (`url`
+ * query param) comes from the shared tenant configuration module
+ * (src/config/fmAdoptionTenant.js) — never a hardcoded string here, never
+ * the backend API URL.
+ *
  * Base URL : VITE_FM_ADOPTION_API_URL (default https://posthog-api.lockated.com)
- * Tenant   : sent as the `url` query param, from VITE_FM_ADOPTION_TENANT_URL
+ * Tenant   : sent as the `url` query param — the FRONTEND host whose analytics
+ *            are returned, resolved by src/config/fmAdoptionTenant.js.
  * Auth     : the analytics host answers openly (HTTP 200, no auth). A Bearer
  *            interceptor is attached at request time for consistency with the
  *            app's other clients and future-proofing — it only fires when a
@@ -16,8 +24,9 @@ export const ANALYTICS_BASE_URL =
   import.meta.env.VITE_FM_ADOPTION_API_URL ||
   "https://posthog-api.lockated.com";
 
-export const ANALYTICS_TENANT =
-  import.meta.env.VITE_FM_ADOPTION_TENANT_URL || "pulse-uat.panchshil.com";
+/* Frontend/tenant host sent as the `url` query param — from the shared
+   tenant configuration module, never hardcoded here. */
+export const ANALYTICS_TENANT = FM_ADOPTION_TENANT_URL;
 
 const analyticsClient = axios.create({
   baseURL: ANALYTICS_BASE_URL,
