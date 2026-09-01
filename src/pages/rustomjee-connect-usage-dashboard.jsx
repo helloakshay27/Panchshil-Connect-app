@@ -30,7 +30,14 @@ const RJ = {
 
 const Tile = ({ label, value, sub }) => (
   <div className="pcd-tile">
-    <div className="pcd-tile-label">{label}</div>
+    <div className="pcd-tile-tophead">
+      <div className="pcd-tile-label">{label}</div>
+      {sub ? (
+        <span className="pcd-info-btn" title={sub} aria-label={sub}>
+          i
+        </span>
+      ) : null}
+    </div>
     <div className="pcd-tile-value">{value}</div>
     {sub ? <div className="pcd-tile-sub">{sub}</div> : null}
   </div>
@@ -323,7 +330,7 @@ const RustomjeeConnectUsageDashboard = () => {
                 for Rustomjee Circle. Figures will update once the traffic endpoint is connected.
               </SampleNote>
 
-              <div className="pcd-tiles" style={{ marginTop: 16 }}>
+              <div className="pcd-tiles" style={{ marginTop: 16, gridTemplateColumns: `repeat(${TRAFFIC_TILES.length}, 1fr)` }}>
                 {TRAFFIC_TILES.map((t) => (
                   <StatTile key={t.label} label={t.label} value={t.value} sub={t.sub} />
                 ))}
@@ -361,7 +368,7 @@ const RustomjeeConnectUsageDashboard = () => {
                 for Rustomjee Circle.
               </SampleNote>
 
-              <div className="pcd-tiles" style={{ marginTop: 16 }}>
+              <div className="pcd-tiles" style={{ marginTop: 16, gridTemplateColumns: `repeat(${ADOPTION_TILES.length}, 1fr)` }}>
                 {ADOPTION_TILES.map((t) => (
                   <Tile key={t.label} label={t.label} value={t.value} sub={t.sub} />
                 ))}
@@ -509,7 +516,7 @@ const RustomjeeConnectUsageDashboard = () => {
                 </div>
               </div>
 
-              <div className="pcd-tiles">
+              <div className="pcd-tiles" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
                 <Tile label="Workflow Adoption" value={`${wf.adoption}%`} sub="of active users attempt this workflow" />
                 <Tile label="Completion Rate" value={`${wf.completionRate}%`} sub="of those who start it, finish it" />
                 <Tile

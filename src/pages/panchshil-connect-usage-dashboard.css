@@ -92,6 +92,155 @@
   margin: 5px 0 0;
 }
 
+/* ---------------- filter bar (date range / project / device / previous period / live) ----------------
+   Matches the filterbar from Panchshil_Connect_Dashboard_v3_FM_structure.html structurally, but keeps
+   this page's own colour tokens (--pcd-*) rather than that file's dark theme. Display-only: nothing here
+   changes what data the charts below show. */
+.pud-filterbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  margin: 2px 0 20px;
+}
+.pud-filterbar .pud-spacer { flex: 1; }
+
+.pud-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pcd-ink);
+  background: var(--pcd-surface);
+  border: 1px solid var(--pcd-line);
+  border-radius: 8px;
+  padding: 6px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pud-ctrl:hover { border-color: var(--pcd-brand); }
+.pud-ctrl .pud-ic { color: var(--pcd-muted); font-size: 12px; line-height: 1; }
+.pud-ctrl .pud-chev { color: var(--pcd-muted); font-size: 10px; margin-left: 1px; }
+.pud-ctrl select {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background: none;
+  color: var(--pcd-ink);
+  cursor: pointer;
+  outline: none;
+  max-width: 190px;
+}
+.pud-ctrl.is-on { border-color: var(--pcd-brand); background: #fdf1e4; color: var(--pcd-brand); }
+.pud-ctrl.is-on .pud-ic { color: var(--pcd-brand); }
+
+.pud-daterange { position: relative; display: inline-block; }
+.pud-daterange-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 40;
+  width: 240px;
+  background: var(--pcd-surface);
+  border: 1px solid var(--pcd-line);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(31, 41, 51, 0.14);
+  padding: 10px;
+}
+.pud-dr-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--pcd-line);
+}
+.pud-dr-preset {
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  color: var(--pcd-ink);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 9px;
+  cursor: pointer;
+}
+.pud-dr-preset:hover { background: #f5f4f1; }
+.pud-dr-preset.is-on { background: #fdf1e4; color: var(--pcd-brand); font-weight: 700; }
+.pud-dr-custom-label {
+  font-size: 11px;
+  color: var(--pcd-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.pud-dr-custom-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.pud-dr-custom-row input[type="date"] {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--pcd-ink);
+  background: var(--pcd-surface);
+  border: 1px solid var(--pcd-line);
+  border-radius: 6px;
+  padding: 5px 6px;
+}
+.pud-dr-to { color: var(--pcd-muted); font-size: 12px; }
+.pud-dr-apply {
+  width: 100%;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--pcd-brand);
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+}
+.pud-dr-apply:hover { opacity: 0.92; }
+
+.pud-devtoggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: #f4f4f5;
+  border-radius: 8px;
+}
+.pud-devtoggle button {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border: none;
+  background: none;
+  color: var(--pcd-muted);
+  cursor: pointer;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.pud-devtoggle button:hover:not(.is-on) { color: var(--pcd-ink); }
+.pud-devtoggle button.is-on { background: #fff; color: var(--pcd-ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
+
+.pud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--pcd-muted);
+  background: var(--pcd-surface);
+  border: 1px solid var(--pcd-line);
+  border-radius: 20px;
+  padding: 5px 11px;
+  white-space: nowrap;
+}
+.pud-pill .pud-dot { width: 7px; height: 7px; border-radius: 50%; background: #17803d; flex: none; }
+
 .pud-qbox {
   font-size: 12.5px;
   line-height: 1.6;

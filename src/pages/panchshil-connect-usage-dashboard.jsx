@@ -7,9 +7,7 @@ import {
   StatTile,
   MetricCard,
   AreaChart,
-  DonutChart,
   HBar,
-  StackedShareBar,
   VIZ,
 } from "../components/dashboard/DashboardCharts";
 import {
@@ -58,7 +56,14 @@ import "./panchshil-connect-usage-dashboard.css";
    Intl.NumberFormat. Same markup/classes, so it looks identical. */
 const Tile = ({ label, value, sub }) => (
   <div className="pcd-tile">
-    <div className="pcd-tile-label">{label}</div>
+    <div className="pcd-tile-tophead">
+      <div className="pcd-tile-label">{label}</div>
+      {sub ? (
+        <span className="pcd-info-btn" title={sub} aria-label={sub}>
+          i
+        </span>
+      ) : null}
+    </div>
     <div className="pcd-tile-value">{value}</div>
     {sub ? <div className="pcd-tile-sub">{sub}</div> : null}
   </div>
@@ -89,6 +94,61 @@ const PercentHBar = ({ rows, color = VIZ.brand }) => (
 );
 
 const SampleNote = ({ children }) => <div className="pcd-note">{children}</div>;
+
+/* Diverging stacked bar chart - one bar per label, `series` stacked upward
+   from a zero line, `negSeries` stacked downward below it. Matches the
+   reference wireframe's growth-accounting chart (New/Returning/Resurrecting
+   above the line, Dormant below). */
+const DivergingStackedBarChart = ({ labels, series, negSeries, height = 210 }) => {
+  const W = 640;
+  const H = height;
+  const PAD = { t: 14, r: 12, b: 26, l: 8 };
+  const n = labels.length;
+  const maxUp = Math.max(...labels.map((_, i) => series.reduce((a, s) => a + s.data[i], 0)));
+  const maxDn = negSeries ? Math.max(...negSeries.data) : 0;
+  const plotH = H - PAD.t - PAD.b;
+  const zeroY = PAD.t + plotH * (maxUp / (maxUp + maxDn || 1));
+  const scaleUp = (zeroY - PAD.t) / (maxUp || 1);
+  const scaleDn = (H - PAD.b - zeroY) / (maxDn || 1);
+  const gap = (W - PAD.l - PAD.r) / n;
+  const bw = gap * 0.52;
+
+  return (
+    <div className="pcd-area-wrap">
+      <svg viewBox={`0 0 ${W} ${H}`} className="pcd-area" role="img">
+        <line x1={PAD.l} x2={W - PAD.r} y1={zeroY} y2={zeroY} stroke={VIZ.grid} strokeWidth="1" />
+        {labels.map((lab, i) => {
+          const x = PAD.l + i * gap + (gap - bw) / 2;
+          let y = zeroY;
+          const negH = negSeries ? negSeries.data[i] * scaleDn : 0;
+          return (
+            <g key={lab}>
+              {series.map((s) => {
+                const h = s.data[i] * scaleUp;
+                y -= h;
+                return <rect key={s.label} x={x} y={y} width={bw} height={Math.max(0, h)} rx="2" fill={s.color} />;
+              })}
+              {negSeries ? (
+                <rect x={x} y={zeroY} width={bw} height={Math.max(0, negH)} rx="2" fill={negSeries.color} />
+              ) : null}
+              <text x={x + bw / 2} y={H - 8} textAnchor="middle" className="pcd-axis">
+                {lab}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+      <ul className="pcd-legend" style={{ marginTop: 10 }}>
+        {[...series, negSeries].filter(Boolean).map((s) => (
+          <li key={s.label}>
+            <span className="pcd-legend-dot" style={{ background: s.color }} />
+            {s.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 /* The four analytics layers, in the same order as the FM Matrix v3
    wireframe this page is modelled on. */
@@ -219,6 +279,22 @@ const DEVICE_SPLIT = [
   { label: "iOS", value: 32.4 },
 ];
 
+/* Screen Views ÷ Total Sessions from TRAFFIC_TILES above - shown alongside
+   the device split, matching the reference wireframe's "Views / session" stat. */
+const VIEWS_PER_SESSION_FALLBACK = (
+  TRAFFIC_TILES.find((t) => t.label === "Screen Views").value /
+  TRAFFIC_TILES.find((t) => t.label === "Total Sessions").value
+).toFixed(1);
+
+/* Date-range presets for the filter bar's popover — display-only, matching
+   Panchshil_Connect_Dashboard_v3_FM_structure.html's filterbar. Nothing here
+   changes what the tiles/charts below show. */
+const DATE_RANGE_PRESETS = [
+  { key: "7", label: "Last 7 days" },
+  { key: "30", label: "Last 30 days" },
+  { key: "90", label: "Last 90 days" },
+];
+
 /* ---------------- Adoption & Engagement ---------------- */
 const REGISTERED_RESIDENTS = 450; // estimated ceiling, matches the source wireframe
 
@@ -253,12 +329,18 @@ const ADOPTION_TREND = [
   { label: "W8", count: 89 },
 ];
 
-const GROWTH_ACCOUNTING = [
-  { label: "New", value: 14 },
-  { label: "Returning", value: 52 },
-  { label: "Resurrecting", value: 4 },
-  { label: "Dormant", value: 12 },
+/* Weekly growth accounting fallback - shown until the live /growth endpoint
+   resolves. New/Returning/Resurrecting stack above the zero line, Dormant
+   stacks below it, matching the reference wireframe's diverging bar chart.
+   Week 6 (the most recent) matches the figures this section used to show
+   as a single snapshot. */
+const SAMPLE_GROWTH_LABELS = ["W1", "W2", "W3", "W4", "W5", "W6"];
+const SAMPLE_GROWTH_SERIES = [
+  { label: "New", color: VIZ.brand, data: [11, 12, 15, 13, 16, 14] },
+  { label: "Returning", color: "#1c6b3f", data: [46, 48, 50, 53, 55, 52] },
+  { label: "Resurrecting", color: "#5fb98a", data: [3, 3, 4, 4, 5, 4] },
 ];
+const SAMPLE_GROWTH_DORMANT = { label: "Dormant", color: VIZ.brand2, data: [10, 11, 9, 13, 14, 12] };
 
 const ROLE_SPLIT = [
   { label: "Sales / CRM Team", value: 71 },
@@ -322,6 +404,7 @@ const SITE_WISE = [
     status: "Watch",
   },
 ];
+const PROJECT_FILTER_OPTIONS = ["All Projects", ...SITE_WISE.map((r) => r.project)];
 const statusClass = {
   Healthy: "pcd-cell-on",
   Steady: "pcd-cell-neutral",
@@ -672,6 +755,22 @@ const PanchshilConnectUsageDashboard = () => {
   const [layer, setLayer] = useState("traffic");
   const [wfKey, setWfKey] = useState("auth");
   const [crashSearch, setCrashSearch] = useState("");
+
+  // Filter bar state — display-only (see DATE_RANGE_PRESETS above); it does
+  // not feed into rangeFilters/growthFilters/etc. below, so it can't affect
+  // what the live queries request or how their results are built.
+  const [dateRangeOpen, setDateRangeOpen] = useState(false);
+  const [dateRangePreset, setDateRangePreset] = useState("30");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+  const [customApplied, setCustomApplied] = useState(false);
+  const [projectFilter, setProjectFilter] = useState("All Projects");
+  const [deviceFilter, setDeviceFilter] = useState("all");
+  const [prevPeriodOn, setPrevPeriodOn] = useState(true);
+  const dateRangeLabel = customApplied
+    ? `${customFrom} – ${customTo}`
+    : DATE_RANGE_PRESETS.find((p) => p.key === dateRangePreset)?.label;
+
   const rangeFilters = useMemo(() => rangeForDays(DEFAULT_WINDOW), []);
   const crashTrendFilters = useMemo(
     () => ({ ...rangeFilters, days: 7 }),
@@ -824,6 +923,44 @@ const PanchshilConnectUsageDashboard = () => {
     [usage, usageQuery.data],
   );
 
+  // Screen Views ÷ Sessions, shown alongside the device split card - reads
+  // the same traffic.tiles values the tiles row above already renders.
+  const viewsPerSession = useMemo(() => {
+    if (!trafficQuery.data) return VIEWS_PER_SESSION_FALLBACK;
+    const views = traffic.tiles.find((t) => t.key === "screen_views")?.value;
+    const sessions = traffic.tiles.find((t) => t.key === "sessions")?.value;
+    return views != null && sessions ? (views / sessions).toFixed(1) : VIEWS_PER_SESSION_FALLBACK;
+  }, [traffic, trafficQuery.data]);
+
+  // Weekly growth accounting for the diverging bar chart - built from the
+  // same growth.weeks the live /growth endpoint already returns (buildGrowth
+  // reads the identical new/returning/resurrected/dormant keys for its
+  // single-week `.share` breakdown), so this doesn't touch the query/builder
+  // wiring, only how the result is shaped for this chart.
+  const growthWeekly = useMemo(() => {
+    const weeks = growthQuery.data ? growth.weeks : null;
+    if (!Array.isArray(weeks) || weeks.length === 0) {
+      return {
+        labels: SAMPLE_GROWTH_LABELS,
+        series: SAMPLE_GROWTH_SERIES,
+        negSeries: SAMPLE_GROWTH_DORMANT,
+      };
+    }
+    const labels = weeks.map(
+      (w, i) => w.week_label || w.week_start || w.week || w.label || w.date || `W${i + 1}`,
+    );
+    const pick = (key) => weeks.map((w) => Number(w?.[key] ?? 0));
+    return {
+      labels,
+      series: [
+        { label: "New", color: VIZ.brand, data: pick("new") },
+        { label: "Returning", color: "#1c6b3f", data: pick("returning") },
+        { label: "Resurrecting", color: "#5fb98a", data: pick("resurrected") },
+      ],
+      negSeries: { label: "Dormant", color: VIZ.brand2, data: pick("dormant") },
+    };
+  }, [growth, growthQuery.data]);
+
   const adoptionTiles = useMemo(() => {
     if (!adoptionQuery.data) return ADOPTION_TILES;
     return [
@@ -926,7 +1063,30 @@ const PanchshilConnectUsageDashboard = () => {
         bounce: screen.bounce,
       }))
     : TOP_ENTRY_SCREENS;
-  const moduleRows = moduleQuery.data ? moduleQuery.data.tree || [] : SITE_WISE;
+  const moduleRows = useMemo(
+    () => (moduleQuery.data ? moduleQuery.data.tree || [] : SITE_WISE),
+    [moduleQuery.data],
+  );
+
+  // Site-wise breakdown table - always the same 7 reference columns
+  // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status), whether
+  // the rows come from the sample SITE_WISE projects or the live module tree.
+  // The live tree only carries name/users/events/sessions, so the columns
+  // it can't supply (Avg session/Bounce/Trend/Status) show "–" rather than
+  // a made-up number.
+  const siteWiseRows = useMemo(
+    () =>
+      moduleRows.map((row) => ({
+        project: row.project || row.name || row.label || "—",
+        active: row.active ?? row.users ?? 0,
+        sessions: row.sessions ?? 0,
+        avgSession: row.avgSession || row.avg_session || "–",
+        bounce: row.bounce ?? row.bounce_rate ?? null,
+        trend: row.trend || null,
+        status: row.status || null,
+      })),
+    [moduleRows],
+  );
 
   const stabilityTiles = useMemo(() => {
     if (!crashOverviewQuery.data) return CRASH_TILES;
@@ -1040,6 +1200,129 @@ const PanchshilConnectUsageDashboard = () => {
             <p>{current.sub}</p>
           </div>
 
+          {/* Filter bar — matches Panchshil_Connect_Dashboard_v3_FM_structure.html's
+              filterbar in structure and controls, in this page's own colours.
+              Display-only: it does not feed rangeFilters/growthFilters/etc.
+              above, so it can't change what the live queries request. */}
+          <div className="pud-filterbar">
+            <div className="pud-daterange">
+              <button
+                type="button"
+                className="pud-ctrl"
+                onClick={() => setDateRangeOpen((o) => !o)}
+              >
+                <span className="pud-ic">📅</span>
+                <span>{dateRangeLabel}</span>
+                <span className="pud-chev">▾</span>
+              </button>
+              {dateRangeOpen ? (
+                <div className="pud-daterange-pop">
+                  <div className="pud-dr-presets">
+                    {DATE_RANGE_PRESETS.map((p) => (
+                      <button
+                        key={p.key}
+                        type="button"
+                        className={`pud-dr-preset ${!customApplied && dateRangePreset === p.key ? "is-on" : ""}`}
+                        onClick={() => {
+                          setDateRangePreset(p.key);
+                          setCustomApplied(false);
+                          setDateRangeOpen(false);
+                        }}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="pud-dr-custom">
+                    <div className="pud-dr-custom-label">Custom range</div>
+                    <div className="pud-dr-custom-row">
+                      <input
+                        type="date"
+                        value={customFrom}
+                        onChange={(e) => setCustomFrom(e.target.value)}
+                      />
+                      <span className="pud-dr-to">–</span>
+                      <input
+                        type="date"
+                        value={customTo}
+                        onChange={(e) => setCustomTo(e.target.value)}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="pud-dr-apply"
+                      onClick={() => {
+                        if (customFrom && customTo) {
+                          setCustomApplied(true);
+                          setDateRangeOpen(false);
+                        }
+                      }}
+                    >
+                      Apply custom range
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <label className="pud-ctrl">
+              <span className="pud-ic">🏢</span>
+              <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}>
+                {PROJECT_FILTER_OPTIONS.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+              <span className="pud-chev">▾</span>
+            </label>
+
+            <div className="pud-devtoggle" title="Platform">
+              <button
+                type="button"
+                className={deviceFilter === "all" ? "is-on" : ""}
+                onClick={() => setDeviceFilter("all")}
+              >
+                All
+              </button>
+              <button
+                type="button"
+                className={deviceFilter === "ios" ? "is-on" : ""}
+                title="iOS only"
+                onClick={() => setDeviceFilter("ios")}
+              >
+                iOS
+              </button>
+              <button
+                type="button"
+                className={deviceFilter === "android" ? "is-on" : ""}
+                title="Android only"
+                onClick={() => setDeviceFilter("android")}
+              >
+                Android
+              </button>
+            </div>
+
+            <button
+              type="button"
+              className={`pud-ctrl ${prevPeriodOn ? "is-on" : ""}`}
+              onClick={() => setPrevPeriodOn((v) => !v)}
+            >
+              <span className="pud-ic">↺</span>
+              <span>Previous period {prevPeriodOn ? "✓" : ""}</span>
+            </button>
+
+            <div className="pud-spacer" />
+
+            <span className="pud-pill">
+              <span className="pud-dot" />
+              <span>
+                {trafficTiles.find((t) => t.label === "Recently Online")?.value ?? 0} recently
+                online
+              </span>
+            </span>
+          </div>
+
           {/* ==================== TRAFFIC & SESSION ==================== */}
           {layer === "traffic" ? (
             <>
@@ -1062,7 +1345,10 @@ const PanchshilConnectUsageDashboard = () => {
                 API.
               </SampleNote>
 
-              <div className="pcd-tiles" style={{ marginTop: 16 }}>
+              <div
+                className="pcd-tiles"
+                style={{ marginTop: 16, gridTemplateColumns: `repeat(${trafficTiles.length}, 1fr)` }}
+              >
                 {trafficTiles.map((t) => (
                   <StatTile
                     key={t.label}
@@ -1075,16 +1361,26 @@ const PanchshilConnectUsageDashboard = () => {
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-2">
-                  <ChartCard title="Active Users Trend" subtitle="Last 24 days">
+                  <ChartCard title="Usage over time" subtitle="Last 24 days">
                     <AreaChart points={trafficTrend} />
                   </ChartCard>
                 </div>
                 <div className="pcd-span-2">
                   <ChartCard
-                    title="Device Platform Split"
+                    title="Android vs iOS usage"
                     subtitle="Share of active users, Android vs iOS"
                   >
-                    <DonutChart rows={deviceSplit} centerLabel="Active Users" />
+                    <PercentHBar rows={deviceSplit} />
+                    <div
+                      className="pcd-splits"
+                      style={{ marginTop: 14, gridTemplateColumns: "repeat(1, 1fr)", maxWidth: 160 }}
+                    >
+                      <div className="pcd-split">
+                        <div className="pcd-split-label">Views / session</div>
+                        <div className="pcd-split-value">{viewsPerSession}</div>
+                        <div className="pcd-split-sub">screens per visit</div>
+                      </div>
+                    </div>
                   </ChartCard>
                 </div>
               </div>
@@ -1117,7 +1413,10 @@ const PanchshilConnectUsageDashboard = () => {
                 analytics API.
               </SampleNote>
 
-              <div className="pcd-tiles" style={{ marginTop: 16 }}>
+              <div
+                className="pcd-tiles"
+                style={{ marginTop: 16, gridTemplateColumns: `repeat(${adoptionTiles.length}, 1fr)` }}
+              >
                 {adoptionTiles.map((t) => (
                   <Tile
                     key={t.label}
@@ -1130,10 +1429,7 @@ const PanchshilConnectUsageDashboard = () => {
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard
-                    title="Adoption Trend"
-                    subtitle="Weekly active users, last 8 weeks"
-                  >
+                  <ChartCard title="Adoption trend (weekly active users, last 8 weeks)">
                     <AreaChart
                       points={
                         adoptionTrendQuery.data
@@ -1147,16 +1443,18 @@ const PanchshilConnectUsageDashboard = () => {
                 <div className="pcd-span-2">
                   <ChartCard
                     title="New · Returning · Resurrecting · Dormant"
-                    subtitle="Share of the active base this week"
+                    subtitle="Growth accounting · Last 6 weeks"
                   >
-                    <StackedShareBar
-                      rows={growthQuery.data ? growth.share : GROWTH_ACCOUNTING}
+                    <DivergingStackedBarChart
+                      labels={growthWeekly.labels}
+                      series={growthWeekly.series}
+                      negSeries={growthWeekly.negSeries}
                     />
                   </ChartCard>
                 </div>
                 <div className="pcd-span-2">
                   <ChartCard
-                    title="Retention · Weekly Cohorts"
+                    title="Do new users keep coming back?"
                     subtitle="% of each cohort still active N weeks later"
                   >
                     <div className="pcd-table-scroll">
@@ -1200,7 +1498,7 @@ const PanchshilConnectUsageDashboard = () => {
 
                 <div className="pcd-span-2">
                   <ChartCard
-                    title="Adoption by Audience"
+                    title="Who is (and isn't) using the app"
                     subtitle="Active users ÷ invited users"
                   >
                     <PercentHBar
@@ -1217,7 +1515,7 @@ const PanchshilConnectUsageDashboard = () => {
                 </div>
                 <div className="pcd-span-2">
                   <MetricCard
-                    label="Dormant Users"
+                    label="Dormant users"
                     value={adoptionQuery.data ? adoption.dormant.value : 312}
                     caption={
                       adoptionQuery.data
@@ -1228,69 +1526,40 @@ const PanchshilConnectUsageDashboard = () => {
                 </div>
 
                 <div className="pcd-span-4">
-                  <ChartCard
-                    title={
-                      moduleQuery.data
-                        ? "Module Activity"
-                        : "Site-Wise Breakdown"
-                    }
-                    subtitle={
-                      moduleQuery.data
-                        ? "Users, events and sessions from the live analytics API"
-                        : "Active users, sessions and bounce rate per live project"
-                    }
-                  >
+                  <ChartCard eyebrow="League table" title="Site-wise breakdown">
                     <div className="pcd-table-scroll">
                       <table className="pcd-table">
                         <thead>
-                          {moduleQuery.data ? (
-                            <tr>
-                              <th>Module</th>
-                              <th>Users</th>
-                              <th>Events</th>
-                              <th>Sessions</th>
-                            </tr>
-                          ) : (
-                            <tr>
-                              <th>Project</th>
-                              <th>Active users</th>
-                              <th>Sessions</th>
-                              <th>Avg session</th>
-                              <th>Bounce</th>
-                              <th>Trend</th>
-                              <th>Status</th>
-                            </tr>
-                          )}
+                          <tr>
+                            <th>Project</th>
+                            <th>Active users</th>
+                            <th>Sessions</th>
+                            <th>Avg session</th>
+                            <th>Bounce</th>
+                            <th>Trend</th>
+                            <th>Status</th>
+                          </tr>
                         </thead>
                         <tbody>
-                          {moduleQuery.data
-                            ? moduleRows.map((row) => (
-                                <tr key={row.name}>
-                                  <td>{row.name}</td>
-                                  <td>{row.users}</td>
-                                  <td>{row.events}</td>
-                                  <td>{row.sessions}</td>
-                                </tr>
-                              ))
-                            : moduleRows.map((row) => (
-                                <tr key={row.project}>
-                                  <td>{row.project}</td>
-                                  <td>{row.active}</td>
-                                  <td>{row.sessions}</td>
-                                  <td>{row.avgSession}</td>
-                                  <td>{row.bounce}%</td>
-                                  <td>{trendArrow[row.trend]}</td>
-                                  <td>
-                                    <span
-                                      className={`pcd-cell-pill ${
-                                        statusClass[row.status]
-                                      }`}
-                                    >
-                                      {row.status}
-                                    </span>
-                                  </td>
-                                </tr>
-                              ))}
+                          {siteWiseRows.map((row, i) => (
+                            <tr key={row.project || i}>
+                              <td>{row.project}</td>
+                              <td>{row.active}</td>
+                              <td>{row.sessions}</td>
+                              <td>{row.avgSession}</td>
+                              <td>{row.bounce != null ? `${row.bounce}%` : "–"}</td>
+                              <td>{row.trend ? trendArrow[row.trend] : "–"}</td>
+                              <td>
+                                {row.status ? (
+                                  <span className={`pcd-cell-pill ${statusClass[row.status]}`}>
+                                    {row.status}
+                                  </span>
+                                ) : (
+                                  "–"
+                                )}
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>
@@ -1339,7 +1608,7 @@ const PanchshilConnectUsageDashboard = () => {
                 </div>
               </div>
 
-              <div className="pcd-tiles">
+              <div className="pcd-tiles" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
                 <Tile
                   label="Workflow Adoption"
                   value={`${
@@ -1389,7 +1658,7 @@ const PanchshilConnectUsageDashboard = () => {
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
                   <ChartCard
-                    title={`${wf.name} — Completion Funnel`}
+                    title={`${wf.name} — completion funnel`}
                     subtitle="Real event sequence, illustrative retained %"
                   >
                     <div className="pud-funnel">
@@ -1428,7 +1697,7 @@ const PanchshilConnectUsageDashboard = () => {
 
                 <div className="pcd-span-4">
                   <ChartCard
-                    title="All Screens in This Module"
+                    title="All screens in this module"
                     subtitle="Users, events, sessions and completion per screen"
                   >
                     <div className="pcd-table-scroll">
@@ -1460,7 +1729,7 @@ const PanchshilConnectUsageDashboard = () => {
 
                 <div className="pcd-span-4">
                   <ChartCard
-                    title="Top Entry Screens"
+                    title="Top entry screens"
                     subtitle="First screen seen in a session, org-wide (not module-filtered)"
                   >
                     <div className="pcd-table-scroll">
@@ -1512,7 +1781,10 @@ const PanchshilConnectUsageDashboard = () => {
                 App stability figures are loaded from the live analytics API.
               </SampleNote>
 
-              <div className="pcd-tiles" style={{ marginTop: 16 }}>
+              <div
+                className="pcd-tiles"
+                style={{ marginTop: 16, gridTemplateColumns: `repeat(${stabilityTiles.length}, 1fr)` }}
+              >
                 {stabilityTiles.map((t) => (
                   <Tile
                     key={t.label}
@@ -1617,7 +1889,7 @@ const PanchshilConnectUsageDashboard = () => {
               </div>
 
               <SectionHead title="The non-fatal / handled-failure layer" />
-              <div className="pcd-tiles">
+              <div className="pcd-tiles" style={{ gridTemplateColumns: `repeat(${healthTiles.length}, 1fr)` }}>
                 {healthTiles.map((t) => (
                   <Tile
                     key={t.label}

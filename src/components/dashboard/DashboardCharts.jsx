@@ -28,12 +28,26 @@ export const VIZ = {
 const nf = new Intl.NumberFormat("en-IN");
 const pct = (v, total) => (total > 0 ? Math.round((v / total) * 100) : 0);
 
+/* Small "i" info button - shown on any tile/card that has caption text to
+   surface, using that same text as a native hover tooltip. Purely additive
+   (no-op when there's nothing to show), matching the reference wireframe's
+   info-icon-on-every-card convention. */
+const InfoIcon = ({ text }) =>
+  text ? (
+    <span className="pcd-info-btn" title={text} aria-label={text}>
+      i
+    </span>
+  ) : null;
+
 /* ================================================================== */
 /* Stat tile - a hero number. The number IS the chart.                */
 /* ================================================================== */
 export const StatTile = ({ label, value, sub, loading }) => (
   <div className="pcd-tile">
-    <div className="pcd-tile-label">{label}</div>
+    <div className="pcd-tile-tophead">
+      <div className="pcd-tile-label">{label}</div>
+      <InfoIcon text={sub} />
+    </div>
     <div className="pcd-tile-value">
       {loading ? <span className="pcd-skel pcd-skel-num" /> : nf.format(value ?? 0)}
     </div>
@@ -44,23 +58,27 @@ export const StatTile = ({ label, value, sub, loading }) => (
 /* ================================================================== */
 /* Card shell                                                          */
 /* ================================================================== */
-export const ChartCard = ({ title, subtitle, legend, loading, error, empty, children }) => (
+export const ChartCard = ({ eyebrow, title, subtitle, legend, loading, error, empty, children }) => (
   <div className="pcd-card">
     <div className="pcd-card-head">
       <div>
+        {eyebrow ? <div className="pcd-card-eyebrow">{eyebrow}</div> : null}
         <h3 className="pcd-card-title">{title}</h3>
         {subtitle ? <p className="pcd-card-sub">{subtitle}</p> : null}
       </div>
-      {legend && !loading && !error && !empty ? (
-        <ul className="pcd-legend">
-          {legend.map((l) => (
-            <li key={l.label}>
-              <span className="pcd-legend-dot" style={{ background: l.color }} />
-              {l.label}
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      <div className="pcd-card-head-right">
+        {legend && !loading && !error && !empty ? (
+          <ul className="pcd-legend">
+            {legend.map((l) => (
+              <li key={l.label}>
+                <span className="pcd-legend-dot" style={{ background: l.color }} />
+                {l.label}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <InfoIcon text={subtitle} />
+      </div>
     </div>
 
     {loading ? (
@@ -515,7 +533,10 @@ export const SectionHead = ({ title }) => (
 /* ================================================================== */
 export const MetricCard = ({ label, value, caption, splits = [], loading, tone = "brand" }) => (
   <div className="pcd-card pcd-metric">
-    <div className="pcd-metric-label">{label}</div>
+    <div className="pcd-tile-tophead">
+      <div className="pcd-metric-label">{label}</div>
+      <InfoIcon text={caption} />
+    </div>
     <div className={`pcd-metric-value pcd-tone-${tone}`}>
       {loading ? <span className="pcd-skel pcd-skel-num" /> : nf.format(value ?? 0)}
     </div>
