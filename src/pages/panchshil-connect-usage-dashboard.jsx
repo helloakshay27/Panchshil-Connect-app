@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { LOGO_URL } from "./baseurl/apiDomain";
+import axios from "axios";
+import Select from "react-select";
+import { LOGO_URL, baseURL } from "./baseurl/apiDomain";
 import {
   ChartCard,
   SectionHead,
@@ -209,24 +211,24 @@ const LAYERS = [
       </svg>
     ),
   },
-  {
-    key: "stability",
-    label: "App Stability",
-    sub: "Crash rates and the issues actually causing residents to drop out mid-session.",
-    icon: (
-      <svg
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M10 2.6 3 16.4h14L10 2.6Z" />
-        <path d="M10 8v3.6M10 14.2v.1" />
-      </svg>
-    ),
-  },
+  // {
+  //   key: "stability",
+  //   label: "App Stability",
+  //   sub: "Crash rates and the issues actually causing residents to drop out mid-session.",
+  //   icon: (
+  //     <svg
+  //       viewBox="0 0 20 20"
+  //       fill="none"
+  //       stroke="currentColor"
+  //       strokeWidth="1.6"
+  //       strokeLinecap="round"
+  //       strokeLinejoin="round"
+  //     >
+  //       <path d="M10 2.6 3 16.4h14L10 2.6Z" />
+  //       <path d="M10 8v3.6M10 14.2v.1" />
+  //     </svg>
+  //   ),
+  // },
 ];
 
 /* =====================================================================
@@ -274,9 +276,26 @@ const ACTIVE_USERS_TREND = [
   { label: "Aug 14", count: 102 },
 ];
 
+/* Views/Sessions sample trends (scaled off ACTIVE_USERS_TREND's visitors,
+   using the same ratios as TRAFFIC_TILES: ~2.25x for views, ~1.6x for
+   sessions), plus a "previous period" line ~9% below each - shown until the
+   live /usage_and_distribution endpoint resolves, matching the reference
+   wireframe's Visitors/Views/Sessions tab switcher and dashed comparison line. */
+const scaleTrend = (base, factor) => base.map((p) => ({ label: p.label, count: Math.round(p.count * factor) }));
+const SAMPLE_VIEWS_TREND = scaleTrend(ACTIVE_USERS_TREND, 2.25);
+const SAMPLE_SESSIONS_TREND = scaleTrend(ACTIVE_USERS_TREND, 1.63);
+const SAMPLE_PREV_FACTOR = 0.91;
+const SAMPLE_USAGE_TRENDS = {
+  visitors: { current: ACTIVE_USERS_TREND, previous: scaleTrend(ACTIVE_USERS_TREND, SAMPLE_PREV_FACTOR) },
+  views: { current: SAMPLE_VIEWS_TREND, previous: scaleTrend(SAMPLE_VIEWS_TREND, SAMPLE_PREV_FACTOR) },
+  sessions: { current: SAMPLE_SESSIONS_TREND, previous: scaleTrend(SAMPLE_SESSIONS_TREND, SAMPLE_PREV_FACTOR) },
+};
+
+/* Both bars use the same brand orange. */
+const DEVICE_SPLIT_COLORS = { Android: VIZ.brand, iOS: VIZ.brand };
 const DEVICE_SPLIT = [
-  { label: "Android", value: 67.6 },
-  { label: "iOS", value: 32.4 },
+  { label: "Android", value: 67.6, color: DEVICE_SPLIT_COLORS.Android },
+  { label: "iOS", value: 32.4, color: DEVICE_SPLIT_COLORS.iOS },
 ];
 
 /* Screen Views ÷ Total Sessions from TRAFFIC_TILES above - shown alongside
@@ -405,6 +424,41 @@ const SITE_WISE = [
   },
 ];
 const PROJECT_FILTER_OPTIONS = ["All Projects", ...SITE_WISE.map((r) => r.project)];
+
+/* react-select styling for the project filter — compact, borderless (sits
+   inside the .pud-ctrl pill), light theme, and scrollable via react-select's
+   own menuList (built-in overflow, capped by maxMenuHeight below) instead of
+   relying on the native <select> popup. */
+const PROJECT_SELECT_STYLES = {
+  control: (base) => ({
+    ...base,
+    minHeight: "22px",
+    border: "none",
+    boxShadow: "none",
+    background: "transparent",
+    cursor: "pointer",
+  }),
+  valueContainer: (base) => ({ ...base, padding: "0 2px" }),
+  input: (base) => ({ ...base, margin: 0, padding: 0 }),
+  indicatorSeparator: () => ({ display: "none" }),
+  indicatorsContainer: (base) => ({ ...base, height: "22px" }),
+  dropdownIndicator: (base) => ({ ...base, padding: "0 2px", color: "var(--pcd-muted)" }),
+  singleValue: (base) => ({ ...base, color: "var(--pcd-ink)", fontWeight: 500, fontSize: "13px" }),
+  placeholder: (base) => ({ ...base, fontSize: "13px" }),
+  menu: (base) => ({ ...base, zIndex: 9999, minWidth: "230px" }),
+  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+  menuList: (base) => ({ ...base, padding: "4px" }),
+  option: (base, state) => ({
+    ...base,
+    borderRadius: "6px",
+    padding: "8px 10px",
+    cursor: "pointer",
+    fontSize: "13px",
+    backgroundColor: state.isSelected ? "#fdf1e4" : state.isFocused ? "#f6f4f2" : "transparent",
+    color: state.isSelected ? "var(--pcd-brand)" : "var(--pcd-ink)",
+    fontWeight: state.isSelected ? 700 : 500,
+  }),
+};
 const statusClass = {
   Healthy: "pcd-cell-on",
   Steady: "pcd-cell-neutral",
@@ -416,6 +470,7 @@ const trendArrow = { up: "↗", flat: "→", dn: "↘" };
 /* Module names and event-step names are real, from the PostHog event catalogue;
    adoption / completion / drop-off figures are illustrative. */
 const WORKFLOWS = [
+  // ---------------- Access ----------------
   {
     key: "auth",
     name: "Auth & Onboarding",
@@ -481,6 +536,16 @@ const WORKFLOWS = [
     completions: 27,
   },
   {
+    key: "theme",
+    name: "Appearance (Theme)",
+    bucket: "Access",
+    steps: ["theme_settings_viewed", "theme_option_selected", "theme_applied"],
+    adoption: 28,
+    completionRate: 76,
+    completions: 18,
+  },
+  // ---------------- Account & Money ----------------
+  {
     key: "account",
     name: "My Account & Financials",
     bucket: "Account & Money",
@@ -505,6 +570,7 @@ const WORKFLOWS = [
     completionRate: 69,
     completions: 19,
   },
+  // ---------------- Discovery ----------------
   {
     key: "projects",
     name: "Projects & Explore",
@@ -519,6 +585,15 @@ const WORKFLOWS = [
     adoption: 71,
     completionRate: 29,
     completions: 21,
+  },
+  {
+    key: "favourites",
+    name: "Favourites",
+    bucket: "Discovery",
+    steps: ["favourites_viewed", "project_favourited", "favourite_removed"],
+    adoption: 24,
+    completionRate: 58,
+    completions: 11,
   },
   {
     key: "sitevisit",
@@ -549,6 +624,16 @@ const WORKFLOWS = [
     completionRate: 41,
     completions: 7,
   },
+  {
+    key: "enquiry",
+    name: "Enquiry",
+    bucket: "Discovery",
+    steps: ["enquiry_form_opened", "enquiry_details_entered", "enquiry_submitted_success"],
+    adoption: 33,
+    completionRate: 47,
+    completions: 15,
+  },
+  // ---------------- Support & Docs ----------------
   {
     key: "docs",
     name: "My Documents",
@@ -588,6 +673,16 @@ const WORKFLOWS = [
     completions: 20,
   },
   {
+    key: "notifications",
+    name: "Notifications",
+    bucket: "Support & Docs",
+    steps: ["notification_center_viewed", "notification_opened", "notification_action_tapped"],
+    adoption: 52,
+    completionRate: 61,
+    completions: 31,
+  },
+  // ---------------- Engagement ----------------
+  {
     key: "privilege",
     name: "Privilege & Concierge",
     bucket: "Engagement",
@@ -613,6 +708,15 @@ const WORKFLOWS = [
     adoption: 21,
     completionRate: 57,
     completions: 13,
+  },
+  {
+    key: "newspress",
+    name: "News & Press",
+    bucket: "Engagement",
+    steps: ["news_list_viewed", "news_article_viewed", "news_article_shared"],
+    adoption: 19,
+    completionRate: 44,
+    completions: 8,
   },
 ];
 const WF_BUCKETS = [...new Set(WORKFLOWS.map((w) => w.bucket))];
@@ -755,6 +859,7 @@ const PanchshilConnectUsageDashboard = () => {
   const [layer, setLayer] = useState("traffic");
   const [wfKey, setWfKey] = useState("auth");
   const [crashSearch, setCrashSearch] = useState("");
+  const [usageTab, setUsageTab] = useState("visitors");
 
   // Filter bar state — display-only (see DATE_RANGE_PRESETS above); it does
   // not feed into rangeFilters/growthFilters/etc. below, so it can't affect
@@ -770,6 +875,41 @@ const PanchshilConnectUsageDashboard = () => {
   const dateRangeLabel = customApplied
     ? `${customFrom} – ${customTo}`
     : DATE_RANGE_PRESETS.find((p) => p.key === dateRangePreset)?.label;
+
+  // Project dropdown — same projects.json call used on the Banner create page,
+  // so this filter lists the same live projects instead of the sample set.
+  const [liveProjects, setLiveProjects] = useState([]);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(`${baseURL}projects.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+        setLiveProjects(response.data.projects || []);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+    fetchProjects();
+  }, []);
+  const projectFilterOptions = useMemo(
+    () =>
+      liveProjects.length
+        ? ["All Projects", ...liveProjects.map((p) => p.project_name)]
+        : PROJECT_FILTER_OPTIONS,
+    [liveProjects],
+  );
+  const projectSelectOptions = useMemo(
+    () => projectFilterOptions.map((p) => ({ label: p, value: p })),
+    [projectFilterOptions],
+  );
+
+  // Refresh button — refetch is wired below, once the layer's query objects
+  // exist (see handleRefresh near the query declarations).
+  const [refreshing, setRefreshing] = useState(false);
 
   const rangeFilters = useMemo(() => rangeForDays(DEFAULT_WINDOW), []);
   const crashTrendFilters = useMemo(
@@ -831,6 +971,41 @@ const PanchshilConnectUsageDashboard = () => {
   const crashHandledFailuresQuery = useCrashHandledFailures(rangeFilters, {
     enabled: layer === "stability",
   });
+
+  // Refresh button — explicitly refetches the live queries backing whichever
+  // layer is currently open, so a click always issues fresh API calls rather
+  // than relying on cache invalidation timing.
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const refetches = [];
+      if (layer === "traffic") {
+        refetches.push(trafficQuery.refetch(), usageQuery.refetch());
+      } else if (layer === "adoption") {
+        refetches.push(
+          adoptionQuery.refetch(),
+          adoptionTrendQuery.refetch(),
+          growthQuery.refetch(),
+          retentionQuery.refetch(),
+          rolesQuery.refetch(),
+          moduleQuery.refetch(),
+        );
+      } else if (layer === "workflow") {
+        refetches.push(moduleQuery.refetch(), workflowQuery.refetch());
+      } else if (layer === "stability") {
+        refetches.push(
+          crashOverviewQuery.refetch(),
+          crashTrendQuery.refetch(),
+          crashReleaseQuery.refetch(),
+          crashDiagnosticsQuery.refetch(),
+          crashHandledFailuresQuery.refetch(),
+        );
+      }
+      await Promise.all(refetches);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const traffic = useMemo(
     () => buildTraffic(trafficQuery.data || {}),
@@ -901,27 +1076,38 @@ const PanchshilConnectUsageDashboard = () => {
     ];
   }, [traffic, trafficQuery.data]);
 
-  const trafficTrend = useMemo(
-    () =>
-      usageQuery.data
-        ? usage.daily.map((day) => ({
-            label: day.day,
-            count: day.current.visitors,
-          }))
-        : ACTIVE_USERS_TREND,
-    [usage, usageQuery.data],
-  );
+  // Visitors/Views/Sessions trend, with a "previous period" dashed
+  // comparison line - both current and previous come straight out of
+  // usage.daily (buildUsage already aligns them day-for-day), switched by
+  // the usageTab toggle. Falls back to the illustrative sample trends above
+  // until the live endpoint resolves.
+  const usageSeries = useMemo(() => {
+    if (usageQuery.data) {
+      return {
+        current: usage.daily.map((day) => ({ label: day.day, count: day.current[usageTab] })),
+        previous: usage.daily.map((day) => ({ label: day.day, count: day.previous[usageTab] })),
+      };
+    }
+    return SAMPLE_USAGE_TRENDS[usageTab];
+  }, [usage, usageQuery.data, usageTab]);
 
-  const deviceSplit = useMemo(
-    () =>
-      usageQuery.data
-        ? usage.devices.map((device) => ({
-            label: device.label,
-            value: device.share || 0,
-          }))
-        : DEVICE_SPLIT,
-    [usage, usageQuery.data],
-  );
+  // Card is specifically "Android vs iOS usage" — always show both rows, even
+  // when the live payload only reports one platform (or an unrelated one like
+  // "Desktop"); a platform missing from the live data is shown as 0%, never
+  // dropped from the chart.
+  const deviceSplit = useMemo(() => {
+    if (usageQuery.data) {
+      const shareByLabel = Object.fromEntries(
+        usage.devices.map((device) => [device.label, device.share || 0]),
+      );
+      return ["Android", "iOS"].map((label) => ({
+        label,
+        value: shareByLabel[label] || 0,
+        color: DEVICE_SPLIT_COLORS[label],
+      }));
+    }
+    return DEVICE_SPLIT;
+  }, [usage, usageQuery.data]);
 
   // Screen Views ÷ Sessions, shown alongside the device split card - reads
   // the same traffic.tiles values the tiles row above already renders.
@@ -1265,17 +1451,22 @@ const PanchshilConnectUsageDashboard = () => {
               ) : null}
             </div>
 
-            <label className="pud-ctrl">
+            <div className="pud-ctrl pud-project-ctrl">
               <span className="pud-ic">🏢</span>
-              <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}>
-                {PROJECT_FILTER_OPTIONS.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-              <span className="pud-chev">▾</span>
-            </label>
+              <Select
+                classNamePrefix="pud-project-select"
+                options={projectSelectOptions}
+                value={
+                  projectSelectOptions.find((o) => o.value === projectFilter) ||
+                  projectSelectOptions[0]
+                }
+                onChange={(opt) => setProjectFilter(opt?.value || "All Projects")}
+                isSearchable
+                maxMenuHeight={280}
+                menuPortalTarget={document.body}
+                styles={PROJECT_SELECT_STYLES}
+              />
+            </div>
 
             <div className="pud-devtoggle" title="Platform">
               <button
@@ -1310,6 +1501,17 @@ const PanchshilConnectUsageDashboard = () => {
             >
               <span className="pud-ic">↺</span>
               <span>Previous period {prevPeriodOn ? "✓" : ""}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`pud-ctrl pud-refresh-btn ${refreshing ? "is-spinning" : ""}`}
+              onClick={handleRefresh}
+              disabled={refreshing}
+              title="Refresh data"
+            >
+              <span className="pud-ic">⟳</span>
+              <span>Refresh</span>
             </button>
 
             <div className="pud-spacer" />
@@ -1362,7 +1564,42 @@ const PanchshilConnectUsageDashboard = () => {
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-2">
                   <ChartCard title="Usage over time" subtitle="Last 24 days">
-                    <AreaChart points={trafficTrend} />
+                    <div className="pud-devtoggle" style={{ marginBottom: 10 }}>
+                      <button
+                        type="button"
+                        className={usageTab === "visitors" ? "is-on" : ""}
+                        onClick={() => setUsageTab("visitors")}
+                      >
+                        Visitors
+                      </button>
+                      <button
+                        type="button"
+                        className={usageTab === "views" ? "is-on" : ""}
+                        onClick={() => setUsageTab("views")}
+                      >
+                        Views
+                      </button>
+                      <button
+                        type="button"
+                        className={usageTab === "sessions" ? "is-on" : ""}
+                        onClick={() => setUsageTab("sessions")}
+                      >
+                        Sessions
+                      </button>
+                    </div>
+                    <AreaChart points={usageSeries.current} previousPoints={usageSeries.previous} />
+                    <div style={{ display: "flex", gap: 18, marginTop: 10, fontSize: 12, color: "var(--pcd-muted)" }}>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+                        <span
+                          style={{ width: 9, height: 9, borderRadius: 2, background: VIZ.brand, display: "inline-block" }}
+                        />
+                        {usageTab === "visitors" ? "Visitors" : usageTab === "views" ? "Views" : "Sessions"}
+                      </span>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+                        <span style={{ width: 16, height: 0, borderTop: "2px dashed #c2c0bd", display: "inline-block" }} />
+                        Previous period
+                      </span>
+                    </div>
                   </ChartCard>
                 </div>
                 <div className="pcd-span-2">

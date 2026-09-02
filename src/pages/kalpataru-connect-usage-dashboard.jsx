@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Rustomji_URL_Black } from "./baseurl/apiDomain";
+import { LOGO_Kalpataru_URL } from "./baseurl/apiDomain";
 import {
   ChartCard,
   StatTile,
@@ -37,23 +37,23 @@ import {
 } from "../features/posthog-dashboard/data/metrics";
 import "./panchshil-connect-dashboard.css";
 import "./panchshil-connect-usage-dashboard.css";
-import "./rustomjee-connect-usage-dashboard.css";
+import "./kalpataru-connect-usage-dashboard.css";
 
-/* Same layout/components as the Panchshil Connect Usage Dashboard (same CSS
-   structure, same DashboardCharts components, same live PostHog-backed API
-   wiring via ../features/posthog-dashboard) — but its own colour code:
-   Rustomjee's brand gold (#A78847) in place of Panchshil's orange (#de7008),
-   and no App Stability layer (this reference wireframe - unlike Panchshil's -
-   has no crash/Crashlytics page). `--pcd-brand/-2/-3` are overridden inline
-   on the page root below, which re-colours everything in the shared CSS that
+/* Same layout/components as the Panchshil and Rustomjee Usage Dashboards
+   (same CSS structure, same DashboardCharts components, same live
+   PostHog-backed API wiring via ../features/posthog-dashboard) — but its own
+   colour code — the same gold/bronze palette used for Rustomjee's page — and
+   no App Stability layer (same scope as Rustomjee's page - no confirmed live
+   Crashlytics project for Kalpataru yet). `--pcd-brand/-2/-3` are overridden inline on
+   the page root below, which re-colours everything in the shared CSS that
    reads those variables; chart components that take an explicit colour prop
-   are passed RJ.* directly, since their own defaults are hardcoded to
-   Panchshil orange. The FM adoption analytics tenant is resolved per-hostname
-   (src/config/fmAdoptionTenant.js), so these same hooks automatically scope
-   to Rustomjee's own analytics once this page is served from its domain -
-   nothing tenant-specific needs to be passed here. */
-const RJ = {
-  brand: "#A78847", // Rustomjee gold — primary
+   are passed KP.* directly, since their own defaults are hardcoded to
+   Panchshil orange. The FM adoption analytics tenant is resolved
+   per-hostname (src/config/fmAdoptionTenant.js), so these same hooks
+   automatically scope to Kalpataru's own analytics once this page is served
+   from its domain - nothing tenant-specific needs to be passed here. */
+const KP = {
+  brand: "#A78847", // same gold used for Rustomjee — primary
   brand2: "#7C6435", // deeper bronze — secondary
   brand3: "#3E6E64", // muted teal — cool contrast for a second data series
   grid: "#e6e4de", // neutral chart gridline, not a brand colour
@@ -76,7 +76,7 @@ const Tile = ({ label, value, sub }) => (
   </div>
 );
 
-const PercentHBar = ({ rows, color = RJ.brand }) => (
+const PercentHBar = ({ rows, color = KP.brand }) => (
   <ul className="pcd-hbar">
     {rows.map((r) => (
       <li key={r.label} title={`${r.label}: ${r.value}%`}>
@@ -118,7 +118,7 @@ const DivergingStackedBarChart = ({ labels, series, negSeries, height = 210 }) =
   return (
     <div className="pcd-area-wrap">
       <svg viewBox={`0 0 ${W} ${H}`} className="pcd-area" role="img">
-        <line x1={PAD.l} x2={W - PAD.r} y1={zeroY} y2={zeroY} stroke={RJ.grid} strokeWidth="1" />
+        <line x1={PAD.l} x2={W - PAD.r} y1={zeroY} y2={zeroY} stroke={KP.grid} strokeWidth="1" />
         {labels.map((lab, i) => {
           const x = PAD.l + i * gap + (gap - bw) / 2;
           let y = zeroY;
@@ -152,9 +152,9 @@ const DivergingStackedBarChart = ({ labels, series, negSeries, height = 210 }) =
   );
 };
 
-/* Three analytics layers, matching Rustomjee_Circle_Dashboard_v1_FM_structure.html
-   (that wireframe has no App Stability page — unlike the Panchshil Usage
-   Dashboard this page otherwise mirrors). */
+/* Three analytics layers, same scope as the Rustomjee Usage Dashboard - no
+   App Stability page (no confirmed live Crashlytics project for Kalpataru
+   yet). */
 const LAYERS = [
   {
     key: "traffic",
@@ -195,36 +195,36 @@ const LAYERS = [
 
 /* =====================================================================
    Sample / illustrative fallback data, shown until each live endpoint
-   resolves. Module names and buckets are real, taken from the shared
-   PostHog Event Catalogue's Rustomjee sheet, referenced in the wireframe
-   HTML; adoption/completion figures and project names are illustrative
-   placeholders (see per-section notes below).
+   resolves. Unlike the Panchshil/Rustomjee pages, there's no confirmed
+   Kalpataru-specific PostHog event catalogue behind this one yet, so the
+   module names and figures below are entirely illustrative placeholders,
+   not sourced from a real event list.
    ===================================================================== */
 
 /* ---------------- Traffic & Session ---------------- */
 const TRAFFIC_TILES = [
-  { label: "Active Users", value: 4050, sub: "Last 28 days" },
-  { label: "Screen Views", value: 17200, sub: "Last 28 days" },
-  { label: "Total Sessions", value: 5460, sub: "Last 28 days" },
-  { label: "New Users", value: 380, sub: "Last 28 days" },
-  { label: "Bounce Rate", value: 21, sub: "% of sessions" },
-  { label: "Recently Online", value: 96, sub: "Active in last 30 min" },
+  { label: "Active Users", value: 860, sub: "Last 28 days" },
+  { label: "Screen Views", value: 3120, sub: "Last 28 days" },
+  { label: "Total Sessions", value: 1180, sub: "Last 28 days" },
+  { label: "New Users", value: 96, sub: "Last 28 days" },
+  { label: "Bounce Rate", value: 20, sub: "% of sessions" },
+  { label: "Recently Online", value: 22, sub: "Active in last 30 min" },
 ];
 
 const ACTIVE_USERS_TREND = [
-  { label: "Jul 22", count: 3120 }, { label: "Jul 23", count: 3180 }, { label: "Jul 24", count: 3240 },
-  { label: "Jul 25", count: 3190 }, { label: "Jul 26", count: 3310 }, { label: "Jul 27", count: 3380 },
-  { label: "Jul 28", count: 3350 }, { label: "Jul 29", count: 3420 }, { label: "Jul 30", count: 3490 },
-  { label: "Jul 31", count: 3560 }, { label: "Aug 1", count: 3520 }, { label: "Aug 2", count: 3600 },
-  { label: "Aug 3", count: 3670 }, { label: "Aug 4", count: 3740 }, { label: "Aug 5", count: 3710 },
-  { label: "Aug 6", count: 3790 }, { label: "Aug 7", count: 3860 }, { label: "Aug 8", count: 3820 },
-  { label: "Aug 9", count: 3890 }, { label: "Aug 10", count: 3950 }, { label: "Aug 11", count: 3910 },
-  { label: "Aug 12", count: 3980 }, { label: "Aug 13", count: 4050 }, { label: "Aug 14", count: 4010 },
+  { label: "Jul 22", count: 640 }, { label: "Jul 23", count: 655 }, { label: "Jul 24", count: 668 },
+  { label: "Jul 25", count: 650 }, { label: "Jul 26", count: 682 }, { label: "Jul 27", count: 695 },
+  { label: "Jul 28", count: 688 }, { label: "Jul 29", count: 704 }, { label: "Jul 30", count: 718 },
+  { label: "Jul 31", count: 732 }, { label: "Aug 1", count: 720 }, { label: "Aug 2", count: 740 },
+  { label: "Aug 3", count: 756 }, { label: "Aug 4", count: 772 }, { label: "Aug 5", count: 765 },
+  { label: "Aug 6", count: 780 }, { label: "Aug 7", count: 798 }, { label: "Aug 8", count: 786 },
+  { label: "Aug 9", count: 802 }, { label: "Aug 10", count: 818 }, { label: "Aug 11", count: 808 },
+  { label: "Aug 12", count: 828 }, { label: "Aug 13", count: 860 }, { label: "Aug 14", count: 842 },
 ];
 
 const DEVICE_SPLIT = [
-  { label: "Android", value: 71.4 },
-  { label: "iOS", value: 28.6 },
+  { label: "Android", value: 64.8 },
+  { label: "iOS", value: 35.2 },
 ];
 
 /* Screen Views ÷ Total Sessions from TRAFFIC_TILES above - shown alongside
@@ -243,104 +243,98 @@ const DATE_RANGE_PRESETS = [
 ];
 
 /* ---------------- Adoption & Engagement ---------------- */
-/* Illustrative ceiling — an estimated booked-homebuyer count for Rustomjee
-   Circle, same disclosure convention as the reference wireframe's
-   BOOKED_HOMEBUYERS constant; not a real/confirmed figure. */
-const BOOKED_HOMEBUYERS = 15600;
+/* Illustrative ceiling — an estimated registered-customer count for
+   Kalpataru, same disclosure convention as the Panchshil/Rustomjee pages'
+   equivalent constants; not a real/confirmed figure. */
+const REGISTERED_CUSTOMERS = 6200;
 
 const ADOPTION_TILES = [
-  { label: "Seat Utilisation", value: "26%", sub: "active ÷ booked homebuyers" },
-  { label: "Stickiness", value: "24%", sub: "avg DAU / MAU" },
-  { label: "Adoption Trend", value: "+6%", sub: "vs prior 8 weeks · weekly actives" },
-  { label: "14-Day Activation", value: "31%", sub: "of new registrations" },
-  { label: "Module Breadth", value: "11 / 18", sub: "modules used this period" },
+  { label: "Seat Utilisation", value: "14%", sub: "active ÷ registered customers" },
+  { label: "Stickiness", value: "19%", sub: "avg DAU / MAU" },
+  { label: "Adoption Trend", value: "+5%", sub: "vs prior 8 weeks · weekly actives" },
+  { label: "14-Day Activation", value: "27%", sub: "of new registrations" },
+  { label: "Module Breadth", value: "8 / 15", sub: "modules used this period" },
 ];
 
 const ADOPTION_TREND = [
-  { label: "W1", count: 2420 }, { label: "W2", count: 2610 }, { label: "W3", count: 2840 },
-  { label: "W4", count: 3050 }, { label: "W5", count: 3280 }, { label: "W6", count: 3520 },
-  { label: "W7", count: 3790 }, { label: "W8", count: 4050 },
+  { label: "W1", count: 520 }, { label: "W2", count: 548 }, { label: "W3", count: 576 },
+  { label: "W4", count: 604 }, { label: "W5", count: 632 }, { label: "W6", count: 668 },
+  { label: "W7", count: 712 }, { label: "W8", count: 760 },
 ];
 
 /* Weekly growth accounting fallback - shown until the live /growth endpoint
    resolves. New/Returning/Resurrecting stack above the zero line, Dormant
-   stacks below it. Week 6 (the most recent) matches the figures this
-   section used to show as a single snapshot. */
+   stacks below it. */
 const SAMPLE_GROWTH_LABELS = ["W1", "W2", "W3", "W4", "W5", "W6"];
 const SAMPLE_GROWTH_SERIES = [
-  { label: "New", color: RJ.brand, data: [9, 10, 12, 10, 13, 11] },
-  { label: "Returning", color: "#5b7350", data: [48, 50, 52, 54, 56, 55] },
-  { label: "Resurrecting", color: "#8aa37c", data: [4, 5, 5, 6, 6, 6] },
+  { label: "New", color: KP.brand, data: [7, 8, 9, 8, 10, 9] },
+  { label: "Returning", color: "#5b7350", data: [22, 24, 26, 27, 29, 28] },
+  { label: "Resurrecting", color: "#8aa37c", data: [2, 2, 3, 3, 3, 3] },
 ];
-const SAMPLE_GROWTH_DORMANT = { label: "Dormant", color: "#8a4a3a", data: [22, 24, 20, 26, 29, 28] };
+const SAMPLE_GROWTH_DORMANT = { label: "Dormant", color: "#8a4a3a", data: [11, 12, 10, 13, 15, 14] };
 
 const ROLE_SPLIT = [
-  { label: "Sales / CRM Team", value: 66 },
-  { label: "CX / Support Team", value: 54 },
-  { label: "Marketing Team", value: 39 },
-  { label: "Customers (all)", value: 42 },
+  { label: "Sales / CRM Team", value: 58 },
+  { label: "CX / Support Team", value: 47 },
+  { label: "Marketing Team", value: 33 },
+  { label: "Customers (all)", value: 29 },
 ];
 
 const COHORT_ROWS = [
-  { date: "7/15", cells: [100, 55, 41, 33, 28, 24] },
-  { date: "7/22", cells: [100, 58, 44, 35, 30, null] },
-  { date: "7/29", cells: [100, 60, 46, 37, null, null] },
-  { date: "8/5", cells: [100, 62, 48, null, null, null] },
-  { date: "8/12", cells: [100, 65, null, null, null, null] },
+  { date: "7/15", cells: [100, 48, 34, 27, 22, 18] },
+  { date: "7/22", cells: [100, 51, 37, 29, 24, null] },
+  { date: "7/29", cells: [100, 53, 39, 31, null, null] },
+  { date: "8/5", cells: [100, 55, 41, null, null, null] },
+  { date: "8/12", cells: [100, 58, null, null, null, null] },
   { date: "8/19", cells: [100, null, null, null, null, null] },
 ];
 
 const cohortColor = (v) => {
-  const i = Math.min(RJ.ramp.length - 1, Math.max(1, Math.ceil((v / 100) * (RJ.ramp.length - 1))));
-  return RJ.ramp[i];
+  const i = Math.min(KP.ramp.length - 1, Math.max(1, Math.ceil((v / 100) * (KP.ramp.length - 1))));
+  return KP.ramp[i];
 };
 
-/* ILLUSTRATIVE placeholder project names, matching the reference wireframe —
-   not real Rustomjee site names. */
+/* ILLUSTRATIVE placeholder project names — sample data only, not real
+   Kalpataru site names. */
 const SITE_WISE = [
-  { project: "Project A – Thane", active: 46, sessions: 88, avgSession: "2.3m", bounce: 19, trend: "up", status: "Healthy" },
-  { project: "Project B – Bandra", active: 34, sessions: 61, avgSession: "2.0m", bounce: 23, trend: "flat", status: "Steady" },
-  { project: "Project C – Khar", active: 21, sessions: 35, avgSession: "1.7m", bounce: 27, trend: "up", status: "Steady" },
-  { project: "Project D – Virar", active: 14, sessions: 22, avgSession: "1.5m", bounce: 33, trend: "dn", status: "Watch" },
+  { project: "Kalpataru Project A – Thane", active: 24, sessions: 42, avgSession: "2.1m", bounce: 21, trend: "up", status: "Healthy" },
+  { project: "Kalpataru Project B – Panvel", active: 18, sessions: 31, avgSession: "1.8m", bounce: 25, trend: "flat", status: "Steady" },
+  { project: "Kalpataru Project C – Vikhroli", active: 11, sessions: 19, avgSession: "1.6m", bounce: 29, trend: "up", status: "Steady" },
+  { project: "Kalpataru Project D – Ghatkopar", active: 7, sessions: 12, avgSession: "1.4m", bounce: 34, trend: "dn", status: "Watch" },
 ];
 const PROJECT_FILTER_OPTIONS = ["All Projects", ...SITE_WISE.map((r) => r.project)];
 const statusClass = { Healthy: "pcd-cell-on", Steady: "pcd-cell-neutral", Watch: "pcd-cell-bad" };
 const trendArrow = { up: "↗", flat: "→", dn: "↘" };
 
 /* ---------------- Workflow Usage ---------------- */
-/* Module names and buckets are real, taken from the shared PostHog Event
-   Catalogue's Rustomjee sheet (18 modules) referenced in the wireframe HTML;
-   adoption / completion / drop-off figures and step-event names below are
-   illustrative fallbacks, shown until the live /workflow_usage endpoint
-   resolves. */
+/* Illustrative module names and buckets - a generic set of resident-app
+   modules, not sourced from a confirmed Kalpataru event catalogue. */
 const WORKFLOWS = [
-  { key: "auth", name: "Authentication & Onboarding", bucket: "Access", steps: ["splash_viewed", "login_screen_viewed", "otp_requested", "otp_screen_viewed", "otp_verified_success", "login_success"], adoption: 95, completionRate: 88, completions: 118 },
-  { key: "notifications", name: "Notifications", bucket: "Access", steps: ["notification_center_viewed", "notification_opened", "notification_action_tapped"], adoption: 52, completionRate: 61, completions: 58 },
-  { key: "profile", name: "Profile & Applicants", bucket: "Access", steps: ["profile_viewed", "applicant_details_viewed", "profile_edit_opened", "profile_updated"], adoption: 40, completionRate: 57, completions: 34 },
-  { key: "enquiries", name: "Enquiries", bucket: "Access", steps: ["enquiry_list_viewed", "enquiry_details_viewed", "enquiry_status_checked"], adoption: 33, completionRate: 49, completions: 22 },
-  { key: "account", name: "My Account & Financials", bucket: "Account & Money", steps: ["account_overview_viewed", "payment_schedule_viewed", "demand_letter_viewed", "payment_status_checked", "receipt_downloaded"], adoption: 61, completionRate: 46, completions: 48 },
-  { key: "homeloan", name: "Home Loan", bucket: "Account & Money", steps: ["home_loan_viewed", "loan_eligibility_checked", "loan_enquiry_submitted"], adoption: 19, completionRate: 38, completions: 9 },
-  { key: "projects", name: "Projects & Explore", bucket: "Discovery", steps: ["projects_list_viewed", "project_details_viewed", "project_gallery_viewed", "project_brochure_opened"], adoption: 68, completionRate: 33, completions: 55 },
-  { key: "sitevisit", name: "Site Visits", bucket: "Discovery", steps: ["create_site_visit_opened", "site_visit_project_selected", "site_visit_date_selected", "site_visit_booked"], adoption: 44, completionRate: 48, completions: 41 },
-  { key: "referral", name: "Referral Program", bucket: "Discovery", steps: ["referral_program_viewed", "referral_form_opened", "referral_contact_picked", "referral_submitted_success"], adoption: 22, completionRate: 39, completions: 12 },
-  { key: "documents", name: "Documents", bucket: "Support & Docs", steps: ["document_hub_viewed", "document_category_opened", "document_viewed", "document_downloaded"], adoption: 55, completionRate: 71, completions: 62 },
-  { key: "servicereq", name: "Service Requests", bucket: "Support & Docs", steps: ["service_request_list_viewed", "service_request_create_opened", "service_request_category_selected", "service_request_submit_tapped", "service_request_created_success"], adoption: 49, completionRate: 58, completions: 45 },
-  { key: "supportfaq", name: "Support & FAQ", bucket: "Support & Docs", steps: ["support_hub_viewed", "faq_list_viewed", "contact_us_viewed"], adoption: 26, completionRate: 44, completions: 14 },
-  { key: "privilege", name: "Loyalty & Privilege", bucket: "Engagement", steps: ["privilege_categories_viewed", "privilege_category_opened", "privilege_offer_details_viewed", "privilege_offer_claimed"], adoption: 37, completionRate: 31, completions: 17 },
-  { key: "construction", name: "Construction Updates", bucket: "Engagement", steps: ["construction_update_list_viewed", "construction_update_details_viewed", "construction_gallery_viewed"], adoption: 30, completionRate: 66, completions: 27 },
-  { key: "testimonials", name: "Testimonials", bucket: "Engagement", steps: ["testimonial_list_viewed", "testimonial_details_viewed", "testimonial_submit_opened"], adoption: 14, completionRate: 42, completions: 6 },
+  { key: "auth", name: "Authentication & Onboarding", bucket: "Access", steps: ["splash_viewed", "login_screen_viewed", "otp_requested", "otp_screen_viewed", "otp_verified_success", "login_success"], adoption: 90, completionRate: 82, completions: 68 },
+  { key: "notifications", name: "Notifications", bucket: "Access", steps: ["notification_center_viewed", "notification_opened", "notification_action_tapped"], adoption: 44, completionRate: 55, completions: 31 },
+  { key: "profile", name: "Profile & Applicants", bucket: "Access", steps: ["profile_viewed", "applicant_details_viewed", "profile_edit_opened", "profile_updated"], adoption: 33, completionRate: 51, completions: 19 },
+  { key: "enquiries", name: "Enquiries", bucket: "Access", steps: ["enquiry_list_viewed", "enquiry_details_viewed", "enquiry_status_checked"], adoption: 27, completionRate: 44, completions: 14 },
+  { key: "account", name: "My Account & Financials", bucket: "Account & Money", steps: ["account_overview_viewed", "payment_schedule_viewed", "demand_letter_viewed", "payment_status_checked", "receipt_downloaded"], adoption: 52, completionRate: 40, completions: 26 },
+  { key: "homeloan", name: "Home Loan", bucket: "Account & Money", steps: ["home_loan_viewed", "loan_eligibility_checked", "loan_enquiry_submitted"], adoption: 14, completionRate: 33, completions: 6 },
+  { key: "projects", name: "Projects & Explore", bucket: "Discovery", steps: ["projects_list_viewed", "project_details_viewed", "project_gallery_viewed", "project_brochure_opened"], adoption: 58, completionRate: 27, completions: 30 },
+  { key: "sitevisit", name: "Site Visits", bucket: "Discovery", steps: ["create_site_visit_opened", "site_visit_project_selected", "site_visit_date_selected", "site_visit_booked"], adoption: 24, completionRate: 42, completions: 16 },
+  { key: "referral", name: "Referral Program", bucket: "Discovery", steps: ["referral_program_viewed", "referral_form_opened", "referral_contact_picked", "referral_submitted_success"], adoption: 13, completionRate: 34, completions: 5 },
+  { key: "documents", name: "Documents", bucket: "Support & Docs", steps: ["document_hub_viewed", "document_category_opened", "document_viewed", "document_downloaded"], adoption: 46, completionRate: 65, completions: 29 },
+  { key: "servicereq", name: "Service Requests", bucket: "Support & Docs", steps: ["service_request_list_viewed", "service_request_create_opened", "service_request_category_selected", "service_request_submit_tapped", "service_request_created_success"], adoption: 38, completionRate: 52, completions: 20 },
+  { key: "supportfaq", name: "Support & FAQ", bucket: "Support & Docs", steps: ["support_hub_viewed", "faq_list_viewed", "contact_us_viewed"], adoption: 21, completionRate: 39, completions: 9 },
+  { key: "events", name: "Community Events", bucket: "Engagement", steps: ["event_list_viewed", "event_details_viewed", "event_rsvp_confirmed"], adoption: 16, completionRate: 48, completions: 7 },
 ];
 const WF_BUCKETS = [...new Set(WORKFLOWS.map((w) => w.bucket))];
 
 const TOP_ENTRY_SCREENS = [
-  { screen: "main_home", visitors: 62, views: 118, bounce: 15 },
-  { screen: "login", visitors: 24, views: 44, bounce: 22 },
-  { screen: "notifications", visitors: 9, views: 17, bounce: 26 },
-  { screen: "my_account", visitors: 7, views: 13, bounce: 29 },
-  { screen: "project_details", visitors: 6, views: 11, bounce: 30 },
+  { screen: "main_home", visitors: 38, views: 71, bounce: 17 },
+  { screen: "login", visitors: 16, views: 29, bounce: 24 },
+  { screen: "notifications", visitors: 6, views: 11, bounce: 27 },
+  { screen: "my_account", visitors: 5, views: 9, bounce: 30 },
+  { screen: "project_details", visitors: 4, views: 7, bounce: 31 },
 ];
 
-const RustomjeeConnectUsageDashboard = () => {
+const KalpataruConnectUsageDashboard = () => {
   const [layer, setLayer] = useState("traffic");
   const [wfKey, setWfKey] = useState("auth");
 
@@ -373,10 +367,10 @@ const RustomjeeConnectUsageDashboard = () => {
     [rangeFilters.to],
   );
 
-  // Same live analytics requests as the Panchshil Usage Dashboard - the FM
-  // adoption tenant is resolved per-hostname, so these automatically scope
-  // to Rustomjee's own analytics on that deployment. No App Stability layer
-  // here, so no crash-related queries.
+  // Same live analytics requests as the Panchshil/Rustomjee Usage
+  // Dashboards - the FM adoption tenant is resolved per-hostname, so these
+  // automatically scope to Kalpataru's own analytics on that deployment. No
+  // App Stability layer here, so no crash-related queries.
   const trafficQuery = useTrafficSession(rangeFilters, { enabled: layer === "traffic" });
   const usageQuery = useUsageAndDistribution(rangeFilters, { enabled: layer === "traffic" });
   const adoptionQuery = useAdoptionEngagement(rangeFilters, { enabled: layer === "adoption" });
@@ -455,7 +449,7 @@ const RustomjeeConnectUsageDashboard = () => {
     return {
       labels,
       series: [
-        { label: "New", color: RJ.brand, data: pick("new") },
+        { label: "New", color: KP.brand, data: pick("new") },
         { label: "Returning", color: "#5b7350", data: pick("returning") },
         { label: "Resurrecting", color: "#8aa37c", data: pick("resurrected") },
       ],
@@ -565,14 +559,14 @@ const RustomjeeConnectUsageDashboard = () => {
 
   return (
     <div
-      className="pcd-page rj-usage-page"
-      style={{ "--pcd-brand": RJ.brand, "--pcd-brand-2": RJ.brand2, "--pcd-brand-3": RJ.brand3 }}
+      className="pcd-page kp-usage-page"
+      style={{ "--pcd-brand": KP.brand, "--pcd-brand-2": KP.brand2, "--pcd-brand-3": KP.brand3 }}
     >
       <header className="pcd-topbar">
         <div className="pcd-brand">
-          <img src={Rustomji_URL_Black} alt="Rustomjee" />
+          <img src={LOGO_Kalpataru_URL} alt="Kalpataru" />
           <div>
-            <strong>Rustomjee Circle</strong>
+            <strong>Kalpataru</strong>
             <span>Usage Dashboard</span>
           </div>
         </div>
@@ -611,10 +605,10 @@ const RustomjeeConnectUsageDashboard = () => {
             <p>{current.sub}</p>
           </div>
 
-          {/* Filter bar — matches Panchshil_Connect_Dashboard_v3_FM_structure.html's
-              filterbar in structure and controls, in this page's own colours.
-              Display-only: it does not feed rangeFilters/growthFilters/etc.
-              above, so it can't change what the live queries request. */}
+          {/* Filter bar — same structure/controls as the Panchshil/Rustomjee
+              Usage Dashboards, in this page's own colours. Display-only: it
+              does not feed rangeFilters/growthFilters/etc. above, so it
+              can't change what the live queries request. */}
           <div className="pud-filterbar">
             <div className="pud-daterange">
               <button type="button" className="pud-ctrl" onClick={() => setDateRangeOpen((o) => !o)}>
@@ -711,7 +705,7 @@ const RustomjeeConnectUsageDashboard = () => {
               <div className="pud-qbox">
                 <b>Key questions</b>
                 <ul>
-                  <li>How many booked homebuyers are actively using the application, and how frequently?</li>
+                  <li>How many registered customers are actively using the application, and how frequently?</li>
                   <li>Which projects generate the highest traffic, and are customers returning?</li>
                 </ul>
               </div>
@@ -732,7 +726,7 @@ const RustomjeeConnectUsageDashboard = () => {
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-2">
                   <ChartCard title="Usage over time" subtitle="Last 24 days">
-                    <AreaChart points={trafficTrend} color={RJ.brand} />
+                    <AreaChart points={trafficTrend} color={KP.brand} />
                   </ChartCard>
                 </div>
                 <div className="pcd-span-2">
@@ -784,7 +778,7 @@ const RustomjeeConnectUsageDashboard = () => {
                   <ChartCard title="Adoption trend (weekly active users, last 8 weeks)">
                     <AreaChart
                       points={adoptionTrendQuery.data ? adoptionTrend.current : ADOPTION_TREND}
-                      color={RJ.brand}
+                      color={KP.brand}
                     />
                   </ChartCard>
                 </div>
@@ -851,11 +845,11 @@ const RustomjeeConnectUsageDashboard = () => {
                 <div className="pcd-span-2">
                   <MetricCard
                     label="Dormant users"
-                    value={adoptionQuery.data ? adoption.dormant.value : 1240}
+                    value={adoptionQuery.data ? adoption.dormant.value : 340}
                     caption={
                       adoptionQuery.data
                         ? `No activity ${adoption.dormant.band}`
-                        : `No activity 14+ days, vs. estimated ${BOOKED_HOMEBUYERS.toLocaleString()} booked homebuyers`
+                        : `No activity 14+ days, vs. estimated ${REGISTERED_CUSTOMERS.toLocaleString()} registered customers`
                     }
                   />
                 </div>
@@ -970,7 +964,7 @@ const RustomjeeConnectUsageDashboard = () => {
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title={`${wf.name} — completion funnel`} subtitle="Real event sequence, illustrative retained %">
+                  <ChartCard title={`${wf.name} — completion funnel`} subtitle="Illustrative event sequence and retained %">
                     <div className="pud-funnel">
                       {funnelSteps.map((row, i) => (
                         <div key={row.step}>
@@ -1060,4 +1054,4 @@ const RustomjeeConnectUsageDashboard = () => {
   );
 };
 
-export default RustomjeeConnectUsageDashboard;
+export default KalpataruConnectUsageDashboard;

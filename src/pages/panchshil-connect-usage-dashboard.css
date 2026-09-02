@@ -136,6 +136,17 @@
 }
 .pud-ctrl.is-on { border-color: var(--pcd-brand); background: #fdf1e4; color: var(--pcd-brand); }
 .pud-ctrl.is-on .pud-ic { color: var(--pcd-brand); }
+.pud-project-ctrl { padding: 4px 10px; }
+.pud-project-ctrl .pud-project-select__control { width: 170px; }
+.pud-project-ctrl .pud-project-select__single-value,
+.pud-project-ctrl .pud-project-select__placeholder { max-width: 150px; }
+.pud-refresh-btn:disabled { cursor: default; opacity: 0.7; }
+.pud-refresh-btn .pud-ic { font-size: 14px; }
+.pud-refresh-btn.is-spinning .pud-ic { animation: pud-spin 0.8s linear infinite; }
+@keyframes pud-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
 .pud-daterange { position: relative; display: inline-block; }
 .pud-daterange-pop {

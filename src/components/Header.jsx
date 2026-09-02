@@ -87,6 +87,7 @@ const isPanchshil =
 const isRustomjee =
   baseURL === "https://dev-panchshil-super-app.lockated.com/" ||
   baseURL === "https://rustomjee-live.lockated.com/";
+const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
 
   // Compute first accessible route for Home and Setup
   const firstHomeRoute =
@@ -152,6 +153,25 @@ const isRustomjee =
   const { firstname, lastname, email, profile_icon } = getUserInfo();
   const userInitial = firstname ? firstname.charAt(0).toUpperCase() : "";
 
+  // Usage Dashboard (PostHog analytics) buttons — restricted to specific
+  // accounts for now while this is still being rolled out.
+  const normalizedEmail = (email || "").trim().toLowerCase();
+  const isPanchshilPostHogUser =
+    normalizedEmail === "anjali.lungare@lockated.com";
+  const isKalpataruPostHogUser = normalizedEmail === "demo@lockated.com";
+
+  const usageDashboardRoute =
+    isPanchshil && isPanchshilPostHogUser
+      ? "/panchshil_connect_dashboard/usage"
+      // Rustomjee's Usage Dashboard button is hidden for now — restore it by
+      // uncommenting this branch (and dropping the ": null" a few lines down
+      // back to whatever it was chained to before).
+      // : isRustomjee
+      // ? "/rustomjee_circle_dashboard"
+      : isKalpataru && isKalpataruPostHogUser
+      ? "/kalpataru_usage_dashboard"
+      : null;
+
   const signout = () => {
     // Fire before the storage wipe — capturePostHogEvent reads identity out of
     // localStorage, so afterwards the event would go out anonymous.
@@ -199,6 +219,18 @@ const isRustomjee =
                 {localStorage.getItem("email") || "example@example.com"}
               </p> */}
               <p className="text-black">{email}</p>
+              {usageDashboardRoute && (
+                <button
+                  type="button"
+                  className="purple-btn1 my-2"
+                  onClick={() => {
+                    handleClose();
+                    navigate(usageDashboardRoute);
+                  }}
+                >
+                  Usage Dashboard
+                </button>
+              )}
               <button className="purple-btn2 my-3" onClick={signout}>
                 Sign Out
               </button>
@@ -268,14 +300,6 @@ const isRustomjee =
                 <NavLink
                   className="nav-link px-4 d-flex align-items-center"
                   to={firstDashboardRoute}
-                >
-                  Dashboard
-                </NavLink>
-              )}
-              {isRustomjee && (
-                <NavLink
-                  className="nav-link px-4 d-flex align-items-center"
-                  to="/rustomjee_circle_dashboard"
                 >
                   Dashboard
                 </NavLink>

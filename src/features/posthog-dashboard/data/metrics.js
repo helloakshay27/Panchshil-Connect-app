@@ -131,7 +131,7 @@ export const buildAdopt = (r = {}) => {
   const kpi = (label, value, unit = "", sub = null, delta = null) => ({
     label,
     value: value == null ? null : nf.format(value),
-    display: value == null ? "—" : `${nf.format(value)}${unit}`,
+    display: value == null ? `0${unit}` : `${nf.format(value)}${unit}`,
     raw: value,
     unit,
     sub,

@@ -331,18 +331,23 @@ export const DonutChart = ({ rows, centerLabel = "Total", colors = VIZ.cat }) =>
 /* AREA / LINE - hour of day is an ordered continuous axis, so a      */
 /* line is the correct form for the distribution across it.           */
 /* ================================================================== */
-export const AreaChart = ({ points, color = VIZ.brand, height = 210 }) => {
+export const AreaChart = ({ points, previousPoints, color = VIZ.brand, height = 210 }) => {
   const [idx, setIdx] = useState(null);
   const W = 720;
   const H = height;
   const PAD = { t: 14, r: 12, b: 26, l: 34 };
-  const peak = Math.max(...points.map((p) => p.count), 0) || 1;
+  const hasPrev = Array.isArray(previousPoints) && previousPoints.length === points.length;
+  const peak =
+    Math.max(...points.map((p) => p.count), ...(hasPrev ? previousPoints.map((p) => p.count) : []), 0) || 1;
 
   const px = (i) => PAD.l + (i / (points.length - 1)) * (W - PAD.l - PAD.r);
   const py = (v) => PAD.t + (1 - v / peak) * (H - PAD.t - PAD.b);
 
   const line = points.map((p, i) => `${i ? "L" : "M"}${px(i)},${py(p.count)}`).join(" ");
   const area = `${line} L${px(points.length - 1)},${py(0)} L${px(0)},${py(0)} Z`;
+  const prevLine = hasPrev
+    ? previousPoints.map((p, i) => `${i ? "L" : "M"}${px(i)},${py(p.count)}`).join(" ")
+    : null;
 
   const ticks = [0, 0.5, 1].map((t) => Math.round(peak * t));
   const active = idx != null ? points[idx] : null;
@@ -381,6 +386,9 @@ export const AreaChart = ({ points, color = VIZ.brand, height = 210 }) => {
         ))}
 
         <path d={area} fill={`url(#pcd-fill-${color.slice(1)})`} />
+        {prevLine ? (
+          <path d={prevLine} fill="none" stroke="#c2c0bd" strokeWidth="1.6" strokeDasharray="4 4" />
+        ) : null}
         <path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
 
         {/* x labels every 3 hours */}

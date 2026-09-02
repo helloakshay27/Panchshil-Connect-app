@@ -11,19 +11,38 @@
  * The host convention mirrors the target app's own frontend deployments and
  * its backend resolution in `src/pages/baseurl/apiDomain.js`:
  *
- *   localhost / unknown  -> Panchshil UAT environment
- *                           (apiDomain.js: localhost -> uatapi-connect.panchshil.com)
- *                           -> frontend tenant = uat-connect.panchshil.com
- *   real deployments     -> their own frontend hostname
+ *   real deployments  -> their own frontend hostname
+ *   localhost/unknown -> resolved via `baseURL` (apiDomain.js), so it always
+ *                        matches whichever brand apiDomain.js picked for this
+ *                        hostname — e.g. localhost resolves to Rustomjee's
+ *                        backend there, so it resolves to Rustomjee's
+ *                        frontend tenant here too, not a fixed brand.
  *
  * Resolution order (first match wins):
  *   1. VITE_FM_ADOPTION_TENANT_URL — explicit per-deployment override.
- *   2. The frontend hostname serving this deployment. `localhost` (and any
- *      non-browser / unmapped context) maps to the Panchshil UAT FRONTEND host
- *      — never the literal `localhost` host, and never the backend API URL.
+ *   2. The frontend hostname serving this deployment, when it's a real host.
+ *   3. `localhost` (and any non-browser/unmapped context): the frontend
+ *      tenant for whichever brand `baseURL` resolved to, via BASE_URL_TENANTS
+ *      below — never a hardcoded single brand.
  */
 
-/** Panchshil UAT frontend tenant used for local/unmapped environments. */
+import { baseURL } from "../pages/baseurl/apiDomain";
+
+/** Backend baseURL (apiDomain.js) -> the matching frontend tenant host the FM
+    adoption analytics API expects. Keyed off baseURL rather than a second,
+    independent hostname switch, so this can never drift out of sync with
+    which brand apiDomain.js actually picked for the current hostname. */
+const BASE_URL_TENANTS = {
+  "https://api-connect.panchshil.com/": "connect.panchshil.com",
+  "https://uatapi-connect.panchshil.com/": "uat-connect.panchshil.com",
+  "https://panchshil-super.lockated.com/": "ui-panchshil-super.lockated.com",
+  "https://dev-panchshil-super-app.lockated.com/": "ui-loyalty-super.lockated.com",
+  "https://kalpataru.lockated.com/": "ui-kalpataru.lockated.com",
+  "https://rustomjee-live.lockated.com/": "rustomjee.lockated.com",
+};
+
+/** Panchshil UAT frontend tenant — last-resort fallback if baseURL is ever
+    something BASE_URL_TENANTS doesn't recognise. */
 const DEFAULT_TENANT_URL = "uat-connect.panchshil.com";
 
 function resolveTenantUrl() {
@@ -32,15 +51,16 @@ function resolveTenantUrl() {
 
   const host = (typeof window !== "undefined" && window.location.hostname) || "";
 
-  // Running locally targets the Panchshil UAT environment — same wiring as
-  // apiDomain.js mapping localhost -> https://uatapi-connect.panchshil.com/.
-  // The analytics tenant is the Panchshil UAT frontend host, not `localhost`.
-  if (!host || host === "localhost") return DEFAULT_TENANT_URL;
-
   // Real deployments: the analytics tenant is the frontend host serving this
   // deployment (Panchshil / Kalpataru / Rustomjee), the same host convention
   // the app keys its environments on in apiDomain.js.
-  return host;
+  if (host && host !== "localhost") return host;
+
+  // localhost (and any non-browser/unmapped context): resolve through the
+  // same backend baseURL the rest of the app is already using, so the
+  // analytics tenant always matches the active brand instead of being
+  // hardcoded to Panchshil.
+  return BASE_URL_TENANTS[baseURL] || DEFAULT_TENANT_URL;
 }
 
 /** Frontend tenant host sent as the `url` query param on every FM adoption request. */

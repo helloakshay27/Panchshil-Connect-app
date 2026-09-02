@@ -175,6 +175,7 @@ import NoticeboardEdit from "./pages/noticeboard-edit";
 import PanchshilConnectDashboard from "./pages/panchshil-connect-dashboard";
 import PanchshilConnectUsageDashboard from "./pages/panchshil-connect-usage-dashboard";
 import RustomjeeConnectUsageDashboard from "./pages/rustomjee-connect-usage-dashboard";
+import KalpataruConnectUsageDashboard from "./pages/kalpataru-connect-usage-dashboard";
 import PosthogDashboardPage from "./features/posthog-dashboard/PosthogDashboardPage";
 
 if (
@@ -297,6 +298,14 @@ function App() {
           element={
             <ProtectedRoute>
               <RustomjeeConnectUsageDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/kalpataru_usage_dashboard"
+          element={
+            <ProtectedRoute>
+              <KalpataruConnectUsageDashboard />
             </ProtectedRoute>
           }
         />
