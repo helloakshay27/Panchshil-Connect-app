@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { InfoButton } from "../../pages/usage-info-popover";
 
 /**
  * Visualization tokens for the Panchshil Connect dashboard.
@@ -58,7 +59,7 @@ export const StatTile = ({ label, value, sub, loading }) => (
 /* ================================================================== */
 /* Card shell                                                          */
 /* ================================================================== */
-export const ChartCard = ({ eyebrow, title, subtitle, legend, loading, error, empty, children }) => (
+export const ChartCard = ({ eyebrow, title, subtitle, legend, loading, error, empty, infoKey, onInfo, children }) => (
   <div className="pcd-card">
     <div className="pcd-card-head">
       <div>
@@ -77,7 +78,7 @@ export const ChartCard = ({ eyebrow, title, subtitle, legend, loading, error, em
             ))}
           </ul>
         ) : null}
-        <InfoIcon text={subtitle} />
+        {infoKey ? <InfoButton infoKey={infoKey} onInfo={onInfo} /> : <InfoIcon text={subtitle} />}
       </div>
     </div>
 

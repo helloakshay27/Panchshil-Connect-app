@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Select from "react-select";
@@ -6,7 +6,6 @@ import { LOGO_URL, baseURL } from "./baseurl/apiDomain";
 import {
   ChartCard,
   SectionHead,
-  StatTile,
   MetricCard,
   AreaChart,
   HBar,
@@ -50,20 +49,20 @@ import {
   buildCrashDiagnostics,
   buildCrashHandledFailures,
 } from "../features/posthog-dashboard/data/metrics";
+import { InfoButton, InfoPopover } from "./usage-info-popover";
+import { hasInfo } from "./usage-info-data";
 import "./panchshil-connect-dashboard.css";
 import "./panchshil-connect-usage-dashboard.css";
 
 /* A tile whose value is already a formatted string (e.g. "94%", "1.0.6 (8)"),
    unlike DashboardCharts' StatTile which always runs the value through
    Intl.NumberFormat. Same markup/classes, so it looks identical. */
-const Tile = ({ label, value, sub }) => (
+const Tile = ({ label, value, sub, infoKey, onInfo }) => (
   <div className="pcd-tile">
     <div className="pcd-tile-tophead">
       <div className="pcd-tile-label">{label}</div>
-      {sub ? (
-        <span className="pcd-info-btn" title={sub} aria-label={sub}>
-          i
-        </span>
+      {hasInfo(infoKey) ? (
+        <InfoButton infoKey={infoKey} onInfo={onInfo} />
       ) : null}
     </div>
     <div className="pcd-tile-value">{value}</div>
@@ -241,12 +240,12 @@ const LAYERS = [
 
 /* ---------------- Traffic & Session ---------------- */
 const TRAFFIC_TILES = [
-  { label: "Active Users", value: 108, sub: "Last 28 days" },
-  { label: "Screen Views", value: 243, sub: "Last 28 days" },
-  { label: "Total Sessions", value: 176, sub: "Last 28 days" },
-  { label: "New Users", value: 40, sub: "Last 28 days" },
-  { label: "Bounce Rate", value: 18, sub: "% of sessions" },
-  { label: "Recently Online", value: 6, sub: "Active in last 30 min" },
+  { label: "Active Users", value: 108, sub: "Last 28 days", infoKey: "traffic.active_users" },
+  { label: "Screen Views", value: 243, sub: "Last 28 days", infoKey: "traffic.screen_views" },
+  { label: "Total Sessions", value: 176, sub: "Last 28 days", infoKey: "traffic.sessions" },
+  { label: "New Users", value: 40, sub: "Last 28 days", infoKey: "traffic.new_users" },
+  { label: "Bounce Rate", value: 18, sub: "% of sessions", infoKey: "traffic.bounce_rate" },
+  { label: "Recently Online", value: 6, sub: "Active in last 30 min", infoKey: "traffic.recently_online" },
 ];
 
 const ACTIVE_USERS_TREND = [
@@ -322,18 +321,21 @@ const ADOPTION_TILES = [
     label: "Seat Utilisation",
     value: "24%",
     sub: "active ÷ registered residents",
+    infoKey: "adoption.seat",
   },
-  { label: "Stickiness", value: "26%", sub: "avg DAU / MAU" },
+  { label: "Stickiness", value: "26%", sub: "avg DAU / MAU", infoKey: "adoption.stickiness" },
   {
     label: "Adoption Trend",
     value: "+7%",
     sub: "vs prior 8 weeks · weekly actives",
+    infoKey: "adoption.trend",
   },
-  { label: "14-Day Activation", value: "33%", sub: "of new registrations" },
+  { label: "14-Day Activation", value: "33%", sub: "of new registrations", infoKey: "adoption.activation" },
   {
     label: "Module Breadth",
     value: "13 / 20",
     sub: "modules used this period",
+    infoKey: "adoption.module_breadth",
   },
 ];
 
@@ -735,22 +737,26 @@ const CRASH_TILES = [
     label: "Crash-Free Users",
     value: "97.8%",
     sub: "last 90 days, latest release",
+    infoKey: "stability.crash_free_users",
   },
   {
     label: "Crash-Free Sessions",
     value: "98.4%",
     sub: "last 90 days, latest release",
+    infoKey: "stability.crash_free_sessions",
   },
-  { label: "Total Crashes", value: "12", sub: "last 90 days, all releases" },
+  { label: "Total Crashes", value: "12", sub: "last 90 days, all releases", infoKey: "stability.total_crashes" },
   {
     label: "Affected Users",
     value: "9",
     sub: "distinct users who hit a crash",
+    infoKey: "stability.affected_users",
   },
   {
     label: "Latest Release",
     value: "1.0.6 (8)",
     sub: "com.lockated.resident_panchshil",
+    infoKey: "stability.latest_release",
   },
 ];
 
@@ -872,6 +878,15 @@ const PanchshilConnectUsageDashboard = () => {
   const [projectFilter, setProjectFilter] = useState("All Projects");
   const [deviceFilter, setDeviceFilter] = useState("all");
   const [prevPeriodOn, setPrevPeriodOn] = useState(true);
+
+  // (i) explainer popover — { key, rect } or null.
+  const [infoPopover, setInfoPopover] = useState(null);
+  const openInfoPopover = useCallback(
+    (key, rect) => setInfoPopover((cur) => (cur?.key === key ? null : { key, rect })),
+    [],
+  );
+  const closeInfoPopover = useCallback(() => setInfoPopover(null), []);
+
   const dateRangeLabel = customApplied
     ? `${customFrom} – ${customTo}`
     : DATE_RANGE_PRESETS.find((p) => p.key === dateRangePreset)?.label;
@@ -911,22 +926,38 @@ const PanchshilConnectUsageDashboard = () => {
   // exist (see handleRefresh near the query declarations).
   const [refreshing, setRefreshing] = useState(false);
 
-  const rangeFilters = useMemo(() => rangeForDays(DEFAULT_WINDOW), []);
+  // Platform/device selector → the existing `device_type` API filter. Mirrors
+  // the reference FM Matrix `deviceParam` mapping: "all" sends no device_type,
+  // iOS/Android send the capitalised platform value the analytics host expects.
+  const devices = useMemo(
+    () =>
+      deviceFilter === "ios"
+        ? ["iOS"]
+        : deviceFilter === "android"
+        ? ["Android"]
+        : [],
+    [deviceFilter],
+  );
+
+  const rangeFilters = useMemo(
+    () => ({ ...rangeForDays(DEFAULT_WINDOW), devices }),
+    [devices],
+  );
   const crashTrendFilters = useMemo(
     () => ({ ...rangeFilters, days: 7 }),
     [rangeFilters],
   );
   const trendFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS, devices }),
+    [rangeFilters.to, devices],
   );
   const growthFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS, devices }),
+    [rangeFilters.to, devices],
   );
   const retentionFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS, devices }),
+    [rangeFilters.to, devices],
   );
 
   // Keep the established sidebar UI intact while issuing the same analytics
@@ -1062,16 +1093,27 @@ const PanchshilConnectUsageDashboard = () => {
 
   const trafficTiles = useMemo(() => {
     if (!trafficQuery.data) return TRAFFIC_TILES;
+    const keyFor = (k) =>
+      ({
+        active_users: "traffic.active_users",
+        screen_views: "traffic.screen_views",
+        sessions: "traffic.sessions",
+        avg_session_seconds: "traffic.avg_session",
+        bounce_rate: "traffic.bounce_rate",
+      })[k] || null;
     return [
       ...traffic.tiles.map((tile) => ({
         label: tile.label,
         value: tile.value,
+        key: tile.key,
         sub: tile.caption || "Selected period",
+        infoKey: keyFor(tile.key),
       })),
       {
         label: "Recently Online",
         value: traffic.recentlyOnline,
         sub: "Active in last 30 min",
+        infoKey: "traffic.recently_online",
       },
     ];
   }, [traffic, trafficQuery.data]);
@@ -1154,26 +1196,31 @@ const PanchshilConnectUsageDashboard = () => {
         label: adoption.seat.label,
         value: adoption.seat.display,
         sub: adoption.seat.sub,
+        infoKey: "adoption.seat",
       },
       {
         label: adoption.stickiness.label,
         value: adoption.stickiness.display,
         sub: adoption.stickiness.sub,
+        infoKey: "adoption.stickiness",
       },
       {
         label: adoption.adoptionTrend.label,
         value: adoption.adoptionTrend.display,
         sub: adoption.adoptionTrend.sub,
+        infoKey: "adoption.trend",
       },
       {
         label: adoption.activation.label,
         value: adoption.activation.display,
         sub: adoption.activation.sub,
+        infoKey: "adoption.activation",
       },
       {
         label: adoption.moduleBreadth.label,
         value: adoption.moduleBreadth.display,
         sub: "modules used this period",
+        infoKey: "adoption.module_breadth",
       },
     ];
   }, [adoption, adoptionQuery.data]);
@@ -1276,7 +1323,17 @@ const PanchshilConnectUsageDashboard = () => {
 
   const stabilityTiles = useMemo(() => {
     if (!crashOverviewQuery.data) return CRASH_TILES;
-    return crashOverview.tiles;
+    return crashOverview.tiles.map((t) => ({
+      ...t,
+      infoKey:
+        {
+          "Crash-Free Users": "stability.crash_free_users",
+          "Crash-Free Sessions": "stability.crash_free_sessions",
+          "Total Crashes": "stability.total_crashes",
+          "Affected Users": "stability.affected_users",
+          "Latest Release": "stability.latest_release",
+        }[t.label] || null,
+    }));
   }, [crashOverviewQuery.data, crashOverview.tiles]);
 
   const crashUsersTrend = useMemo(
@@ -1315,10 +1372,19 @@ const PanchshilConnectUsageDashboard = () => {
     [crashReleaseQuery.data, crashByRelease.variants],
   );
 
-  const healthTiles = useMemo(
-    () => (crashDiagnosticsQuery.data ? crashDiagnostics.health : HEALTH_TILES),
-    [crashDiagnosticsQuery.data, crashDiagnostics.health],
-  );
+  const healthTiles = useMemo(() => {
+    const rows = crashDiagnosticsQuery.data ? crashDiagnostics.health : HEALTH_TILES;
+    return rows.map((t) => ({
+      ...t,
+      infoKey:
+        {
+          "API Timeout Rate": "health.api_timeout",
+          "Offline-Blocked Actions": "health.offline_blocked",
+          "Rooted / Jailbroken Devices": "health.rooted_devices",
+          "Slow API Response (p90)": "health.slow_api",
+        }[t.label] || null,
+    }));
+  }, [crashDiagnosticsQuery.data, crashDiagnostics.health]);
 
   const failureRows = useMemo(
     () =>
@@ -1335,8 +1401,9 @@ const PanchshilConnectUsageDashboard = () => {
   );
 
   return (
-    <div className="pcd-page">
-      <header className="pcd-topbar">
+    <>
+      <div className="pcd-page">
+        <header className="pcd-topbar">
         <div className="pcd-brand">
           <img src={LOGO_URL} alt="Panchshil" />
           <div>
@@ -1552,18 +1619,25 @@ const PanchshilConnectUsageDashboard = () => {
                 style={{ marginTop: 16, gridTemplateColumns: `repeat(${trafficTiles.length}, 1fr)` }}
               >
                 {trafficTiles.map((t) => (
-                  <StatTile
+                  <Tile
                     key={t.label}
                     label={t.label}
                     value={t.value}
                     sub={t.sub}
+                    infoKey={t.infoKey}
+                    onInfo={openInfoPopover}
                   />
                 ))}
               </div>
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-2">
-                  <ChartCard title="Usage over time" subtitle="Last 24 days">
+                    <ChartCard
+                      title="Usage over time"
+                      subtitle="Last 24 days"
+                      infoKey="chart.usage"
+                      onInfo={openInfoPopover}
+                    >
                     <div className="pud-devtoggle" style={{ marginBottom: 10 }}>
                       <button
                         type="button"
@@ -1606,6 +1680,8 @@ const PanchshilConnectUsageDashboard = () => {
                   <ChartCard
                     title="Android vs iOS usage"
                     subtitle="Share of active users, Android vs iOS"
+                    infoKey="chart.device"
+                    onInfo={openInfoPopover}
                   >
                     <PercentHBar rows={deviceSplit} />
                     <div
@@ -1660,13 +1736,15 @@ const PanchshilConnectUsageDashboard = () => {
                     label={t.label}
                     value={t.value}
                     sub={t.sub}
+                    infoKey={t.infoKey}
+                    onInfo={openInfoPopover}
                   />
                 ))}
               </div>
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title="Adoption trend (weekly active users, last 8 weeks)">
+                  <ChartCard title="Adoption trend (weekly active users, last 8 weeks)" infoKey="chart.adoptTrend" onInfo={openInfoPopover}>
                     <AreaChart
                       points={
                         adoptionTrendQuery.data
@@ -1681,6 +1759,8 @@ const PanchshilConnectUsageDashboard = () => {
                   <ChartCard
                     title="New · Returning · Resurrecting · Dormant"
                     subtitle="Growth accounting · Last 6 weeks"
+                    infoKey="chart.growth"
+                    onInfo={openInfoPopover}
                   >
                     <DivergingStackedBarChart
                       labels={growthWeekly.labels}
@@ -1693,6 +1773,8 @@ const PanchshilConnectUsageDashboard = () => {
                   <ChartCard
                     title="Do new users keep coming back?"
                     subtitle="% of each cohort still active N weeks later"
+                    infoKey="chart.retention"
+                    onInfo={openInfoPopover}
                   >
                     <div className="pcd-table-scroll">
                       <table className="pud-cohort">
@@ -1737,6 +1819,8 @@ const PanchshilConnectUsageDashboard = () => {
                   <ChartCard
                     title="Who is (and isn't) using the app"
                     subtitle="Active users ÷ invited users"
+                    infoKey="chart.role"
+                    onInfo={openInfoPopover}
                   >
                     <PercentHBar
                       rows={
@@ -1763,7 +1847,7 @@ const PanchshilConnectUsageDashboard = () => {
                 </div>
 
                 <div className="pcd-span-4">
-                  <ChartCard eyebrow="League table" title="Site-wise breakdown">
+                  <ChartCard eyebrow="League table" title="Site-wise breakdown" infoKey="chart.siteHealth" onInfo={openInfoPopover}>
                     <div className="pcd-table-scroll">
                       <table className="pcd-table">
                         <thead>
@@ -1854,6 +1938,8 @@ const PanchshilConnectUsageDashboard = () => {
                       : wf.adoption
                   }%`}
                   sub="of active users attempt this workflow"
+                  infoKey="workflow.adoption"
+                  onInfo={openInfoPopover}
                 />
                 <Tile
                   label="Completion Rate"
@@ -1863,6 +1949,8 @@ const PanchshilConnectUsageDashboard = () => {
                       : wf.completionRate
                   }%`}
                   sub="of those who start it, finish it"
+                  infoKey="workflow.completion"
+                  onInfo={openInfoPopover}
                 />
                 <Tile
                   label="Biggest Step Drop"
@@ -1880,6 +1968,8 @@ const PanchshilConnectUsageDashboard = () => {
                           (a.drop_pct ?? a.drop ?? 0),
                       )[0]?.step
                   }`}
+                  infoKey="workflow.biggest_step_drop"
+                  onInfo={openInfoPopover}
                 />
                 <Tile
                   label="Usage Volume"
@@ -1889,6 +1979,8 @@ const PanchshilConnectUsageDashboard = () => {
                       : wf.completions,
                   )}
                   sub="completions this period"
+                  infoKey="workflow.usage_volume"
+                  onInfo={openInfoPopover}
                 />
               </div>
 
@@ -1897,6 +1989,8 @@ const PanchshilConnectUsageDashboard = () => {
                   <ChartCard
                     title={`${wf.name} — completion funnel`}
                     subtitle="Real event sequence, illustrative retained %"
+                    infoKey="chart.funnel"
+                    onInfo={openInfoPopover}
                   >
                     <div className="pud-funnel">
                       {funnelSteps.map((row, i) => (
@@ -1936,6 +2030,8 @@ const PanchshilConnectUsageDashboard = () => {
                   <ChartCard
                     title="All screens in this module"
                     subtitle="Users, events, sessions and completion per screen"
+                    infoKey="chart.flowList"
+                    onInfo={openInfoPopover}
                   >
                     <div className="pcd-table-scroll">
                       <table className="pcd-table">
@@ -1968,6 +2064,8 @@ const PanchshilConnectUsageDashboard = () => {
                   <ChartCard
                     title="Top entry screens"
                     subtitle="First screen seen in a session, org-wide (not module-filtered)"
+                    infoKey="chart.path"
+                    onInfo={openInfoPopover}
                   >
                     <div className="pcd-table-scroll">
                       <table className="pcd-table">
@@ -2028,6 +2126,8 @@ const PanchshilConnectUsageDashboard = () => {
                     label={t.label}
                     value={t.value}
                     sub={t.sub}
+                    infoKey={t.infoKey}
+                    onInfo={openInfoPopover}
                   />
                 ))}
               </div>
@@ -2133,6 +2233,8 @@ const PanchshilConnectUsageDashboard = () => {
                     label={t.label}
                     value={t.value}
                     sub={t.sub}
+                    infoKey={t.infoKey}
+                    onInfo={openInfoPopover}
                   />
                 ))}
               </div>
@@ -2150,7 +2252,9 @@ const PanchshilConnectUsageDashboard = () => {
           ) : null}
         </main>
       </div>
-    </div>
+      </div>
+      <InfoPopover state={infoPopover} onClose={closeInfoPopover} />
+    </>
   );
 };
 
