@@ -7,7 +7,7 @@ switch (hostname) {
     baseURL = "https://dev-panchshil-super-app.lockated.com/";
     break;
 
-  case "rustomjee.lockated.com/":
+  case "rustomjee.lockated.com":
     baseURL = "https://rustomjee-live.lockated.com/";
     break;  
 
