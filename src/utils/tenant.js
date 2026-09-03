@@ -10,9 +10,9 @@
  */
 
 const TENANTS = {
-  panchshil: { tenant: "panchshil", project_code: "PANCHSHIL-01" },
-  kalpataru: { tenant: "kalpataru", project_code: "KL-01" },
-  rustomjee: { tenant: "rustomjee", project_code: "RJ-01" },
+  panchshil: { tenant: "panchshil", project_code: "PC-01" },
+  kalpataru: { tenant: "kalpataru", project_code: "KL-PS01" },
+  rustomjee: { tenant: "rustomjee", project_code: "RC-PS01" },
   runwal: { tenant: "runwal", project_code: "RUNWAL-01" },
 };
 

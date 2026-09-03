@@ -1,5 +1,3 @@
-import axios from "axios";
-import { baseURL } from "../pages/baseurl/apiDomain";
 import { identifyUser } from "./posthogHelpers";
 
 /**
@@ -20,18 +18,15 @@ const persist = (key, value) => {
 };
 
 /**
- * Attach the PostHog person and backfill the company context.
+ * Attach the PostHog person and persist the company/site context.
  *
- * The sign-in response carries only id/email/name/role, so the company the user
- * belongs to is fetched separately from `user_details/:id.json` — the same
- * endpoint src/pages/user-details.jsx uses, whose `users` payload carries
- * company_id, organization_id and site_id.
- *
- * Deliberately never rejects: analytics context is not worth failing a login
- * over. When the fetch fails, events still carry the hostname-derived `tenant`,
- * which is always present, plus user_id and email.
+ * Every sign-in response (`/users/signin.json`, `/get_otps/verify_otp.json`)
+ * already carries company_id, organization_id and site_id on its nested
+ * `user` object — there is no need for a separate `user_details/:id.json`
+ * round trip (that call could fail silently and leave the context blank).
+ * Callers pass that nested `user` object straight through as `details`.
  */
-export const establishAnalyticsIdentity = async (user = {}, token) => {
+export const establishAnalyticsIdentity = (user = {}, details = {}) => {
   const userId = user.id ?? user.user_id;
 
   try {
@@ -40,25 +35,10 @@ export const establishAnalyticsIdentity = async (user = {}, token) => {
     console.warn("[analytics] identify failed", err);
   }
 
-  if (!userId || !token) return;
-
-  try {
-    const { data } = await axios.get(`${baseURL}user_details/${userId}.json`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const details = data?.users ?? {};
-    persist("company_id", details.company_id);
-    persist("company_name", details.company_name ?? details.company?.name);
-    persist("organization_id", details.organization_id);
-    persist("site_id", details.site_id);
-  } catch (err) {
-    // Non-fatal by design — see the note above.
-    console.warn("[analytics] company context backfill failed", err);
-  }
+  persist("company_id", details.company_id);
+  persist("company_name", details.company_name ?? details.company?.name);
+  persist("organization_id", details.organization_id);
+  persist("site_id", details.site_id);
 };
 
 /** Drop the analytics-owned context keys. Called on logout. */

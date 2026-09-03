@@ -3,6 +3,30 @@ import { getTenant } from "./tenant";
 
 const RELEASE_VERSION = import.meta.env.VITE_APP_VERSION ?? "dev";
 
+/**
+ * OS-level device info: `{ os: "ios" }` / `{ os: "Android" }` for a known
+ * platform, `{ device_type: "mobile" }` for everything else (desktop,
+ * tablets, "all", unrecognised UAs). Spread into the PostHog capture props.
+ *
+ * Pass `dev` explicitly when the caller already knows the platform — e.g. the
+ * usage dashboards' All/iOS/Android toggle buttons, which call this with the
+ * clicked filter ("all" | "ios" | "android") so the event reflects the
+ * selected platform rather than the browser's own user agent. Omit it to
+ * fall back to sniffing the current browser's user agent.
+ */
+export const getDeviceInfo = (dev) => {
+  const resolved =
+    dev ??
+    (() => {
+      const ua = typeof navigator !== "undefined" ? navigator.userAgent || "" : "";
+      return /iPhone|iPad|iPod/i.test(ua) ? "ios" : /Android/i.test(ua) ? "android" : "";
+    })();
+
+  if (resolved === "ios") return { os: "ios" };
+  if (resolved === "android") return { os: "Android" };
+  return { device_type: "mobile" };
+};
+
 /** Read a localStorage value as a number, or undefined when absent/not numeric. */
 const numeric = (key) => {
   const raw = localStorage.getItem(key);
@@ -26,9 +50,10 @@ const text = (key) => {
  *
  * The reporting hierarchy is post sales -> company -> email:
  *   - `project_code` / `tenant` come from the hostname and are always present.
- *   - `company_id` and friends are backfilled into localStorage at login from
- *     `user_details/:id.json` (see src/pages/sign_pages/signIn.jsx). That call
- *     is allowed to fail without blocking login, so these may be absent.
+ *   - `company_id`, `organization_id` and `site_id` are written into
+ *     localStorage at login straight off the sign-in response's nested
+ *     `user` object (see src/utils/analyticsIdentity.js) — no separate
+ *     lookup, so they're present whenever the login response carries them.
  *   - `user_id` / `email` are written by every sign-in path.
  *
  * Absent fields are omitted rather than sent as null, so a missing value is
@@ -39,6 +64,7 @@ export const capturePostHogEvent = (event, props = {}) => {
 
   posthog.capture(event, {
     platform: "web",
+    ...getDeviceInfo(),
     release_version: RELEASE_VERSION,
     project_id: "P-224",
     project_code,

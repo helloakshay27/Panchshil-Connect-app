@@ -35,6 +35,8 @@ import {
   buildTraffic,
   buildUsage,
 } from "../features/posthog-dashboard/data/metrics";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { getDeviceInfo } from "../utils/posthogHelpers";
 import "./panchshil-connect-dashboard.css";
 import "./panchshil-connect-usage-dashboard.css";
 import "./kalpataru-connect-usage-dashboard.css";
@@ -302,7 +304,6 @@ const SITE_WISE = [
   { project: "Kalpataru Project C – Vikhroli", active: 11, sessions: 19, avgSession: "1.6m", bounce: 29, trend: "up", status: "Steady" },
   { project: "Kalpataru Project D – Ghatkopar", active: 7, sessions: 12, avgSession: "1.4m", bounce: 34, trend: "dn", status: "Watch" },
 ];
-const PROJECT_FILTER_OPTIONS = ["All Projects", ...SITE_WISE.map((r) => r.project)];
 const statusClass = { Healthy: "pcd-cell-on", Steady: "pcd-cell-neutral", Watch: "pcd-cell-bad" };
 const trendArrow = { up: "↗", flat: "→", dn: "↘" };
 
@@ -335,6 +336,7 @@ const TOP_ENTRY_SCREENS = [
 ];
 
 const KalpataruConnectUsageDashboard = () => {
+  const connectEvents = useConnectEvents();
   const [layer, setLayer] = useState("traffic");
   const [wfKey, setWfKey] = useState("auth");
 
@@ -346,12 +348,15 @@ const KalpataruConnectUsageDashboard = () => {
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
   const [customApplied, setCustomApplied] = useState(false);
-  const [projectFilter, setProjectFilter] = useState("All Projects");
   const [deviceFilter, setDeviceFilter] = useState("all");
   const [prevPeriodOn, setPrevPeriodOn] = useState(true);
   const dateRangeLabel = customApplied
     ? `${customFrom} – ${customTo}`
     : DATE_RANGE_PRESETS.find((p) => p.key === dateRangePreset)?.label;
+
+  // Refresh button state — handleRefresh is wired below, once the layer's
+  // query objects exist.
+  const [refreshing, setRefreshing] = useState(false);
 
   const rangeFilters = useMemo(() => rangeForDays(DEFAULT_WINDOW), []);
   const trendFilters = useMemo(
@@ -382,6 +387,33 @@ const KalpataruConnectUsageDashboard = () => {
     enabled: layer === "adoption" || layer === "workflow",
   });
   const workflowQuery = useWorkflowUsage(rangeFilters, { enabled: layer === "workflow" });
+
+  // Refresh button — explicitly refetches the live queries backing whichever
+  // layer is currently open, so a click always issues fresh API calls rather
+  // than relying on cache invalidation timing.
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const refetches = [];
+      if (layer === "traffic") {
+        refetches.push(trafficQuery.refetch(), usageQuery.refetch());
+      } else if (layer === "adoption") {
+        refetches.push(
+          adoptionQuery.refetch(),
+          adoptionTrendQuery.refetch(),
+          growthQuery.refetch(),
+          retentionQuery.refetch(),
+          rolesQuery.refetch(),
+          moduleQuery.refetch(),
+        );
+      } else if (layer === "workflow") {
+        refetches.push(moduleQuery.refetch(), workflowQuery.refetch());
+      }
+      await Promise.all(refetches);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const traffic = useMemo(() => buildTraffic(trafficQuery.data || {}), [trafficQuery.data]);
   const usage = useMemo(() => buildUsage(usageQuery.data || {}), [usageQuery.data]);
@@ -415,10 +447,21 @@ const KalpataruConnectUsageDashboard = () => {
     [usage, usageQuery.data],
   );
 
+  // Card is specifically "Android vs iOS usage" — always show both rows, even
+  // when the live payload only reports one platform (or an unrelated one);
+  // a platform missing from the live data is shown as 0%, never dropped.
   const deviceSplit = useMemo(
     () =>
       usageQuery.data
-        ? usage.devices.map((device) => ({ label: device.label, value: device.share || 0 }))
+        ? (() => {
+            const shareByLabel = Object.fromEntries(
+              usage.devices.map((device) => [device.label, device.share || 0]),
+            );
+            return ["Android", "iOS"].map((label) => ({
+              label,
+              value: shareByLabel[label] || 0,
+            }));
+          })()
         : DEVICE_SPLIT,
     [usage, usageQuery.data],
   );
@@ -658,26 +701,37 @@ const KalpataruConnectUsageDashboard = () => {
               ) : null}
             </div>
 
-            <label className="pud-ctrl">
-              <span className="pud-ic">🏢</span>
-              <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}>
-                {PROJECT_FILTER_OPTIONS.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-              <span className="pud-chev">▾</span>
-            </label>
-
             <div className="pud-devtoggle" title="Platform">
-              <button type="button" className={deviceFilter === "all" ? "is-on" : ""} onClick={() => setDeviceFilter("all")}>
+              <button
+                type="button"
+                className={deviceFilter === "all" ? "is-on" : ""}
+                onClick={() => {
+                  setDeviceFilter("all");
+                  connectEvents.onModuleFiltered({ filters_used: [], ...getDeviceInfo("all") });
+                }}
+              >
                 All
               </button>
-              <button type="button" className={deviceFilter === "ios" ? "is-on" : ""} title="iOS only" onClick={() => setDeviceFilter("ios")}>
+              <button
+                type="button"
+                className={deviceFilter === "ios" ? "is-on" : ""}
+                title="iOS only"
+                onClick={() => {
+                  setDeviceFilter("ios");
+                  connectEvents.onModuleFiltered({ filters_used: ["ios"], ...getDeviceInfo("ios") });
+                }}
+              >
                 iOS
               </button>
-              <button type="button" className={deviceFilter === "android" ? "is-on" : ""} title="Android only" onClick={() => setDeviceFilter("android")}>
+              <button
+                type="button"
+                className={deviceFilter === "android" ? "is-on" : ""}
+                title="Android only"
+                onClick={() => {
+                  setDeviceFilter("android");
+                  connectEvents.onModuleFiltered({ filters_used: ["android"], ...getDeviceInfo("android") });
+                }}
+              >
                 Android
               </button>
             </div>
@@ -689,6 +743,17 @@ const KalpataruConnectUsageDashboard = () => {
             >
               <span className="pud-ic">↺</span>
               <span>Previous period {prevPeriodOn ? "✓" : ""}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`pud-ctrl pud-refresh-btn ${refreshing ? "is-spinning" : ""}`}
+              onClick={handleRefresh}
+              disabled={refreshing}
+              title="Refresh data"
+            >
+              <span className="pud-ic">⟳</span>
+              <span>Refresh</span>
             </button>
 
             <div className="pud-spacer" />

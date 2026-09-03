@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import Select from "react-select";
-import { LOGO_URL, baseURL } from "./baseurl/apiDomain";
+import { LOGO_URL } from "./baseurl/apiDomain";
 import {
   ChartCard,
   SectionHead,
@@ -51,6 +49,8 @@ import {
 } from "../features/posthog-dashboard/data/metrics";
 import { InfoButton, InfoPopover } from "./usage-info-popover";
 import { hasInfo } from "./usage-info-data";
+import { useConnectEvents } from "../hooks/useConnectEvents";
+import { getDeviceInfo } from "../utils/posthogHelpers";
 import "./panchshil-connect-dashboard.css";
 import "./panchshil-connect-usage-dashboard.css";
 
@@ -425,42 +425,6 @@ const SITE_WISE = [
     status: "Watch",
   },
 ];
-const PROJECT_FILTER_OPTIONS = ["All Projects", ...SITE_WISE.map((r) => r.project)];
-
-/* react-select styling for the project filter — compact, borderless (sits
-   inside the .pud-ctrl pill), light theme, and scrollable via react-select's
-   own menuList (built-in overflow, capped by maxMenuHeight below) instead of
-   relying on the native <select> popup. */
-const PROJECT_SELECT_STYLES = {
-  control: (base) => ({
-    ...base,
-    minHeight: "22px",
-    border: "none",
-    boxShadow: "none",
-    background: "transparent",
-    cursor: "pointer",
-  }),
-  valueContainer: (base) => ({ ...base, padding: "0 2px" }),
-  input: (base) => ({ ...base, margin: 0, padding: 0 }),
-  indicatorSeparator: () => ({ display: "none" }),
-  indicatorsContainer: (base) => ({ ...base, height: "22px" }),
-  dropdownIndicator: (base) => ({ ...base, padding: "0 2px", color: "var(--pcd-muted)" }),
-  singleValue: (base) => ({ ...base, color: "var(--pcd-ink)", fontWeight: 500, fontSize: "13px" }),
-  placeholder: (base) => ({ ...base, fontSize: "13px" }),
-  menu: (base) => ({ ...base, zIndex: 9999, minWidth: "230px" }),
-  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-  menuList: (base) => ({ ...base, padding: "4px" }),
-  option: (base, state) => ({
-    ...base,
-    borderRadius: "6px",
-    padding: "8px 10px",
-    cursor: "pointer",
-    fontSize: "13px",
-    backgroundColor: state.isSelected ? "#fdf1e4" : state.isFocused ? "#f6f4f2" : "transparent",
-    color: state.isSelected ? "var(--pcd-brand)" : "var(--pcd-ink)",
-    fontWeight: state.isSelected ? 700 : 500,
-  }),
-};
 const statusClass = {
   Healthy: "pcd-cell-on",
   Steady: "pcd-cell-neutral",
@@ -862,6 +826,7 @@ const FAILURES_BY_MODULE = [
 ];
 
 const PanchshilConnectUsageDashboard = () => {
+  const connectEvents = useConnectEvents();
   const [layer, setLayer] = useState("traffic");
   const [wfKey, setWfKey] = useState("auth");
   const [crashSearch, setCrashSearch] = useState("");
@@ -875,7 +840,6 @@ const PanchshilConnectUsageDashboard = () => {
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
   const [customApplied, setCustomApplied] = useState(false);
-  const [projectFilter, setProjectFilter] = useState("All Projects");
   const [deviceFilter, setDeviceFilter] = useState("all");
   const [prevPeriodOn, setPrevPeriodOn] = useState(true);
 
@@ -891,73 +855,33 @@ const PanchshilConnectUsageDashboard = () => {
     ? `${customFrom} – ${customTo}`
     : DATE_RANGE_PRESETS.find((p) => p.key === dateRangePreset)?.label;
 
-  // Project dropdown — same projects.json call used on the Banner create page,
-  // so this filter lists the same live projects instead of the sample set.
-  const [liveProjects, setLiveProjects] = useState([]);
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await axios.get(`${baseURL}projects.json`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        });
-        setLiveProjects(response.data.projects || []);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-    fetchProjects();
-  }, []);
-  const projectFilterOptions = useMemo(
-    () =>
-      liveProjects.length
-        ? ["All Projects", ...liveProjects.map((p) => p.project_name)]
-        : PROJECT_FILTER_OPTIONS,
-    [liveProjects],
-  );
-  const projectSelectOptions = useMemo(
-    () => projectFilterOptions.map((p) => ({ label: p, value: p })),
-    [projectFilterOptions],
-  );
 
   // Refresh button — refetch is wired below, once the layer's query objects
   // exist (see handleRefresh near the query declarations).
   const [refreshing, setRefreshing] = useState(false);
 
-  // Platform/device selector → the existing `device_type` API filter. Mirrors
-  // the reference FM Matrix `deviceParam` mapping: "all" sends no device_type,
-  // iOS/Android send the capitalised platform value the analytics host expects.
-  const devices = useMemo(
-    () =>
-      deviceFilter === "ios"
-        ? ["iOS"]
-        : deviceFilter === "android"
-        ? ["Android"]
-        : [],
-    [deviceFilter],
-  );
-
+  // Platform/device selector → the API's device filter. "all" sends
+  // { device_type: "mobile" }; "ios"/"android" send { os: "ios" } /
+  // { os: "Android" } — see getDeviceInfo in utils/posthogHelpers.js.
   const rangeFilters = useMemo(
-    () => ({ ...rangeForDays(DEFAULT_WINDOW), devices }),
-    [devices],
+    () => ({ ...rangeForDays(DEFAULT_WINDOW), dev: deviceFilter }),
+    [deviceFilter],
   );
   const crashTrendFilters = useMemo(
     () => ({ ...rangeFilters, days: 7 }),
     [rangeFilters],
   );
   const trendFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS, devices }),
-    [rangeFilters.to, devices],
+    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
   const growthFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS, devices }),
-    [rangeFilters.to, devices],
+    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
   const retentionFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS, devices }),
-    [rangeFilters.to, devices],
+    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
 
   // Keep the established sidebar UI intact while issuing the same analytics
@@ -1518,28 +1442,17 @@ const PanchshilConnectUsageDashboard = () => {
               ) : null}
             </div>
 
-            <div className="pud-ctrl pud-project-ctrl">
-              <span className="pud-ic">🏢</span>
-              <Select
-                classNamePrefix="pud-project-select"
-                options={projectSelectOptions}
-                value={
-                  projectSelectOptions.find((o) => o.value === projectFilter) ||
-                  projectSelectOptions[0]
-                }
-                onChange={(opt) => setProjectFilter(opt?.value || "All Projects")}
-                isSearchable
-                maxMenuHeight={280}
-                menuPortalTarget={document.body}
-                styles={PROJECT_SELECT_STYLES}
-              />
-            </div>
-
             <div className="pud-devtoggle" title="Platform">
               <button
                 type="button"
                 className={deviceFilter === "all" ? "is-on" : ""}
-                onClick={() => setDeviceFilter("all")}
+                onClick={() => {
+                  setDeviceFilter("all");
+                  connectEvents.onModuleFiltered({
+                    filters_used: [],
+                    ...getDeviceInfo("all"),
+                  });
+                }}
               >
                 All
               </button>
@@ -1547,7 +1460,13 @@ const PanchshilConnectUsageDashboard = () => {
                 type="button"
                 className={deviceFilter === "ios" ? "is-on" : ""}
                 title="iOS only"
-                onClick={() => setDeviceFilter("ios")}
+                onClick={() => {
+                  setDeviceFilter("ios");
+                  connectEvents.onModuleFiltered({
+                    filters_used: ["ios"],
+                    ...getDeviceInfo("ios"),
+                  });
+                }}
               >
                 iOS
               </button>
@@ -1555,7 +1474,13 @@ const PanchshilConnectUsageDashboard = () => {
                 type="button"
                 className={deviceFilter === "android" ? "is-on" : ""}
                 title="Android only"
-                onClick={() => setDeviceFilter("android")}
+                onClick={() => {
+                  setDeviceFilter("android");
+                  connectEvents.onModuleFiltered({
+                    filters_used: ["android"],
+                    ...getDeviceInfo("android"),
+                  });
+                }}
               >
                 Android
               </button>

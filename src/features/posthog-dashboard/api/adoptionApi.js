@@ -1,5 +1,7 @@
 import axios from "axios";
 import { FM_ADOPTION_TENANT_URL } from "../../../config/fmAdoptionTenant";
+import { getTenant } from "../../../utils/tenant";
+import { getDeviceInfo } from "../../../utils/posthogHelpers";
 
 /* ---------------------------------------------------------------------------
  * FM Adoption Analytics API client.
@@ -7,12 +9,11 @@ import { FM_ADOPTION_TENANT_URL } from "../../../config/fmAdoptionTenant";
  * The client mirrors the reference usage-analytics dashboard architecture:
  * the API host comes from VITE_FM_ADOPTION_API_URL and the tenant (`url`
  * query param) comes from the shared tenant configuration module
- * (src/config/fmAdoptionTenant.js) — never a hardcoded string here, never
- * the backend API URL.
+ * (src/config/fmAdoptionTenant.js) — never a hardcoded string here.
  *
  * Base URL : VITE_FM_ADOPTION_API_URL (default https://posthog-api.lockated.com)
- * Tenant   : sent as the `url` query param — the FRONTEND host whose analytics
- *            are returned, resolved by src/config/fmAdoptionTenant.js.
+ * Tenant   : sent as the `url` query param — the app's own BACKEND base URL
+ *            (apiDomain.js), resolved by src/config/fmAdoptionTenant.js.
  * Auth     : the analytics host answers openly (HTTP 200, no auth). A Bearer
  *            interceptor is attached at request time for consistency with the
  *            app's other clients and future-proofing — it only fires when a
@@ -24,9 +25,15 @@ export const ANALYTICS_BASE_URL =
   import.meta.env.VITE_FM_ADOPTION_API_URL ||
   "https://posthog-api.lockated.com";
 
-/* Frontend/tenant host sent as the `url` query param — from the shared
-   tenant configuration module, never hardcoded here. */
+/* Backend base URL sent as the `url` query param — from the shared tenant
+   configuration module, never hardcoded here. */
 export const ANALYTICS_TENANT = FM_ADOPTION_TENANT_URL;
+
+/* Brand project code sent as the `project_code` query param — the same
+   per-brand code (RC-PS01 / KL-PS01 / PC-01 / ...) attached to every PostHog
+   capture via src/utils/posthogHelpers.js, so FM adoption reads and PostHog
+   writes are keyed the same way. */
+export const ANALYTICS_PROJECT_CODE = getTenant().project_code;
 
 const analyticsClient = axios.create({
   baseURL: ANALYTICS_BASE_URL,
@@ -106,20 +113,24 @@ const get = async (endpoint, pairs) => {
 
 /* Shared param slices ---------------------------------------------------- */
 
-const rangeParams = ({ from, to, siteIds, devices } = {}) => [
-  ["url", ANALYTICS_TENANT],
+/* Platform filter: "ios"/"android" send { os: "ios"/"Android" }, "all" (and
+   anything else) sends { device_type: "mobile" } — see getDeviceInfo. */
+const rangeParams = ({ from, to, siteIds, dev = "all" } = {}) => [
+  ["base_url", ANALYTICS_TENANT],
+  // ["project_code", ANALYTICS_PROJECT_CODE],
   ["from", from],
   ["to", to],
   ["site_id", siteIds],
-  ["device_type", devices],
+  ...Object.entries(getDeviceInfo(dev)),
 ];
 
-const weeklyParams = ({ to, weeks, siteIds, devices } = {}) => [
-  ["url", ANALYTICS_TENANT],
+const weeklyParams = ({ to, weeks, siteIds, dev = "all" } = {}) => [
+  ["base_url", ANALYTICS_TENANT],
+  ["project_code", ANALYTICS_PROJECT_CODE],
   ["to", to],
   ["weeks", weeks],
   ["site_id", siteIds],
-  ["device_type", devices],
+  ...Object.entries(getDeviceInfo(dev)),
 ];
 
 /* Endpoint methods -------------------------------------------------------- */
