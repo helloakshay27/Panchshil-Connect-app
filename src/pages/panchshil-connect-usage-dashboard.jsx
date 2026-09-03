@@ -1843,6 +1843,8 @@ const PanchshilConnectUsageDashboard = () => {
                         ? `No activity ${adoption.dormant.band}`
                         : `No activity 14+ days, vs. estimated ${REGISTERED_RESIDENTS.toLocaleString()} registered residents`
                     }
+                    infoKey="adoption.dormant"
+                    onInfo={openInfoPopover}
                   />
                 </div>
 

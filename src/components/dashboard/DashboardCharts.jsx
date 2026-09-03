@@ -540,11 +540,11 @@ export const SectionHead = ({ title }) => (
 /* ================================================================== */
 /* Metric card - hero number plus split boxes (no plot)               */
 /* ================================================================== */
-export const MetricCard = ({ label, value, caption, splits = [], loading, tone = "brand" }) => (
+export const MetricCard = ({ label, value, caption, splits = [], loading, tone = "brand", infoKey, onInfo }) => (
   <div className="pcd-card pcd-metric">
     <div className="pcd-tile-tophead">
       <div className="pcd-metric-label">{label}</div>
-      <InfoIcon text={caption} />
+      {infoKey ? <InfoButton infoKey={infoKey} onInfo={onInfo} /> : <InfoIcon text={caption} />}
     </div>
     <div className={`pcd-metric-value pcd-tone-${tone}`}>
       {loading ? <span className="pcd-skel pcd-skel-num" /> : nf.format(value ?? 0)}

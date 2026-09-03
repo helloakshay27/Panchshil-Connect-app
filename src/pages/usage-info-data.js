@@ -63,6 +63,11 @@ export const INFO_DB = {
     f: "Count of the modules that had at least one action in the range, out of every module the app exposes.",
     d: "How much of the platform is genuinely in use versus sitting idle. A low number means people are only touching one or two areas of what they pay for.",
   },
+  "adoption.dormant": {
+    t: "Dormant Users",
+    f: "Users who were previously active but have had no activity for 14+ days, counted against total registered residents.",
+    d: "A rising dormant count signals disengagement — these are people who once used the app but stopped. Tracking this helps identify when re-engagement campaigns may be needed.",
+  },
 
   /* ---- Workflow (text copied verbatim from the FM Matrix / PostHog Usage
        Dashboard reference INFO database, keys F-adopt/F-comp/F-step/F-vol) ---- */
