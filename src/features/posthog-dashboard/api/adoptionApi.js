@@ -32,8 +32,18 @@ export const ANALYTICS_TENANT = FM_ADOPTION_TENANT_URL;
 /* Brand project code sent as the `project_code` query param — the same
    per-brand code (RC-PS01 / KL-PS01 / PC-01 / ...) attached to every PostHog
    capture via src/utils/posthogHelpers.js, so FM adoption reads and PostHog
-   writes are keyed the same way. */
+   writes are keyed the same way. Rustomjee is the one exception: it has no
+   project_code on the FM adoption side, only its own numeric app_id. */
 export const ANALYTICS_PROJECT_CODE = getTenant().project_code;
+
+/* Keyed off ANALYTICS_TENANT (itself derived from apiDomain.js's baseURL,
+   see fmAdoptionTenant.js) rather than getTenant()'s hostname-only HOST_MAP —
+   that map has no "localhost" entry and falls back to Panchshil there, while
+   baseURL already resolves localhost to Rustomjee's backend. Keying off
+   ANALYTICS_TENANT keeps this in sync with whichever brand is actually being
+   queried, on every host including localhost. */
+const IS_RUSTOMJEE = ANALYTICS_TENANT.includes("rustomjee");
+const RUSTOMJEE_APP_ID = 32;
 
 const analyticsClient = axios.create({
   baseURL: ANALYTICS_BASE_URL,
@@ -116,8 +126,8 @@ const get = async (endpoint, pairs) => {
 /* Platform filter: "ios"/"android" send { os: "ios"/"Android" }, "all" (and
    anything else) sends { device_type: "mobile" } — see getDeviceInfo. */
 const rangeParams = ({ from, to, siteIds, dev = "all" } = {}) => [
-  ["base_url", ANALYTICS_TENANT],
-  // ["project_code", ANALYTICS_PROJECT_CODE],
+  // ["base_url", ANALYTICS_TENANT],
+  IS_RUSTOMJEE ? ["app_id", RUSTOMJEE_APP_ID] : ["project_code", ANALYTICS_PROJECT_CODE],
   ["from", from],
   ["to", to],
   ["site_id", siteIds],
@@ -125,8 +135,8 @@ const rangeParams = ({ from, to, siteIds, dev = "all" } = {}) => [
 ];
 
 const weeklyParams = ({ to, weeks, siteIds, dev = "all" } = {}) => [
-  ["base_url", ANALYTICS_TENANT],
-  ["project_code", ANALYTICS_PROJECT_CODE],
+  // ["base_url", ANALYTICS_TENANT],
+  IS_RUSTOMJEE ? ["app_id", RUSTOMJEE_APP_ID] : ["project_code", ANALYTICS_PROJECT_CODE],
   ["to", to],
   ["weeks", weeks],
   ["site_id", siteIds],
