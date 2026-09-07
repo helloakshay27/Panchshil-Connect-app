@@ -341,7 +341,11 @@ export const AreaChart = ({ points, previousPoints, color = VIZ.brand, height = 
   const peak =
     Math.max(...points.map((p) => p.count), ...(hasPrev ? previousPoints.map((p) => p.count) : []), 0) || 1;
 
-  const px = (i) => PAD.l + (i / (points.length - 1)) * (W - PAD.l - PAD.r);
+  // points.length - 1 is 0 for a single-point (e.g. no-data) series, which
+  // would divide by zero and push every x position to NaN — center that
+  // lone point instead of dividing.
+  const px = (i) =>
+    PAD.l + (points.length > 1 ? i / (points.length - 1) : 0.5) * (W - PAD.l - PAD.r);
   const py = (v) => PAD.t + (1 - v / peak) * (H - PAD.t - PAD.b);
 
   const line = points.map((p, i) => `${i ? "L" : "M"}${px(i)},${py(p.count)}`).join(" ");

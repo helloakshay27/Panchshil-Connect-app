@@ -1,13 +1,24 @@
 /**
  * Brand (tenant) resolution for analytics.
  *
- * This app is one codebase deployed under several brands, each on its own
- * hostname — the same switch that `src/pages/baseurl/apiDomain.js` uses to pick
- * the API base URL. Page components are shared across brands, so the brand is
- * carried as an event property rather than being baked into event names.
+ * This app is one codebase deployed under several brands. Page components
+ * are shared across brands, so the brand is carried as an event property
+ * rather than being baked into event names.
  *
- * Keep the hosts here in sync with apiDomain.js when a deployment is added.
+ * Resolved from `baseURL` (src/pages/baseurl/apiDomain.js) — the same
+ * backend host every other API call in the app already keys off — rather
+ * than a second, independent hostname switch. A raw-hostname switch here
+ * would drift out of sync with apiDomain.js's own hostname→backend mapping
+ * (e.g. apiDomain.js pointing `localhost` at a real brand's backend while
+ * this module still fell back to Panchshil for any host it didn't
+ * recognise); keying off baseURL means both always agree, including on
+ * localhost and any admin-panel alias host that shares a brand's backend.
+ *
+ * Keep this map in sync with apiDomain.js's `baseURL` switch when a
+ * deployment is added.
  */
+
+import { baseURL } from "../pages/baseurl/apiDomain";
 
 const TENANTS = {
   panchshil: { tenant: "panchshil", project_code: "PC-01" },
@@ -16,37 +27,20 @@ const TENANTS = {
   runwal: { tenant: "runwal", project_code: "RUNWAL-01" },
 };
 
-const HOST_MAP = {
-  "connect.panchshil.com": TENANTS.panchshil,
-  "uat-connect.panchshil.com": TENANTS.panchshil,
-  "ui-panchshil-super.lockated.com": TENANTS.panchshil,
-  "ui-loyalty-super.lockated.com": TENANTS.panchshil,
-
-  "ui-kalpataru.lockated.com": TENANTS.kalpataru,
-  "web-kalpataru.lockated.com": TENANTS.kalpataru,
-
-  "rustomjee.lockated.com": TENANTS.rustomjee,
+const BASE_URL_TENANTS = {
+  "https://api-connect.panchshil.com/": TENANTS.panchshil,
+  "https://uatapi-connect.panchshil.com/": TENANTS.panchshil,
+  "https://panchshil-super.lockated.com/": TENANTS.panchshil,
+  "https://dev-panchshil-super-app.lockated.com/": TENANTS.panchshil,
+  "https://kalpataru.lockated.com/": TENANTS.kalpataru,
+  "https://rustomjee-live.lockated.com/": TENANTS.rustomjee,
 };
 
 /**
  * The brand serving the current page.
  *
- * Falls back to Panchshil for localhost and any unmapped host, matching the
- * default arm of apiDomain.js — an unknown host is a deployment that has not
- * been registered yet, not a separate brand.
+ * Falls back to Panchshil when baseURL is ever something BASE_URL_TENANTS
+ * doesn't recognise — an unmapped backend is a deployment that hasn't been
+ * registered yet, not a separate brand.
  */
-export const getTenant = () => {
-  if (typeof window === "undefined") return TENANTS.panchshil;
-
-  const hostname = window.location.hostname;
-  if (HOST_MAP[hostname]) return HOST_MAP[hostname];
-
-  // Substring fallbacks so preview/staging subdomains resolve to the right
-  // brand instead of silently reporting as Panchshil.
-  if (hostname.includes("kalpataru")) return TENANTS.kalpataru;
-  if (hostname.includes("rustomjee")) return TENANTS.rustomjee;
-  if (hostname.includes("runwal")) return TENANTS.runwal;
-  if (hostname.includes("panchshil")) return TENANTS.panchshil;
-
-  return TENANTS.panchshil;
-};
+export const getTenant = () => BASE_URL_TENANTS[baseURL] || TENANTS.panchshil;
