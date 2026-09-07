@@ -19,7 +19,7 @@ const DATA_TYPE_OPTIONS = [
   { value: "cp", label: "CP" },
 ];
 
-const MAX_SELECTABLE_PROJECTS = 2;
+const MAX_SELECTABLE_PROJECTS = 3;
 
 const EventEdit = () => {
   const connectEvents = useConnectEvents();

@@ -505,7 +505,7 @@ const EventCreate = () => {
     setFiles([...files, ...fileData]);
   };
 
-  const MAX_SELECTABLE_PROJECTS = 2;
+  const MAX_SELECTABLE_PROJECTS = 3;
 
   const handleProjectsMultiSelectChange = (selectedOptions) => {
     const opts = selectedOptions || [];
