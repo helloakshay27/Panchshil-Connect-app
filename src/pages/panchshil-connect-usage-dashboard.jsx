@@ -832,9 +832,8 @@ const PanchshilConnectUsageDashboard = () => {
   const [crashSearch, setCrashSearch] = useState("");
   const [usageTab, setUsageTab] = useState("visitors");
 
-  // Filter bar state — display-only (see DATE_RANGE_PRESETS above); it does
-  // not feed into rangeFilters/growthFilters/etc. below, so it can't affect
-  // what the live queries request or how their results are built.
+  // Filter bar state — feeds into rangeFilters below via the dateRangePreset/
+  // customFrom/customTo/customApplied values it holds.
   const [dateRangeOpen, setDateRangeOpen] = useState(false);
   const [dateRangePreset, setDateRangePreset] = useState("30");
   const [customFrom, setCustomFrom] = useState("");
@@ -864,8 +863,13 @@ const PanchshilConnectUsageDashboard = () => {
   // { device_type: "mobile" }; "ios"/"android" send { os: "ios" } /
   // { os: "Android" } — see getDeviceInfo in utils/posthogHelpers.js.
   const rangeFilters = useMemo(
-    () => ({ ...rangeForDays(DEFAULT_WINDOW), dev: deviceFilter }),
-    [deviceFilter],
+    () => ({
+      ...(customApplied && customFrom && customTo
+        ? { from: customFrom, to: customTo }
+        : rangeForDays(Number(dateRangePreset) || DEFAULT_WINDOW)),
+      dev: deviceFilter,
+    }),
+    [customApplied, customFrom, customTo, dateRangePreset, deviceFilter],
   );
   const crashTrendFilters = useMemo(
     () => ({ ...rangeFilters, days: 7 }),
