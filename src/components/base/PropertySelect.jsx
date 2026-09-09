@@ -9,12 +9,13 @@ export default function PropertySelect({
   style = {},
   className = "",
   isDisableFirstOption = false, // New prop
+  projectDetails = false,
 }) {
     const customStyles = {
         control: (base, state) => ({
           ...base,
-          minHeight: "35px", // Reduce the height of the box
-          height: "30px", // Explicit height control
+          minHeight: projectDetails ? "50px" : "35px", // Reduce the height of the box
+          height: projectDetails ? "50px" : "30px", // Explicit height control
           padding: "0px 4px", // Reduce padding to make it more compact
           //overflowY: "auto",
           borderColor: state.isFocused ? "#80bdff" : base.borderColor,
@@ -29,7 +30,7 @@ export default function PropertySelect({
         }),
         indicatorsContainer: (base) => ({
           ...base,
-          height: "32px", // Match the control height
+          height: projectDetails ? "48px" : "32px", // Match the control height
         }),
         menu: (base) => ({
           ...base,
@@ -88,6 +89,7 @@ export default function PropertySelect({
         onChange={(selectedOption) => onChange(selectedOption)}
         isOptionDisabled={(option) => option.isDisabled} // Disabling logic
         styles={customStyles}
+        classNamePrefix="select"
         menuPortalTarget={document.body} // Render dropdown outside the table
       />
     </div>

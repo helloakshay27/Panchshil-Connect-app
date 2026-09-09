@@ -665,9 +665,9 @@ const ProjectDetails = () => {
           </div>
           <div className="card-body">
             <div className="row">
-              {/* <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
+              <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                 <div className="col-6 ">
-                  <label>Rera Number</label>
+                  <label>RERA Number</label>
                 </div>
                 <div className="col-6">
                   <label className="text">
@@ -678,35 +678,21 @@ const ProjectDetails = () => {
                           ? formData.rera_number_multiple.map((rera, idx) => (
                               <div key={idx}>
                                 <strong>{rera.tower_name} :</strong>{" "}
-                                {rera.rera_number}
+                                {rera.rera_number}{" "}
+                                <a
+                                  href={rera.rera_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-decoration-underline"
+                                >
+                                  {rera.rera_url}
+                                </a>
                               </div>
                             ))
-                          : ""}
+                          : "N/A"}
                       </span>
                     </span>
                   </label>
-                </div>
-              </div> */}
-              <div className=" col-sm-12 row px-3">
-                <div className="">
-                  {formData?.rera_number_multiple?.length > 0 ? (
-                    formData.rera_number_multiple.map((rera, idx) => (
-                      <div key={idx} className="mb-1">
-                        <strong>Tower Name :{rera.tower_name},</strong>{" "}
-                        <strong>Rera Number :{rera.rera_number},</strong>{" "}
-                        <a
-                          href={rera.rera_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-decoration-underline"
-                        >
-                          Rera URL :{rera.rera_url}
-                        </a>
-                      </div>
-                    ))
-                  ) : (
-                    <span className="text-muted">N/A</span>
-                  )}
                 </div>
               </div>
             </div>

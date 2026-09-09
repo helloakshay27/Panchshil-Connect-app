@@ -8,6 +8,7 @@ export default function MultiSelectBox({
   placeholder,
   isCheckbox = false,
   maxSelected, // optional cap - once reached, un-selected options grey out and stop responding to clicks
+  projectDetails = false,
 }) {
   const selectedValues = Array.isArray(value) ? value.map((v) => v.value) : [];
   const atMax = maxSelected != null && selectedValues.length >= maxSelected;
@@ -27,26 +28,23 @@ export default function MultiSelectBox({
   const customStyles = {
     control: (base, state) => ({
       ...base,
-      minHeight: "35px", // Reduce the height of the box
-      // height: "30px", // Explicit height control
+      minHeight: projectDetails ? "50px" : "35px",
       padding: "0px 4px",
-      //overflowY: "auto",
+      height: projectDetails ? "auto" : undefined,
       position: "relative",
       zIndex: 10,
       border: "1px solid #ccc",
       boxShadow: state.isFocused ? "0 0 0 4px rgba(128, 189, 255, 0.5)" : base.boxShadow,
-
-
     }),
 
     valueContainer: (base) => ({
       ...base,
       overflowY: "auto",
-      //padding: "0px 6px", // Reduce padding inside the box
+      flexWrap: "wrap",
     }),
     indicatorsContainer: (base) => ({
       ...base,
-      height: "32px", // Match the control height
+      height: projectDetails ? "48px" : "32px", // Match the control height
     }),
     menu: (base) => ({
       ...base,

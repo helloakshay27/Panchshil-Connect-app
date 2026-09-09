@@ -1,0 +1,237 @@
+.project-details-page {
+  padding: 0.75rem 1rem !important;
+}
+
+.project-details-page > .card {
+  margin: 0.75rem 0 1rem;
+  border: 1px solid #e2e5e8;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  overflow: visible;
+}
+
+.project-details-page > .card .card-header,
+.project-details-page > .card .card-header3 {
+  min-height: 58px;
+  margin-bottom: 0 !important;
+  padding: 0.85rem 1.25rem;
+}
+
+.project-details-page > .card .card-body {
+  margin-top: 0;
+  padding: 1.25rem;
+}
+
+.project-details-page > .card .card-title {
+  border-top-left-radius: 7px !important;
+  padding: 0.7rem 2rem;
+}
+
+.project-details-create-card .project-details-section-header {
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #e2e5e8 !important;
+}
+
+.project-details-create-card .project-details-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #101828;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.project-details-create-card .project-details-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e5e0d3;
+  color: var(--red, #de7008);
+}
+
+.project-details-section-card .project-details-section-header {
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  margin-bottom: 0 !important;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #e2e5e8 !important;
+}
+
+.project-details-section-card .project-details-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #101828;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.project-details-section-card .project-details-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e5e0d3;
+  color: var(--red, #de7008);
+}
+
+.project-details-primary-fields {
+  width: 100%;
+  row-gap: 1.35rem;
+}
+
+.project-details-primary-fields .form-group {
+  min-height: 50px;
+}
+
+.project-details-primary-fields .form-group > label {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  z-index: 2;
+  margin: 0;
+  padding: 0 5px;
+  background: #fff;
+  color: #4b4b4b;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+.project-details-primary-fields .form-group > label.project-details-long-label {
+  position: static;
+  display: block;
+  max-width: 100%;
+  margin: 0 0 8px;
+  padding: 0;
+  background: transparent;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-details-primary-fields .form-group > label.project-details-button-label {
+  position: static;
+  display: block;
+  height: 20px;
+  margin: 0 0 8px;
+  padding: 0;
+  visibility: hidden;
+  background: transparent;
+}
+
+.project-details-primary-fields .form-group > label .otp-asterisk {
+  color: #de7008;
+}
+
+.project-details-primary-fields .form-control,
+.project-details-primary-fields .select__control {
+  width: 100%;
+  min-height: 50px;
+  height: 50px;
+  border: 1px solid #d8d8d8;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  font-size: 15px !important;
+  box-shadow: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.project-details-primary-fields .form-control {
+  padding: 12px 16px;
+}
+
+.project-details-primary-fields textarea.form-control {
+  min-height: 50px;
+  height: 50px;
+  resize: vertical;
+}
+
+.project-details-primary-fields .form-control::placeholder,
+.project-details-primary-fields .select__placeholder {
+  color: #9a9a9a;
+  opacity: 1;
+}
+
+.project-details-primary-fields .form-control:focus,
+.project-details-primary-fields .select__control--is-focused {
+  border-color: #de7008;
+  box-shadow: 0 0 0 1px #de7008;
+  outline: none;
+}
+
+.project-details-primary-fields .select__control {
+  padding: 0 8px;
+}
+
+.project-details-primary-fields .select__value-container {
+  padding: 0 8px;
+}
+
+.project-details-primary-fields .select__single-value {
+  color: #333;
+  margin-top: 4px;
+}
+
+.project-details-primary-fields .select__indicators {
+  height: auto;
+  min-height: 48px;
+}
+
+.project-details-primary-fields .select__menu {
+  z-index: 20;
+  border: 1px solid #e4e4e4;
+  border-radius: 6px;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
+}
+
+.project-details-primary-fields .select__option {
+  padding: 10px 12px;
+}
+
+@media (min-width: 768px) {
+  .project-details-main-fields > .col-md-3,
+  .project-details-main-fields > .col-md-6 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+
+  .project-details-main-fields .form-select-field .select__control {
+    min-height: 45px;
+    height: 45px;
+  }
+
+  .project-details-main-fields .form-select-field .select__indicators {
+    min-height: 43px;
+    height: 43px;
+  }
+}
+
+@media (max-width: 767px) {
+  .project-details-primary-fields {
+    row-gap: 1rem;
+  }
+
+  .project-details-main-fields > .col-md-3,
+  .project-details-main-fields > .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

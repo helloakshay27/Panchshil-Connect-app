@@ -1,0 +1,120 @@
+.form-control-field,
+.form-select-field {
+  position: relative;
+  width: 100%;
+}
+
+.form-control-field__input,
+.form-control-field__textarea,
+.form-select-field .select__control {
+  width: 100%;
+  min-height: 45px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  font: inherit;
+  font-size: 14px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.form-control-field__input,
+.form-control-field__textarea {
+  padding: 12px;
+}
+
+.form-control-field__textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.form-control-field__input::placeholder,
+.form-control-field__textarea::placeholder {
+  color: #9a9a9a;
+  opacity: 1;
+}
+
+.form-control-field__input:focus,
+.form-control-field__textarea:focus,
+.form-select-field .select__control--is-focused {
+  border-color: var(--red, #de7008);
+  box-shadow: 0 0 0 1px var(--red, #de7008);
+  outline: none;
+}
+
+.form-control-field__label,
+.form-select-field__label {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  z-index: 2;
+  padding: 0 5px;
+  background: #fff;
+  color: #555;
+  font-size: 12px;
+  line-height: 16px;
+  pointer-events: none;
+}
+
+.form-control-field__required,
+.form-select-field__required {
+  color: var(--red, #de7008);
+}
+
+.form-select-field .select__control {
+  padding: 0 4px;
+  box-shadow: none;
+}
+
+.form-select-field .select__value-container {
+  padding: 0 8px;
+}
+
+.form-select-field .select__single-value {
+  color: #333;
+}
+
+.form-select-field .select__placeholder {
+  color: #9a9a9a;
+}
+
+.form-select-field .select__indicators {
+  min-height: 43px;
+}
+
+.form-select-field .select__menu,
+.form-select-field .select__menu-portal {
+  z-index: 9999;
+}
+
+.form-select-field .select__option {
+  padding: 10px 12px;
+}
+
+.form-select-field .select__option--is-focused {
+  background: color-mix(in srgb, var(--red, #de7008) 14%, white);
+  color: #333;
+}
+
+.form-select-field .select__option--is-selected {
+  background: var(--red, #de7008);
+  color: #fff;
+}
+
+.form-select-field .select__multi-value {
+  background: color-mix(in srgb, var(--red, #de7008) 14%, white);
+}
+
+.form-select-field .select__multi-value__label {
+  color: #333;
+}
+
+.form-select-field .select__multi-value__remove:hover {
+  background: var(--red, #de7008);
+  color: #fff;
+}
+
+.form-control-field--disabled,
+.form-select-field--disabled {
+  opacity: 0.65;
+}

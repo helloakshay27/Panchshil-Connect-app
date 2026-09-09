@@ -10,6 +10,7 @@ export default function SelectBox({
   style = {},
   className = "",
   isDisableFirstOption = false,
+  projectDetails = false,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -40,8 +41,8 @@ export default function SelectBox({
   const customStyles = {
     control: (base, state) => ({
       ...base,
-      minHeight: "35px",
-      height: "30px",
+      minHeight: projectDetails ? "50px" : "35px",
+      height: projectDetails ? "50px" : "30px",
       padding: "0px 4px",
       borderColor: state.isFocused ? "#80bdff" : base.borderColor,
       boxShadow: state.isFocused ? "0 0 0 4px rgba(128, 189, 255, 0.5)" : base.boxShadow,
@@ -52,7 +53,7 @@ export default function SelectBox({
     }),
     indicatorsContainer: (base) => ({
       ...base,
-      height: "32px",
+      height: projectDetails ? "48px" : "32px",
     }),
     menu: (base) => ({
       ...base,
@@ -114,6 +115,7 @@ export default function SelectBox({
         onChange={handleChange}
         isOptionDisabled={(option) => option.isDisabled}
         styles={customStyles}
+        classNamePrefix="select"
         menuPortalTarget={document.body}
       />
     </div>
