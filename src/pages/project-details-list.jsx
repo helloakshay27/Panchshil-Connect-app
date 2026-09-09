@@ -1,50 +1,83 @@
-import React from "react";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
-import "../mor.css";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import { useEffect, useMemo, useState } from "react";
+import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import EnhancedTable from "../components/EnhancedTable";
 import { useConnectEvents } from "../hooks/useConnectEvents";
 import { useSearchTracking } from "../hooks/useSearchTracking";
+import { baseURL } from "./baseurl/apiDomain";
+import "../mor.css";
+
+const pageSize = 10;
+
+const EditIcon = () => (
+  <svg
+    width="17"
+    height="17"
+    viewBox="0 0 16 16"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path d="M15.502 1.94a.5.5 0 0 1 0 .706l-1 1-2-2 1-1a.5.5 0 0 1 .707 0l1.293 1.293ZM13.793 4.354l-2-2L4.939 9.207a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.854-6.854Z" />
+    <path
+      fillRule="evenodd"
+      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11Z"
+    />
+  </svg>
+);
+
+const ViewIcon = () => (
+  <svg
+    width="17"
+    height="17"
+    viewBox="0 0 16 16"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8c-.058.087-.123.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8Z" />
+    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+  </svg>
+);
+
+const StatusToggle = ({ active, label, onClick }) => (
+  <button
+    type="button"
+    className={`enhanced-table__toggle ${active ? "is-active" : ""}`}
+    onClick={onClick}
+    aria-label={label}
+    aria-pressed={active}
+    title={label}
+  >
+    <span />
+  </button>
+);
+
+const TruncatedCell = ({ value }) => (
+  <div className="enhanced-table__truncate-cell" title={value || "-"}>
+    {value || "-"}
+  </div>
+);
 
 const ProjectDetailsList = () => {
   const connectEvents = useConnectEvents();
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [projectPermission, setProjectPermission] = useState({});
-  const getPageFromStorage = () => {
-    return (
-      parseInt(localStorage.getItem("project_details_list_currentPage")) || 1
-    );
-  };
+  const [loading, setLoading] = useState(false);
+  const [activeToastId, setActiveToastId] = useState(null);
+
+  const getPageFromStorage = () =>
+    parseInt(localStorage.getItem("project_details_list_currentPage")) || 1;
+
   const [pagination, setPagination] = useState({
     current_page: getPageFromStorage(),
     total_pages: 5,
-    total_count: 50, // total number of entries
+    total_count: 50,
   });
-
-  const [expandedConfigs, setExpandedConfigs] = useState({});
-
-  const toggleExpand = (index) => {
-    setExpandedConfigs((prev) => ({
-      ...prev,
-      [index]: !prev[index], // Toggle the specific configuration's expansion
-    }));
-  };
-
-  const [loading, setLoading] = useState(false);
-  // Track the active toast ID to dismiss it before showing a new one
-  const [activeToastId, setActiveToastId] = useState(null);
-
-  const pageSize = 10; // Items per page
-
-  const navigate = useNavigate();
 
   const getProjectPermission = () => {
     try {
@@ -52,9 +85,9 @@ const ProjectDetailsList = () => {
       if (!lockRolePermissions) return {};
 
       const permissions = JSON.parse(lockRolePermissions);
-      return permissions.project || {}; // 👈 Fetching amenities-specific permissions
-    } catch (e) {
-      console.error("Error parsing lock_role_permissions:", e);
+      return permissions.project || {};
+    } catch (permissionError) {
+      console.error("Error parsing lock_role_permissions:", permissionError);
       return {};
     }
   };
@@ -66,9 +99,15 @@ const ProjectDetailsList = () => {
   }, []);
 
   useEffect(() => {
-  console.log("Auth check - isLoggedIn:", sessionStorage.getItem("isLoggedIn"));
-  console.log("Auth check - access_token:", localStorage.getItem("access_token"));
-}, []);
+    console.log(
+      "Auth check - isLoggedIn:",
+      sessionStorage.getItem("isLoggedIn"),
+    );
+    console.log(
+      "Auth check - access_token:",
+      localStorage.getItem("access_token"),
+    );
+  }, []);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -83,10 +122,7 @@ const ProjectDetailsList = () => {
 
       const projectsData = response.data?.projects || [];
       setProjects(projectsData);
-
-      // Optional: save to sessionStorage
       sessionStorage.setItem("cached_projects", JSON.stringify(projectsData));
-      
 
       connectEvents.onModuleLoaded({ record_count: projectsData.length });
       setPagination({
@@ -116,21 +152,22 @@ const ProjectDetailsList = () => {
     } else {
       fetchProjects();
     }
+    // The list is intentionally loaded once; fetchProjects uses the existing API.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setPagination((prevState) => ({ ...prevState, current_page: 1 }));
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    setPagination((previous) => ({ ...previous, current_page: 1 }));
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    // Instead of fetching new data, we'll update the URL params like BannerList
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
     const params = new URLSearchParams();
-    if (searchQuery) {
-      params.set("s[name_cont]", searchQuery);
-    }
-    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+    if (searchQuery) params.set("s[name_cont]", searchQuery);
+    navigate(`${window.location.pathname}?${params.toString()}`, {
+      replace: true,
+    });
   };
 
   const handlePageChange = (pageNumber) => {
@@ -147,7 +184,6 @@ const ProjectDetailsList = () => {
   const handleToggle = async (id, currentStatus) => {
     const updatedStatus = !currentStatus;
 
-    // Dismiss any existing toast first
     if (activeToastId) {
       toast.dismiss(activeToastId);
     }
@@ -161,33 +197,29 @@ const ProjectDetailsList = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
 
-      setProjects((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, published: updatedStatus } : item
-        )
+      setProjects((previous) =>
+        previous.map((item) =>
+          item.id === id ? { ...item, published: updatedStatus } : item,
+        ),
       );
 
       sessionStorage.removeItem("cached_projects");
-
-      // Show new toast and store its ID
       connectEvents.onRecordStatusChanged({
         record_id: id,
         new_status: !currentStatus ? "active" : "inactive",
       });
       const newToastId = toast.success("Status updated successfully!", {
-        duration: 3000, // Toast will auto-dismiss after 3 seconds
-        position: "top-center", // Position the toast at the top center
-        id: `toggle-${id}`, // Give each toast a unique ID based on project
+        duration: 3000,
+        position: "top-center",
+        id: `toggle-${id}`,
       });
 
       setActiveToastId(newToastId);
-    } catch (error) {
-      console.error("Error updating status:", error);
-
-      // Show error toast and store its ID
+    } catch (toggleError) {
+      console.error("Error updating status:", toggleError);
       const newToastId = toast.error("Failed to update status.", {
         duration: 3000,
         position: "top-center",
@@ -198,614 +230,261 @@ const ProjectDetailsList = () => {
     }
   };
 
-  // Filter projects based on search query (client-side filtering like BannerList)
-  const filteredProjects = searchQuery
-    ? projects.filter((project) =>
-        (project.project_name?.toLowerCase() || "").includes(
-          searchQuery.toLowerCase()
-        )
-      )
-    : projects;
+  const handleToggleShow = async (id, currentStatus) => {
+    const updatedStatus = !currentStatus;
 
-  // Update pagination based on filtered results
-  const totalFilteredPages = Math.ceil(filteredProjects.length / pageSize);
+    if (activeToastId) {
+      toast.dismiss(activeToastId);
+    }
 
-  // Get the current page of projects to display
-  useSearchTracking(searchQuery, filteredProjects.length);
+    try {
+      await axios.put(
+        `${baseURL}projects/${id}.json`,
+        { project: { show_on_home: updatedStatus } },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        },
+      );
 
-  const displayedProjects = filteredProjects.slice(
-    (pagination.current_page - 1) * pageSize,
-    pagination.current_page * pageSize
+      setProjects((previous) =>
+        previous.map((item) =>
+          item.id === id ? { ...item, show_on_home: updatedStatus } : item,
+        ),
+      );
+
+      sessionStorage.removeItem("cached_projects");
+      const newToastId = toast.success("Status updated successfully!", {
+        duration: 3000,
+        position: "top-center",
+        id: `toggle-${id}`,
+      });
+
+      setActiveToastId(newToastId);
+    } catch (toggleError) {
+      console.error("Error updating status:", toggleError);
+
+      let newToastId;
+      if (toggleError.response && toggleError.response.status === 422) {
+        const message =
+          toggleError.response.data?.active?.[0] || "Unprocessable Entity.";
+        newToastId = toast.error(message, {
+          duration: 3000,
+          position: "top-center",
+          id: `toggle-error-${id}`,
+        });
+      } else {
+        newToastId = toast.error("Project is not active or published.", {
+          duration: 3000,
+          position: "top-center",
+          id: `toggle-error-${id}`,
+        });
+      }
+
+      setActiveToastId(newToastId);
+    }
+  };
+
+  const filteredProjects = useMemo(
+    () =>
+      searchQuery
+        ? projects.filter((project) =>
+            (project.project_name?.toLowerCase() || "").includes(
+              searchQuery.toLowerCase(),
+            ),
+          )
+        : projects,
+    [projects, searchQuery],
   );
 
-   useEffect(() => {
-        setPagination(prev => ({
-          ...prev,
-          total_count: filteredProjects.length,
-          total_pages: Math.ceil(filteredProjects.length / pageSize),
-          current_page: searchQuery ? 1 : prev.current_page // Reset to page 1 when searching
-        }));
-      }, [filteredProjects.length, pageSize, searchQuery]);
+  useSearchTracking(searchQuery, filteredProjects.length);
 
-      const handleToggleShow = async (id, currentStatus) => {
-  const updatedStatus = !currentStatus;
+  useEffect(() => {
+    setPagination((previous) => ({
+      ...previous,
+      total_count: filteredProjects.length,
+      total_pages: Math.ceil(filteredProjects.length / pageSize),
+      current_page: searchQuery ? 1 : previous.current_page,
+    }));
+  }, [filteredProjects.length, searchQuery]);
 
-  // Dismiss any existing toast first
-  if (activeToastId) {
-    toast.dismiss(activeToastId);
-  }
+  const columns = [
+    {
+      key: "actions",
+      label: "Actions",
+      width: "10%",
+      sortable: false,
+      alwaysVisible: true,
+      render: (project) => (
+        <div className="enhanced-table__row-actions">
+          {projectPermission.update === "true" && (
+            <a
+              href={`/project-edit/${project?.id || "N/A"}`}
+              className="enhanced-table__action-button"
+              aria-label={`Edit ${project?.project_name || "project"}`}
+              title="Edit"
+            >
+              <EditIcon />
+            </a>
+          )}
+          {projectPermission.show === "true" && (
+            <a
+              href={`/project-details/${project?.id || "N/A"}`}
+              className="enhanced-table__action-button is-primary"
+              aria-label={`View ${project?.project_name || "project"}`}
+              title="View"
+            >
+              <ViewIcon />
+            </a>
+          )}
+          {projectPermission.show === "true" && (
+            <StatusToggle
+              active={project.published}
+              label={`${project.published ? "Unpublish" : "Publish"} ${
+                project?.project_name || "project"
+              }`}
+              onClick={() => handleToggle(project.id, project.published)}
+            />
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "serial_number",
+      label: "Sr No",
+      width: "6%",
+      sortable: false,
+      render: (_project, { absoluteIndex }) => absoluteIndex + 1,
+    },
+    {
+      key: "project_name",
+      label: "Project Name",
+      width: "12%",
+      render: (project) => <TruncatedCell value={project.project_name} />,
+    },
+    {
+      key: "property_type",
+      label: "Property Type",
+      width: "11%",
+      filterable: true,
+      render: (project) => <TruncatedCell value={project.property_type} />,
+    },
+    {
+      key: "SFDC_Project_Id",
+      label: "SFDC Project ID",
+      width: "12%",
+      render: (project) => <TruncatedCell value={project.SFDC_Project_Id} />,
+    },
+    {
+      key: "Project_Construction_Status",
+      label: "Project Construction Status",
+      width: "18%",
+      filterable: true,
+      render: (project) => (
+        <TruncatedCell value={project.Project_Construction_Status} />
+      ),
+    },
+    {
+      key: "configurations",
+      label: "Configuration Type",
+      width: "14%",
+      getSortValue: (project) =>
+        project.configurations
+          ?.map((configuration) => configuration.name)
+          .join(", ") || "",
+      render: (project) =>
+        project.configurations?.length ? (
+          <div
+            className="enhanced-table__configuration-list"
+            title={project.configurations
+              .map((configuration) => configuration.name)
+              .join(", ")}
+          >
+            {project.configurations.map((configuration, index) => (
+              <div
+                className="enhanced-table__configuration"
+                key={`${configuration.name}-${index}`}
+              >
+                <span>{configuration.name}</span>
+                {configuration.icon_url && (
+                  <img
+                    src={configuration.icon_url}
+                    alt=""
+                    width="16"
+                    height="16"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          "-"
+        ),
+    },
+    {
+      key: "project_tag",
+      label: "Project Tag",
+      width: "10%",
+      filterable: true,
+      render: (project) => <TruncatedCell value={project.project_tag} />,
+    },
+    {
+      key: "show_on_home",
+      label: "Show On Home",
+      width: "7%",
+      getSortValue: (project) => Number(Boolean(project.show_on_home)),
+      render: (project) => (
+        <StatusToggle
+          active={project.show_on_home}
+          label={`${project.show_on_home ? "Hide" : "Show"} ${
+            project?.project_name || "project"
+          } on home`}
+          onClick={() => handleToggleShow(project.id, project.show_on_home)}
+        />
+      ),
+    },
+  ];
 
-  try {
-    await axios.put(
-      `${baseURL}projects/${id}.json`,
-      { project: { show_on_home: updatedStatus } }, // <-- update this line
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      }
-    );
-
-    setProjects((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, show_on_home: updatedStatus } : item
-      )
-    );
-
-    sessionStorage.removeItem("cached_projects");
-
-    // Show new toast and store its ID
-    const newToastId = toast.success("Status updated successfully!", {
-      duration: 3000,
-      position: "top-center",
-      id: `toggle-${id}`,
-    });
-
-    setActiveToastId(newToastId);
-  } catch (error) {
-  console.error("Error updating status:", error);
-
-  let newToastId;
-
-  if (error.response && error.response.status === 422) {
-    const message = error.response.data?.active?.[0] || "Unprocessable Entity.";
-    newToastId = toast.error(message, {
-      duration: 3000,
-      position: "top-center",
-      id: `toggle-error-${id}`,
-    });
-  } else {
-    newToastId = toast.error("Project is not active or published.", {
-      duration: 3000,
-      position: "top-center",
-      id: `toggle-error-${id}`,
-    });
-  }
-
-  setActiveToastId(newToastId);
-}
-};
+  const addButton =
+    projectPermission.create === "true" ? (
+      <button
+        type="button"
+        className="purple-btn2 enhanced-table__add"
+        onClick={() => navigate("/project-create")}
+      >
+        <Plus size={16} />
+        <span>Add</span>
+      </button>
+    ) : null;
 
   return (
-    <>
-      <div className="main-content">
-        {/* <div className="website-content overflow-auto"> */}
-        <div className="module-data-section container-fluid">
-          <div className="d-flex justify-content-end px-4 ">
-            <div className="col-md-4 pe-2 mt-1 ">
-              <form
-                onSubmit={handleSearchSubmit}
-                action="/pms/departments"
-                acceptCharset="UTF-8"
-                method="get"
-              >
-                <div className="input-group">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    name="s[name_cont]"
-                    id="s_name_cont"
-                    className="form-control tbl-search table_search"
-                    placeholder="Search"
-                    fdprocessedid="u38fp"
-                  />
-                  <div className="input-group-append">
-                    <button
-                      type="submit"
-                      className="btn btn-md btn-default"
-                      fdprocessedid="2wqzh"
-                    >
-                      <svg
-                        width={16}
-                        height={16}
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"
-                          fill="#8B0203"
-                        />
-                        <path
-                          d="M14.6676 14.5644C14.5409 14.5644 14.4143 14.5206 14.3143 14.4269L12.9809 13.1769C12.7876 12.9956 12.7876 12.6956 12.9809 12.5144C13.1743 12.3331 13.4943 12.3331 13.6876 12.5144L15.0209 13.7644C15.2143 13.9456 15.2143 14.2456 15.0209 14.4269C14.9209 14.5206 14.7943 14.5644 14.6676 14.5644Z"
-                          fill="#8B0203"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </form>{" "}
-            </div>
-            {projectPermission.create === "true" && (
-              <div className="card-tools ">
-                <button
-                  className="purple-btn2 rounded-3"
-                  fdprocessedid="xn3e6n"
-                  onClick={() => navigate("/project-create")}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={26}
-                    height={20}
-                    fill="currentColor"
-                    className="bi bi-plus"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="module-data-section container-fluid">
-            <div className="card mt-3 mx-3">
-              <div className="card-header">
-                <h3 className="card-title">Project List</h3>
-              </div>
-              <div className="card-body mt-3 pt-0">
-                {loading ? (
-                  <div className="text-center">
-                    <div
-                      className="spinner-border"
-                      role="status"
-                      style={{ color: "var(--red)" }}
-                    >
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="tbl-container">
-                    <table className="w-100" style={{ width: "max-content" }}>
-                      <thead>
-                        <tr>
-                          <th>Action</th>
-                          <th>Sr No</th>
-                          <th>Project Name</th>
-                          <th>Property Type</th>
-                          <th>SFDC Project ID</th>
-                          <th>Project Construction Status</th>
-                          <th>Configuration Type</th>
-                          <th>Project Tag</th>
-                          {/* <th>Price Onward</th>
-                          <th>Project Size (Sq. Mtr)</th>
-                          <th>Project Size (Sq. Ft)</th>
-                          <th>Rera Carpet Area (Sq. M)</th>
-                          <th>Rera Carpet Area (Sq. Ft)</th>
-                          <th>Number Of Towers</th>
-                          <th>Number Of Units</th>
-                          <th>Rera Number</th>
-                          <th>Amenities</th> */}
-                          <th>Show On Home</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {displayedProjects?.map((project, index) => (
-                          <tr key={index}>
-                            <td key={project.id} className="">
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "1px",
-                                padding: "2px"
-                              }}
-                              >
-                                  {projectPermission.update === "true" && (
-                                  <a
-                                    href={`/project-edit/${
-                                      project?.id || "N/A"
-                                    }`}
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="24"
-                                      height="24"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                    >
-                                      <path
-                                        d="M13.93 6.46611L8.7982 11.5979C8.68827 11.7078 8.62708 11.862 8.62708 12.0183L8.67694 14.9367C8.68261 15.2495 8.93534 15.5023 9.24815 15.5079L12.1697 15.5578H12.1788C12.3329 15.5578 12.4803 15.4966 12.5879 15.3867L19.2757 8.69895C19.9341 8.0405 19.9341 6.96723 19.2757 6.30879L17.8806 4.91368C17.561 4.59407 17.1349 4.4173 16.6849 4.4173C16.2327 4.4173 15.8089 4.5941 15.4893 4.91368L13.93 6.46611C13.9334 6.46271 13.93 6.46271 13.93 6.46611ZM11.9399 14.3912L9.8274 14.3561L9.79227 12.2436L14.3415 7.69443L16.488 9.84091L11.9399 14.3912ZM16.3066 5.73151C16.5072 5.53091 16.8574 5.53091 17.058 5.73151L18.4531 7.12662C18.6593 7.33288 18.6593 7.66948 18.4531 7.87799L17.3096 9.0215L15.1631 6.87502L16.3066 5.73151Z"
-                                        fill="#667085"
-                                      />
-                                      <path
-                                        d="M7.42035 20H16.5797C18.4655 20 20 18.4655 20 16.5797V12.0012C20 11.6816 19.7393 11.4209 19.4197 11.4209C19.1001 11.4209 18.8395 11.6816 18.8395 12.0012V16.582C18.8395 17.8264 17.8274 18.8418 16.5797 18.8418H7.42032C6.17593 18.8418 5.16048 17.8298 5.16048 16.582V7.42035C5.16048 6.17596 6.17254 5.16051 7.42032 5.16051H12.2858C12.6054 5.16051 12.866 4.89985 12.866 4.58026C12.866 4.26066 12.6054 4 12.2858 4H7.42032C5.53449 4 4 5.53452 4 7.42032V16.5797C4.00227 18.4677 5.53454 20 7.42035 20Z"
-                                        fill="#667085"
-                                      />
-                                    </svg>
-                                  </a>
-                                )}
-                                 {projectPermission.show === "true" && (
-                                  <a
-                                    href={`/project-details/${
-                                      project?.id || "N/A"
-                                    }`}
-                                   className="p-1"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="16"
-                                      height="16"
-                                      fill="currentColor"
-                                      className="bi bi-eye "
-                                      viewBox="1 1 14 14"
-                                    >
-                                      <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"></path>
-                                      <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"></path>
-                                    </svg>
-                                  </a>
-                                )}
-                                
-                                {projectPermission.show === "true" && (
-                                  <button
-                                    onClick={() =>
-                                      handleToggle(project.id, project.published)
-                                    }
-                                    className="toggle-button"
-                                    style={{
-                                      border: "none",
-                                      background: "none",
-                                      cursor: "pointer",
-                                      padding: 0,
-                                      width: "35px",
-                                    }}
-                                  >
-                                    {project.published ? (
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="25"
-                                        fill="#de7008"
-                                        className="bi bi-toggle-on"
-                                        viewBox="0 0 16 16"
-                                      >
-                                        <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
-                                      </svg>
-                                    ) : (
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="25"
-                                        fill="#667085"
-                                        className="bi bi-toggle-off"
-                                        viewBox="0 0 16 16"
-                                      >
-                                        <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
-                                      </svg>
-                                    )}
-                                  </button>
-                                )}
-                              
-                               
-                              </div>
-                            </td>
-                            <td>
-                              {(pagination.current_page - 1) * pageSize +
-                                index +
-                                1}
-                            </td>
-                            <td>{project?.project_name || "-"}</td>
-                            <td>{project?.property_type || "-"}</td>
-                            <td>{project?.SFDC_Project_Id || "-"}</td>
-                            <td>
-                              {project?.Project_Construction_Status || "-"}
-                            </td>
-
-                            <td style={{ width: "200px" }}>
-                              {project?.configurations?.length > 0
-                                ? project?.configurations.map(
-                                    (configurations, idx) => (
-                                      <div key={idx}>
-                                        {configurations.name}{" "}
-                                        <img
-                                          src={configurations.icon_url}
-                                          alt={configurations.name}
-                                          style={{
-                                            width: "20px",
-                                            marginLeft: "5px",
-                                          }}
-                                        />
-                                      </div>
-                                    )
-                                  )
-                                : "-"}
-                            </td>
-                            <td>{project?.project_tag || "-"}</td>
-                            <td>
-                               <button
-                                    onClick={() =>
-                                      handleToggleShow(project.id, project.show_on_home)
-                                    }
-                                    className="toggle-button"
-                                    style={{
-                                      border: "none",
-                                      background: "none",
-                                      cursor: "pointer",
-                                      padding: 0,
-                                      width: "35px",
-                                    }}
-                                  >
-                                    {project.show_on_home ? (
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="25"
-                                        fill="#de7008"
-                                        className="bi bi-toggle-on"
-                                        viewBox="0 0 16 16"
-                                      >
-                                        <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
-                                      </svg>
-                                    ) : (
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="25"
-                                        fill="#667085"
-                                        className="bi bi-toggle-off"
-                                        viewBox="0 0 16 16"
-                                      >
-                                        <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5" />
-                                      </svg>
-                                    )}
-                                  </button>
-                            </td>
-
-                            {/* <td>{project?.price || "-"}</td>
-                            <td>{project?.project_size_sq_mtr || "-"}</td>
-                            <td>{project?.project_size_sq_ft || "-"}</td>
-                            <td>{project?.rera_carpet_area_sq_mtr || "-"}</td>
-                            <td>{project?.rera_carpet_area_sqft || "-"}</td>
-                            <td>{project?.no_of_towers || "-"}</td>
-                            <td>{project?.no_of_apartments || "-"}</td>
-                            <td>
-                              {project?.rera_number_multiple?.length > 0
-                                ? project.rera_number_multiple.map(
-                                    (rera, idx) => (
-                                      <div key={idx}>
-                                        <strong>{rera.tower_name}:</strong>{" "}
-                                        {rera.rera_number}
-                                      </div>
-                                    )
-                                  )
-                                : "-"}
-                            </td>
-
-                            <td style={{ width: "200px" }}>
-                              {project?.amenities?.length > 0
-                                ? project?.amenities.map((amenity, idx) => (
-                                    <div key={idx}>
-                                      {amenity.name}{" "}
-                                      <img
-                                        src={amenity.icon_url}
-                                        alt={amenity.name}
-                                        style={{
-                                          width: "20px",
-                                          marginLeft: "5px",
-                                        }}
-                                      />
-                                    </div>
-                                  ))
-                                : "-"}
-                            </td> */}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                {/* Pagination */}
-                <div className="d-flex align-items-center justify-content-between px-3 pagination-section">
-                    <ul
-                      className="pagination"
-                      role="navigation"
-                      aria-label="pager"
-                    >
-                      {/* First Button */}
-                      <li
-                        className={`page-item ${
-                          pagination.current_page === 1 ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() => handlePageChange(1)}
-                          disabled={pagination.current_page === 1}
-                        >
-                          First
-                        </button>
-                      </li>
-
-                      {/* Previous Button */}
-                      <li
-                        className={`page-item ${
-                          pagination.current_page === 1 ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() =>
-                            handlePageChange(pagination.current_page - 1)
-                          }
-                          disabled={pagination.current_page === 1}
-                        >
-                          Prev
-                        </button>
-                      </li>
-
-                      {/* Dynamic Page Numbers with Ellipsis */}
-                      {(() => {
-                        const totalPages = pagination.total_pages;
-                        const currentPage = pagination.current_page;
-                        const pageNumbers = [];
-
-                        let startPage = Math.max(currentPage - 2, 1);
-                        let endPage = Math.min(startPage + 4, totalPages);
-
-                        // Adjust start if end is near total
-                        if (endPage - startPage < 5) {
-                          startPage = Math.max(endPage - 4, 1);
-                        }
-
-                        // Show first page and ellipsis if needed
-                        if (startPage > 1) {
-                          pageNumbers.push(
-                            <li key={1} className="page-item">
-                              <button
-                                className="page-link"
-                                onClick={() => handlePageChange(1)}
-                              >
-                                1
-                              </button>
-                            </li>
-                          );
-                          if (startPage > 2) {
-                            pageNumbers.push(
-                              <li
-                                key="start-ellipsis"
-                                className="page-item disabled"
-                              >
-                                <span className="page-link">...</span>
-                              </li>
-                            );
-                          }
-                        }
-
-                        for (let i = startPage; i <= endPage; i++) {
-                          pageNumbers.push(
-                            <li
-                              key={i}
-                              className={`page-item ${
-                                pagination.current_page === i ? "active" : ""
-                              }`}
-                            >
-                              <button
-                                className="page-link"
-                                onClick={() => handlePageChange(i)}
-                              >
-                                {i}
-                              </button>
-                            </li>
-                          );
-                        }
-
-                        // Show end ellipsis and last page
-                        if (endPage < totalPages) {
-                          if (endPage < totalPages - 1) {
-                            pageNumbers.push(
-                              <li
-                                key="end-ellipsis"
-                                className="page-item disabled"
-                              >
-                                <span className="page-link">...</span>
-                              </li>
-                            );
-                          }
-                          pageNumbers.push(
-                            <li key={totalPages} className="page-item">
-                              <button
-                                className="page-link"
-                                onClick={() => handlePageChange(totalPages)}
-                              >
-                                {totalPages}
-                              </button>
-                            </li>
-                          );
-                        }
-
-                        return pageNumbers;
-                      })()}
-
-                      {/* Next Button */}
-                      <li
-                        className={`page-item ${
-                          pagination.current_page === pagination.total_pages
-                            ? "disabled"
-                            : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() =>
-                            handlePageChange(pagination.current_page + 1)
-                          }
-                          disabled={
-                            pagination.current_page === pagination.total_pages
-                          }
-                        >
-                          Next
-                        </button>
-                      </li>
-
-                      {/* Last Button */}
-                      <li
-                        className={`page-item ${
-                          pagination.current_page === pagination.total_pages
-                            ? "disabled"
-                            : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() =>
-                            handlePageChange(pagination.total_pages)
-                          }
-                          disabled={
-                            pagination.current_page === pagination.total_pages
-                          }
-                        >
-                          Last
-                        </button>
-                      </li>
-                    </ul>
-
-                    {/* Showing entries count */}
-                    <div>
-                      <p className="mb-0">
-                        Showing{" "}
-                        {Math.min(
-                          (pagination.current_page - 1) * pageSize + 1 || 1,
-                          pagination.total_count
-                        )}{" "}
-                        to{" "}
-                        {Math.min(
-                          pagination.current_page * pageSize,
-                          pagination.total_count
-                        )}{" "}
-                        of {pagination.total_count} entries
-                      </p>
-                    </div>
-                  </div>
-              </div>
-            </div>
+    <div className="main-content">
+      <div className="module-data-section container-fluid project-list-page">
+        <h1 className="enhanced-page-title">PROJECT LIST</h1>
+        <div className="project-list-card">
+          <div className="project-list-card__body">
+            <EnhancedTable
+              columns={columns}
+              data={filteredProjects}
+              loading={loading}
+              emptyMessage={error || "No projects found"}
+              searchTerm={searchQuery}
+              onSearchChange={handleSearchChange}
+              onSearchSubmit={handleSearchSubmit}
+              searchPlaceholder="Search projects"
+              currentPage={pagination.current_page}
+              pageSize={pageSize}
+              onPageChange={handlePageChange}
+              leftActions={addButton}
+              getRowId={(project) => project.id}
+              storageKey="project-list"
+            />
           </div>
         </div>
-        {/* </div> */}
       </div>
-    </>
+    </div>
   );
 };
 

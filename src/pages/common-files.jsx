@@ -375,7 +375,7 @@ const CommonFileUpload = () => {
     const tooltipText = `Supports: Images, Videos, PDFs, Documents (DOC/DOCX), Presentations (PPT/PPTX), Excel (XLS/XLSX)`;
 
     return (
-      <div className="d-flex flex-column mb-4">
+      <div className="d-flex flex-column mb-4 common-files__section">
         <div className="d-flex justify-content-between align-items-end mx-1">
           <h5 className="mt-3">
             {config.label}{" "}
@@ -392,7 +392,7 @@ const CommonFileUpload = () => {
             {config.required && <span className="otp-asterisk"> *</span>}
           </h5>
           <button
-            className="purple-btn2 rounded-3"
+            className="purple-btn2 enhanced-table__add"
             type="button"
             onClick={() => openModal(categoryKey)}
           >
@@ -421,10 +421,16 @@ const CommonFileUpload = () => {
         </div>
         <div className="col-md-12 mt-2">
           <div
-            className="mt-4 tbl-container"
+            className="mt-2 tbl-container common-files__table"
             style={{ maxHeight: "300px", overflowY: "auto" }}
           >
             <table className="w-100">
+              <colgroup>
+                <col style={{ width: config.ratios ? "48%" : "58%" }} />
+                <col style={{ width: config.ratios ? "27%" : "30%" }} />
+                {config.ratios && <col style={{ width: "13%" }} />}
+                <col style={{ width: "12%" }} />
+              </colgroup>
               <thead>
                 <tr>
                   <th>File Name</th>
@@ -503,7 +509,8 @@ const CommonFileUpload = () => {
                             </video>
                           )}
                           {isDocument && (
-                            <div 
+                            <div
+                              className="common-files__document-preview"
                               onClick={() => isFromAPI ? openFile(file.url, file.name) : null}
                               style={{ 
                                 cursor: isFromAPI ? 'pointer' : 'default',
@@ -548,7 +555,7 @@ const CommonFileUpload = () => {
                         <td>
                           <button
                             type="button"
-                            className="purple-btn2"
+                            className="purple-btn2 common-files__delete-button"
                             onClick={() => {
                               if (file.isFromAPI && file.id) {
                                 deleteFile(categoryKey, index, file.id, file.name);
@@ -863,7 +870,7 @@ const CommonFileUpload = () => {
 
   return (
     <>
-      <div className="module-data-section p-3">
+      <div className="module-data-section p-3 common-files-page">
         <div className="card mt-3 pb-4 mx-4">
           <div className="card-header">
             <h3 className="card-title">Common File Uploads</h3>
