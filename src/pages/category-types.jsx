@@ -73,8 +73,9 @@ const CategoryTypes = () => {
                   {/* Tag Selection */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Tags</label>
                       <SelectBox
+                        label="Tags"
+                        placeholder="Select Tags"
                         options={tags.map((tag) => ({
                           value: tag.id,
                           label: tag.tag_type,

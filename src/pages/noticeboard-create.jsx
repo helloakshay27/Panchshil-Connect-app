@@ -1088,10 +1088,10 @@ const NoticeboardForm = () => {
                     {/* Notice Type Field - First */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Notice Type<span className="otp-asterisk"> *</span>
-                        </label>
                         <SelectBox
+                          label="Notice Type"
+                          required
+                          placeholder="Select Notice Type"
                           options={noticeTypeOptions}
                           value={formData.notice_type || ""}
                           onChange={(value) => {
@@ -1109,10 +1109,10 @@ const NoticeboardForm = () => {
                     {/* Project Field - Multi Select with checkboxes */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Project<span className="otp-asterisk"> *</span>
-                        </label>
                         <MultiSelectBox
+                          label="Project"
+                          required
+                          placeholder="Select Project"
                           isCheckbox
                           options={projects.map((project) => ({
                             label: project.project_name,
@@ -1180,10 +1180,10 @@ const NoticeboardForm = () => {
                     {formData.notice_type === "roadblock" && (
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>
-                            Home Screen Display Frequency<span className="otp-asterisk"> *</span>
-                          </label>
                           <SelectBox
+                            label="Home Screen Display Frequency"
+                            required
+                            placeholder="Select Frequency"
                             options={frequencyOptions}
                             value={formData.home_screen_frequency || ""}
                             onChange={(value) => setFormData(prev => ({...prev, home_screen_frequency: value}))}
@@ -1539,8 +1539,9 @@ const NoticeboardForm = () => {
 
                       {formData.shared === "individual" && (
                         <div className="form-group">
-                          <label>Broadcast User ID</label>
                           <MultiSelectBox
+                            label="Broadcast User ID"
+                            placeholder="Select Users"
                             options={eventUserID.map((user) => ({
                               value: user.id,
                               label: `${user.firstname} ${user.lastname}`,
@@ -1572,8 +1573,9 @@ const NoticeboardForm = () => {
 
                       {formData.shared === "group" && (
                         <div className="form-group">
-                          <label>Share with Groups</label>
                           <MultiSelectBox
+                            label="Share with Groups"
+                            placeholder="Select Groups"
                             options={groups.map((group) => ({
                               value: group.id,
                               label: group.name,

@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { HelpCircle } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const FaqCreate = () => {
   const connectEvents = useConnectEvents();
@@ -255,119 +258,102 @@ const FaqCreate = () => {
     }
   };
 
+  const categoryRequired =
+    baseURL === "https://dev-panchshil-super-app.lockated.com/" ||
+    baseURL === "https://kalpataru.lockated.com/" ||
+    baseURL === "https://rustomjee-live.lockated.com/";
+
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <form id="faqCreateForm" onSubmit={handleSubmit}>
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Create FAQ</h3>
-              </div>
-              <div className="card-body">
-                {/* Category and Subcategory Selection */}
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        FAQ Category 
-                       {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
-                            <span className="otp-asterisk"> *</span>
-                        )}
-                      </label>
-                      <SelectBox
-                        options={[
-                          {
-                            value: "",
-                            label: categoriesLoading
-                              ? "Loading categories..."
-                              : "Select Category",
-                          },
-                          ...categories.map((category) => ({
-                            value: category.id,
-                            label: category.name,
-                          })),
-                        ]}
-                        defaultValue={formData.faq_category_id}
-                        onChange={handleCategoryChange}
-                        disabled={loading || categoriesLoading}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        FAQ Sub Category
-                        {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
-                          <span className="otp-asterisk"> *</span>
-                        )}
-                      </label>
-                      <SelectBox
-                        options={[
-                          {
-                            value: "",
-                            label: subCategoriesLoading
-                              ? "Loading subcategories..."
-                              : "Select Sub Category",
-                          },
-                          ...subCategories.map((subCategory) => ({
-                            value: subCategory.id,
-                            label: subCategory.name,
-                          })),
-                        ]}
-                        defaultValue={formData.faq_sub_category_id}
-                        onChange={handleSubCategoryChange}
-                        disabled={
-                          loading ||
-                          subCategoriesLoading ||
-                          !formData.faq_category_id
-                        }
-                      />
-                    </div>
+      <div className="module-data-section banner-form-page p-3">
+        <form id="faqCreateForm" onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <HelpCircle size={16} strokeWidth={1.8} />
+                </span>
+                Create FAQ
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="FAQ Category"
+                      required={categoryRequired}
+                      placeholder={
+                        categoriesLoading
+                          ? "Loading categories..."
+                          : "Select Category"
+                      }
+                      options={categories.map((category) => ({
+                        value: category.id,
+                        label: category.name,
+                      }))}
+                      value={formData.faq_category_id}
+                      onChange={handleCategoryChange}
+                      disabled={loading || categoriesLoading}
+                    />
                   </div>
                 </div>
 
-                {/* FAQ Entry Section */}
-                <div className="row align-items-center">
-                  {/* Question */}
-                  <div className="col-md-3 mt-2">
-                    <div className="form-group">
-                      <label>
-                        Question <span className="otp-asterisk">*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="question"
-                        placeholder="Enter FAQ Question"
-                        value={question}
-                        onChange={(e) => setQuestion(e.target.value)}
-                        disabled={loading}
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="FAQ Sub Category"
+                      required={categoryRequired}
+                      placeholder={
+                        subCategoriesLoading
+                          ? "Loading subcategories..."
+                          : "Select Sub Category"
+                      }
+                      options={subCategories.map((subCategory) => ({
+                        value: subCategory.id,
+                        label: subCategory.name,
+                      }))}
+                      value={formData.faq_sub_category_id}
+                      onChange={handleSubCategoryChange}
+                      disabled={
+                        loading ||
+                        subCategoriesLoading ||
+                        !formData.faq_category_id
+                      }
+                    />
                   </div>
+                </div>
 
-                  {/* Answer */}
-                  <div className="col-md-3 mt-2">
-                    <div className="form-group">
-                      <label>
-                        Answer <span className="otp-asterisk">*</span>
-                      </label>
-                      <textarea
-                        className="form-control"
-                        name="answer"
-                        placeholder="Enter FAQ Answer"
-                        value={answer}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        disabled={loading}
-                        rows="1"
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Question"
+                      required
+                      name="question"
+                      placeholder="Enter FAQ Question"
+                      value={question}
+                      onChange={(e) => setQuestion(e.target.value)}
+                      disabled={loading}
+                    />
                   </div>
+                </div>
 
-                  {/* Site Selection */}
-                  {/* <div className="col-md-2 mt-2">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Answer"
+                      required
+                      name="answer"
+                      placeholder="Enter FAQ Answer"
+                      value={answer}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+
+                {/* Site Selection */}
+                {/* <div className="col-md-2 mt-2">
                     <div className="form-group">
                       <label>Site <span className="otp-asterisk">*</span></label>
                       <SelectBox
@@ -385,8 +371,8 @@ const FaqCreate = () => {
                     </div>
                   </div> */}
 
-                  {/* FAQ Tag */}
-                  {/* <div className="col-md-2 mt-2">
+                {/* FAQ Tag */}
+                {/* <div className="col-md-2 mt-2">
                     <div className="form-group">
                       <label>FAQ Tag</label>
                       <input
@@ -401,120 +387,99 @@ const FaqCreate = () => {
                     </div>
                   </div> */}
 
-                  {/* Add Button */}
-                  <div className="col-md-2 mt-2">
+                <div className="col-md-3">
+                  <div className="form-group">
                     <button
                       type="button"
-                      className="purple-btn2 rounded-3"
-                      style={{ marginTop: "23px" }}
+                      className="banner-form-action-btn w-100"
                       onClick={handleAddFaq}
                       disabled={loading}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={26}
-                        height={20}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span> Add</span>
+                      + Add
                     </button>
                   </div>
                 </div>
-
-                {/* FAQ List Table */}
-                {formData.faqs.length > 0 && (
-                  <div className="col-md-12 mt-4">
-                    <div className="mt-4 tbl-container w-100">
-                      <table className="w-100">
-                        <thead>
-                          <tr>
-                            <th>Sr No</th>
-                            <th>Question</th>
-                            <th>Answer</th>
-                            {/* <th>Site</th> */}
-                            {/* <th>FAQ Tag</th> */}
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {formData.faqs.map((faq, index) => {
-                            const siteName =
-                              sites.find((site) => site.id == faq.site_id)
-                                ?.name || "Unknown Site";
-                            return (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td
-                                  style={{
-                                    maxWidth: "200px",
-                                    wordWrap: "break-word",
-                                  }}
-                                >
-                                  {faq.question}
-                                </td>
-                                <td
-                                  style={{
-                                    maxWidth: "250px",
-                                    wordWrap: "break-word",
-                                  }}
-                                >
-                                  {faq.answer}
-                                </td>
-                                {/* <td>{siteName}</td>
-                                <td>{faq.faq_tag || '-'}</td> */}
-                                <td>
-                                  <button
-                                    type="button"
-                                    className="purple-btn2"
-                                    onClick={() => handleDeleteFaq(index)}
-                                    disabled={loading}
-                                  >
-                                    x
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
 
-            {/* Hidden submit button for form submission */}
-            <button type="submit" style={{ display: "none" }} />
-          </form>
-
-          {/* Visible buttons positioned below the card */}
-          <div className="row mt-3 justify-content-center mx-4">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                form="faqCreateForm"
-                className="purple-btn2 w-100"
-                disabled={loading || formData.faqs.length === 0}
-              >
-                {loading ? "Submiting..." : "Submit"}
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={() => navigate("/faq-list")}
-                disabled={loading}
-              >
-                Cancel
-              </button>
+              {formData.faqs.length > 0 && (
+                <div className="col-md-12 mt-4">
+                  <div className="tbl-container w-100">
+                    <table className="w-100">
+                      <thead>
+                        <tr>
+                          <th>Sr No</th>
+                          <th>Question</th>
+                          <th>Answer</th>
+                          {/* <th>Site</th> */}
+                          {/* <th>FAQ Tag</th> */}
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {formData.faqs.map((faq, index) => {
+                          const siteName =
+                            sites.find((site) => site.id == faq.site_id)
+                              ?.name || "Unknown Site";
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td
+                                style={{
+                                  maxWidth: "200px",
+                                  wordWrap: "break-word",
+                                }}
+                              >
+                                {faq.question}
+                              </td>
+                              <td
+                                style={{
+                                  maxWidth: "250px",
+                                  wordWrap: "break-word",
+                                }}
+                              >
+                                {faq.answer}
+                              </td>
+                              {/* <td>{siteName}</td>
+                                <td>{faq.faq_tag || '-'}</td> */}
+                              <td>
+                                <button
+                                  type="button"
+                                  className="purple-btn2"
+                                  onClick={() => handleDeleteFaq(index)}
+                                  disabled={loading}
+                                >
+                                  x
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading || formData.faqs.length === 0}
+            >
+              {loading ? "Submiting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={() => navigate("/faq-list")}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

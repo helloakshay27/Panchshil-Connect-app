@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { Building2 } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const ProjectBuildingTypeEdit = () => {
   const connectEvents = useConnectEvents();
@@ -23,13 +26,12 @@ const ProjectBuildingTypeEdit = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    
+
     const fetchPropertyTypes = async () => {
       try {
         const response = await axios.get(`${baseURL}property_types.json`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
         });
-        // API returns array directly
         const fetchedPropertyTypes = Array.isArray(response.data) ? response.data : [];
 
         const options = fetchedPropertyTypes.map((item) => ({
@@ -54,25 +56,19 @@ const ProjectBuildingTypeEdit = () => {
         });
         const data = response.data;
 
-        // Set the building type name
         setBuildingType(data.building_type);
 
-        // Find the matching property type based on property_type_id
         const matchedPropertyType = options.find(
           (item) => item.id === data.property_type_id
         );
 
         if (matchedPropertyType) {
-          console.log("Found matching property type:", matchedPropertyType);
-          
           setFormData({
             Property_Type: matchedPropertyType.value,
             Property_Type_ID: data.property_type_id,
             building_type: data.building_type,
           });
         } else {
-          console.warn("No matching property type found for ID:", data.property_type_id);
-          
           setFormData({
             Property_Type: "",
             Property_Type_ID: data.property_type_id,
@@ -132,83 +128,80 @@ const ProjectBuildingTypeEdit = () => {
     }
   };
 
-  console.log("Property Type Options:", propertyTypeOptions);
-  console.log("Current Form Data:", formData);
-
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Edit Project Building Type</h3>
-            </div>
-            <div className="card-body">
-              {isLoading ? (
-                <div className="text-center">Loading...</div>
-              ) : (
-                <form onSubmit={handleSubmit}>
-                  <div className="row">
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Property Types <span className="otp-asterisk">{" "}*</span>
-                        </label>
-                        <SelectBox
-                          options={propertyTypeOptions}
-                          value={formData.Property_Type}
-                          onChange={(value) => {
-                            const selected = propertyTypeOptions.find(
-                              (opt) => opt.value === value
-                            );
-                            setFormData((prev) => ({
-                              ...prev,
-                              Property_Type: value,
-                              Property_Type_ID: selected?.id || null,
-                            }));
-                          }}
-                          placeholder="Select Property Type"
-                          isSearchable={true}
-                          defaultValue={formData.Property_Type}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Name <span className="otp-asterisk">{" "}*</span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Enter name"
-                          value={buildingType}
-                          onChange={(e) => setBuildingType(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row mt-2 justify-content-center">
-                    <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                        {loading ? "Updating..." : "Submit"}
-                      </button>
-                    </div>
-                    <div className="col-md-2">
-                      <button
-                        type="button"
-                        className="purple-btn2 w-100"
-                        onClick={() => navigate("/setup-member/project-building-type-list")}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              )}
-            </div>
+      <div className="module-data-section banner-form-page p-3">
+        {isLoading ? (
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-body text-center py-4">Loading...</div>
           </div>
-        </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="card banner-form-card mt-3 pb-4">
+              <div className="card-header banner-form-section-header">
+                <h3 className="banner-form-section-heading">
+                  <span className="banner-form-section-icon" aria-hidden="true">
+                    <Building2 size={16} strokeWidth={1.8} />
+                  </span>
+                  Edit Project Building Type
+                </h3>
+              </div>
+              <div className="card-body">
+                <div className="row banner-form-fields">
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <SelectBox
+                        label="Property Types"
+                        required
+                        placeholder="Select Property Type"
+                        options={propertyTypeOptions}
+                        value={formData.Property_Type}
+                        onChange={(value) => {
+                          const selected = propertyTypeOptions.find(
+                            (opt) => opt.value === value
+                          );
+                          setFormData((prev) => ({
+                            ...prev,
+                            Property_Type: value,
+                            Property_Type_ID: selected?.id || null,
+                          }));
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <FormTextField
+                        label="Name"
+                        required
+                        placeholder="Enter name"
+                        value={buildingType}
+                        onChange={(e) => setBuildingType(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="banner-form-actions">
+              <button
+                type="submit"
+                className="banner-form-action-btn"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Submit"}
+              </button>
+              <button
+                type="button"
+                className="banner-form-action-btn"
+                onClick={() => navigate("/setup-member/project-building-type-list")}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

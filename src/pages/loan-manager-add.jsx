@@ -273,15 +273,10 @@ const LoanManagerAdd = () => {
                   {/* Project Select */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Project
-                        {/* <span className="otp-asterisk"> *</span> */}
-                      </label>
-                      {loading ? (
-                        <div>Loading projects...</div>
-                      ) : (
-                        <SelectBox
-                          options={projects.map((project) => ({
+                      <SelectBox
+                        label="Project"
+                        placeholder={loading ? "Loading projects..." : "Select Project"}
+                        options={projects.map((project) => ({
                             label: project.project_name,
                             value: project.id,
                           }))}
@@ -289,9 +284,7 @@ const LoanManagerAdd = () => {
                           onChange={(value) =>
                             setFormData({ ...formData, project_id: value })
                           }
-                          placeholder="Select a project"
                         />
-                      )}
                       {errors.project_id && (
                         <div className="text-danger">{errors.project_id}</div>
                       )}

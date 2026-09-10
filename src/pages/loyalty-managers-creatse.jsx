@@ -168,10 +168,10 @@ const LoyaltyManager = () => {
                   {/* Project Field */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Project<span className="otp-asterisk"> *</span>
-                      </label>
                       <SelectBox
+                        label="Project"
+                        required
+                        placeholder="Select Project"
                         options={projects.map((project) => ({
                           label: project.project_name,
                           value: project.id,

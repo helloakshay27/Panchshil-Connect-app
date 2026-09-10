@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { User } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const UserCreate = () => {
   const connectEvents = useConnectEvents();
@@ -411,75 +414,60 @@ const UserCreate = () => {
 
   return (
     <div className="main-content">
-      <div className="">
-        <div className="">
-          <div className="module-data-section p-3">
-            <form onSubmit={handleSubmit} noValidate>
-              <div className="card mt-4 pb-4 mx-4">
-                <div className="card-header3">
-                  <h3 className="card-title">Create User</h3>
-                </div>
-                <div className="card-body">
-                  <div className="row">
-                    {/* First Name */}
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <User size={16} strokeWidth={1.8} />
+                </span>
+                Create User
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          First Name <span className="otp-asterisk">*</span>
-                        </label>
-                        <input
-                          className={`form-control ${
-                            errors.firstname ? "is-invalid" : ""
-                          }`}
-                          type="text"
+                        <FormTextField
+                          label="First Name"
+                          required
                           name="firstname"
                           placeholder="Enter firstname"
                           value={formData.firstname}
                           onChange={handleChange}
                         />
                         {errors.firstname && (
-                          <div className="invalid-feedback">
+                          <span className="error text-danger">
                             {errors.firstname}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Last Name */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Last Name <span className="otp-asterisk">*</span>
-                        </label>
-                        <input
-                          className={`form-control ${
-                            errors.lastname ? "is-invalid" : ""
-                          }`}
-                          type="text"
+                        <FormTextField
+                          label="Last Name"
+                          required
                           name="lastname"
                           placeholder="Enter lastname"
                           value={formData.lastname}
                           onChange={handleChange}
                         />
                         {errors.lastname && (
-                          <div className="invalid-feedback">
+                          <span className="error text-danger">
                             {errors.lastname}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Mobile */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Mobile Number <span className="otp-asterisk">*</span>
-                        </label>
-                        <input
-                          className={`form-control ${
-                            errors.mobile ? "is-invalid" : ""
-                          }`}
-                          type="text"
+                        <FormTextField
+                          label="Mobile Number"
+                          required
                           name="mobile"
                           placeholder="Enter mobile"
                           value={formData.mobile}
@@ -487,23 +475,18 @@ const UserCreate = () => {
                           maxLength={10}
                         />
                         {errors.mobile && (
-                          <div className="invalid-feedback">
+                          <span className="error text-danger">
                             {errors.mobile}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Email */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Email <span className="otp-asterisk">*</span>
-                        </label>
-                        <input
-                          className={`form-control ${
-                            errors.email ? "is-invalid" : ""
-                          }`}
+                        <FormTextField
+                          label="Email"
+                          required
                           type="email"
                           name="email"
                           placeholder="Enter email"
@@ -511,21 +494,16 @@ const UserCreate = () => {
                           onChange={handleChange}
                         />
                         {errors.email && (
-                          <div className="invalid-feedback">{errors.email}</div>
+                          <span className="error text-danger">{errors.email}</span>
                         )}
                       </div>
                     </div>
 
-                    {/* Password */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Password <span className="otp-asterisk">*</span>
-                        </label>
-                        <input
-                          className={`form-control ${
-                            errors.password ? "is-invalid" : ""
-                          }`}
+                        <FormTextField
+                          label="Password"
+                          required
                           type="password"
                           name="password"
                           placeholder="Enter password"
@@ -533,19 +511,17 @@ const UserCreate = () => {
                           onChange={handleChange}
                         />
                         {errors.password && (
-                          <div className="invalid-feedback">{errors.password}</div>
+                          <span className="error text-danger">
+                            {errors.password}
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Alternate Email 1 */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Alternate Email</label>
-                        <input
-                          className={`form-control ${
-                            errors.alternate_email1 ? "is-invalid" : ""
-                          }`}
+                        <FormTextField
+                          label="Alternate Email"
                           type="email"
                           name="alternate_email1"
                           placeholder="Enter alternate email"
@@ -553,20 +529,17 @@ const UserCreate = () => {
                           onChange={handleChange}
                         />
                         {errors.alternate_email1 && (
-                          <div className="invalid-feedback">
+                          <span className="error text-danger">
                             {errors.alternate_email1}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Alternate Address */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Address</label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Address"
                           name="alternate_address"
                           placeholder="Enter alternate address"
                           value={formData.alternate_address}
@@ -575,13 +548,10 @@ const UserCreate = () => {
                       </div>
                     </div>
 
-                    {/* User Title */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>User Title</label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="User Title"
                           name="user_title"
                           placeholder="Enter user title"
                           value={formData.user_title}
@@ -590,17 +560,17 @@ const UserCreate = () => {
                       </div>
                     </div>
 
-                    {/* Gender */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Gender</label>
                         <SelectBox
+                          label="Gender"
+                          placeholder="Select Gender"
                           options={[
                             { label: "Male", value: "Male" },
                             { label: "Female", value: "Female" },
                             { label: "Other", value: "Other" },
                           ]}
-                          defaultValue={formData.gender}
+                          value={formData.gender}
                           onChange={(value) =>
                             setFormData((prev) => ({
                               ...prev,
@@ -627,32 +597,26 @@ const UserCreate = () => {
 
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>Birth Date</label>
-                          <input
-                            className={`form-control ${
-                              errors.birth_date ? "is-invalid" : ""
-                            }`}
+                          <FormTextField
+                            label="Birth Date"
                             type="date"
                             name="birth_date"
                             value={formData.birth_date || ""}
-                            max={getMaxBirthDate()} // This restricts the date picker
+                            max={getMaxBirthDate()}
                             onChange={handleChange}
                           />
                           {errors.birth_date && (
-                            <div className="invalid-feedback">
+                            <span className="error text-danger">
                               {errors.birth_date}
-                            </div>
+                            </span>
                           )}
                         </div>
                       </div>
 
-                    {/* Employee Type */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Employee Type</label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Employee Type"
                           name="employee_type"
                           placeholder="Enter employee type"
                           value={formData.employee_type}
@@ -661,18 +625,16 @@ const UserCreate = () => {
                       </div>
                     </div>
 
-                    {/* Company Dropdown */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Company <span className="otp-asterisk">*</span>
-                        </label>
                         <SelectBox
-                          name="company_id"
+                          label="Company"
+                          required
+                          placeholder={
+                            companiesLoading ? "Loading..." : "Select Company"
+                          }
                           options={
-                            companiesLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : companies.length > 0
+                            companies.length > 0
                               ? companies.map((comp) => ({
                                   value: comp.id,
                                   label: comp.name,
@@ -683,39 +645,31 @@ const UserCreate = () => {
                           onChange={(value) =>
                             setFormData({ ...formData, company_id: value })
                           }
-                          className={errors.company_id ? "is-invalid" : ""}
                         />
                         {errors.company_id && (
-                          <div className="invalid-feedback">
+                          <span className="error text-danger">
                             {errors.company_id}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Organization Dropdown */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Organization 
-                          {/* <span className="otp-asterisk">*</span> */}
-                        </label>
                         <SelectBox
-                          name="organization_id"
-                          options={
+                          label="Organization"
+                          placeholder={
                             organizationsLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : organizations.length > 0
+                              ? "Loading..."
+                              : "Select Organization"
+                          }
+                          options={
+                            organizations.length > 0
                               ? organizations.map((org) => ({
                                   value: org.id,
                                   label: org.name,
                                 }))
-                              : [
-                                  {
-                                    value: "",
-                                    label: "No organizations found",
-                                  },
-                                ]
+                              : [{ value: "", label: "No organizations found" }]
                           }
                           value={formData.organization_id}
                           onChange={(value) =>
@@ -724,28 +678,25 @@ const UserCreate = () => {
                               organization_id: value,
                             })
                           }
-                          className={errors.organization_id ? "is-invalid" : ""}
                         />
                         {errors.organization_id && (
-                          <div className="invalid-feedback">
+                          <span className="error text-danger">
                             {errors.organization_id}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Role Dropdown */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          User Role <span className="otp-asterisk">*</span>
-                        </label>
                         <SelectBox
-                          name="role_id"
+                          label="User Role"
+                          required
+                          placeholder={
+                            rolesLoading ? "Loading..." : "Select User Role"
+                          }
                           options={
-                            rolesLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : roles.length > 0
+                            roles.length > 0
                               ? roles.map((role) => ({
                                   value: role.id,
                                   label: role.name,
@@ -756,28 +707,27 @@ const UserCreate = () => {
                           onChange={(value) =>
                             setFormData({ ...formData, role_id: value })
                           }
-                          className={errors.role_id ? "is-invalid" : ""}
                         />
                         {errors.role_id && (
-                          <div className="invalid-feedback">
+                          <span className="error text-danger">
                             {errors.role_id}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Department Dropdown */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Department <span className="otp-asterisk">*</span>
-                        </label>
                         <SelectBox
-                          name="department_id"
-                          options={
+                          label="Department"
+                          required
+                          placeholder={
                             departmentsLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : departments.length > 0
+                              ? "Loading..."
+                              : "Select Department"
+                          }
+                          options={
+                            departments.length > 0
                               ? departments.map((dept) => ({
                                   value: dept.id,
                                   label: dept.name,
@@ -788,28 +738,24 @@ const UserCreate = () => {
                           onChange={(value) =>
                             setFormData({ ...formData, department_id: value })
                           }
-                          className={errors.department_id ? "is-invalid" : ""}
                         />
                         {errors.department_id && (
-                          <div className="invalid-feedback">
+                          <span className="error text-danger">
                             {errors.department_id}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Site 
-                          {/* <span className="otp-asterisk">*</span> */}
-                        </label>
                         <SelectBox
-                          name="site_id"
+                          label="Site"
+                          placeholder={
+                            sitesLoading ? "Loading..." : "Select Site"
+                          }
                           options={
-                            sitesLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : sites.length > 0
+                            sites.length > 0
                               ? sites.map((site) => ({
                                   value: site.id,
                                   label: site.name,
@@ -820,12 +766,11 @@ const UserCreate = () => {
                           onChange={(value) =>
                             setFormData({ ...formData, site_id: value })
                           }
-                          className={errors.site_id ? "is-invalid" : ""}
                         />
-                        {errors.site && (
-                          <div className="invalid-feedback">
+                        {errors.site_id && (
+                          <span className="error text-danger">
                             {errors.site_id}
-                          </div>
+                          </span>
                         )}
                       </div>
                     </div>
@@ -848,30 +793,23 @@ const UserCreate = () => {
                 </div>
               </div>
 
-              {/* Submit and Cancel Buttons */}
-              <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    {loading ? "Creating..." : "Submit"}
-                  </button>
-                </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
+              <div className="banner-form-actions">
+                <button
+                  type="submit"
+                  className="banner-form-action-btn"
+                  disabled={loading}
+                >
+                  {loading ? "Creating..." : "Submit"}
+                </button>
+                <button
+                  type="button"
+                  className="banner-form-action-btn"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
               </div>
-            </form>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
   );

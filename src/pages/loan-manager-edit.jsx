@@ -268,11 +268,9 @@ const LoanManagerEdit = () => {
                     {/* Project Select */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Project
-                          {/* <span className="otp-asterisk"> *</span> */}
-                        </label>
                         <SelectBox
+                          label="Project"
+                          placeholder="Select Project"
                           options={projects.map((p) => ({
                             label: p.project_name || p.name,
                             value: p.id,

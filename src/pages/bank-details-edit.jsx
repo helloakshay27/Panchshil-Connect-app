@@ -542,8 +542,9 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>State</label>
                       <SelectBox
+                        label="State"
+                        placeholder="Select State"
                         name="state_id"
                         options={
                           states.length > 0
@@ -562,8 +563,9 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>City</label>
                       <SelectBox
+                        label="City"
+                        placeholder="Select City"
                         name="city_id"
                         options={
                           cities.length > 0
@@ -610,10 +612,10 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Project<span className="otp-asterisk"> *</span>
-                      </label>
                       <SelectBox
+                        label="Project"
+                        required
+                        placeholder="Select Project"
                         options={[
                           { value: "", label: "Select Project" },
                           ...projects.map((project) => ({

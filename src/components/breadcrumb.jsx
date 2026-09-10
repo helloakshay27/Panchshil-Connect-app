@@ -30,14 +30,16 @@ const Breadcrumbs = () => {
   // Only show the last segment as breadcrumb
   const last = pathnames[pathnames.length - 1];
 
+  if (!last || /^\d+$/.test(last)) {
+    return null;
+  }
+
   return (
     <nav aria-label="breadcrumb" className="mx-4 my-2">
       <ol className="breadcrumb">
-        {last && (
-          <li className="breadcrumb-item active" aria-current="page">
-            {last}
-          </li>
-        )}
+        <li className="breadcrumb-item active" aria-current="page">
+          {last}
+        </li>
       </ol>
     </nav>
   );

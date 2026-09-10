@@ -221,10 +221,10 @@ const ReferralCreate = () => {
                 {/* Project Field */}
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Project <span className="otp-asterisk"> *</span>
-                    </label>
                     <SelectBox
+                      label="Project"
+                      required
+                      placeholder="Select Project"
                       options={projects.map((proj) => ({
                         label: proj.project_name,
                         value: proj.id,

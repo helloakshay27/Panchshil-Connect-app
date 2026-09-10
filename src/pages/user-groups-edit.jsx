@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import { Users } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import MultiSelectBox from "../components/base/MultiSelectBox";
+import "./banner-add.css";
 
 const UserGroupEdit = () => {
   const navigate = useNavigate();
@@ -330,34 +333,32 @@ const UserGroupEdit = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-hidden">
-        <div className="">
-          <div className="module-data-section p-3">
-            <form onSubmit={handleSubmit} noValidate>
-              <div className="card mt-4 pb-4 mx-4">
-                <div className="card-header3">
-                  <h3 className="card-title">Edit User Group</h3>
-                </div>
-                <div className="card-body">
-                  <div className="row">
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Users size={16} strokeWidth={1.8} />
+                </span>
+                Edit User Group
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
                     {/* Group Name */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Group Name <span className="otp-asterisk">*</span>
-                        </label>
-                        <input
-                          className={`form-control ${
-                            errors.name ? "is-invalid" : ""
-                          }`}
-                          type="text"
+                        <FormTextField
+                          label="Group Name"
+                          required
                           name="name"
                           placeholder="Enter group name"
                           value={formData.name}
                           onChange={handleChange}
                         />
                         {errors.name && (
-                          <div className="invalid-feedback">{errors.name}</div>
+                          <span className="error text-danger">{errors.name}</span>
                         )}
                       </div>
                     </div>
@@ -424,10 +425,11 @@ const UserGroupEdit = () => {
                     </div> */}
 
                     {/* Members Multi-Select */}
-                    <div className="col-md-3 mt-1">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Members ID</label>
                         <MultiSelectBox
+                          label="Members ID"
+                          placeholder="Select Members"
                           options={
                             Array.isArray(eventUserID)
                               ? eventUserID.map((user) => ({
@@ -451,34 +453,27 @@ const UserGroupEdit = () => {
                         />
                       </div>
                     </div>
-                  </div>
-                </div>
               </div>
-
-              {/* Submit and Cancel Buttons */}
-              <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    {loading ? "Updating..." : "Submit"}
-                  </button>
-                </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Updating..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

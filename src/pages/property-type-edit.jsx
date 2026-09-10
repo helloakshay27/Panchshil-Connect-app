@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { Home } from "lucide-react";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const PropertyTypeEdit = () => {
   const connectEvents = useConnectEvents();
-  const { id } = useParams(); // ✅ Get ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
 
-  // ✅ Fetch Property Type Data
   useEffect(() => {
     const fetchPropertyType = async () => {
       try {
@@ -20,7 +22,7 @@ const PropertyTypeEdit = () => {
           `${baseURL}property_types/${id}.json`,
           { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } }
         );
-        setName(response.data.property_type || ""); // ✅ Ensure correct field
+        setName(response.data.property_type || "");
       } catch (error) {
         console.error("Error fetching property type:", error);
         toast.error("Failed to load property type.");
@@ -30,7 +32,6 @@ const PropertyTypeEdit = () => {
     fetchPropertyType();
   }, [id]);
 
-  // ✅ Handle Form Submission (Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim()) {
@@ -43,7 +44,7 @@ const PropertyTypeEdit = () => {
     try {
       await axios.put(
         `${baseURL}property_types/${id}.json`,
-        { property_type: { property_type: name } }, // ✅ Correct backend format
+        { property_type: { property_type: name } },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -54,11 +55,10 @@ const PropertyTypeEdit = () => {
 
       connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("Property Type updated successfully!");
-      navigate("/setup-member/property-type-list"); // ✅ Navigate after success
+      navigate("/setup-member/property-type-list");
     } catch (error) {
       console.error("Error updating property type:", error);
 
-      // Extract detailed backend error message if available
       const errorMessage =
         error.response?.data?.message || "Failed to update Property Type.";
       toast.error(errorMessage);
@@ -69,62 +69,52 @@ const PropertyTypeEdit = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Edit Property Type</h3>
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Home size={16} strokeWidth={1.8} />
+                </span>
+                Edit Property Type
+              </h3>
             </div>
             <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                <div className="row">
-                  {/* Name Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Name
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Enter name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                      />
-                    </div>
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Name"
+                      required
+                      placeholder="Enter name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
                   </div>
                 </div>
-
-                {/* ✅ Submit & Cancel Buttons */}
-                <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={loading}
-                    >
-                      {loading ? "Updating..." : "Update"}
-                    </button>
-                  </div>
-
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={() => navigate("/setup-member/property-type-list")}
-                      disabled={loading}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-                {/* ✅ End of Buttons */}
-              </form>
+              </div>
             </div>
           </div>
-        </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Updating..." : "Update"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={() => navigate("/setup-member/property-type-list")}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

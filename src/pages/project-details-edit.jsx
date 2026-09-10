@@ -4245,13 +4245,11 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="card-body mt-0 pb-0">
                 {/* Input Fields for New Entry */}
-                <div className="row align-items-center project-details-primary-fields">
-                  <div className="col-md-3 mt-2">
+                <div className="row project-details-primary-fields">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>Tower </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Tower"
                         name="tower_name"
                         placeholder="Enter Tower Name"
                         value={towerName}
@@ -4260,12 +4258,10 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-2">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>RERA Number </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="RERA Number"
                         name="rera_number"
                         placeholder="Enter RERA Number"
                         value={reraNumber}
@@ -4274,12 +4270,10 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-2">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>RERA URL </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="RERA URL"
                         name="rera_url"
                         placeholder="Enter RERA URL"
                         value={reraUrl}
@@ -4288,25 +4282,26 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  {/* Add Button */}
-                  <div className="col-md-3 mt-2 d-flex align-items-end">
-                    <button
-                      type="button"
-                      className="purple-btn2 rounded-3"
-                      onClick={handleAddRera}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={26}
-                        height={20}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <button
+                        type="button"
+                        className="purple-btn2 project-details-add-btn"
+                        onClick={handleAddRera}
                       >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span> Add</span>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -6755,13 +6750,11 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="card-body mt-0 pb-0">
                 {/* Input Fields */}
-                <div className="row align-items-center project-details-primary-fields">
-                  <div className="col-md-3 mt-2">
+                <div className="row project-details-primary-fields">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>Virtual Tour Name </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Virtual Tour Name"
                         name="virtual_tour_name"
                         placeholder="Enter Virtual Tour Name"
                         value={virtualTourName}
@@ -6770,11 +6763,10 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-2">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>Virtual Tour URL </label>
-                      <input
-                        className="form-control"
+                      <FormTextField
+                        label="Virtual Tour URL"
                         type="url"
                         name="virtual_tour_url"
                         placeholder="Enter Virtual Tour URL"
@@ -6784,26 +6776,28 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-2 d-flex align-items-end">
-                    <button
-                      type="button"
-                      className="purple-btn2 rounded-3"
-                      onClick={handleAddVirtualTour}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={26}
-                        height={20}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <button
+                        type="button"
+                        className="purple-btn2 project-details-add-btn"
+                        onClick={handleAddVirtualTour}
                       >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span> Add</span>
-                    </button>
-                   </div>
-                 </div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
                  {formData.virtual_tour_url_multiple.length > 0 && (
                   <div className="col-md-12 mt-2">
@@ -6876,26 +6870,22 @@ const ProjectDetailsEdit = () => {
             </div>
           </>
         )}
-        <div className="row mt-2 justify-content-center">
-          <div className="col-md-2">
-            <button
-              onClick={handleSubmit}
-              className="purple-btn2 w-100"
-              disabled={loading}
-            >
-              Submit
-            </button>
-          </div>
-
-          <div className="col-md-2">
-            <button
-              type="button"
-              className="purple-btn2 w-100"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-          </div>
+        <div className="banner-form-actions">
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </>

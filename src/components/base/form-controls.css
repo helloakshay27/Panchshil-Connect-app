@@ -8,23 +8,30 @@
 .form-control-field__textarea,
 .form-select-field .select__control {
   width: 100%;
-  min-height: 45px;
-  border: 1px solid #ddd;
+  min-height: 40px;
+  border: 1px solid #d0d0d0;
   border-radius: 4px;
   background: #fff;
   color: #333;
   font: inherit;
   font-size: 14px;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  box-shadow: none;
+  transition: border-color 160ms ease;
 }
 
 .form-control-field__input,
 .form-control-field__textarea {
-  padding: 12px;
+  height: 40px;
+  padding: 0 12px;
+  line-height: 38px;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .form-control-field__textarea {
   min-height: 90px;
+  height: auto;
   resize: vertical;
 }
 
@@ -38,7 +45,7 @@
 .form-control-field__textarea:focus,
 .form-select-field .select__control--is-focused {
   border-color: var(--red, #de7008);
-  box-shadow: 0 0 0 1px var(--red, #de7008);
+  box-shadow: none;
   outline: none;
 }
 
@@ -46,14 +53,24 @@
 .form-select-field__label {
   position: absolute;
   top: -8px;
-  left: 12px;
+  left: 10px;
   z-index: 2;
-  padding: 0 5px;
+  max-width: calc(100% - 20px);
+  padding: 0 4px;
   background: #fff;
   color: #555;
   font-size: 12px;
+  font-weight: 400;
   line-height: 16px;
-  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: auto;
+}
+
+.form-control-field__label .tooltip-container,
+.form-select-field__label .tooltip-container {
+  pointer-events: auto;
 }
 
 .form-control-field__required,
@@ -61,60 +78,280 @@
   color: var(--red, #de7008);
 }
 
-.form-select-field .select__control {
-  padding: 0 4px;
-  box-shadow: none;
+.form-select-field .select__indicator-separator {
+  display: none;
 }
 
-.form-select-field .select__value-container {
-  padding: 0 8px;
-}
-
+.form-select-field .select__placeholder,
 .form-select-field .select__single-value {
-  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.form-select-field .select__placeholder {
+.form-select-field--multi .select__control {
+  min-height: 40px !important;
+}
+
+.form-select-field--multi .select__control:has(.select__multi-value) {
+  height: auto !important;
+  max-height: none !important;
+  align-items: flex-start !important;
+  flex-wrap: wrap !important;
+  overflow: visible !important;
+}
+
+.form-select-field--multi .select__control:not(:has(.select__multi-value)) {
+  height: 40px !important;
+  max-height: 40px !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  overflow: hidden !important;
+}
+
+.form-select-field--multi .select__value-container {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  align-items: center !important;
+  gap: 4px;
+}
+
+.form-select-field--multi .select__value-container--has-value {
+  height: auto !important;
+  min-height: 32px !important;
+  max-height: none !important;
+  flex-wrap: wrap !important;
+  align-content: flex-start !important;
+  overflow: visible !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+.form-select-field--multi .select__value-container:not(.select__value-container--has-value) {
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  flex-wrap: nowrap !important;
+  overflow: hidden !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 12px !important;
+  padding-right: 8px !important;
+}
+
+.form-select-field--multi .select__value-container:not(.select__value-container--has-value) .select__placeholder {
+  position: static !important;
+  transform: none !important;
+  top: auto !important;
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
   color: #9a9a9a;
 }
 
-.form-select-field .select__indicators {
-  min-height: 43px;
+.form-select-field .select__input-container,
+.form-select-field--multi .select__input {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.form-select-field .select__menu,
-.form-select-field .select__menu-portal {
-  z-index: 9999;
+.form-select-field--multi .select__indicators {
+  height: 38px;
+  align-self: center !important;
 }
 
-.form-select-field .select__option {
-  padding: 10px 12px;
+.form-select-field--multi .select__control:has(.select__multi-value) .select__indicators {
+  align-self: flex-start !important;
 }
 
-.form-select-field .select__option--is-focused {
-  background: color-mix(in srgb, var(--red, #de7008) 14%, white);
+.form-select-field--multi .select__multi-value {
+  margin: 0;
+  max-width: 100%;
+  border-radius: 3px;
+  background-color: color-mix(in srgb, var(--red, #de7008) 14%, white);
+}
+
+.form-select-field--multi .select__multi-value__label {
+  padding: 2px 4px 2px 6px;
   color: #333;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.form-select-field .select__option--is-selected {
-  background: var(--red, #de7008);
-  color: #fff;
-}
-
-.form-select-field .select__multi-value {
-  background: color-mix(in srgb, var(--red, #de7008) 14%, white);
-}
-
-.form-select-field .select__multi-value__label {
-  color: #333;
+.form-select-field .select__multi-value__remove {
+  color: var(--red, #de7008);
+  cursor: pointer;
+  border-radius: 0 3px 3px 0;
 }
 
 .form-select-field .select__multi-value__remove:hover {
-  background: var(--red, #de7008);
+  background-color: var(--red, #de7008);
   color: #fff;
+}
+
+.form-select-field .select__option--is-focused,
+.form-select-field .select__option--is-selected {
+  background-color: #fff4ec;
+  color: var(--red, #de7008);
+}
+
+.select__menu .select__option {
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-select-field__menu-search {
+  padding: 8px 10px 6px;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+}
+
+.form-select-field__menu-search input {
+  width: 100%;
+  height: 30px;
+  padding: 4px 8px;
+  border: 1px solid #d8d8d8;
+  border-radius: 3px;
+  outline: none;
+  font-size: 13px;
+  color: #333;
+}
+
+.form-select-field__menu-search input:focus {
+  border-color: var(--red, #de7008);
 }
 
 .form-control-field--disabled,
 .form-select-field--disabled {
   opacity: 0.65;
+}
+
+.form-group:has(.form-select-field),
+.form-group:has(.form-control-field) {
+  position: relative;
+  padding-top: 8px;
+}
+
+.form-group:has(.form-select-field) > label,
+.form-group:has(.form-select-field) > .form-label {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  z-index: 2;
+  margin: 0 !important;
+  padding: 0 4px;
+  background: #fff;
+  color: #555;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.form-group:has(.form-select-field) > label .otp-asterisk,
+.form-group:has(.form-select-field) > .form-label .otp-asterisk {
+  color: var(--red, #de7008);
+}
+
+.form-group:has(.select__control--is-focused) > label,
+.form-group:has(.select__control--is-focused) > .form-label {
+  color: var(--red, #de7008);
+}
+
+select.form-control {
+  height: 40px !important;
+  min-height: 40px;
+  padding: 0 36px 0 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238d8d8d' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none;
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+}
+
+select.form-control:focus {
+  border-color: var(--red, #de7008);
+  box-shadow: none;
+  outline: none;
+}
+
+.banner-form-actions:not(.modal-footer) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 20px 0 28px;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.banner-form-actions:not(.efs-nav):not(.modal-footer):has(> .banner-form-action-btn:nth-child(2)) {
+  flex-direction: row-reverse;
+  justify-content: center;
+}
+
+.banner-form-action-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  width: auto;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  margin: 0;
+  padding: 0 24px;
+  border: 1px solid var(--red, #de7008) !important;
+  border-radius: 6px;
+  background: var(--red, #de7008) !important;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.banner-form-action-btn:hover {
+  background: #c46307 !important;
+  border-color: #c46307 !important;
+  color: #fff !important;
+}
+
+.banner-form-action-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.banner-form-action-btn--outline,
+.banner-form-actions:not(.efs-nav):not(.modal-footer):has(> .banner-form-action-btn:nth-child(2))
+  > .banner-form-action-btn:last-child {
+  background: #fff !important;
+  color: var(--red, #de7008) !important;
+  border: 1px solid var(--red, #de7008) !important;
+}
+
+.banner-form-action-btn--outline:hover,
+.banner-form-actions:not(.efs-nav):not(.modal-footer):has(> .banner-form-action-btn:nth-child(2))
+  > .banner-form-action-btn:last-child:hover {
+  background: #fff4ec !important;
+  color: var(--red, #de7008) !important;
 }

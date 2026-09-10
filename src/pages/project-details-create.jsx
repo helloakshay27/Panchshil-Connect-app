@@ -2130,6 +2130,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <FormSelect
                     label="Property Types"
+                    placeholder="Select..."
                     required
                     options={propertyTypeOptions}
                     value={formData.Property_Type}
@@ -2141,6 +2142,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <FormSelect
                     label="Project Building Type"
+                    placeholder="Select..."
                     options={buildingTypeOptions}
                     value={formData.building_type}
                     onChange={(selected) => {
@@ -2156,6 +2158,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <FormSelect
                     label="Project Construction Status"
+                    placeholder="Select..."
                     required
                     options={statusOptions}
                     value={formData.Project_Construction_Status}
@@ -2172,6 +2175,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <FormMultiSelect
                     label="Configuration Type"
+                    placeholder="Select..."
                     options={configurations.map((config) => ({
                       value: config.name,
                       label: config.name,
@@ -2188,7 +2192,6 @@ const ProjectDetailsCreate = () => {
                         ),
                       }))
                     }
-                    placeholder="Select Type"
                   />
                 </div>
               </div>
@@ -2233,6 +2236,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <FormSelect
                     label="Project Tag"
+                    placeholder="Select..."
                     options={[
                       { value: "Featured", label: "Featured" },
                       { value: "Upcoming", label: "Upcoming" },
@@ -2383,6 +2387,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <FormSelect
                     label="Land UOM"
+                    placeholder="Select..."
                     options={[
                       { value: "Square Meter", label: "Square Meter" },
                       { value: "Square Feet", label: "Square Feet" },
@@ -2407,6 +2412,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <FormSelect
                     label="Project Sales Type"
+                    placeholder="Select..."
                     options={[
                       { value: "Sales", label: "Sales" },
                       { value: "Lease", label: "Lease" },
@@ -2639,13 +2645,11 @@ const ProjectDetailsCreate = () => {
                   </h3>
                 </div>
                 <div className="card-body mt-0 pb-0">
-                  <div className="row align-items-center project-details-primary-fields">
-                    <div className="col-md-3 mt-2">
+                  <div className="row project-details-primary-fields">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Tower </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Tower"
                           name="tower_name"
                           placeholder="Enter Tower Name"
                           value={towerName}
@@ -2653,12 +2657,10 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>RERA Number </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="RERA Number"
                           name="rera_number"
                           placeholder="Enter RERA Number"
                           value={reraNumber}
@@ -2671,12 +2673,10 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>RERA URL </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="RERA URL"
                           name="rera_url"
                           placeholder="Enter RERA URL"
                           value={reraUrl}
@@ -2684,24 +2684,26 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2 d-flex align-items-end">
-                      <button
-                        type="button"
-                        className="purple-btn2 rounded-3"
-                        onClick={handleAddRera}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={26}
-                          height={20}
-                          fill="currentColor"
-                          className="bi bi-plus"
-                          viewBox="0 0 16 16"
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <button
+                          type="button"
+                          className="purple-btn2 project-details-add-btn"
+                          onClick={handleAddRera}
                         >
-                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                        </svg>
-                        <span> Add</span>
-                      </button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={16}
+                            height={16}
+                            fill="currentColor"
+                            className="bi bi-plus"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                          </svg>
+                          <span>Add</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   {formData.Rera_Number_multiple.length > 0 && (
@@ -2800,6 +2802,7 @@ const ProjectDetailsCreate = () => {
                 <div className="form-group">
                   <FormMultiSelect
                     label="Amenities"
+                    placeholder="Select..."
                     options={amenities.map((ammit) => ({
                       value: ammit.id,
                       label: ammit.name,
@@ -2818,7 +2821,6 @@ const ProjectDetailsCreate = () => {
                         ),
                       }))
                     }
-                    placeholder="Select amenities"
                     projectDetails
                   />
                 </div>
@@ -4700,13 +4702,11 @@ const ProjectDetailsCreate = () => {
                   </h3>
                 </div>
                 <div className="card-body mt-0 pb-0">
-                  <div className="row align-items-center project-details-primary-fields">
-                    <div className="col-md-3 mt-2">
+                  <div className="row project-details-primary-fields">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Virtual Tour Name </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Virtual Tour Name"
                           name="virtual_tour_name"
                           placeholder="Enter Virtual Tour Name"
                           value={virtualTourName}
@@ -4714,11 +4714,10 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Virtual Tour URL </label>
-                        <input
-                          className="form-control"
+                        <FormTextField
+                          label="Virtual Tour URL"
                           type="url"
                           name="virtual_tour_url"
                           placeholder="Enter Virtual Tour URL"
@@ -4727,24 +4726,26 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2 d-flex align-items-end">
-                      <button
-                        type="button"
-                        className="purple-btn2 rounded-3"
-                        onClick={handleAddVirtualTour}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={26}
-                          height={20}
-                          fill="currentColor"
-                          className="bi bi-plus"
-                          viewBox="0 0 16 16"
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <button
+                          type="button"
+                          className="purple-btn2 project-details-add-btn"
+                          onClick={handleAddVirtualTour}
                         >
-                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                        </svg>
-                        <span> Add</span>
-                      </button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={16}
+                            height={16}
+                            fill="currentColor"
+                            className="bi bi-plus"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                          </svg>
+                          <span>Add</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   {formData.virtual_tour_url_multiple.length > 0 && (
@@ -4790,25 +4791,22 @@ const ProjectDetailsCreate = () => {
             </>
           )}
         <div className="card-body mt-0 pb-0"></div>
-        <div className="row mt-2 justify-content-center">
-          <div className="col-md-2">
-            <button
-              onClick={handleSubmit}
-              className="purple-btn2 w-100"
-              disabled={loading}
-            >
-              Submit
-            </button>
-          </div>
-          <div className="col-md-2">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="purple-btn2 w-100"
-            >
-              Cancel
-            </button>
-          </div>
+        <div className="banner-form-actions">
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </>

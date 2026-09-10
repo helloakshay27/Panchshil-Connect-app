@@ -415,10 +415,10 @@ const HomeLoanEdit = () => {
                   {/* Project */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Project<span className="otp-asterisk"> *</span>
-                      </label>
                       <SelectBox
+                        label="Project"
+                        required
+                        placeholder="Select Project"
                         options={projects.map((project) => ({
                           label: project.project_name,
                           value: project.id,
@@ -438,10 +438,10 @@ const HomeLoanEdit = () => {
                   {/* Banks (Multiple Select) */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Banks<span className="otp-asterisk"> *</span>
-                      </label>
                       <MultiSelectBox
+                        label="Banks"
+                        required
+                        placeholder="Select Banks"
                         options={banks.map((bank) => ({
                           value: bank.id,
                           label: bank.bank_name,

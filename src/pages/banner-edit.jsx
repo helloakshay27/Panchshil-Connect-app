@@ -2,12 +2,13 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import SelectBox from "../components/base/SelectBox";
+import { FileText, Image, Upload } from "lucide-react";
+import FormSelect from "../components/base/FormSelect";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
-import { ImageCropper } from "../components/reusable/ImageCropper";
-import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const BannerEdit = () => {
   const connectEvents = useConnectEvents();
@@ -736,308 +737,247 @@ const BannerEdit = () => {
   // );
   return (
     <div className="main-content">
-      <style jsx>{`
-        .btn-primary {
-          background: #f1f5f9;
-          color: #1f2937;
-          padding: 8px 16px;
-          border: 1px solid #cbd5e0;
-          border-radius: 6px;
-          cursor: pointer;
-          font-weight: 500;
-          margin-left: 10px;
-          height: 38px;
-          display: inline-flex;
-          align-items: center;
-        }
-        .btn-primary:hover {
-          background: #e2e8f0;
-        }
-        .scrollable-table {
-          max-height: 300px;
-          overflow-y: auto;
-        }
-        .tbl-container table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .tbl-container th,
-        .tbl-container td {
-          padding: 8px;
-          border: 1px solid #ddd;
-          text-align: left;
-        }
-        .sticky-footer {
-          position: sticky;
-          bottom: 0;
-          background: white;
-          padding-top: 16px;
-          z-index: 10;
-        }
-      `}</style>
+      <div className="module-data-section banner-form-page p-3">
+        <div className="card banner-form-card mt-3 pb-4">
+          <div className="card-header banner-form-section-header">
+            <h3 className="banner-form-section-heading">
+              <span className="banner-form-section-icon" aria-hidden="true">
+                <Image size={16} strokeWidth={1.8} />
+              </span>
+              Banner Edit
+            </h3>
+          </div>
 
-      <div className="module-data-section container-fluid overflow-hidden">
-        <div className="module-data-section">
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Banner Edit</h3>
-            </div>
-
-            <div className="card-body">
-              <div className="row">
-                {/* Title Input */}
-               
-
-                {/* Project Select */}
-               
-
-                {/* Banner Type Select */}
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Banner Type<span className="otp-asterisk"> *</span>
-                    </label>
-                    <SelectBox
-                      options={[
-                        { label: "Home Loan", value: "home_loan" },
-                        { label: "Homescreen Hero Banner", value: "project" },
-                        // { label: "Common", value: "common" },
-                      ]}
-                      defaultValue={formData.banner_type}
-                      onChange={(value) =>
-                        setFormData({ ...formData, banner_type: value })
-                      }
-                    />
-                    {errors.banner_type && (
-                      <span className="text-danger">{errors.banner_type}</span>
-                    )}
-                  </div>
-                </div>
-
-                 <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Title{formData.banner_type !== "home_loan" && <span className="otp-asterisk"> *</span>}
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleChange}
-                      placeholder="Enter title"
-                    />
-                    {errors.title && (
-                      <span className="text-danger">{errors.title}</span>
-                    )}
-                  </div>
-                </div>
-
-                 <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Project{formData.banner_type !== "home_loan" && <span className="text-danger"> *</span>}
-                    </label>
-                    <SelectBox
-                      options={projects.map((p) => ({
-                        label: p.project_name,
-                        value: p.id,
-                      }))}
-                      defaultValue={formData.project_id}
-                      onChange={(value) =>
-                        setFormData({ ...formData, project_id: value })
-                      }
-                    />
-                    {errors.project_id && (
-                      <span className="text-danger">{errors.project_id}</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Banner Attachment Upload */}
-                <div className="col-md-3 col-sm-6 col-12">
-                  <div className="form-group d-flex flex-column">
-                    <label className="mb-2">
-                      Banner Attachment{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowVideoTooltip(true)}
-                        onMouseLeave={() => setShowVideoTooltip(false)}
-                      >
-                        [i]
-                        {showVideoTooltip && (
-                          <span className="tooltip-text">
-                            {getDynamicRatiosText("BannerImage")}
-                          </span>
-                        )}
-                      </span>
-                      <span className="otp-asterisk"> *</span>
-                    </label>
-
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setShowUploader(true)}
-                      className="custom-upload-button input-upload-button"
-                    >
-                      <span className="upload-button-label">Choose file</span>
-                      <span className="upload-button-value">
-                        No file chosen
-                      </span>
-                    </span>
-
-                    {showUploader && (
-                      <ProjectImageVideoUpload
-                        onClose={() => setShowUploader(false)}
-                        includeInvalidRatios={false}
-                        selectedRatioProp={selectedRatios}
-                        showAsModal={true}
-                        label={dynamicLabel}
-                        description={dynamicDescription}
-                        onContinue={handleCropComplete}
-                        allowVideos={true}
-                      />
-                    )}
-                  </div>
+          <div className="card-body">
+            <div className="row banner-form-fields">
+              <div className="col-md-4">
+                <div className="form-group">
+                  <FormSelect
+                    label="Banner Type"
+                    required
+                    placeholder="Select Banner Type"
+                    options={[
+                      { label: "Home Loan", value: "home_loan" },
+                      { label: "Homescreen Hero Banner", value: "project" },
+                    ]}
+                    value={formData.banner_type}
+                    onChange={(value) =>
+                      setFormData({ ...formData, banner_type: value })
+                    }
+                  />
+                  {errors.banner_type && (
+                    <span className="text-danger">{errors.banner_type}</span>
+                  )}
                 </div>
               </div>
 
-{/* Scrollable Image Table */}
-<div className="col-md-12 mt-4">
-  <div className="scrollable-table tbl-container">
-    <table>
-      <thead>
-        <tr>
-          <th>File Name</th>
-          <th>Preview</th>
-          <th>Ratio</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-                      {/* Removed the banner_video row without ratio - only show ratio-specific images */}
+              <div className="col-md-4">
+                <div className="form-group">
+                  <FormTextField
+                    label="Title"
+                    required={formData.banner_type !== "home_loan"}
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    placeholder="Enter title"
+                  />
+                  {errors.title && (
+                    <span className="text-danger">{errors.title}</span>
+                  )}
+                </div>
+              </div>
 
-                      {project_banner.map(({ key, label }) => {
-                        const files = Array.isArray(formData[key])
-                          ? formData[key]
-                          : formData[key]
+              <div className="col-md-4">
+                <div className="form-group">
+                  <FormSelect
+                    label="Project"
+                    required={formData.banner_type !== "home_loan"}
+                    placeholder="Select Project"
+                    options={projects.map((project) => ({
+                      label: project.project_name,
+                      value: project.id,
+                    }))}
+                    value={formData.project_id}
+                    onChange={(value) =>
+                      setFormData({ ...formData, project_id: value })
+                    }
+                  />
+                  {errors.project_id && (
+                    <span className="text-danger">{errors.project_id}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card banner-form-card banner-attachment-card mt-3 pb-4">
+          <div className="card-header banner-form-section-header">
+            <h3 className="banner-form-section-heading">
+              <span className="banner-form-section-icon" aria-hidden="true">
+                <FileText size={16} strokeWidth={1.8} />
+              </span>
+              Add Attachments
+            </h3>
+          </div>
+          <div className="card-body">
+            <div className="banner-upload-dropzone">
+              <button
+                type="button"
+                className="banner-upload-files-btn"
+                onClick={() => setShowUploader(true)}
+              >
+                <Upload size={16} strokeWidth={1.8} />
+                Upload Files
+              </button>
+              <span
+                className="banner-upload-hint tooltip-container"
+                onMouseEnter={() => setShowVideoTooltip(true)}
+                onMouseLeave={() => setShowVideoTooltip(false)}
+              >
+                [i]
+                {showVideoTooltip && (
+                  <span className="tooltip-text">
+                    {getDynamicRatiosText("BannerImage")}
+                  </span>
+                )}
+              </span>
+            </div>
+
+            {showUploader && (
+              <ProjectImageVideoUpload
+                onClose={() => setShowUploader(false)}
+                includeInvalidRatios={false}
+                selectedRatioProp={selectedRatios}
+                showAsModal={true}
+                label={dynamicLabel}
+                description={dynamicDescription}
+                onContinue={handleCropComplete}
+                allowVideos={true}
+              />
+            )}
+
+            <div className="col-md-12 mt-4">
+              <div className="scrollable-table tbl-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                      <th>Preview</th>
+                      <th>Ratio</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {project_banner.map(({ key, label }) => {
+                      const files = Array.isArray(formData[key])
+                        ? formData[key]
+                        : formData[key]
                           ? [formData[key]]
                           : [];
 
-                        return files.map((file, index) => {
-                          // Get the preview URL - prioritize object URL over document_url
-                          const preview =
-                            file.preview ||
-                            (file.file
-                              ? URL.createObjectURL(file.file)
-                              : null) ||
-                            file.document_url ||
-                            "";
+                      return files.map((file, index) => {
+                        const preview =
+                          file.preview ||
+                          (file.file ? URL.createObjectURL(file.file) : null) ||
+                          file.document_url ||
+                          "";
 
-                          const name =
-                            file.name || file.document_file_name || "Unnamed";
+                        const name =
+                          file.name || file.document_file_name || "Unnamed";
 
-                          // More reliable video detection
-                          const isVideo =
-                            file.type === "video" ||
-                            (file.file &&
-                              file.file.type.startsWith("video/")) ||
-                            (file.document_url &&
-                              [".mp4", ".webm", ".ogg"].some((ext) =>
-                                file.document_url.toLowerCase().endsWith(ext)
-                              )) ||
-                            (preview &&
-                              [".mp4", ".webm", ".ogg"].some((ext) =>
-                                preview.toLowerCase().endsWith(ext)
-                              ));
+                        const isVideo =
+                          file.type === "video" ||
+                          (file.file && file.file.type.startsWith("video/")) ||
+                          (file.document_url &&
+                            [".mp4", ".webm", ".ogg"].some((ext) =>
+                              file.document_url.toLowerCase().endsWith(ext)
+                            )) ||
+                          (preview &&
+                            [".mp4", ".webm", ".ogg"].some((ext) =>
+                              preview.toLowerCase().endsWith(ext)
+                            ));
 
-                          return (
-                            <tr key={`${key}-${index}`}>
-                              <td>{name}</td>
-                              <td>
-                                {isVideo ? (
-                                  <video
-                                    controls
-                                    style={{ maxWidth: 100, maxHeight: 100 }}
-                                    className="img-fluid rounded"
-                                    key={preview} // Important for re-rendering when preview changes
-                                  >
-                                    <source
-                                      src={preview}
-                                      type={
-                                        file.file?.type ||
-                                        (file.document_url
-                                          ? `video/${file.document_url
-                                              .split(".")
-                                              .pop()}`
-                                          : "video/mp4")
-                                      }
-                                    />
-                                    Your browser does not support the video tag.
-                                  </video>
-                                ) : (
-                                  <img
-                                    style={{ maxWidth: 100, maxHeight: 100 }}
-                                    className="img-fluid rounded"
-                                    src={preview}
-                                    alt={name}
-                                  />
-                                )}
-                              </td>
-                              <td>{file.ratio || label}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() =>
-                                    handleFetchedDiscardGallery(
-                                      key,
-                                      index,
-                                      file.id
-                                    )
-                                  }
+                        return (
+                          <tr key={`${key}-${index}`}>
+                            <td>{name}</td>
+                            <td>
+                              {isVideo ? (
+                                <video
+                                  controls
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  key={preview}
                                 >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        });
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                                  <source
+                                    src={preview}
+                                    type={
+                                      file.file?.type ||
+                                      (file.document_url
+                                        ? `video/${file.document_url
+                                            .split(".")
+                                            .pop()}`
+                                        : "video/mp4")
+                                    }
+                                  />
+                                  Your browser does not support the video tag.
+                                </video>
+                              ) : (
+                                <img
+                                  style={{ maxWidth: 100, maxHeight: 100 }}
+                                  className="img-fluid rounded"
+                                  src={preview}
+                                  alt={name}
+                                />
+                              )}
+                            </td>
+                            <td>{file.ratio || label}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleFetchedDiscardGallery(
+                                    key,
+                                    index,
+                                    file.id
+                                  )
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      });
+                    })}
+                  </tbody>
+                </table>
               </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Sticky Footer Buttons */}
-            </div>
-          </div>
-          <div className="row mt-4 sticky-footer justify-content-center">
-            <div className="col-md-2">
-              <button
-                onClick={handleSubmit}
-                className="purple-btn2 w-100"
-                disabled={loading}
-              >
-                Submit
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+        <div className="banner-form-actions">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="banner-form-action-btn"
+            disabled={loading || isSubmitting}
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default BannerEdit;
-                {/* Sticky Footer Buttons */}
-            
+export default BannerEdit; 

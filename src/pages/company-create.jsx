@@ -191,10 +191,9 @@ const CompanyCreate = () => {
                   {/* Organization */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Organization
-                      </label>
                       <SelectBox
+                        label="Organization"
+                        placeholder="Select Organization"
                         name="organizationId"
                         options={
                           loading

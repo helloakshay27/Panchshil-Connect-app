@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./mor.css";
+import "./components/base/form-controls.css";
 import "./utils/apiInterceptor";
 import PostHogPageView from "./components/PostHogPageView";
 import ConnectModuleTracker from "./components/ConnectModuleTracker";

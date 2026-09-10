@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import "../mor.css";
 import { toast } from "react-hot-toast";
-import SelectBox from "../components/base/SelectBox";
+import { FileText, Sparkles, Upload } from "lucide-react";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const EditAmenities = () => {
   const connectEvents = useConnectEvents();
@@ -18,7 +19,11 @@ const EditAmenities = () => {
   const [previewDarkModeImage, setPreviewDarkModeImage] = useState(null); // ✅ Added dark mode preview state
   const [loading, setLoading] = useState(false);
   const [amenityType, setAmenityType] = useState("");
-  const [nightMode, setNightMode] = useState(false); // ✅ Added night mode state
+  const [nightMode, setNightMode] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showDarkModeTooltip, setShowDarkModeTooltip] = useState(false);
+  const amenityInputRef = useRef(null);
+  const darkModeInputRef = useRef(null);
 
   // Fetch existing amenity details
   useEffect(() => {
@@ -144,118 +149,49 @@ const EditAmenities = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <form onSubmit={handleSubmit}>
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Edit Amenity</h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  {/* Name Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Name{" "}
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Enter name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    </div>
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Sparkles size={16} strokeWidth={1.8} />
+                </span>
+                Edit Amenity
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Name"
+                      required
+                      placeholder="Enter name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
                   </div>
+                </div>
 
-                  {/* Icon Upload */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Upload Amenity{" "}
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        accept=".png,.jpg,.jpeg,.svg"
-                        onChange={handleFileChange}
-                      />
-                    </div>
-
-                    {/* ✅ Show Preview Image (Default or New Upload) */}
-                    <div className="mt-2">
-                      {previewImage ? (
-                        <img
-                          src={previewImage}
-                          alt="Uploaded Preview"
-                          className="img-fluid rounded"
-                          style={{
-                            maxWidth: "100px",
-                            maxHeight: "100px",
-                            objectFit: "cover",
-                            border: "1px solid #ccc",
-                            padding: "5px",
-                          }}
-                        />
-                      ) : (
-                        <p className="text-muted">No image uploaded</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* ✅ Dark Mode Icon Upload */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Upload Dark Mode Icon{" "}
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        accept=".png,.jpg,.jpeg,.svg"
-                        onChange={handleDarkModeFileChange}
-                      />
-                    </div>
-
-                    {/* ✅ Show Dark Mode Preview Image (Default or New Upload) */}
-                    <div className="mt-2">
-                      {previewDarkModeImage ? (
-                        <img
-                          src={previewDarkModeImage}
-                          alt="Dark Mode Preview"
-                          className="img-fluid rounded"
-                          style={{
-                            maxWidth: "100px",
-                            maxHeight: "100px",
-                            objectFit: "cover",
-                            border: "1px solid #ccc",
-                            padding: "5px",
-                          }}
-                        />
-                      ) : (
-                        <p className="text-muted"></p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* ✅ Night Mode Toggle */}
-                  <div className="col-md-3 mt-2">
-                    <label>Night Mode</label>
-                    <div className="form-group">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <div className="form-check">
                       <button
                         type="button"
                         onClick={() => setNightMode(!nightMode)}
                         className="toggle-button"
+                        aria-pressed={nightMode}
+                        aria-label="Night Mode"
                         style={{
                           border: "none",
                           background: "none",
                           cursor: "pointer",
                           padding: 0,
-                          width: "35px",
+                          width: "40px",
+                          height: "30px",
+                          display: "flex",
+                          alignItems: "center",
                         }}
                       >
                         {nightMode ? (
@@ -282,53 +218,154 @@ const EditAmenities = () => {
                           </svg>
                         )}
                       </button>
+                      <label className="form-check-label" htmlFor="nightMode">
+                        Night Mode
+                      </label>
                     </div>
                   </div>
-
-                  {/* Amenity Type SelectBox */}
-                  {/* <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Amenity Type{" "}
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <SelectBox
-                        options={[
-                          { value: "Indoor", label: "Indoor" },
-                          { value: "Outdoor", label: "Outdoor" },
-                        ]}
-                        defaultValue={amenityType}
-                        onChange={setAmenityType}
-                      />
-                    </div>
-                  </div> */}
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Submit & Cancel Buttons */}
-            <div className="row mt-2 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={loading}
-                >
-                  Submit
-                </button>
-              </div>
-              <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 w-100"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-              </div>
+          <div className="card banner-form-card banner-attachment-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <FileText size={16} strokeWidth={1.8} />
+                </span>
+                Add Attachments
+              </h3>
             </div>
-          </form>
-        </div>
+            <div className="card-body">
+              <input
+                ref={amenityInputRef}
+                type="file"
+                accept=".png,.jpg,.jpeg,.svg"
+                onChange={handleFileChange}
+                className="banner-upload-native-input"
+              />
+              <input
+                ref={darkModeInputRef}
+                type="file"
+                accept=".png,.jpg,.jpeg,.svg"
+                onChange={handleDarkModeFileChange}
+                className="banner-upload-native-input"
+              />
+              <div className="banner-upload-dropzone">
+                <div className="banner-upload-item">
+                  <button
+                    type="button"
+                    className="banner-upload-files-btn"
+                    onClick={() => amenityInputRef.current?.click()}
+                  >
+                    <Upload size={16} strokeWidth={1.8} />
+                    Upload Files
+                  </button>
+                  <span className="banner-upload-item-label">
+                    Upload Amenity
+                    <span
+                      className="banner-upload-hint tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 10 MB
+                        </span>
+                      )}
+                    </span>
+                    <span className="form-control-field__required">*</span>
+                  </span>
+                </div>
+                <div className="banner-upload-item">
+                  <button
+                    type="button"
+                    className="banner-upload-files-btn"
+                    onClick={() => darkModeInputRef.current?.click()}
+                  >
+                    <Upload size={16} strokeWidth={1.8} />
+                    Upload Files
+                  </button>
+                  <span className="banner-upload-item-label">
+                    Upload Dark Mode Icon
+                    <span
+                      className="banner-upload-hint tooltip-container"
+                      onMouseEnter={() => setShowDarkModeTooltip(true)}
+                      onMouseLeave={() => setShowDarkModeTooltip(false)}
+                    >
+                      [i]
+                      {showDarkModeTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 10 MB
+                        </span>
+                      )}
+                    </span>
+                    <span className="form-control-field__required">*</span>
+                  </span>
+                </div>
+              </div>
+
+              {(previewImage || previewDarkModeImage) && (
+                <div className="d-flex flex-wrap gap-4 mt-3">
+                  {previewImage && (
+                    <div>
+                      <div className="small text-muted mb-1">Amenity</div>
+                      <img
+                        src={previewImage}
+                        alt="Uploaded Preview"
+                        className="img-fluid rounded"
+                        style={{
+                          maxWidth: "100px",
+                          maxHeight: "100px",
+                          objectFit: "cover",
+                          border: "1px solid #ccc",
+                          padding: "5px",
+                        }}
+                      />
+                    </div>
+                  )}
+                  {previewDarkModeImage && (
+                    <div>
+                      <div className="small text-muted mb-1">Dark Mode Icon</div>
+                      <img
+                        src={previewDarkModeImage}
+                        alt="Dark Mode Preview"
+                        className="img-fluid rounded"
+                        style={{
+                          maxWidth: "100px",
+                          maxHeight: "100px",
+                          objectFit: "cover",
+                          border: "1px solid #ccc",
+                          padding: "5px",
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

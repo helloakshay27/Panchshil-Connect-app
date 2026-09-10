@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { ListTree } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const FaqSubCategory = () => {
   const location = useLocation();
@@ -21,6 +24,7 @@ const FaqSubCategoryForm = () => {
     faq_category_id: "",
   });
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [faqCategories, setFaqCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
@@ -122,7 +126,7 @@ const FaqSubCategoryForm = () => {
       return;
     }
 
-    setLoading(true);
+    setSubmitting(true);
 
     try {
       const payload = { faq_sub_category: formData };
@@ -151,105 +155,92 @@ const FaqSubCategoryForm = () => {
       const errorMessage = error.response?.data?.message || "Failed to submit form";
       toast.error(errorMessage);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          {/* Form with hidden submit button */}
-          <form id="faqSubCategoryForm" onSubmit={handleSubmit}>
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">
-                  {isEditMode ? "Edit FAQ Sub Category" : "Create FAQ Sub Category"}
-                </h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  {/* Name */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Name <span className="otp-asterisk">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="Enter FAQ sub category name"
-                        disabled={loading}
-                      />
-                    </div>
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <ListTree size={16} strokeWidth={1.8} />
+                </span>
+                {isEditMode ? "Edit FAQ Sub Category" : "Create FAQ Sub Category"}
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Name"
+                      required
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Enter FAQ sub category name"
+                      disabled={loading || submitting}
+                    />
                   </div>
+                </div>
 
-                  {/* FAQ Category Dropdown */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        FAQ Category <span className="otp-asterisk">*</span>
-                      </label>
-                      <SelectBox
-                        options={[
-                          { value: "", label: categoriesLoading ? "Loading categories..." : "" },
-                          ...faqCategories.map((category) => ({
-                            value: category.id,
-                            label: category.name,
-                          })),
-                        ]}
-                        defaultValue={formData.faq_category_id}
-                        onChange={(value) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            faq_category_id: value,
-                          }))
-                        }
-                        disabled={loading || categoriesLoading}
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="FAQ Category"
+                      required
+                      placeholder={
+                        categoriesLoading ? "Loading categories..." : "Select"
+                      }
+                      options={
+                        faqCategories.length > 0
+                          ? faqCategories.map((category) => ({
+                              value: category.id,
+                              label: category.name,
+                            }))
+                          : [{ value: "", label: "No categories found" }]
+                      }
+                      value={formData.faq_category_id}
+                      onChange={(value) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          faq_category_id: value,
+                        }))
+                      }
+                      disabled={loading || submitting || categoriesLoading}
+                    />
                   </div>
                 </div>
               </div>
             </div>
-            
-            {/* Hidden submit button for form submission */}
-            <button type="submit" style={{ display: "none" }} />
-          </form>
-          
-          {/* Visible buttons positioned below the card */}
-          <div className="row mt-3 justify-content-center mx-4">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                form="faqSubCategoryForm" // Associates with the form
-                className="purple-btn2 w-100"
-                disabled={loading}
-              >
-                {loading
-                  ? isEditMode
-                    ? "Updating..."
-                    : "Creating..."
-                  : isEditMode
-                  ? "Update"
-                  : "Create"}
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={() => navigate("/setup-member/faq-subcategory-list")}
-                disabled={loading}
-              >
-                Cancel
-              </button>
-            </div>
           </div>
-        </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={submitting}
+            >
+              {submitting
+                ? isEditMode
+                  ? "Updating..."
+                  : "Creating..."
+                : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={() => navigate("/setup-member/faq-subcategory-list")}
+              disabled={submitting}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

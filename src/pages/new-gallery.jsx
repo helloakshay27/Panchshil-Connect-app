@@ -153,8 +153,9 @@ const NewGallery = () => {
                   {/* Project Dropdown */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Project</label>
                       <SelectBox
+                        label="Project"
+                        placeholder="Select Project"
                         options={projects.map((proj) => ({
                           value: proj.id,
                           label: proj.project_name,

@@ -256,10 +256,10 @@ const OtherServiceEdit = () => {
               <div className="row">
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Plus Service<span className="otp-asterisk"> *</span>
-                    </label>
                     <SelectBox
+                      label="Plus Service"
+                      required
+                      placeholder="Select Plus Service"
                       options={plusServices.map((service) => ({
                         label: service.name,
                         value: service.id,

@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { ConciergeBell, FileText, Upload } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
+import FormTextField from "../components/base/FormTextField";
 import SelectBox from "../components/base/SelectBox";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const PlusServiceEdit = () => {
   const connectEvents = useConnectEvents();
@@ -28,8 +31,7 @@ const PlusServiceEdit = () => {
   });
 
   const [imageChanged, setImageChanged] = useState(false);
-
-  console.log("formData", serviceData);
+  const attachmentInputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -162,8 +164,7 @@ const PlusServiceEdit = () => {
   const removeNewImage = () => {
     setServiceData((prev) => ({ ...prev, attachment: null }));
     setImageChanged(false);
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) fileInput.value = "";
+    if (attachmentInputRef.current) attachmentInputRef.current.value = "";
   };
 
   const removeExistingImage = () => {
@@ -173,8 +174,7 @@ const PlusServiceEdit = () => {
       existingImageUrl: "",
     }));
     setImageChanged(true);
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) fileInput.value = "";
+    if (attachmentInputRef.current) attachmentInputRef.current.value = "";
   };
 
   const validateForm = () => {
@@ -260,65 +260,62 @@ const PlusServiceEdit = () => {
   };
 
   return (
-    <div className="">
-      <div className="module-data-section p-3">
+    <div className="main-content">
+      <div className="module-data-section banner-form-page p-3">
         <form onSubmit={handleSubmit}>
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Edit Plus Service</h3>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <ConciergeBell size={16} strokeWidth={1.8} />
+                </span>
+                Edit Plus Service
+              </h3>
             </div>
             <div className="card-body">
-              <div className="row">
+              <div className="row banner-form-fields">
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Name <span className="otp-asterisk"> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Enter Name"
+                    <FormTextField
+                      label="Name"
+                      required
                       name="name"
+                      placeholder="Enter Name"
                       value={serviceData.name}
                       onChange={handleInputChange}
-                      required
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Description <span className="otp-asterisk"> *</span>
-                    </label>
-                    <textarea
-                      className="form-control"
-                      rows={1}
-                      placeholder="Enter Description"
+                    <FormTextField
+                      label="Description"
+                      required
                       name="description"
+                      placeholder="Enter Description"
                       value={serviceData.description}
                       onChange={handleInputChange}
-                      required
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Service Category<span className="otp-asterisk"> *</span>
-                    </label>
                     <SelectBox
+                      label="Service Category"
+                      required
+                      placeholder="Select Service Category"
                       options={services.map((service) => ({
                         label: service.service_cat_name,
                         value: service.id,
                       }))}
-                      defaultValue={serviceData.service_category_id}
+                      value={serviceData.service_category_id}
                       onChange={(value) =>
-                        setServiceData({
-                          ...serviceData,
+                        setServiceData((prev) => ({
+                          ...prev,
                           service_category_id: value,
-                        })
+                        }))
                       }
                     />
                   </div>
@@ -326,12 +323,11 @@ const PlusServiceEdit = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>Mobile</label>
-                    <input
-                      className="form-control"
+                    <FormTextField
+                      label="Mobile"
                       type="tel"
-                      placeholder="Enter Mobile"
                       name="mobile"
+                      placeholder="Enter Mobile"
                       value={serviceData.mobile}
                       onChange={handleInputChange}
                       maxLength={10}
@@ -341,12 +337,11 @@ const PlusServiceEdit = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>Alternate Mobile 1</label>
-                    <input
-                      className="form-control"
+                    <FormTextField
+                      label="Alternate Mobile 1"
                       type="tel"
-                      placeholder="Enter Alternate Mobile 1"
                       name="mobile2"
+                      placeholder="Enter Alternate Mobile 1"
                       value={serviceData.mobile2}
                       onChange={handleInputChange}
                       maxLength={10}
@@ -356,12 +351,11 @@ const PlusServiceEdit = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>Alternate Mobile 2</label>
-                    <input
-                      className="form-control"
+                    <FormTextField
+                      label="Alternate Mobile 2"
                       type="tel"
-                      placeholder="Enter Alternate Mobile 2"
                       name="mobile3"
+                      placeholder="Enter Alternate Mobile 2"
                       value={serviceData.mobile3}
                       onChange={handleInputChange}
                       maxLength={10}
@@ -371,171 +365,142 @@ const PlusServiceEdit = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>Address</label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Enter Address"
+                    <FormTextField
+                      label="Address"
                       name="address"
+                      placeholder="Enter Address"
                       value={serviceData.address}
                       onChange={handleInputChange}
                     />
-                  </div>
-                </div>
-
-                {/* <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Order No
-                    </label>
-                    <input
-                      className="form-control"
-                      type="number"
-                      placeholder="Enter Order Number"
-                      name="order_no"
-                      value={serviceData.order_no}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </div> */}
-
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Service Image{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Single image, max 3MB. Upload new image to replace
-                            existing one.
-                          </span>
-                        )}
-                      </span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="file"
-                      name="attachment"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-
-                    <div className="mt-3">
-                      {serviceData.attachment && imageChanged ? (
-                        <div className="position-relative d-inline-block">
-                          <img
-                            src={URL.createObjectURL(serviceData.attachment)}
-                            alt="New Service Preview"
-                            className="img-thumbnail"
-                            style={{
-                              width: "150px",
-                              height: "150px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          {/* <button
-                            type="button"
-                            className="btn btn-danger btn-sm position-absolute"
-                            title="Remove new image"
-                            style={{
-                              top: "-5px",
-                              right: "-5px",
-                              fontSize: "12px",
-                              width: "25px",
-                              height: "25px",
-                              padding: "0px",
-                              borderRadius: "50%",
-                            }}
-                            onClick={removeNewImage}
-                          >
-                            ×
-                          </button> */}
-                          {/* <div className="text-center mt-2">
-                            <small className="text-success font-weight-bold"></small>
-                            <br />
-                            <small className="text-muted">
-                              {serviceData.attachment.name.length > 20
-                                ? `${serviceData.attachment.name.substring(0, 20)}...`
-                                : serviceData.attachment.name}
-                            </small>
-                          </div> */}
-                        </div>
-                      ) : (
-                        serviceData.existingImageUrl && (
-                          <div className="position-relative d-inline-block">
-                            <img
-                              src={serviceData.existingImageUrl}
-                              alt="Current Service Image"
-                              className="img-thumbnail"
-                              style={{
-                                width: "150px",
-                                height: "150px",
-                                objectFit: "cover",
-                              }}
-                            />
-                            {/* <button
-                              type="button"
-                              className="btn btn-danger btn-sm position-absolute"
-                              title="Remove existing image"
-                              style={{
-                                top: "-5px",
-                                right: "-5px",
-                                fontSize: "12px",
-                                width: "25px",
-                                height: "25px",
-                                padding: "0px",
-                                borderRadius: "50%",
-                              }}
-                              onClick={removeExistingImage}
-                            >
-                              ×
-                            </button>
-                            <div className="text-center mt-2">
-                              <small className="text-info font-weight-bold"></small>
-                            </div> */}
-                          </div>
-                        )
-                      )}
-
-                      {!serviceData.attachment &&
-                        !serviceData.existingImageUrl && (
-                          <div className="text-center p-3 border border-dashed">
-                            <small className="text-muted">
-                              No image selected
-                            </small>
-                          </div>
-                        )}
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
+          <div className="card banner-form-card banner-attachment-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <FileText size={16} strokeWidth={1.8} />
+                </span>
+                Add Attachments
+              </h3>
             </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
+            <div className="card-body">
+              <input
+                ref={attachmentInputRef}
+                type="file"
+                name="attachment"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="banner-upload-native-input"
+              />
+              <div className="banner-upload-dropzone">
+                <button
+                  type="button"
+                  className="banner-upload-files-btn"
+                  onClick={() => attachmentInputRef.current?.click()}
+                >
+                  <Upload size={16} strokeWidth={1.8} />
+                  Upload Files
+                </button>
+                <span className="banner-upload-item-label">
+                  Service Image
+                  <span
+                    className="banner-upload-hint tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Single image, max 3MB. Upload a new image to replace the
+                        existing one.
+                      </span>
+                    )}
+                  </span>
+                </span>
+              </div>
+
+              {serviceData.attachment && imageChanged ? (
+                <div className="mt-3 position-relative d-inline-block">
+                  <img
+                    src={URL.createObjectURL(serviceData.attachment)}
+                    alt="New Service Preview"
+                    className="img-thumbnail"
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                    style={{
+                      top: 2,
+                      right: -5,
+                      height: 20,
+                      width: 20,
+                      backgroundColor: "var(--red)",
+                      color: "white",
+                    }}
+                    onClick={removeNewImage}
+                  >
+                    x
+                  </button>
+                </div>
+              ) : (
+                serviceData.existingImageUrl && (
+                  <div className="mt-3 position-relative d-inline-block">
+                    <img
+                      src={serviceData.existingImageUrl}
+                      alt="Current Service Image"
+                      className="img-thumbnail"
+                      style={{
+                        width: "150px",
+                        height: "150px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                      style={{
+                        top: 2,
+                        right: -5,
+                        height: 20,
+                        width: 20,
+                        backgroundColor: "var(--red)",
+                        color: "white",
+                      }}
+                      onClick={removeExistingImage}
+                    >
+                      x
+                    </button>
+                  </div>
+                )
+              )}
             </div>
+          </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>

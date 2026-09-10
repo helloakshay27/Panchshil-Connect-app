@@ -1,26 +1,41 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Check, Pencil, Plus, Search, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Box, ButtonBase, Popover, Typography } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import EnhancedTable from "../components/EnhancedTable";
 import { useConnectEvents } from "../hooks/useConnectEvents";
 import { useSearchTracking } from "../hooks/useSearchTracking";
 import { baseURL } from "./baseurl/apiDomain";
-import "../mor.css";
+import "./lock-role-list.css";
 
-const pageSize = 10;
+const ACTION_ROWS = [
+  { key: "create", label: "Add" },
+  { key: "show", label: "View" },
+  { key: "update", label: "Edit" },
+  { key: "destroy", label: "Disable" },
+];
 
-const PermissionCheckbox = ({ checked, label, onChange }) => (
-  <input
-    type="checkbox"
-    checked={checked}
-    onChange={onChange}
-    aria-label={label}
-  />
-);
+const EMPTY_PERMISSIONS = {
+  all: "false",
+  create: "false",
+  show: "false",
+  update: "false",
+  destroy: "false",
+};
+
+const getFunctionKey = (func) =>
+  func.action_name || func.name?.toLowerCase().replace(/\s+/g, "_");
+
+const getModuleName = (func) =>
+  (func.parent_function || "").trim() || "Other";
+
+const formatLabel = (name) =>
+  String(name || "")
+    .split(/[_\s]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 
 const LockRoleList = () => {
   const connectEvents = useConnectEvents();
@@ -30,10 +45,12 @@ const LockRoleList = () => {
   const [loading, setLoading] = useState(true);
   const [functionsLoading, setFunctionsLoading] = useState(true);
   const [selectedRole, setSelectedRole] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [roleSearch, setRoleSearch] = useState("");
+  const [functionSearch, setFunctionSearch] = useState("");
+  const [selectedModule, setSelectedModule] = useState("");
   const [editedPermissions, setEditedPermissions] = useState({});
-  const [permissionPage, setPermissionPage] = useState(1);
-  const [roleMenuAnchor, setRoleMenuAnchor] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const fetchLockFunctions = async () => {
     toast.dismiss();
@@ -45,7 +62,6 @@ const LockRoleList = () => {
           "Content-Type": "application/json",
         },
       });
-
       setLockFunctions(response.data || []);
     } catch (error) {
       console.error("Error fetching lock functions:", error);
@@ -65,7 +81,6 @@ const LockRoleList = () => {
           "Content-Type": "application/json",
         },
       });
-
       const roles = response.data || [];
       setLockRoles(roles);
       setSelectedRole(roles.length > 0 ? roles[0] : null);
@@ -83,10 +98,12 @@ const LockRoleList = () => {
   }, []);
 
   useEffect(() => {
+    setIsEditing(false);
+    setFunctionSearch("");
+
     if (selectedRole && lockFunctions.length > 0) {
       try {
         let permissions = {};
-
         if (
           selectedRole.permissions_hash &&
           selectedRole.permissions_hash !== ""
@@ -95,16 +112,9 @@ const LockRoleList = () => {
         }
 
         lockFunctions.forEach((func) => {
-          const functionName =
-            func.action_name || func.name.toLowerCase().replace(/\s+/g, "_");
+          const functionName = getFunctionKey(func);
           if (!permissions[functionName]) {
-            permissions[functionName] = {
-              all: "false",
-              create: "false",
-              show: "false",
-              update: "false",
-              destroy: "false",
-            };
+            permissions[functionName] = { ...EMPTY_PERMISSIONS };
           }
         });
 
@@ -112,37 +122,20 @@ const LockRoleList = () => {
       } catch (error) {
         console.error("Error parsing permissions:", error);
         const defaultPermissions = {};
-
         lockFunctions.forEach((func) => {
-          const functionName =
-            func.action_name || func.name.toLowerCase().replace(/\s+/g, "_");
-          defaultPermissions[functionName] = {
-            all: "false",
-            create: "false",
-            show: "false",
-            update: "false",
-            destroy: "false",
-          };
+          const functionName = getFunctionKey(func);
+          defaultPermissions[functionName] = { ...EMPTY_PERMISSIONS };
         });
-
         setEditedPermissions(defaultPermissions);
       }
     } else {
       setEditedPermissions({});
     }
-    setPermissionPage(1);
   }, [selectedRole, lockFunctions]);
 
-  const handleRoleSelect = (role) => {
-    setSelectedRole(role);
-    setRoleMenuAnchor(null);
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
   const handlePermissionChange = (functionName, permissionType) => {
+    if (!isEditing) return;
+
     const updatedPermissions = { ...editedPermissions };
     const currentValue = updatedPermissions[functionName][permissionType];
     updatedPermissions[functionName][permissionType] =
@@ -174,7 +167,6 @@ const LockRoleList = () => {
         updatedPermissions[functionName].show === "true" &&
         updatedPermissions[functionName].update === "true" &&
         updatedPermissions[functionName].destroy === "true";
-
       updatedPermissions[functionName].all = allChecked ? "true" : "false";
     }
 
@@ -186,6 +178,7 @@ const LockRoleList = () => {
     if (!selectedRole) return;
 
     try {
+      setSaving(true);
       const permissionsHash = JSON.stringify(editedPermissions);
 
       await axios.put(
@@ -210,260 +203,342 @@ const LockRoleList = () => {
       );
 
       setLockRoles(updatedRoles);
+      setSelectedRole((prev) =>
+        prev ? { ...prev, permissions_hash: permissionsHash } : prev,
+      );
+      setIsEditing(false);
       connectEvents.onRecordSaved({
         mode: "updated",
         record_id: selectedRole.id,
       });
-      toast.success("Role Updated successfully!");
+      toast.success("Role updated successfully!");
     } catch (error) {
       console.error("Error saving permissions:", error);
       toast.error("Failed to update role.");
+    } finally {
+      setSaving(false);
     }
   };
 
   const filteredRoles = useMemo(
     () =>
-      lockRoles.filter(
-        (role) =>
-          role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (role.display_name &&
-            role.display_name.toLowerCase().includes(searchTerm.toLowerCase())),
-      ),
-    [lockRoles, searchTerm],
+      lockRoles.filter((role) => {
+        const query = roleSearch.toLowerCase();
+        return (
+          role.name?.toLowerCase().includes(query) ||
+          role.display_name?.toLowerCase().includes(query)
+        );
+      }),
+    [lockRoles, roleSearch],
   );
 
-  useSearchTracking(searchTerm, filteredRoles.length);
-
-  const formatFunctionName = (name) =>
-    name
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+  useSearchTracking(roleSearch, filteredRoles.length);
 
   const getFunctionDisplayName = (functionName) => {
     const func = lockFunctions.find(
-      (item) =>
-        (item.action_name && item.action_name === functionName) ||
-        (item.name &&
-          item.name.toLowerCase().replace(/\s+/g, "_") === functionName),
+      (item) => getFunctionKey(item) === functionName,
     );
-    return func ? func.name : formatFunctionName(functionName);
+    return func ? func.name : formatLabel(functionName);
   };
 
-  const permissionRows = useMemo(
-    () =>
-      Object.entries(editedPermissions).map(([functionName, permissions]) => ({
-        functionName,
-        permissions,
-      })),
+  const modules = useMemo(() => {
+    const names = [];
+    const seen = new Set();
+    lockFunctions.forEach((func) => {
+      const moduleName = getModuleName(func);
+      if (!seen.has(moduleName)) {
+        seen.add(moduleName);
+        names.push(moduleName);
+      }
+    });
+    return names;
+  }, [lockFunctions]);
+
+  useEffect(() => {
+    if (!modules.length) {
+      setSelectedModule("");
+      return;
+    }
+    if (!modules.includes(selectedModule)) {
+      setSelectedModule(modules[0]);
+    }
+  }, [modules, selectedModule]);
+
+  const permissionEntries = useMemo(
+    () => Object.entries(editedPermissions),
     [editedPermissions],
   );
 
-  const permissionColumns = [
-    {
-      key: "functionName",
-      label: "Functions",
-      alwaysVisible: true,
-      render: (row) => getFunctionDisplayName(row.functionName),
-    },
-    ...[
-      ["all", "All"],
-      ["create", "Add"],
-      ["show", "View"],
-      ["update", "Edit"],
-      ["destroy", "Disable"],
-    ].map(([key, label]) => ({
-      key,
-      label,
-      sortable: false,
-      render: (row) => (
-        <PermissionCheckbox
-          checked={row.permissions?.[key] === "true"}
-          label={`${label} ${getFunctionDisplayName(row.functionName)}`}
-          onChange={() => handlePermissionChange(row.functionName, key)}
-        />
-      ),
-    })),
-  ];
+  const visiblePermissionEntries = useMemo(() => {
+    const query = functionSearch.toLowerCase().trim();
+    const moduleKeys = new Set(
+      lockFunctions
+        .filter((func) => getModuleName(func) === selectedModule)
+        .map(getFunctionKey),
+    );
 
-  const addButton = (
-    <>
-      <button
-        type="button"
-        className="purple-btn2 enhanced-table__add"
-        onClick={(event) => setRoleMenuAnchor(event.currentTarget)}
-        aria-haspopup="menu"
-        aria-expanded={Boolean(roleMenuAnchor)}
-      >
-        <Plus size={16} />
-        <span>Add</span>
-      </button>
-      <Popover
-        anchorEl={roleMenuAnchor}
-        open={Boolean(roleMenuAnchor)}
-        onClose={() => setRoleMenuAnchor(null)}
-        anchorReference="none"
-        slotProps={{
-          paper: {
-            sx: {
-              position: "fixed",
-              top: "auto !important",
-              right: "auto !important",
-              bottom: "30px !important",
-              left: "50% !important",
-              transform: "translateX(-50%) !important",
-              maxWidth: "calc(100vw - 32px)",
-              overflow: "hidden",
-              borderRadius: "10px",
-              boxShadow: "0 8px 28px rgba(15, 23, 42, 0.16)",
-            },
-          },
-        }}
-      >
-        <Box
-          role="menu"
-          aria-label="Lock roles"
-          sx={{
-            display: "flex",
-            alignItems: "stretch",
-            minHeight: 74,
-            backgroundColor: "#fff",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-              minWidth: 145,
-              px: 2,
-              borderLeft: "30px solid #d8c8a1",
-            }}
-          >
-            <Box>
-              <Typography sx={{ fontSize: 14, fontWeight: 700, color: "#222" }}>
-                Roles
-              </Typography>
-              <Typography sx={{ fontSize: 11, color: "#667085" }}>
-                Select a role
-              </Typography>
-            </Box>
-          </Box>
+    return permissionEntries.filter(([functionName]) => {
+      if (selectedModule && !moduleKeys.has(functionName)) return false;
+      if (!query) return true;
+      return getFunctionDisplayName(functionName)
+        .toLowerCase()
+        .includes(query);
+    });
+  }, [
+    permissionEntries,
+    functionSearch,
+    lockFunctions,
+    selectedModule,
+  ]);
 
-          <Box
-            sx={{ display: "flex", alignItems: "stretch", overflowX: "auto" }}
-          >
-            {loading ? (
-              <Typography sx={{ px: 2, alignSelf: "center", fontSize: 12 }}>
-                Loading roles...
-              </Typography>
-            ) : lockRoles.length > 0 ? (
-              lockRoles.map((role) => {
-                const active = selectedRole?.id === role.id;
-                return (
-                  <ButtonBase
-                    key={role.id}
-                    role="menuitem"
-                    onClick={() => handleRoleSelect(role)}
-                    sx={{
-                      minWidth: 92,
-                      px: 1.5,
-                      color: active ? "var(--red)" : "#344054",
-                      borderLeft: "1px solid #eaecf0",
-                      fontSize: 12,
-                      fontWeight: active ? 700 : 500,
-                      whiteSpace: "nowrap",
-                      "&:hover": { backgroundColor: "#fff7ef" },
-                    }}
-                  >
-                    {role.name || "Unnamed Role"}
-                  </ButtonBase>
-                );
-              })
-            ) : (
-              <Typography sx={{ px: 2, alignSelf: "center", fontSize: 12 }}>
-                No roles found
-              </Typography>
-            )}
+  const allVisibleEnabled =
+    visiblePermissionEntries.length > 0 &&
+    visiblePermissionEntries.every(
+      ([, permissions]) => permissions?.all === "true",
+    );
 
-            <ButtonBase
-              role="menuitem"
-              onClick={() => {
-                setRoleMenuAnchor(null);
-                navigate("/setup-member/lock-role-create");
-              }}
-              sx={{
-                minWidth: 96,
-                px: 1.5,
-                gap: 0.75,
-                color: "#344054",
-                borderLeft: "1px solid #eaecf0",
-                fontSize: 12,
-                fontWeight: 600,
-                "&:hover": { backgroundColor: "#fff7ef" },
-              }}
-            >
-              <Plus size={16} />
-              New Role
-            </ButtonBase>
+  const handleEnableAll = () => {
+    if (!isEditing) return;
+    const nextValue = allVisibleEnabled ? "false" : "true";
+    const updatedPermissions = { ...editedPermissions };
 
-            <ButtonBase
-              aria-label="Close role actions"
-              onClick={() => setRoleMenuAnchor(null)}
-              sx={{
-                width: 58,
-                flexShrink: 0,
-                borderLeft: "1px solid #eaecf0",
-                "&:hover": { backgroundColor: "#f9fafb" },
-              }}
-            >
-              <X size={17} />
-            </ButtonBase>
-          </Box>
-        </Box>
-      </Popover>
-    </>
-  );
+    visiblePermissionEntries.forEach(([functionName]) => {
+      updatedPermissions[functionName] = {
+        all: nextValue,
+        create: nextValue,
+        show: nextValue,
+        update: nextValue,
+        destroy: nextValue,
+      };
+    });
 
-  const updateButton = selectedRole ? (
-    <button type="button" className="update-btn" onClick={savePermissions}>
-      Update
-    </button>
-  ) : null;
+    setEditedPermissions(updatedPermissions);
+  };
+
+  const selectedRoleName =
+    selectedRole?.display_name || selectedRole?.name || "this role";
 
   return (
-    <div className="main-content">
-      <div className="module-data-section container-fluid project-list-page">
-        <h1 className="enhanced-page-title">LOCK ROLE LIST</h1>
-        <div className="project-list-card">
-          <div className="project-list-card__body">
-            <div className="row">
-              <div className="col-md-12">
-                <EnhancedTable
-                  columns={permissionColumns}
-                  data={permissionRows}
-                  loading={loading || functionsLoading}
-                  emptyMessage={
-                    selectedRole
-                      ? "Unable to load permissions."
-                      : "Select a role to view permissions"
-                  }
-                  searchTerm={searchTerm}
-                  onSearchChange={handleSearchChange}
-                  searchPlaceholder="Search"
-                  currentPage={permissionPage}
-                  pageSize={pageSize}
-                  onPageChange={setPermissionPage}
-                  leftActions={addButton}
-                  rightActions={updateButton}
-                  getRowId={(row) => row.functionName}
-                  storageKey="lock-role-list"
-                />
-              </div>
-            </div>
+    <div className="module-data-section container-fluid lock-role-page">
+        <div className="lock-role-header">
+          <div className="lock-role-header-copy">
+            <h1 className="lock-role-title">
+              <span className="lock-role-title-icon" aria-hidden="true">
+                <Shield size={16} strokeWidth={1.8} />
+              </span>
+              Role Management
+            </h1>
+            <p className="lock-role-subtitle">
+              Manage user roles and their access permissions across modules
+            </p>
           </div>
+          <button
+            type="button"
+            className="lock-role-add-btn"
+            onClick={() => navigate("/setup-member/lock-role-create")}
+          >
+            <Plus size={16} />
+            Add New Role
+          </button>
         </div>
-      </div>
+
+        <div className="lock-role-layout">
+          <aside className="lock-role-panel lock-role-sidebar">
+            <h2 className="lock-role-panel-title">Roles</h2>
+            <div className="lock-role-search">
+              <Search size={15} />
+              <input
+                type="search"
+                value={roleSearch}
+                onChange={(event) => setRoleSearch(event.target.value)}
+                placeholder="Search roles..."
+                aria-label="Search roles"
+              />
+            </div>
+            <div className="lock-role-list">
+              {loading ? (
+                <p className="lock-role-loading">Loading roles...</p>
+              ) : filteredRoles.length > 0 ? (
+                filteredRoles.map((role) => {
+                  const active = selectedRole?.id === role.id;
+                  return (
+                    <button
+                      key={role.id}
+                      type="button"
+                      className={`lock-role-item${active ? " is-active" : ""}`}
+                      onClick={() => setSelectedRole(role)}
+                    >
+                      <span className="lock-role-item-name">
+                        {role.name || "Unnamed Role"}
+                      </span>
+                      {active && <Check size={16} />}
+                    </button>
+                  );
+                })
+              ) : (
+                <p className="lock-role-empty">No roles found</p>
+              )}
+            </div>
+          </aside>
+
+          <section className="lock-role-panel lock-role-permissions">
+            {selectedRole ? (
+              <>
+                <div className="lock-role-permissions-header">
+                  <div>
+                    <h2>Permissions Configuration</h2>
+                    <p>
+                      Configure access rights for <strong>{selectedRoleName}</strong>
+                    </p>
+                  </div>
+                  {isEditing ? (
+                    <button
+                      type="button"
+                      className="lock-role-edit-btn"
+                      onClick={savePermissions}
+                      disabled={saving}
+                    >
+                      {saving ? "Saving..." : "Save Permissions"}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="lock-role-edit-btn"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <Pencil size={15} />
+                      Edit Permissions
+                    </button>
+                  )}
+                </div>
+
+                {modules.length > 0 && (
+                  <div className="lock-role-modules" role="tablist">
+                    {modules.map((moduleName) => {
+                      const active = selectedModule === moduleName;
+                      return (
+                        <button
+                          key={moduleName}
+                          type="button"
+                          role="tab"
+                          aria-selected={active}
+                          className={`lock-role-module-tab${active ? " is-active" : ""}`}
+                          onClick={() => {
+                            setSelectedModule(moduleName);
+                            setFunctionSearch("");
+                          }}
+                        >
+                          {formatLabel(moduleName)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="lock-role-toolbar">
+                  <div className="lock-role-access-meta">
+                    {selectedModule
+                      ? `${formatLabel(selectedModule)} Module Access`
+                      : "Module Access"}
+                    <span>
+                      {visiblePermissionEntries.length} Function
+                      {visiblePermissionEntries.length === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                  <div className="lock-role-toolbar-actions">
+                    <div className="lock-role-search">
+                      <Search size={15} />
+                      <input
+                        type="search"
+                        value={functionSearch}
+                        onChange={(event) =>
+                          setFunctionSearch(event.target.value)
+                        }
+                        placeholder="Search functions..."
+                        aria-label="Search functions"
+                      />
+                    </div>
+                    <label className="lock-role-enable-all">
+                      Enable All
+                      <input
+                        type="checkbox"
+                        checked={allVisibleEnabled}
+                        onChange={handleEnableAll}
+                        disabled={!isEditing || visiblePermissionEntries.length === 0}
+                        aria-label="Enable all functions"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="lock-role-table">
+                  {functionsLoading ? (
+                    <div className="lock-role-placeholder">
+                      Loading functions...
+                    </div>
+                  ) : visiblePermissionEntries.length > 0 ? (
+                    visiblePermissionEntries.map(([functionName, permissions]) => (
+                      <div key={functionName}>
+                        <div className="lock-role-row is-parent">
+                          <div className="lock-role-function">
+                            <span className="lock-role-function-dot" aria-hidden="true">
+                              <Shield size={12} strokeWidth={2} />
+                            </span>
+                            {getFunctionDisplayName(functionName)}
+                          </div>
+                          <div className="lock-role-enabled">
+                            <input
+                              type="checkbox"
+                              checked={permissions?.all === "true"}
+                              disabled={!isEditing}
+                              onChange={() =>
+                                handlePermissionChange(functionName, "all")
+                              }
+                              aria-label={`Enable ${getFunctionDisplayName(functionName)}`}
+                            />
+                          </div>
+                        </div>
+                        {ACTION_ROWS.map((action) => (
+                          <div
+                            key={`${functionName}-${action.key}`}
+                            className="lock-role-row is-child"
+                          >
+                            <div className="lock-role-function">
+                              <span className="lock-role-child-dot" />
+                              {action.label}
+                            </div>
+                            <div className="lock-role-enabled">
+                              <input
+                                type="checkbox"
+                                checked={permissions?.[action.key] === "true"}
+                                disabled={!isEditing}
+                                onChange={() =>
+                                  handlePermissionChange(
+                                    functionName,
+                                    action.key,
+                                  )
+                                }
+                                aria-label={`${action.label} ${getFunctionDisplayName(functionName)}`}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="lock-role-placeholder">
+                      No functions found
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="lock-role-placeholder">
+                Select a role to view permissions
+              </div>
+            )}
+          </section>
+        </div>
     </div>
   );
 };

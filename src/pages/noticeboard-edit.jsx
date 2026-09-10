@@ -603,10 +603,10 @@ const NoticeboardEdit = () => {
                     {/* Notice Type */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Notice Type<span className="otp-asterisk"> *</span>
-                        </label>
                         <SelectBox
+                          label="Notice Type"
+                          required
+                          placeholder="Select Notice Type"
                           options={noticeTypeOptions}
                           value={formData.notice_type || ""}
                           onChange={(value) => {
@@ -624,10 +624,10 @@ const NoticeboardEdit = () => {
                     {/* Project – Multi Select with checkboxes */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Project<span className="otp-asterisk"> *</span>
-                        </label>
                         <MultiSelectBox
+                          label="Project"
+                          required
+                          placeholder="Select Project"
                           isCheckbox
                           options={projects.map((project) => ({
                             label: project.project_name,
@@ -695,11 +695,10 @@ const NoticeboardEdit = () => {
                     {formData.notice_type === "roadblock" && (
                       <div className="col-md-3">
                         <div className="form-group">
-                          <label>
-                            Home Screen Display Frequency
-                            <span className="otp-asterisk"> *</span>
-                          </label>
                           <SelectBox
+                            label="Home Screen Display Frequency"
+                            required
+                            placeholder="Select Frequency"
                             options={frequencyOptions}
                             value={formData.home_screen_frequency || ""}
                             onChange={(value) =>

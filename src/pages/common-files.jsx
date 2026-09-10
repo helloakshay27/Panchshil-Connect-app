@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
-import "../mor.css"; // Assuming you want to reuse your existing styles
+import { Files, Upload } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const MAX_UPLOAD_SIZE = {
   images: 3 * 1024 * 1024, // 3MB
@@ -376,11 +377,11 @@ const CommonFileUpload = () => {
 
     return (
       <div className="d-flex flex-column mb-4 common-files__section">
-        <div className="d-flex justify-content-between align-items-end mx-1">
-          <h5 className="mt-3">
+        <div className="d-flex justify-content-between align-items-center mx-1">
+          <h5 className="mb-0" style={{ fontSize: 15, fontWeight: 600, color: "#222" }}>
             {config.label}{" "}
             <span
-              className="tooltip-container"
+              className="tooltip-container banner-upload-hint"
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             >
@@ -392,31 +393,21 @@ const CommonFileUpload = () => {
             {config.required && <span className="otp-asterisk"> *</span>}
           </h5>
           <button
-            className="purple-btn2 enhanced-table__add"
+            className="banner-form-action-btn"
             type="button"
             onClick={() => openModal(categoryKey)}
+            style={{ minWidth: 100, height: 36 }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={16}
-              height={16}
-              fill="currentColor"
-              className="bi bi-plus"
-              viewBox="0 0 16 16"
-            >
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-            </svg>
-            <span>Add</span>
+            + Add
           </button>
           <input
             id={categoryKey}
-            className="form-control"
+            className="banner-upload-native-input"
             type="file"
             name={categoryKey}
             accept={config.accept}
             multiple={config.multiple}
             onChange={(e) => handleDirectFileUpload(categoryKey, e.target.files)}
-            style={{ display: "none" }}
           />
         </div>
         <div className="col-md-12 mt-2">
@@ -555,7 +546,7 @@ const CommonFileUpload = () => {
                         <td>
                           <button
                             type="button"
-                            className="purple-btn2 common-files__delete-button"
+                            className="banner-form-action-btn common-files__delete-button"
                             onClick={() => {
                               if (file.isFromAPI && file.id) {
                                 deleteFile(categoryKey, index, file.id, file.name);
@@ -564,6 +555,7 @@ const CommonFileUpload = () => {
                               }
                             }}
                             title={isFromAPI ? "Delete file permanently" : "Remove from display"}
+                            style={{ minWidth: 30, width: 30, height: 30, padding: 0 }}
                           >
                             x
                           </button>
@@ -689,18 +681,27 @@ const CommonFileUpload = () => {
               <div className="mb-4">
                 <input
                   id={`modal-${currentCategory}`}
-                  className="form-control"
+                  className="banner-upload-native-input"
                   type="file"
                   accept={config?.accept}
                   multiple={config?.multiple}
                   onChange={(e) => handleModalFileSelection(e.target.files)}
-                  style={{ 
-                    border: '2px dashed #dee2e6', 
-                    borderRadius: '8px', 
-                    padding: '12px',
-                    backgroundColor: '#f8f9fa'
-                  }}
                 />
+                <div className="banner-upload-dropzone">
+                  <button
+                    type="button"
+                    className="banner-upload-files-btn"
+                    onClick={() =>
+                      document.getElementById(`modal-${currentCategory}`)?.click()
+                    }
+                  >
+                    <Upload size={16} strokeWidth={1.8} />
+                    Upload Files
+                  </button>
+                  <span className="banner-upload-item-label">
+                    {config?.label}
+                  </span>
+                </div>
               </div>
 
               {/* Selected Files Preview - Simple Grid */}
@@ -820,44 +821,21 @@ const CommonFileUpload = () => {
                 </div>
               )}
             </div>
-            <div className="modal-footer" style={{ borderTop: '1px solid #dee2e6', padding: '20px 30px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <div className="modal-footer banner-form-actions" style={{ borderTop: '1px solid #dee2e6', padding: '20px 30px', margin: 0 }}>
               <button 
                 type="button" 
-                className="purple-btn2"
+                className="banner-form-action-btn"
                 onClick={uploadModalFiles}
                 disabled={isUploading || modalFiles.length === 0}
-                style={{ 
-                  borderRadius: '6px',
-                  padding: '8px 20px',
-                  fontWeight: '500',
-                  border: 'none'
-                }}
               >
-                {isUploading ? (
-                  <>
-                    <span 
-                      className="spinner-border spinner-border-sm me-2" 
-                      role="status" 
-                      aria-hidden="true"
-                      style={{ color: 'white' }}
-                    ></span>
-                    Uploading...
-                  </>
-                ) : (
-                  `Upload ${modalFiles.length} File${modalFiles.length !== 1 ? 's' : ''}`
-                )}
+                {isUploading
+                  ? "Uploading..."
+                  : `Upload ${modalFiles.length} File${modalFiles.length !== 1 ? "s" : ""}`}
               </button>
               <button 
                 type="button" 
-                className="purple-btn2"
+                className="banner-form-action-btn"
                 onClick={closeModal}
-                style={{ 
-                  borderRadius: '6px',
-                  padding: '8px 20px',
-                  fontWeight: '500',
-                  border: 'none',
-                  backgroundColor: '#6c757d'
-                }}
               >
                 Cancel
               </button>
@@ -869,36 +847,31 @@ const CommonFileUpload = () => {
   };
 
   return (
-    <>
-      <div className="module-data-section p-3 common-files-page">
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header">
-            <h3 className="card-title">Common File Uploads</h3>
+    <div className="main-content">
+      <div className="module-data-section banner-form-page p-3 common-files-page">
+        <div className="card banner-form-card mt-3 pb-4">
+          <div className="card-header banner-form-section-header">
+            <h3 className="banner-form-section-heading">
+              <span className="banner-form-section-icon" aria-hidden="true">
+                <Files size={16} strokeWidth={1.8} />
+              </span>
+              Common File Uploads
+            </h3>
           </div>
           <div className="card-body">
-            <div className="row">
-              {renderFileUploadSection("instagram_photos_videos")}
-              {renderFileUploadSection("site_photos_progress")}
-              {renderFileUploadSection("print_media")}
-              {renderFileUploadSection("company_profile")}
-              {renderFileUploadSection("competition_project_builders")}
-              {renderFileUploadSection("possession_intimation")}
-              {renderFileUploadSection("birthday_anniversary_emailers")}
-              {renderFileUploadSection("whatsapp_creatives")}
-            </div>
-            <div className="row mt-4 justify-content-center">
-              <div className="col-md-8">
-                {/* <div className="alert alert-info text-center">
-                  <strong>Note:</strong> Files are automatically submitted when uploaded and remain visible in the table. 
-                  Use the &quot;x&quot; button to remove files from the display if needed.
-                </div> */}
-              </div>
-            </div>
+            {renderFileUploadSection("instagram_photos_videos")}
+            {renderFileUploadSection("site_photos_progress")}
+            {renderFileUploadSection("print_media")}
+            {renderFileUploadSection("company_profile")}
+            {renderFileUploadSection("competition_project_builders")}
+            {renderFileUploadSection("possession_intimation")}
+            {renderFileUploadSection("birthday_anniversary_emailers")}
+            {renderFileUploadSection("whatsapp_creatives")}
           </div>
         </div>
       </div>
       {renderModal()}
-    </>
+    </div>
   );
 };
 

@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
+import FormTextField from "../components/base/FormTextField";
+import { CalendarDays } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
 import { ImageCropper } from "../components/reusable/ImageCropper";
@@ -11,6 +13,7 @@ import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import ProjectImageVideoUpload from "../components/reusable/ProjectImageVideoUpload";
 import { useConnectEvents } from "../hooks/useConnectEvents";
 import EventFormSteps from "../components/events/EventFormSteps";
+import "./banner-add.css";
 
 const DATA_TYPE_OPTIONS = [
   { value: "bookedClients", label: "Booked Clients" },
@@ -994,27 +997,29 @@ const EventCreate = () => {
   return (
     <>
       <div className="main-content">
-        <div className="" style={{ width: "100%" }}>
-          <div className="module-data-section container-fluid">
-            <div className="module-data-section p-3">
+        <div className="module-data-section banner-form-page p-3">
               <EventFormSteps current={step} onStepClick={goToStep} />
 
               {step === "details" && (
-              <div className="card mt-4 pb-2 mx-4">
-                <div className="card-header">
-                  <h3 className="card-title">Create Event</h3>
+              <div className="card banner-form-card mt-3 pb-4">
+                <div className="card-header banner-form-section-header">
+                  <h3 className="banner-form-section-heading">
+                    <span className="banner-form-section-icon" aria-hidden="true">
+                      <CalendarDays size={16} strokeWidth={1.8} />
+                    </span>
+                    Create Event
+                  </h3>
                 </div>
 
                 <div className="card-body">
                   {error && <p className="text-danger">{error}</p>}
-                  <div className="row">
-                    <div className="col-md-6 mt-1">
+                  <div className="row banner-form-fields">
+                    <div className="col-md-6">
                       <div className="form-group">
-                        <label>
-                          Projects
-                          <span className="otp-asterisk"> *</span>
-                        </label>
                         <MultiSelectBox
+                          label="Projects"
+                          required
+                          placeholder="Select Projects"
                           options={projects.map((proj) => ({
                             value: proj.id,
                             label: proj.name || proj.project_name,
@@ -1037,13 +1042,12 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3 mt-1">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Data Type
-                          <span className="otp-asterisk"> *</span>
-                        </label>
                         <MultiSelectBox
+                          label="Data Type"
+                          required
+                          placeholder="Select Data Type"
                           options={DATA_TYPE_OPTIONS}
                           value={DATA_TYPE_OPTIONS.filter((o) =>
                             dataType.includes(o.value)
@@ -1054,26 +1058,12 @@ const EventCreate = () => {
                         />
                       </div>
                     </div>
-                    {/* <div className="col-md-3 mt-1">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Type</label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="event_type"
-                          placeholder="Enter Event Type"
-                          value={formData.event_type}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                    </div> */}
-                    <div className="col-md-3 mt-1">
-                      <div className="form-group">
-                        <label>Event Type (Internal/External)</label>
                         <SelectBox
+                          label="Event Type (Internal/External)"
+                          placeholder="Select Event Type"
                           options={[
-                            { value: "", label: "Select Event Type" },
                             { value: "internal", label: "Internal" },
                             { value: "external", label: "External" },
                           ]}
@@ -1085,17 +1075,15 @@ const EventCreate = () => {
                               payment_link: "",
                             }));
                           }}
-                          isDisableFirstOption={true}
                         />
                       </div>
                     </div>
 
                     {formData.pay_at === "external" && (
-                      <div className="col-md-3 mt-1">
+                      <div className="col-md-3">
                         <div className="form-group">
-                          <label>Event Link</label>
-                          <input
-                            className="form-control"
+                          <FormTextField
+                            label="Event Link"
                             type="url"
                             name="payment_link"
                             placeholder="Enter Event Link"
@@ -1107,28 +1095,21 @@ const EventCreate = () => {
                     )}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Event Name
-                          <span className="otp-asterisk"> *</span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Event Name"
+                          required
                           name="event_name"
                           placeholder="Enter Event Name"
                           value={formData.event_name}
                           onChange={handleChange}
-                          required
                         />
                       </div>
                     </div>
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Title</label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Event Title"
                           name="title"
                           placeholder="Enter Event Title"
                           value={formData.title}
@@ -1137,25 +1118,21 @@ const EventCreate = () => {
                       </div>
                     </div>
                    
-                    <div className="col-md-3 mt-1">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event At</label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Event At"
                           name="event_at"
                           placeholder="Enter Event At"
                           value={formData.event_at}
-                          required
                           onChange={handleChange}
                         />
                       </div>
                     </div>
-                     <div className="col-md-3 mt-1">
+                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Location URL</label>
-                        <input
-                          className="form-control"
+                        <FormTextField
+                          label="Location URL"
                           type="url"
                           name="location_url"
                           placeholder="Enter Location URL"
@@ -1166,82 +1143,79 @@ const EventCreate = () => {
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event From</label>
-                        <div className="d-flex gap-2" style={{ flexWrap: "wrap" }}>
-                          <input
-                            className="form-control"
-                            type="date"
-                            name="from_date"
-                            value={getDatePart(formData.from_time)}
-                            onChange={(e) =>
-                              handleDateTimeChange(
-                                "from_time",
-                                "date",
-                                e.target.value
-                              )
-                            }
-                            style={{ flex: "1 1 130px", minWidth: 0 }}
-                          />
-                          <input
-                            className="form-control"
-                            type="time"
-                            name="from_time_part"
-                            value={getTimePart(formData.from_time)}
-                            onChange={(e) =>
-                              handleDateTimeChange(
-                                "from_time",
-                                "time",
-                                e.target.value
-                              )
-                            }
-                            disabled={!getDatePart(formData.from_time)}
-                            style={{ flex: "1 1 110px", minWidth: 0 }}
-                          />
-                        </div>
+                        <FormTextField
+                          label="Event From"
+                          type="date"
+                          name="from_date"
+                          value={getDatePart(formData.from_time)}
+                          onChange={(e) =>
+                            handleDateTimeChange(
+                              "from_time",
+                              "date",
+                              e.target.value
+                            )
+                          }
+                        />
                       </div>
                     </div>
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event To</label>
-                        <div className="d-flex gap-2" style={{ flexWrap: "wrap" }}>
-                          <input
-                            className="form-control"
-                            type="date"
-                            name="to_date"
-                            value={getDatePart(formData.to_time)}
-                            onChange={(e) =>
-                              handleDateTimeChange(
-                                "to_time",
-                                "date",
-                                e.target.value
-                              )
-                            }
-                            style={{ flex: "1 1 130px", minWidth: 0 }}
-                          />
-                          <input
-                            className="form-control"
-                            type="time"
-                            name="to_time_part"
-                            value={getTimePart(formData.to_time)}
-                            onChange={(e) =>
-                              handleDateTimeChange(
-                                "to_time",
-                                "time",
-                                e.target.value
-                              )
-                            }
-                            disabled={!getDatePart(formData.to_time)}
-                            style={{ flex: "1 1 110px", minWidth: 0 }}
-                          />
-                        </div>
+                        <FormTextField
+                          label="From Time"
+                          type="time"
+                          name="from_time_part"
+                          value={getTimePart(formData.from_time)}
+                          onChange={(e) =>
+                            handleDateTimeChange(
+                              "from_time",
+                              "time",
+                              e.target.value
+                            )
+                          }
+                          disabled={!getDatePart(formData.from_time)}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <FormTextField
+                          label="Event To"
+                          type="date"
+                          name="to_date"
+                          value={getDatePart(formData.to_time)}
+                          onChange={(e) =>
+                            handleDateTimeChange(
+                              "to_time",
+                              "date",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <FormTextField
+                          label="To Time"
+                          type="time"
+                          name="to_time_part"
+                          value={getTimePart(formData.to_time)}
+                          onChange={(e) =>
+                            handleDateTimeChange(
+                              "to_time",
+                              "time",
+                              e.target.value
+                            )
+                          }
+                          disabled={!getDatePart(formData.to_time)}
+                        />
                       </div>
                     </div>
 
-                    <div className="col-md-3 mt-1">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Salesforce Data Retention Days</label>
-                        <input
-                          className="form-control"
+                        <FormTextField
+                          label="Salesforce Data Retention Days"
                           type="number"
                           min="0"
                           name="salesforce_data_retention_days"
@@ -1254,15 +1228,12 @@ const EventCreate = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Event Description</label>
-                        <textarea
-                          className="form-control"
-                          rows={1}
+                        <FormTextField
+                          label="Event Description"
                           name="description"
                           placeholder="Enter Description"
                           value={formData.description}
                           onChange={handleChange}
-                          required
                         />
                       </div>
                     </div>
@@ -1390,49 +1361,55 @@ const EventCreate = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Mark Important</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="is_important"
-                              value="true"
-                              checked={formData.is_important === true}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  is_important: true,
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              Yes
-                            </label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="is_important"
-                              value="false"
-                              checked={formData.is_important === false}
-                              onChange={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  is_important: false,
-                                }))
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              No
-                            </label>
+                        <div className="form-control-field">
+                          <span className="form-control-field__label">
+                            Mark Important
+                          </span>
+                          <div className="form-radio-control">
+                            <div className="form-check">
+                              <input
+                                id="create-event-is-important-yes"
+                                className="form-check-input"
+                                type="radio"
+                                name="is_important"
+                                value="true"
+                                checked={formData.is_important === true}
+                                onChange={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    is_important: true,
+                                  }))
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="create-event-is-important-yes"
+                              >
+                                Yes
+                              </label>
+                            </div>
+                            <div className="form-check">
+                              <input
+                                id="create-event-is-important-no"
+                                className="form-check-input"
+                                type="radio"
+                                name="is_important"
+                                value="false"
+                                checked={formData.is_important === false}
+                                onChange={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    is_important: false,
+                                  }))
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="create-event-is-important-no"
+                              >
+                                No
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1497,41 +1474,47 @@ const EventCreate = () => {
                     </div> */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>RSVP Action</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="rsvp_action"
-                              value="yes"
-                              checked={formData.rsvp_action === "yes"}
-                              onChange={handleChange}
-                              required
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              Yes
-                            </label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="rsvp_action"
-                              value="no"
-                              checked={formData.rsvp_action === "no"}
-                              onChange={handleChange}
-                              required
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ color: "black" }}
-                            >
-                              No
-                            </label>
+                        <div className="form-control-field">
+                          <span className="form-control-field__label">
+                            RSVP Action
+                          </span>
+                          <div className="form-radio-control">
+                            <div className="form-check">
+                              <input
+                                id="create-event-rsvp-yes"
+                                className="form-check-input"
+                                type="radio"
+                                name="rsvp_action"
+                                value="yes"
+                                checked={formData.rsvp_action === "yes"}
+                                onChange={handleChange}
+                                required
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="create-event-rsvp-yes"
+                              >
+                                Yes
+                              </label>
+                            </div>
+                            <div className="form-check">
+                              <input
+                                id="create-event-rsvp-no"
+                                className="form-check-input"
+                                type="radio"
+                                name="rsvp_action"
+                                value="no"
+                                checked={formData.rsvp_action === "no"}
+                                onChange={handleChange}
+                                required
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="create-event-rsvp-no"
+                              >
+                                No
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1541,98 +1524,86 @@ const EventCreate = () => {
                       <>
                         <div className="col-md-3">
                           <div className="form-group">
-                            <label>RSVP Name</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter RSVP Name"
+                            <FormTextField
+                              label="RSVP Name"
+                              required
                               name="rsvp_name"
+                              placeholder="Enter RSVP Name"
                               value={formData.rsvp_name || ""}
                               onChange={handleChange}
-                              required
                             />
                           </div>
                         </div>
                         <div className="col-md-3">
                           <div className="form-group">
-                            <label>RSVP Number</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter RSVP Number"
+                            <FormTextField
+                              label="RSVP Number"
+                              required
                               name="rsvp_number"
+                              placeholder="Enter RSVP Number"
                               value={formData.rsvp_number || ""}
                               onChange={handleChange}
-                              required
                             />
                           </div>
                         </div>
                       </>
                     )}
 
-                    <div className="col-md-6">
-                      <label className="form-label">Set Reminders</label>
-
-                      {/* Input fields for adding new reminders */}
-                      <div className="row mb-2">
-                        <div className="col-md-4">
-                          <SelectBox
-                            options={timeOptions}
-                            value={reminderUnit || ""}
-                            onChange={(value) => {
-                              setReminderUnit(value);
-                              setReminderValue("");
-                            }}
-                          />
-                        </div>
-                        <div className="col-md-4">
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Value"
-                            value={reminderValue}
-                            onChange={(e) => {
-                              const val = Number(e.target.value);
-                              const unit = reminderUnit;
-                              const constraints = timeConstraints[unit] || {
-                                min: 0,
-                                max: Infinity,
-                              };
-                              if (
-                                val >= constraints.min &&
-                                val <= constraints.max
-                              ) {
-                                setReminderValue(e.target.value);
-                              }
-                            }}
-                            min={timeConstraints[reminderUnit]?.min || 0}
-                            max={timeConstraints[reminderUnit]?.max || ""}
-                            title={
-                              reminderUnit
-                                ? `Must be between ${timeConstraints[reminderUnit].min} to ${timeConstraints[reminderUnit].max} ${reminderUnit}`
-                                : "Please select a time unit first"
-                            }
-                            disabled={!reminderUnit}
-                          />
-                        </div>
-
-                        <div className="col-md-4">
-                          <button
-                            type="button"
-                            className="btn btn-danger w-100"
-                            onClick={handleAddReminder}
-                            disabled={!reminderValue || !reminderUnit}
-                            style={{
-                              height: "35px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            + Add
-                          </button>
-                        </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <SelectBox
+                          label="Set Reminders"
+                          placeholder="Select"
+                          options={timeOptions}
+                          value={reminderUnit || ""}
+                          onChange={(value) => {
+                            setReminderUnit(value);
+                            setReminderValue("");
+                          }}
+                        />
                       </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <FormTextField
+                          label="Value"
+                          type="number"
+                          placeholder="Value"
+                          value={reminderValue}
+                          onChange={(e) => {
+                            const val = Number(e.target.value);
+                            const unit = reminderUnit;
+                            const constraints = timeConstraints[unit] || {
+                              min: 0,
+                              max: Infinity,
+                            };
+                            if (
+                              val >= constraints.min &&
+                              val <= constraints.max
+                            ) {
+                              setReminderValue(e.target.value);
+                            }
+                          }}
+                          min={timeConstraints[reminderUnit]?.min || 0}
+                          max={timeConstraints[reminderUnit]?.max || ""}
+                          disabled={!reminderUnit}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <button
+                          type="button"
+                          className="banner-form-action-btn"
+                          onClick={handleAddReminder}
+                          disabled={!reminderValue || !reminderUnit}
+                        >
+                          + Add
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="col-md-12">
 
                       {/* Display added reminders. Map to {reminder, originalIndex}
                           before filtering, so handleRemoveReminder(originalIndex)
@@ -1696,9 +1667,14 @@ const EventCreate = () => {
               )}
 
               {step === "images" && (
-              <div className="card mt-3 pb-4 mx-4">
-                <div className="card-header3">
-                  <h3 className="card-title">File Upload</h3>
+              <div className="card banner-form-card mt-3 pb-4">
+                <div className="card-header banner-form-section-header">
+                  <h3 className="banner-form-section-heading">
+                    <span className="banner-form-section-icon" aria-hidden="true">
+                      <CalendarDays size={16} strokeWidth={1.8} />
+                    </span>
+                    File Upload
+                  </h3>
                 </div>
                 <div className="card-body mt-0 pb-0">
                   <div className="row"></div>
@@ -2328,9 +2304,14 @@ const EventCreate = () => {
               )}
 
               {step === "preview" && (
-              <div className="card mt-4 pb-4 mx-4">
-                <div className="card-header">
-                  <h3 className="card-title">Preview</h3>
+              <div className="card banner-form-card mt-3 pb-4">
+                <div className="card-header banner-form-section-header">
+                  <h3 className="banner-form-section-heading">
+                    <span className="banner-form-section-icon" aria-hidden="true">
+                      <CalendarDays size={16} strokeWidth={1.8} />
+                    </span>
+                    Preview
+                  </h3>
                 </div>
                 <div className="card-body">
                   <div className="row px-3">
@@ -2473,13 +2454,12 @@ const EventCreate = () => {
                 </div>
               </div>
               )}
-            </div>
 
-            <div className="efs-nav">
+            <div className="banner-form-actions efs-nav">
               {step !== "details" && (
                 <button
                   type="button"
-                  className="purple-btn1"
+                  className="banner-form-action-btn banner-form-action-btn--outline"
                   onClick={() => goToStep(step === "preview" ? "images" : "details")}
                 >
                   Back
@@ -2488,7 +2468,7 @@ const EventCreate = () => {
               {step !== "preview" ? (
                 <button
                   type="button"
-                  className="purple-btn2"
+                  className="banner-form-action-btn"
                   onClick={() => goToStep(step === "details" ? "images" : "preview")}
                 >
                   Proceed to save
@@ -2497,7 +2477,7 @@ const EventCreate = () => {
                 <>
                   <button
                     type="button"
-                    className="purple-btn1"
+                    className="banner-form-action-btn banner-form-action-btn--outline"
                     onClick={handleCancel}
                   >
                     Cancel
@@ -2505,7 +2485,7 @@ const EventCreate = () => {
                   <button
                     onClick={handleSubmit}
                     type="submit"
-                    className="purple-btn2"
+                    className="banner-form-action-btn"
                     disabled={loading}
                   >
                     Submit
@@ -2513,7 +2493,6 @@ const EventCreate = () => {
                 </>
               )}
             </div>
-          </div>
         </div>
       </div>
     </>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import "../mor.css";
 import { toast } from "react-hot-toast";
+import { Image } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
+import FormTextField from "../components/base/FormTextField";
 import SelectBox from "../components/base/SelectBox";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const EditImagesConfiguration = () => {
   const connectEvents = useConnectEvents();
@@ -166,7 +168,8 @@ const EditImagesConfiguration = () => {
   };
 
   // Handle update API call
-  const handleUpdate = async () => {
+  const handleUpdate = async (e) => {
+    e?.preventDefault();
     if (!configuration) return;
 
     if (!selectedName) {
@@ -227,12 +230,12 @@ const EditImagesConfiguration = () => {
   if (!configuration) {
     return (
       <div className="main-content">
-        <div className="website-content overflow-auto">
-          <div className="module-data-section container-fluid">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-body text-center">
-                <p className="text-muted">Configuration not found.</p>
-              </div>
+        <div className="module-data-section banner-form-page p-3">
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-body text-center">
+              <p className="text-muted mb-0">
+                {loading ? "Loading..." : "Configuration not found."}
+              </p>
             </div>
           </div>
         </div>
@@ -242,42 +245,43 @@ const EditImagesConfiguration = () => {
 
   return (
     <div className="main-content">
-       <div className="website-content overflow-auto">
-         <div className="module-data-section container-fluid">
-             <form onSubmit={handleUpdate}>
-                <div className="card mt-4 pb-4 mx-4">
-                 <div className="card-header">
-                   <h3 className="card-title">Edit Images Configuration</h3>
-                 </div>
-                 <div className="card-body">
-              <div className="row">
-                <div className="col-md-3 mb-4">
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleUpdate}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Image size={16} strokeWidth={1.8} />
+                </span>
+                Edit Images Configuration
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Name <span className="otp-asterisk">*</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
+                    <FormTextField
+                      label="Name"
+                      required
                       value={selectedName}
                       disabled
-                      style={{ backgroundColor: '#f7f8f9', cursor: 'not-allowed' }}
                     />
                   </div>
                 </div>
 
-                <div className="col-md-3 mb-4">
+                <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Value <span className="otp-asterisk">*</span>
-                    </label>
                     <SelectBox
+                      label="Value"
+                      required
+                      placeholder="Select Value"
                       options={selectedName ? valueOptionsMap[selectedName] : []}
-                      defaultValue={selectedValue}
+                      value={selectedValue}
                       onChange={handleValueChange}
+                      disabled={loading || !selectedName}
                     />
                     {!selectedName && (
-                      <small className="text-muted">
+                      <small className="text-muted mt-1">
                         Please select a name first
                       </small>
                     )}
@@ -286,38 +290,25 @@ const EditImagesConfiguration = () => {
               </div>
             </div>
           </div>
-          </form>
 
-          {/* Update and Cancel Buttons */}
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={handleUpdate}
-                disabled={loading || !configuration}
-              >
-                {loading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Submitting...
-                  </>
-                ) : (
-                  'Submit'
-                )}
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-            </div>
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              Cancel
+            </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

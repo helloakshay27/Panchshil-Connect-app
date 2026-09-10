@@ -22,7 +22,7 @@ export default function FormTextField({
   return (
     <div className={`form-control-field ${disabled ? "form-control-field--disabled" : ""} ${className}`}>
       {label && (
-        <label className="form-control-field__label" htmlFor={fieldId}>
+        <label className="form-control-field__label" htmlFor={fieldId} title={label}>
           {label}
           {required && <span className="form-control-field__required"> *</span>}
         </label>

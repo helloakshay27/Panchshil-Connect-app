@@ -191,10 +191,9 @@ const CompanyEdit = () => {
                   </div>
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Organization
-                      </label>
                       <SelectBox
+                        label="Organization"
+                        placeholder="Select Organization"
                         options={[
                           { value: "", label: "Select Organization" },
                           ...organization.map((org) => ({
