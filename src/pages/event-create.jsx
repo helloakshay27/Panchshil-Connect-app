@@ -42,7 +42,9 @@ const EventCreate = () => {
     email_trigger_enabled: "",
     salesforce_data_retention_days: "",
     creation_email_attachment: null,
+    creation_email_attachment_url: "",
     reminder_email_attachment: null,
+    reminder_email_attachment_url: "",
     set_reminders_attributes: [],
     cover_image_1_by_1: [],
     cover_image_9_by_16: [],
@@ -682,10 +684,22 @@ const EventCreate = () => {
         formData.creation_email_attachment.file
       );
     }
+    if (formData.creation_email_attachment_url) {
+      data.append(
+        "event[creation_email_attachment_url]",
+        formData.creation_email_attachment_url
+      );
+    }
     if (formData.reminder_email_attachment?.file) {
       data.append(
         "event[reminder_email_attachment]",
         formData.reminder_email_attachment.file
+      );
+    }
+    if (formData.reminder_email_attachment_url) {
+      data.append(
+        "event[reminder_email_attachment_url]",
+        formData.reminder_email_attachment_url
       );
     }
 
@@ -818,7 +832,9 @@ const EventCreate = () => {
         email_trigger_enabled: "",
         salesforce_data_retention_days: "",
         creation_email_attachment: null,
+        creation_email_attachment_url: "",
         reminder_email_attachment: null,
+        reminder_email_attachment_url: "",
         set_reminders_attributes: [],
         cover_image_1_by_1: [],
         cover_image_9_by_16: [],
@@ -2247,6 +2263,20 @@ const EventCreate = () => {
                     </div>
                   </div>
 
+                  <div className="col-md-6 mt-3">
+                    <div className="form-group">
+                      <label>Event Creation Email Attachment URL</label>
+                      <input
+                        className="form-control"
+                        type="url"
+                        name="creation_email_attachment_url"
+                        placeholder="Enter Creation Email Attachment URL"
+                        value={formData.creation_email_attachment_url}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
                       Event Reminder Email Attachment
@@ -2321,6 +2351,20 @@ const EventCreate = () => {
                           )}
                         </tbody>
                       </table>
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 mt-3">
+                    <div className="form-group">
+                      <label>Event Reminder Email Attachment URL</label>
+                      <input
+                        className="form-control"
+                        type="url"
+                        name="reminder_email_attachment_url"
+                        placeholder="Enter Reminder Email Attachment URL"
+                        value={formData.reminder_email_attachment_url}
+                        onChange={handleChange}
+                      />
                     </div>
                   </div>
                 </div>

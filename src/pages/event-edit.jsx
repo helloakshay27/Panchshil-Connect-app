@@ -51,7 +51,9 @@ const EventEdit = () => {
     email_trigger_enabled: "false",
     salesforce_data_retention_days: "",
     creation_email_attachment: null,
+    creation_email_attachment_url: "",
     reminder_email_attachment: null,
+    reminder_email_attachment_url: "",
     set_reminders_attributes: [],
     existingImages: [], // for previously uploaded images
     newImages: [], // for newly selected images
@@ -574,7 +576,9 @@ const EventEdit = () => {
           payment_link: data.payment_link || "",
           salesforce_data_retention_days: data.salesforce_data_retention_days || "",
           creation_email_attachment: data.creation_email_attachment || null,
+          creation_email_attachment_url: data.creation_email_attachment?.file_name || "",
           reminder_email_attachment: data.reminder_email_attachment || null,
+          reminder_email_attachment_url: data.reminder_email_attachment?.file_name || "",
           attachfile: attachfileData,
           newImages: [],
           existingImages: existingImages,
@@ -613,6 +617,8 @@ const EventEdit = () => {
           pay_at: data.pay_at || "",
           payment_link: data.payment_link || "",
           salesforce_data_retention_days: data.salesforce_data_retention_days || "",
+          creation_email_attachment_url: data.creation_email_attachment?.file_name || "",
+          reminder_email_attachment_url: data.reminder_email_attachment?.file_name || "",
           publish: data.publish || "",
           comment: data.comment || "",
           location_url: data.comment || "",
@@ -1128,10 +1134,22 @@ const EventEdit = () => {
         formData.creation_email_attachment.file
       );
     }
+    if (formData.creation_email_attachment_url) {
+      data.append(
+        "event[creation_email_attachment_url]",
+        formData.creation_email_attachment_url
+      );
+    }
     if (formData.reminder_email_attachment?.file) {
       data.append(
         "event[reminder_email_attachment]",
         formData.reminder_email_attachment.file
+      );
+    }
+    if (formData.reminder_email_attachment_url) {
+      data.append(
+        "event[reminder_email_attachment_url]",
+        formData.reminder_email_attachment_url
       );
     }
 
@@ -1285,7 +1303,9 @@ const EventEdit = () => {
       "set_reminders_attributes",
       "project_id",
       "creation_email_attachment",
+      "creation_email_attachment_url",
       "reminder_email_attachment",
+      "reminder_email_attachment_url",
       "title",
       "event_title", // handled explicitly via the title → event_title mapping above
       "rsvp_action",
@@ -2938,6 +2958,20 @@ const EventEdit = () => {
                     </div>
                   </div>
 
+                  <div className="col-md-6 mt-3">
+                    <div className="form-group">
+                      <label>Event Creation Email Attachment URL</label>
+                      <input
+                        className="form-control"
+                        type="url"
+                        name="creation_email_attachment_url"
+                        placeholder="Enter Creation Email Attachment URL"
+                        value={formData.creation_email_attachment_url}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
                       Event Reminder Email Attachment
@@ -3019,6 +3053,20 @@ const EventEdit = () => {
                           )}
                         </tbody>
                       </table>
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 mt-3">
+                    <div className="form-group">
+                      <label>Event Reminder Email Attachment URL</label>
+                      <input
+                        className="form-control"
+                        type="url"
+                        name="reminder_email_attachment_url"
+                        placeholder="Enter Reminder Email Attachment URL"
+                        value={formData.reminder_email_attachment_url}
+                        onChange={handleChange}
+                      />
                     </div>
                   </div>
                 </div>
