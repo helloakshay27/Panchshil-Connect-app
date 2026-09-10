@@ -279,7 +279,6 @@ const LoanManagerEdit = () => {
                           onChange={(value) =>
                             setFormData({ ...formData, project_id: value })
                           }
-                          placeholder="Select Project"
                         />
                         {errors.project_id && (
                           <span className="text-danger">{errors.project_id}</span>

@@ -5,8 +5,10 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
+import "./project-details-create.css";
 import { useParams } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
+import { Building2, FileText, Globe2, Image, MapPin, Upload } from "lucide-react";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -142,10 +144,16 @@ const ProjectDetails = () => {
           }
         `}
       </style>
-      <div className="module-data-section p-3">
-        <div className="card mt-4 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Project Details</h3>
+      <div className="module-data-section project-details-page p-3">
+        <div className="card project-details-create-card mt-4 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Building2 size={16} strokeWidth={1.8} />
+              </span>
+              Project Details
+            </h3>
+          </div>
             <div className="card-body">
               <div className="row px-3">
                 {/* <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
@@ -657,11 +665,15 @@ const ProjectDetails = () => {
                 </div> */}
               </div>
             </div>
-          </div>
         </div>
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">RERA Number</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <FileText size={16} strokeWidth={1.8} />
+              </span>
+              RERA Number
+            </h3>
           </div>
           <div className="card-body">
             <div className="row">
@@ -699,9 +711,14 @@ const ProjectDetails = () => {
           </div>
         </div>
 
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Amenities</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Building2 size={16} strokeWidth={1.8} />
+              </span>
+              Amenities
+            </h3>
           </div>
           <div className="card-body">
             <div className="row">
@@ -731,9 +748,14 @@ const ProjectDetails = () => {
           </div>
         </div>
 
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Address</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <MapPin size={16} strokeWidth={1.8} />
+              </span>
+              Address
+            </h3>
           </div>
           <div className="card-body">
             <div className="row">
@@ -852,9 +874,14 @@ const ProjectDetails = () => {
           </div>
         </div>
          {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Plans</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Image size={16} strokeWidth={1.8} />
+              </span>
+              Plans
+            </h3>
           </div>
           <div className="card-body pb-2 mb-1 mt-0">
             <div className="row ">
@@ -927,9 +954,14 @@ const ProjectDetails = () => {
         </div>
          )}
 
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Document Attachment</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Upload size={16} strokeWidth={1.8} />
+              </span>
+              Document Attachment
+            </h3>
           </div>
           <div className="card-body pb-2 mb-1 mt-0">
             <div className="row ">
@@ -1798,9 +1830,14 @@ const ProjectDetails = () => {
           </div>
         </div>
 
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Virtual Tour</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Globe2 size={16} strokeWidth={1.8} />
+              </span>
+              Virtual Tour
+            </h3>
           </div>
           <div className="card-body">
             <div className="row">

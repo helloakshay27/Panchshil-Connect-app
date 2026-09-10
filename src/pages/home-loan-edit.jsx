@@ -427,7 +427,6 @@ const HomeLoanEdit = () => {
                         onChange={(value) =>
                           setFormData({ ...formData, project_id: value })
                         }
-                        placeholder="Select Project"
                       />
                       {errors.project_id && (
                         <span className="text-danger">{errors.project_id}</span>
@@ -448,7 +447,6 @@ const HomeLoanEdit = () => {
                         }))}
                         value={getSelectedBankOptions()}
                         onChange={handleBankChange}
-                        placeholder="Select Banks"
                       />
                       {errors.bank_ids && (
                         <span className="text-danger">{errors.bank_ids}</span>

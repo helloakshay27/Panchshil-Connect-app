@@ -231,7 +231,6 @@ const ReferralCreate = () => {
                       }))}
                       value={selectedProjectId}
                       onChange={(value) => setSelectedProjectId(value)}
-                      required
                     />
                   </div>
                 </div>

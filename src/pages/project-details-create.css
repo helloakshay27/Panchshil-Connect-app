@@ -18,6 +18,10 @@
   box-shadow: none !important;
 }
 
+.project-details-page > .card {
+  box-shadow: none !important;
+}
+
 .project-details-page > .card .card-header,
 .project-details-page > .card .card-header3 {
   min-height: 58px;
