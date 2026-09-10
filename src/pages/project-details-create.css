@@ -10,6 +10,14 @@
   overflow: visible;
 }
 
+.project-details-page > .user-details-card {
+  box-shadow: none !important;
+}
+
+.event-details-page > .card {
+  box-shadow: none !important;
+}
+
 .project-details-page > .card .card-header,
 .project-details-page > .card .card-header3 {
   min-height: 58px;
@@ -55,6 +63,50 @@
   border-radius: 50%;
   background: #e5e0d3;
   color: var(--red, #de7008);
+}
+
+.project-details-upload-dropzone {
+  display: flex;
+  align-items: center;
+  min-height: 86px;
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px dashed #d4d4d4;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.project-details-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background: #fff;
+  color: #6b6b6b;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.project-details-upload-btn svg {
+  color: var(--red, #de7008);
+}
+
+.project-details-upload-btn:hover {
+  border-color: var(--red, #de7008);
+  color: #555;
+}
+
+.project-details-hidden-file-input {
+  display: none;
+}
+
+.project-details-plan-upload {
+  min-height: 50px;
+  padding: 0;
+  border: 0;
 }
 
 .project-details-section-card .project-details-section-header {
@@ -212,8 +264,10 @@
   height: 40px;
   min-height: 40px;
   max-height: 40px;
+  min-width: 120px;
+  width: 120px;
   margin: 0 !important;
-  padding: 0 18px;
+  padding: 0 24px;
   border-width: 1px !important;
   border-radius: 4px !important;
   box-sizing: border-box;

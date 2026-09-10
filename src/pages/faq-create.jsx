@@ -447,6 +447,7 @@ const FaqCreate = () => {
                                   className="purple-btn2"
                                   onClick={() => handleDeleteFaq(index)}
                                   disabled={loading}
+                                  style={{ color: "#fff" }}
                                 >
                                   x
                                 </button>

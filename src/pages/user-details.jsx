@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { UserRound } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
+import "../mor.css";
+import "./project-details-create.css";
 
 const UserDetails = () => {
   const { id } = useParams();
@@ -58,10 +61,15 @@ const UserDetails = () => {
     <div className="main-content">
       <div className="website-content overflow-auto">
         <div className="module-data-section container-fluid">
-          <div className="module-data-section p-3">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header3">
-                <h3 className="card-title">User Details</h3>
+          <div className="module-data-section project-details-page p-3">
+            <div className="card user-details-card project-details-create-card mt-4 pb-4 mx-4">
+              <div className="card-header project-details-section-header">
+                <h3 className="project-details-section-heading">
+                  <span className="project-details-section-icon" aria-hidden="true">
+                    <UserRound size={16} strokeWidth={1.8} />
+                  </span>
+                  User Details
+                </h3>
               </div>
               <div className="card-body">
                 <div className="row px-3">

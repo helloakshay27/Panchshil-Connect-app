@@ -4042,14 +4042,24 @@ const ProjectDetailsEdit = () => {
                     </span>
                     <span className="otp-asterisk"> *</span>
                   </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    name="project_qrcode_image"
-                    accept="image/*"
-                    multiple
-                    onChange={handleQRCodeImageChange}
-                  />
+                  <div className="project-details-upload-dropzone">
+                    <label
+                      htmlFor="project-qrcode-image-upload-edit"
+                      className="project-details-upload-btn"
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </label>
+                    <input
+                      id="project-qrcode-image-upload-edit"
+                      className="project-details-hidden-file-input"
+                      type="file"
+                      name="project_qrcode_image"
+                      accept="image/*"
+                      multiple
+                      onChange={handleQRCodeImageChange}
+                    />
+                  </div>
                 </div>
 
                 {/* Display uploaded or existing QR code images */}
@@ -4087,7 +4097,7 @@ const ProjectDetailsEdit = () => {
                         />
                         <button
                           type="button"
-                          className="purple-btn2"
+                          className="purple-btn2" style={{ color: "#fff" }}
                           onClick={() =>
                             handleRemoveQRCodeImage(
                               "project_qrcode_image",
@@ -4368,7 +4378,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() => handleDeleteRera(index)}
                                 >
                                   x
@@ -4583,17 +4593,27 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
                 <div className="col-md-3 mt-2">
-                  <input
-                    className="form-control"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
-                  />
+                  <div className="project-details-upload-dropzone project-details-plan-upload">
+                    <label
+                      htmlFor="project-plan-images-upload-edit"
+                      className="project-details-upload-btn"
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </label>
+                    <input
+                      id="project-plan-images-upload-edit"
+                      className="project-details-hidden-file-input"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => setPlanImages(Array.from(e.target.files))}
+                    />
+                  </div>
                 </div>
                 <div className="col-md-3">
                   <button
-                    className="purple-btn2"
+                    className="purple-btn2" style={{ color: "#fff" }}
                     type="button"
                     onClick={() => {
                       if (!planName || planImages.length === 0) {
@@ -4651,7 +4671,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() => handlePlanDelete(plan.id, pIdx)}
                               >
                                 x
@@ -4772,7 +4792,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleFileDiscardCoverImage("image", index)
                                 }
@@ -4808,7 +4828,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleFileDiscardCoverImage(key, index)
                                 }
@@ -4917,7 +4937,7 @@ const ProjectDetailsEdit = () => {
                           <td>
                             <button
                               type="button"
-                              className="purple-btn2"
+                              className="purple-btn2" style={{ color: "#fff" }}
                               onClick={() =>
                                 handleFileDiscardCoverImage(
                                   "cover_images",
@@ -5001,7 +5021,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardCoverImage(key, index)
                                   }
@@ -5147,7 +5167,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleFetchedDiscardGallery(
                                     "fetched_gallery_image",
@@ -5268,7 +5288,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() => {
                                     handleFetchedDiscardGallery(
                                       key,
@@ -5382,7 +5402,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleDiscardTwoDImage(
                                       "two_d_images",
@@ -5421,7 +5441,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleFileDiscardCoverImage(key, index)
                                     }
@@ -5504,7 +5524,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleDiscardBroucher("brochure")
                                 }
@@ -5596,7 +5616,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFilePpt("project_ppt", index)
                                     }
@@ -5707,7 +5727,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardLayout(
                                       "project_layout",
@@ -5814,7 +5834,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardCreative(
                                       "project_creatives",
@@ -5927,7 +5947,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleFileDiscardCreativeGenerics(
                                         "project_creative_generics",
@@ -6041,7 +6061,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleFileDiscardCreativeOffers(
                                         "project_creative_offers",
@@ -6149,7 +6169,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardInteriors(
                                       "project_interiors",
@@ -6256,7 +6276,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardExteriors(
                                       "project_exteriors",
@@ -6356,7 +6376,7 @@ const ProjectDetailsEdit = () => {
                                     <td>
                                       <button
                                         type="button"
-                                        className="purple-btn2"
+                                        className="purple-btn2" style={{ color: "#fff" }}
                                         onClick={() =>
                                           handleFileDiscardEmailerTemplate(
                                             "project_emailer_templetes",
@@ -6381,7 +6401,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_emailer_templetes",
@@ -6472,7 +6492,7 @@ const ProjectDetailsEdit = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleFileDiscardTechnical(
                                           "KnwYrApt_Technical",
@@ -6496,7 +6516,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile("KnwYrApt_Technical", 0)
                                     }
@@ -6595,7 +6615,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscard("videos", index)
                                   }
@@ -6712,7 +6732,7 @@ const ProjectDetailsEdit = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() => handleDeleteVideo(index)}
                                     >
                                       x
@@ -6850,7 +6870,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDeleteVirtualTour(index)
                                     }

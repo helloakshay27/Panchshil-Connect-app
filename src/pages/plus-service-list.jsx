@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from "react";
-import { Pencil, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -10,6 +10,22 @@ import { useSearchTracking } from "../hooks/useSearchTracking";
 import { baseURL } from "./baseurl/apiDomain";
 
 const pageSize = 10;
+
+const EditIcon = () => (
+  <svg
+    width="17"
+    height="17"
+    viewBox="0 0 16 16"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path d="M15.502 1.94a.5.5 0 0 1 0 .706l-1 1-2-2 1-1a.5.5 0 0 1 .707 0l1.293 1.293ZM13.793 4.354l-2-2L4.939 9.207a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.854-6.854Z" />
+    <path
+      fillRule="evenodd"
+      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11Z"
+    />
+  </svg>
+);
 
 const StatusToggle = ({ active, label, onClick }) => (
   <button
@@ -244,7 +260,7 @@ const PlusServicesList = () => {
             aria-label={`Edit ${service.name || "plus service"}`}
             title="Edit Plus Service"
           >
-            <Pencil size={17} />
+            <EditIcon />
           </a>
           <StatusToggle
             active={service.active}

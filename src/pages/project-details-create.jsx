@@ -2484,14 +2484,24 @@ const ProjectDetailsCreate = () => {
                     </span>
                     <span className="otp-asterisk"> *</span>
                   </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    name="project_qrcode_image"
-                    accept="image/*"
-                    multiple
-                    onChange={handleQRCodeImageChange}
-                  />
+                  <div className="project-details-upload-dropzone">
+                    <label
+                      htmlFor="project-qrcode-image-upload"
+                      className="project-details-upload-btn"
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </label>
+                    <input
+                      id="project-qrcode-image-upload"
+                      className="project-details-hidden-file-input"
+                      type="file"
+                      name="project_qrcode_image"
+                      accept="image/*"
+                      multiple
+                      onChange={handleQRCodeImageChange}
+                    />
+                  </div>
                 </div>
                 <div className="mt-2">
                   {formData.project_qrcode_image.length > 0 ? (
@@ -2527,7 +2537,7 @@ const ProjectDetailsCreate = () => {
                         />
                         <button
                           type="button"
-                          className="purple-btn2"
+                          className="purple-btn2" style={{ color: "#fff" }}
                           onClick={() => handleRemoveQRCodeImage(index)}
                         >
                           Remove
@@ -2769,7 +2779,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() => handleDeleteRera(index)}
                                     >
                                       x
@@ -2987,17 +2997,27 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
                 <div className="col-md-3 mt-2">
-                  <input
-                    className="form-control"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
-                  />
+                  <div className="project-details-upload-dropzone project-details-plan-upload">
+                    <label
+                      htmlFor="project-plan-images-upload"
+                      className="project-details-upload-btn"
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </label>
+                    <input
+                      id="project-plan-images-upload"
+                      className="project-details-hidden-file-input"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => setPlanImages(Array.from(e.target.files))}
+                    />
+                  </div>
                 </div>
                 <div className="col-md-3 ">
                   <button
-                    className="purple-btn2"
+                    className="purple-btn2" style={{ color: "#fff" }}
                     type="button"
                     onClick={() => {
                       if (!planName || planImages.length === 0) {
@@ -3066,7 +3086,7 @@ const ProjectDetailsCreate = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() => handlePlanDelete(plan.id, pIdx)}
                               >
                                 x
@@ -3173,7 +3193,7 @@ const ProjectDetailsCreate = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() => discardImage(key, file)}
                               >
                                 x
@@ -3285,7 +3305,7 @@ const ProjectDetailsCreate = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() => discardImage(key, file)}
                                 >
                                   x
@@ -3470,7 +3490,7 @@ const ProjectDetailsCreate = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() => discardImage(key, file)}
                                 >
                                   x
@@ -3564,7 +3584,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() => discardImage(key, file)}
                                     >
                                       x
@@ -3638,7 +3658,7 @@ const ProjectDetailsCreate = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleDiscardFile("brochure", index)
                                 }
@@ -3723,7 +3743,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardPpt("project_ppt", index)
                                     }
@@ -3813,7 +3833,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile("project_layout", index)
                                     }
@@ -3904,7 +3924,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_creatives",
@@ -4004,7 +4024,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleDiscardFile(
                                           "project_creative_generics",
@@ -4105,7 +4125,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleDiscardFile(
                                           "project_creative_offers",
@@ -4200,7 +4220,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_interiors",
@@ -4294,7 +4314,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_exteriors",
@@ -4382,7 +4402,7 @@ const ProjectDetailsCreate = () => {
                                     <td>
                                       <button
                                         type="button"
-                                        className="purple-btn2"
+                                        className="purple-btn2" style={{ color: "#fff" }}
                                         onClick={() =>
                                           handleDiscardFile(
                                             "project_emailer_templetes",
@@ -4468,7 +4488,7 @@ const ProjectDetailsCreate = () => {
                                     <td>
                                       <button
                                         type="button"
-                                        className="purple-btn2"
+                                        className="purple-btn2" style={{ color: "#fff" }}
                                         onClick={() =>
                                           handleDiscardFile(
                                             "KnwYrApt_Technical",
@@ -4562,7 +4582,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile("videos", index)
                                     }
@@ -4664,7 +4684,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() => handleDeleteVideo(index)}
                                     >
                                       x
@@ -4770,7 +4790,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleDeleteVirtualTour(index)
                                       }

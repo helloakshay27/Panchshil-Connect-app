@@ -2282,7 +2282,7 @@ const EventEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFetchedDiscardGallery("cover_image")
                                   }
@@ -2341,7 +2341,7 @@ const EventEdit = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleFetchedDiscardGallery(
                                           key,
@@ -2483,7 +2483,7 @@ const EventEdit = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleFetchedDiscardGallery(key, index, file.id)
                                       }
@@ -2601,7 +2601,7 @@ const EventEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleFetchedDiscardGallery(file.id)
                                     }
@@ -2683,7 +2683,7 @@ const EventEdit = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleFetchedDiscardGallery(
                                           key,
@@ -2814,7 +2814,7 @@ const EventEdit = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleFetchedDiscardGallery(
                                           key,
@@ -2906,7 +2906,7 @@ const EventEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     setFormData((prev) => ({
                                       ...prev,
@@ -2990,7 +2990,7 @@ const EventEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     setFormData((prev) => ({
                                       ...prev,
