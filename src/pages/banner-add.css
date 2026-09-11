@@ -88,7 +88,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 40px;
+  min-height: 48px;
   margin-bottom: 0;
   padding-top: 8px;
 }
@@ -101,7 +101,7 @@
 .banner-form-fields .form-select-field .select__control,
 .banner-form-fields .form-control-field__input {
   width: 100%;
-  min-height: 40px !important;
+  min-height: 48px !important;
   box-sizing: border-box !important;
   border: 1px solid #d0d0d0 !important;
   border-radius: 4px;
@@ -112,12 +112,12 @@
 
 .banner-form-fields .form-control-field__input,
 .banner-form-fields .form-select-field:not(.form-select-field--multi) .select__control {
-  height: 40px !important;
-  max-height: 40px !important;
+  height: 48px !important;
+  max-height: 48px !important;
 }
 
 .banner-form-fields .form-select-field--multi .select__control {
-  min-height: 40px !important;
+  min-height: 48px !important;
 }
 
 .banner-form-fields .form-select-field--multi .select__control:has(.select__multi-value) {
@@ -129,8 +129,8 @@
 }
 
 .banner-form-fields .form-select-field--multi .select__control:not(:has(.select__multi-value)) {
-  height: 40px !important;
-  max-height: 40px !important;
+  height: 48px !important;
+  max-height: 48px !important;
   align-items: center !important;
   flex-wrap: nowrap !important;
   overflow: hidden !important;
@@ -143,21 +143,21 @@
 
 .banner-form-fields .form-select-field--multi .select__value-container--has-value {
   height: auto !important;
-  min-height: 32px !important;
+  min-height: 36px !important;
   max-height: none !important;
   flex-wrap: wrap !important;
   overflow: visible !important;
-  padding-top: 4px !important;
-  padding-bottom: 4px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
 }
 
 .banner-form-fields .form-select-field--multi .select__value-container:not(.select__value-container--has-value) {
-  height: 38px !important;
-  min-height: 38px !important;
-  max-height: 38px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
   flex-wrap: nowrap !important;
   overflow: hidden !important;
-  padding: 0 8px 0 12px !important;
+  padding: 0 8px 0 14px !important;
 }
 
 .banner-form-fields .form-select-field--multi .select__value-container:not(.select__value-container--has-value) .select__placeholder {
@@ -186,19 +186,19 @@
 }
 
 .banner-form-fields .form-control-field__input {
-  padding: 0 12px !important;
-  line-height: 38px;
+  padding: 0 14px !important;
+  line-height: 46px;
 }
 
 .banner-form-fields .form-control-field__input::placeholder {
-  line-height: 38px;
+  line-height: 46px;
   color: #9a9a9a;
 }
 
 .banner-form-fields .form-control-field__textarea {
-  min-height: 40px !important;
-  height: 40px;
-  padding: 9px 12px !important;
+  min-height: 48px !important;
+  height: 48px;
+  padding: 13px 14px !important;
   line-height: 20px;
   resize: vertical;
 }
@@ -223,9 +223,9 @@
   align-items: center;
   gap: 20px;
   width: 100%;
-  height: 40px;
-  min-height: 40px;
-  padding: 0 12px;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 14px;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
   background: #fff;
@@ -431,7 +431,7 @@
 .banner-form-fields .form-check {
   display: flex;
   align-items: center;
-  height: 40px;
+  height: 48px;
   margin: 0;
   gap: 8px;
 }
@@ -470,8 +470,8 @@
   display: inline-flex;
   align-items: center;
   width: 100%;
-  height: 40px;
-  min-height: 40px;
+  height: 48px;
+  min-height: 48px;
   margin: 0;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
@@ -510,7 +510,7 @@
   padding: 0 12px;
   color: #9a9a9a;
   font-size: 14px;
-  line-height: 38px;
+  line-height: 46px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

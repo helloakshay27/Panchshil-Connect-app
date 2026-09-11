@@ -47,8 +47,8 @@ const selectStyles = {
   control: (base, state) => ({
     ...base,
     width: "100%",
-    minHeight: 40,
-    height: 40,
+    minHeight: 48,
+    height: 48,
     borderColor: state.isFocused || state.menuIsOpen ? "var(--red, #de7008)" : "#d0d0d0",
     borderRadius: 4,
     boxShadow: "none",
@@ -60,8 +60,8 @@ const selectStyles = {
   }),
   valueContainer: (base) => ({
     ...base,
-    padding: "0 8px 0 12px",
-    height: 38,
+    padding: "0 8px 0 14px",
+    height: 46,
     display: "flex",
     alignItems: "center",
     flexWrap: "nowrap",
@@ -97,7 +97,7 @@ const selectStyles = {
   }),
   indicatorsContainer: (base) => ({
     ...base,
-    height: 38,
+    height: 46,
     paddingRight: 6,
   }),
   dropdownIndicator: (base) => ({

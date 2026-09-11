@@ -53,8 +53,8 @@ const multiSelectStyles = {
   control: (base, state) => ({
     ...base,
     width: "100%",
-    minHeight: 40,
-    height: state.hasValue ? "auto" : 40,
+    minHeight: 48,
+    height: state.hasValue ? "auto" : 48,
     alignItems: state.hasValue ? "flex-start" : "center",
     flexWrap: state.hasValue ? "wrap" : "nowrap",
     overflow: state.hasValue ? "visible" : "hidden",
@@ -69,10 +69,10 @@ const multiSelectStyles = {
   }),
   valueContainer: (base, state) => ({
     ...base,
-    padding: state.hasValue ? "4px 8px 4px 12px" : "0 8px 0 12px",
+    padding: state.hasValue ? "6px 8px 6px 14px" : "0 8px 0 14px",
     gap: 4,
-    height: state.hasValue ? "auto" : 38,
-    minHeight: state.hasValue ? 32 : 38,
+    height: state.hasValue ? "auto" : 46,
+    minHeight: state.hasValue ? 36 : 46,
     flex: "1 1 auto",
     flexWrap: state.hasValue ? "wrap" : "nowrap",
     overflow: state.hasValue ? "visible" : "hidden",
@@ -105,7 +105,7 @@ const multiSelectStyles = {
     ...base,
     paddingRight: 6,
     alignSelf: state.hasValue ? "flex-start" : "center",
-    height: 38,
+    height: 46,
   }),
   multiValue: (base) => ({
     ...base,

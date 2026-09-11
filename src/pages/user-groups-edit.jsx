@@ -347,7 +347,7 @@ const UserGroupEdit = () => {
             <div className="card-body">
               <div className="row banner-form-fields">
                     {/* Group Name */}
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <div className="form-group">
                         <FormTextField
                           label="Group Name"
@@ -425,7 +425,7 @@ const UserGroupEdit = () => {
                     </div> */}
 
                     {/* Members Multi-Select */}
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <div className="form-group">
                         <MultiSelectBox
                           label="Members ID"
