@@ -231,11 +231,9 @@ const LAYERS = [
 ];
 
 /* =====================================================================
-   Sample / illustrative data. Nothing on this page is wired to a real
-   analytics endpoint yet (unlike the Engagement Dashboard it links back
-   to, which is fully live) — every number below is a stand-in, sized to
-   look plausible for an early-stage resident app, until PostHog / GA4 /
-   Crashlytics are wired in for real.
+   Tile/label structural config. Values are populated at render time from
+   the live analytics queries; when a query has no data yet, the fallback
+   is an honest zero/empty state rather than a fabricated number.
    ===================================================================== */
 
 /* ---------------- Traffic & Session ---------------- */
@@ -248,61 +246,8 @@ const TRAFFIC_TILES = [
   { label: "Recently Online", value: 6, sub: "Active in last 30 min", infoKey: "traffic.recently_online" },
 ];
 
-const ACTIVE_USERS_TREND = [
-  { label: "Jul 22", count: 52 },
-  { label: "Jul 23", count: 58 },
-  { label: "Jul 24", count: 61 },
-  { label: "Jul 25", count: 49 },
-  { label: "Jul 26", count: 66 },
-  { label: "Jul 27", count: 71 },
-  { label: "Jul 28", count: 64 },
-  { label: "Jul 29", count: 69 },
-  { label: "Jul 30", count: 75 },
-  { label: "Jul 31", count: 80 },
-  { label: "Aug 1", count: 73 },
-  { label: "Aug 2", count: 78 },
-  { label: "Aug 3", count: 85 },
-  { label: "Aug 4", count: 91 },
-  { label: "Aug 5", count: 88 },
-  { label: "Aug 6", count: 94 },
-  { label: "Aug 7", count: 99 },
-  { label: "Aug 8", count: 90 },
-  { label: "Aug 9", count: 96 },
-  { label: "Aug 10", count: 101 },
-  { label: "Aug 11", count: 97 },
-  { label: "Aug 12", count: 104 },
-  { label: "Aug 13", count: 108 },
-  { label: "Aug 14", count: 102 },
-];
-
-/* Views/Sessions sample trends (scaled off ACTIVE_USERS_TREND's visitors,
-   using the same ratios as TRAFFIC_TILES: ~2.25x for views, ~1.6x for
-   sessions), plus a "previous period" line ~9% below each - shown until the
-   live /usage_and_distribution endpoint resolves, matching the reference
-   wireframe's Visitors/Views/Sessions tab switcher and dashed comparison line. */
-const scaleTrend = (base, factor) => base.map((p) => ({ label: p.label, count: Math.round(p.count * factor) }));
-const SAMPLE_VIEWS_TREND = scaleTrend(ACTIVE_USERS_TREND, 2.25);
-const SAMPLE_SESSIONS_TREND = scaleTrend(ACTIVE_USERS_TREND, 1.63);
-const SAMPLE_PREV_FACTOR = 0.91;
-const SAMPLE_USAGE_TRENDS = {
-  visitors: { current: ACTIVE_USERS_TREND, previous: scaleTrend(ACTIVE_USERS_TREND, SAMPLE_PREV_FACTOR) },
-  views: { current: SAMPLE_VIEWS_TREND, previous: scaleTrend(SAMPLE_VIEWS_TREND, SAMPLE_PREV_FACTOR) },
-  sessions: { current: SAMPLE_SESSIONS_TREND, previous: scaleTrend(SAMPLE_SESSIONS_TREND, SAMPLE_PREV_FACTOR) },
-};
-
 /* Both bars use the same brand orange. */
 const DEVICE_SPLIT_COLORS = { Android: VIZ.brand, iOS: VIZ.brand };
-const DEVICE_SPLIT = [
-  { label: "Android", value: 67.6, color: DEVICE_SPLIT_COLORS.Android },
-  { label: "iOS", value: 32.4, color: DEVICE_SPLIT_COLORS.iOS },
-];
-
-/* Screen Views ÷ Total Sessions from TRAFFIC_TILES above - shown alongside
-   the device split, matching the reference wireframe's "Views / session" stat. */
-const VIEWS_PER_SESSION_FALLBACK = (
-  TRAFFIC_TILES.find((t) => t.label === "Screen Views").value /
-  TRAFFIC_TILES.find((t) => t.label === "Total Sessions").value
-).toFixed(1);
 
 /* Date-range presets for the filter bar's popover — display-only, matching
    Panchshil_Connect_Dashboard_v3_FM_structure.html's filterbar. Nothing here
@@ -314,8 +259,6 @@ const DATE_RANGE_PRESETS = [
 ];
 
 /* ---------------- Adoption & Engagement ---------------- */
-const REGISTERED_RESIDENTS = 450; // estimated ceiling, matches the source wireframe
-
 const ADOPTION_TILES = [
   {
     label: "Seat Utilisation",
@@ -339,46 +282,6 @@ const ADOPTION_TILES = [
   },
 ];
 
-const ADOPTION_TREND = [
-  { label: "W1", count: 62 },
-  { label: "W2", count: 66 },
-  { label: "W3", count: 69 },
-  { label: "W4", count: 73 },
-  { label: "W5", count: 76 },
-  { label: "W6", count: 80 },
-  { label: "W7", count: 84 },
-  { label: "W8", count: 89 },
-];
-
-/* Weekly growth accounting fallback - shown until the live /growth endpoint
-   resolves. New/Returning/Resurrecting stack above the zero line, Dormant
-   stacks below it, matching the reference wireframe's diverging bar chart.
-   Week 6 (the most recent) matches the figures this section used to show
-   as a single snapshot. */
-const SAMPLE_GROWTH_LABELS = ["W1", "W2", "W3", "W4", "W5", "W6"];
-const SAMPLE_GROWTH_SERIES = [
-  { label: "New", color: VIZ.brand, data: [11, 12, 15, 13, 16, 14] },
-  { label: "Returning", color: "#1c6b3f", data: [46, 48, 50, 53, 55, 52] },
-  { label: "Resurrecting", color: "#5fb98a", data: [3, 3, 4, 4, 5, 4] },
-];
-const SAMPLE_GROWTH_DORMANT = { label: "Dormant", color: VIZ.brand2, data: [10, 11, 9, 13, 14, 12] };
-
-const ROLE_SPLIT = [
-  { label: "Sales / CRM Team", value: 71 },
-  { label: "CX / Support Team", value: 58 },
-  { label: "Marketing Team", value: 44 },
-  { label: "Residents (all)", value: 51 },
-];
-
-const COHORT_ROWS = [
-  { date: "7/15", cells: [100, 58, 44, 36, 30, 26] },
-  { date: "7/22", cells: [100, 61, 47, 38, 32, null] },
-  { date: "7/29", cells: [100, 63, 49, 40, null, null] },
-  { date: "8/5", cells: [100, 65, 51, null, null, null] },
-  { date: "8/12", cells: [100, 68, null, null, null, null] },
-  { date: "8/19", cells: [100, null, null, null, null, null] },
-];
-
 const cohortColor = (v) => {
   const i = Math.min(
     VIZ.ramp.length - 1,
@@ -387,44 +290,6 @@ const cohortColor = (v) => {
   return VIZ.ramp[i];
 };
 
-const SITE_WISE = [
-  {
-    project: "Panchshil Towers – Kharadi",
-    active: 58,
-    sessions: 102,
-    avgSession: "2.6m",
-    bounce: 17,
-    trend: "up",
-    status: "Healthy",
-  },
-  {
-    project: "Panchshil Business Park – Yerwada",
-    active: 41,
-    sessions: 74,
-    avgSession: "2.1m",
-    bounce: 22,
-    trend: "flat",
-    status: "Steady",
-  },
-  {
-    project: "Panchshil Residency – Hinjewadi",
-    active: 33,
-    sessions: 55,
-    avgSession: "1.9m",
-    bounce: 26,
-    trend: "up",
-    status: "Steady",
-  },
-  {
-    project: "Panchshil Greens – Bavdhan",
-    active: 19,
-    sessions: 29,
-    avgSession: "1.6m",
-    bounce: 31,
-    trend: "dn",
-    status: "Watch",
-  },
-];
 const statusClass = {
   Healthy: "pcd-cell-on",
   Steady: "pcd-cell-neutral",
@@ -687,14 +552,6 @@ const WORKFLOWS = [
 ];
 const WF_BUCKETS = [...new Set(WORKFLOWS.map((w) => w.bucket))];
 
-const TOP_ENTRY_SCREENS = [
-  { screen: "main_home", visitors: 81, views: 146, bounce: 13 },
-  { screen: "login", visitors: 29, views: 52, bounce: 24 },
-  { screen: "notifications", visitors: 11, views: 20, bounce: 28 },
-  { screen: "my_documents", visitors: 10, views: 18, bounce: 28 },
-  { screen: "project_details", visitors: 8, views: 15, bounce: 28 },
-];
-
 /* ---------------- App Stability ---------------- */
 const CRASH_TILES = [
   {
@@ -722,107 +579,6 @@ const CRASH_TILES = [
     sub: "com.lockated.resident_panchshil",
     infoKey: "stability.latest_release",
   },
-];
-
-const CRASH_FREE_USERS_TREND = [
-  { label: "Aug 8", count: 96.4 },
-  { label: "Aug 9", count: 97.1 },
-  { label: "Aug 10", count: 96.8 },
-  { label: "Aug 11", count: 97.6 },
-  { label: "Aug 12", count: 98.0 },
-  { label: "Aug 13", count: 97.5 },
-  { label: "Aug 14", count: 98.2 },
-];
-const CRASH_FREE_SESSIONS_TREND = [
-  { label: "Aug 8", count: 97.2 },
-  { label: "Aug 9", count: 97.9 },
-  { label: "Aug 10", count: 97.5 },
-  { label: "Aug 11", count: 98.1 },
-  { label: "Aug 12", count: 98.5 },
-  { label: "Aug 13", count: 98.0 },
-  { label: "Aug 14", count: 98.7 },
-];
-
-const CRASH_ISSUES = [
-  {
-    issue: "new MultiImageStreamCompleter.<fn>",
-    sub: "FlutterError/HttpException on image load failure — CDN asset socket abort",
-    version: "1.0.6",
-    events: 5,
-    users: 3,
-    tag: "Repetitive",
-  },
-  {
-    issue: "CarouselSliderState.build.<fn>",
-    sub: "RangeError (invalid length)",
-    version: "1.0.6",
-    events: 3,
-    users: 2,
-  },
-  {
-    issue: "new _VideoProgressIndicatorState.<fn>",
-    sub: "setState/markNeedsBuild error",
-    version: "1.0.6",
-    events: 2,
-    users: 1,
-  },
-  {
-    issue: "BuildOwner.finalizeTree.<fn>",
-    sub: "Duplicate GlobalKeys",
-    version: "1.0.6",
-    events: 1,
-    users: 1,
-  },
-  {
-    issue: "_TabBarState._handleTabControllerAnimationTick",
-    sub: "Null check operator used on a null value",
-    version: "1.0.6",
-    events: 1,
-    users: 1,
-  },
-];
-
-const CRASH_VARIANTS = [
-  { label: "Android — com.lockated.resident_panchshil", value: 97.8 },
-  { label: "iOS — com.panchshil.connect (live)", value: 98.9 },
-  {
-    label: "iOS — legacy bundle (stale, no traffic)",
-    value: 81.2,
-    color: VIZ.brand2,
-  },
-];
-
-const HEALTH_TILES = [
-  {
-    label: "API Timeout Rate",
-    value: "2.6%",
-    sub: "api_timeout ÷ all API calls",
-  },
-  {
-    label: "Offline-Blocked Actions",
-    value: "47",
-    sub: "offline_action_blocked, last 90 days",
-  },
-  {
-    label: "Rooted / Jailbroken Devices",
-    value: "4",
-    sub: "root_detection_triggered, distinct devices",
-  },
-  {
-    label: "Slow API Response (p90)",
-    value: "1,860 ms",
-    sub: "slow_api_response, duration_ms",
-  },
-];
-
-const FAILURES_BY_MODULE = [
-  { key: "news", label: "News & Press", value: 6 },
-  { key: "switcher", label: "Project Switcher", value: 9 },
-  { key: "referral", label: "Referral Program", value: 12 },
-  { key: "sitevisit", label: "Site Visits", value: 15 },
-  { key: "docs", label: "My Documents", value: 18 },
-  { key: "servicereq", label: "Service Requests", value: 22 },
-  { key: "account", label: "My Account & Financials", value: 31 },
 ];
 
 const PanchshilConnectUsageDashboard = () => {
@@ -1020,7 +776,7 @@ const PanchshilConnectUsageDashboard = () => {
   );
 
   const trafficTiles = useMemo(() => {
-    if (!trafficQuery.data) return TRAFFIC_TILES;
+    if (!trafficQuery.data) return TRAFFIC_TILES.map((t) => ({ ...t, value: 0 }));
     const keyFor = (k) =>
       ({
         active_users: "traffic.active_users",
@@ -1049,8 +805,8 @@ const PanchshilConnectUsageDashboard = () => {
   // Visitors/Views/Sessions trend, with a "previous period" dashed
   // comparison line - both current and previous come straight out of
   // usage.daily (buildUsage already aligns them day-for-day), switched by
-  // the usageTab toggle. Falls back to the illustrative sample trends above
-  // until the live endpoint resolves.
+  // the usageTab toggle. Falls back to an empty series until the live
+  // endpoint resolves.
   const usageSeries = useMemo(() => {
     if (usageQuery.data) {
       return {
@@ -1058,7 +814,7 @@ const PanchshilConnectUsageDashboard = () => {
         previous: usage.daily.map((day) => ({ label: day.day, count: day.previous[usageTab] })),
       };
     }
-    return SAMPLE_USAGE_TRENDS[usageTab];
+    return { current: [], previous: [] };
   }, [usage, usageQuery.data, usageTab]);
 
   // Card is specifically "Android vs iOS usage" — always show both rows, even
@@ -1076,16 +832,20 @@ const PanchshilConnectUsageDashboard = () => {
         color: DEVICE_SPLIT_COLORS[label],
       }));
     }
-    return DEVICE_SPLIT;
+    return ["Android", "iOS"].map((label) => ({
+      label,
+      value: 0,
+      color: DEVICE_SPLIT_COLORS[label],
+    }));
   }, [usage, usageQuery.data]);
 
   // Screen Views ÷ Sessions, shown alongside the device split card - reads
   // the same traffic.tiles values the tiles row above already renders.
   const viewsPerSession = useMemo(() => {
-    if (!trafficQuery.data) return VIEWS_PER_SESSION_FALLBACK;
+    if (!trafficQuery.data) return "0.0";
     const views = traffic.tiles.find((t) => t.key === "screen_views")?.value;
     const sessions = traffic.tiles.find((t) => t.key === "sessions")?.value;
-    return views != null && sessions ? (views / sessions).toFixed(1) : VIEWS_PER_SESSION_FALLBACK;
+    return views != null && sessions ? (views / sessions).toFixed(1) : "0.0";
   }, [traffic, trafficQuery.data]);
 
   // Weekly growth accounting for the diverging bar chart - built from the
@@ -1096,11 +856,7 @@ const PanchshilConnectUsageDashboard = () => {
   const growthWeekly = useMemo(() => {
     const weeks = growthQuery.data ? growth.weeks : null;
     if (!Array.isArray(weeks) || weeks.length === 0) {
-      return {
-        labels: SAMPLE_GROWTH_LABELS,
-        series: SAMPLE_GROWTH_SERIES,
-        negSeries: SAMPLE_GROWTH_DORMANT,
-      };
+      return { labels: [], series: [], negSeries: null };
     }
     const labels = weeks.map(
       (w, i) => w.week_label || w.week_start || w.week || w.label || w.date || `W${i + 1}`,
@@ -1118,7 +874,12 @@ const PanchshilConnectUsageDashboard = () => {
   }, [growth, growthQuery.data]);
 
   const adoptionTiles = useMemo(() => {
-    if (!adoptionQuery.data) return ADOPTION_TILES;
+    if (!adoptionQuery.data) {
+      return ADOPTION_TILES.map((t) => ({
+        ...t,
+        value: t.label === "Module Breadth" ? "0 / 0" : "0%",
+      }));
+    }
     return [
       {
         label: adoption.seat.label,
@@ -1160,7 +921,7 @@ const PanchshilConnectUsageDashboard = () => {
             date: row.cohort_week,
             cells: [0, 1, 2, 3, 4, 5].map((week) => row[`week${week}`] ?? null),
           }))
-        : COHORT_ROWS,
+        : [],
     [retention, retentionQuery.data],
   );
 
@@ -1170,43 +931,7 @@ const PanchshilConnectUsageDashboard = () => {
   const wfBucket = wf.bucket;
   const wfMods = WORKFLOWS.filter((w) => w.bucket === wfBucket);
 
-  const sampleFunnelSteps = useMemo(() => {
-    const n = wf.steps.length;
-    return wf.steps
-      .map((s, i) => {
-        const retained = Math.round(
-          100 - (i * (100 - wf.completionRate)) / (n - 1 || 1),
-        );
-        const drop = i > 0 ? null : null;
-        return { step: s, retained };
-      })
-      .map((row, i, arr) => ({
-        ...row,
-        drop: i > 0 ? arr[i - 1].retained - row.retained : null,
-      }));
-  }, [wf]);
-
-  const sampleScreenRows = useMemo(
-    () =>
-      sampleFunnelSteps.map((row, i) => {
-        const users = Math.max(
-          1,
-          Math.round((wf.completions * row.retained) / 100),
-        );
-        return {
-          screen: row.step,
-          users,
-          events: Math.round(users * 1.4),
-          sessions: Math.round(users * 0.9),
-          completion: row.retained,
-        };
-      }),
-    [sampleFunnelSteps, wf],
-  );
-
-  const funnelSteps = workflowQuery.data
-    ? liveWorkflow.funnel
-    : sampleFunnelSteps;
+  const funnelSteps = workflowQuery.data ? liveWorkflow.funnel : [];
   const screenRows = workflowQuery.data
     ? liveWorkflow.flows.map((flow) => ({
         screen: flow.path,
@@ -1215,7 +940,7 @@ const PanchshilConnectUsageDashboard = () => {
         sessions: flow.sessions,
         completion: flow.fComp,
       }))
-    : sampleScreenRows;
+    : [];
   const entryScreens = workflowQuery.data
     ? liveWorkflow.entryScreens.map((screen) => ({
         screen: screen.path,
@@ -1223,16 +948,15 @@ const PanchshilConnectUsageDashboard = () => {
         views: screen.views,
         bounce: screen.bounce,
       }))
-    : TOP_ENTRY_SCREENS;
+    : [];
   const moduleRows = useMemo(
-    () => (moduleQuery.data ? moduleQuery.data.tree || [] : SITE_WISE),
+    () => (moduleQuery.data ? moduleQuery.data.tree || [] : []),
     [moduleQuery.data],
   );
 
   // Site-wise breakdown table - always the same 7 reference columns
-  // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status), whether
-  // the rows come from the sample SITE_WISE projects or the live module tree.
-  // The live tree only carries name/users/events/sessions, so the columns
+  // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status). The
+  // live tree only carries name/users/events/sessions, so the columns
   // it can't supply (Avg session/Bounce/Trend/Status) show "–" rather than
   // a made-up number.
   const siteWiseRows = useMemo(
@@ -1250,7 +974,17 @@ const PanchshilConnectUsageDashboard = () => {
   );
 
   const stabilityTiles = useMemo(() => {
-    if (!crashOverviewQuery.data) return CRASH_TILES;
+    if (!crashOverviewQuery.data) {
+      return CRASH_TILES.map((t) => ({
+        ...t,
+        value:
+          t.label === "Latest Release"
+            ? "-"
+            : t.label.startsWith("Crash-Free")
+              ? "0%"
+              : "0",
+      }));
+    }
     return crashOverview.tiles.map((t) => ({
       ...t,
       infoKey:
@@ -1265,26 +999,22 @@ const PanchshilConnectUsageDashboard = () => {
   }, [crashOverviewQuery.data, crashOverview.tiles]);
 
   const crashUsersTrend = useMemo(
-    () => (crashTrendQuery.data ? crashTrend.users : CRASH_FREE_USERS_TREND),
+    () => (crashTrendQuery.data ? crashTrend.users : []),
     [crashTrendQuery.data, crashTrend.users],
   );
 
   const crashSessionsTrend = useMemo(
-    () =>
-      crashTrendQuery.data ? crashTrend.sessions : CRASH_FREE_SESSIONS_TREND,
+    () => (crashTrendQuery.data ? crashTrend.sessions : []),
     [crashTrendQuery.data, crashTrend.sessions],
   );
 
   const crashIssues = useMemo(
-    () => (crashDiagnosticsQuery.data ? crashDiagnostics.issues : CRASH_ISSUES),
+    () => (crashDiagnosticsQuery.data ? crashDiagnostics.issues : []),
     [crashDiagnosticsQuery.data, crashDiagnostics.issues],
   );
 
   const crashReleaseRows = useMemo(
-    () =>
-      crashReleaseQuery.data
-        ? crashByRelease.byRelease
-        : [{ key: "1.0.6", label: "1.0.6 (8)", value: 12 }],
+    () => (crashReleaseQuery.data ? crashByRelease.byRelease : []),
     [crashReleaseQuery.data, crashByRelease.byRelease],
   );
 
@@ -1296,12 +1026,12 @@ const PanchshilConnectUsageDashboard = () => {
             value: row.value,
             color: row.color || VIZ.brand3,
           }))
-        : CRASH_VARIANTS,
+        : [],
     [crashReleaseQuery.data, crashByRelease.variants],
   );
 
   const healthTiles = useMemo(() => {
-    const rows = crashDiagnosticsQuery.data ? crashDiagnostics.health : HEALTH_TILES;
+    const rows = crashDiagnosticsQuery.data ? crashDiagnostics.health : [];
     return rows.map((t) => ({
       ...t,
       infoKey:
@@ -1315,10 +1045,7 @@ const PanchshilConnectUsageDashboard = () => {
   }, [crashDiagnosticsQuery.data, crashDiagnostics.health]);
 
   const failureRows = useMemo(
-    () =>
-      crashHandledFailuresQuery.data
-        ? crashHandledFailures.rows
-        : FAILURES_BY_MODULE,
+    () => (crashHandledFailuresQuery.data ? crashHandledFailures.rows : []),
     [crashHandledFailuresQuery.data, crashHandledFailures.rows],
   );
 
@@ -1678,7 +1405,7 @@ const PanchshilConnectUsageDashboard = () => {
                       points={
                         adoptionTrendQuery.data
                           ? adoptionTrend.current
-                          : ADOPTION_TREND
+                          : []
                       }
                     />
                   </ChartCard>
@@ -1758,7 +1485,7 @@ const PanchshilConnectUsageDashboard = () => {
                               label: role.label,
                               value: role.activeShare || 0,
                             }))
-                          : ROLE_SPLIT
+                          : []
                       }
                     />
                   </ChartCard>
@@ -1766,11 +1493,11 @@ const PanchshilConnectUsageDashboard = () => {
                 <div className="pcd-span-2">
                   <MetricCard
                     label="Dormant users"
-                    value={adoptionQuery.data ? adoption.dormant.value : 312}
+                    value={adoptionQuery.data ? adoption.dormant.value : 0}
                     caption={
                       adoptionQuery.data
                         ? `No activity ${adoption.dormant.band}`
-                        : `No activity 14+ days, vs. estimated ${REGISTERED_RESIDENTS.toLocaleString()} registered residents`
+                        : "No activity 14+ days"
                     }
                     infoKey="adoption.dormant"
                     onInfo={openInfoPopover}
@@ -1864,9 +1591,7 @@ const PanchshilConnectUsageDashboard = () => {
                 <Tile
                   label="Workflow Adoption"
                   value={`${
-                    workflowQuery.data
-                      ? liveWorkflow.kpis.fAdopt.value
-                      : wf.adoption
+                    workflowQuery.data ? liveWorkflow.kpis.fAdopt.value : 0
                   }%`}
                   sub="of active users attempt this workflow"
                   infoKey="workflow.adoption"
@@ -1875,9 +1600,7 @@ const PanchshilConnectUsageDashboard = () => {
                 <Tile
                   label="Completion Rate"
                   value={`${
-                    workflowQuery.data
-                      ? liveWorkflow.kpis.fComp.value
-                      : wf.completionRate
+                    workflowQuery.data ? liveWorkflow.kpis.fComp.value : 0
                   }%`}
                   sub="of those who start it, finish it"
                   infoKey="workflow.completion"
@@ -1886,28 +1609,28 @@ const PanchshilConnectUsageDashboard = () => {
                 <Tile
                   label="Biggest Step Drop"
                   value={`${
-                    workflowQuery.data
-                      ? liveWorkflow.kpis.fStep.value
-                      : Math.max(...funnelSteps.slice(1).map((s) => s.drop))
+                    workflowQuery.data ? liveWorkflow.kpis.fStep.value : 0
                   }%`}
-                  sub={`at ${
-                    funnelSteps
-                      .slice(1)
-                      .sort(
-                        (a, b) =>
-                          (b.drop_pct ?? b.drop ?? 0) -
-                          (a.drop_pct ?? a.drop ?? 0),
-                      )[0]?.step
-                  }`}
+                  sub={
+                    funnelSteps.length > 1
+                      ? `at ${
+                          funnelSteps
+                            .slice(1)
+                            .sort(
+                              (a, b) =>
+                                (b.drop_pct ?? b.drop ?? 0) -
+                                (a.drop_pct ?? a.drop ?? 0),
+                            )[0]?.step
+                        }`
+                      : "-"
+                  }
                   infoKey="workflow.biggest_step_drop"
                   onInfo={openInfoPopover}
                 />
                 <Tile
                   label="Usage Volume"
                   value={String(
-                    workflowQuery.data
-                      ? liveWorkflow.kpis.fVol.value
-                      : wf.completions,
+                    workflowQuery.data ? liveWorkflow.kpis.fVol.value : 0,
                   )}
                   sub="completions this period"
                   infoKey="workflow.usage_volume"
@@ -1919,7 +1642,7 @@ const PanchshilConnectUsageDashboard = () => {
                 <div className="pcd-span-4">
                   <ChartCard
                     title={`${wf.name} — completion funnel`}
-                    subtitle="Real event sequence, illustrative retained %"
+                    subtitle="Live event sequence and retained %"
                     infoKey="chart.funnel"
                     onInfo={openInfoPopover}
                   >
@@ -2173,7 +1896,7 @@ const PanchshilConnectUsageDashboard = () => {
                 <div className="pcd-span-4">
                   <ChartCard
                     title="Handled Failures by Module"
-                    subtitle="Failures caught in a try/catch and recorded as a non-fatal, by module — illustrative counts, real event names"
+                    subtitle="Failures caught in a try/catch and recorded as a non-fatal, by module"
                   >
                     <HBar rows={failureRows} color="#c98a12" />
                   </ChartCard>
