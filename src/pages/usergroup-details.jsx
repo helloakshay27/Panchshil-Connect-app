@@ -92,8 +92,8 @@ const UserGroupDetails = () => {
 
   return (
     <div className="main-content">
-      <div className="module-data-section banner-form-page p-3">
-        <div className="card banner-form-card mt-3 pb-4">
+      <div className="module-data-section banner-form-page usergroup-details-page p-3">
+        <div className="card banner-form-card usergroup-details-card mt-3">
           <div className="card-header banner-form-section-header">
             <h3 className="banner-form-section-heading">
               <span className="banner-form-section-icon" aria-hidden="true">
@@ -114,7 +114,7 @@ const UserGroupDetails = () => {
               />
             </div>
 
-            {formData.usergroup_members.length > 0 && (
+            {/* {formData.usergroup_members.length > 0 && (
               <div className="banner-details-members">
                 <h4 className="banner-details-subtitle">Members</h4>
                 <div className="tbl-container">
@@ -136,11 +136,11 @@ const UserGroupDetails = () => {
                   </table>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 
-        <div className="banner-form-actions">
+        {/* <div className="banner-form-actions">
           <button
             type="button"
             className="banner-form-action-btn"
@@ -155,7 +155,7 @@ const UserGroupDetails = () => {
           >
             Back
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

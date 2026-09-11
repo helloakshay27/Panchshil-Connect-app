@@ -17,6 +17,27 @@
   background: #fff;
 }
 
+.usergroup-details-page {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.usergroup-details-page .usergroup-details-card {
+  margin-bottom: 0;
+}
+
+.usergroup-details-page .usergroup-details-card .card-body {
+  padding: 1.5rem 1.25rem 1rem;
+}
+
+.usergroup-details-page .banner-details-grid {
+  gap: 12px 32px;
+}
+
+.usergroup-details-page .banner-details-item {
+  min-height: 20px;
+}
+
 .banner-form-card .banner-form-section-header {
   display: flex;
   align-items: center;
