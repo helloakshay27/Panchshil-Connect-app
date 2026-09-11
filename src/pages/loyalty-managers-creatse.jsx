@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { UserRound } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const LoyaltyManager = () => {
   const connectEvents = useConnectEvents();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [projectId, setProjectId] = useState("");
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  // ✅ Fetch Projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -36,7 +38,6 @@ const LoyaltyManager = () => {
     fetchProjects();
   }, []);
 
-  // ✅ Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -50,15 +51,18 @@ const LoyaltyManager = () => {
       return;
     }
 
-    // Basic mobile validation (10 digits)
     if (!/^\d{10}$/.test(mobile)) {
       toast.error("Please enter a valid 10-digit mobile number!");
       return;
     }
 
-    // Email validation if provided
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("Please enter a valid email address!");
+      return;
+    }
+
+    if (!projectId) {
+      toast.error("Project is required!");
       return;
     }
 
@@ -67,23 +71,19 @@ const LoyaltyManager = () => {
     try {
       const payload = {
         loyalty_manager: {
-          name: name,
-          mobile: mobile,
-          email: email || undefined, // Only include if provided
+          name,
+          mobile,
+          email: email || undefined,
           project_id: projectId || undefined,
-        }
+        },
       };
 
-      await axios.post(
-        `${baseURL}loyalty_managers.json`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.post(`${baseURL}loyalty_managers.json`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       connectEvents.onRecordSaved({ mode: "added" });
       toast.success("Loyalty Manager added successfully!");
@@ -94,7 +94,6 @@ const LoyaltyManager = () => {
       navigate("/setup-member/loyalty-managers-list");
     } catch (error) {
       console.error("Error submitting loyalty manager:", error);
-
       const errorMessage =
         error.response?.data?.message || "Failed to add Loyalty Manager.";
       toast.error(errorMessage);
@@ -105,111 +104,97 @@ const LoyaltyManager = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Loyalty Manager</h3>
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <UserRound size={16} strokeWidth={1.8} />
+                </span>
+                Create Loyalty Manager
+              </h3>
             </div>
             <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                <div className="row">
-                  {/* Name Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Name
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Enter name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Mobile Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Mobile
-                        <span className="otp-asterisk">{" "}*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="tel"
-                        placeholder="Enter mobile number"
-                        value={mobile}
-                        onChange={(e) => setMobile(e.target.value)}
-                        maxLength="10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Email Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Email</label>
-                      <input
-                        className="form-control"
-                        type="email"
-                        placeholder="Enter email (optional)"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Project Field */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <SelectBox
-                        label="Project"
-                        required
-                        placeholder="Select Project"
-                        options={projects.map((project) => ({
-                          label: project.project_name,
-                          value: project.id,
-                        }))}
-                        value={projectId}
-                        onChange={(value) => setProjectId(value)}
-                      />
-                    </div>
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Name"
+                      required
+                      name="name"
+                      placeholder="Enter name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
                   </div>
                 </div>
 
-                {/* ✅ Submit & Cancel Buttons */}
-                <div className="row mt-2 justify-content-center">
-                  <div className="col-md-2">
-                    <button
-                      type="submit"
-                      className="purple-btn2 w-100"
-                      disabled={loading}
-                    >
-                      {loading ? "Submitting..." : "Submit"}
-                    </button>
-                  </div>
-
-                  <div className="col-md-2">
-                    <button
-                      type="button"
-                      className="purple-btn2 w-100"
-                      onClick={() => navigate("/setup-member/loyalty-managers-list")}
-                      disabled={loading}
-                    >
-                      Cancel
-                    </button>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Mobile"
+                      required
+                      type="tel"
+                      name="mobile"
+                      placeholder="Enter mobile number"
+                      value={mobile}
+                      onChange={(e) => setMobile(e.target.value)}
+                      maxLength={10}
+                    />
                   </div>
                 </div>
-              </form>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Email"
+                      type="email"
+                      name="email"
+                      placeholder="Enter email (optional)"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Project"
+                      required
+                      placeholder="Select Project"
+                      options={projects.map((project) => ({
+                        label: project.project_name,
+                        value: project.id,
+                      }))}
+                      value={projectId}
+                      onChange={(value) => setProjectId(value)}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={() => navigate("/setup-member/loyalty-managers-list")}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
