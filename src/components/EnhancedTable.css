@@ -289,8 +289,16 @@
   margin-top: 0;
 }
 
+.module-data-section .tbl-container.enhanced-table__container table,
+.module-data-section .tbl-container.enhanced-table__container table.w-100 {
+  table-layout: fixed;
+  width: 100% !important;
+  min-width: 100%;
+}
+
 .module-data-section .tbl-container.enhanced-table__container thead th {
   position: relative;
+  overflow: hidden;
   height: 38px;
   padding: 8px 12px;
   color: #fff !important;
@@ -317,12 +325,14 @@
 
 .module-data-section .tbl-container.enhanced-table__container tbody td {
   box-sizing: border-box;
+  overflow: hidden;
   height: 40px;
   min-height: 40px;
   padding: 8px 12px;
   border-right: 0 !important;
   border-bottom: 1px solid #f0ede7 !important;
   line-height: 20px;
+  vertical-align: middle;
 }
 
 .module-data-section

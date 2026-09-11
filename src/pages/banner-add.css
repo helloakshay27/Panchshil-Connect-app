@@ -183,12 +183,14 @@
 }
 
 .banner-form-fields input[type="date"],
-.banner-form-fields input[type="time"] {
+.banner-form-fields input[type="time"],
+.banner-form-fields input[type="datetime-local"] {
   line-height: normal;
 }
 
 .banner-form-fields input[type="date"]::-webkit-datetime-edit,
-.banner-form-fields input[type="time"]::-webkit-datetime-edit {
+.banner-form-fields input[type="time"]::-webkit-datetime-edit,
+.banner-form-fields input[type="datetime-local"]::-webkit-datetime-edit {
   display: flex;
   align-items: center;
   height: 100%;

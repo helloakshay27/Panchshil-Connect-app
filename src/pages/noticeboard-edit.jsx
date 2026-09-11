@@ -1,12 +1,51 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import { Image as ImageIcon, Megaphone } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
+
+const RadioField = ({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  disabled = false,
+}) => (
+  <div className="form-control-field">
+    {label && <span className="form-control-field__label">{label}</span>}
+    <div className="form-radio-control">
+      {options.map((option) => (
+        <div className="form-check" key={option.value}>
+          <input
+            id={`edit-${name}-${option.value}`}
+            className="form-check-input"
+            type="radio"
+            name={name}
+            value={option.value}
+            checked={value === option.value}
+            onChange={onChange}
+            disabled={disabled}
+          />
+          <label
+            className="form-check-label"
+            htmlFor={`edit-${name}-${option.value}`}
+          >
+            {option.label}
+          </label>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 const NoticeboardEdit = () => {
   const connectEvents = useConnectEvents();
@@ -579,13 +618,15 @@ const NoticeboardEdit = () => {
   return (
     <>
       <div className="main-content">
-        <div className="">
-          <div className="module-data-section container-fluid">
-            <div className="module-data-section p-3">
-              {/* ── Main Form Card ── */}
-              <div className="card mt-4 pb-4 mx-4">
-                <div className="card-header">
-                  <h3 className="card-title">Edit Broadcast</h3>
+        <div className="module-data-section banner-form-page p-3">
+              <div className="card banner-form-card mt-3 pb-4">
+                <div className="card-header banner-form-section-header">
+                  <h3 className="banner-form-section-heading">
+                    <span className="banner-form-section-icon" aria-hidden="true">
+                      <Megaphone size={16} strokeWidth={1.8} />
+                    </span>
+                    Edit Broadcast
+                  </h3>
                 </div>
 
                 <div className="card-body">
@@ -599,7 +640,7 @@ const NoticeboardEdit = () => {
                   )}
                   {error && <p className="text-danger">{error}</p>}
 
-                  <div className="row">
+                  <div className="row banner-form-fields">
                     {/* Notice Type */}
                     <div className="col-md-3">
                       <div className="form-group">
@@ -662,10 +703,8 @@ const NoticeboardEdit = () => {
                     {/* Notice Heading */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Notice Heading</label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Notice Heading"
                           name="notice_heading"
                           placeholder="Enter Notice Heading"
                           value={formData.notice_heading}
@@ -678,10 +717,8 @@ const NoticeboardEdit = () => {
                     {/* Notice Text */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Notice Text</label>
-                        <textarea
-                          className="form-control"
-                          rows={1}
+                        <FormTextField
+                          label="Notice Text"
                           name="notice_text"
                           placeholder="Enter Notice Text"
                           value={formData.notice_text}
@@ -715,11 +752,9 @@ const NoticeboardEdit = () => {
                     {/* Expire Time */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Expire Time<span className="otp-asterisk"> *</span>
-                        </label>
-                        <input
-                          className="form-control"
+                        <FormTextField
+                          label="Expire Time"
+                          required
                           type="datetime-local"
                           name="expire_time"
                           value={formData.expire_time}
@@ -731,19 +766,13 @@ const NoticeboardEdit = () => {
                     {/* Comment */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Comment
-                          {formData.notice_type !== "roadblock" && (
-                            <span className="otp-asterisk"> *</span>
-                          )}
-                        </label>
-                        <textarea
-                          className="form-control"
-                          rows={1}
+                        <FormTextField
+                          label="Comment"
                           name="comment"
                           placeholder="Enter Comment"
                           value={formData.comment}
                           onChange={handleChange}
+                          required={formData.notice_type !== "roadblock"}
                         />
                       </div>
                     </div>
@@ -751,107 +780,49 @@ const NoticeboardEdit = () => {
                     {/* Mark Important */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Mark Important</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="is_important"
-                              value="1"
-                              checked={formData.is_important === "1"}
-                              onChange={handleChange}
-                              disabled={formData.notice_type === "roadblock"}
-                            />
-                            <label className="form-check-label" style={{ color: "black" }}>
-                              Yes
-                            </label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="is_important"
-                              value="0"
-                              checked={formData.is_important === "0"}
-                              onChange={handleChange}
-                              disabled={formData.notice_type === "roadblock"}
-                            />
-                            <label className="form-check-label" style={{ color: "black" }}>
-                              No
-                            </label>
-                          </div>
-                        </div>
+                        <RadioField
+                          label="Mark Important"
+                          name="is_important"
+                          value={formData.is_important}
+                          onChange={handleChange}
+                          disabled={formData.notice_type === "roadblock"}
+                          options={[
+                            { value: "1", label: "Yes" },
+                            { value: "0", label: "No" },
+                          ]}
+                        />
                       </div>
                     </div>
 
                     {/* Send Email */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Send Email</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="email_trigger_enabled"
-                              value="1"
-                              checked={formData.email_trigger_enabled === "1"}
-                              onChange={handleChange}
-                            />
-                            <label className="form-check-label" style={{ color: "black" }}>
-                              Yes
-                            </label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="email_trigger_enabled"
-                              value="0"
-                              checked={formData.email_trigger_enabled === "0"}
-                              onChange={handleChange}
-                            />
-                            <label className="form-check-label" style={{ color: "black" }}>
-                              No
-                            </label>
-                          </div>
-                        </div>
+                        <RadioField
+                          label="Send Email"
+                          name="email_trigger_enabled"
+                          value={formData.email_trigger_enabled}
+                          onChange={handleChange}
+                          options={[
+                            { value: "1", label: "Yes" },
+                            { value: "0", label: "No" },
+                          ]}
+                        />
                       </div>
                     </div>
 
                     {/* Active Status */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>Active Status</label>
-                        <div className="d-flex">
-                          <div className="form-check me-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="active"
-                              value="1"
-                              checked={formData.active === "1"}
-                              onChange={handleChange}
-                            />
-                            <label className="form-check-label" style={{ color: "black" }}>
-                              Active
-                            </label>
-                          </div>
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="active"
-                              value="0"
-                              checked={formData.active === "0"}
-                              onChange={handleChange}
-                            />
-                            <label className="form-check-label" style={{ color: "black" }}>
-                              Inactive
-                            </label>
-                          </div>
-                        </div>
+                        <RadioField
+                          label="Active Status"
+                          name="active"
+                          value={formData.active}
+                          onChange={handleChange}
+                          options={[
+                            { value: "1", label: "Active" },
+                            { value: "0", label: "Inactive" },
+                          ]}
+                        />
                       </div>
                     </div>
                   </div>
@@ -859,9 +830,14 @@ const NoticeboardEdit = () => {
               </div>
 
               {/* ── File Upload Card ── */}
-              <div className="card mt-3 pb-4 mx-4">
-                <div className="card-header3">
-                  <h3 className="card-title">File Upload</h3>
+              <div className="card banner-form-card mt-3 pb-4">
+                <div className="card-header banner-form-section-header">
+                  <h3 className="banner-form-section-heading">
+                    <span className="banner-form-section-icon" aria-hidden="true">
+                      <ImageIcon size={16} strokeWidth={1.8} />
+                    </span>
+                    File Upload
+                  </h3>
                 </div>
                 <div className="card-body mt-0 pb-0">
                   <div className="d-flex justify-content-between align-items-end mx-1">
@@ -1024,29 +1000,24 @@ const NoticeboardEdit = () => {
               </div>
 
               {/* ── Action Buttons ── */}
-              <div className="row justify-content-center mt-3">
-                <div className="col-md-2">
-                  <button
-                    onClick={handleSubmit}
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    {loading ? "Updating..." : "Update"}
-                  </button>
-                </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
+              <div className="banner-form-actions">
+                <button
+                  onClick={handleSubmit}
+                  type="submit"
+                  className="banner-form-action-btn"
+                  disabled={loading}
+                >
+                  {loading ? "Updating..." : "Update"}
+                </button>
+                <button
+                  type="button"
+                  className="banner-form-action-btn"
+                  onClick={handleCancel}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
               </div>
-            </div>
-          </div>
         </div>
       </div>
     </>

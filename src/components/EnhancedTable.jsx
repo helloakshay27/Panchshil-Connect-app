@@ -436,6 +436,12 @@ export default function EnhancedTable({
           <thead>
             <tr>
               {visibleColumns.map((column) => {
+                const resolvedWidth =
+                  columnWidths[column.key] || column.width;
+                const isPercentWidth =
+                  typeof resolvedWidth === "string" &&
+                  resolvedWidth.trim().endsWith("%");
+
                 return (
                   <th
                     key={column.key}
@@ -443,8 +449,8 @@ export default function EnhancedTable({
                       draggingColumn === column.key ? "is-dragging" : ""
                     }`}
                     style={{
-                      width: columnWidths[column.key] || column.width,
-                      minWidth: columnWidths[column.key] || column.width,
+                      width: resolvedWidth,
+                      minWidth: isPercentWidth ? undefined : resolvedWidth,
                     }}
                     onDragOver={(event) => event.preventDefault()}
                     onDrop={(event) => {
