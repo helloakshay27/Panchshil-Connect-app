@@ -2,9 +2,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Eye, EyeOff, Mail } from "lucide-react";
+import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
-import { Eye, EyeOff } from "lucide-react";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
+
+const AUTHENTICATION_OPTIONS = [
+  { value: "plain", label: "Plain" },
+  { value: "login", label: "Login" },
+  { value: "cram_md5", label: "CRAM-MD5" },
+];
 
 const SMTPSettingsEdit = () => {
   const connectEvents = useConnectEvents();
@@ -24,35 +33,18 @@ const SMTPSettingsEdit = () => {
     company_name: "",
   });
 
-  console.log("formData:", formData);
-
-  // Fetch existing SMTP settings data
   useEffect(() => {
     const fetchSMTPData = async () => {
       try {
         setFetchingData(true);
-        console.log("=== FETCH DEBUG INFO ===");
-        console.log(
-          "Fetching from URL:",
-          `${baseURL}/smtp_settings/${id}.json`
-        );
-        console.log("ID:", id);
-        console.log("Base URL:", baseURL);
+        const response = await axios.get(`${baseURL}smtp_settings/${id}.json`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-        const response = await axios.get(
-          `${baseURL}smtp_settings/${id}.json`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        console.log("Fetch API Response:", response.data);
         const smtpData = response.data.smtp_setting || response.data;
-        console.log("Processed SMTP data:", smtpData);
-
         setFormData({
           address: smtpData.address || "",
           port: smtpData.port || "",
@@ -64,10 +56,8 @@ const SMTPSettingsEdit = () => {
         });
       } catch (error) {
         console.error("Error fetching SMTP data:", error);
-        console.error("Error status:", error.response?.status);
-        console.error("Error data:", error.response?.data);
         toast.error("Failed to fetch SMTP settings data");
-        navigate("/smtp-settings-list");
+        navigate("/setup-member/smtp-settings-list");
       } finally {
         setFetchingData(false);
       }
@@ -80,7 +70,6 @@ const SMTPSettingsEdit = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Convert port to number if it's the port field
     const processedValue =
       name === "port" ? (value === "" ? "" : Number(value)) : value;
     setFormData({ ...formData, [name]: processedValue });
@@ -91,7 +80,6 @@ const SMTPSettingsEdit = () => {
     setLoading(true);
     toast.dismiss();
 
-    // Validation
     if (!formData.address.trim()) {
       toast.error("SMTP Address is required.");
       setLoading(false);
@@ -122,7 +110,6 @@ const SMTPSettingsEdit = () => {
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast.error("Please enter a valid email address.");
@@ -137,16 +124,6 @@ const SMTPSettingsEdit = () => {
     }
 
     try {
-      console.log("=== SUBMISSION DEBUG INFO ===");
-      console.log("ID:", id);
-      console.log("Base URL:", baseURL);
-      console.log("Full URL:", `${baseURL}/smtp_settings/${id}.json`);
-      console.log("Form Data:", formData);
-      console.log(
-        "Access Token exists:",
-        !!localStorage.getItem("access_token")
-      );
-
       const jsonPayload = {
         smtp_setting: {
           address: formData.address.trim(),
@@ -159,40 +136,25 @@ const SMTPSettingsEdit = () => {
         },
       };
 
-      console.log("Sending payload:", jsonPayload);
+      await axios.put(`${baseURL}smtp_settings/${id}.json`, jsonPayload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      const response = await axios.put(
-        `${baseURL}smtp_settings/${id}.json`,
-        jsonPayload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("Update response:", response.data);
       connectEvents.onRecordSaved({ mode: "updated" });
       toast.success("SMTP settings updated successfully!");
       navigate("/setup-member/smtp-settings-list");
     } catch (error) {
-      console.error("=== ERROR DETAILS ===");
-      console.error("Status:", error.response?.status);
-      console.error("Status Text:", error.response?.statusText);
-      console.error("Headers:", error.response?.headers);
-      console.error("Data type:", typeof error.response?.data);
-      console.error("Data:", error.response?.data);
-      console.error("Full error:", error);
+      console.error("Error updating SMTP settings:", error);
 
-      // Check if the response is HTML (server error page)
       if (
         typeof error.response?.data === "string" &&
         error.response.data.includes("<!DOCTYPE html>")
       ) {
-        console.error("Server returned HTML error page - likely a 500 error");
         toast.error(
-          "Server error occurred. Please check the console and contact support."
+          "Server error occurred. Please check the console and contact support.",
         );
       } else if (error.response?.status === 422) {
         const errors = error.response.data?.errors;
@@ -212,9 +174,7 @@ const SMTPSettingsEdit = () => {
       } else if (error.response?.status >= 500) {
         toast.error("Server error. Please try again later or contact support.");
       } else {
-        toast.error(
-          "Failed to update SMTP settings. Please check the console for details."
-        );
+        toast.error("Failed to update SMTP settings. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -222,74 +182,24 @@ const SMTPSettingsEdit = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1);
-  };
-
-  const handleTestConnection = async () => {
-    toast.dismiss();
-
-    // Basic validation before testing
-    if (
-      !formData.address ||
-      !formData.port ||
-      !formData.user_name ||
-      !formData.password
-    ) {
-      toast.error(
-        "Please fill in all required fields before testing connection."
-      );
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const testPayload = {
-        smtp_setting: {
-          address: formData.address.trim(),
-          port: Number(formData.port),
-          user_name: formData.user_name.trim(),
-          password: formData.password.trim(),
-          authentication: formData.authentication,
-          email: formData.email.trim(),
-          company_name: formData.company_name.trim(),
-        },
-      };
-
-      // Assuming there's a test endpoint - adjust URL as needed
-      const response = await axios.post(
-        `${baseURL}smtp_settings/test_connection.json`,
-        testPayload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      toast.success("SMTP connection test successful!");
-    } catch (error) {
-      console.error("SMTP test connection error:", error);
-      toast.error("SMTP connection test failed. Please check your settings.");
-    } finally {
-      setLoading(false);
-    }
+    navigate("/setup-member/smtp-settings-list");
   };
 
   if (fetchingData) {
     return (
-      <div className="">
-        <div className="website-content overflow-auto">
-          <div className="module-data-section p-3">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Loading...</h3>
-              </div>
-              <div className="card-body">
-                <div className="text-center">
-                  <p>Loading SMTP settings data...</p>
-                </div>
-              </div>
+      <div className="main-content">
+        <div className="module-data-section banner-form-page p-3">
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Mail size={16} strokeWidth={1.8} />
+                </span>
+                Loading...
+              </h3>
+            </div>
+            <div className="card-body">
+              <p className="mb-0 text-muted">Loading SMTP settings data...</p>
             </div>
           </div>
         </div>
@@ -298,154 +208,154 @@ const SMTPSettingsEdit = () => {
   }
 
   return (
-    <div className="">
-      <div className="module-data-section p-3">
+    <div className="main-content">
+      <div className="module-data-section banner-form-page p-3">
         <form onSubmit={handleSubmit}>
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Edit SMTP Settings</h3>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Mail size={16} strokeWidth={1.8} />
+                </span>
+                Edit SMTP Settings
+              </h3>
             </div>
             <div className="card-body">
-              <div className="row">
+              <div className="row banner-form-fields">
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      SMTP Address<span style={{ color: "#de7008" }}> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="e.g., smtp.gmail.com"
+                    <FormTextField
+                      label="SMTP Address"
+                      required
                       name="address"
+                      placeholder="e.g., smtp.gmail.com"
                       value={formData.address}
                       onChange={handleChange}
-                      required
                     />
                   </div>
                 </div>
+
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Port<span style={{ color: "#de7008" }}> *</span>
-                    </label>
-                    <input
-                      className="form-control"
+                    <FormTextField
+                      label="Port"
+                      required
                       type="number"
-                      placeholder="e.g., 587"
                       name="port"
+                      placeholder="e.g., 587"
                       value={formData.port}
                       onChange={handleChange}
-                      min="1"
-                      max="65535"
-                      required
+                      min={1}
+                      max={65535}
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Username<span style={{ color: "#de7008" }}> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Enter SMTP Username"
+                    <FormTextField
+                      label="Username"
+                      required
                       name="user_name"
+                      placeholder="Enter SMTP Username"
                       value={formData.user_name}
                       onChange={handleChange}
-                      required
                     />
-                  </div>
-                </div>
-                <div className="col-md-3">
-                  <div className="form-group position-relative">
-                    <label>
-                      Password<span style={{ color: "#de7008" }}> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter SMTP Password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="position-absolute mt-3"
-                      style={{
-                        top: "50%",
-                        right: "10px",
-                        transform: "translateY(-50%)",
-                        background: "transparent",
-                        border: "none",
-                        padding: 0,
-                        cursor: "pointer",
-                      }}
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
-                    >
-                      {showPassword ? (
-                        <EyeOff size={18} color="var(--red)" />
-                      ) : (
-                        <Eye size={18} color="var(--red)" />
-                      )}
-                    </button>
                   </div>
                 </div>
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Authentication<span style={{ color: "#de7008" }}> *</span>
-                    </label>
-                    <select
-                      className="form-control"
-                      name="authentication"
-                      value={formData.authentication}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="plain">Plain</option>
-                      <option value="login">Login</option>
-                      <option value="cram_md5">CRAM-MD5</option>
-                    </select>
+                    <div className="form-control-field">
+                      <label
+                        className="form-control-field__label"
+                        htmlFor="smtp-password"
+                      >
+                        Password
+                        <span className="form-control-field__required"> *</span>
+                      </label>
+                      <input
+                        id="smtp-password"
+                        className="form-control-field__input"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter SMTP Password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        style={{ paddingRight: "40px" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          right: "10px",
+                          transform: "translateY(-50%)",
+                          background: "transparent",
+                          border: "none",
+                          padding: 0,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "var(--red, #de7008)",
+                        }}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
+
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Email<span style={{ color: "#de7008" }}> *</span>
-                    </label>
-                    <input
-                      className="form-control"
+                    <SelectBox
+                      label="Authentication"
+                      required
+                      placeholder="Select Authentication"
+                      options={AUTHENTICATION_OPTIONS}
+                      value={formData.authentication}
+                      onChange={(value) =>
+                        setFormData((previous) => ({
+                          ...previous,
+                          authentication: value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Email"
+                      required
                       type="email"
-                      placeholder="e.g., noreply@company.com"
                       name="email"
+                      placeholder="e.g., noreply@company.com"
                       value={formData.email}
                       onChange={handleChange}
-                      required
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Company Name<span style={{ color: "#de7008" }}> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Enter Company Name"
+                    <FormTextField
+                      label="Company Name"
+                      required
                       name="company_name"
+                      placeholder="Enter Company Name"
                       value={formData.company_name}
                       onChange={handleChange}
-                      required
                     />
                   </div>
                 </div>
@@ -453,36 +363,22 @@ const SMTPSettingsEdit = () => {
             </div>
           </div>
 
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                disabled={loading || fetchingData}
-              >
-                {loading ? "Updating..." : "Update"}
-              </button>
-            </div>
-            {/* <div className="col-md-2">
-              <button
-                type="button"
-                className="btn btn-info w-100"
-                onClick={handleTestConnection}
-                disabled={loading || fetchingData}
-              >
-                Test Connection
-              </button>
-            </div> */}
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                onClick={handleCancel}
-                disabled={loading}
-              >
-                Cancel
-              </button>
-            </div>
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading || fetchingData}
+            >
+              {loading ? "Updating..." : "Update"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>

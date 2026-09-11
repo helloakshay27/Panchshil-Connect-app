@@ -46,8 +46,22 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString();
 };
 
+const stripHtml = (value = "") =>
+  String(value)
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const TruncatedCell = ({ value }) => (
+  <div className="enhanced-table__truncate-cell" title={value || "-"}>
+    {value || "-"}
+  </div>
+);
+
 const AttachmentPreview = ({ attachment }) => {
-  if (!attachment?.document_url) return <span>No Attachment</span>;
+  if (!attachment?.document_url) return <span>-</span>;
 
   const fileName = attachment.document_file_name || "";
   const contentType = attachment.document_content_type || "";
@@ -61,20 +75,19 @@ const AttachmentPreview = ({ attachment }) => {
   if (isVideo) {
     return (
       <video
-        width="100"
-        height="65"
+        width="56"
+        height="32"
         autoPlay
         muted
         loop
         playsInline
         style={{
-          borderRadius: "8px",
+          borderRadius: "4px",
           objectFit: "cover",
           display: "block",
         }}
       >
         <source src={attachment.document_url} type={contentType} />
-        Your browser does not support the video tag.
       </video>
     );
   }
@@ -83,13 +96,13 @@ const AttachmentPreview = ({ attachment }) => {
     return (
       <img
         src={attachment.document_url}
-        className="img-fluid rounded"
         alt={attachment.document_file_name || "Attachment"}
         style={{
-          maxWidth: "100px",
-          maxHeight: "100px",
+          width: "56px",
+          height: "32px",
           objectFit: "cover",
-          borderRadius: "8px",
+          borderRadius: "4px",
+          display: "block",
         }}
         onError={(event) => {
           console.error("Failed to load image:", event.target.src);
@@ -100,21 +113,19 @@ const AttachmentPreview = ({ attachment }) => {
 
   return (
     <div
-      className="file-preview d-flex align-items-center justify-content-center rounded"
+      className="d-flex align-items-center justify-content-center"
       style={{
-        width: "100px",
-        height: "65px",
-        border: "1px solid #ccc",
+        width: "56px",
+        height: "32px",
+        border: "1px solid #e4e7ec",
         backgroundColor: "#f8f9fa",
-        borderRadius: "8px",
+        borderRadius: "4px",
+        fontSize: "10px",
+        color: "#667085",
       }}
+      title={fileName || "File"}
     >
-      <div className="text-center">
-        <i className="fas fa-file fa-lg text-secondary mb-1" />
-        <div className="small text-muted">
-          {fileName ? fileName.split(".").pop().toUpperCase() : "FILE"}
-        </div>
-      </div>
+      {fileName ? fileName.split(".").pop().toUpperCase() : "FILE"}
     </div>
   );
 };
@@ -337,15 +348,15 @@ const ConstructionUpdatesList = () => {
   const filteredUpdates = useMemo(
     () =>
       constructionUpdates
-        .filter(
-          (update) =>
-            (update.title?.toLowerCase() || "").includes(
-              searchQuery.toLowerCase(),
-            ) ||
-            (update.description?.toLowerCase() || "").includes(
-              searchQuery.toLowerCase(),
-            ),
-        )
+        .filter((update) => {
+          const query = searchQuery.toLowerCase();
+          if (!query) return true;
+          return (
+            (update.title?.toLowerCase() || "").includes(query) ||
+            stripHtml(update.description).toLowerCase().includes(query) ||
+            (update.project_name?.toLowerCase() || "").includes(query)
+          );
+        })
         .sort((left, right) => (left.id || 0) - (right.id || 0)),
     [constructionUpdates, searchQuery],
   );
@@ -365,6 +376,7 @@ const ConstructionUpdatesList = () => {
     {
       key: "actions",
       label: "Action",
+      width: 110,
       sortable: false,
       alwaysVisible: true,
       render: (update) => (
@@ -404,34 +416,30 @@ const ConstructionUpdatesList = () => {
     {
       key: "serial_number",
       label: "Sr No",
+      width: 70,
       sortable: false,
       render: (_update, { absoluteIndex }) => absoluteIndex + 1,
     },
     {
       key: "title",
       label: "Title",
-      render: (update) => update.title || "-",
+      width: 150,
+      filterable: true,
+      render: (update) => <TruncatedCell value={update.title} />,
     },
     {
       key: "description",
       label: "Description",
+      width: 220,
+      getSortValue: (update) => stripHtml(update.description),
       render: (update) => (
-        <div
-          style={{
-            maxWidth: "200px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-          title={update.description}
-        >
-          {update.description || "-"}
-        </div>
+        <TruncatedCell value={stripHtml(update.description)} />
       ),
     },
     {
       key: "on_date",
       label: "Date",
+      width: 110,
       getSortValue: (update) =>
         update.on_date ? new Date(update.on_date).getTime() : null,
       render: (update) => formatDate(update.on_date),
@@ -439,27 +447,34 @@ const ConstructionUpdatesList = () => {
     {
       key: "project_name",
       label: "Project Name",
-      render: (update) => update.project_name || "-",
+      width: 160,
+      filterable: true,
+      render: (update) => <TruncatedCell value={update.project_name} />,
     },
     {
       key: "sfdc_id",
       label: "SFDC ID",
-      render: (update) => update.sfdc_id || "-",
+      width: 120,
+      render: (update) => <TruncatedCell value={update.sfdc_id} />,
     },
     {
       key: "site_name",
       label: "Site ID",
-      render: (update) => update.site_name || "-",
+      width: 110,
+      render: (update) => <TruncatedCell value={update.site_name} />,
     },
     {
       key: "building_name",
       label: "Building ID",
-      render: (update) => update.building_name || "-",
+      width: 120,
+      render: (update) => <TruncatedCell value={update.building_name} />,
     },
     {
       key: "attachment",
       label: "Attachment",
+      width: 90,
       sortable: false,
+      className: "enhanced-table__media-cell",
       render: (update) => <AttachmentPreview attachment={update.attachment} />,
     },
   ];
@@ -496,7 +511,7 @@ const ConstructionUpdatesList = () => {
               onPageChange={handlePageChange}
               leftActions={addButton}
               getRowId={(update) => update.id}
-              storageKey="construction-updates-list"
+              storageKey="construction-updates-list-v2"
             />
           </div>
         </div>
