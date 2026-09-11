@@ -23,6 +23,23 @@ const clock = (d) =>
     ? d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false })
     : null;
 
+/* Recent Activity is unfiltered and visible to anyone with dashboard access,
+   so contact details are shown masked - full value stays in the tooltip. */
+const maskEmail = (email) => {
+  const [local, domain] = String(email).split("@");
+  if (!domain) return email;
+  const visible = local.slice(0, 2);
+  return `${visible}${"*".repeat(Math.max(local.length - visible.length, 3))}@${domain}`;
+};
+
+const maskMobile = (mobile) => {
+  const digits = String(mobile).replace(/\D/g, "");
+  if (digits.length <= 4) return "*".repeat(digits.length);
+  const head = digits.slice(0, 2);
+  const tail = digits.slice(-2);
+  return `${head}${"*".repeat(digits.length - 4)}${tail}`;
+};
+
 export const ActivityBoard = ({
   data,
   loading,
@@ -116,15 +133,15 @@ export const ActivityBoard = ({
 
                   <div className="pcd-pin-contact">
                     {it.email ? (
-                      <span title={it.email}>
+                      <span>
                         <Mail size={10} strokeWidth={2} aria-hidden="true" />
-                        {it.email}
+                        {maskEmail(it.email)}
                       </span>
                     ) : null}
                     {it.mobile ? (
-                      <span title={it.mobile}>
+                      <span>
                         <Phone size={10} strokeWidth={2} aria-hidden="true" />
-                        {it.mobile}
+                        {maskMobile(it.mobile)}
                       </span>
                     ) : null}
                   </div>

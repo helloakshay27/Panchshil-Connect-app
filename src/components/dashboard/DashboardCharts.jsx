@@ -1,4 +1,20 @@
 import React, { useState } from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  AreaChart as RechartsAreaChart,
+  Area,
+  Line,
+} from "recharts";
 import { InfoButton } from "../../pages/usage-info-popover";
 
 /**
@@ -28,6 +44,47 @@ export const VIZ = {
 
 const nf = new Intl.NumberFormat("en-IN");
 const pct = (v, total) => (total > 0 ? Math.round((v / total) * 100) : 0);
+
+/* Shared Recharts tooltips - small cards matching the dashboard's own
+   visual language (white surface, hairline border, soft shadow) instead
+   of Recharts' bare default box. Reused across every Recharts-based
+   chart below. */
+const SimpleTooltip = ({ active, payload, suffix = "" }) => {
+  if (!active || !payload || !payload.length) return null;
+  const title = payload[0].payload?.name ?? payload[0].payload?.label;
+  return (
+    <div className="pcd-rechart-tooltip">
+      {title != null ? <div className="pcd-rechart-tooltip-title">{title}</div> : null}
+      {payload.map((p) => (
+        <div key={p.dataKey} className="pcd-rechart-tooltip-row">
+          <span className="pcd-rechart-tooltip-dot" style={{ background: p.color || p.fill }} />
+          <span className="pcd-rechart-tooltip-name">{p.name || p.dataKey}</span>
+          <span className="pcd-rechart-tooltip-value">
+            {nf.format(p.value)}
+            {suffix}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const ShareTooltip = ({ active, payload, total }) => {
+  if (!active || !payload || !payload.length) return null;
+  return (
+    <div className="pcd-rechart-tooltip">
+      {payload.map((p) => (
+        <div key={p.dataKey} className="pcd-rechart-tooltip-row">
+          <span className="pcd-rechart-tooltip-dot" style={{ background: p.color }} />
+          <span className="pcd-rechart-tooltip-name">{p.dataKey}</span>
+          <span className="pcd-rechart-tooltip-value">
+            {nf.format(p.value)} · {pct(p.value, total)}%
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 /* Small "i" info button - shown on any tile/card that has caption text to
    surface, using that same text as a native hover tooltip. Purely additive
@@ -82,104 +139,145 @@ export const ChartCard = ({ eyebrow, title, subtitle, legend, loading, error, em
       </div>
     </div>
 
-    {loading ? (
-      <div className="pcd-state">
-        <span className="pcd-skel pcd-skel-row" />
-        <span className="pcd-skel pcd-skel-row" />
-        <span className="pcd-skel pcd-skel-row" />
-      </div>
-    ) : error ? (
-      <div className="pcd-state pcd-state-error">{error}</div>
-    ) : empty ? (
-      <div className="pcd-state pcd-state-empty">No data for the selected filters</div>
-    ) : (
-      children
-    )}
+    <div className="pcd-card-body">
+      {loading ? (
+        <div className="pcd-state">
+          <span className="pcd-skel pcd-skel-row" />
+          <span className="pcd-skel pcd-skel-row" />
+          <span className="pcd-skel pcd-skel-row" />
+        </div>
+      ) : error ? (
+        <div className="pcd-state pcd-state-error">{error}</div>
+      ) : empty ? (
+        <div className="pcd-state pcd-state-empty">No data for the selected filters</div>
+      ) : (
+        children
+      )}
+    </div>
   </div>
 );
 
 /* ================================================================== */
 /* BAR (horizontal) - magnitude across nominal categories with long   */
 /* names. One hue: bar length already encodes the value, so colour    */
-/* stays free.                                                         */
+/* stays free. Built with Recharts (BarChart, layout="vertical").     */
 /* ================================================================== */
 export const HBar = ({ rows, valueSuffix = "", color = VIZ.brand }) => {
-  const peak = Math.max(...rows.map((r) => r.value), 0);
+  const chartData = rows.map((r) => ({ name: r.label, value: r.value }));
+  const height = Math.max(rows.length * 34 + 16, 90);
+
   return (
-    <ul className="pcd-hbar">
-      {rows.map((r) => (
-        <li key={r.key ?? r.label} title={`${r.label}: ${nf.format(r.value)}${valueSuffix}`}>
-          <span className="pcd-hbar-label" title={r.label}>
-            {r.label}
-          </span>
-          <span className="pcd-hbar-track">
-            <span
-              className="pcd-hbar-fill"
-              style={{
-                width: `${peak > 0 ? Math.max((r.value / peak) * 100, r.value > 0 ? 1.5 : 0) : 0}%`,
-                background: color,
-              }}
-            />
-          </span>
-          <span className="pcd-hbar-value">{nf.format(r.value)}</span>
-        </li>
-      ))}
-    </ul>
+    <div className="pcd-rechart-inner" style={{ height }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 4, bottom: 4 }}>
+          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={VIZ.grid} />
+          <XAxis type="number" tick={{ fontSize: 10 }} allowDecimals={false} />
+          <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={120} />
+          <Tooltip content={<SimpleTooltip suffix={valueSuffix} />} cursor={{ fill: "rgba(31, 41, 51, 0.05)" }} />
+          <Bar dataKey="value" name="Value" fill={color} radius={[0, 4, 4, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
 /* ================================================================== */
-/* COLUMN (vertical bar) - short labels, few categories               */
+/* COLUMN (vertical bar) - short labels, few categories. Built with    */
+/* Recharts (BarChart, default layout).                                */
 /* ================================================================== */
-export const ColumnChart = ({ rows, height = 200 }) => {
-  const [hover, setHover] = useState(null);
-  const peak = Math.max(...rows.map((r) => r.value), 0);
-  const plot = height - 34;
+export const ColumnChart = ({ rows, height = 220 }) => {
+  const chartData = rows.map((r) => ({ name: r.label, value: r.value }));
+  // Long/many category names collide if drawn flat, so once there's more
+  // than a handful they're angled ("crossed") like a normal bar-chart axis,
+  // with extra bottom margin/axis height to fit the diagonal text.
+  const angled = chartData.length > 4;
 
   return (
-    <div className="pcd-col-wrap">
-      <div className="pcd-col-grid" style={{ height: plot }}>
-        {[1, 0.5, 0].map((t) => (
-          <span key={t} className="pcd-col-gridline" style={{ bottom: `${t * 100}%` }}>
-            <em>{nf.format(Math.round(peak * t))}</em>
-          </span>
-        ))}
-        <div className="pcd-col-bars">
-          {rows.map((r, i) => (
-            <div
-              key={r.label}
-              className="pcd-col-item"
-              onMouseEnter={() => setHover(r)}
-              onMouseLeave={() => setHover(null)}
-            >
-              <span className="pcd-col-val">{nf.format(r.value)}</span>
-              <span
-                className="pcd-col-bar"
-                style={{
-                  height: `${peak > 0 ? Math.max((r.value / peak) * 100, r.value > 0 ? 1 : 0) : 0}%`,
-                  background: VIZ.cat[i % VIZ.cat.length],
-                }}
-              />
-            </div>
-          ))}
+    <div className="pcd-rechart-inner" style={{ height }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={chartData}
+          margin={{ top: 8, right: 8, left: 0, bottom: angled ? 28 : 0 }}
+          barSize={40}
+        >
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={VIZ.grid} />
+          <XAxis
+            dataKey="name"
+            tick={{ fontSize: 10 }}
+            interval={0}
+            angle={angled ? -35 : 0}
+            textAnchor={angled ? "end" : "middle"}
+            height={angled ? 56 : 30}
+          />
+          <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+          <Tooltip content={<SimpleTooltip />} cursor={{ fill: "rgba(31, 41, 51, 0.05)" }} />
+          <Bar dataKey="value" name="Value" radius={[4, 4, 0, 0]}>
+            {chartData.map((_, i) => (
+              <Cell key={i} fill={VIZ.cat[i % VIZ.cat.length]} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+/* Custom tooltip - a small card matching the dashboard's own visual
+   language (white surface, hairline border, soft shadow) instead of
+   Recharts' bare default box, with a computed Total row beneath the
+   per-segment breakdown. */
+const StackedColumnTooltip = ({ active, payload, label }) => {
+  if (!active || !payload || !payload.length) return null;
+  const total = payload.reduce((sum, p) => sum + (p.value || 0), 0);
+  return (
+    <div className="pcd-rechart-tooltip">
+      <div className="pcd-rechart-tooltip-title">{label}</div>
+      {payload.map((p) => (
+        <div key={p.dataKey} className="pcd-rechart-tooltip-row">
+          <span className="pcd-rechart-tooltip-dot" style={{ background: p.color }} />
+          <span className="pcd-rechart-tooltip-name">{p.name}</span>
+          <span className="pcd-rechart-tooltip-value">{nf.format(p.value)}</span>
         </div>
+      ))}
+      <div className="pcd-rechart-tooltip-row pcd-rechart-tooltip-total">
+        <span className="pcd-rechart-tooltip-name">Total</span>
+        <span className="pcd-rechart-tooltip-value">{nf.format(total)}</span>
       </div>
-      <div className="pcd-col-labels">
-        {rows.map((r) => (
-          <span key={r.label} title={r.label}>
-            {r.label}
-          </span>
-        ))}
-      </div>
-      <div className="pcd-hint">
-        {hover ? (
-          <>
-            <strong>{hover.label}</strong> · {nf.format(hover.value)}
-          </>
-        ) : (
-          <span className="pcd-muted">Hover a column for details</span>
-        )}
-      </div>
+    </div>
+  );
+};
+
+/* ================================================================== */
+/* STACKED COLUMN - one column per category, split into two stacked   */
+/* segments (active vs. the remainder of a total). Built with Recharts,*/
+/* the same charting library and stacked-Bar pattern the Pulse         */
+/* dashboard uses for its "Community Member Status Breakdown" chart    */
+/* (PulseCommunity.tsx) - CartesianGrid + XAxis/YAxis + stacked Bars,   */
+/* legend top-right, rounded cap on the topmost segment.               */
+/* ================================================================== */
+export const StackedColumnChart = ({ rows, colorActive = VIZ.brand2, colorRemaining = VIZ.brand }) => {
+  const chartData = rows.map((r) => ({
+    name: r.label,
+    Active: r.b,
+    Inactive: Math.max(r.a - r.b, 0),
+  }));
+
+  return (
+    <div className="pcd-rechart-inner">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barSize={40}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={VIZ.grid} />
+          <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} />
+          <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+          <Tooltip
+            content={<StackedColumnTooltip />}
+            cursor={{ fill: "rgba(31, 41, 51, 0.05)" }}
+          />
+          <Legend align="right" wrapperStyle={{ fontSize: 11 }} />
+          <Bar dataKey="Active" stackId="services" fill={colorActive} />
+          <Bar dataKey="Inactive" stackId="services" fill={colorRemaining} radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
@@ -218,23 +316,42 @@ export const GroupedHBar = ({ rows }) => {
 /* ================================================================== */
 /* STACKED BAR (part-to-whole) - the right form for 2 segments.       */
 /* A 2-slice pie is an anti-pattern; this reads the share directly.   */
+/* Built with Recharts: one category row, one <Bar> per segment,      */
+/* all sharing the same stackId so they lay end-to-end as one 100%    */
+/* bar. ------------------------------------------------------------- */
 /* ================================================================== */
 export const StackedShareBar = ({ rows, colors = VIZ.cat }) => {
   const total = rows.reduce((s, r) => s + r.value, 0);
+  const chartData = [rows.reduce((acc, r) => ({ ...acc, [r.label]: r.value }), { name: "share" })];
+
   return (
     <div className="pcd-share">
-      <div className="pcd-share-track">
-        {rows.map((r, i) => (
-          <span
-            key={r.label}
-            className="pcd-share-seg"
-            style={{
-              width: `${pct(r.value, total)}%`,
-              background: colors[i % colors.length],
-            }}
-            title={`${r.label}: ${nf.format(r.value)} (${pct(r.value, total)}%)`}
-          />
-        ))}
+      <div className="pcd-rechart-inner" style={{ height: 56 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+            <XAxis type="number" hide domain={[0, total || 1]} />
+            <YAxis type="category" dataKey="name" hide />
+            <Tooltip content={<ShareTooltip total={total} />} cursor={false} />
+            {rows.map((r, i) => (
+              <Bar
+                key={r.label}
+                dataKey={r.label}
+                stackId="share"
+                fill={colors[i % colors.length]}
+                barSize={26}
+                radius={
+                  rows.length === 1
+                    ? [4, 4, 4, 4]
+                    : i === 0
+                      ? [4, 0, 0, 4]
+                      : i === rows.length - 1
+                        ? [0, 4, 4, 0]
+                        : [0, 0, 0, 0]
+                }
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
       </div>
       <ul className="pcd-share-keys">
         {rows.map((r, i) => (
@@ -253,74 +370,59 @@ export const StackedShareBar = ({ rows, colors = VIZ.cat }) => {
 };
 
 /* ================================================================== */
-/* DONUT - part-to-whole at a glance, legal at 3..6 segments          */
+/* DONUT - part-to-whole at a glance, legal at 3..6 segments. Built    */
+/* with Recharts (PieChart + Pie with an innerRadius), with the total  */
+/* (or the hovered segment) overlaid in the center via an absolutely-  */
+/* positioned div, since Recharts has no built-in center label.       */
 /* ================================================================== */
 export const DonutChart = ({ rows, centerLabel = "Total", colors = VIZ.cat }) => {
-  const [hover, setHover] = useState(null);
+  const [hoverIdx, setHoverIdx] = useState(null);
   const total = rows.reduce((s, r) => s + r.value, 0);
-  const R = 60;
-  const C = 2 * Math.PI * R;
-  const GAP = 3; // surface gap between segments
-
-  let offset = 0;
-  const segs = rows.map((r, i) => {
-    const len = total > 0 ? (r.value / total) * C : 0;
-    const seg = {
-      ...r,
-      color: colors[i % colors.length],
-      dash: Math.max(len - GAP, 0),
-      offset,
-      percent: pct(r.value, total),
-    };
-    offset += len;
-    return seg;
-  });
-
-  const focus = hover ?? null;
+  const focus = hoverIdx != null ? rows[hoverIdx] : null;
 
   return (
     <div className="pcd-donut-wrap">
-      <svg viewBox="0 0 160 160" className="pcd-donut" role="img" aria-label={centerLabel}>
-        <circle cx="80" cy="80" r={R} fill="none" stroke="#f4f4f5" strokeWidth="20" />
-        {segs.map((s) => (
-          <circle
-            key={s.label}
-            cx="80"
-            cy="80"
-            r={R}
-            fill="none"
-            stroke={s.color}
-            strokeWidth={focus && focus.label === s.label ? 24 : 20}
-            strokeDasharray={`${s.dash} ${C - s.dash}`}
-            strokeDashoffset={-s.offset}
-            transform="rotate(-90 80 80)"
-            onMouseEnter={() => setHover(s)}
-            onMouseLeave={() => setHover(null)}
-            style={{ transition: "stroke-width .15s ease" }}
-          />
-        ))}
-        <text x="80" y="74" textAnchor="middle" className="pcd-donut-num">
-          {nf.format(focus ? focus.value : total)}
-        </text>
-        <text x="80" y="92" textAnchor="middle" className="pcd-donut-cap">
-          {focus ? `${focus.percent}%` : centerLabel}
-        </text>
-      </svg>
+      <div className="pcd-rechart-donut">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={rows}
+              dataKey="value"
+              nameKey="label"
+              innerRadius="62%"
+              outerRadius="94%"
+              paddingAngle={rows.length > 1 ? 3 : 0}
+              cornerRadius={3}
+              stroke="none"
+              onMouseEnter={(_, i) => setHoverIdx(i)}
+              onMouseLeave={() => setHoverIdx(null)}
+            >
+              {rows.map((r, i) => (
+                <Cell key={r.label} fill={colors[i % colors.length]} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="pcd-donut-center">
+          <div className="pcd-donut-center-value">{nf.format(focus ? focus.value : total)}</div>
+          <div className="pcd-donut-center-label">{focus ? `${pct(focus.value, total)}%` : centerLabel}</div>
+        </div>
+      </div>
 
       <ul className="pcd-donut-keys">
-        {segs.map((s) => (
+        {rows.map((r, i) => (
           <li
-            key={s.label}
-            onMouseEnter={() => setHover(s)}
-            onMouseLeave={() => setHover(null)}
-            className={focus && focus.label === s.label ? "is-on" : ""}
+            key={r.label}
+            onMouseEnter={() => setHoverIdx(i)}
+            onMouseLeave={() => setHoverIdx(null)}
+            className={hoverIdx === i ? "is-on" : ""}
           >
-            <span className="pcd-legend-dot" style={{ background: s.color }} />
-            <span className="pcd-share-name" title={s.label}>
-              {s.label}
+            <span className="pcd-legend-dot" style={{ background: colors[i % colors.length] }} />
+            <span className="pcd-share-name" title={r.label}>
+              {r.label}
             </span>
-            <strong>{nf.format(s.value)}</strong>
-            <em>{s.percent}%</em>
+            <strong>{nf.format(r.value)}</strong>
+            <em>{pct(r.value, total)}%</em>
           </li>
         ))}
       </ul>
@@ -330,112 +432,65 @@ export const DonutChart = ({ rows, centerLabel = "Total", colors = VIZ.cat }) =>
 
 /* ================================================================== */
 /* AREA / LINE - hour of day is an ordered continuous axis, so a      */
-/* line is the correct form for the distribution across it.           */
+/* line is the correct form for the distribution across it. Built     */
+/* with Recharts (AreaChart + Area, with an optional dashed Line for  */
+/* the previous-period comparison series).                            */
 /* ================================================================== */
 export const AreaChart = ({ points, previousPoints, color = VIZ.brand, height = 210 }) => {
-  const [idx, setIdx] = useState(null);
-  const W = 720;
-  const H = height;
-  const PAD = { t: 14, r: 12, b: 26, l: 34 };
   const hasPrev = Array.isArray(previousPoints) && previousPoints.length === points.length;
-  const peak =
-    Math.max(...points.map((p) => p.count), ...(hasPrev ? previousPoints.map((p) => p.count) : []), 0) || 1;
-
-  // points.length - 1 is 0 for a single-point (e.g. no-data) series, which
-  // would divide by zero and push every x position to NaN — center that
-  // lone point instead of dividing.
-  const px = (i) =>
-    PAD.l + (points.length > 1 ? i / (points.length - 1) : 0.5) * (W - PAD.l - PAD.r);
-  const py = (v) => PAD.t + (1 - v / peak) * (H - PAD.t - PAD.b);
-
-  const line = points.map((p, i) => `${i ? "L" : "M"}${px(i)},${py(p.count)}`).join(" ");
-  const area = `${line} L${px(points.length - 1)},${py(0)} L${px(0)},${py(0)} Z`;
-  const prevLine = hasPrev
-    ? previousPoints.map((p, i) => `${i ? "L" : "M"}${px(i)},${py(p.count)}`).join(" ")
-    : null;
-
-  const ticks = [0, 0.5, 1].map((t) => Math.round(peak * t));
-  const active = idx != null ? points[idx] : null;
-
-  const onMove = (e) => {
-    const box = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - box.left) / box.width) * W;
-    const i = Math.round(((x - PAD.l) / (W - PAD.l - PAD.r)) * (points.length - 1));
-    setIdx(Math.max(0, Math.min(points.length - 1, i)));
-  };
+  const gradientId = `pcd-fill-${color.replace("#", "")}`;
+  const chartData = points.map((p, i) => ({
+    label: p.label,
+    count: p.count,
+    previous: hasPrev ? previousPoints[i].count : undefined,
+  }));
+  // Thin out x-axis ticks on long series so labels don't collide - every
+  // point is still plotted, only the tick text is skipped.
+  const tickInterval = Math.max(Math.ceil(points.length / 8) - 1, 0);
 
   return (
-    <div className="pcd-area-wrap">
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        className="pcd-area"
-        onMouseMove={onMove}
-        onMouseLeave={() => setIdx(null)}
-        role="img"
-      >
-        <defs>
-          <linearGradient id={`pcd-fill-${color.slice(1)}`} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.26" />
-            <stop offset="100%" stopColor={color} stopOpacity="0.02" />
-          </linearGradient>
-        </defs>
-
-        {/* recessive hairline grid */}
-        {ticks.map((t) => (
-          <g key={t}>
-            <line x1={PAD.l} x2={W - PAD.r} y1={py(t)} y2={py(t)} stroke={VIZ.grid} strokeWidth="1" />
-            <text x={PAD.l - 7} y={py(t) + 3.5} textAnchor="end" className="pcd-axis">
-              {nf.format(t)}
-            </text>
-          </g>
-        ))}
-
-        <path d={area} fill={`url(#pcd-fill-${color.slice(1)})`} />
-        {prevLine ? (
-          <path d={prevLine} fill="none" stroke="#c2c0bd" strokeWidth="1.6" strokeDasharray="4 4" />
-        ) : null}
-        <path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
-
-        {/* x labels every 3 hours */}
-        {points.map((p, i) =>
-          i % 3 === 0 ? (
-            <text key={p.label} x={px(i)} y={H - 8} textAnchor="middle" className="pcd-axis">
-              {p.label.replace(/^0/, "")}
-            </text>
-          ) : null
-        )}
-
-        {active ? (
-          <g>
-            <line
-              x1={px(idx)}
-              x2={px(idx)}
-              y1={PAD.t}
-              y2={H - PAD.b}
-              stroke={VIZ.inkMuted}
-              strokeWidth="1"
+    <div className="pcd-rechart-inner" style={{ height }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <RechartsAreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity={0.26} />
+              <stop offset="100%" stopColor={color} stopOpacity={0.02} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={VIZ.grid} />
+          <XAxis
+            dataKey="label"
+            tick={{ fontSize: 10 }}
+            interval={tickInterval}
+            tickFormatter={(v) => String(v).replace(/^0/, "")}
+          />
+          <YAxis tick={{ fontSize: 10 }} allowDecimals={false} width={30} />
+          <Tooltip content={<SimpleTooltip />} />
+          {hasPrev ? (
+            <Line
+              type="monotone"
+              dataKey="previous"
+              name="Previous"
+              stroke="#c2c0bd"
+              strokeWidth={1.6}
+              strokeDasharray="4 4"
+              dot={false}
+              activeDot={false}
             />
-            <circle
-              cx={px(idx)}
-              cy={py(active.count)}
-              r="5"
-              fill={color}
-              stroke="#fff"
-              strokeWidth="2"
-            />
-          </g>
-        ) : null}
-      </svg>
-
-      <div className="pcd-hint">
-        {active ? (
-          <>
-            <strong>{active.label}</strong> · {nf.format(active.count)}
-          </>
-        ) : (
-          <span className="pcd-muted">Hover the chart for hourly detail</span>
-        )}
-      </div>
+          ) : null}
+          <Area
+            type="monotone"
+            dataKey="count"
+            name="Value"
+            stroke={color}
+            strokeWidth={2}
+            fill={`url(#${gradientId})`}
+            dot={{ r: 3, strokeWidth: 0, fill: color }}
+            activeDot={{ r: 5 }}
+          />
+        </RechartsAreaChart>
+      </ResponsiveContainer>
     </div>
   );
 };

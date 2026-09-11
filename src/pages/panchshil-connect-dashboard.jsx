@@ -2,10 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import Select from "react-select";
 import { Link } from "react-router-dom";
+import { Calendar, MapPin } from "lucide-react";
 import { baseURL, LOGO_URL } from "./baseurl/apiDomain";
 import {
   ChartCard,
-  GroupedHBar,
+  StackedColumnChart,
   HeatMap,
   KpiRibbon,
   SectionHead,
@@ -35,20 +36,53 @@ const EP = {
   recentActivity: "recent_activity",
 };
 
-/* Master / tabular report endpoints - paginated, and exportable to xlsx. */
+/* Referrals is a separate controller, mounted at /referrals/ instead of
+   /panchshil_connect_dashboard/. */
+const REFERRALS_EP = "project_wise_referrals_summary";
+
+/* Master / tabular report endpoints - paginated, and exportable to xlsx.
+   Keyed identically to MODULES below, so each module tab maps 1:1 to the
+   report it fetches. */
 const REPORTS = [
   { key: "projects", label: "Project Details", path: "project_details_table" },
   { key: "enquiries", label: "Enquiry Details", path: "enquiry_details_table" },
-  { key: "visits", label: "Site Visit Details", path: "site_visit_details_table" },
+  {
+    key: "visits",
+    label: "Site Visit Details",
+    path: "site_visit_details_table",
+  },
   { key: "events", label: "Event Details", path: "event_details_table" },
+];
+
+/* Top-level module tabs, mirroring the Pulse dashboard's per-module tabs
+   (Customers, Users, Amenities, ...) - each one shows its own charts
+   together with its own table, instead of a separate Visualization /
+   Tabular Reports split. */
+const MODULES = [
+  { key: "projects", label: "Projects" },
+  { key: "enquiries", label: "Enquiries" },
+  { key: "visits", label: "Site Visits" },
+  { key: "events", label: "Events" },
 ];
 
 /* The token saved at sign-in; every dashboard call is authenticated with it. */
 const authToken = () =>
-  localStorage.getItem("access_token") || sessionStorage.getItem("access_token") || "";
+  localStorage.getItem("access_token") ||
+  sessionStorage.getItem("access_token") ||
+  "";
 
 const api = (path, params, signal) =>
-  axios.get(`${baseURL.replace(/\/+$/, "")}/panchshil_connect_dashboard/${path}.json`, {
+  axios.get(
+    `${baseURL.replace(/\/+$/, "")}/panchshil_connect_dashboard/${path}.json`,
+    {
+      params,
+      signal,
+      headers: { Authorization: `Bearer ${authToken()}` },
+    },
+  );
+
+const referralsApi = (path, params, signal) =>
+  axios.get(`${baseURL.replace(/\/+$/, "")}/referrals/${path}.json`, {
     params,
     signal,
     headers: { Authorization: `Bearer ${authToken()}` },
@@ -64,12 +98,17 @@ const nf = new Intl.NumberFormat("en-IN");
    IST (+05:30) rolls a local midnight back to the previous day - so the 1st of
    the month would go out as the 30th/31st of the previous one. */
 const iso = (d) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate(),
+  ).padStart(2, "0")}`;
 
 /* The dashboard opens on the current month across all projects. */
 const monthRange = () => {
   const now = new Date();
-  return { from: iso(new Date(now.getFullYear(), now.getMonth(), 1)), to: iso(now) };
+  return {
+    from: iso(new Date(now.getFullYear(), now.getMonth(), 1)),
+    to: iso(now),
+  };
 };
 const DEFAULTS = monthRange();
 
@@ -85,8 +124,10 @@ const projectBars = (payload, field) =>
 const selectStyles = {
   control: (b, s) => ({
     ...b,
-    minHeight: 34,
+    minHeight: 36,
     fontSize: 13,
+    paddingLeft: 20,
+    borderRadius: 8,
     borderColor: s.isFocused ? VIZ.brand : "#e7e5e4",
     boxShadow: s.isFocused ? `0 0 0 1px ${VIZ.brand}` : "none",
     "&:hover": { borderColor: VIZ.brand },
@@ -111,11 +152,10 @@ const selectStyles = {
 const PanchshilConnectDashboard = () => {
   const [projectOptions, setProjectOptions] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
-  /* Which view is showing: the charts, or the tabular reports. */
-  const [tab, setTab] = useState("visualization");
+  /* Which module tab is active - each one renders its own charts + table. */
+  const [section, setSection] = useState("projects");
 
-  /* Tabular-reports state - fetched lazily, only while that tab is open. */
-  const [report, setReport] = useState("projects");
+  /* Tabular-report state for the active module's table. */
   const [reportPage, setReportPage] = useState(1);
   const [reportData, setReportData] = useState(null);
   const [reportLoading, setReportLoading] = useState(false);
@@ -160,7 +200,9 @@ const PanchshilConnectDashboard = () => {
     const ac = new AbortController();
     api(EP.projectNames, {}, ac.signal)
       .then(({ data: d }) =>
-        setProjectOptions((d.projects || []).map((p) => ({ value: p.id, label: p.name })))
+        setProjectOptions(
+          (d.projects || []).map((p) => ({ value: p.id, label: p.name })),
+        ),
       )
       .catch((e) => {
         if (!axios.isCancel(e)) console.error("project_names failed", e);
@@ -212,7 +254,8 @@ const PanchshilConnectDashboard = () => {
   /* Poll while visible, and catch up immediately on tab focus. */
   useEffect(() => {
     const tick = () => {
-      if (document.visibilityState === "visible") setActivityNonce((n) => n + 1);
+      if (document.visibilityState === "visible")
+        setActivityNonce((n) => n + 1);
     };
     const id = setInterval(tick, ACTIVITY_POLL_MS);
     document.addEventListener("visibilitychange", tick);
@@ -240,35 +283,40 @@ const PanchshilConnectDashboard = () => {
     if (filters.toDate) dateOnly.to_date = filters.toDate;
 
     const calls = [
-      ["enquiries", EP.enquiries, scoped],
-      ["visits", EP.visits, scoped],
-      ["likes", EP.likes, scoped],
-      ["amenities", EP.amenities, scoped],
-      ["propertyTypes", EP.propertyTypes, scoped],
-      ["salesBuilding", EP.salesBuilding, scoped],
-      ["services", EP.services, dateOnly],
-      ["featured", EP.featured, dateOnly],
-      ["enquiryHours", EP.enquiryHours, scoped],
-      ["visitHours", EP.visitHours, scoped],
+      ["enquiries", api, EP.enquiries, scoped],
+      ["visits", api, EP.visits, scoped],
+      ["likes", api, EP.likes, scoped],
+      ["amenities", api, EP.amenities, scoped],
+      ["propertyTypes", api, EP.propertyTypes, scoped],
+      ["salesBuilding", api, EP.salesBuilding, scoped],
+      ["services", api, EP.services, dateOnly],
+      ["featured", api, EP.featured, dateOnly],
+      ["enquiryHours", api, EP.enquiryHours, scoped],
+      ["visitHours", api, EP.visitHours, scoped],
+      ["referrals", referralsApi, REFERRALS_EP, scoped],
     ];
 
-    Promise.allSettled(calls.map(([, path, p]) => api(path, p, signal))).then((results) => {
-      if (signal?.aborted) return;
-      const next = {};
-      let failures = 0;
-      results.forEach((res, i) => {
-        const key = calls[i][0];
-        if (res.status === "fulfilled") next[key] = res.value.data;
-        else {
-          failures += 1;
-          next[key] = { __error: true };
-        }
-      });
-      setData(next);
-      if (failures === calls.length)
-        setError("Could not load dashboard data — check that you are signed in and the API is up.");
-      setLoading(false);
-    });
+    Promise.allSettled(calls.map(([, fn, path, p]) => fn(path, p, signal))).then(
+      (results) => {
+        if (signal?.aborted) return;
+        const next = {};
+        let failures = 0;
+        results.forEach((res, i) => {
+          const key = calls[i][0];
+          if (res.status === "fulfilled") next[key] = res.value.data;
+          else {
+            failures += 1;
+            next[key] = { __error: true };
+          }
+        });
+        setData(next);
+        if (failures === calls.length)
+          setError(
+            "Could not load dashboard data — check that you are signed in and the API is up.",
+          );
+        setLoading(false);
+      },
+    );
   }, []);
 
   useEffect(() => {
@@ -301,8 +349,8 @@ const PanchshilConnectDashboard = () => {
   }, [applied, alertsNonce]);
 
   /* ---------------- tabular reports ----------------
-     Fetched only while the reports tab is open, so opening the dashboard
-     never pays for table queries it will not show. */
+     Only the active module's report is fetched - switching modules refetches
+     whichever table that module needs, rather than loading all four. */
   const reportParams = useCallback(
     (extra = {}) => {
       const p = { ...extra };
@@ -311,13 +359,12 @@ const PanchshilConnectDashboard = () => {
       if (applied.toDate) p.to_date = applied.toDate;
       return p;
     },
-    [applied]
+    [applied],
   );
 
   useEffect(() => {
-    if (tab !== "tables") return undefined;
     const ac = new AbortController();
-    const def = REPORTS.find((r) => r.key === report);
+    const def = REPORTS.find((r) => r.key === section);
     setReportLoading(true);
     setReportError(null);
 
@@ -333,24 +380,25 @@ const PanchshilConnectDashboard = () => {
       });
 
     return () => ac.abort();
-  }, [tab, report, reportPage, reportParams]);
+  }, [section, reportPage, reportParams]);
 
-  /* Filters or report changed -> back to the first page. */
-  useEffect(() => setReportPage(1), [report, applied]);
+  /* Module or filters changed -> back to the first page. */
+  useEffect(() => setReportPage(1), [section, applied]);
 
   /* The export needs the auth header, so it cannot be a plain link - fetch the
      xlsx as a blob and hand it to the browser. */
   const onExport = async () => {
-    const def = REPORTS.find((r) => r.key === report);
+    const def = REPORTS.find((r) => r.key === section);
     setExporting(true);
     try {
       const res = await axios.get(
-        `${baseURL.replace(/\/+$/, "")}/panchshil_connect_dashboard/${def.path}.json`,
+        `${baseURL.replace(/\/+$/, "")}/panchshil_connect_dashboard/${def.path
+        }.json`,
         {
           params: reportParams({ export: true }),
           responseType: "blob",
           headers: { Authorization: `Bearer ${authToken()}` },
-        }
+        },
       );
       const url = URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
@@ -412,10 +460,23 @@ const PanchshilConnectDashboard = () => {
   /* ---------------- derived rows ---------------- */
   const err = (k) => (data[k]?.__error ? "Failed to load" : null);
 
-  const enquiryRows = useMemo(() => projectBars(data.enquiries, "enquiries_count"), [data]);
+  const enquiryRows = useMemo(
+    () => projectBars(data.enquiries, "enquiries_count"),
+    [data],
+  );
   const visitRows = useMemo(() => projectBars(data.visits, "count"), [data]);
-  const likeRows = useMemo(() => projectBars(data.likes, "likes_count"), [data]);
-  const amenityRows = useMemo(() => projectBars(data.amenities, "amenities_count"), [data]);
+  const likeRows = useMemo(
+    () => projectBars(data.likes, "likes_count"),
+    [data],
+  );
+  const amenityRows = useMemo(
+    () => projectBars(data.amenities, "amenities_count"),
+    [data],
+  );
+  const referralRows = useMemo(
+    () => projectBars(data.referrals, "total_referrals_count"),
+    [data],
+  );
 
   const propertyRows = useMemo(
     () =>
@@ -423,12 +484,15 @@ const PanchshilConnectDashboard = () => {
         label: r.property_type,
         value: r.count,
       })),
-    [data]
+    [data],
   );
   const salesRows = useMemo(
     () =>
-      (data.salesBuilding?.sales_types || []).map((r) => ({ label: r.sales_type, value: r.count })),
-    [data]
+      (data.salesBuilding?.sales_types || []).map((r) => ({
+        label: r.sales_type,
+        value: r.count,
+      })),
+    [data],
   );
   const buildingRows = useMemo(
     () =>
@@ -436,11 +500,15 @@ const PanchshilConnectDashboard = () => {
         label: r.building_type,
         value: r.count,
       })),
-    [data]
+    [data],
   );
   const featuredRows = useMemo(
-    () => (data.featured?.statuses || []).map((r) => ({ label: r.status, value: r.count })),
-    [data]
+    () =>
+      (data.featured?.statuses || []).map((r) => ({
+        label: r.status,
+        value: r.count,
+      })),
+    [data],
   );
   const serviceRows = useMemo(
     () =>
@@ -449,23 +517,34 @@ const PanchshilConnectDashboard = () => {
         a: c.services_count,
         b: c.active_services_count,
       })),
-    [data]
+    [data],
   );
 
   const heatRows = (key) => (data[key]?.projects || []).slice(0, HEAT_ROWS);
   const hourLabels = useMemo(() => {
-    const src = data.enquiryHours?.hourly_totals || data.visitHours?.hourly_totals || [];
+    const src =
+      data.enquiryHours?.hourly_totals || data.visitHours?.hourly_totals || [];
     return src.map((h) => ({ hour: h.hour, label: h.label }));
   }, [data]);
 
-  const enquiryHourly = useMemo(() => data.enquiryHours?.hourly_totals || [], [data]);
-  const visitHourly = useMemo(() => data.visitHours?.hourly_totals || [], [data]);
-  const hourlyRows = (pts) => pts.filter((h) => h.count > 0).map((h) => ({ label: h.label, value: h.count }));
+  const enquiryHourly = useMemo(
+    () => data.enquiryHours?.hourly_totals || [],
+    [data],
+  );
+  const visitHourly = useMemo(
+    () => data.visitHours?.hourly_totals || [],
+    [data],
+  );
+  const hourlyRows = (pts) =>
+    pts
+      .filter((h) => h.count > 0)
+      .map((h) => ({ label: h.label, value: h.count }));
 
   const peak = (key) => data[key]?.peak_hour;
-  const rangeCaption = applied.fromDate || applied.toDate
-    ? `${applied.fromDate || "start"} → ${applied.toDate || "today"}`
-    : "All time";
+  const rangeCaption =
+    applied.fromDate || applied.toDate
+      ? `${applied.fromDate || "start"} → ${applied.toDate || "today"}`
+      : "All time";
 
   /* ---------------- ribbon ----------------
      The single KPI layer. Nothing below it restates these numbers. */
@@ -478,17 +557,24 @@ const PanchshilConnectDashboard = () => {
       value: nf.format(data.enquiries?.total_enquiries ?? 0),
       sub: plural(data.enquiries?.total_projects ?? 0, "project"),
       /* the hour is the headline here, the count is the qualifier */
-      note: pk("enquiryHours") ? `Peak ${pk("enquiryHours").label} · ${pk("enquiryHours").count}` : null,
+      // note: pk("enquiryHours")
+      //   ? `Peak ${pk("enquiryHours").label} · ${pk("enquiryHours").count}`
+      //   : null,
+    },
+    {
+      label: "Referrals",
+      value: nf.format(data.referrals?.total_referrals ?? 0),
+      sub: `${nf.format(data.referrals?.active_referrals ?? 0)} active`,
     },
     {
       label: "Scheduled Visits",
       value: nf.format(data.visits?.total_visits ?? 0),
       sub: plural(data.visits?.total_projects ?? 0, "project"),
-      note: pk("visitHours")
-        ? `Peak ${pk("visitHours").label} · ${pk("visitHours").count}`
-        : data.visitHours?.unslotted_count
-        ? `${data.visitHours.unslotted_count} without slot`
-        : null,
+      // note: pk("visitHours")
+      //   ? `Peak ${pk("visitHours").label} · ${pk("visitHours").count}`
+      //   : data.visitHours?.unslotted_count
+      //     ? `${data.visitHours.unslotted_count} without slot`
+      //     : null,
     },
     {
       label: "Project Likes",
@@ -503,7 +589,10 @@ const PanchshilConnectDashboard = () => {
     {
       label: "Projects in scope",
       value: nf.format(data.propertyTypes?.total_projects ?? 0),
-      sub: plural(data.propertyTypes?.total_property_types ?? 0, "property type"),
+      sub: plural(
+        data.propertyTypes?.total_property_types ?? 0,
+        "property type",
+      ),
     },
     /* The two below are NOT project-filtered: plus_services has no project
        linkage at all server-side, and the status endpoint takes only a date
@@ -513,8 +602,6 @@ const PanchshilConnectDashboard = () => {
       label: "Overall Privileges",
       value: nf.format(data.services?.total_services ?? 0),
       sub: `${data.services?.total_active_services ?? 0} active`,
-      note: "All projects · not filtered",
-      muted: true,
     },
     {
       /* Upcoming and Sold Out come from different columns and do not
@@ -522,14 +609,12 @@ const PanchshilConnectDashboard = () => {
       label: "Overall Project Status",
       value: featuredRows.map((r) => r.value).join(" / ") || "—",
       sub: featuredRows.map((r) => r.label).join(" / ") || "—",
-      note: "All projects · not filtered",
-      muted: true,
     },
   ];
 
   return (
     <div className="pcd-page">
-      {/* ---------------- sticky header ---------------- */}
+      {/* ---------------- brand nav strip ---------------- */}
       <header className="pcd-topbar">
         <div className="pcd-brand">
           <img src={LOGO_URL} alt="Panchshil" />
@@ -539,402 +624,487 @@ const PanchshilConnectDashboard = () => {
           </div>
         </div>
 
-        <div className="pcd-controls">
-          <div className="pcd-seg">
-            {[
-              ["day", "Day"],
-              ["month", "Month"],
-              ["range", "Range"],
-              ["all", "All"],
-            ].map(([k, l]) => (
-              <button
-                key={k}
-                type="button"
-                className={preset === k ? "is-on" : ""}
-                onClick={() => applyPreset(k)}
-              >
-                {l}
-              </button>
-            ))}
-          </div>
-
-          {showDates ? (
-            <div className="pcd-daterange">
-              <label className="pcd-date">
-                <span>From</span>
-                <input
-                  type="date"
-                  value={fromDate}
-                  max={toDate || undefined}
-                  onChange={(e) => {
-                    setFromDate(e.target.value);
-                    setPreset("range");
-                  }}
-                />
-              </label>
-              <i className="pcd-dash" aria-hidden="true" />
-              <label className="pcd-date">
-                <span>To</span>
-                <input
-                  type="date"
-                  value={toDate}
-                  min={fromDate || undefined}
-                  onChange={(e) => {
-                    setToDate(e.target.value);
-                    setPreset("range");
-                  }}
-                />
-              </label>
-            </div>
-          ) : (
-            <span className="pcd-alltime">No date filter — all time</span>
-          )}
-
-          <div className="pcd-projsel">
-            <Select
-              inputId="pcd-projects"
-              isMulti
-              options={projectOptions}
-              value={selectedProjects}
-              onChange={(v) => setSelectedProjects(v || [])}
-              placeholder="All projects"
-              styles={selectStyles}
-              closeMenuOnSelect={false}
-              menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-            />
-          </div>
-
-          <button
-            type="button"
-            className="pcd-btn pcd-btn-primary"
-            onClick={onApply}
-            disabled={dateInvalid || loading}
-          >
-            {loading ? "Loading…" : "Apply"}
-          </button>
-          <button type="button" className="pcd-btn pcd-btn-ghost" onClick={onReset}>
-            Reset
-          </button>
-        </div>
-
-        <Link to="/" className="pcd-back">
-          ← Back to Web App
-        </Link>
-      </header>
-
-      <main className="pcd">
-        {dateInvalid ? (
-          <div className="pcd-note">“From date” must be on or before “To date”.</div>
-        ) : null}
-        {error ? <div className="pcd-note pcd-note-error">{error}</div> : null}
-
-        <AiGreeting data={greeting} loading={greetingLoading} />
-
-        <div className="pcd-scope">
-          <span>Showing</span>
-          <b>{applied.projectIds ? `${applied.projectIds.split(",").length} selected projects` : "all projects"}</b>
-          <span>·</span>
-          <b>{rangeCaption}</b>
-        </div>
-
-        <KpiRibbon items={ribbon} loading={loading} />
-
-        {/* Main column on the left, activity rail spanning the full height
-            on the right - collapsible so the charts can take the full width. */}
-        <div className={`pcd-shell ${railOpen ? "" : "is-collapsed"}`}>
-          <div className="pcd-main">
-            <AiAlerts
-              data={alerts}
-              loading={alertsLoading}
-              error={alertsError}
-              onRetry={() => setAlertsNonce((n) => n + 1)}
-            />
-
-        {/* ---------------- view tabs ---------------- */}
-        <div className="pcd-tabs" role="tablist">
-          {[
-            ["visualization", "Visualization"],
-            ["tables", "Tabular Reports"],
-          ].map(([k, l]) => (
-            <button
-              key={k}
-              type="button"
-              role="tab"
-              aria-selected={tab === k}
-              className={tab === k ? "is-on" : ""}
-              onClick={() => setTab(k)}
-            >
-              {l}
-            </button>
-          ))}
-        </div>
-
-        {tab === "tables" ? (
-          <>
-            <div className="pcd-subtabs">
-              {REPORTS.map((r) => (
+        <div className="pcd-dash-actions">
+          <div className="pcd-dash-actions">
+            <div className="pcd-seg">
+              {[
+                ["day", "Day"],
+                ["month", "Month"],
+                ["range", "Range"],
+                ["all", "All"],
+              ].map(([k, l]) => (
                 <button
-                  key={r.key}
+                  key={k}
                   type="button"
-                  className={report === r.key ? "is-on" : ""}
-                  onClick={() => setReport(r.key)}
+                  className={preset === k ? "is-on" : ""}
+                  onClick={() => applyPreset(k)}
                 >
-                  {r.label}
+                  {l}
                 </button>
               ))}
             </div>
-            <DataTable
-              columns={reportData?.columns || []}
-              rows={reportData?.rows || []}
-              pagination={reportData?.pagination}
-              loading={reportLoading}
-              error={reportError}
-              onPage={setReportPage}
-              onExport={onExport}
-              exporting={exporting}
-            />
-          </>
-        ) : (
-          <>
-        {/* ================= ENGAGEMENT ================= */}
-        <SectionHead title="Engagement — what users are doing" />
-        <div className="pcd-grid">
-          
-          <div className="pcd-span-2">
-            <ChartCard
-              title="Enquiries by Project"
-              subtitle="Enquiry forms submitted"
-              loading={loading}
-              error={err("enquiries")}
-              empty={!enquiryRows.length}
-            >
-              <SwitchableChart
-                rows={enquiryRows}
-                types={["bar", "column", "table"]}
-                tableCols={["Project", "Enquiries"]}
+
+            {showDates ? (
+              <div className="pcd-daterange">
+                <Calendar size={14} strokeWidth={2} className="pcd-daterange-icon" aria-hidden="true" />
+                <label className="pcd-date">
+                  <span>From</span>
+                  <input
+                    type="date"
+                    value={fromDate}
+                    max={toDate || undefined}
+                    onChange={(e) => {
+                      setFromDate(e.target.value);
+                      setPreset("range");
+                    }}
+                  />
+                </label>
+                <i className="pcd-dash" aria-hidden="true" />
+                <label className="pcd-date">
+                  <span>To</span>
+                  <input
+                    type="date"
+                    value={toDate}
+                    min={fromDate || undefined}
+                    onChange={(e) => {
+                      setToDate(e.target.value);
+                      setPreset("range");
+                    }}
+                  />
+                </label>
+              </div>
+            ) : (
+              <span className="pcd-alltime">No date filter — all time</span>
+            )}
+
+            <div className="pcd-projsel">
+              <MapPin size={13} strokeWidth={2} className="pcd-projsel-icon" aria-hidden="true" />
+              <Select
+                inputId="pcd-projects"
+                isMulti
+                options={projectOptions}
+                value={selectedProjects}
+                onChange={(v) => setSelectedProjects(v || [])}
+                placeholder="All projects"
+                styles={selectStyles}
+                closeMenuOnSelect={false}
+                menuPortalTarget={
+                  typeof document !== "undefined" ? document.body : null
+                }
               />
-            </ChartCard>
+            </div>
+
+            <button
+              type="button"
+              className="pcd-btn pcd-btn-primary"
+              onClick={onApply}
+              disabled={dateInvalid || loading}
+            >
+              {loading ? "Loading…" : "Apply"}
+            </button>
+            <button
+              type="button"
+              className="pcd-btn pcd-btn-ghost"
+              onClick={onReset}
+            >
+              Reset
+            </button>
           </div>
 
-          
-          <div className="pcd-span-2">
-            <ChartCard
-              title="Scheduled Visits by Project"
-              loading={loading}
-              error={err("visits")}
-              empty={!visitRows.length}
-            >
-              <SwitchableChart
-                rows={visitRows}
-                types={["column", "bar", "table"]}
-                tableCols={["Project", "Scheduled visits"]}
-              />
-            </ChartCard>
+          <Link to="/" className="pcd-back">
+            ← Back to Web App
+          </Link>
+        </div>
+      </header>
+
+      <main className="pcd">
+        {/* ---------------- dashboard header: greeting + filters ---------------- */}
+        <div className="pcd-dash-header">
+          <div className="pcd-dash-titlewrap">
+            <AiGreeting data={greeting} loading={greetingLoading} />
           </div>
-          <div className="pcd-span-2">
-            <ChartCard
-              title="Likes by Project"
-              subtitle="Favourited projects"
-              loading={loading}
-              error={err("likes")}
-              empty={!likeRows.length}
-            >
-              <SwitchableChart
-                rows={likeRows}
-                types={["bar", "column", "table"]}
-                tableCols={["Project", "Likes"]}
-              />
-            </ChartCard>
-          </div>
-          <div className="pcd-span-2">
-            <ChartCard
-              title="Amenities by Project"
-              loading={loading}
-              error={err("amenities")}
-              empty={!amenityRows.length}
-            >
-              <SwitchableChart
-                rows={amenityRows}
-                types={["bar", "table"]}
-                tableCols={["Project", "Amenities"]}
-              />
-            </ChartCard>
+
+        </div>
+
+        {/* KPI ribbon is global - it does not change with the module tab
+            below, only with the date/project filters. Full-bleed white,
+            flush under the dashboard header (same attachment as the topbar
+            / dashboard-header pair above), with the module tabs directly
+            beneath it and no gap - the two read as one band, separated from
+            the chart content below by a single hairline border. */}
+        <div className="pcd-kpi-tabs">
+          <KpiRibbon items={ribbon} loading={loading} />
+
+          <div className="pcd-tabs" role="tablist">
+            {MODULES.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={section === key}
+                className={section === key ? "is-on" : ""}
+                onClick={() => setSection(key)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* ================= PORTFOLIO ================= */}
-        <SectionHead title="Portfolio — what is in the project mix" />
-        <div className="pcd-grid">
-          <div className="pcd-span-1">
-            <ChartCard
-              title="By Property Type"
-              subtitle="Share of portfolio"
-              loading={loading}
-              error={err("propertyTypes")}
-              empty={!propertyRows.length}
-            >
-              {/* 2 segments: share bar or bar — a 2-slice pie is an anti-pattern */}
-              <SwitchableChart
-                rows={propertyRows}
-                types={["share", "bar", "table"]}
-                tableCols={["Property type", "Projects"]}
-              />
-            </ChartCard>
-          </div>
-          <div className="pcd-span-1">
-            <ChartCard
-              title="By Sales Type"
-              subtitle="Sales vs lease"
-              loading={loading}
-              error={err("salesBuilding")}
-              empty={!salesRows.length}
-            >
-              <SwitchableChart
-                rows={salesRows}
-                types={["donut", "bar", "share", "table"]}
-                unit="Projects"
-                tableCols={["Sales type", "Projects"]}
-              />
-            </ChartCard>
-          </div>
-          <div className="pcd-span-1">
-            <ChartCard
-              title="By Building Type"
-              loading={loading}
-              error={err("salesBuilding")}
-              empty={!buildingRows.length}
-            >
-              <SwitchableChart
-                rows={buildingRows}
-                types={["bar", "donut", "table"]}
-                unit="Projects"
-                tableCols={["Building type", "Projects"]}
-              />
-            </ChartCard>
-          </div>
-          <div className="pcd-span-1">
-            <ChartCard
-              title="Overall Project Status"
-              subtitle="Upcoming vs sold out · all projects, not project-filtered"
-              loading={loading}
-              error={err("featured")}
-              empty={!featuredRows.length}
-            >
-              <SwitchableChart
-                rows={featuredRows}
-                types={["column", "bar", "table"]}
-                tableCols={["Status", "Projects"]}
-              />
-            </ChartCard>
-          </div>
+        <div className="pcd-content">
+          {dateInvalid ? (
+            <div className="pcd-note">
+              “From date” must be on or before “To date”.
+            </div>
+          ) : null}
+          {error ? (
+            <div className="pcd-note pcd-note-error">{error}</div>
+          ) : null}
 
-          <div className="pcd-span-4">
-            <ChartCard
-              title="Overall Privileges by Category"
-              subtitle="Plus services per category · all projects, not project-filtered"
-              legend={[
-                { label: "Total", color: VIZ.brand },
-                { label: "Active", color: VIZ.brand2 },
-              ]}
-              loading={loading}
-              error={err("services")}
-              empty={!serviceRows.length}
-            >
-              <GroupedHBar rows={serviceRows} />
-            </ChartCard>
-          </div>
-          
-        </div>
+          {/* <div className="pcd-scope">
+            <span>Showing</span>
+            <b>
+              {applied.projectIds
+                ? `${applied.projectIds.split(",").length} selected projects`
+                : "all projects"}
+            </b>
+            <span>·</span>
+            <b>{rangeCaption}</b>
+          </div> */}
 
-        {/* ================= TIMING ================= */}
-        <SectionHead title="Timing — when the activity happens" />
-        <div className="pcd-grid">
-          <div className="pcd-span-2">
-            <ChartCard
-              title="Enquiries by Hour of Day"
-              subtitle={
-                peak("enquiryHours")?.count
-                  ? `Peak ${peak("enquiryHours").label} · ${peak("enquiryHours").count}`
-                  : "Across all projects in scope"
-              }
-              loading={loading}
-              error={err("enquiryHours")}
-              empty={!enquiryHourly.some((h) => h.count > 0)}
-            >
-              <SwitchableChart
-                rows={hourlyRows(enquiryHourly)}
-                linePoints={enquiryHourly}
-                types={["line", "bar", "table"]}
-                tableCols={["Hour", "Enquiries"]}
-              />
-            </ChartCard>
-          </div>
-          <div className="pcd-span-2">
-            <ChartCard
-              title="Scheduled Visits by Hour of Day"
-              subtitle={
-                peak("visitHours")?.count
-                  ? `Peak ${peak("visitHours").label} · ${peak("visitHours").count}`
-                  : "Scheduled slot times"
-              }
-              loading={loading}
-              error={err("visitHours")}
-              empty={!visitHourly.some((h) => h.count > 0)}
-            >
-              <SwitchableChart
-                rows={hourlyRows(visitHourly)}
-                linePoints={visitHourly}
-                lineColor={VIZ.brand3}
-                types={["line", "bar", "table"]}
-                tableCols={["Hour", "Visits"]}
-              />
-            </ChartCard>
-          </div>
+          {/* Main column on the left, activity rail spanning the full height
+              on the right - collapsible so the charts can take the full width. */}
+          <div className={`pcd-shell ${railOpen ? "" : "is-collapsed"}`}>
+            <div className="pcd-main">
+              {/* <AiAlerts
+                data={alerts}
+                loading={alertsLoading}
+                error={alertsError}
+                onRetry={() => setAlertsNonce((n) => n + 1)}
+              /> */}
 
-          <div className="pcd-span-4">
-            <ChartCard
-              title="Enquiry Peak Hours"
-              subtitle={`Top ${HEAT_ROWS} projects × hour of day`}
-              loading={loading}
-              error={err("enquiryHours")}
-              empty={!heatRows("enquiryHours").length}
-            >
-              <HeatMap rows={heatRows("enquiryHours")} hourLabels={hourLabels} />
-            </ChartCard>
-          </div>
+              {section === "projects" ? (
+                <>
+                  <SectionHead title="Projects — property mix & activity" />
+                  <div className="pcd-grid">
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="By Property Type"
+                        subtitle="Share of portfolio"
+                        loading={loading}
+                        error={err("propertyTypes")}
+                        empty={!propertyRows.length}
+                      >
+                        {/* 2 segments: share bar or bar — a 2-slice pie is an anti-pattern */}
+                        <SwitchableChart
+                          rows={propertyRows}
+                          types={["share", "bar", "table"]}
+                          tableCols={["Property type", "Projects"]}
+                        />
+                      </ChartCard>
+                    </div>
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="By Sales Type"
+                        subtitle="Sales vs lease"
+                        loading={loading}
+                        error={err("salesBuilding")}
+                        empty={!salesRows.length}
+                      >
+                        <SwitchableChart
+                          rows={salesRows}
+                          types={["donut", "bar", "share", "table"]}
+                          unit="Projects"
+                          tableCols={["Sales type", "Projects"]}
+                        />
+                      </ChartCard>
+                    </div>
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="By Building Type"
+                        loading={loading}
+                        error={err("salesBuilding")}
+                        empty={!buildingRows.length}
+                      >
+                        <SwitchableChart
+                          rows={buildingRows}
+                          types={["bar", "donut", "table"]}
+                          unit="Projects"
+                          tableCols={["Building type", "Projects"]}
+                        />
+                      </ChartCard>
+                    </div>
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="Overall Project Status"
+                        subtitle="Upcoming vs sold out · all projects, not project-filtered"
+                        loading={loading}
+                        error={err("featured")}
+                        empty={!featuredRows.length}
+                      >
+                        <SwitchableChart
+                          rows={featuredRows}
+                          types={["column", "bar", "table"]}
+                          tableCols={["Status", "Projects"]}
+                        />
+                      </ChartCard>
+                    </div>
 
-          <div className="pcd-span-4">
-            <ChartCard
-              title="Scheduled Visit Peak Hours"
-              subtitle={`Top ${HEAT_ROWS} projects × slot hour`}
-              loading={loading}
-              error={err("visitHours")}
-              empty={!heatRows("visitHours").length}
-            >
-              <HeatMap rows={heatRows("visitHours")} hourLabels={hourLabels} />
-              {data.visitHours?.unslotted_count > 0 ? (
-                <div className="pcd-note">
-                  {data.visitHours.unslotted_count} scheduled visit
-                  {data.visitHours.unslotted_count === 1 ? "" : "s"} have no resolvable slot time
-                  and are not shown.
-                </div>
+                    <div className="pcd-span-4">
+                      <ChartCard
+                        title="Overall Privileges by Category"
+                        subtitle="Plus services per category · all projects, not project-filtered"
+                        loading={loading}
+                        error={err("services")}
+                        empty={!serviceRows.length}
+                      >
+                        <StackedColumnChart rows={serviceRows} />
+                      </ChartCard>
+                    </div>
+
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="Likes by Project"
+                        subtitle="Favourited projects"
+                        loading={loading}
+                        error={err("likes")}
+                        empty={!likeRows.length}
+                      >
+                        <SwitchableChart
+                          rows={likeRows}
+                          types={["bar", "column", "table"]}
+                          tableCols={["Project", "Likes"]}
+                        />
+                      </ChartCard>
+                    </div>
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="Amenities by Project"
+                        loading={loading}
+                        error={err("amenities")}
+                        empty={!amenityRows.length}
+                      >
+                        <SwitchableChart
+                          rows={amenityRows}
+                          types={["bar", "table"]}
+                          tableCols={["Project", "Amenities"]}
+                        />
+                      </ChartCard>
+                    </div>
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="Referrals by Project"
+                        subtitle="Active vs lost referrals"
+                        loading={loading}
+                        error={err("referrals")}
+                        empty={!referralRows.length}
+                      >
+                        <SwitchableChart
+                          rows={referralRows}
+                          types={["bar", "column", "table"]}
+                          tableCols={["Project", "Referrals"]}
+                        />
+                      </ChartCard>
+                    </div>
+                  </div>
+
+                  <SectionHead title="Project Records" />
+                  <DataTable
+                    columns={reportData?.columns || []}
+                    rows={reportData?.rows || []}
+                    pagination={reportData?.pagination}
+                    loading={reportLoading}
+                    error={reportError}
+                    onPage={setReportPage}
+                    onExport={onExport}
+                    exporting={exporting}
+                  />
+                </>
               ) : null}
-            </ChartCard>
-          </div>
-        </div>
-          </>
-        )}
-          </div>
 
-          <ActivityBoard
-            data={activity}
-            loading={activityLoading}
-            error={activityError}
-            onRetry={() => setActivityNonce((n) => n + 1)}
-            updatedAt={activityUpdatedAt}
-            collapsed={!railOpen}
-            onToggle={() => setRailOpen((v) => !v)}
-          />
+              {section === "enquiries" ? (
+                <>
+                  <SectionHead title="Enquiries — what users are doing" />
+                  <div className="pcd-grid">
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="Enquiries by Project"
+                        subtitle="Enquiry forms submitted"
+                        loading={loading}
+                        error={err("enquiries")}
+                        empty={!enquiryRows.length}
+                      >
+                        <SwitchableChart
+                          rows={enquiryRows}
+                          types={["bar", "column", "table"]}
+                          tableCols={["Project", "Enquiries"]}
+                        />
+                      </ChartCard>
+                    </div>
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="Enquiries by Hour of Day"
+                        subtitle={
+                          peak("enquiryHours")?.count
+                            ? `Peak ${peak("enquiryHours").label} · ${peak("enquiryHours").count
+                            }`
+                            : "Across all projects in scope"
+                        }
+                        loading={loading}
+                        error={err("enquiryHours")}
+                        empty={!enquiryHourly.some((h) => h.count > 0)}
+                      >
+                        <SwitchableChart
+                          rows={hourlyRows(enquiryHourly)}
+                          linePoints={enquiryHourly}
+                          types={["line", "bar", "table"]}
+                          tableCols={["Hour", "Enquiries"]}
+                        />
+                      </ChartCard>
+                    </div>
+
+                    <div className="pcd-span-4">
+                      <ChartCard
+                        title="Enquiry Peak Hours"
+                        subtitle={`Top ${HEAT_ROWS} projects × hour of day`}
+                        loading={loading}
+                        error={err("enquiryHours")}
+                        empty={!heatRows("enquiryHours").length}
+                      >
+                        <HeatMap
+                          rows={heatRows("enquiryHours")}
+                          hourLabels={hourLabels}
+                        />
+                      </ChartCard>
+                    </div>
+                  </div>
+
+                  <SectionHead title="Enquiry Records" />
+                  <DataTable
+                    columns={reportData?.columns || []}
+                    rows={reportData?.rows || []}
+                    pagination={reportData?.pagination}
+                    loading={reportLoading}
+                    error={reportError}
+                    onPage={setReportPage}
+                    onExport={onExport}
+                    exporting={exporting}
+                  />
+                </>
+              ) : null}
+
+              {section === "visits" ? (
+                <>
+                  <SectionHead title="Site Visits — what users are doing" />
+                  <div className="pcd-grid">
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="Scheduled Visits by Project"
+                        loading={loading}
+                        error={err("visits")}
+                        empty={!visitRows.length}
+                      >
+                        <SwitchableChart
+                          rows={visitRows}
+                          types={["column", "bar", "table"]}
+                          tableCols={["Project", "Scheduled visits"]}
+                        />
+                      </ChartCard>
+                    </div>
+                    <div className="pcd-span-2">
+                      <ChartCard
+                        title="Scheduled Visits by Hour of Day"
+                        subtitle={
+                          peak("visitHours")?.count
+                            ? `Peak ${peak("visitHours").label} · ${peak("visitHours").count
+                            }`
+                            : "Scheduled slot times"
+                        }
+                        loading={loading}
+                        error={err("visitHours")}
+                        empty={!visitHourly.some((h) => h.count > 0)}
+                      >
+                        <SwitchableChart
+                          rows={hourlyRows(visitHourly)}
+                          linePoints={visitHourly}
+                          lineColor={VIZ.brand3}
+                          types={["line", "bar", "table"]}
+                          tableCols={["Hour", "Visits"]}
+                        />
+                      </ChartCard>
+                    </div>
+
+                    <div className="pcd-span-4">
+                      <ChartCard
+                        title="Scheduled Visit Peak Hours"
+                        subtitle={`Top ${HEAT_ROWS} projects × slot hour`}
+                        loading={loading}
+                        error={err("visitHours")}
+                        empty={!heatRows("visitHours").length}
+                      >
+                        <HeatMap
+                          rows={heatRows("visitHours")}
+                          hourLabels={hourLabels}
+                        />
+                        {data.visitHours?.unslotted_count > 0 ? (
+                          <div className="pcd-note">
+                            {data.visitHours.unslotted_count} scheduled visit
+                            {data.visitHours.unslotted_count === 1
+                              ? ""
+                              : "s"}{" "}
+                            have no resolvable slot time and are not shown.
+                          </div>
+                        ) : null}
+                      </ChartCard>
+                    </div>
+                  </div>
+
+                  <SectionHead title="Site Visit Records" />
+                  <DataTable
+                    columns={reportData?.columns || []}
+                    rows={reportData?.rows || []}
+                    pagination={reportData?.pagination}
+                    loading={reportLoading}
+                    error={reportError}
+                    onPage={setReportPage}
+                    onExport={onExport}
+                    exporting={exporting}
+                  />
+                </>
+              ) : null}
+
+              {section === "events" ? (
+                <>
+                  <SectionHead title="Event Records" />
+                  <DataTable
+                    columns={reportData?.columns || []}
+                    rows={reportData?.rows || []}
+                    pagination={reportData?.pagination}
+                    loading={reportLoading}
+                    error={reportError}
+                    onPage={setReportPage}
+                    onExport={onExport}
+                    exporting={exporting}
+                  />
+                </>
+              ) : null}
+            </div>
+
+            {/* Positioned out of normal flow so the rail's own (sticky, near
+              full-viewport-capped) height never forces .pcd-shell taller
+              than .pcd-main actually needs - see .pcd-board-rail. */}
+            <div className="pcd-board-rail">
+              <ActivityBoard
+                data={activity}
+                loading={activityLoading}
+                error={activityError}
+                onRetry={() => setActivityNonce((n) => n + 1)}
+                updatedAt={activityUpdatedAt}
+                collapsed={!railOpen}
+                onToggle={() => setRailOpen((v) => !v)}
+              />
+            </div>
+          </div>
         </div>
       </main>
     </div>

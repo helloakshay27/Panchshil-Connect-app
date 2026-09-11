@@ -27,6 +27,7 @@
         "react-select": "^5.9.0",
         "react-toastify": "^11.0.5",
         "react-tooltip": "^5.28.0",
+        "recharts": "^3.10.1",
         "yup": "^1.7.1"
     },
     "devDependencies": {

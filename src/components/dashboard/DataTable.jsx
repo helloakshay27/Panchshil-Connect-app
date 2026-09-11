@@ -64,14 +64,14 @@ export const DataTable = ({
             </>
           )}
         </div>
-        <button
+        {/* <button
           type="button"
           className="pcd-btn pcd-btn-primary pcd-dt-export"
           onClick={onExport}
           disabled={exporting || loading || !total}
         >
           {exporting ? "Preparing…" : "Export to Excel"}
-        </button>
+        </button> */}
       </div>
 
       {error ? (
