@@ -63,6 +63,7 @@ const MODULES = [
   { key: "enquiries", label: "Enquiries" },
   { key: "visits", label: "Site Visits" },
   { key: "events", label: "Events" },
+  { key: "referrals", label: "Referrals" },
 ];
 
 /* The token saved at sign-in; every dashboard call is authenticated with it. */
@@ -363,8 +364,16 @@ const PanchshilConnectDashboard = () => {
   );
 
   useEffect(() => {
-    const ac = new AbortController();
     const def = REPORTS.find((r) => r.key === section);
+    /* Referrals has no backing report table - only the ribbon + chart. */
+    if (!def) {
+      setReportData(null);
+      setReportError(null);
+      setReportLoading(false);
+      return;
+    }
+
+    const ac = new AbortController();
     setReportLoading(true);
     setReportError(null);
 
@@ -389,6 +398,7 @@ const PanchshilConnectDashboard = () => {
      xlsx as a blob and hand it to the browser. */
   const onExport = async () => {
     const def = REPORTS.find((r) => r.key === section);
+    if (!def) return;
     setExporting(true);
     try {
       const res = await axios.get(
@@ -476,6 +486,10 @@ const PanchshilConnectDashboard = () => {
   const referralRows = useMemo(
     () => projectBars(data.referrals, "total_referrals_count"),
     [data],
+  );
+  const referralLinePoints = useMemo(
+    () => referralRows.map((r) => ({ label: r.label, count: r.value })),
+    [referralRows],
   );
 
   const propertyRows = useMemo(
@@ -891,21 +905,6 @@ const PanchshilConnectDashboard = () => {
                         />
                       </ChartCard>
                     </div>
-                    <div className="pcd-span-2">
-                      <ChartCard
-                        title="Referrals by Project"
-                        subtitle="Active vs lost referrals"
-                        loading={loading}
-                        error={err("referrals")}
-                        empty={!referralRows.length}
-                      >
-                        <SwitchableChart
-                          rows={referralRows}
-                          types={["bar", "column", "table"]}
-                          tableCols={["Project", "Referrals"]}
-                        />
-                      </ChartCard>
-                    </div>
                   </div>
 
                   <SectionHead title="Project Records" />
@@ -1086,6 +1085,31 @@ const PanchshilConnectDashboard = () => {
                     onExport={onExport}
                     exporting={exporting}
                   />
+                </>
+              ) : null}
+
+              {section === "referrals" ? (
+                <>
+                  <SectionHead title="Referrals — referral activity by project" />
+                  <div className="pcd-grid">
+                    <div className="pcd-span-4">
+                      <ChartCard
+                        title="Referrals by Project"
+                        subtitle="Total referrals"
+                        loading={loading}
+                        error={err("referrals")}
+                        empty={!referralRows.length}
+                      >
+                        <SwitchableChart
+                          rows={referralRows}
+                          initial="line"
+                          linePoints={referralLinePoints}
+                          types={["line", "bar", "table"]}
+                          tableCols={["Project", "Referrals"]}
+                        />
+                      </ChartCard>
+                    </div>
+                  </div>
                 </>
               ) : null}
             </div>
