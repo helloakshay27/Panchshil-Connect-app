@@ -1,10 +1,19 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { Users } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
-import "../mor.css";
-import "./project-details-create.css";
+import "./banner-add.css";
+
+const DetailItem = ({ label, value }) => (
+  <div className="banner-details-item">
+    <span className="banner-details-label">{label}</span>
+    <span className="banner-details-value" title={value || "-"}>
+      {value || "-"}
+    </span>
+  </div>
+);
 
 const UserGroupDetails = () => {
   const { id } = useParams();
@@ -12,9 +21,12 @@ const UserGroupDetails = () => {
   const [formData, setFormData] = useState({
     name: "",
     company_id: "",
+    company_name: "",
     site_id: "",
+    site_name: "",
     user_id: "",
     active: false,
+    usergroup_members: [],
   });
   const [loading, setLoading] = useState(true);
 
@@ -31,10 +43,16 @@ const UserGroupDetails = () => {
         const data = response.data.usergroup || response.data;
         setFormData({
           name: data.name || "",
-          company_id: data.company_id || "",
+          company_id: data.company_id || response.data.company_id || "",
+          company_name:
+            data.company_name || response.data.company_name || "",
           site_id: data.site_id || "",
+          site_name: data.site_name || "",
           user_id: data.user_id || "",
-          active: data.active || false,
+          active: Boolean(data.active),
+          usergroup_members: Array.isArray(data.usergroup_members)
+            ? data.usergroup_members
+            : [],
         });
       } catch (error) {
         console.error("Error fetching user group data", error);
@@ -47,109 +65,96 @@ const UserGroupDetails = () => {
   }, [id]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="main-content">
+        <div className="module-data-section banner-form-page p-3">
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Users size={16} strokeWidth={1.8} />
+                </span>
+                Loading...
+              </h3>
+            </div>
+            <div className="card-body">
+              <p className="mb-0 text-muted">Loading user group details...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
+
+  const companyDisplay =
+    formData.company_name || formData.company_id || "-";
+  const siteDisplay = formData.site_name || formData.site_id || "-";
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <div className="module-data-section project-details-page p-3">
-            <div className="card user-details-card project-details-create-card mt-4 pb-4 mx-4">
-              <div className="card-header project-details-section-header">
-                <h3 className="project-details-section-heading">
-                  <span className="project-details-section-icon" aria-hidden="true">
-                    <Users size={16} strokeWidth={1.8} />
-                  </span>
-                  User Group Details
-                </h3>
-              </div>
-              <div className="card-body">
-                <div className="row px-3">
-                  <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
-                    <div className="col-6">
-                      <label>Group Name</label>
-                    </div>
-                    <div className="col-6">
-                      <span className="text-dark">
-                        : {formData.name || "-"}
-                      </span>
-                    </div>
-                  </div>
+      <div className="module-data-section banner-form-page p-3">
+        <div className="card banner-form-card mt-3 pb-4">
+          <div className="card-header banner-form-section-header">
+            <h3 className="banner-form-section-heading">
+              <span className="banner-form-section-icon" aria-hidden="true">
+                <Users size={16} strokeWidth={1.8} />
+              </span>
+              User Group Details
+            </h3>
+          </div>
+          <div className="card-body">
+            <div className="banner-details-grid">
+              <DetailItem label="Group Name" value={formData.name} />
+              <DetailItem label="Company" value={companyDisplay} />
+              <DetailItem label="Site" value={siteDisplay} />
+              <DetailItem label="User ID" value={formData.user_id} />
+              <DetailItem
+                label="Status"
+                value={formData.active ? "Active" : "Inactive"}
+              />
+            </div>
 
-                  <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
-                    <div className="col-6">
-                      <label>Company ID</label>
-                    </div>
-                    <div className="col-6">
-                      <span className="text-dark">
-                        : {formData.company_id || "-"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
-                    <div className="col-6">
-                      <label>Site ID</label>
-                    </div>
-                    <div className="col-6">
-                      <span className="text-dark">
-                        : {formData.site_id || "-"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
-                    <div className="col-6">
-                      <label>User ID</label>
-                    </div>
-                    <div className="col-6">
-                      <span className="text-dark">
-                        : {formData.user_id || "-"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-6 col-md-6 col-sm-12 row px-3">
-                    <div className="col-6">
-                      <label>Status</label>
-                    </div>
-                    <div className="col-6">
-                      <span className="text-dark">
-                        : {formData.active ? "Active" : "Inactive"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/*
-                  {formData.usergroup_members.length > 0 && (
-                    <div className="col-12 mt-3 usergroup-members-section">
-                      <h5>Members</h5>
-                      <div className="tbl-container enhanced-table__container usergroup-members-table">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>User ID</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {formData.usergroup_members.map((member, index) => (
-                              <tr key={member.id || index}>
-                                <td>{index + 1}</td>
-                                <td>{member.user_id || "-"}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
-                  */}
+            {formData.usergroup_members.length > 0 && (
+              <div className="banner-details-members">
+                <h4 className="banner-details-subtitle">Members</h4>
+                <div className="tbl-container">
+                  <table className="w-100">
+                    <thead>
+                      <tr>
+                        <th style={{ width: "80px" }}>Sr No</th>
+                        <th>User ID</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.usergroup_members.map((member, index) => (
+                        <tr key={member.id || index}>
+                          <td>{index + 1}</td>
+                          <td>{member.user_id || "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-            </div>
+            )}
           </div>
+        </div>
+
+        <div className="banner-form-actions">
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={() => navigate(`/setup-member/user-groups-edit/${id}`)}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={() => navigate("/setup-member/user-groups-list")}
+          >
+            Back
+          </button>
         </div>
       </div>
     </div>
