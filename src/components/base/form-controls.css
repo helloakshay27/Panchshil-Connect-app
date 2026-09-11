@@ -355,3 +355,22 @@ select.form-control:focus {
   background: #fff4ec !important;
   color: var(--red, #de7008) !important;
 }
+
+@media (min-width: 768px) {
+  .row.banner-form-fields > [class*="col-md-2"],
+  .row.banner-form-fields > [class*="col-md-3"],
+  .row.banner-form-fields > [class*="col-md-4"],
+  .row.banner-form-fields > [class*="col-lg-2"],
+  .row.banner-form-fields > [class*="col-lg-3"],
+  .row.banner-form-fields > [class*="col-lg-4"],
+  .row:has(.form-control-field, .form-select-field) > [class*="col-md-2"],
+  .row:has(.form-control-field, .form-select-field) > [class*="col-md-3"],
+  .row:has(.form-control-field, .form-select-field) > [class*="col-md-4"],
+  .row:has(.form-control-field, .form-select-field) > [class*="col-lg-2"],
+  .row:has(.form-control-field, .form-select-field) > [class*="col-lg-3"],
+  .row:has(.form-control-field, .form-select-field) > [class*="col-lg-4"] {
+    flex: 0 0 auto;
+    width: 50%;
+    max-width: 50%;
+  }
+}

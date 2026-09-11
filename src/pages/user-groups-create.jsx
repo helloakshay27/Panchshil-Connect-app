@@ -270,7 +270,7 @@ const UserGroupCreate = () => {
             </div>
             <div className="card-body">
               <div className="row banner-form-fields">
-                <div className="col-md-4">
+                <div className="col-12 col-md-6">
                   <div className="form-group">
                     <FormTextField
                       label="Group Name"
@@ -382,7 +382,7 @@ const UserGroupCreate = () => {
                       </div>
                     </div> */}
 
-                <div className="col-md-4">
+                <div className="col-12 col-md-6">
                   <div className="form-group">
                     <MultiSelectBox
                       label="Members ID"
