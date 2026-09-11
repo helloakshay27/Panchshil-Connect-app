@@ -130,6 +130,7 @@ import { useEffect } from "react";
 import UserGroupList from "./pages/user-groups-list";
 import UserGroupCreate from "./pages/user-groups-create";
 import UserGroupEdit from "./pages/user-groups-edit";
+import UserGroupDetails from "./pages/usergroup-details";
 import FaqCreate from "./pages/faq-create";
 import FaqList from "./pages/faq-list";
 import FaqEdit from "./pages/faq-edit";
@@ -624,6 +625,10 @@ function App() {
           <Route
             path="/setup-member/user-groups-edit/:id"
             element={<UserGroupEdit />}
+          />
+          <Route
+            path="/setup-member/usergroup-details/:id"
+            element={<UserGroupDetails />}
           />
 
           <Route path="/faq-create" element={<FaqCreate />} />
