@@ -593,6 +593,175 @@
   .banner-details-item {
     grid-template-columns: 120px minmax(0, 1fr);
   }
+
+  .banner-form-page {
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .banner-form-page .banner-form-card {
+    margin: 0.5rem 0 0.75rem;
+    border-radius: 10px !important;
+  }
+
+  .banner-form-card .banner-form-section-header {
+    min-height: 48px;
+    padding: 0.65rem 0.9rem;
+  }
+
+  .banner-form-card .banner-form-section-heading {
+    font-size: 15px;
+  }
+
+  .banner-form-card .card-body {
+    padding: 1rem 0.9rem 1.1rem;
+  }
+
+  .banner-form-fields {
+    --bs-gutter-x: 0;
+    row-gap: 1rem;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .banner-form-fields > [class*="col-"] {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .banner-form-fields .form-select-field .select__control,
+  .banner-form-fields .form-control-field__input,
+  .banner-form-fields .form-control-field__textarea {
+    font-size: 16px !important;
+  }
+
+  .banner-upload-dropzone {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .banner-upload-files-btn {
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .banner-form-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 24px;
+  }
+
+  .banner-form-action-btn {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 0;
+    height: 44px;
+    min-height: 44px;
+    max-height: 44px;
+  }
+
+  .banner-attachment-card .scrollable-table.tbl-container,
+  .banner-form-page .banner-attachment-card .tbl-container {
+    margin-top: 12px;
+    overflow: visible;
+    background: transparent;
+    border: 0;
+  }
+
+  .banner-attachment-card .scrollable-table table {
+    table-layout: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .banner-attachment-card .scrollable-table table,
+  .banner-attachment-card .scrollable-table thead,
+  .banner-attachment-card .scrollable-table tbody,
+  .banner-attachment-card .scrollable-table th,
+  .banner-attachment-card .scrollable-table td,
+  .banner-attachment-card .scrollable-table tr {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .banner-attachment-card .scrollable-table thead {
+    display: none;
+  }
+
+  .banner-attachment-card .scrollable-table tbody tr {
+    box-sizing: border-box;
+    margin: 0 0 10px;
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #e4e7ec !important;
+    border-radius: 10px;
+  }
+
+  .banner-attachment-card .scrollable-table tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #f2f4f7 !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    text-overflow: unset !important;
+    line-height: 1.4;
+  }
+
+  .banner-attachment-card .scrollable-table tbody td:last-child {
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .banner-attachment-card .scrollable-table tbody td::before {
+    flex: 0 0 auto;
+    color: #667085;
+    font-size: 12px;
+    font-weight: 600;
+    content: attr(data-label);
+  }
+
+  .banner-attachment-card .scrollable-table tbody td:nth-child(1)::before {
+    content: "File Name";
+  }
+
+  .banner-attachment-card .scrollable-table tbody td:nth-child(2)::before {
+    content: "Preview";
+  }
+
+  .banner-attachment-card .scrollable-table tbody td:nth-child(3)::before {
+    content: "Ratio";
+  }
+
+  .banner-attachment-card .scrollable-table tbody td:nth-child(4)::before {
+    content: "Action";
+  }
+
+  .banner-attachment-card .scrollable-table tbody td img,
+  .banner-attachment-card .scrollable-table tbody td video {
+    max-width: 96px !important;
+    max-height: 72px !important;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .banner-attachment-card .scrollable-table tbody td .purple-btn2 {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0 12px;
+  }
 }
 
 .common-files-page .common-files__table tbody td:last-child {

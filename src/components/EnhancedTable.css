@@ -631,43 +631,228 @@
   text-align: center;
 }
 
+.enhanced-table {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.enhanced-table__mobile {
+  display: none;
+}
+
+.enhanced-table__card {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+}
+
+.enhanced-table__card:last-child {
+  margin-bottom: 0;
+}
+
+.enhanced-table__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.enhanced-table__card-heading {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.enhanced-table__card-serial {
+  display: inline-block;
+  margin-bottom: 4px;
+  color: #667085;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.enhanced-table__card-title {
+  margin: 0;
+  color: #101828;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.enhanced-table__card-actions {
+  flex: 0 0 auto;
+}
+
+.enhanced-table__card-actions .enhanced-table__row-actions {
+  gap: 6px;
+}
+
+.enhanced-table__card-actions .enhanced-table__action-button,
+.enhanced-table__card-actions .enhanced-table__row-actions a {
+  width: 36px;
+  height: 36px;
+}
+
+.enhanced-table__card-meta {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.enhanced-table__card-row {
+  display: grid;
+  grid-template-columns: minmax(88px, 34%) 1fr;
+  gap: 8px;
+  align-items: start;
+  padding-top: 8px;
+  border-top: 1px solid #f2f4f7;
+}
+
+.enhanced-table__card-row dt {
+  margin: 0;
+  color: #667085;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.enhanced-table__card-row dd {
+  margin: 0;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.enhanced-table__state--mobile {
+  position: static;
+  inset: auto;
+  min-height: 120px;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+}
+
 @media (max-width: 767px) {
+  .project-list-page {
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+  }
+
+  .enhanced-page-title {
+    margin: 10px 0 12px;
+    font-size: 16px;
+  }
+
   .project-list-card {
     margin-right: 0 !important;
     margin-left: 0 !important;
+    overflow: hidden;
   }
 
   .project-list-card__body {
-    padding: 10px 12px 16px;
+    padding: 8px 0 14px;
   }
 
-  .enhanced-table__toolbar,
-  .enhanced-table__footer {
+  .enhanced-table__toolbar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
     align-items: stretch;
-    flex-direction: column;
-  }
-
-  .enhanced-table__search {
-    width: 100%;
-    margin-left: 0;
+    min-height: 0;
+    margin-bottom: 12px;
   }
 
   .enhanced-table__toolbar-left {
-    width: 100%;
+    grid-column: 1 / 2;
+    width: auto;
     margin-right: 0;
   }
 
   .enhanced-table__toolbar-actions {
+    grid-column: 2 / 3;
     justify-content: flex-end;
   }
 
-  .enhanced-table__footer nav {
-    justify-content: center;
+  .enhanced-table__search {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .enhanced-table__search input {
+    height: 40px;
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+
+  .enhanced-table__icon-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .enhanced-table__add {
+    min-height: 40px;
+    max-height: 40px;
+    height: 40px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  .enhanced-table__columns-menu,
+  .enhanced-table__filters-menu {
+    position: fixed;
+    top: auto;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-height: min(70vh, 420px);
+    overflow: auto;
+  }
+
+  .enhanced-table__desktop {
+    display: none !important;
+  }
+
+  .enhanced-table__mobile {
+    display: block;
+    width: 100%;
     max-width: 100%;
-    overflow-x: auto;
   }
 
   .enhanced-table__footer {
     align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 14px;
+  }
+
+  .enhanced-table__footer nav {
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .enhanced-table__footer nav button {
+    min-width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-table__card-row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .enhanced-table__card-title {
+    font-size: 14px;
   }
 }

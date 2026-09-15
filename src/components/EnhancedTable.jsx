@@ -271,6 +271,30 @@ export default function EnhancedTable({
     window.addEventListener("mouseup", finishResize);
   };
 
+  const actionColumn = visibleColumns.find(
+    (column) =>
+      column.key === "actions" || column.key === "action" || column.isAction,
+  );
+  const serialColumn = visibleColumns.find(
+    (column) =>
+      column.key === "serial_number" ||
+      column.key === "sr_no" ||
+      column.key === "srNo",
+  );
+  const detailColumns = visibleColumns.filter(
+    (column) => column !== actionColumn && column !== serialColumn,
+  );
+  const titleColumn = detailColumns[0];
+  const metaColumns = detailColumns.slice(1);
+
+  const renderCell = (column, row, index) =>
+    column.render
+      ? column.render(row, {
+          index,
+          absoluteIndex: firstIndex + index,
+        })
+      : (row[column.key] ?? "-");
+
   return (
     <div className="enhanced-table">
       <div className="enhanced-table__toolbar">
@@ -431,7 +455,7 @@ export default function EnhancedTable({
         </div>
       </div>
 
-      <div className="tbl-container enhanced-table__container">
+      <div className="tbl-container enhanced-table__container enhanced-table__desktop">
         <table>
           <thead>
             <tr>
@@ -505,12 +529,7 @@ export default function EnhancedTable({
                 <tr key={getRowId(row)}>
                   {visibleColumns.map((column) => (
                     <td key={column.key} className={column.className || ""}>
-                      {column.render
-                        ? column.render(row, {
-                            index,
-                            absoluteIndex: firstIndex + index,
-                          })
-                        : row[column.key] ?? "-"}
+                      {renderCell(column, row, index)}
                     </td>
                   ))}
                 </tr>
@@ -525,13 +544,76 @@ export default function EnhancedTable({
               role="status"
               aria-label="Loading"
             />
-          <span>{loadingMessage}</span>
+            <span>{loadingMessage}</span>
           </div>
         )}
 
         {!loading && pageRows.length === 0 && (
           <div className="enhanced-table__state">{emptyMessage}</div>
         )}
+      </div>
+
+      <div className="enhanced-table__mobile">
+        {loading && (
+          <div className="enhanced-table__state enhanced-table__state--mobile">
+            <div
+              className="spinner-border spinner-border-sm"
+              role="status"
+              aria-label="Loading"
+            />
+            <span>{loadingMessage}</span>
+          </div>
+        )}
+
+        {!loading && pageRows.length === 0 && (
+          <div className="enhanced-table__state enhanced-table__state--mobile">
+            {emptyMessage}
+          </div>
+        )}
+
+        {!loading &&
+          pageRows.map((row, index) => (
+            <article
+              className="enhanced-table__card"
+              key={`mobile-${getRowId(row)}`}
+            >
+              <div className="enhanced-table__card-top">
+                <div className="enhanced-table__card-heading">
+                  {serialColumn && (
+                    <span className="enhanced-table__card-serial">
+                      #{renderCell(serialColumn, row, index)}
+                    </span>
+                  )}
+                  {titleColumn && (
+                    <h2 className="enhanced-table__card-title">
+                      {renderCell(titleColumn, row, index)}
+                    </h2>
+                  )}
+                </div>
+                {actionColumn && (
+                  <div className="enhanced-table__card-actions">
+                    {renderCell(actionColumn, row, index)}
+                  </div>
+                )}
+              </div>
+
+              {metaColumns.length > 0 && (
+                <dl className="enhanced-table__card-meta">
+                  {metaColumns.map((column) => (
+                    <div
+                      className="enhanced-table__card-row"
+                      key={`${getRowId(row)}-${column.key}`}
+                    >
+                      <dt>{column.label}</dt>
+                      <dd className={column.className || ""}>
+                        {renderCell(column, row, index)}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </article>
+          ))}
       </div>
 
       {!loading && sortedData.length > 0 && (

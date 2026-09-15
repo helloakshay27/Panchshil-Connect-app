@@ -900,8 +900,8 @@ const BannerEdit = () => {
 
                         return (
                           <tr key={`${key}-${index}`}>
-                            <td>{name}</td>
-                            <td>
+                            <td data-label="File Name">{name}</td>
+                            <td data-label="Preview">
                               {isVideo ? (
                                 <video
                                   controls
@@ -931,8 +931,8 @@ const BannerEdit = () => {
                                 />
                               )}
                             </td>
-                            <td>{file.ratio || label}</td>
-                            <td>
+                            <td data-label="Ratio">{file.ratio || label}</td>
+                            <td data-label="Action">
                               <button
                                 type="button"
                                 className="purple-btn2"
