@@ -219,7 +219,7 @@ const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
                 {localStorage.getItem("email") || "example@example.com"}
               </p> */}
               <p className="text-black">{email}</p>
-              {usageDashboardRoute && (
+              {/* {usageDashboardRoute && (
                 <button
                   type="button"
                   className="purple-btn1 my-2"
@@ -230,7 +230,7 @@ const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
                 >
                   Usage Dashboard
                 </button>
-              )}
+              )} */}
               <button className="purple-btn2 my-3" onClick={signout}>
                 Sign Out
               </button>
