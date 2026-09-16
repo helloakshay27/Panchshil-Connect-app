@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { Landmark } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const BankDetailsEdit = () => {
   const connectEvents = useConnectEvents();
@@ -354,24 +357,26 @@ const BankDetailsEdit = () => {
   return (
     <div className="main-content">
       <div className="">
-        <div className="module-data-section container-fluid">
+        <div className="module-data-section banner-form-page container-fluid">
           <form onSubmit={handleSubmit}>
             {/* Bank Details Card */}
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Edit Bank Details</h3>
+            <div className="card banner-form-card mt-4 pb-4">
+              <div className="card-header banner-form-section-header">
+                <h3 className="banner-form-section-heading">
+                  <span className="banner-form-section-icon" aria-hidden="true">
+                    <Landmark size={16} strokeWidth={1.8} />
+                  </span>
+                  Edit Bank Details
+                </h3>
               </div>
               <div className="card-body">
                 {/* Basic Bank Information */}
-                <div className="row ">
+                <div className="row banner-form-fields">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Bank Name <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Bank Name"
+                        required
                         name="bank_name"
                         value={bankDetails.bank_name}
                         onChange={handleChange}
@@ -382,12 +387,9 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Branch Name <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Branch Name"
+                        required
                         name="branch_name"
                         value={bankDetails.branch_name}
                         onChange={handleChange}
@@ -398,12 +400,9 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        IFSC Code <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="IFSC Code"
+                        required
                         name="ifsc_code"
                         value={bankDetails.ifsc_code}
                         onChange={handleChange}
@@ -415,10 +414,8 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>MICR Number</label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="MICR Number"
                         name="micr_number"
                         value={bankDetails.micr_number}
                         onChange={handleChange}
@@ -429,10 +426,8 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Bank Address</label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Bank Address"
                         name="address"
                         value={bankDetails.address}
                         onChange={handleChange}
@@ -443,28 +438,25 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Account Type <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="account_type"
+                      <SelectBox
+                        label="Account Type"
+                        required
+                        placeholder="Select Account Type"
+                        options={[
+                          { label: "Savings", value: "Savings" },
+                          { label: "Current", value: "Current" },
+                        ]}
                         value={bankDetails.account_type}
-                        onChange={handleChange}
-                        placeholder="Enter account type"
+                        onChange={(value) => handleSelectChange("account_type", value)}
                       />
                     </div>
                   </div>
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Account Number <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Account Number"
+                        required
                         name="account_number"
                         value={bankDetails.account_number}
                         onChange={handleChange}
@@ -475,13 +467,9 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Confirm Account Number{" "}
-                        <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Confirm Account Number"
+                        required
                         name="confirm_account_number"
                         value={bankDetails.confirm_account_number}
                         onChange={handleChange}
@@ -492,13 +480,9 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Beneficiary Name{" "}
-                        <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Beneficiary Name"
+                        required
                         name="benficary_name"
                         value={bankDetails.benficary_name}
                         onChange={handleChange}
@@ -509,10 +493,8 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Company Codes</label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Company Codes"
                         name="company_codes"
                         value={bankDetails.company_codes}
                         onChange={handleChange}
@@ -584,10 +566,8 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Pincode</label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Pincode"
                         name="pincode"
                         value={bankDetails.pincode}
                         onChange={handleChange}
@@ -598,10 +578,8 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Resource Type</label>
-                      <input
-                        type="text"
-                        className="form-control"
+                      <FormTextField
+                        label="Resource Type"
                         name="resource_type"
                         value="Project"
                         readOnly
@@ -616,14 +594,11 @@ const BankDetailsEdit = () => {
                         label="Project"
                         required
                         placeholder="Select Project"
-                        options={[
-                          { value: "", label: "Select Project" },
-                          ...projects.map((project) => ({
-                            label: project.project_name,
-                            value: project.id,
-                          }))
-                        ]}
-                        defaultValue={bankDetails.resource_id}
+                        options={projects.map((project) => ({
+                          label: project.project_name,
+                          value: project.id,
+                        }))}
+                        value={bankDetails.resource_id}
                         onChange={(value) => handleSelectChange("resource_id", value)}
                       />
                     </div>
@@ -631,10 +606,8 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Virtual Account Code</label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Virtual Account Code"
                         name="virtual_account_code"
                         value={bankDetails.virtual_account_code}
                         onChange={handleChange}
@@ -645,10 +618,8 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>City Name</label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="City Name"
                         name="city_name"
                         value={bankDetails.city_name}
                         onChange={handleChange}
@@ -659,14 +630,14 @@ const BankDetailsEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>Remark</label>
-                      <textarea
-                        className="form-control"
+                      <FormTextField
+                        label="Remark"
                         name="remark"
                         value={bankDetails.remark}
                         onChange={handleChange}
                         placeholder="Enter any remarks or notes"
-                        rows="1"
+                        multiline
+                        rows={1}
                       />
                     </div>
                   </div>
