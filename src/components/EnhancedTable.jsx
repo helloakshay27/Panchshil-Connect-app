@@ -13,6 +13,11 @@ import {
   X,
 } from "lucide-react";
 
+const DEFAULT_COLUMN_WIDTHS = {
+  actions: "8%",
+  serial_number: "8%",
+};
+
 const getCellValue = (row, column) => {
   if (column.getSortValue) return column.getSortValue(row);
   return row[column.key];
@@ -192,6 +197,11 @@ export default function EnhancedTable({
   const firstIndex = (safeCurrentPage - 1) * pageSize;
   const pageRows = sortedData.slice(firstIndex, firstIndex + pageSize);
   const pageNumbers = getPageNumbers(safeCurrentPage, totalPages);
+
+  const getColumnWidth = (column) =>
+    columnWidths[column.key] ||
+    column.width ||
+    DEFAULT_COLUMN_WIDTHS[column.key];
 
   const changeSort = (column) => {
     if (column.sortable === false) return;
@@ -457,11 +467,18 @@ export default function EnhancedTable({
 
       <div className="tbl-container enhanced-table__container enhanced-table__desktop">
         <table>
+          <colgroup>
+            {visibleColumns.map((column) => (
+              <col
+                key={column.key}
+                style={{ width: getColumnWidth(column) }}
+              />
+            ))}
+          </colgroup>
           <thead>
             <tr>
               {visibleColumns.map((column) => {
-                const resolvedWidth =
-                  columnWidths[column.key] || column.width;
+                const resolvedWidth = getColumnWidth(column);
                 const isPercentWidth =
                   typeof resolvedWidth === "string" &&
                   resolvedWidth.trim().endsWith("%");
@@ -528,7 +545,11 @@ export default function EnhancedTable({
               pageRows.map((row, index) => (
                 <tr key={getRowId(row)}>
                   {visibleColumns.map((column) => (
-                    <td key={column.key} className={column.className || ""}>
+                    <td
+                      key={column.key}
+                      className={column.className || ""}
+                      style={{ width: getColumnWidth(column) }}
+                    >
                       {renderCell(column, row, index)}
                     </td>
                   ))}

@@ -18,13 +18,13 @@ const renderAttachment = (tutorial) => {
   if (attachment.document_content_type?.startsWith("video/")) {
     return (
       <video
-        width="100"
-        height="65"
+        width="56"
+        height="32"
         autoPlay
         muted
         loop
         playsInline
-        style={{ display: "block", borderRadius: "8px", objectFit: "cover" }}
+        style={{ display: "block", borderRadius: "4px", objectFit: "cover" }}
       >
         <source
           src={attachment.document_url}
@@ -41,7 +41,12 @@ const renderAttachment = (tutorial) => {
         src={attachment.document_url}
         alt="Tutorial Attachment"
         className="img-fluid rounded"
-        style={{ maxWidth: "100px", maxHeight: "100px", display: "block" }}
+        style={{
+          width: "56px",
+          height: "32px",
+          objectFit: "cover",
+          display: "block",
+        }}
       />
     );
   }
@@ -51,7 +56,7 @@ const renderAttachment = (tutorial) => {
       href={attachment.document_url}
       target="_blank"
       rel="noopener noreferrer"
-      style={{ display: "inline-block" }}
+      className="enhanced-table__truncate-cell"
     >
       View attachment
     </a>
@@ -190,6 +195,7 @@ const TdsTutorialList = () => {
     {
       key: "actions",
       label: "Actions",
+      width: "8%",
       sortable: false,
       alwaysVisible: true,
       render: (tutorial) => (
@@ -211,20 +217,30 @@ const TdsTutorialList = () => {
     {
       key: "serial_number",
       label: "Sr No",
+      width: "8%",
       sortable: false,
       render: (_tutorial, { absoluteIndex }) => absoluteIndex + 1,
     },
     {
       key: "name",
       label: "Name",
+      width: "54%",
       getSortValue: (tutorial) => tutorial.name || tutorial.title || "",
-      render: (tutorial) => tutorial.name || tutorial.title || "-",
+      render: (tutorial) => (
+        <div
+          className="enhanced-table__truncate-cell"
+          title={tutorial.name || tutorial.title || "-"}
+        >
+          {tutorial.name || tutorial.title || "-"}
+        </div>
+      ),
     },
     {
       key: "attachment",
       label: "Attachment",
+      width: "30%",
       sortable: false,
-      className: "text-center",
+      className: "enhanced-table__media-cell",
       render: renderAttachment,
     },
   ];
@@ -260,7 +276,7 @@ const TdsTutorialList = () => {
               onPageChange={handlePageChange}
               leftActions={addButton}
               getRowId={(tutorial) => tutorial.id}
-              storageKey="tds-tutorial-list"
+              storageKey="tds-tutorial-list-v2"
             />
           </div>
         </div>

@@ -66,7 +66,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #eadfce;
+  background: color-mix(in srgb, var(--red, #de7008) 18%, white);
   color: var(--red, #de7008);
 }
 
@@ -267,7 +267,7 @@
 .banner-form-fields .form-select-field .select__control--is-focused,
 .banner-form-fields .form-control-field__input:focus,
 .banner-form-fields .form-control-field:focus-within .form-radio-control {
-  border-color: #de7008 !important;
+  border-color: var(--red, #de7008) !important;
 }
 
 .banner-form-page .form-select-field__label,
@@ -323,7 +323,7 @@
 
 .banner-upload-files-btn:hover {
   border-color: var(--red, #de7008);
-  background: #fffaf6;
+  background: color-mix(in srgb, var(--red, #de7008) 6%, white);
 }
 
 .banner-upload-hint {
@@ -402,8 +402,8 @@
 }
 
 .banner-form-action-btn:hover {
-  background: #c46307 !important;
-  border-color: #c46307 !important;
+  background: color-mix(in srgb, var(--red, #de7008) 86%, #000) !important;
+  border-color: color-mix(in srgb, var(--red, #de7008) 86%, #000) !important;
   color: #fff !important;
 }
 
@@ -426,7 +426,7 @@
 .banner-form-action-btn--outline:hover,
 .banner-form-actions:not(.efs-nav):has(> .banner-form-action-btn:nth-child(2))
   > .banner-form-action-btn:last-child:hover {
-  background: #fff4ec !important;
+  background: color-mix(in srgb, var(--red, #de7008) 8%, white) !important;
   color: var(--red, #de7008) !important;
   border-color: var(--red, #de7008) !important;
 }
