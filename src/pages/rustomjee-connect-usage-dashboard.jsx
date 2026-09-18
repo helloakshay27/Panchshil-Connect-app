@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ChartCard,
   StatTile,
@@ -238,36 +238,16 @@ const statusClass = { Healthy: "pcd-cell-on", Steady: "pcd-cell-neutral", Watch:
 const trendArrow = { up: "↗", flat: "→", dn: "↘" };
 
 /* ---------------- Workflow Usage ---------------- */
-/* Module names, buckets and step-event names are real, taken from the
-   shared PostHog Event Catalogue's Rustomjee sheet (18 modules) referenced
-   in the wireframe HTML — used only for the module navigation below.
-   Adoption/completion/volume figures are never hardcoded here; they always
-   come from the live /workflow_usage endpoint. */
-const WORKFLOWS = [
-  { key: "auth", name: "Authentication & Onboarding", bucket: "Access", steps: ["splash_viewed", "login_screen_viewed", "otp_requested", "otp_screen_viewed", "otp_verified_success", "login_success"] },
-  { key: "notifications", name: "Notifications", bucket: "Access", steps: ["notification_center_viewed", "notification_opened", "notification_action_tapped"] },
-  { key: "profile", name: "Profile & Applicants", bucket: "Access", steps: ["profile_viewed", "applicant_details_viewed", "profile_edit_opened", "profile_updated"] },
-  { key: "enquiries", name: "Enquiries", bucket: "Access", steps: ["enquiry_list_viewed", "enquiry_details_viewed", "enquiry_status_checked"] },
-  { key: "account", name: "My Account & Financials", bucket: "Account & Money", steps: ["account_overview_viewed", "payment_schedule_viewed", "demand_letter_viewed", "payment_status_checked", "receipt_downloaded"] },
-  { key: "homeloan", name: "Home Loan", bucket: "Account & Money", steps: ["home_loan_viewed", "loan_eligibility_checked", "loan_enquiry_submitted"] },
-  { key: "projects", name: "Projects & Explore", bucket: "Discovery", steps: ["projects_list_viewed", "project_details_viewed", "project_gallery_viewed", "project_brochure_opened"] },
-  { key: "sitevisit", name: "Site Visits", bucket: "Discovery", steps: ["create_site_visit_opened", "site_visit_project_selected", "site_visit_date_selected", "site_visit_booked"] },
-  { key: "referral", name: "Referral Program", bucket: "Discovery", steps: ["referral_program_viewed", "referral_form_opened", "referral_contact_picked", "referral_submitted_success"] },
-  { key: "documents", name: "Documents", bucket: "Support & Docs", steps: ["document_hub_viewed", "document_category_opened", "document_viewed", "document_downloaded"] },
-  { key: "servicereq", name: "Service Requests", bucket: "Support & Docs", steps: ["service_request_list_viewed", "service_request_create_opened", "service_request_category_selected", "service_request_submit_tapped", "service_request_created_success"] },
-  { key: "supportfaq", name: "Support & FAQ", bucket: "Support & Docs", steps: ["support_hub_viewed", "faq_list_viewed", "contact_us_viewed"] },
-  { key: "privilege", name: "Loyalty & Privilege", bucket: "Engagement", steps: ["privilege_categories_viewed", "privilege_category_opened", "privilege_offer_details_viewed", "privilege_offer_claimed"] },
-  { key: "construction", name: "Construction Updates", bucket: "Engagement", steps: ["construction_update_list_viewed", "construction_update_details_viewed", "construction_gallery_viewed"] },
-  { key: "testimonials", name: "Testimonials", bucket: "Engagement", steps: ["testimonial_list_viewed", "testimonial_details_viewed", "testimonial_submit_opened"] },
-];
-const WF_BUCKETS = [...new Set(WORKFLOWS.map((w) => w.bucket))];
+/* Module chips are driven entirely by the live /modules tree (moduleRows,
+   below) rather than a hardcoded list - selecting one feeds its name as the
+   `module` param on /workflow_usage. */
 
 const RustomjeeConnectUsageDashboard = () => {
   const connectEvents = useConnectEvents();
   const { theme, toggleTheme } = useTheme();
   const { collapsed: sidebarCollapsed, toggle: toggleSidebar } = useSidebarCollapsed();
   const [layer, setLayer] = useState("traffic");
-  const [wfKey, setWfKey] = useState("auth");
+  const [wfModule, setWfModule] = useState(null);
 
   // Filter bar state. deviceFilter is the one control that actually drives the
   // queries below — it is threaded into rangeFilters/weeklyFilters as `dev`, so
@@ -326,7 +306,16 @@ const RustomjeeConnectUsageDashboard = () => {
   const moduleQuery = useModuleTree(rangeFilters, {
     enabled: layer === "adoption" || layer === "workflow",
   });
-  const workflowQuery = useWorkflowUsage(rangeFilters, { enabled: layer === "workflow" });
+  // Scoped to whichever module chip is selected below (see moduleRows/
+  // wfModule) - the tree name is passed straight through as the `module`
+  // query param, per fetchWorkflowUsage.
+  const workflowFilters = useMemo(
+    () => ({ ...rangeFilters, module: wfModule }),
+    [rangeFilters, wfModule],
+  );
+  const workflowQuery = useWorkflowUsage(workflowFilters, {
+    enabled: layer === "workflow" && !!wfModule,
+  });
 
   // Refresh button — explicitly refetches the live queries backing whichever
   // layer is currently open, so a click always issues fresh API calls rather
@@ -472,6 +461,13 @@ const RustomjeeConnectUsageDashboard = () => {
     [moduleQuery.data],
   );
 
+  // Auto-select the first module chip once the live tree loads, so the
+  // Workflow Usage tab always has something selected without hardcoding a
+  // module name.
+  useEffect(() => {
+    if (!wfModule && moduleRows.length) setWfModule(moduleRows[0].name);
+  }, [moduleRows, wfModule]);
+
   // Site-wise breakdown table - always the same 7 reference columns
   // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status), read
   // from the live module tree. The live tree only carries
@@ -492,10 +488,6 @@ const RustomjeeConnectUsageDashboard = () => {
   );
 
   const current = LAYERS.find((l) => l.key === layer);
-
-  const wf = WORKFLOWS.find((w) => w.key === wfKey) || WORKFLOWS[0];
-  const wfBucket = wf.bucket;
-  const wfMods = WORKFLOWS.filter((w) => w.bucket === wfBucket);
 
   const funnelSteps = workflowQuery.data ? liveWorkflow.funnel : [];
   const screenRows = workflowQuery.data
@@ -883,28 +875,15 @@ const RustomjeeConnectUsageDashboard = () => {
               </SampleNote>
 
               <div className="pud-modnav">
-                <div className="pud-modnav-buckets">
-                  {WF_BUCKETS.map((b) => (
-                    <button
-                      key={b}
-                      type="button"
-                      className={wfBucket === b ? "is-on" : ""}
-                      onClick={() => setWfKey(WORKFLOWS.find((w) => w.bucket === b).key)}
-                    >
-                      {b}
-                      <span className="pud-mcount">{WORKFLOWS.filter((w) => w.bucket === b).length}</span>
-                    </button>
-                  ))}
-                </div>
                 <div className="pud-modnav-mods">
-                  {wfMods.map((w) => (
+                  {moduleRows.map((m) => (
                     <button
-                      key={w.key}
+                      key={m.name}
                       type="button"
-                      className={wfKey === w.key ? "is-on" : ""}
-                      onClick={() => setWfKey(w.key)}
+                      className={wfModule === m.name ? "is-on" : ""}
+                      onClick={() => setWfModule(m.name)}
                     >
-                      {w.name}
+                      {m.name}
                     </button>
                   ))}
                 </div>
@@ -943,7 +922,7 @@ const RustomjeeConnectUsageDashboard = () => {
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title={`${wf.name} — completion funnel`} subtitle="Live event sequence and retained %">
+                  <ChartCard title={`${wfModule || "—"} — completion funnel`} subtitle="Live event sequence and retained %">
                     <div className="pud-funnel">
                       {funnelSteps.map((row, i) => (
                         <div key={row.step}>

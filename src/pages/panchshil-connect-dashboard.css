@@ -127,8 +127,8 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: var(--pcd-ink);
-  color: var(--pcd-on-ink);
+  background: var(--pcd-brand);
+  color: #fff;
   display: grid;
   place-items: center;
   font-size: 10.5px;

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ChartCard,
   SectionHead,
@@ -299,259 +299,9 @@ const statusClass = {
 const trendArrow = { up: "↗", flat: "→", dn: "↘" };
 
 /* ---------------- Workflow Usage ---------------- */
-/* Module names and event-step names are real, from the PostHog event catalogue;
-   adoption / completion / drop-off figures are illustrative. */
-const WORKFLOWS = [
-  // ---------------- Access ----------------
-  {
-    key: "auth",
-    name: "Auth & Onboarding",
-    bucket: "Access",
-    steps: [
-      "splash_viewed",
-      "login_screen_viewed",
-      "auth_otp_requested",
-      "otp_screen_viewed",
-      "auth_otp_verified_success",
-      "auth_login_success",
-    ],
-    adoption: 94,
-    completionRate: 85,
-    completions: 92,
-  },
-  {
-    key: "home",
-    name: "Home Dashboard",
-    bucket: "Access",
-    steps: [
-      "home_page_viewed",
-      "home_banner_viewed",
-      "home_banner_tapped",
-      "home_quick_action_tapped",
-      "home_section_viewed",
-    ],
-    adoption: 82,
-    completionRate: 71,
-    completions: 71,
-  },
-  {
-    key: "connect",
-    name: "Panchshil Connect",
-    bucket: "Access",
-    steps: [
-      "connect_tab_viewed",
-      "home_tab_viewed",
-      "connect_section_tapped",
-      "connect_banner_tapped",
-      "bottom_nav_tapped",
-    ],
-    adoption: 64,
-    completionRate: 60,
-    completions: 44,
-  },
-  {
-    key: "switcher",
-    name: "Project Switcher",
-    bucket: "Access",
-    steps: ["project_selection_viewed", "project_switched"],
-    adoption: 88,
-    completionRate: 81,
-    completions: 58,
-  },
-  {
-    key: "profile",
-    name: "Profile & Settings",
-    bucket: "Access",
-    steps: ["profile_viewed", "profile_edit_opened", "profile_updated"],
-    adoption: 42,
-    completionRate: 66,
-    completions: 27,
-  },
-  {
-    key: "theme",
-    name: "Appearance (Theme)",
-    bucket: "Access",
-    steps: ["theme_settings_viewed", "theme_option_selected", "theme_applied"],
-    adoption: 28,
-    completionRate: 76,
-    completions: 18,
-  },
-  // ---------------- Account & Money ----------------
-  {
-    key: "account",
-    name: "My Account & Financials",
-    bucket: "Account & Money",
-    steps: [
-      "account_overview_viewed",
-      "booking_details_viewed",
-      "demand_letter_viewed",
-      "payment_status_checked",
-      "ncf_accepted",
-      "stamp_duty_viewed",
-    ],
-    adoption: 71,
-    completionRate: 44,
-    completions: 34,
-  },
-  {
-    key: "applicant",
-    name: "Primary Applicant",
-    bucket: "Account & Money",
-    steps: ["primary_applicant_viewed", "primary_applicant_section_expanded"],
-    adoption: 31,
-    completionRate: 69,
-    completions: 19,
-  },
-  // ---------------- Discovery ----------------
-  {
-    key: "projects",
-    name: "Projects & Explore",
-    bucket: "Discovery",
-    steps: [
-      "projects_list_viewed",
-      "project_details_viewed",
-      "project_gallery_viewed",
-      "project_brochure_opened",
-      "project_enquire_now_tapped",
-    ],
-    adoption: 71,
-    completionRate: 29,
-    completions: 21,
-  },
-  {
-    key: "favourites",
-    name: "Favourites",
-    bucket: "Discovery",
-    steps: ["favourites_viewed", "project_favourited", "favourite_removed"],
-    adoption: 24,
-    completionRate: 58,
-    completions: 11,
-  },
-  {
-    key: "sitevisit",
-    name: "Site Visits",
-    bucket: "Discovery",
-    steps: [
-      "create_site_visit_opened",
-      "site_visit_project_selected",
-      "site_visit_date_selected",
-      "site_visit_time_slot_selected",
-      "site_visit_booked",
-    ],
-    adoption: 29,
-    completionRate: 52,
-    completions: 16,
-  },
-  {
-    key: "referral",
-    name: "Referral Program",
-    bucket: "Discovery",
-    steps: [
-      "referral_program_viewed",
-      "referral_form_opened",
-      "referral_contact_picked",
-      "referral_submitted_success",
-    ],
-    adoption: 17,
-    completionRate: 41,
-    completions: 7,
-  },
-  {
-    key: "enquiry",
-    name: "Enquiry",
-    bucket: "Discovery",
-    steps: ["enquiry_form_opened", "enquiry_details_entered", "enquiry_submitted_success"],
-    adoption: 33,
-    completionRate: 47,
-    completions: 15,
-  },
-  // ---------------- Support & Docs ----------------
-  {
-    key: "docs",
-    name: "My Documents",
-    bucket: "Support & Docs",
-    steps: [
-      "document_hub_viewed",
-      "document_category_opened",
-      "document_viewed",
-      "document_downloaded",
-    ],
-    adoption: 58,
-    completionRate: 74,
-    completions: 46,
-  },
-  {
-    key: "servicereq",
-    name: "Service Requests",
-    bucket: "Support & Docs",
-    steps: [
-      "service_request_list_viewed",
-      "service_request_create_opened",
-      "service_request_category_selected",
-      "service_request_submit_tapped",
-      "service_request_created_success",
-    ],
-    adoption: 49,
-    completionRate: 63,
-    completions: 33,
-  },
-  {
-    key: "supportfaq",
-    name: "Support, FAQ & Contact",
-    bucket: "Support & Docs",
-    steps: ["support_hub_viewed", "faq_list_viewed", "contact_us_viewed"],
-    adoption: 38,
-    completionRate: 47,
-    completions: 20,
-  },
-  {
-    key: "notifications",
-    name: "Notifications",
-    bucket: "Support & Docs",
-    steps: ["notification_center_viewed", "notification_opened", "notification_action_tapped"],
-    adoption: 52,
-    completionRate: 61,
-    completions: 31,
-  },
-  // ---------------- Engagement ----------------
-  {
-    key: "privilege",
-    name: "Privilege & Concierge",
-    bucket: "Engagement",
-    steps: [
-      "privilege_categories_viewed",
-      "privilege_category_opened",
-      "privilege_offer_details_viewed",
-      "privilege_offer_claimed",
-    ],
-    adoption: 34,
-    completionRate: 33,
-    completions: 12,
-  },
-  {
-    key: "events",
-    name: "Resident Events",
-    bucket: "Engagement",
-    steps: [
-      "event_list_viewed",
-      "event_details_viewed",
-      "event_rsvp_confirmed",
-    ],
-    adoption: 21,
-    completionRate: 57,
-    completions: 13,
-  },
-  {
-    key: "newspress",
-    name: "News & Press",
-    bucket: "Engagement",
-    steps: ["news_list_viewed", "news_article_viewed", "news_article_shared"],
-    adoption: 19,
-    completionRate: 44,
-    completions: 8,
-  },
-];
-const WF_BUCKETS = [...new Set(WORKFLOWS.map((w) => w.bucket))];
+/* Module chips are driven entirely by the live /modules tree (moduleRows,
+   below) rather than a hardcoded list - selecting one feeds its name as the
+   `module` param on /workflow_usage. */
 
 /* ---------------- App Stability ---------------- */
 const CRASH_TILES = [
@@ -587,7 +337,7 @@ const PanchshilConnectUsageDashboard = () => {
   const { theme, toggleTheme } = useTheme();
   const { collapsed: sidebarCollapsed, toggle: toggleSidebar } = useSidebarCollapsed();
   const [layer, setLayer] = useState("traffic");
-  const [wfKey, setWfKey] = useState("auth");
+  const [wfModule, setWfModule] = useState(null);
   const [crashSearch, setCrashSearch] = useState("");
   const [usageTab, setUsageTab] = useState("visitors");
 
@@ -671,8 +421,15 @@ const PanchshilConnectUsageDashboard = () => {
   const moduleQuery = useModuleTree(rangeFilters, {
     enabled: layer === "adoption" || layer === "workflow",
   });
-  const workflowQuery = useWorkflowUsage(rangeFilters, {
-    enabled: layer === "workflow",
+  // Scoped to whichever module chip is selected below (see moduleRows/
+  // wfModule) - the tree name is passed straight through as the `module`
+  // query param, per fetchWorkflowUsage.
+  const workflowFilters = useMemo(
+    () => ({ ...rangeFilters, module: wfModule }),
+    [rangeFilters, wfModule],
+  );
+  const workflowQuery = useWorkflowUsage(workflowFilters, {
+    enabled: layer === "workflow" && !!wfModule,
   });
   const crashOverviewQuery = useCrashOverview(rangeFilters, {
     enabled: layer === "stability",
@@ -930,10 +687,6 @@ const PanchshilConnectUsageDashboard = () => {
 
   const current = LAYERS.find((l) => l.key === layer);
 
-  const wf = WORKFLOWS.find((w) => w.key === wfKey) || WORKFLOWS[0];
-  const wfBucket = wf.bucket;
-  const wfMods = WORKFLOWS.filter((w) => w.bucket === wfBucket);
-
   const funnelSteps = workflowQuery.data ? liveWorkflow.funnel : [];
   const screenRows = workflowQuery.data
     ? liveWorkflow.flows.map((flow) => ({
@@ -956,6 +709,13 @@ const PanchshilConnectUsageDashboard = () => {
     () => (moduleQuery.data ? moduleQuery.data.tree || [] : []),
     [moduleQuery.data],
   );
+
+  // Auto-select the first module chip once the live tree loads, so the
+  // Workflow Usage tab always has something selected without hardcoding a
+  // module name.
+  useEffect(() => {
+    if (!wfModule && moduleRows.length) setWfModule(moduleRows[0].name);
+  }, [moduleRows, wfModule]);
 
   // Site-wise breakdown table - always the same 7 reference columns
   // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status). The
@@ -1547,32 +1307,15 @@ const PanchshilConnectUsageDashboard = () => {
               </SampleNote>
 
               <div className="pud-modnav">
-                <div className="pud-modnav-buckets">
-                  {WF_BUCKETS.map((b) => (
-                    <button
-                      key={b}
-                      type="button"
-                      className={wfBucket === b ? "is-on" : ""}
-                      onClick={() =>
-                        setWfKey(WORKFLOWS.find((w) => w.bucket === b).key)
-                      }
-                    >
-                      {b}
-                      <span className="pud-mcount">
-                        {WORKFLOWS.filter((w) => w.bucket === b).length}
-                      </span>
-                    </button>
-                  ))}
-                </div>
                 <div className="pud-modnav-mods">
-                  {wfMods.map((w) => (
+                  {moduleRows.map((m) => (
                     <button
-                      key={w.key}
+                      key={m.name}
                       type="button"
-                      className={wfKey === w.key ? "is-on" : ""}
-                      onClick={() => setWfKey(w.key)}
+                      className={wfModule === m.name ? "is-on" : ""}
+                      onClick={() => setWfModule(m.name)}
                     >
-                      {w.name}
+                      {m.name}
                     </button>
                   ))}
                 </div>
@@ -1632,7 +1375,7 @@ const PanchshilConnectUsageDashboard = () => {
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
                   <ChartCard
-                    title={`${wf.name} — completion funnel`}
+                    title={`${wfModule || "—"} — completion funnel`}
                     subtitle="Live event sequence and retained %"
                     infoKey="chart.funnel"
                     onInfo={openInfoPopover}

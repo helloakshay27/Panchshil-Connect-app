@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ChartCard,
   StatTile,
@@ -238,30 +238,16 @@ const statusClass = { Healthy: "pcd-cell-on", Steady: "pcd-cell-neutral", Watch:
 const trendArrow = { up: "↗", flat: "→", dn: "↘" };
 
 /* ---------------- Workflow Usage ---------------- */
-/* Module names, buckets and step-event names - Kalpataru's own module set,
-   used only for the module navigation below. Adoption/completion/volume
-   figures are never hardcoded here; they always come from the live
-   /workflow_usage endpoint. */
-const WORKFLOWS = [
-  { key: "regslot", name: "Registration Slot Booking", bucket: "Booking Journey", steps: ["registration_slot_list_viewed", "registration_slot_selected", "registration_slot_confirmed_success"] },
-  { key: "stampduty", name: "Stamp Duty UTR Submission", bucket: "Booking Journey", steps: ["stamp_duty_screen_viewed", "stamp_duty_utr_entered", "stamp_duty_utr_submitted_success"] },
-  { key: "kyc", name: "Primary Applicant KYC Update", bucket: "Account & Documents", steps: ["kyc_update_opened", "kyc_document_uploaded", "kyc_update_submitted_success"] },
-  { key: "servicereq", name: "Service Request Creation", bucket: "Requests & Support", steps: ["service_request_list_viewed", "service_request_create_opened", "service_request_created_success"] },
-  { key: "loanassist", name: "Loan Assistance Request", bucket: "Requests & Support", steps: ["loan_assistance_viewed", "loan_assistance_form_opened", "loan_assistance_submitted_success"] },
-  { key: "referral", name: "Referral Submission", bucket: "Growth & Referral", steps: ["referral_program_viewed", "referral_form_opened", "referral_submitted_success"] },
-  { key: "leadform", name: "Enquire — Lead Form Submission", bucket: "Growth & Referral", steps: ["lead_form_viewed", "lead_form_opened", "lead_form_submitted_success"] },
-  { key: "projectenquiry", name: "Project Enquiry Intent", bucket: "Growth & Referral", steps: ["project_enquiry_viewed", "project_enquiry_intent_tapped"] },
-  { key: "otplogin", name: "OTP Login", bucket: "Identity & Access", steps: ["login_screen_viewed", "otp_requested", "otp_verified_success", "login_success"] },
-  { key: "onboarding", name: "Onboarding Completion", bucket: "Identity & Access", steps: ["onboarding_started", "onboarding_step_completed", "onboarding_completed_success"] },
-];
-const WF_BUCKETS = [...new Set(WORKFLOWS.map((w) => w.bucket))];
+/* Module chips are driven entirely by the live /modules tree (moduleRows,
+   below) rather than a hardcoded list - selecting one feeds its name as the
+   `module` param on /workflow_usage. */
 
 const KalpataruConnectUsageDashboard = () => {
   const connectEvents = useConnectEvents();
   const { theme, toggleTheme } = useTheme();
   const { collapsed: sidebarCollapsed, toggle: toggleSidebar } = useSidebarCollapsed();
   const [layer, setLayer] = useState("traffic");
-  const [wfKey, setWfKey] = useState("regslot");
+  const [wfModule, setWfModule] = useState(null);
 
   // Filter bar state. deviceFilter is the one control that actually drives the
   // queries below — it is threaded into rangeFilters/weeklyFilters as `dev`, so
@@ -319,7 +305,16 @@ const KalpataruConnectUsageDashboard = () => {
   const moduleQuery = useModuleTree(rangeFilters, {
     enabled: layer === "adoption" || layer === "workflow",
   });
-  const workflowQuery = useWorkflowUsage(rangeFilters, { enabled: layer === "workflow" });
+  // Scoped to whichever module chip is selected below (see moduleRows/
+  // wfModule) - the tree name is passed straight through as the `module`
+  // query param, per fetchWorkflowUsage.
+  const workflowFilters = useMemo(
+    () => ({ ...rangeFilters, module: wfModule }),
+    [rangeFilters, wfModule],
+  );
+  const workflowQuery = useWorkflowUsage(workflowFilters, {
+    enabled: layer === "workflow" && !!wfModule,
+  });
 
   // Refresh button — explicitly refetches the live queries backing whichever
   // layer is currently open, so a click always issues fresh API calls rather
@@ -465,6 +460,13 @@ const KalpataruConnectUsageDashboard = () => {
     [moduleQuery.data],
   );
 
+  // Auto-select the first module chip once the live tree loads, so the
+  // Workflow Usage tab always has something selected without hardcoding a
+  // module name.
+  useEffect(() => {
+    if (!wfModule && moduleRows.length) setWfModule(moduleRows[0].name);
+  }, [moduleRows, wfModule]);
+
   // Site-wise breakdown table - always the same 7 reference columns
   // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status), read
   // from the live module tree. The live tree only carries
@@ -485,10 +487,6 @@ const KalpataruConnectUsageDashboard = () => {
   );
 
   const current = LAYERS.find((l) => l.key === layer);
-
-  const wf = WORKFLOWS.find((w) => w.key === wfKey) || WORKFLOWS[0];
-  const wfBucket = wf.bucket;
-  const wfMods = WORKFLOWS.filter((w) => w.bucket === wfBucket);
 
   const funnelSteps = workflowQuery.data ? liveWorkflow.funnel : [];
   const screenRows = workflowQuery.data
@@ -875,28 +873,15 @@ const KalpataruConnectUsageDashboard = () => {
               </SampleNote>
 
               <div className="pud-modnav">
-                <div className="pud-modnav-buckets">
-                  {WF_BUCKETS.map((b) => (
-                    <button
-                      key={b}
-                      type="button"
-                      className={wfBucket === b ? "is-on" : ""}
-                      onClick={() => setWfKey(WORKFLOWS.find((w) => w.bucket === b).key)}
-                    >
-                      {b}
-                      <span className="pud-mcount">{WORKFLOWS.filter((w) => w.bucket === b).length}</span>
-                    </button>
-                  ))}
-                </div>
                 <div className="pud-modnav-mods">
-                  {wfMods.map((w) => (
+                  {moduleRows.map((m) => (
                     <button
-                      key={w.key}
+                      key={m.name}
                       type="button"
-                      className={wfKey === w.key ? "is-on" : ""}
-                      onClick={() => setWfKey(w.key)}
+                      className={wfModule === m.name ? "is-on" : ""}
+                      onClick={() => setWfModule(m.name)}
                     >
-                      {w.name}
+                      {m.name}
                     </button>
                   ))}
                 </div>
@@ -935,7 +920,7 @@ const KalpataruConnectUsageDashboard = () => {
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title={`${wf.name} — completion funnel`} subtitle="Live event sequence and retained %">
+                  <ChartCard title={`${wfModule || "—"} — completion funnel`} subtitle="Live event sequence and retained %">
                     <div className="pud-funnel">
                       {funnelSteps.map((row, i) => (
                         <div key={row.step}>
