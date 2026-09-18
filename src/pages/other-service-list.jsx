@@ -42,12 +42,12 @@ const renderAttachment = (service) => {
         <img
           src={attachmentUrl}
           alt={service.name || "Attachment"}
+          className="img-fluid rounded"
           style={{
-            width: "60px",
-            height: "60px",
+            width: "56px",
+            height: "32px",
             objectFit: "cover",
-            borderRadius: "4px",
-            cursor: "pointer",
+            display: "block",
           }}
         />
       </a>
@@ -59,7 +59,7 @@ const renderAttachment = (service) => {
       href={attachmentUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn btn-sm btn-outline-primary"
+      className="enhanced-table__truncate-cell"
     >
       View File
     </a>
@@ -205,6 +205,7 @@ const OtherServicesList = () => {
     {
       key: "actions",
       label: "Actions",
+      width: "10%",
       sortable: false,
       alwaysVisible: true,
       render: (service) => (
@@ -230,26 +231,56 @@ const OtherServicesList = () => {
     {
       key: "serial_number",
       label: "Sr No",
+      width: "6%",
       sortable: false,
       render: (_service, { absoluteIndex }) => absoluteIndex + 1,
     },
     {
       key: "plus_service_name",
       label: "Plus Service",
+      width: "18%",
       filterable: true,
-      render: (service) => service.plus_service_name || "-",
+      render: (service) => (
+        <div
+          className="enhanced-table__truncate-cell"
+          title={service.plus_service_name || "-"}
+        >
+          {service.plus_service_name || "-"}
+        </div>
+      ),
     },
-    { key: "name", label: "Name", render: (service) => service.name || "-" },
+    {
+      key: "name",
+      label: "Name",
+      width: "22%",
+      render: (service) => (
+        <div
+          className="enhanced-table__truncate-cell"
+          title={service.name || "-"}
+        >
+          {service.name || "-"}
+        </div>
+      ),
+    },
     {
       key: "description",
       label: "Description",
-      render: (service) => service.description || "-",
+      width: "28%",
+      render: (service) => (
+        <div
+          className="enhanced-table__truncate-cell"
+          title={service.description || "-"}
+        >
+          {service.description || "-"}
+        </div>
+      ),
     },
     {
       key: "attachment",
       label: "Attachment",
+      width: "16%",
       sortable: false,
-      className: "text-center",
+      className: "enhanced-table__media-cell",
       render: renderAttachment,
     },
   ];
@@ -284,7 +315,7 @@ const OtherServicesList = () => {
               onPageChange={handlePageChange}
               leftActions={addButton}
               getRowId={(service) => service.id}
-              storageKey="other-service-list"
+              storageKey="other-service-list-v2"
             />
           </div>
         </div>

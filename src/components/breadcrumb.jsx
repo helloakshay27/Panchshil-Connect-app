@@ -14,6 +14,8 @@ const Breadcrumbs = () => {
       ].includes(location.pathname));
 
   if (
+    location.pathname.endsWith("-list") ||
+    location.pathname.startsWith("/referral-program-") ||
     location.pathname === "/project-list" ||
     location.pathname === "/banner-list" ||
     location.pathname === "/testimonial-list" ||

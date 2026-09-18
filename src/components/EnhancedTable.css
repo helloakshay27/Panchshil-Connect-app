@@ -290,7 +290,7 @@
 }
 
 .module-data-section .enhanced-table__container:has(.enhanced-table__state) {
-  min-height: 112px;
+  min-height: 78px;
 }
 
 .module-data-section .tbl-container.enhanced-table__container table,
@@ -468,12 +468,12 @@
 
 .enhanced-table__state {
   position: absolute;
-  inset: 44px 0 0;
+  inset: 38px 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-  min-height: 68px;
+  min-height: 40px;
   color: #667085;
   background: #fff;
   font-size: 13px;

@@ -130,6 +130,7 @@ const VideoTutorialList = () => {
     {
       key: "actions",
       label: "Actions",
+      width: "8%",
       sortable: false,
       alwaysVisible: true,
       render: (tutorial) => (
@@ -161,20 +162,30 @@ const VideoTutorialList = () => {
     {
       key: "serial_number",
       label: "Sr No",
+      width: "8%",
       sortable: false,
       render: (_tutorial, { absoluteIndex }) => absoluteIndex + 1,
     },
     {
       key: "title",
       label: "Title",
+      width: "42%",
       getSortValue: (tutorial) => tutorial.title || tutorial.name || "",
-      render: (tutorial) => tutorial.title || tutorial.name || "-",
+      render: (tutorial) => (
+        <div
+          className="enhanced-table__truncate-cell"
+          title={tutorial.title || tutorial.name || "-"}
+        >
+          {tutorial.title || tutorial.name || "-"}
+        </div>
+      ),
     },
     {
       key: "video",
       label: "Video",
+      width: "42%",
       sortable: false,
-      className: "text-center",
+      className: "enhanced-table__media-cell",
       render: (tutorial) => {
         const videoFile =
           tutorial.video_attachment ||
@@ -185,12 +196,12 @@ const VideoTutorialList = () => {
 
         return videoUrl ? (
           <video
-            width="100"
-            height="65"
+            width="56"
+            height="32"
             controls
             style={{
               display: "block",
-              borderRadius: "8px",
+              borderRadius: "4px",
               objectFit: "cover",
             }}
           >
@@ -234,7 +245,7 @@ const VideoTutorialList = () => {
               onPageChange={handlePageChange}
               leftActions={addButton}
               getRowId={(tutorial) => tutorial.id}
-              storageKey="video-tutorial-list"
+              storageKey="video-tutorial-list-v3"
             />
           </div>
         </div>

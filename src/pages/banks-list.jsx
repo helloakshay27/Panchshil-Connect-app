@@ -114,6 +114,7 @@ const BankList = () => {
     {
       key: "actions",
       label: "Action",
+      width: "8%",
       sortable: false,
       alwaysVisible: true,
       render: (bank) => (
@@ -133,23 +134,35 @@ const BankList = () => {
     {
       key: "serial_number",
       label: "Sr No",
+      width: "8%",
       sortable: false,
       render: (_bank, { absoluteIndex }) => absoluteIndex + 1,
     },
     {
       key: "bank_name",
       label: "Bank Name",
-      render: (bank) => bank.bank_name || "-",
+      width: "28%",
+      render: (bank) => (
+        <div
+          className="enhanced-table__truncate-cell"
+          title={bank.bank_name || "-"}
+        >
+          {bank.bank_name || "-"}
+        </div>
+      ),
     },
     {
       key: "interest_rate",
       label: "Interest Rate (%)",
+      width: "16%",
       render: (bank) => (bank.interest_rate ? `${bank.interest_rate}%` : "-"),
     },
     {
       key: "bank_logo",
       label: "Bank Logo",
+      width: "20%",
       sortable: false,
+      className: "enhanced-table__media-cell",
       render: (bank) =>
         bank.bank_logo ? (
           <>
@@ -158,9 +171,10 @@ const BankList = () => {
               className="img-fluid rounded"
               alt={bank.bank_name || "Bank Logo"}
               style={{
-                maxWidth: "80px",
-                maxHeight: "60px",
+                width: "56px",
+                height: "32px",
                 objectFit: "contain",
+                display: "block",
               }}
               onError={(event) => {
                 event.currentTarget.style.display = "none";
@@ -176,6 +190,7 @@ const BankList = () => {
     {
       key: "created_at",
       label: "Created Date",
+      width: "20%",
       render: (bank) => formatDate(bank.created_at),
     },
   ];
@@ -216,7 +231,7 @@ const BankList = () => {
               onPageChange={handlePageChange}
               leftActions={addButton}
               getRowId={(bank) => bank.id}
-              storageKey="banks-list"
+              storageKey="banks-list-v2"
             />
           </div>
         </div>

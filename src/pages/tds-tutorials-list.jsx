@@ -224,7 +224,7 @@ const TdsTutorialList = () => {
     {
       key: "name",
       label: "Name",
-      width: "54%",
+      width: "42%",
       getSortValue: (tutorial) => tutorial.name || tutorial.title || "",
       render: (tutorial) => (
         <div
@@ -238,7 +238,7 @@ const TdsTutorialList = () => {
     {
       key: "attachment",
       label: "Attachment",
-      width: "30%",
+      width: "42%",
       sortable: false,
       className: "enhanced-table__media-cell",
       render: renderAttachment,
@@ -276,7 +276,7 @@ const TdsTutorialList = () => {
               onPageChange={handlePageChange}
               leftActions={addButton}
               getRowId={(tutorial) => tutorial.id}
-              storageKey="tds-tutorial-list-v2"
+              storageKey="tds-tutorial-list-v3"
             />
           </div>
         </div>
