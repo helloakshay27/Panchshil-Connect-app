@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { ConciergeBell, FileText, Upload } from "lucide-react";
+import FormTextField from "../components/base/FormTextField";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const OtherServiceCreate = () => {
   const connectEvents = useConnectEvents();
   const [plusServices, setPlusServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const attachmentInputRef = useRef(null);
 
   const [serviceData, setServiceData] = useState({
     name: "",
@@ -18,8 +22,6 @@ const OtherServiceCreate = () => {
     attachment: null,
     plus_service_id: "",
   });
-
-  console.log("formData", serviceData);
 
   const navigate = useNavigate();
 
@@ -87,8 +89,7 @@ const OtherServiceCreate = () => {
 
   const removeImage = () => {
     setServiceData((prev) => ({ ...prev, attachment: null }));
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) fileInput.value = "";
+    if (attachmentInputRef.current) attachmentInputRef.current.value = "";
   };
 
   const validateForm = () => {
@@ -128,7 +129,7 @@ const OtherServiceCreate = () => {
         formData.append("other_service[attachment]", serviceData.attachment);
       }
 
-      const response = await axios.post(
+      await axios.post(
         `${baseURL}other_services.json`,
         formData,
         {
@@ -148,8 +149,7 @@ const OtherServiceCreate = () => {
         plus_service_id: "",
       });
 
-      const fileInput = document.querySelector('input[type="file"]');
-      if (fileInput) fileInput.value = "";
+      if (attachmentInputRef.current) attachmentInputRef.current.value = "";
 
       navigate("/setup-member/other-services-list");
     } catch (error) {
@@ -172,19 +172,24 @@ const OtherServiceCreate = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    navigate("/setup-member/other-services-list");
   };
 
   return (
-    <div className="">
-      <div className="module-data-section p-3">
+    <div className="main-content">
+      <div className="module-data-section banner-form-page p-3">
         <form onSubmit={handleSubmit}>
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Create Other Service</h3>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <ConciergeBell size={16} strokeWidth={1.8} />
+                </span>
+                Create Other Service
+              </h3>
             </div>
             <div className="card-body">
-              <div className="row">
+              <div className="row banner-form-fields">
                 <div className="col-md-3">
                   <div className="form-group">
                     <SelectBox
@@ -197,10 +202,10 @@ const OtherServiceCreate = () => {
                       }))}
                       value={serviceData.plus_service_id}
                       onChange={(value) =>
-                        setServiceData({
-                          ...serviceData,
+                        setServiceData((prev) => ({
+                          ...prev,
                           plus_service_id: value,
-                        })
+                        }))
                       }
                     />
                   </div>
@@ -208,104 +213,124 @@ const OtherServiceCreate = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Name <span className="otp-asterisk"> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Enter Name"
+                    <FormTextField
+                      label="Name"
+                      required
                       name="name"
+                      placeholder="Enter Name"
                       value={serviceData.name}
                       onChange={handleInputChange}
-                      required
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Description <span className="otp-asterisk"> *</span>
-                    </label>
-                    <textarea
-                      className="form-control"
-                      rows={1}
-                      placeholder="Enter Description"
+                    <FormTextField
+                      label="Description"
+                      required
                       name="description"
+                      placeholder="Enter Description"
                       value={serviceData.description}
                       onChange={handleInputChange}
-                      required
                     />
-                  </div>
-                </div>
-
-                <div className="col-md-3 mt-1">
-                  <div className="form-group">
-                    <label>
-                      Service Image{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Single image, max 3MB
-                          </span>
-                        )}
-                      </span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="file"
-                      name="attachment"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-
-                    {serviceData.attachment && (
-                      <div className="mt-3">
-                        <div className="position-relative d-inline-block">
-                          <img
-                            src={URL.createObjectURL(serviceData.attachment)}
-                            alt="Service Preview"
-                            className="img-thumbnail"
-                            style={{
-                              width: "150px",
-                              height: "150px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
+          <div className="card banner-form-card banner-attachment-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <FileText size={16} strokeWidth={1.8} />
+                </span>
+                Add Attachments
+              </h3>
             </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
+            <div className="card-body">
+              <input
+                ref={attachmentInputRef}
+                type="file"
+                name="attachment"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="banner-upload-native-input"
+              />
+              <div className="banner-upload-dropzone">
+                <button
+                  type="button"
+                  className="banner-upload-files-btn"
+                  onClick={() => attachmentInputRef.current?.click()}
+                >
+                  <Upload size={16} strokeWidth={1.8} />
+                  Upload Files
+                </button>
+                <span className="banner-upload-item-label">
+                  Service Image
+                  <span
+                    className="banner-upload-hint tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">Single image, max 3MB</span>
+                    )}
+                  </span>
+                </span>
+              </div>
+
+              {serviceData.attachment && (
+                <div className="mt-3 position-relative d-inline-block">
+                  <img
+                    src={URL.createObjectURL(serviceData.attachment)}
+                    alt="Service Preview"
+                    className="img-thumbnail"
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                    title="Remove image"
+                    style={{
+                      top: 2,
+                      right: -5,
+                      height: 20,
+                      width: 20,
+                      backgroundColor: "var(--red)",
+                      color: "white",
+                    }}
+                    onClick={removeImage}
+                  >
+                    x
+                  </button>
+                </div>
+              )}
             </div>
+          </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>

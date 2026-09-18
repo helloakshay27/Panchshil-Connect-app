@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { ConciergeBell, FileText, Upload } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
+import FormTextField from "../components/base/FormTextField";
 import SelectBox from "../components/base/SelectBox";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const OtherServiceEdit = () => {
   const connectEvents = useConnectEvents();
@@ -13,6 +16,7 @@ const OtherServiceEdit = () => {
   const [fetchLoading, setFetchLoading] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
   const [plusServices, setPlusServices] = useState([]);
+  const attachmentInputRef = useRef(null);
 
   const [serviceData, setServiceData] = useState({
     name: "",
@@ -23,8 +27,6 @@ const OtherServiceEdit = () => {
   });
 
   const [imageChanged, setImageChanged] = useState(false);
-
-  console.log("formData", serviceData);
 
   const navigate = useNavigate();
 
@@ -149,11 +151,14 @@ const OtherServiceEdit = () => {
     setImageChanged(true);
   };
 
+  const clearFileInput = () => {
+    if (attachmentInputRef.current) attachmentInputRef.current.value = "";
+  };
+
   const removeNewImage = () => {
     setServiceData((prev) => ({ ...prev, attachment: null }));
     setImageChanged(false);
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) fileInput.value = "";
+    clearFileInput();
   };
 
   const removeExistingImage = () => {
@@ -163,8 +168,7 @@ const OtherServiceEdit = () => {
       existingImageUrl: "",
     }));
     setImageChanged(true);
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) fileInput.value = "";
+    clearFileInput();
   };
 
   const validateForm = () => {
@@ -208,7 +212,7 @@ const OtherServiceEdit = () => {
         }
       }
 
-      const response = await axios.patch(
+      await axios.patch(
         `${baseURL}other_services/${id}.json`,
         formData,
         {
@@ -244,16 +248,43 @@ const OtherServiceEdit = () => {
     navigate("/setup-member/other-services-list");
   };
 
-  return (
-    <div className="">
-      <div className="module-data-section p-3">
-        <form onSubmit={handleSubmit}>
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Edit Other Service</h3>
+  if (fetchLoading) {
+    return (
+      <div className="main-content">
+        <div className="module-data-section banner-form-page p-3">
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <ConciergeBell size={16} strokeWidth={1.8} />
+                </span>
+                Loading...
+              </h3>
             </div>
             <div className="card-body">
-              <div className="row">
+              <p className="mb-0">Loading other service data...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="main-content">
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <ConciergeBell size={16} strokeWidth={1.8} />
+                </span>
+                Edit Other Service
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
                 <div className="col-md-3">
                   <div className="form-group">
                     <SelectBox
@@ -264,12 +295,12 @@ const OtherServiceEdit = () => {
                         label: service.name,
                         value: service.id,
                       }))}
-                      defaultValue={serviceData.plus_service_id}
+                      value={serviceData.plus_service_id}
                       onChange={(value) =>
-                        setServiceData({
-                          ...serviceData,
+                        setServiceData((prev) => ({
+                          ...prev,
                           plus_service_id: value,
-                        })
+                        }))
                       }
                     />
                   </div>
@@ -277,129 +308,158 @@ const OtherServiceEdit = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Name <span className="otp-asterisk"> *</span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Enter Name"
+                    <FormTextField
+                      label="Name"
+                      required
                       name="name"
+                      placeholder="Enter Name"
                       value={serviceData.name}
                       onChange={handleInputChange}
-                      required
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label>
-                      Description <span className="otp-asterisk"> *</span>
-                    </label>
-                    <textarea
-                      className="form-control"
-                      rows={1}
-                      placeholder="Enter Description"
+                    <FormTextField
+                      label="Description"
+                      required
                       name="description"
+                      placeholder="Enter Description"
                       value={serviceData.description}
                       onChange={handleInputChange}
-                      required
                     />
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Service Image{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                      >
-                        [i]
-                        {showTooltip && (
-                          <span className="tooltip-text">
-                            Single image, max 3MB. Upload new image to replace
-                            existing one.
-                          </span>
-                        )}
-                      </span>
-                    </label>
-                    <input
-                      className="form-control"
-                      type="file"
-                      name="attachment"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-
-                    <div className="mt-3">
-                      {serviceData.attachment && imageChanged ? (
-                        <div className="position-relative d-inline-block">
-                          <img
-                            src={URL.createObjectURL(serviceData.attachment)}
-                            alt="New Service Preview"
-                            className="img-thumbnail"
-                            style={{
-                              width: "150px",
-                              height: "150px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        serviceData.existingImageUrl && (
-                          <div className="position-relative d-inline-block">
-                            <img
-                              src={serviceData.existingImageUrl}
-                              alt="Current Service Image"
-                              className="img-thumbnail"
-                              style={{
-                                width: "150px",
-                                height: "150px",
-                                objectFit: "cover",
-                              }}
-                            />
-                          </div>
-                        )
-                      )}
-
-                      {!serviceData.attachment &&
-                        !serviceData.existingImageUrl && (
-                          <div className="text-center p-3 border border-dashed">
-                            <small className="text-muted">
-                              No image selected
-                            </small>
-                          </div>
-                        )}
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
+          <div className="card banner-form-card banner-attachment-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <FileText size={16} strokeWidth={1.8} />
+                </span>
+                Add Attachments
+              </h3>
             </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 purple-btn2-shadow w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
+            <div className="card-body">
+              <input
+                ref={attachmentInputRef}
+                type="file"
+                name="attachment"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="banner-upload-native-input"
+              />
+              <div className="banner-upload-dropzone">
+                <button
+                  type="button"
+                  className="banner-upload-files-btn"
+                  onClick={() => attachmentInputRef.current?.click()}
+                >
+                  <Upload size={16} strokeWidth={1.8} />
+                  Upload Files
+                </button>
+                <span className="banner-upload-item-label">
+                  Service Image
+                  <span
+                    className="banner-upload-hint tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Single image, max 3MB. Upload a new image to replace the
+                        existing one.
+                      </span>
+                    )}
+                  </span>
+                </span>
+              </div>
+
+              {serviceData.attachment && imageChanged ? (
+                <div className="mt-3 position-relative d-inline-block">
+                  <img
+                    src={URL.createObjectURL(serviceData.attachment)}
+                    alt="New Service Preview"
+                    className="img-thumbnail"
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                    title="Remove image"
+                    style={{
+                      top: 2,
+                      right: -5,
+                      height: 20,
+                      width: 20,
+                      backgroundColor: "var(--red)",
+                      color: "white",
+                    }}
+                    onClick={removeNewImage}
+                  >
+                    x
+                  </button>
+                </div>
+              ) : (
+                serviceData.existingImageUrl && (
+                  <div className="mt-3 position-relative d-inline-block">
+                    <img
+                      src={serviceData.existingImageUrl}
+                      alt="Current Service Image"
+                      className="img-thumbnail"
+                      style={{
+                        width: "150px",
+                        height: "150px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="position-absolute border-0 rounded-circle d-flex align-items-center justify-content-center"
+                      title="Remove image"
+                      style={{
+                        top: 2,
+                        right: -5,
+                        height: 20,
+                        width: 20,
+                        backgroundColor: "var(--red)",
+                        color: "white",
+                      }}
+                      onClick={removeExistingImage}
+                    >
+                      x
+                    </button>
+                  </div>
+                )
+              )}
             </div>
+          </div>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>
