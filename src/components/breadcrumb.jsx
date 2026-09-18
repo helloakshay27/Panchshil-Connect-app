@@ -32,7 +32,14 @@ const Breadcrumbs = () => {
   // Only show the last segment as breadcrumb
   const last = pathnames[pathnames.length - 1];
 
-  if (!last || /^\d+$/.test(last)) {
+  if (
+    !last ||
+    /^\d+$/.test(last) ||
+    last === "create" ||
+    last === "edit" ||
+    last.endsWith("-create") ||
+    last.endsWith("-edit")
+  ) {
     return null;
   }
 
