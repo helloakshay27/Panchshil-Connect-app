@@ -6,15 +6,57 @@
 
 .pcd-page {
   min-height: 100vh;
-  background: #faf9f8;
+  background: var(--pcd-bg);
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --pcd-brand: #de7008;
   --pcd-brand-2: #a81e20;
   --pcd-brand-3: #0e7fa8;
+  --pcd-bg: #faf9f8;
+  --pcd-surface: #fff;
+  --pcd-surface-2: #f5f4f1;
+  --pcd-surface-3: #f4f4f5;
+  --pcd-tint: #fdf1e4;
+  --pcd-tint-border: #f6bd85;
+  --pcd-line: #e7e5e4;
+  --pcd-line-2: #d9d5d1;
   --pcd-ink: #1f2933;
   --pcd-muted: #667085;
-  --pcd-line: #e7e5e4;
-  --pcd-surface: #fff;
+  --pcd-faint: #98a2b3;
+  --pcd-amber-ink: #8a4605;
+  --pcd-green-tint: #e8f3ec;
+  --pcd-green-ink: #1c6b3f;
+  --pcd-red-tint: #fdecec;
+  --pcd-red-border: #f0b3b4;
+  --pcd-blue-tint: #e8f1f6;
+  --pcd-blue-ink: #0b6484;
+  --pcd-on-ink: #ffffff;
+  color: var(--pcd-ink);
+  transition: background .15s ease, color .15s ease;
+}
+
+/* Dark theme - flips the neutral/surface tokens above; --pcd-brand/-2/-3 stay
+   put since they're the accent colour and read fine on either ground. Toggled
+   via the data-theme attribute on this same root element (see useTheme). */
+.pcd-page[data-theme="dark"] {
+  --pcd-bg: #1a1917;
+  --pcd-surface: #211f1d;
+  --pcd-surface-2: #2a2825;
+  --pcd-surface-3: #35322d;
+  --pcd-tint: rgba(222, 112, 8, 0.16);
+  --pcd-tint-border: rgba(222, 112, 8, 0.4);
+  --pcd-line: #33302a;
+  --pcd-line-2: #474339;
+  --pcd-ink: #f2f0eb;
+  --pcd-muted: #a09d94;
+  --pcd-faint: #7b7871;
+  --pcd-amber-ink: #dfa63e;
+  --pcd-green-tint: #1a2c21;
+  --pcd-green-ink: #4fc07f;
+  --pcd-red-tint: #37211c;
+  --pcd-red-border: #5a332c;
+  --pcd-blue-tint: #1b2a3e;
+  --pcd-blue-ink: #5f9df6;
+  --pcd-on-ink: #1a1917;
 }
 /* Buttons/inputs don't inherit font-family from the page by default in the
    UA stylesheet, so every control has to be told explicitly. */
@@ -33,9 +75,66 @@
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  background: #fff;
+  background: var(--pcd-surface);
   border-bottom: 1px solid var(--pcd-line);
   padding: 10px 20px;
+}
+
+/* Text-only topbar title - ported from the reference wireframe's
+   .topbar-title, used in place of a full logo lockup. */
+.pcd-topbar-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--pcd-muted);
+  white-space: nowrap;
+  margin-left: 6px;
+}
+
+/* Icon-only controls in the topbar (theme toggle, etc.) and the user's
+   avatar badge - ported from the reference wireframe's #themeBtn/.avatar. */
+.pcd-icon-btn {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: none;
+  color: var(--pcd-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.pcd-icon-btn:hover { background: var(--pcd-surface-2); color: var(--pcd-ink); }
+.pcd-icon-btn svg { width: 17px; height: 17px; display: block; }
+.pcd-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(222, 112, 8, 0.18);
+}
+.pcd-icon-btn:not(button) { text-decoration: none; }
+.pcd-topbar-rule { width: 1px; height: 22px; background: var(--pcd-line); flex: none; }
+
+/* Left cluster of the topbar - nav-collapse toggle, back button, title -
+   matches the reference wireframe's navToggle/.back/.topbar-title grouping. */
+.pcd-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pcd-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--pcd-ink);
+  color: var(--pcd-on-ink);
+  display: grid;
+  place-items: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  flex: none;
 }
 
 /* ---------------- dashboard header: title + filters ----------------
@@ -122,7 +221,7 @@
 
 .pcd-seg {
   display: inline-flex;
-  background: #f4f4f5;
+  background: var(--pcd-surface-3);
   border-radius: 999px;
   padding: 3px;
 }
@@ -163,7 +262,7 @@
    border-bottom is the single hairline separating this band from the
    (gray, padded) chart content below. */
 .pcd-kpi-tabs {
-  background: #fff;
+  background: var(--pcd-surface);
 }
 
 /* ---------------- KPI cards (ported from the Pulse dashboard's
@@ -183,8 +282,8 @@
 .pcd-ribbon-cell {
   display: flex;
   flex-direction: column-reverse;
-  background: #fff;
-  border: 1px solid #e5e3db;
+  background: var(--pcd-surface);
+  border: 1px solid var(--pcd-line);
   border-radius: 12px;
   padding: 16px 20px;
   min-width: 0;
@@ -196,7 +295,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #888780;
+  color: var(--pcd-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -210,14 +309,14 @@
 }
 .pcd-ribbon-sub {
   font-size: 11.5px;
-  color: #888780;
+  color: var(--pcd-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .pcd-ribbon-note {
   font-size: 10.5px;
-  color: #888780;
+  color: var(--pcd-muted);
   margin-top: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -283,7 +382,7 @@
   gap: 8px;
 }
 .pcd-split {
-  background: #faf9f8;
+  background: var(--pcd-bg);
   border: 1px solid var(--pcd-line);
   border-radius: 8px;
   padding: 8px 10px;
@@ -318,7 +417,7 @@
 }
 .pcd-pill {
   border: 1px solid var(--pcd-line);
-  background: #fff;
+  background: var(--pcd-surface);
   color: var(--pcd-muted);
   border-radius: 999px;
   padding: 3px 12px;
@@ -334,9 +433,9 @@
 }
 
 .pcd-note-error {
-  background: #fdecec;
-  border-color: #f0b3b4;
-  color: #a81e20;
+  background: var(--pcd-red-tint);
+  border-color: var(--pcd-red-border);
+  color: var(--pcd-brand-2);
 }
 
 @media (max-width: 900px) {
@@ -378,7 +477,7 @@
   padding: 0 10px;
   font-size: 13px;
   color: var(--pcd-ink);
-  background: #fff;
+  background: var(--pcd-surface);
 }
 .pcd-field input[type="date"]:focus {
   outline: 2px solid var(--pcd-brand);
@@ -533,7 +632,7 @@
   font-size: 12px;
   line-height: 1.5;
   color: var(--pcd-ink);
-  background: #f7f5f4;
+  background: var(--pcd-surface-2);
   border: 1px solid var(--pcd-line);
   border-radius: 6px;
   padding: 8px 10px;
@@ -691,7 +790,7 @@
   white-space: nowrap;
 }
 .pcd-hbar-track {
-  background: #f4f4f5;
+  background: var(--pcd-surface-3);
   border-radius: 4px;
   height: 14px;
   overflow: hidden;
@@ -900,7 +999,7 @@
   text-align: right;
 }
 .pcd-donut-keys li.is-on {
-  background: #fdf1e4;
+  background: var(--pcd-tint);
   border-radius: 4px;
 }
 
@@ -1063,7 +1162,7 @@
 }
 .pcd-skel {
   display: block;
-  background: linear-gradient(90deg, #f1f0ef 25%, #e7e5e4 37%, #f1f0ef 63%);
+  background: linear-gradient(90deg, var(--pcd-surface-3) 25%, var(--pcd-line) 37%, var(--pcd-surface-3) 63%);
   background-size: 400% 100%;
   animation: pcd-shimmer 1.3s ease infinite;
   border-radius: 4px;
@@ -1110,14 +1209,14 @@
   white-space: nowrap;
 }
 .pcd-table thead th {
-  background: #faf9f8;
+  background: var(--pcd-bg);
   border-bottom: 1px solid var(--pcd-line);
 }
 .pcd-table tbody tr:last-child td {
   border-bottom: 0;
 }
 .pcd-table tbody tr:hover td {
-  background: #fdf1e4;
+  background: var(--pcd-tint);
 }
 .pcd-table th {
   color: var(--pcd-muted);
@@ -1139,8 +1238,8 @@
 .pcd-note {
   font-size: 12px;
   color: var(--pcd-muted);
-  background: #fdf1e4;
-  border: 1px solid #f6bd85;
+  background: var(--pcd-tint);
+  border: 1px solid var(--pcd-tint-border);
   border-radius: 6px;
   padding: 8px 12px;
   margin-top: 10px;
@@ -1169,7 +1268,7 @@
 /* Ribbon cells whose endpoint ignores the project filter - visually set
    apart so their numbers are not read as belonging to the selection. */
 .pcd-ribbon-cell.is-global {
-  background: #faf9f8;
+  background: var(--pcd-bg);
   border-style: dashed;
 }
 .pcd-ribbon-cell.is-global .pcd-ribbon-note {
@@ -1228,7 +1327,7 @@
 .pcd-daterange input[type="date"]:focus { outline: none; }
 /* empty (Range) shows the placeholder in muted ink, not black */
 .pcd-daterange input[type="date"]:invalid,
-.pcd-daterange input[type="date"]:not(:valid) { color: #98a2b3; font-weight: 500; }
+.pcd-daterange input[type="date"]:not(:valid) { color: var(--pcd-faint); font-weight: 500; }
 /* tint the native calendar button to the brand hue */
 .pcd-daterange input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
@@ -1302,7 +1401,7 @@
 }
 .pcd-subtabs button {
   border: 1px solid var(--pcd-line);
-  background: #fff;
+  background: var(--pcd-surface);
   color: var(--pcd-muted);
   border-radius: 999px;
   padding: 6px 16px;
@@ -1372,8 +1471,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.pcd-dt tbody tr:nth-child(even) { background: #fcfbfa; }
-.pcd-dt tbody tr:hover { background: #fdf1e4; }
+.pcd-dt tbody tr:nth-child(even) { background: var(--pcd-bg); }
+.pcd-dt tbody tr:hover { background: var(--pcd-tint); }
 .pcd-dt .is-center { text-align: center; }
 .pcd-dt-idx {
   width: 46px;
@@ -1391,10 +1490,10 @@
   font-weight: 600;
   white-space: nowrap;
 }
-.pcd-cell-on { background: #e8f3ec; color: #1c6b3f; }
-.pcd-cell-off { background: #f2f2f3; color: #667085; }
-.pcd-cell-bad { background: #fdecec; color: #a81e20; }
-.pcd-cell-neutral { background: #fdf1e4; color: #8a4605; }
+.pcd-cell-on { background: var(--pcd-green-tint); color: var(--pcd-green-ink); }
+.pcd-cell-off { background: var(--pcd-surface-3); color: var(--pcd-muted); }
+.pcd-cell-bad { background: var(--pcd-red-tint); color: var(--pcd-brand-2); }
+.pcd-cell-neutral { background: var(--pcd-tint); color: var(--pcd-amber-ink); }
 
 /* ---------------- pager ---------------- */
 .pcd-pager {
@@ -1407,7 +1506,7 @@
 }
 .pcd-pager-btn {
   border: 1px solid var(--pcd-line);
-  background: #fff;
+  background: var(--pcd-surface);
   color: var(--pcd-ink);
   border-radius: 6px;
   min-width: 32px;
@@ -1446,7 +1545,7 @@
   justify-content: center;
   flex: 0 0 auto;
   margin-top: 1px;
-  background: #fdf1e4;
+  background: var(--pcd-tint);
   color: var(--pcd-brand);
 }
 .pcd-greet-body { min-width: 0; }
@@ -1470,15 +1569,15 @@
   margin: 5px 0 0;
   padding-left: 10px;
   max-width: 72ch;
-  border-left: 2px solid #f6bd85;
+  border-left: 2px solid var(--pcd-tint-border);
   line-height: 1.5;
 }
 
 /* Day-part tints - the mark shifts warm to cool across the day. */
-.pcd-daypart-dawn .pcd-greet-icon { background: #fdf1e4; color: #b25a06; }
-.pcd-daypart-day .pcd-greet-icon { background: #fdf1e4; color: var(--pcd-brand); }
-.pcd-daypart-dusk .pcd-greet-icon { background: #fbe9e9; color: var(--pcd-brand-2); }
-.pcd-daypart-night .pcd-greet-icon { background: #e8f1f6; color: var(--pcd-brand-3); }
+.pcd-daypart-dawn .pcd-greet-icon { background: var(--pcd-tint); color: #b25a06; }
+.pcd-daypart-day .pcd-greet-icon { background: var(--pcd-tint); color: var(--pcd-brand); }
+.pcd-daypart-dusk .pcd-greet-icon { background: var(--pcd-red-tint); color: var(--pcd-brand-2); }
+.pcd-daypart-night .pcd-greet-icon { background: var(--pcd-blue-tint); color: var(--pcd-brand-3); }
 .pcd-daypart-dusk .pcd-greet-quote { border-left-color: #eaa9aa; }
 .pcd-daypart-night .pcd-greet-quote { border-left-color: #a8cfe0; }
 
@@ -1527,7 +1626,7 @@
   align-items: center;
   gap: 6px;
   border: 1px solid var(--pcd-line);
-  background: #fff;
+  background: var(--pcd-surface);
   color: var(--pcd-muted);
   border-radius: 6px;
   height: 28px;
@@ -1540,7 +1639,7 @@
 .pcd-refresh:hover:not(:disabled) {
   border-color: var(--pcd-brand);
   color: var(--pcd-brand);
-  background: #fdf1e4;
+  background: var(--pcd-tint);
 }
 .pcd-refresh:disabled { opacity: 0.7; cursor: default; }
 .pcd-refresh .is-spinning { animation: pcd-spin 0.9s linear infinite; }
@@ -1625,7 +1724,7 @@
 
 .pcd-sev-warning { border-left-color: #de7008; }
 .pcd-sev-warning .pcd-alert-badge { background: #de7008; }
-.pcd-sev-warning .pcd-alert-sev { color: #8a4605; }
+.pcd-sev-warning .pcd-alert-sev { color: var(--pcd-amber-ink); }
 
 .pcd-sev-info { border-left-color: #0e7fa8; }
 .pcd-sev-info .pcd-alert-badge { background: #0e7fa8; }
@@ -1661,7 +1760,7 @@
 .pcd-shell.is-collapsed .pcd-board-rail { width: 40px; }
 
 .pcd-board {
-  background: #f7f4f0;
+  background: var(--pcd-bg);
   border: 1px solid var(--pcd-line);
   border-radius: 12px;
   overflow: hidden;
@@ -1677,7 +1776,7 @@
   align-items: center;
   padding: 10px 0;
   gap: 10px;
-  background: #fff;
+  background: var(--pcd-surface);
 }
 .pcd-board-spine {
   writing-mode: vertical-rl;
@@ -1690,7 +1789,7 @@
 }
 .pcd-board-toggle {
   border: 1px solid var(--pcd-line);
-  background: #fff;
+  background: var(--pcd-surface);
   color: var(--pcd-muted);
   border-radius: 6px;
   width: 24px;
@@ -1708,7 +1807,7 @@
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
-  background: #fff;
+  background: var(--pcd-surface);
   border-bottom: 1px solid var(--pcd-line);
 }
 .pcd-board-head h2 {
@@ -1729,7 +1828,7 @@
   flex: 0 0 auto;
   padding: 9px 14px;
   border-top: 1px solid var(--pcd-line);
-  background: #fff;
+  background: var(--pcd-surface);
   font-size: 10.5px;
   color: var(--pcd-muted);
   line-height: 1.4;
@@ -1747,13 +1846,13 @@
 }
 .pcd-board-list::-webkit-scrollbar { width: 6px; }
 .pcd-board-list::-webkit-scrollbar-thumb {
-  background: #d9d5d1;
+  background: var(--pcd-line-2);
   border-radius: 999px;
 }
 
 .pcd-pin {
   position: relative;
-  background: #fff;
+  background: var(--pcd-surface);
   border: 1px solid var(--pcd-line);
   border-left: 3px solid var(--pcd-line);
   border-radius: 8px;
@@ -1823,8 +1922,8 @@
 .pcd-pin-project { color: var(--pcd-ink); font-weight: 600; }
 .pcd-pin-project svg, .pcd-pin-timing svg { flex: 0 0 auto; }
 .pcd-pin-timing {
-  color: #8a4605;
-  background: #fdf1e4;
+  color: var(--pcd-amber-ink);
+  background: var(--pcd-tint);
   font-weight: 600;
   border-radius: 5px;
   padding: 3px 6px;
@@ -1858,19 +1957,19 @@
   text-transform: uppercase;
   padding: 2px 7px;
   border-radius: 999px;
-  background: #f2f2f3;
+  background: var(--pcd-surface-3);
   color: var(--pcd-muted);
 }
 
 /* Record type - the tag text carries the meaning, colour reinforces it. */
 .pcd-pin.is-enquiry { border-left-color: var(--pcd-brand); }
-.pcd-pin.is-enquiry .pcd-pin-tag { background: #fdf1e4; color: #8a4605; }
+.pcd-pin.is-enquiry .pcd-pin-tag { background: var(--pcd-tint); color: var(--pcd-amber-ink); }
 .pcd-pin.is-enquiry .pcd-pin-icon { color: var(--pcd-brand); }
 
 .pcd-pin.is-visit { border-left-color: var(--pcd-brand-3); }
-.pcd-pin.is-visit .pcd-pin-tag { background: #e8f1f6; color: #0b6484; }
+.pcd-pin.is-visit .pcd-pin-tag { background: var(--pcd-blue-tint); color: var(--pcd-blue-ink); }
 .pcd-pin.is-visit .pcd-pin-icon { color: var(--pcd-brand-3); }
-.pcd-pin.is-visit .pcd-pin-timing { background: #e8f1f6; color: #0b6484; }
+.pcd-pin.is-visit .pcd-pin-timing { background: var(--pcd-blue-tint); color: var(--pcd-blue-ink); }
 
 @media (max-width: 1100px) {
   /* Below this width the rail drops back into normal flow, full width,

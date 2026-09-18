@@ -2,7 +2,18 @@
    (panchshil-connect-dashboard.css / panchshil-connect-usage-dashboard.css).
    Almost all brand colour there is driven by the --pcd-brand/-2/-3 CSS
    variables, which are overridden inline on the page root (see
-   kalpataru-connect-usage-dashboard.jsx). These two rules cover the only
-   spots that use a hardcoded Panchshil-orange tint instead of the variable. */
-.kp-usage-page .pud-nav-item.is-on { background: #f8f3e6; }
-.kp-usage-page .pcd-cell-neutral { background: #f8f3e6; color: #7c6435; }
+   kalpataru-connect-usage-dashboard.jsx). These two spots use a Kalpataru-gold
+   tint instead of the shared Panchshil-orange --pcd-tint/--pcd-amber-ink, so
+   they get their own theme-aware pair here (light: gold cream, dark: a
+   translucent gold over the dark surface) rather than a flat hardcoded value
+   that would stay light-mode-cream even with the page in dark theme. */
+.pcd-page.kp-usage-page {
+  --kp-tint: #f8f3e6;
+  --kp-tint-ink: #7c6435;
+}
+.pcd-page.kp-usage-page[data-theme="dark"] {
+  --kp-tint: rgba(167, 136, 71, 0.22);
+  --kp-tint-ink: #e2c98f;
+}
+.kp-usage-page .pud-nav-item.is-on { background: var(--kp-tint); }
+.kp-usage-page .pcd-cell-neutral { background: var(--kp-tint); color: var(--kp-tint-ink); }

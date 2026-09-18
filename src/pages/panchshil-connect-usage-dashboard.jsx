@@ -1,6 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { LOGO_URL } from "./baseurl/apiDomain";
 import {
   ChartCard,
   SectionHead,
@@ -50,7 +48,10 @@ import {
 import { InfoButton, InfoPopover } from "./usage-info-popover";
 import { hasInfo } from "./usage-info-data";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useTheme } from "../hooks/useTheme";
+import { useSidebarCollapsed } from "../hooks/useSidebarCollapsed";
 import { getDeviceInfo } from "../utils/posthogHelpers";
+import { SidebarToggle, BackButton, ThemeToggle, Avatar } from "../components/dashboard/TopbarControls";
 import "./panchshil-connect-dashboard.css";
 import "./panchshil-connect-usage-dashboard.css";
 
@@ -583,6 +584,8 @@ const CRASH_TILES = [
 
 const PanchshilConnectUsageDashboard = () => {
   const connectEvents = useConnectEvents();
+  const { theme, toggleTheme } = useTheme();
+  const { collapsed: sidebarCollapsed, toggle: toggleSidebar } = useSidebarCollapsed();
   const [layer, setLayer] = useState("traffic");
   const [wfKey, setWfKey] = useState("auth");
   const [crashSearch, setCrashSearch] = useState("");
@@ -1057,35 +1060,23 @@ const PanchshilConnectUsageDashboard = () => {
 
   return (
     <>
-      <div className="pcd-page">
+      <div className="pcd-page" data-theme={theme}>
         <header className="pcd-topbar">
-        <div className="pcd-brand">
-          <img src={LOGO_URL} alt="Panchshil" />
-          <div>
-            <strong>Panchshil Connect</strong>
-            <span>Usage Dashboard</span>
-          </div>
+        <div className="pcd-topbar-left">
+          <SidebarToggle collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+          <BackButton to="/panchshil_connect_dashboard" label="Back to Dashboard" />
+          <span className="pcd-topbar-title">Panchshil Connect Analytics</span>
         </div>
         <div className="pcd-controls">
           <span className="pcd-alltime">Live analytics data</span>
+          <span className="pcd-topbar-rule" />
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <Avatar initials="PC" />
         </div>
       </header>
 
-      <div className="pud-shell">
+      <div className={`pud-shell ${sidebarCollapsed ? "is-collapsed" : ""}`}>
         <aside className="pud-sidebar">
-          <Link to="/panchshil_connect_dashboard" className="pud-sidebar-back">
-            <svg
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12.5 4.5 6.5 10l6 5.5" />
-            </svg>
-            Back to Dashboard
-          </Link>
           <div className="pud-sidebar-label">Layers</div>
           <nav className="pud-nav" aria-label="Analytics layers">
             {LAYERS.map((l) => (

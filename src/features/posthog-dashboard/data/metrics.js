@@ -104,13 +104,32 @@ export const buildUsage = ({ usage_over_time = {}, device_split = {}, views_per_
 
   const daily = align(usage_over_time.current, usage_over_time.previous);
 
-  const devices = (device_split.devices || []).map((d) => ({
-    label: d.device,
-    value: d.sessions,
-    share: d.session_share,
-    users: d.users,
+  // device_split.devices is grouped by device_type (Mobile/Desktop/…), each
+  // carrying its own os_breakdown (Android/iOS/…) with a session_share that's
+  // relative to that device's own sessions, not the overall total. The
+  // "Android vs iOS usage" card wants OS share of ALL sessions, so flatten
+  // os_breakdown across every device_type, sum by OS, and re-derive each
+  // share against total_sessions ourselves rather than trusting the
+  // per-device session_share field.
+  const osTotals = new Map();
+  (device_split.devices || []).forEach((d) => {
+    (d.os_breakdown || []).forEach((o) => {
+      const prev = osTotals.get(o.os) || { sessions: 0, users: 0 };
+      osTotals.set(o.os, {
+        sessions: prev.sessions + (o.sessions || 0),
+        users: prev.users + (o.users || 0),
+      });
+    });
+  });
+  const totalSessions =
+    device_split.total_sessions ??
+    [...osTotals.values()].reduce((s, o) => s + o.sessions, 0);
+  const devices = [...osTotals.entries()].map(([os, vals]) => ({
+    label: os,
+    value: vals.sessions,
+    share: totalSessions ? (vals.sessions / totalSessions) * 100 : 0,
+    users: vals.users,
   }));
-  const totalSessions = device_split.total_sessions ?? devices.reduce((s, d) => s + d.value, 0);
 
   return { daily, devices, totalSessions, viewsPerSession: views_per_session, info };
 };

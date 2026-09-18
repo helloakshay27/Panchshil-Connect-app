@@ -2,7 +2,18 @@
    system (panchshil-connect-dashboard.css / panchshil-connect-usage-dashboard.css).
    Almost all brand colour there is driven by the --pcd-brand/-2/-3 CSS
    variables, which are overridden inline on the page root (see
-   rustomjee-connect-usage-dashboard.jsx). These two rules cover the only
-   spots that use a hardcoded Panchshil-orange tint instead of the variable. */
-.rj-usage-page .pud-nav-item.is-on { background: #f8f3e6; }
-.rj-usage-page .pcd-cell-neutral { background: #f8f3e6; color: #7c6435; }
+   rustomjee-connect-usage-dashboard.jsx). These two spots use a Rustomjee-gold
+   tint instead of the shared Panchshil-orange --pcd-tint/--pcd-amber-ink, so
+   they get their own theme-aware pair here (light: gold cream, dark: a
+   translucent gold over the dark surface) rather than a flat hardcoded value
+   that would stay light-mode-cream even with the page in dark theme. */
+.pcd-page.rj-usage-page {
+  --rj-tint: #f8f3e6;
+  --rj-tint-ink: #7c6435;
+}
+.pcd-page.rj-usage-page[data-theme="dark"] {
+  --rj-tint: rgba(167, 136, 71, 0.22);
+  --rj-tint-ink: #e2c98f;
+}
+.rj-usage-page .pud-nav-item.is-on { background: var(--rj-tint); }
+.rj-usage-page .pcd-cell-neutral { background: var(--rj-tint); color: var(--rj-tint-ink); }

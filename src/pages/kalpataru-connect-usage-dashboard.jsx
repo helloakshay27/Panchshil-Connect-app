@@ -1,6 +1,4 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { LOGO_Kalpataru_URL } from "./baseurl/apiDomain";
 import {
   ChartCard,
   StatTile,
@@ -36,7 +34,10 @@ import {
   buildUsage,
 } from "../features/posthog-dashboard/data/metrics";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useTheme } from "../hooks/useTheme";
+import { useSidebarCollapsed } from "../hooks/useSidebarCollapsed";
 import { getDeviceInfo } from "../utils/posthogHelpers";
+import { SidebarToggle, BackButton, ThemeToggle, Avatar } from "../components/dashboard/TopbarControls";
 import "./panchshil-connect-dashboard.css";
 import "./panchshil-connect-usage-dashboard.css";
 import "./kalpataru-connect-usage-dashboard.css";
@@ -58,7 +59,7 @@ const KP = {
   brand: "#A78847", // same gold used for Rustomjee — primary
   brand2: "#7C6435", // deeper bronze — secondary
   brand3: "#3E6E64", // muted teal — cool contrast for a second data series
-  grid: "#e6e4de", // neutral chart gridline, not a brand colour
+  grid: "var(--pcd-line, #e6e4de)", // theme-aware chart gridline, not a brand colour
   cat: ["#A78847", "#7C6435", "#3E6E64"],
   ramp: ["#f8f3e6", "#efe3c4", "#e2c98f", "#cca962", "#A78847", "#7c6435", "#544425"],
 };
@@ -196,45 +197,20 @@ const LAYERS = [
 ];
 
 /* =====================================================================
-   Sample / illustrative fallback data, shown until each live endpoint
-   resolves. Unlike the Panchshil/Rustomjee pages, there's no confirmed
-   Kalpataru-specific PostHog event catalogue behind this one yet, so the
-   module names and figures below are entirely illustrative placeholders,
-   not sourced from a real event list.
+   Tile/label structural config. Values are populated at render time from
+   the live analytics queries; when a query has no data yet, the fallback
+   is an honest zero/empty state rather than a fabricated number.
    ===================================================================== */
 
 /* ---------------- Traffic & Session ---------------- */
 const TRAFFIC_TILES = [
-  { label: "Active Users", value: 860, sub: "Last 28 days" },
-  { label: "Screen Views", value: 3120, sub: "Last 28 days" },
-  { label: "Total Sessions", value: 1180, sub: "Last 28 days" },
-  { label: "New Users", value: 96, sub: "Last 28 days" },
-  { label: "Bounce Rate", value: 20, sub: "% of sessions" },
-  { label: "Recently Online", value: 22, sub: "Active in last 30 min" },
+  { label: "Active Users", sub: "Last 28 days" },
+  { label: "Screen Views", sub: "Last 28 days" },
+  { label: "Total Sessions", sub: "Last 28 days" },
+  { label: "New Users", sub: "Last 28 days" },
+  { label: "Bounce Rate", sub: "% of sessions" },
+  { label: "Recently Online", sub: "Active in last 30 min" },
 ];
-
-const ACTIVE_USERS_TREND = [
-  { label: "Jul 22", count: 640 }, { label: "Jul 23", count: 655 }, { label: "Jul 24", count: 668 },
-  { label: "Jul 25", count: 650 }, { label: "Jul 26", count: 682 }, { label: "Jul 27", count: 695 },
-  { label: "Jul 28", count: 688 }, { label: "Jul 29", count: 704 }, { label: "Jul 30", count: 718 },
-  { label: "Jul 31", count: 732 }, { label: "Aug 1", count: 720 }, { label: "Aug 2", count: 740 },
-  { label: "Aug 3", count: 756 }, { label: "Aug 4", count: 772 }, { label: "Aug 5", count: 765 },
-  { label: "Aug 6", count: 780 }, { label: "Aug 7", count: 798 }, { label: "Aug 8", count: 786 },
-  { label: "Aug 9", count: 802 }, { label: "Aug 10", count: 818 }, { label: "Aug 11", count: 808 },
-  { label: "Aug 12", count: 828 }, { label: "Aug 13", count: 860 }, { label: "Aug 14", count: 842 },
-];
-
-const DEVICE_SPLIT = [
-  { label: "Android", value: 64.8 },
-  { label: "iOS", value: 35.2 },
-];
-
-/* Screen Views ÷ Total Sessions from TRAFFIC_TILES above - shown alongside
-   the device split, matching the reference wireframe's "Views / session" stat. */
-const VIEWS_PER_SESSION_FALLBACK = (
-  TRAFFIC_TILES.find((t) => t.label === "Screen Views").value /
-  TRAFFIC_TILES.find((t) => t.label === "Total Sessions").value
-).toFixed(1);
 
 /* Date-range presets for the filter bar's popover — display-only. Nothing
    here changes what the tiles/charts below show. */
@@ -245,50 +221,12 @@ const DATE_RANGE_PRESETS = [
 ];
 
 /* ---------------- Adoption & Engagement ---------------- */
-/* Illustrative ceiling — an estimated registered-customer count for
-   Kalpataru, same disclosure convention as the Panchshil/Rustomjee pages'
-   equivalent constants; not a real/confirmed figure. */
-const REGISTERED_CUSTOMERS = 6200;
-
 const ADOPTION_TILES = [
-  { label: "Seat Utilisation", value: "14%", sub: "active ÷ registered customers" },
-  { label: "Stickiness", value: "19%", sub: "avg DAU / MAU" },
-  { label: "Adoption Trend", value: "+5%", sub: "vs prior 8 weeks · weekly actives" },
-  { label: "14-Day Activation", value: "27%", sub: "of new registrations" },
-  { label: "Module Breadth", value: "8 / 15", sub: "modules used this period" },
-];
-
-const ADOPTION_TREND = [
-  { label: "W1", count: 520 }, { label: "W2", count: 548 }, { label: "W3", count: 576 },
-  { label: "W4", count: 604 }, { label: "W5", count: 632 }, { label: "W6", count: 668 },
-  { label: "W7", count: 712 }, { label: "W8", count: 760 },
-];
-
-/* Weekly growth accounting fallback - shown until the live /growth endpoint
-   resolves. New/Returning/Resurrecting stack above the zero line, Dormant
-   stacks below it. */
-const SAMPLE_GROWTH_LABELS = ["W1", "W2", "W3", "W4", "W5", "W6"];
-const SAMPLE_GROWTH_SERIES = [
-  { label: "New", color: KP.brand, data: [7, 8, 9, 8, 10, 9] },
-  { label: "Returning", color: "#5b7350", data: [22, 24, 26, 27, 29, 28] },
-  { label: "Resurrecting", color: "#8aa37c", data: [2, 2, 3, 3, 3, 3] },
-];
-const SAMPLE_GROWTH_DORMANT = { label: "Dormant", color: "#8a4a3a", data: [11, 12, 10, 13, 15, 14] };
-
-const ROLE_SPLIT = [
-  { label: "Sales / CRM Team", value: 58 },
-  { label: "CX / Support Team", value: 47 },
-  { label: "Marketing Team", value: 33 },
-  { label: "Customers (all)", value: 29 },
-];
-
-const COHORT_ROWS = [
-  { date: "7/15", cells: [100, 48, 34, 27, 22, 18] },
-  { date: "7/22", cells: [100, 51, 37, 29, 24, null] },
-  { date: "7/29", cells: [100, 53, 39, 31, null, null] },
-  { date: "8/5", cells: [100, 55, 41, null, null, null] },
-  { date: "8/12", cells: [100, 58, null, null, null, null] },
-  { date: "8/19", cells: [100, null, null, null, null, null] },
+  { label: "Seat Utilisation", sub: "active ÷ registered customers" },
+  { label: "Stickiness", sub: "avg DAU / MAU" },
+  { label: "Adoption Trend", sub: "vs prior 8 weeks · weekly actives" },
+  { label: "14-Day Activation", sub: "of new registrations" },
+  { label: "Module Breadth", sub: "modules used this period" },
 ];
 
 const cohortColor = (v) => {
@@ -296,53 +234,40 @@ const cohortColor = (v) => {
   return KP.ramp[i];
 };
 
-/* ILLUSTRATIVE placeholder project names — sample data only, not real
-   Kalpataru site names. */
-const SITE_WISE = [
-  { project: "Kalpataru Project A – Thane", active: 24, sessions: 42, avgSession: "2.1m", bounce: 21, trend: "up", status: "Healthy" },
-  { project: "Kalpataru Project B – Panvel", active: 18, sessions: 31, avgSession: "1.8m", bounce: 25, trend: "flat", status: "Steady" },
-  { project: "Kalpataru Project C – Vikhroli", active: 11, sessions: 19, avgSession: "1.6m", bounce: 29, trend: "up", status: "Steady" },
-  { project: "Kalpataru Project D – Ghatkopar", active: 7, sessions: 12, avgSession: "1.4m", bounce: 34, trend: "dn", status: "Watch" },
-];
 const statusClass = { Healthy: "pcd-cell-on", Steady: "pcd-cell-neutral", Watch: "pcd-cell-bad" };
 const trendArrow = { up: "↗", flat: "→", dn: "↘" };
 
 /* ---------------- Workflow Usage ---------------- */
-/* Illustrative module names and buckets - a generic set of resident-app
-   modules, not sourced from a confirmed Kalpataru event catalogue. */
+/* Module names, buckets and step-event names - Kalpataru's own module set,
+   used only for the module navigation below. Adoption/completion/volume
+   figures are never hardcoded here; they always come from the live
+   /workflow_usage endpoint. */
 const WORKFLOWS = [
-  { key: "auth", name: "Authentication & Onboarding", bucket: "Access", steps: ["splash_viewed", "login_screen_viewed", "otp_requested", "otp_screen_viewed", "otp_verified_success", "login_success"], adoption: 90, completionRate: 82, completions: 68 },
-  { key: "notifications", name: "Notifications", bucket: "Access", steps: ["notification_center_viewed", "notification_opened", "notification_action_tapped"], adoption: 44, completionRate: 55, completions: 31 },
-  { key: "profile", name: "Profile & Applicants", bucket: "Access", steps: ["profile_viewed", "applicant_details_viewed", "profile_edit_opened", "profile_updated"], adoption: 33, completionRate: 51, completions: 19 },
-  { key: "enquiries", name: "Enquiries", bucket: "Access", steps: ["enquiry_list_viewed", "enquiry_details_viewed", "enquiry_status_checked"], adoption: 27, completionRate: 44, completions: 14 },
-  { key: "account", name: "My Account & Financials", bucket: "Account & Money", steps: ["account_overview_viewed", "payment_schedule_viewed", "demand_letter_viewed", "payment_status_checked", "receipt_downloaded"], adoption: 52, completionRate: 40, completions: 26 },
-  { key: "homeloan", name: "Home Loan", bucket: "Account & Money", steps: ["home_loan_viewed", "loan_eligibility_checked", "loan_enquiry_submitted"], adoption: 14, completionRate: 33, completions: 6 },
-  { key: "projects", name: "Projects & Explore", bucket: "Discovery", steps: ["projects_list_viewed", "project_details_viewed", "project_gallery_viewed", "project_brochure_opened"], adoption: 58, completionRate: 27, completions: 30 },
-  { key: "sitevisit", name: "Site Visits", bucket: "Discovery", steps: ["create_site_visit_opened", "site_visit_project_selected", "site_visit_date_selected", "site_visit_booked"], adoption: 24, completionRate: 42, completions: 16 },
-  { key: "referral", name: "Referral Program", bucket: "Discovery", steps: ["referral_program_viewed", "referral_form_opened", "referral_contact_picked", "referral_submitted_success"], adoption: 13, completionRate: 34, completions: 5 },
-  { key: "documents", name: "Documents", bucket: "Support & Docs", steps: ["document_hub_viewed", "document_category_opened", "document_viewed", "document_downloaded"], adoption: 46, completionRate: 65, completions: 29 },
-  { key: "servicereq", name: "Service Requests", bucket: "Support & Docs", steps: ["service_request_list_viewed", "service_request_create_opened", "service_request_category_selected", "service_request_submit_tapped", "service_request_created_success"], adoption: 38, completionRate: 52, completions: 20 },
-  { key: "supportfaq", name: "Support & FAQ", bucket: "Support & Docs", steps: ["support_hub_viewed", "faq_list_viewed", "contact_us_viewed"], adoption: 21, completionRate: 39, completions: 9 },
-  { key: "events", name: "Community Events", bucket: "Engagement", steps: ["event_list_viewed", "event_details_viewed", "event_rsvp_confirmed"], adoption: 16, completionRate: 48, completions: 7 },
+  { key: "regslot", name: "Registration Slot Booking", bucket: "Booking Journey", steps: ["registration_slot_list_viewed", "registration_slot_selected", "registration_slot_confirmed_success"] },
+  { key: "stampduty", name: "Stamp Duty UTR Submission", bucket: "Booking Journey", steps: ["stamp_duty_screen_viewed", "stamp_duty_utr_entered", "stamp_duty_utr_submitted_success"] },
+  { key: "kyc", name: "Primary Applicant KYC Update", bucket: "Account & Documents", steps: ["kyc_update_opened", "kyc_document_uploaded", "kyc_update_submitted_success"] },
+  { key: "servicereq", name: "Service Request Creation", bucket: "Requests & Support", steps: ["service_request_list_viewed", "service_request_create_opened", "service_request_created_success"] },
+  { key: "loanassist", name: "Loan Assistance Request", bucket: "Requests & Support", steps: ["loan_assistance_viewed", "loan_assistance_form_opened", "loan_assistance_submitted_success"] },
+  { key: "referral", name: "Referral Submission", bucket: "Growth & Referral", steps: ["referral_program_viewed", "referral_form_opened", "referral_submitted_success"] },
+  { key: "leadform", name: "Enquire — Lead Form Submission", bucket: "Growth & Referral", steps: ["lead_form_viewed", "lead_form_opened", "lead_form_submitted_success"] },
+  { key: "projectenquiry", name: "Project Enquiry Intent", bucket: "Growth & Referral", steps: ["project_enquiry_viewed", "project_enquiry_intent_tapped"] },
+  { key: "otplogin", name: "OTP Login", bucket: "Identity & Access", steps: ["login_screen_viewed", "otp_requested", "otp_verified_success", "login_success"] },
+  { key: "onboarding", name: "Onboarding Completion", bucket: "Identity & Access", steps: ["onboarding_started", "onboarding_step_completed", "onboarding_completed_success"] },
 ];
 const WF_BUCKETS = [...new Set(WORKFLOWS.map((w) => w.bucket))];
 
-const TOP_ENTRY_SCREENS = [
-  { screen: "main_home", visitors: 38, views: 71, bounce: 17 },
-  { screen: "login", visitors: 16, views: 29, bounce: 24 },
-  { screen: "notifications", visitors: 6, views: 11, bounce: 27 },
-  { screen: "my_account", visitors: 5, views: 9, bounce: 30 },
-  { screen: "project_details", visitors: 4, views: 7, bounce: 31 },
-];
-
 const KalpataruConnectUsageDashboard = () => {
   const connectEvents = useConnectEvents();
+  const { theme, toggleTheme } = useTheme();
+  const { collapsed: sidebarCollapsed, toggle: toggleSidebar } = useSidebarCollapsed();
   const [layer, setLayer] = useState("traffic");
-  const [wfKey, setWfKey] = useState("auth");
+  const [wfKey, setWfKey] = useState("regslot");
 
-  // Filter bar state — display-only (see DATE_RANGE_PRESETS above); it does
-  // not feed into rangeFilters/growthFilters/etc. below, so it can't affect
-  // what the live queries request or how their results are built.
+  // Filter bar state. deviceFilter is the one control that actually drives the
+  // queries below — it is threaded into rangeFilters/weeklyFilters as `dev`, so
+  // the live API calls are scoped to the selected platform (see adoptionApi's
+  // rangeParams/getDeviceInfo). The date-range presets, custom range and
+  // previous-period toggle remain display-only (see DATE_RANGE_PRESETS above).
   const [dateRangeOpen, setDateRangeOpen] = useState(false);
   const [dateRangePreset, setDateRangePreset] = useState("30");
   const [customFrom, setCustomFrom] = useState("");
@@ -358,18 +283,26 @@ const KalpataruConnectUsageDashboard = () => {
   // query objects exist.
   const [refreshing, setRefreshing] = useState(false);
 
-  const rangeFilters = useMemo(() => rangeForDays(DEFAULT_WINDOW), []);
+  const rangeFilters = useMemo(
+    () => ({
+      ...(customApplied && customFrom && customTo
+        ? { from: customFrom, to: customTo }
+        : rangeForDays(Number(dateRangePreset) || DEFAULT_WINDOW)),
+      dev: deviceFilter,
+    }),
+    [customApplied, customFrom, customTo, dateRangePreset, deviceFilter],
+  );
   const trendFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
   const growthFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
   const retentionFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
 
   // Same live analytics requests as the Panchshil/Rustomjee Usage
@@ -428,7 +361,7 @@ const KalpataruConnectUsageDashboard = () => {
   const liveWorkflow = useMemo(() => buildFlows(workflowQuery.data || {}), [workflowQuery.data]);
 
   const trafficTiles = useMemo(() => {
-    if (!trafficQuery.data) return TRAFFIC_TILES;
+    if (!trafficQuery.data) return TRAFFIC_TILES.map((t) => ({ ...t, value: 0 }));
     return [
       ...traffic.tiles.map((tile) => ({
         label: tile.label,
@@ -443,7 +376,7 @@ const KalpataruConnectUsageDashboard = () => {
     () =>
       usageQuery.data
         ? usage.daily.map((day) => ({ label: day.day, count: day.current.visitors }))
-        : ACTIVE_USERS_TREND,
+        : [],
     [usage, usageQuery.data],
   );
 
@@ -462,17 +395,17 @@ const KalpataruConnectUsageDashboard = () => {
               value: shareByLabel[label] || 0,
             }));
           })()
-        : DEVICE_SPLIT,
+        : ["Android", "iOS"].map((label) => ({ label, value: 0 })),
     [usage, usageQuery.data],
   );
 
   // Screen Views ÷ Sessions, shown alongside the device split card - reads
   // the same traffic.tiles values the tiles row above already renders.
   const viewsPerSession = useMemo(() => {
-    if (!trafficQuery.data) return VIEWS_PER_SESSION_FALLBACK;
+    if (!trafficQuery.data) return "0.0";
     const views = traffic.tiles.find((t) => t.key === "screen_views")?.value;
     const sessions = traffic.tiles.find((t) => t.key === "sessions")?.value;
-    return views != null && sessions ? (views / sessions).toFixed(1) : VIEWS_PER_SESSION_FALLBACK;
+    return views != null && sessions ? (views / sessions).toFixed(1) : "0.0";
   }, [traffic, trafficQuery.data]);
 
   // Weekly growth accounting for the diverging bar chart - built from the
@@ -483,7 +416,7 @@ const KalpataruConnectUsageDashboard = () => {
   const growthWeekly = useMemo(() => {
     const weeks = growthQuery.data ? growth.weeks : null;
     if (!Array.isArray(weeks) || weeks.length === 0) {
-      return { labels: SAMPLE_GROWTH_LABELS, series: SAMPLE_GROWTH_SERIES, negSeries: SAMPLE_GROWTH_DORMANT };
+      return { labels: [], series: [], negSeries: null };
     }
     const labels = weeks.map(
       (w, i) => w.week_label || w.week_start || w.week || w.label || w.date || `W${i + 1}`,
@@ -501,7 +434,12 @@ const KalpataruConnectUsageDashboard = () => {
   }, [growth, growthQuery.data]);
 
   const adoptionTiles = useMemo(() => {
-    if (!adoptionQuery.data) return ADOPTION_TILES;
+    if (!adoptionQuery.data) {
+      return ADOPTION_TILES.map((t) => ({
+        ...t,
+        value: t.label === "Module Breadth" ? "0 / 0" : "0%",
+      }));
+    }
     return [
       { label: adoption.seat.label, value: adoption.seat.display, sub: adoption.seat.sub },
       { label: adoption.stickiness.label, value: adoption.stickiness.display, sub: adoption.stickiness.sub },
@@ -518,21 +456,20 @@ const KalpataruConnectUsageDashboard = () => {
             date: row.cohort_week,
             cells: [0, 1, 2, 3, 4, 5].map((week) => row[`week${week}`] ?? null),
           }))
-        : COHORT_ROWS,
+        : [],
     [retention, retentionQuery.data],
   );
 
   const moduleRows = useMemo(
-    () => (moduleQuery.data ? moduleQuery.data.tree || [] : SITE_WISE),
+    () => (moduleQuery.data ? moduleQuery.data.tree || [] : []),
     [moduleQuery.data],
   );
 
   // Site-wise breakdown table - always the same 7 reference columns
-  // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status), whether
-  // the rows come from the sample SITE_WISE projects or the live module tree.
-  // The live tree only carries name/users/events/sessions, so the columns
-  // it can't supply (Avg session/Bounce/Trend/Status) show "–" rather than
-  // a made-up number.
+  // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status), read
+  // from the live module tree. The live tree only carries
+  // name/users/events/sessions, so the columns it can't supply (Avg
+  // session/Bounce/Trend/Status) show "–" rather than a made-up number.
   const siteWiseRows = useMemo(
     () =>
       moduleRows.map((row) => ({
@@ -553,35 +490,7 @@ const KalpataruConnectUsageDashboard = () => {
   const wfBucket = wf.bucket;
   const wfMods = WORKFLOWS.filter((w) => w.bucket === wfBucket);
 
-  const sampleFunnelSteps = useMemo(() => {
-    const n = wf.steps.length;
-    return wf.steps
-      .map((s, i) => {
-        const retained = Math.round(100 - (i * (100 - wf.completionRate)) / (n - 1 || 1));
-        return { step: s, retained };
-      })
-      .map((row, i, arr) => ({
-        ...row,
-        drop: i > 0 ? arr[i - 1].retained - row.retained : null,
-      }));
-  }, [wf]);
-
-  const sampleScreenRows = useMemo(
-    () =>
-      sampleFunnelSteps.map((row) => {
-        const users = Math.max(1, Math.round((wf.completions * row.retained) / 100));
-        return {
-          screen: row.step,
-          users,
-          events: Math.round(users * 1.4),
-          sessions: Math.round(users * 0.9),
-          completion: row.retained,
-        };
-      }),
-    [sampleFunnelSteps, wf],
-  );
-
-  const funnelSteps = workflowQuery.data ? liveWorkflow.funnel : sampleFunnelSteps;
+  const funnelSteps = workflowQuery.data ? liveWorkflow.funnel : [];
   const screenRows = workflowQuery.data
     ? liveWorkflow.flows.map((flow) => ({
         screen: flow.path,
@@ -590,7 +499,7 @@ const KalpataruConnectUsageDashboard = () => {
         sessions: flow.sessions,
         completion: flow.fComp,
       }))
-    : sampleScreenRows;
+    : [];
   const entryScreens = workflowQuery.data
     ? liveWorkflow.entryScreens.map((screen) => ({
         screen: screen.path,
@@ -598,34 +507,30 @@ const KalpataruConnectUsageDashboard = () => {
         views: screen.views,
         bounce: screen.bounce,
       }))
-    : TOP_ENTRY_SCREENS;
+    : [];
 
   return (
     <div
       className="pcd-page kp-usage-page"
+      data-theme={theme}
       style={{ "--pcd-brand": KP.brand, "--pcd-brand-2": KP.brand2, "--pcd-brand-3": KP.brand3 }}
     >
       <header className="pcd-topbar">
-        <div className="pcd-brand">
-          <img src={LOGO_Kalpataru_URL} alt="Kalpataru" />
-          <div>
-            <strong>Kalpataru</strong>
-            <span>Usage Dashboard</span>
-          </div>
+        <div className="pcd-topbar-left">
+          <SidebarToggle collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+          <BackButton to="/" label="Back to Home" />
+          <span className="pcd-topbar-title">Kalpataru Analytics</span>
         </div>
         <div className="pcd-controls">
           <span className="pcd-alltime">Live analytics data</span>
+          <span className="pcd-topbar-rule" />
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <Avatar initials="KP" />
         </div>
       </header>
 
-      <div className="pud-shell">
+      <div className={`pud-shell ${sidebarCollapsed ? "is-collapsed" : ""}`}>
         <aside className="pud-sidebar">
-          <Link to="/" className="pud-sidebar-back">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12.5 4.5 6.5 10l6 5.5" />
-            </svg>
-            Back to Home
-          </Link>
           <div className="pud-sidebar-label">Layers</div>
           <nav className="pud-nav" aria-label="Analytics layers">
             {LAYERS.map((l) => (
@@ -649,9 +554,10 @@ const KalpataruConnectUsageDashboard = () => {
           </div>
 
           {/* Filter bar — same structure/controls as the Panchshil/Rustomjee
-              Usage Dashboards, in this page's own colours. Display-only: it
-              does not feed rangeFilters/growthFilters/etc. above, so it
-              can't change what the live queries request. */}
+              Usage Dashboards, in this page's own colours. The date-range
+              preset/custom range and device toggle feed rangeFilters above,
+              so picking a range or platform re-scopes the live queries;
+              the "Previous period" toggle remains display-only. */}
           <div className="pud-filterbar">
             <div className="pud-daterange">
               <button type="button" className="pud-ctrl" onClick={() => setDateRangeOpen((o) => !o)}>
@@ -842,7 +748,7 @@ const KalpataruConnectUsageDashboard = () => {
                 <div className="pcd-span-4">
                   <ChartCard title="Adoption trend (weekly active users, last 8 weeks)">
                     <AreaChart
-                      points={adoptionTrendQuery.data ? adoptionTrend.current : ADOPTION_TREND}
+                      points={adoptionTrendQuery.data ? adoptionTrend.current : []}
                       color={KP.brand}
                     />
                   </ChartCard>
@@ -902,7 +808,7 @@ const KalpataruConnectUsageDashboard = () => {
                       rows={
                         rolesQuery.data
                           ? roles.roles.map((role) => ({ label: role.label, value: role.activeShare || 0 }))
-                          : ROLE_SPLIT
+                          : []
                       }
                     />
                   </ChartCard>
@@ -910,11 +816,11 @@ const KalpataruConnectUsageDashboard = () => {
                 <div className="pcd-span-2">
                   <MetricCard
                     label="Dormant users"
-                    value={adoptionQuery.data ? adoption.dormant.value : 340}
+                    value={adoptionQuery.data ? adoption.dormant.value : 0}
                     caption={
                       adoptionQuery.data
                         ? `No activity ${adoption.dormant.band}`
-                        : `No activity 14+ days, vs. estimated ${REGISTERED_CUSTOMERS.toLocaleString()} registered customers`
+                        : "No activity 14+ days"
                     }
                   />
                 </div>
@@ -999,37 +905,37 @@ const KalpataruConnectUsageDashboard = () => {
               <div className="pcd-tiles" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
                 <Tile
                   label="Workflow Adoption"
-                  value={`${workflowQuery.data ? liveWorkflow.kpis.fAdopt.value : wf.adoption}%`}
+                  value={`${workflowQuery.data ? liveWorkflow.kpis.fAdopt.value : 0}%`}
                   sub="of active users attempt this workflow"
                 />
                 <Tile
                   label="Completion Rate"
-                  value={`${workflowQuery.data ? liveWorkflow.kpis.fComp.value : wf.completionRate}%`}
+                  value={`${workflowQuery.data ? liveWorkflow.kpis.fComp.value : 0}%`}
                   sub="of those who start it, finish it"
                 />
                 <Tile
                   label="Biggest Step Drop"
-                  value={`${
-                    workflowQuery.data
-                      ? liveWorkflow.kpis.fStep.value
-                      : Math.max(...funnelSteps.slice(1).map((s) => s.drop))
-                  }%`}
-                  sub={`at ${
-                    funnelSteps
-                      .slice(1)
-                      .sort((a, b) => (b.drop_pct ?? b.drop ?? 0) - (a.drop_pct ?? a.drop ?? 0))[0]?.step
-                  }`}
+                  value={`${workflowQuery.data ? liveWorkflow.kpis.fStep.value : 0}%`}
+                  sub={
+                    funnelSteps.length > 1
+                      ? `at ${
+                          funnelSteps
+                            .slice(1)
+                            .sort((a, b) => (b.drop_pct ?? b.drop ?? 0) - (a.drop_pct ?? a.drop ?? 0))[0]?.step
+                        }`
+                      : "-"
+                  }
                 />
                 <Tile
                   label="Usage Volume"
-                  value={String(workflowQuery.data ? liveWorkflow.kpis.fVol.value : wf.completions)}
+                  value={String(workflowQuery.data ? liveWorkflow.kpis.fVol.value : 0)}
                   sub="completions this period"
                 />
               </div>
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title={`${wf.name} — completion funnel`} subtitle="Illustrative event sequence and retained %">
+                  <ChartCard title={`${wf.name} — completion funnel`} subtitle="Live event sequence and retained %">
                     <div className="pud-funnel">
                       {funnelSteps.map((row, i) => (
                         <div key={row.step}>

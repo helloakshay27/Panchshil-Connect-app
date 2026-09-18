@@ -1,6 +1,4 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { Rustomji_URL_Black } from "./baseurl/apiDomain";
 import {
   ChartCard,
   StatTile,
@@ -36,7 +34,10 @@ import {
   buildUsage,
 } from "../features/posthog-dashboard/data/metrics";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import { useTheme } from "../hooks/useTheme";
+import { useSidebarCollapsed } from "../hooks/useSidebarCollapsed";
 import { getDeviceInfo } from "../utils/posthogHelpers";
+import { SidebarToggle, BackButton, ThemeToggle, Avatar } from "../components/dashboard/TopbarControls";
 import "./panchshil-connect-dashboard.css";
 import "./panchshil-connect-usage-dashboard.css";
 import "./rustomjee-connect-usage-dashboard.css";
@@ -58,7 +59,7 @@ const RJ = {
   brand: "#A78847", // Rustomjee gold — primary
   brand2: "#7C6435", // deeper bronze — secondary
   brand3: "#3E6E64", // muted teal — cool contrast for a second data series
-  grid: "#e6e4de", // neutral chart gridline, not a brand colour
+  grid: "var(--pcd-line, #e6e4de)", // theme-aware chart gridline, not a brand colour
   cat: ["#A78847", "#7C6435", "#3E6E64"],
   ramp: ["#f8f3e6", "#efe3c4", "#e2c98f", "#cca962", "#A78847", "#7c6435", "#544425"],
 };
@@ -196,45 +197,20 @@ const LAYERS = [
 ];
 
 /* =====================================================================
-   Sample / illustrative fallback data, shown until each live endpoint
-   resolves. Module names and buckets are real, taken from the shared
-   PostHog Event Catalogue's Rustomjee sheet, referenced in the wireframe
-   HTML; adoption/completion figures and project names are illustrative
-   placeholders (see per-section notes below).
+   Tile/label structural config. Values are populated at render time from
+   the live analytics queries; when a query has no data yet, the fallback
+   is an honest zero/empty state rather than a fabricated number.
    ===================================================================== */
 
 /* ---------------- Traffic & Session ---------------- */
 const TRAFFIC_TILES = [
-  { label: "Active Users", value: 4050, sub: "Last 28 days" },
-  { label: "Screen Views", value: 17200, sub: "Last 28 days" },
-  { label: "Total Sessions", value: 5460, sub: "Last 28 days" },
-  { label: "New Users", value: 380, sub: "Last 28 days" },
-  { label: "Bounce Rate", value: 21, sub: "% of sessions" },
-  { label: "Recently Online", value: 96, sub: "Active in last 30 min" },
+  { label: "Active Users", sub: "Last 28 days" },
+  { label: "Screen Views", sub: "Last 28 days" },
+  { label: "Total Sessions", sub: "Last 28 days" },
+  { label: "New Users", sub: "Last 28 days" },
+  { label: "Bounce Rate", sub: "% of sessions" },
+  { label: "Recently Online", sub: "Active in last 30 min" },
 ];
-
-const ACTIVE_USERS_TREND = [
-  { label: "Jul 22", count: 3120 }, { label: "Jul 23", count: 3180 }, { label: "Jul 24", count: 3240 },
-  { label: "Jul 25", count: 3190 }, { label: "Jul 26", count: 3310 }, { label: "Jul 27", count: 3380 },
-  { label: "Jul 28", count: 3350 }, { label: "Jul 29", count: 3420 }, { label: "Jul 30", count: 3490 },
-  { label: "Jul 31", count: 3560 }, { label: "Aug 1", count: 3520 }, { label: "Aug 2", count: 3600 },
-  { label: "Aug 3", count: 3670 }, { label: "Aug 4", count: 3740 }, { label: "Aug 5", count: 3710 },
-  { label: "Aug 6", count: 3790 }, { label: "Aug 7", count: 3860 }, { label: "Aug 8", count: 3820 },
-  { label: "Aug 9", count: 3890 }, { label: "Aug 10", count: 3950 }, { label: "Aug 11", count: 3910 },
-  { label: "Aug 12", count: 3980 }, { label: "Aug 13", count: 4050 }, { label: "Aug 14", count: 4010 },
-];
-
-const DEVICE_SPLIT = [
-  { label: "Android", value: 71.4 },
-  { label: "iOS", value: 28.6 },
-];
-
-/* Screen Views ÷ Total Sessions from TRAFFIC_TILES above - shown alongside
-   the device split, matching the reference wireframe's "Views / session" stat. */
-const VIEWS_PER_SESSION_FALLBACK = (
-  TRAFFIC_TILES.find((t) => t.label === "Screen Views").value /
-  TRAFFIC_TILES.find((t) => t.label === "Total Sessions").value
-).toFixed(1);
 
 /* Date-range presets for the filter bar's popover — display-only. Nothing
    here changes what the tiles/charts below show. */
@@ -245,51 +221,12 @@ const DATE_RANGE_PRESETS = [
 ];
 
 /* ---------------- Adoption & Engagement ---------------- */
-/* Illustrative ceiling — an estimated booked-homebuyer count for Rustomjee
-   Circle, same disclosure convention as the reference wireframe's
-   BOOKED_HOMEBUYERS constant; not a real/confirmed figure. */
-const BOOKED_HOMEBUYERS = 15600;
-
 const ADOPTION_TILES = [
-  { label: "Seat Utilisation", value: "26%", sub: "active ÷ booked homebuyers" },
-  { label: "Stickiness", value: "24%", sub: "avg DAU / MAU" },
-  { label: "Adoption Trend", value: "+6%", sub: "vs prior 8 weeks · weekly actives" },
-  { label: "14-Day Activation", value: "31%", sub: "of new registrations" },
-  { label: "Module Breadth", value: "11 / 18", sub: "modules used this period" },
-];
-
-const ADOPTION_TREND = [
-  { label: "W1", count: 2420 }, { label: "W2", count: 2610 }, { label: "W3", count: 2840 },
-  { label: "W4", count: 3050 }, { label: "W5", count: 3280 }, { label: "W6", count: 3520 },
-  { label: "W7", count: 3790 }, { label: "W8", count: 4050 },
-];
-
-/* Weekly growth accounting fallback - shown until the live /growth endpoint
-   resolves. New/Returning/Resurrecting stack above the zero line, Dormant
-   stacks below it. Week 6 (the most recent) matches the figures this
-   section used to show as a single snapshot. */
-const SAMPLE_GROWTH_LABELS = ["W1", "W2", "W3", "W4", "W5", "W6"];
-const SAMPLE_GROWTH_SERIES = [
-  { label: "New", color: RJ.brand, data: [9, 10, 12, 10, 13, 11] },
-  { label: "Returning", color: "#5b7350", data: [48, 50, 52, 54, 56, 55] },
-  { label: "Resurrecting", color: "#8aa37c", data: [4, 5, 5, 6, 6, 6] },
-];
-const SAMPLE_GROWTH_DORMANT = { label: "Dormant", color: "#8a4a3a", data: [22, 24, 20, 26, 29, 28] };
-
-const ROLE_SPLIT = [
-  { label: "Sales / CRM Team", value: 66 },
-  { label: "CX / Support Team", value: 54 },
-  { label: "Marketing Team", value: 39 },
-  { label: "Customers (all)", value: 42 },
-];
-
-const COHORT_ROWS = [
-  { date: "7/15", cells: [100, 55, 41, 33, 28, 24] },
-  { date: "7/22", cells: [100, 58, 44, 35, 30, null] },
-  { date: "7/29", cells: [100, 60, 46, 37, null, null] },
-  { date: "8/5", cells: [100, 62, 48, null, null, null] },
-  { date: "8/12", cells: [100, 65, null, null, null, null] },
-  { date: "8/19", cells: [100, null, null, null, null, null] },
+  { label: "Seat Utilisation", sub: "active ÷ booked homebuyers" },
+  { label: "Stickiness", sub: "avg DAU / MAU" },
+  { label: "Adoption Trend", sub: "vs prior 8 weeks · weekly actives" },
+  { label: "14-Day Activation", sub: "of new registrations" },
+  { label: "Module Breadth", sub: "modules used this period" },
 ];
 
 const cohortColor = (v) => {
@@ -297,58 +234,46 @@ const cohortColor = (v) => {
   return RJ.ramp[i];
 };
 
-/* ILLUSTRATIVE placeholder project names, matching the reference wireframe —
-   not real Rustomjee site names. */
-const SITE_WISE = [
-  { project: "Project A – Thane", active: 46, sessions: 88, avgSession: "2.3m", bounce: 19, trend: "up", status: "Healthy" },
-  { project: "Project B – Bandra", active: 34, sessions: 61, avgSession: "2.0m", bounce: 23, trend: "flat", status: "Steady" },
-  { project: "Project C – Khar", active: 21, sessions: 35, avgSession: "1.7m", bounce: 27, trend: "up", status: "Steady" },
-  { project: "Project D – Virar", active: 14, sessions: 22, avgSession: "1.5m", bounce: 33, trend: "dn", status: "Watch" },
-];
 const statusClass = { Healthy: "pcd-cell-on", Steady: "pcd-cell-neutral", Watch: "pcd-cell-bad" };
 const trendArrow = { up: "↗", flat: "→", dn: "↘" };
 
 /* ---------------- Workflow Usage ---------------- */
-/* Module names and buckets are real, taken from the shared PostHog Event
-   Catalogue's Rustomjee sheet (18 modules) referenced in the wireframe HTML;
-   adoption / completion / drop-off figures and step-event names below are
-   illustrative fallbacks, shown until the live /workflow_usage endpoint
-   resolves. */
+/* Module names, buckets and step-event names are real, taken from the
+   shared PostHog Event Catalogue's Rustomjee sheet (18 modules) referenced
+   in the wireframe HTML — used only for the module navigation below.
+   Adoption/completion/volume figures are never hardcoded here; they always
+   come from the live /workflow_usage endpoint. */
 const WORKFLOWS = [
-  { key: "auth", name: "Authentication & Onboarding", bucket: "Access", steps: ["splash_viewed", "login_screen_viewed", "otp_requested", "otp_screen_viewed", "otp_verified_success", "login_success"], adoption: 95, completionRate: 88, completions: 118 },
-  { key: "notifications", name: "Notifications", bucket: "Access", steps: ["notification_center_viewed", "notification_opened", "notification_action_tapped"], adoption: 52, completionRate: 61, completions: 58 },
-  { key: "profile", name: "Profile & Applicants", bucket: "Access", steps: ["profile_viewed", "applicant_details_viewed", "profile_edit_opened", "profile_updated"], adoption: 40, completionRate: 57, completions: 34 },
-  { key: "enquiries", name: "Enquiries", bucket: "Access", steps: ["enquiry_list_viewed", "enquiry_details_viewed", "enquiry_status_checked"], adoption: 33, completionRate: 49, completions: 22 },
-  { key: "account", name: "My Account & Financials", bucket: "Account & Money", steps: ["account_overview_viewed", "payment_schedule_viewed", "demand_letter_viewed", "payment_status_checked", "receipt_downloaded"], adoption: 61, completionRate: 46, completions: 48 },
-  { key: "homeloan", name: "Home Loan", bucket: "Account & Money", steps: ["home_loan_viewed", "loan_eligibility_checked", "loan_enquiry_submitted"], adoption: 19, completionRate: 38, completions: 9 },
-  { key: "projects", name: "Projects & Explore", bucket: "Discovery", steps: ["projects_list_viewed", "project_details_viewed", "project_gallery_viewed", "project_brochure_opened"], adoption: 68, completionRate: 33, completions: 55 },
-  { key: "sitevisit", name: "Site Visits", bucket: "Discovery", steps: ["create_site_visit_opened", "site_visit_project_selected", "site_visit_date_selected", "site_visit_booked"], adoption: 44, completionRate: 48, completions: 41 },
-  { key: "referral", name: "Referral Program", bucket: "Discovery", steps: ["referral_program_viewed", "referral_form_opened", "referral_contact_picked", "referral_submitted_success"], adoption: 22, completionRate: 39, completions: 12 },
-  { key: "documents", name: "Documents", bucket: "Support & Docs", steps: ["document_hub_viewed", "document_category_opened", "document_viewed", "document_downloaded"], adoption: 55, completionRate: 71, completions: 62 },
-  { key: "servicereq", name: "Service Requests", bucket: "Support & Docs", steps: ["service_request_list_viewed", "service_request_create_opened", "service_request_category_selected", "service_request_submit_tapped", "service_request_created_success"], adoption: 49, completionRate: 58, completions: 45 },
-  { key: "supportfaq", name: "Support & FAQ", bucket: "Support & Docs", steps: ["support_hub_viewed", "faq_list_viewed", "contact_us_viewed"], adoption: 26, completionRate: 44, completions: 14 },
-  { key: "privilege", name: "Loyalty & Privilege", bucket: "Engagement", steps: ["privilege_categories_viewed", "privilege_category_opened", "privilege_offer_details_viewed", "privilege_offer_claimed"], adoption: 37, completionRate: 31, completions: 17 },
-  { key: "construction", name: "Construction Updates", bucket: "Engagement", steps: ["construction_update_list_viewed", "construction_update_details_viewed", "construction_gallery_viewed"], adoption: 30, completionRate: 66, completions: 27 },
-  { key: "testimonials", name: "Testimonials", bucket: "Engagement", steps: ["testimonial_list_viewed", "testimonial_details_viewed", "testimonial_submit_opened"], adoption: 14, completionRate: 42, completions: 6 },
+  { key: "auth", name: "Authentication & Onboarding", bucket: "Access", steps: ["splash_viewed", "login_screen_viewed", "otp_requested", "otp_screen_viewed", "otp_verified_success", "login_success"] },
+  { key: "notifications", name: "Notifications", bucket: "Access", steps: ["notification_center_viewed", "notification_opened", "notification_action_tapped"] },
+  { key: "profile", name: "Profile & Applicants", bucket: "Access", steps: ["profile_viewed", "applicant_details_viewed", "profile_edit_opened", "profile_updated"] },
+  { key: "enquiries", name: "Enquiries", bucket: "Access", steps: ["enquiry_list_viewed", "enquiry_details_viewed", "enquiry_status_checked"] },
+  { key: "account", name: "My Account & Financials", bucket: "Account & Money", steps: ["account_overview_viewed", "payment_schedule_viewed", "demand_letter_viewed", "payment_status_checked", "receipt_downloaded"] },
+  { key: "homeloan", name: "Home Loan", bucket: "Account & Money", steps: ["home_loan_viewed", "loan_eligibility_checked", "loan_enquiry_submitted"] },
+  { key: "projects", name: "Projects & Explore", bucket: "Discovery", steps: ["projects_list_viewed", "project_details_viewed", "project_gallery_viewed", "project_brochure_opened"] },
+  { key: "sitevisit", name: "Site Visits", bucket: "Discovery", steps: ["create_site_visit_opened", "site_visit_project_selected", "site_visit_date_selected", "site_visit_booked"] },
+  { key: "referral", name: "Referral Program", bucket: "Discovery", steps: ["referral_program_viewed", "referral_form_opened", "referral_contact_picked", "referral_submitted_success"] },
+  { key: "documents", name: "Documents", bucket: "Support & Docs", steps: ["document_hub_viewed", "document_category_opened", "document_viewed", "document_downloaded"] },
+  { key: "servicereq", name: "Service Requests", bucket: "Support & Docs", steps: ["service_request_list_viewed", "service_request_create_opened", "service_request_category_selected", "service_request_submit_tapped", "service_request_created_success"] },
+  { key: "supportfaq", name: "Support & FAQ", bucket: "Support & Docs", steps: ["support_hub_viewed", "faq_list_viewed", "contact_us_viewed"] },
+  { key: "privilege", name: "Loyalty & Privilege", bucket: "Engagement", steps: ["privilege_categories_viewed", "privilege_category_opened", "privilege_offer_details_viewed", "privilege_offer_claimed"] },
+  { key: "construction", name: "Construction Updates", bucket: "Engagement", steps: ["construction_update_list_viewed", "construction_update_details_viewed", "construction_gallery_viewed"] },
+  { key: "testimonials", name: "Testimonials", bucket: "Engagement", steps: ["testimonial_list_viewed", "testimonial_details_viewed", "testimonial_submit_opened"] },
 ];
 const WF_BUCKETS = [...new Set(WORKFLOWS.map((w) => w.bucket))];
 
-const TOP_ENTRY_SCREENS = [
-  { screen: "main_home", visitors: 62, views: 118, bounce: 15 },
-  { screen: "login", visitors: 24, views: 44, bounce: 22 },
-  { screen: "notifications", visitors: 9, views: 17, bounce: 26 },
-  { screen: "my_account", visitors: 7, views: 13, bounce: 29 },
-  { screen: "project_details", visitors: 6, views: 11, bounce: 30 },
-];
-
 const RustomjeeConnectUsageDashboard = () => {
   const connectEvents = useConnectEvents();
+  const { theme, toggleTheme } = useTheme();
+  const { collapsed: sidebarCollapsed, toggle: toggleSidebar } = useSidebarCollapsed();
   const [layer, setLayer] = useState("traffic");
   const [wfKey, setWfKey] = useState("auth");
 
-  // Filter bar state — display-only (see DATE_RANGE_PRESETS above); it does
-  // not feed into rangeFilters/growthFilters/etc. below, so it can't affect
-  // what the live queries request or how their results are built.
+  // Filter bar state. deviceFilter is the one control that actually drives the
+  // queries below — it is threaded into rangeFilters/weeklyFilters as `dev`, so
+  // the live API calls are scoped to the selected platform (see adoptionApi's
+  // rangeParams/getDeviceInfo). The date-range presets, custom range and
+  // previous-period toggle remain display-only (see DATE_RANGE_PRESETS above).
   const [dateRangeOpen, setDateRangeOpen] = useState(false);
   const [dateRangePreset, setDateRangePreset] = useState("30");
   const [customFrom, setCustomFrom] = useState("");
@@ -365,18 +290,26 @@ const RustomjeeConnectUsageDashboard = () => {
     ? `${customFrom} – ${customTo}`
     : DATE_RANGE_PRESETS.find((p) => p.key === dateRangePreset)?.label;
 
-  const rangeFilters = useMemo(() => rangeForDays(DEFAULT_WINDOW), []);
+  const rangeFilters = useMemo(
+    () => ({
+      ...(customApplied && customFrom && customTo
+        ? { from: customFrom, to: customTo }
+        : rangeForDays(Number(dateRangePreset) || DEFAULT_WINDOW)),
+      dev: deviceFilter,
+    }),
+    [customApplied, customFrom, customTo, dateRangePreset, deviceFilter],
+  );
   const trendFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
   const growthFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
   const retentionFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS }),
-    [rangeFilters.to],
+    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS, dev: deviceFilter }),
+    [rangeFilters.to, deviceFilter],
   );
 
   // Same live analytics requests as the Panchshil Usage Dashboard - the FM
@@ -435,7 +368,7 @@ const RustomjeeConnectUsageDashboard = () => {
   const liveWorkflow = useMemo(() => buildFlows(workflowQuery.data || {}), [workflowQuery.data]);
 
   const trafficTiles = useMemo(() => {
-    if (!trafficQuery.data) return TRAFFIC_TILES;
+    if (!trafficQuery.data) return TRAFFIC_TILES.map((t) => ({ ...t, value: 0 }));
     return [
       ...traffic.tiles.map((tile) => ({
         label: tile.label,
@@ -450,7 +383,7 @@ const RustomjeeConnectUsageDashboard = () => {
     () =>
       usageQuery.data
         ? usage.daily.map((day) => ({ label: day.day, count: day.current.visitors }))
-        : ACTIVE_USERS_TREND,
+        : [],
     [usage, usageQuery.data],
   );
 
@@ -469,17 +402,17 @@ const RustomjeeConnectUsageDashboard = () => {
               value: shareByLabel[label] || 0,
             }));
           })()
-        : DEVICE_SPLIT,
+        : ["Android", "iOS"].map((label) => ({ label, value: 0 })),
     [usage, usageQuery.data],
   );
 
   // Screen Views ÷ Sessions, shown alongside the device split card - reads
   // the same traffic.tiles values the tiles row above already renders.
   const viewsPerSession = useMemo(() => {
-    if (!trafficQuery.data) return VIEWS_PER_SESSION_FALLBACK;
+    if (!trafficQuery.data) return "0.0";
     const views = traffic.tiles.find((t) => t.key === "screen_views")?.value;
     const sessions = traffic.tiles.find((t) => t.key === "sessions")?.value;
-    return views != null && sessions ? (views / sessions).toFixed(1) : VIEWS_PER_SESSION_FALLBACK;
+    return views != null && sessions ? (views / sessions).toFixed(1) : "0.0";
   }, [traffic, trafficQuery.data]);
 
   // Weekly growth accounting for the diverging bar chart - built from the
@@ -490,7 +423,7 @@ const RustomjeeConnectUsageDashboard = () => {
   const growthWeekly = useMemo(() => {
     const weeks = growthQuery.data ? growth.weeks : null;
     if (!Array.isArray(weeks) || weeks.length === 0) {
-      return { labels: SAMPLE_GROWTH_LABELS, series: SAMPLE_GROWTH_SERIES, negSeries: SAMPLE_GROWTH_DORMANT };
+      return { labels: [], series: [], negSeries: null };
     }
     const labels = weeks.map(
       (w, i) => w.week_label || w.week_start || w.week || w.label || w.date || `W${i + 1}`,
@@ -508,7 +441,12 @@ const RustomjeeConnectUsageDashboard = () => {
   }, [growth, growthQuery.data]);
 
   const adoptionTiles = useMemo(() => {
-    if (!adoptionQuery.data) return ADOPTION_TILES;
+    if (!adoptionQuery.data) {
+      return ADOPTION_TILES.map((t) => ({
+        ...t,
+        value: t.label === "Module Breadth" ? "0 / 0" : "0%",
+      }));
+    }
     return [
       { label: adoption.seat.label, value: adoption.seat.display, sub: adoption.seat.sub },
       { label: adoption.stickiness.label, value: adoption.stickiness.display, sub: adoption.stickiness.sub },
@@ -525,21 +463,20 @@ const RustomjeeConnectUsageDashboard = () => {
             date: row.cohort_week,
             cells: [0, 1, 2, 3, 4, 5].map((week) => row[`week${week}`] ?? null),
           }))
-        : COHORT_ROWS,
+        : [],
     [retention, retentionQuery.data],
   );
 
   const moduleRows = useMemo(
-    () => (moduleQuery.data ? moduleQuery.data.tree || [] : SITE_WISE),
+    () => (moduleQuery.data ? moduleQuery.data.tree || [] : []),
     [moduleQuery.data],
   );
 
   // Site-wise breakdown table - always the same 7 reference columns
-  // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status), whether
-  // the rows come from the sample SITE_WISE projects or the live module tree.
-  // The live tree only carries name/users/events/sessions, so the columns
-  // it can't supply (Avg session/Bounce/Trend/Status) show "–" rather than
-  // a made-up number.
+  // (Project/Active users/Sessions/Avg session/Bounce/Trend/Status), read
+  // from the live module tree. The live tree only carries
+  // name/users/events/sessions, so the columns it can't supply (Avg
+  // session/Bounce/Trend/Status) show "–" rather than a made-up number.
   const siteWiseRows = useMemo(
     () =>
       moduleRows.map((row) => ({
@@ -560,35 +497,7 @@ const RustomjeeConnectUsageDashboard = () => {
   const wfBucket = wf.bucket;
   const wfMods = WORKFLOWS.filter((w) => w.bucket === wfBucket);
 
-  const sampleFunnelSteps = useMemo(() => {
-    const n = wf.steps.length;
-    return wf.steps
-      .map((s, i) => {
-        const retained = Math.round(100 - (i * (100 - wf.completionRate)) / (n - 1 || 1));
-        return { step: s, retained };
-      })
-      .map((row, i, arr) => ({
-        ...row,
-        drop: i > 0 ? arr[i - 1].retained - row.retained : null,
-      }));
-  }, [wf]);
-
-  const sampleScreenRows = useMemo(
-    () =>
-      sampleFunnelSteps.map((row) => {
-        const users = Math.max(1, Math.round((wf.completions * row.retained) / 100));
-        return {
-          screen: row.step,
-          users,
-          events: Math.round(users * 1.4),
-          sessions: Math.round(users * 0.9),
-          completion: row.retained,
-        };
-      }),
-    [sampleFunnelSteps, wf],
-  );
-
-  const funnelSteps = workflowQuery.data ? liveWorkflow.funnel : sampleFunnelSteps;
+  const funnelSteps = workflowQuery.data ? liveWorkflow.funnel : [];
   const screenRows = workflowQuery.data
     ? liveWorkflow.flows.map((flow) => ({
         screen: flow.path,
@@ -597,7 +506,7 @@ const RustomjeeConnectUsageDashboard = () => {
         sessions: flow.sessions,
         completion: flow.fComp,
       }))
-    : sampleScreenRows;
+    : [];
   const entryScreens = workflowQuery.data
     ? liveWorkflow.entryScreens.map((screen) => ({
         screen: screen.path,
@@ -605,34 +514,30 @@ const RustomjeeConnectUsageDashboard = () => {
         views: screen.views,
         bounce: screen.bounce,
       }))
-    : TOP_ENTRY_SCREENS;
+    : [];
 
   return (
     <div
       className="pcd-page rj-usage-page"
+      data-theme={theme}
       style={{ "--pcd-brand": RJ.brand, "--pcd-brand-2": RJ.brand2, "--pcd-brand-3": RJ.brand3 }}
     >
       <header className="pcd-topbar">
-        <div className="pcd-brand">
-          <img src={Rustomji_URL_Black} alt="Rustomjee" />
-          <div>
-            <strong>Rustomjee Circle</strong>
-            <span>Usage Dashboard</span>
-          </div>
+        <div className="pcd-topbar-left">
+          <SidebarToggle collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+          <BackButton to="/" label="Back to Home" />
+          <span className="pcd-topbar-title">Rustomjee Circle Analytics</span>
         </div>
         <div className="pcd-controls">
           <span className="pcd-alltime">Live analytics data</span>
+          <span className="pcd-topbar-rule" />
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <Avatar initials="RC" />
         </div>
       </header>
 
-      <div className="pud-shell">
+      <div className={`pud-shell ${sidebarCollapsed ? "is-collapsed" : ""}`}>
         <aside className="pud-sidebar">
-          <Link to="/" className="pud-sidebar-back">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12.5 4.5 6.5 10l6 5.5" />
-            </svg>
-            Back to Home
-          </Link>
           <div className="pud-sidebar-label">Layers</div>
           <nav className="pud-nav" aria-label="Analytics layers">
             {LAYERS.map((l) => (
@@ -657,8 +562,10 @@ const RustomjeeConnectUsageDashboard = () => {
 
           {/* Filter bar — matches Panchshil_Connect_Dashboard_v3_FM_structure.html's
               filterbar in structure and controls, in this page's own colours.
-              Display-only: it does not feed rangeFilters/growthFilters/etc.
-              above, so it can't change what the live queries request. */}
+              The date-range preset/custom range and device toggle feed
+              rangeFilters above, so picking a range or platform re-scopes
+              the live queries; the "Previous period" toggle remains
+              display-only. */}
           <div className="pud-filterbar">
             <div className="pud-daterange">
               <button type="button" className="pud-ctrl" onClick={() => setDateRangeOpen((o) => !o)}>
@@ -849,7 +756,7 @@ const RustomjeeConnectUsageDashboard = () => {
                 <div className="pcd-span-4">
                   <ChartCard title="Adoption trend (weekly active users, last 8 weeks)">
                     <AreaChart
-                      points={adoptionTrendQuery.data ? adoptionTrend.current : ADOPTION_TREND}
+                      points={adoptionTrendQuery.data ? adoptionTrend.current : []}
                       color={RJ.brand}
                     />
                   </ChartCard>
@@ -909,7 +816,7 @@ const RustomjeeConnectUsageDashboard = () => {
                       rows={
                         rolesQuery.data
                           ? roles.roles.map((role) => ({ label: role.label, value: role.activeShare || 0 }))
-                          : ROLE_SPLIT
+                          : []
                       }
                     />
                   </ChartCard>
@@ -917,11 +824,11 @@ const RustomjeeConnectUsageDashboard = () => {
                 <div className="pcd-span-2">
                   <MetricCard
                     label="Dormant users"
-                    value={adoptionQuery.data ? adoption.dormant.value : 1240}
+                    value={adoptionQuery.data ? adoption.dormant.value : 0}
                     caption={
                       adoptionQuery.data
                         ? `No activity ${adoption.dormant.band}`
-                        : `No activity 14+ days, vs. estimated ${BOOKED_HOMEBUYERS.toLocaleString()} booked homebuyers`
+                        : "No activity 14+ days"
                     }
                   />
                 </div>
@@ -1006,37 +913,37 @@ const RustomjeeConnectUsageDashboard = () => {
               <div className="pcd-tiles" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
                 <Tile
                   label="Workflow Adoption"
-                  value={`${workflowQuery.data ? liveWorkflow.kpis.fAdopt.value : wf.adoption}%`}
+                  value={`${workflowQuery.data ? liveWorkflow.kpis.fAdopt.value : 0}%`}
                   sub="of active users attempt this workflow"
                 />
                 <Tile
                   label="Completion Rate"
-                  value={`${workflowQuery.data ? liveWorkflow.kpis.fComp.value : wf.completionRate}%`}
+                  value={`${workflowQuery.data ? liveWorkflow.kpis.fComp.value : 0}%`}
                   sub="of those who start it, finish it"
                 />
                 <Tile
                   label="Biggest Step Drop"
-                  value={`${
-                    workflowQuery.data
-                      ? liveWorkflow.kpis.fStep.value
-                      : Math.max(...funnelSteps.slice(1).map((s) => s.drop))
-                  }%`}
-                  sub={`at ${
-                    funnelSteps
-                      .slice(1)
-                      .sort((a, b) => (b.drop_pct ?? b.drop ?? 0) - (a.drop_pct ?? a.drop ?? 0))[0]?.step
-                  }`}
+                  value={`${workflowQuery.data ? liveWorkflow.kpis.fStep.value : 0}%`}
+                  sub={
+                    funnelSteps.length > 1
+                      ? `at ${
+                          funnelSteps
+                            .slice(1)
+                            .sort((a, b) => (b.drop_pct ?? b.drop ?? 0) - (a.drop_pct ?? a.drop ?? 0))[0]?.step
+                        }`
+                      : "-"
+                  }
                 />
                 <Tile
                   label="Usage Volume"
-                  value={String(workflowQuery.data ? liveWorkflow.kpis.fVol.value : wf.completions)}
+                  value={String(workflowQuery.data ? liveWorkflow.kpis.fVol.value : 0)}
                   sub="completions this period"
                 />
               </div>
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title={`${wf.name} — completion funnel`} subtitle="Real event sequence, illustrative retained %">
+                  <ChartCard title={`${wf.name} — completion funnel`} subtitle="Live event sequence and retained %">
                     <div className="pud-funnel">
                       {funnelSteps.map((row, i) => (
                         <div key={row.step}>

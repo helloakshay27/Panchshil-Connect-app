@@ -39,7 +39,10 @@ export const VIZ = {
   rampEmpty: "#f4f4f5",
   ink: "#1f2933",
   inkMuted: "#667085",
-  grid: "#e9e7e5",
+  // theme-aware: resolved against the .pcd-page custom properties at paint
+  // time, so gridlines/axis ticks stay legible when the page flips to dark.
+  grid: "var(--pcd-line, #e9e7e5)",
+  gridSoft: "var(--pcd-faint, #98a2b3)",
 };
 
 const nf = new Intl.NumberFormat("en-IN");
@@ -461,18 +464,18 @@ export const AreaChart = ({ points, previousPoints, color = VIZ.brand, height = 
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={VIZ.grid} />
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 10 }}
+            tick={{ fontSize: 10, fill: VIZ.gridSoft }}
             interval={tickInterval}
             tickFormatter={(v) => String(v).replace(/^0/, "")}
           />
-          <YAxis tick={{ fontSize: 10 }} allowDecimals={false} width={30} />
+          <YAxis tick={{ fontSize: 10, fill: VIZ.gridSoft }} allowDecimals={false} width={30} />
           <Tooltip content={<SimpleTooltip />} />
           {hasPrev ? (
             <Line
               type="monotone"
               dataKey="previous"
               name="Previous"
-              stroke="#c2c0bd"
+              stroke={VIZ.gridSoft}
               strokeWidth={1.6}
               strokeDasharray="4 4"
               dot={false}

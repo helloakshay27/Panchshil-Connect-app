@@ -45,6 +45,14 @@ export const ANALYTICS_PROJECT_CODE = getTenant().project_code;
 const IS_RUSTOMJEE = ANALYTICS_TENANT.includes("rustomjee");
 const RUSTOMJEE_APP_ID = 32;
 
+/* Kalpataru has no numeric app_id on the FM adoption side — it is keyed, like
+   Panchshil, by a brand project_code. Pinned explicitly here so a Kalpataru
+   deployment always sends project_code=KL-PS01 and can never inherit another
+   brand's code through getTenant()'s Panchshil fallback on unrecognised
+   hosts. */
+const IS_KALPATARU = ANALYTICS_TENANT.includes("kalpataru");
+const KALPATARU_PROJECT_CODE = "KL-PS01";
+
 const analyticsClient = axios.create({
   baseURL: ANALYTICS_BASE_URL,
   timeout: 60000,
@@ -127,7 +135,11 @@ const get = async (endpoint, pairs) => {
    anything else) sends { device_type: "mobile" } — see getDeviceInfo. */
 const rangeParams = ({ from, to, siteIds, dev = "all" } = {}) => [
   // ["base_url", ANALYTICS_TENANT],
-  IS_RUSTOMJEE ? ["app_id", RUSTOMJEE_APP_ID] : ["project_code", ANALYTICS_PROJECT_CODE],
+  IS_RUSTOMJEE
+    ? ["app_id", RUSTOMJEE_APP_ID]
+    : IS_KALPATARU
+      ? ["project_code", KALPATARU_PROJECT_CODE]
+      : ["project_code", ANALYTICS_PROJECT_CODE],
   ["from", from],
   ["to", to],
   ["site_id", siteIds],
@@ -136,7 +148,11 @@ const rangeParams = ({ from, to, siteIds, dev = "all" } = {}) => [
 
 const weeklyParams = ({ to, weeks, siteIds, dev = "all" } = {}) => [
   // ["base_url", ANALYTICS_TENANT],
-  IS_RUSTOMJEE ? ["app_id", RUSTOMJEE_APP_ID] : ["project_code", ANALYTICS_PROJECT_CODE],
+  IS_RUSTOMJEE
+    ? ["app_id", RUSTOMJEE_APP_ID]
+    : IS_KALPATARU
+      ? ["project_code", KALPATARU_PROJECT_CODE]
+      : ["project_code", ANALYTICS_PROJECT_CODE],
   ["to", to],
   ["weeks", weeks],
   ["site_id", siteIds],
