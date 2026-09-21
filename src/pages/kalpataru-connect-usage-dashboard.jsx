@@ -222,7 +222,6 @@ const DATE_RANGE_PRESETS = [
 
 /* ---------------- Adoption & Engagement ---------------- */
 const ADOPTION_TILES = [
-  { label: "Seat Utilisation", sub: "active ÷ registered customers" },
   { label: "Stickiness", sub: "avg DAU / MAU" },
   { label: "Adoption Trend", sub: "vs prior 8 weeks · weekly actives" },
   { label: "14-Day Activation", sub: "of new registrations" },
@@ -436,7 +435,6 @@ const KalpataruConnectUsageDashboard = () => {
       }));
     }
     return [
-      { label: adoption.seat.label, value: adoption.seat.display, sub: adoption.seat.sub },
       { label: adoption.stickiness.label, value: adoption.stickiness.display, sub: adoption.stickiness.sub },
       { label: adoption.adoptionTrend.label, value: adoption.adoptionTrend.display, sub: adoption.adoptionTrend.sub },
       { label: adoption.activation.label, value: adoption.activation.display, sub: adoption.activation.sub },

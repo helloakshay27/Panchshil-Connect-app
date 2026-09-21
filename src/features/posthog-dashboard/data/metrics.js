@@ -127,7 +127,10 @@ export const buildUsage = ({ usage_over_time = {}, device_split = {}, views_per_
   const devices = [...osTotals.entries()].map(([os, vals]) => ({
     label: os,
     value: vals.sessions,
-    share: totalSessions ? (vals.sessions / totalSessions) * 100 : 0,
+    // 1 decimal place, matching the API's own session_share convention
+    // (e.g. 88.4) - the raw division produces long floats like
+    // 88.38709677419355 that render unrounded straight into the UI.
+    share: totalSessions ? Math.round((vals.sessions / totalSessions) * 1000) / 10 : 0,
     users: vals.users,
   }));
 

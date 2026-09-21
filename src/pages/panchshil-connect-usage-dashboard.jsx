@@ -261,12 +261,6 @@ const DATE_RANGE_PRESETS = [
 
 /* ---------------- Adoption & Engagement ---------------- */
 const ADOPTION_TILES = [
-  {
-    label: "Seat Utilisation",
-    value: "24%",
-    sub: "active ÷ registered residents",
-    infoKey: "adoption.seat",
-  },
   { label: "Stickiness", value: "26%", sub: "avg DAU / MAU", infoKey: "adoption.stickiness" },
   {
     label: "Adoption Trend",
@@ -641,12 +635,6 @@ const PanchshilConnectUsageDashboard = () => {
       }));
     }
     return [
-      {
-        label: adoption.seat.label,
-        value: adoption.seat.display,
-        sub: adoption.seat.sub,
-        infoKey: "adoption.seat",
-      },
       {
         label: adoption.stickiness.label,
         value: adoption.stickiness.display,
