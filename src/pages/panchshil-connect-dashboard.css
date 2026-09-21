@@ -1063,11 +1063,26 @@
 }
 
 /* ---------------- area / line ---------------- */
+.pcd-area-wrap {
+  position: relative;
+}
 .pcd-area {
   width: 100%;
   height: auto;
   display: block;
   overflow: visible;
+}
+/* Floating tooltip for DivergingStackedBarChart - anchored at the hovered
+   column's horizontal position (set inline as a % of the chart width) and
+   pinned near the top of the plot, reusing the same .pcd-rechart-tooltip
+   card the Recharts-based charts already use. */
+.pcd-diverging-tooltip {
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 5;
+  white-space: nowrap;
 }
 .pcd-axis {
   font-size: 10px;

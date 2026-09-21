@@ -73,6 +73,85 @@
 .pud-shell.is-collapsed .pud-nav-item .ni-t,
 .pud-shell.is-collapsed .pud-nav-item span:not(.pud-nav-ic) { display: none; }
 
+/* Recent-activity sidebar widget - a compact, always-visible feed (not a
+   separate tab/page): label + export button on one row, live rows below.
+   Hidden entirely when the rail is collapsed, same as the "Layers" label. */
+.pud-recent-panel {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--pcd-line);
+}
+.pud-shell.is-collapsed .pud-recent-panel { display: none; }
+.pud-recent-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 0 6px 8px 10px;
+}
+.pud-recent-panel-head span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pcd-muted);
+}
+.pud-recent-export-btn {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: none;
+  color: var(--pcd-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.pud-recent-export-btn:hover { background: var(--pcd-surface-2); color: var(--pcd-brand); }
+.pud-recent-export-btn:disabled { opacity: 0.5; cursor: default; }
+.pud-recent-export-btn svg { width: 15px; height: 15px; display: block; }
+.pud-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.pud-recent-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: var(--pcd-surface-2);
+  min-width: 0;
+}
+.pud-recent-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pcd-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pud-recent-meta {
+  font-size: 10.5px;
+  color: var(--pcd-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pud-recent-empty {
+  font-size: 11.5px;
+  color: var(--pcd-muted);
+  padding: 0 10px;
+}
+
 .pud-main { padding: 26px 28px 60px; min-width: 0; }
 
 .pud-page-head h2 {
@@ -402,5 +481,6 @@
   .pud-nav-item,
   .pud-shell.is-collapsed .pud-nav-item { width: auto; border: 1px solid var(--pcd-line); justify-content: flex-start; padding: 9px 10px; }
   .pud-shell.is-collapsed .pud-nav-item span:not(.pud-nav-ic) { display: inline; }
+  .pud-recent-panel { display: none; }
   .pud-main { padding: 20px 16px 48px; }
 }

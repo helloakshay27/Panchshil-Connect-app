@@ -291,6 +291,35 @@ export const buildFlows = ({ kpis = {}, funnel = [], flows = [], entry_screens =
   };
 };
 
+/* ---- Live activity: recent_active_users ---- */
+
+export const buildRecentActiveUsers = (payload = {}) => {
+  // The row array's envelope key isn't pinned down in the API reference, so
+  // check the plausible ones defensively rather than assuming one.
+  const rows =
+    (Array.isArray(payload) && payload) ||
+    payload.users ||
+    payload.rows ||
+    payload.recent_active_users ||
+    payload.data ||
+    [];
+  return rows.map((r) => ({
+    userId: r.user_id || "",
+    name: r.display_name || r.user_name || r.email || "anonymous",
+    email: r.email || "",
+    path: r.path || "—",
+    lastEvent: r.last_event || "—",
+    lastSeen: r.last_seen || "—",
+    minutesAgo: r.minutes_ago ?? null,
+    role: r.user_role || "—",
+    site: r.site_name || r.site_id || "—",
+    device: r.device_type || "—",
+    os: r.os || "—",
+    events: r.events ?? 0,
+    sessions: r.sessions ?? 0,
+  }));
+};
+
 const firstDefined = (...values) => values.find((v) => v !== undefined && v !== null && v !== "");
 const toNumber = (value) => {
   const n = Number(value);

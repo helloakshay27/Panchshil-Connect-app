@@ -15,7 +15,9 @@ import {
   useRoles,
   useModuleTree,
   useWorkflowUsage,
+  useRecentActiveUsers,
 } from "../features/posthog-dashboard/api/queries";
+import { downloadActiveUsersExport } from "../features/posthog-dashboard/api/adoptionApi";
 import {
   DEFAULT_WINDOW,
   GROWTH_WEEKS,
@@ -27,6 +29,7 @@ import {
   buildAdopt,
   buildAdoptionTrend,
   buildFlows,
+  buildRecentActiveUsers,
   buildGrowth,
   buildRetention,
   buildRoles,
@@ -105,6 +108,7 @@ const SampleNote = ({ children }) => <div className="pcd-note">{children}</div>;
    reference wireframe's growth-accounting chart (New/Returning/Resurrecting
    above the line, Dormant below). */
 const DivergingStackedBarChart = ({ labels, series, negSeries, height = 210 }) => {
+  const [hoverIdx, setHoverIdx] = useState(null);
   const W = 640;
   const H = height;
   const PAD = { t: 14, r: 12, b: 26, l: 8 };
@@ -117,6 +121,7 @@ const DivergingStackedBarChart = ({ labels, series, negSeries, height = 210 }) =
   const scaleDn = (H - PAD.b - zeroY) / (maxDn || 1);
   const gap = (W - PAD.l - PAD.r) / n;
   const bw = gap * 0.52;
+  const allSeries = [...series, negSeries].filter(Boolean);
 
   return (
     <div className="pcd-area-wrap">
@@ -139,12 +144,42 @@ const DivergingStackedBarChart = ({ labels, series, negSeries, height = 210 }) =
               <text x={x + bw / 2} y={H - 8} textAnchor="middle" className="pcd-axis">
                 {lab}
               </text>
+              {/* Full-column hit target (not just the bar) - so hovering the
+                  empty space around a small/zero-height segment still shows
+                  every series' value for that week, not just whichever
+                  segment happens to be tall enough to sit under the cursor. */}
+              <rect
+                x={PAD.l + i * gap}
+                y={PAD.t}
+                width={gap}
+                height={plotH}
+                fill="transparent"
+                onMouseEnter={() => setHoverIdx(i)}
+                onMouseLeave={() => setHoverIdx(null)}
+              />
             </g>
           );
         })}
       </svg>
+      {hoverIdx != null ? (
+        <div
+          className="pcd-diverging-tooltip"
+          style={{ left: `${((PAD.l + hoverIdx * gap + gap / 2) / W) * 100}%` }}
+        >
+          <div className="pcd-rechart-tooltip">
+            <div className="pcd-rechart-tooltip-title">{labels[hoverIdx]}</div>
+            {allSeries.map((s) => (
+              <div className="pcd-rechart-tooltip-row" key={s.label}>
+                <span className="pcd-rechart-tooltip-dot" style={{ background: s.color }} />
+                <span className="pcd-rechart-tooltip-name">{s.label}</span>
+                <span className="pcd-rechart-tooltip-value">{s.data[hoverIdx]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
       <ul className="pcd-legend" style={{ marginTop: 10 }}>
-        {[...series, negSeries].filter(Boolean).map((s) => (
+        {allSeries.map((s) => (
           <li key={s.label}>
             <span className="pcd-legend-dot" style={{ background: s.color }} />
             {s.label}
@@ -264,6 +299,7 @@ const RustomjeeConnectUsageDashboard = () => {
   // Refresh button state — handleRefresh is wired below, once the layer's
   // query objects exist.
   const [refreshing, setRefreshing] = useState(false);
+  const [exportingUsers, setExportingUsers] = useState(false);
 
   const dateRangeLabel = customApplied
     ? `${customFrom} – ${customTo}`
@@ -315,6 +351,13 @@ const RustomjeeConnectUsageDashboard = () => {
   const workflowQuery = useWorkflowUsage(workflowFilters, {
     enabled: layer === "workflow" && !!wfModule,
   });
+  // Sidebar "Recent Activity" widget - always visible (not gated behind a
+  // layer tab), so this fetches regardless of which main layer is open.
+  const recentActiveUsersFilters = useMemo(
+    () => ({ ...rangeFilters, limit: 5 }),
+    [rangeFilters],
+  );
+  const recentActiveUsersQuery = useRecentActiveUsers(recentActiveUsersFilters);
 
   // Refresh button — explicitly refetches the live queries backing whichever
   // layer is currently open, so a click always issues fresh API calls rather
@@ -322,7 +365,9 @@ const RustomjeeConnectUsageDashboard = () => {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const refetches = [];
+      // The Recent Activity sidebar widget refreshes every time, regardless
+      // of which layer tab is open, since it isn't a tab itself.
+      const refetches = [recentActiveUsersQuery.refetch()];
       if (layer === "traffic") {
         refetches.push(trafficQuery.refetch(), usageQuery.refetch());
       } else if (layer === "adoption") {
@@ -343,6 +388,19 @@ const RustomjeeConnectUsageDashboard = () => {
     }
   };
 
+  // Recent Activity sidebar widget's export button — downloads the same
+  // range/device scope as the rest of the page via active_users_export.
+  const handleExportActiveUsers = async () => {
+    setExportingUsers(true);
+    try {
+      await downloadActiveUsersExport(rangeFilters);
+    } catch (err) {
+      console.error("Failed to export active users", err);
+    } finally {
+      setExportingUsers(false);
+    }
+  };
+
   const traffic = useMemo(() => buildTraffic(trafficQuery.data || {}), [trafficQuery.data]);
   const usage = useMemo(() => buildUsage(usageQuery.data || {}), [usageQuery.data]);
   const adoption = useMemo(() => buildAdopt(adoptionQuery.data || {}), [adoptionQuery.data]);
@@ -354,6 +412,10 @@ const RustomjeeConnectUsageDashboard = () => {
   const retention = useMemo(() => buildRetention(retentionQuery.data || {}), [retentionQuery.data]);
   const roles = useMemo(() => buildRoles(rolesQuery.data || {}), [rolesQuery.data]);
   const liveWorkflow = useMemo(() => buildFlows(workflowQuery.data || {}), [workflowQuery.data]);
+  const recentUsers = useMemo(
+    () => (recentActiveUsersQuery.data ? buildRecentActiveUsers(recentActiveUsersQuery.data) : []),
+    [recentActiveUsersQuery.data],
+  );
 
   const trafficTiles = useMemo(() => {
     if (!trafficQuery.data) return TRAFFIC_TILES.map((t) => ({ ...t, value: 0 }));
@@ -542,6 +604,41 @@ const RustomjeeConnectUsageDashboard = () => {
               </button>
             ))}
           </nav>
+
+          {/* Always-visible live feed, not a separate tab - see
+              recentActiveUsersQuery/handleExportActiveUsers above. */}
+          <div className="pud-recent-panel">
+            <div className="pud-recent-panel-head">
+              <span>Recent Activity</span>
+              <button
+                type="button"
+                className="pud-recent-export-btn"
+                onClick={handleExportActiveUsers}
+                disabled={exportingUsers}
+                title="Download active users (.xlsx)"
+                aria-label="Download active users (.xlsx)"
+              >
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M10 3v9.5M6.2 9.2 10 13l3.8-3.8" />
+                  <path d="M3.5 15.5v1.2c0 .7.6 1.3 1.3 1.3h10.4c.7 0 1.3-.6 1.3-1.3v-1.2" />
+                </svg>
+              </button>
+            </div>
+            {recentUsers.length ? (
+              <ul className="pud-recent-list">
+                {recentUsers.map((r, i) => (
+                  <li key={r.userId || `${r.email}-${i}`}>
+                    <span className="pud-recent-name">{r.name}</span>
+                    <span className="pud-recent-meta">
+                      {r.path} · {r.minutesAgo != null ? `${r.minutesAgo}m ago` : r.lastSeen}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="pud-recent-empty">No recent activity yet.</div>
+            )}
+          </div>
         </aside>
 
         <main className="pud-main">
@@ -1004,6 +1101,7 @@ const RustomjeeConnectUsageDashboard = () => {
               </div>
             </>
           ) : null}
+
         </main>
       </div>
     </div>

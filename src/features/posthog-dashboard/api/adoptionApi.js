@@ -129,6 +129,17 @@ const get = async (endpoint, pairs) => {
   return data;
 };
 
+/**
+ * Same URL-building as `get`, but for a binary (.xlsx) download - returns
+ * the full axios response so the caller can read the filename off
+ * Content-Disposition rather than just the parsed body.
+ */
+const getBlob = (endpoint, pairs) => {
+  const qs = buildQuery(pairs);
+  const url = `/fm/adoption/${endpoint}${qs ? `?${qs}` : ""}`;
+  return analyticsClient.get(url, { responseType: "blob" });
+};
+
 /* Shared param slices ---------------------------------------------------- */
 
 /* Platform filter: "ios"/"android" send { os: "ios"/"Android" }, "all" (and
@@ -219,6 +230,39 @@ export const fetchWorkflowUsage = (filters) => {
   if (module) pairs.push(["module", module]); // defaults server-side
   if (subModule) pairs.push(["sub_module", subModule]);
   return get("workflow_usage", pairs);
+};
+
+/* Live activity - latest active users + the path/screen each is on. `limit`
+   defaults to 10 (server max 100); from/to reuse the same range the rest of
+   the dashboard is scoped to rather than the endpoint's own "omit for today"
+   default, so this stays consistent with the date-range picker. */
+export const fetchRecentActiveUsers = (filters) => {
+  const { limit, ...rest } = filters || {};
+  const pairs = rangeParams(rest);
+  pairs.push(["limit", Number(limit) || 10]);
+  return get("recent_active_users", pairs);
+};
+
+/* Excel export of the active-users list (no row limit) - fetches the
+   workbook and hands the browser a file to save, reading the filename off
+   Content-Disposition when the server sends one and falling back to the
+   documented active_users_<from>_to_<to>.xlsx convention otherwise. */
+export const downloadActiveUsersExport = async (filters) => {
+  const response = await getBlob("active_users_export", rangeParams(filters));
+  const disposition = response.headers?.["content-disposition"] || "";
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition);
+  const filename =
+    (match && decodeURIComponent(match[1])) ||
+    `active_users_${filters?.from || "all"}_to_${filters?.to || "all"}.xlsx`;
+
+  const blobUrl = window.URL.createObjectURL(response.data);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(blobUrl);
 };
 
 export default analyticsClient;

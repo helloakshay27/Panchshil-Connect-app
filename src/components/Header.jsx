@@ -296,14 +296,14 @@ const isKalpataru = baseURL === "https://kalpataru.lockated.com/";
               >
                 Setup
               </NavLink>
-               {isPanchshil && (
+               {/* {isPanchshil && (
                 <NavLink
                   className="nav-link px-4 d-flex align-items-center"
                   to={firstDashboardRoute}
                 >
                   Dashboard
                 </NavLink>
-              )}
+              )} */}
             </div>
           </div>
 

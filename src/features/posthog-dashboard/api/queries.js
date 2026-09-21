@@ -14,6 +14,7 @@ import {
   fetchRoles,
   fetchModules,
   fetchWorkflowUsage,
+  fetchRecentActiveUsers,
 } from "./adoptionApi";
 
 /* ---------------------------------------------------------------------------
@@ -116,6 +117,14 @@ export const useWorkflowUsage = (filters, opts = {}) =>
   useQuery({
     queryKey: [ANALYTICS_QUERY_KEY, "workflow_usage", filters],
     queryFn: () => fetchWorkflowUsage(filters),
+    ...common,
+    ...opts,
+  });
+
+export const useRecentActiveUsers = (filters, opts = {}) =>
+  useQuery({
+    queryKey: [ANALYTICS_QUERY_KEY, "recent_active_users", filters],
+    queryFn: () => fetchRecentActiveUsers(filters),
     ...common,
     ...opts,
   });
