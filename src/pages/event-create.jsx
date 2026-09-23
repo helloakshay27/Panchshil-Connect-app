@@ -19,6 +19,11 @@ const DATA_TYPE_OPTIONS = [
   { value: "cp", label: "CP" },
 ];
 
+/* Kalpataru has no mandatory fields on this form - team can create an event
+   with whatever details they have on hand. Rustomjee and Panchshil keep the
+   required-field validation below. */
+const IS_KALPATARU = baseURL.includes("kalpataru");
+
 const EventCreate = () => {
   const connectEvents = useConnectEvents();
   const navigate = useNavigate();
@@ -545,6 +550,7 @@ const EventCreate = () => {
   };
 
   const validateDetailsStep = () => {
+    if (IS_KALPATARU) return [];
     const errors = [];
     if (!formData.event_name) errors.push("Event Name is required.");
     if (selectedProjectIds.length === 0) errors.push("Please select at least one project.");
@@ -555,6 +561,7 @@ const EventCreate = () => {
   };
 
   const validateImagesStep = () => {
+    if (IS_KALPATARU) return [];
     const errors = [];
     if (!formData.creation_email_attachment) {
       errors.push("Event Creation Email Attachment is required.");
@@ -1028,7 +1035,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Projects
-                          <span className="otp-asterisk"> *</span>
+                          {!IS_KALPATARU ? <span className="otp-asterisk"> *</span> : null}
                         </label>
                         <MultiSelectBox
                           options={projects.map((proj) => ({
@@ -1057,7 +1064,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Data Type
-                          <span className="otp-asterisk"> *</span>
+                          {!IS_KALPATARU ? <span className="otp-asterisk"> *</span> : null}
                         </label>
                         <MultiSelectBox
                           options={DATA_TYPE_OPTIONS}
@@ -1125,7 +1132,7 @@ const EventCreate = () => {
                       <div className="form-group">
                         <label>
                           Event Name
-                          <span className="otp-asterisk"> *</span>
+                          {!IS_KALPATARU ? <span className="otp-asterisk"> *</span> : null}
                         </label>
                         <input
                           className="form-control"
@@ -1134,7 +1141,7 @@ const EventCreate = () => {
                           placeholder="Enter Event Name"
                           value={formData.event_name}
                           onChange={handleChange}
-                          required
+                          required={!IS_KALPATARU}
                         />
                       </div>
                     </div>
@@ -2189,7 +2196,7 @@ const EventCreate = () => {
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
                       Event Creation Email Attachment
-                      <span className="otp-asterisk"> *</span>
+                      {!IS_KALPATARU ? <span className="otp-asterisk"> *</span> : null}
                     </h5>
                     <button
                       className="purple-btn2 rounded-3"
@@ -2280,7 +2287,7 @@ const EventCreate = () => {
                   <div className="d-flex justify-content-between align-items-end mx-1">
                     <h5 className="mt-3">
                       Event Reminder Email Attachment
-                      <span className="otp-asterisk"> *</span>
+                      {!IS_KALPATARU ? <span className="otp-asterisk"> *</span> : null}
                     </h5>
                     <button
                       className="purple-btn2 rounded-3"
