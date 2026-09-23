@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import {
   ChartCard,
   SectionHead,
@@ -96,6 +97,57 @@ const PercentHBar = ({ rows, color = VIZ.brand }) => (
       </li>
     ))}
   </ul>
+);
+
+/* Hover tooltip for DeviceSharePie - a single "<label> · <value>%" row,
+   matching the shared .pcd-rechart-tooltip visual language. Values passed in
+   are already percentages (0-100), so no re-derivation against a total. */
+const PieShareTooltip = ({ active, payload }) => {
+  if (!active || !payload || !payload.length) return null;
+  const p = payload[0];
+  return (
+    <div className="pcd-rechart-tooltip">
+      <div className="pcd-rechart-tooltip-row">
+        <span className="pcd-rechart-tooltip-dot" style={{ background: p.payload.color || p.color }} />
+        <span className="pcd-rechart-tooltip-name">{p.name}</span>
+        <span className="pcd-rechart-tooltip-value">{p.value}%</span>
+      </div>
+    </div>
+  );
+};
+
+/* Plain pie (no donut hole) for a 2-way share, with the percentage value
+   surfaced via a hover tooltip rather than printed on the slice itself. */
+const DeviceSharePie = ({ rows, height = 200 }) => (
+  <div className="pcd-piechart-wrap">
+    <div className="pcd-rechart-inner" style={{ height }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={rows}
+            dataKey="value"
+            nameKey="label"
+            outerRadius="85%"
+            paddingAngle={rows.length > 1 ? 2 : 0}
+            stroke="none"
+          >
+            {rows.map((r, i) => (
+              <Cell key={r.label} fill={r.color || VIZ.cat[i % VIZ.cat.length]} />
+            ))}
+          </Pie>
+          <Tooltip content={<PieShareTooltip />} />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+    <ul className="pcd-legend" style={{ marginTop: 10, justifyContent: "flex-start" }}>
+      {rows.map((r, i) => (
+        <li key={r.label}>
+          <span className="pcd-legend-dot" style={{ background: r.color || VIZ.cat[i % VIZ.cat.length] }} />
+          {r.label}
+        </li>
+      ))}
+    </ul>
+  </div>
 );
 
 const SampleNote = ({ children }) => <div className="pcd-note">{children}</div>;
@@ -282,8 +334,10 @@ const TRAFFIC_TILES = [
   { label: "Recently Online", value: 6, sub: "Active in last 30 min", infoKey: "traffic.recently_online" },
 ];
 
-/* Both bars use the same brand orange. */
-const DEVICE_SPLIT_COLORS = { Android: VIZ.brand, iOS: VIZ.brand };
+/* Distinct colours per slice - the pie chart needs Android and iOS to be
+   visually distinguishable, unlike the old bar chart where the row label
+   already did that job. */
+const DEVICE_SPLIT_COLORS = { Android: VIZ.brand, iOS: VIZ.brand3 };
 
 /* Date-range presets for the filter bar's popover — display-only, matching
    Panchshil_Connect_Dashboard_v3_FM_structure.html's filterbar. Nothing here
@@ -1175,7 +1229,7 @@ const PanchshilConnectUsageDashboard = () => {
                     infoKey="chart.device"
                     onInfo={openInfoPopover}
                   >
-                    <PercentHBar rows={deviceSplit} />
+                    <DeviceSharePie rows={deviceSplit} />
                     <div
                       className="pcd-splits"
                       style={{ marginTop: 14, gridTemplateColumns: "repeat(1, 1fr)", maxWidth: 160 }}

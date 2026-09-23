@@ -450,11 +450,20 @@ export const AreaChart = ({ points, previousPoints, color = VIZ.brand, height = 
   // Thin out x-axis ticks on long series so labels don't collide - every
   // point is still plotted, only the tick text is skipped.
   const tickInterval = Math.max(Math.ceil(points.length / 8) - 1, 0);
+  // Labels come in as full ISO dates ("2026-09-20"); render as "Sep 20"
+  // instead - shorter, so the last tick (centered on the rightmost data
+  // point, right up against the plot edge) doesn't get clipped by the SVG's
+  // own bounds the way the full 10-character string did.
+  const formatTick = (v) => {
+    const d = new Date(`${v}T00:00:00`);
+    if (Number.isNaN(d.getTime())) return String(v);
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  };
 
   return (
     <div className="pcd-rechart-inner" style={{ height }}>
       <ResponsiveContainer width="100%" height="100%">
-        <RechartsAreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        <RechartsAreaChart data={chartData} margin={{ top: 8, right: 20, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity={0.26} />
@@ -466,7 +475,7 @@ export const AreaChart = ({ points, previousPoints, color = VIZ.brand, height = 
             dataKey="label"
             tick={{ fontSize: 10, fill: VIZ.gridSoft }}
             interval={tickInterval}
-            tickFormatter={(v) => String(v).replace(/^0/, "")}
+            tickFormatter={formatTick}
           />
           <YAxis tick={{ fontSize: 10, fill: VIZ.gridSoft }} allowDecimals={false} width={30} />
           <Tooltip content={<SimpleTooltip />} />

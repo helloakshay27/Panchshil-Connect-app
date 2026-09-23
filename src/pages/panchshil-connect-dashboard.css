@@ -1003,6 +1003,14 @@
   border-radius: 4px;
 }
 
+/* ---------------- plain pie (no donut hole) ---------------- */
+.pcd-piechart-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 /* ---------------- donut ---------------- */
 .pcd-donut-wrap {
   display: flex;
