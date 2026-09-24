@@ -28,9 +28,6 @@ import {
 import { downloadActiveUsersExport } from "../features/posthog-dashboard/api/adoptionApi";
 import {
   DEFAULT_WINDOW,
-  GROWTH_WEEKS,
-  RETENTION_WEEKS,
-  TREND_WEEKS,
   rangeForDays,
 } from "../features/posthog-dashboard/data/constants";
 import {
@@ -128,7 +125,6 @@ const DeviceSharePie = ({ rows, height = 200 }) => (
             dataKey="value"
             nameKey="label"
             outerRadius="85%"
-            paddingAngle={rows.length > 1 ? 2 : 0}
             stroke="none"
           >
             {rows.map((r, i) => (
@@ -468,17 +464,34 @@ const PanchshilConnectUsageDashboard = () => {
     () => ({ ...rangeFilters, days: 7 }),
     [rangeFilters],
   );
+
+  // The weekly-bucketed endpoints (adoption trend, growth accounting,
+  // retention) take a week count instead of a from/to pair, so the selected
+  // date-range filter (7/30/90 days, or a custom range) has to be converted
+  // into an equivalent number of weeks - otherwise switching the date-range
+  // preset never changes what these three cards request, only `to` (which
+  // rangeForDays always pins to today anyway) and the device filter would.
+  const filterDays = useMemo(() => {
+    if (customApplied && customFrom && customTo) {
+      const diff = Math.round((new Date(customTo) - new Date(customFrom)) / 86400000) + 1;
+      return Math.max(1, diff);
+    }
+    return Number(dateRangePreset) || DEFAULT_WINDOW;
+  }, [customApplied, customFrom, customTo, dateRangePreset]);
+  const filterWeeks = Math.min(52, Math.max(1, Math.ceil(filterDays / 7)));
+  const filterWeeksLabel = `${filterWeeks} week${filterWeeks === 1 ? "" : "s"}`;
+
   const trendFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: TREND_WEEKS, dev: deviceFilter }),
-    [rangeFilters.to, deviceFilter],
+    () => ({ to: rangeFilters.to, weeks: filterWeeks, dev: deviceFilter }),
+    [rangeFilters.to, filterWeeks, deviceFilter],
   );
   const growthFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: GROWTH_WEEKS, dev: deviceFilter }),
-    [rangeFilters.to, deviceFilter],
+    () => ({ to: rangeFilters.to, weeks: filterWeeks, dev: deviceFilter }),
+    [rangeFilters.to, filterWeeks, deviceFilter],
   );
   const retentionFilters = useMemo(
-    () => ({ to: rangeFilters.to, weeks: RETENTION_WEEKS, dev: deviceFilter }),
-    [rangeFilters.to, deviceFilter],
+    () => ({ to: rangeFilters.to, weeks: filterWeeks, dev: deviceFilter }),
+    [rangeFilters.to, filterWeeks, deviceFilter],
   );
 
   // Keep the established sidebar UI intact while issuing the same analytics
@@ -948,7 +961,10 @@ const PanchshilConnectUsageDashboard = () => {
                 key={l.key}
                 type="button"
                 className={`pud-nav-item ${layer === l.key ? "is-on" : ""}`}
-                onClick={() => setLayer(l.key)}
+                onClick={() => {
+                  setLayer(l.key);
+                  setDateRangeOpen(false);
+                }}
               >
                 <span className="pud-nav-ic">{l.icon}</span>
                 <span>{l.label}</span>
@@ -1290,7 +1306,7 @@ const PanchshilConnectUsageDashboard = () => {
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title="Adoption trend (weekly active users, last 8 weeks)" infoKey="chart.adoptTrend" onInfo={openInfoPopover}>
+                  <ChartCard title={`Adoption trend (weekly active users, last ${filterWeeksLabel})`} infoKey="chart.adoptTrend" onInfo={openInfoPopover}>
                     <AreaChart
                       points={
                         adoptionTrendQuery.data
@@ -1304,7 +1320,7 @@ const PanchshilConnectUsageDashboard = () => {
                 <div className="pcd-span-2">
                   <ChartCard
                     title="New · Returning · Resurrecting · Dormant"
-                    subtitle="Growth accounting · Last 6 weeks"
+                    subtitle={`Growth accounting · Last ${filterWeeksLabel}`}
                     infoKey="chart.growth"
                     onInfo={openInfoPopover}
                   >
