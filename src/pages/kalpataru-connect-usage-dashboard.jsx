@@ -282,6 +282,7 @@ const KalpataruConnectUsageDashboard = () => {
   const { collapsed: sidebarCollapsed, toggle: toggleSidebar } = useSidebarCollapsed();
   const [layer, setLayer] = useState("traffic");
   const [wfModule, setWfModule] = useState(null);
+  const [usageTab, setUsageTab] = useState("visitors");
 
   // Filter bar state. deviceFilter is the one control that actually drives the
   // queries below — it is threaded into rangeFilters/weeklyFilters as `dev`, so
@@ -428,13 +429,20 @@ const KalpataruConnectUsageDashboard = () => {
     ];
   }, [traffic, trafficQuery.data]);
 
-  const trafficTrend = useMemo(
-    () =>
-      usageQuery.data
-        ? usage.daily.map((day) => ({ label: day.day, count: day.current.visitors }))
-        : [],
-    [usage, usageQuery.data],
-  );
+  // Visitors/Views/Sessions trend, with a "previous period" dashed
+  // comparison line - both current and previous come straight out of
+  // usage.daily (buildUsage already aligns them day-for-day), switched by
+  // the usageTab toggle. Falls back to an empty series until the live
+  // endpoint resolves.
+  const usageSeries = useMemo(() => {
+    if (usageQuery.data) {
+      return {
+        current: usage.daily.map((day) => ({ label: day.day, count: day.current[usageTab] })),
+        previous: usage.daily.map((day) => ({ label: day.day, count: day.previous[usageTab] })),
+      };
+    }
+    return { current: [], previous: [] };
+  }, [usage, usageQuery.data, usageTab]);
 
   // Card is specifically "Android vs iOS usage" — always show both rows, even
   // when the live payload only reports one platform (or an unrelated one);
@@ -790,7 +798,42 @@ const KalpataruConnectUsageDashboard = () => {
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-2">
                   <ChartCard title="Usage over time" subtitle="Last 24 days">
-                    <AreaChart points={trafficTrend} color={KP.brand} />
+                    <div className="pud-devtoggle" style={{ marginBottom: 10 }}>
+                      <button
+                        type="button"
+                        className={usageTab === "visitors" ? "is-on" : ""}
+                        onClick={() => setUsageTab("visitors")}
+                      >
+                        Users
+                      </button>
+                      <button
+                        type="button"
+                        className={usageTab === "views" ? "is-on" : ""}
+                        onClick={() => setUsageTab("views")}
+                      >
+                        Views
+                      </button>
+                      <button
+                        type="button"
+                        className={usageTab === "sessions" ? "is-on" : ""}
+                        onClick={() => setUsageTab("sessions")}
+                      >
+                        Sessions
+                      </button>
+                    </div>
+                    <AreaChart points={usageSeries.current} previousPoints={usageSeries.previous} color={KP.brand} />
+                    <div style={{ display: "flex", gap: 18, marginTop: 10, fontSize: 12, color: "var(--pcd-muted)" }}>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+                        <span
+                          style={{ width: 9, height: 9, borderRadius: 2, background: KP.brand, display: "inline-block" }}
+                        />
+                        {usageTab === "visitors" ? "Users" : usageTab === "views" ? "Views" : "Sessions"}
+                      </span>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+                        <span style={{ width: 16, height: 0, borderTop: "2px dashed #c2c0bd", display: "inline-block" }} />
+                        Previous period
+                      </span>
+                    </div>
                   </ChartCard>
                 </div>
                 <div className="pcd-span-2">
@@ -918,7 +961,7 @@ const KalpataruConnectUsageDashboard = () => {
                   />
                 </div>
 
-                <div className="pcd-span-4">
+                {/* <div className="pcd-span-4">
                   <ChartCard eyebrow="League table" title="Site-wise breakdown">
                     <div className="pcd-table-scroll">
                       <table className="pcd-table">
@@ -955,7 +998,7 @@ const KalpataruConnectUsageDashboard = () => {
                       </table>
                     </div>
                   </ChartCard>
-                </div>
+                </div> */}
               </div>
             </>
           ) : null}

@@ -1206,7 +1206,7 @@ const PanchshilConnectUsageDashboard = () => {
                         className={usageTab === "visitors" ? "is-on" : ""}
                         onClick={() => setUsageTab("visitors")}
                       >
-                        Visitors
+                        Users
                       </button>
                       <button
                         type="button"
@@ -1229,7 +1229,7 @@ const PanchshilConnectUsageDashboard = () => {
                         <span
                           style={{ width: 9, height: 9, borderRadius: 2, background: VIZ.brand, display: "inline-block" }}
                         />
-                        {usageTab === "visitors" ? "Visitors" : usageTab === "views" ? "Views" : "Sessions"}
+                        {usageTab === "visitors" ? "Users" : usageTab === "views" ? "Views" : "Sessions"}
                       </span>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
                         <span style={{ width: 16, height: 0, borderTop: "2px dashed #c2c0bd", display: "inline-block" }} />
