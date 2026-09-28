@@ -667,26 +667,21 @@ const BankDetailsEdit = () => {
               </div>
             </div>
 
-            {/* Submit & Cancel Buttons */}
-            <div className="row mt-2 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={submitting}
-                >
-                  {submitting ? "Submitting..." : "Submit"}
-                </button>
-              </div>
-              <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 w-100"
-                  onClick={() => navigate(-1)}
-                >
-                  Cancel
-                </button>
-              </div>
+            <div className="banner-form-actions">
+              <button
+                type="submit"
+                className="banner-form-action-btn"
+                disabled={submitting}
+              >
+                {submitting ? "Submitting..." : "Submit"}
+              </button>
+              <button
+                type="button"
+                className="banner-form-action-btn"
+                onClick={() => navigate(-1)}
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>
