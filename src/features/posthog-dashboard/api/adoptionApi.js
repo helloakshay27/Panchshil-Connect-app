@@ -44,6 +44,10 @@ export const ANALYTICS_PROJECT_CODE = getTenant().project_code;
    queried, on every host including localhost. */
 const IS_RUSTOMJEE = ANALYTICS_TENANT.includes("rustomjee");
 const RUSTOMJEE_APP_ID = 32;
+/* Rustomjee now also has a project_code on the FM adoption side - sent
+   alongside app_id (not replacing it) so existing app_id-keyed lookups keep
+   working while the backend picks up project_code too. */
+const RUSTOMJEE_PROJECT_CODE = "RC-PS01";
 
 /* Kalpataru has no numeric app_id on the FM adoption side — it is keyed, like
    Panchshil, by a brand project_code. Pinned explicitly here so a Kalpataru
@@ -146,11 +150,11 @@ const getBlob = (endpoint, pairs) => {
    anything else) sends { device_type: "mobile" } — see getDeviceInfo. */
 const rangeParams = ({ from, to, siteIds, dev = "all" } = {}) => [
   // ["base_url", ANALYTICS_TENANT],
-  IS_RUSTOMJEE
-    ? ["app_id", RUSTOMJEE_APP_ID]
+  ...(IS_RUSTOMJEE
+    ? [["app_id", RUSTOMJEE_APP_ID], ["project_code", RUSTOMJEE_PROJECT_CODE]]
     : IS_KALPATARU
-      ? ["project_code", KALPATARU_PROJECT_CODE]
-      : ["project_code", ANALYTICS_PROJECT_CODE],
+      ? [["project_code", KALPATARU_PROJECT_CODE]]
+      : [["project_code", ANALYTICS_PROJECT_CODE]]),
   ["from", from],
   ["to", to],
   ["site_id", siteIds],
@@ -159,11 +163,11 @@ const rangeParams = ({ from, to, siteIds, dev = "all" } = {}) => [
 
 const weeklyParams = ({ to, weeks, siteIds, dev = "all" } = {}) => [
   // ["base_url", ANALYTICS_TENANT],
-  IS_RUSTOMJEE
-    ? ["app_id", RUSTOMJEE_APP_ID]
+  ...(IS_RUSTOMJEE
+    ? [["app_id", RUSTOMJEE_APP_ID], ["project_code", RUSTOMJEE_PROJECT_CODE]]
     : IS_KALPATARU
-      ? ["project_code", KALPATARU_PROJECT_CODE]
-      : ["project_code", ANALYTICS_PROJECT_CODE],
+      ? [["project_code", KALPATARU_PROJECT_CODE]]
+      : [["project_code", ANALYTICS_PROJECT_CODE]]),
   ["to", to],
   ["weeks", weeks],
   ["site_id", siteIds],

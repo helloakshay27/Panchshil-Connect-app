@@ -32,7 +32,7 @@ switch (hostname) {
     break;
 
   case "localhost":
-    baseURL = "https://uatapi-connect.panchshil.com/"; 
+    baseURL = "https://rustomjee-live.lockated.com/"; 
     break;
 
   default:
