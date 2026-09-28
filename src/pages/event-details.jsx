@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
 import ShareSalesforceCustomersModal from "../components/events/ShareSalesforceCustomersModal";
+import { CalendarDays, Image } from "lucide-react";
+import "./project-details-create.css";
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -188,13 +190,19 @@ const EventDetails = () => {
       <div className="main-content">
         <div className="">
           <div className="module-data-section container-fluid">
-            <div className="module-data-section p-3">
-              <div className="card mt-4 pb-4 mx-4">
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", paddingRight: "16px" }}>
-                  <div className="card-header3">
-                    <h3 className="card-title" style={{ whiteSpace: "nowrap" }}>Event Details</h3>
-                  </div>
-                  <div style={{ display: "flex", gap: "10px", marginTop: "8px", flexWrap: "wrap" }}>
+            <div className="module-data-section event-details-page p-3">
+              <div className="card project-details-create-card mt-4 pb-4 mx-4">
+                <div
+                  className="card-header project-details-section-header"
+                  style={{ justifyContent: "space-between", flexWrap: "wrap", paddingRight: "16px" }}
+                >
+                  <h3 className="project-details-section-heading">
+                    <span className="project-details-section-icon" aria-hidden="true">
+                      <CalendarDays size={16} strokeWidth={1.8} />
+                    </span>
+                    Event Details
+                  </h3>
+                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                     <button
                       className="purple-btn2 btn-sm"
                       style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
@@ -583,9 +591,14 @@ const EventDetails = () => {
                 </div>
               </div>
               {/* Event Image */}
-              <div className="card mt-3 pb-4 mx-4">
-                <div className="card-header">
-                  <h3 className="card-title">Event Image</h3>
+              <div className="card project-details-section-card mt-3 pb-4 mx-4">
+                <div className="card-header project-details-section-header">
+                  <h3 className="project-details-section-heading">
+                    <span className="project-details-section-icon" aria-hidden="true">
+                      <Image size={16} strokeWidth={1.8} />
+                    </span>
+                    Event Image
+                  </h3>
                 </div>
                 <div className="card-body">
                   <div className="row">

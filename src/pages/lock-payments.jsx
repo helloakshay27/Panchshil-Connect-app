@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import Pagination from "../components/reusable/Pagination";
+import EnhancedTable from "../components/EnhancedTable";
+
+const showLegacyTable = false;
 
 export default function LockPayments() {
   const [payments, setPayments] = useState([]);
@@ -10,14 +12,14 @@ export default function LockPayments() {
   const itemsPerPage = 15;
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
-  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" });
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'N/A'; // Invalid date check
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    if (isNaN(date.getTime())) return "N/A"; // Invalid date check
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = String(date.getFullYear());
     return `${day}-${month}-${year}`;
   };
@@ -31,7 +33,7 @@ export default function LockPayments() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-        }
+        },
       );
       setPayments(response.data);
       setFilteredItems(response.data);
@@ -68,7 +70,9 @@ export default function LockPayments() {
         payment.pg_transaction_id,
         payment.payment_gateway,
       ]
-        .map((v) => (v !== null && v !== undefined ? String(v).toLowerCase() : ""))
+        .map((v) =>
+          v !== null && v !== undefined ? String(v).toLowerCase() : "",
+        )
         .some((v) => v.includes(q));
     });
 
@@ -87,9 +91,9 @@ export default function LockPayments() {
   };
 
   const requestSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
   };
@@ -101,24 +105,30 @@ export default function LockPayments() {
         let aVal = a[sortConfig.key];
         let bVal = b[sortConfig.key];
 
-        if (aVal === null || aVal === undefined) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (bVal === null || bVal === undefined) return sortConfig.direction === 'asc' ? 1 : -1;
+        if (aVal === null || aVal === undefined)
+          return sortConfig.direction === "asc" ? -1 : 1;
+        if (bVal === null || bVal === undefined)
+          return sortConfig.direction === "asc" ? 1 : -1;
 
-        if (['payment_date', 'created_at', 'updated_at'].includes(sortConfig.key)) {
+        if (
+          ["payment_date", "created_at", "updated_at"].includes(sortConfig.key)
+        ) {
           const dateA = new Date(aVal).getTime();
           const dateB = new Date(bVal).getTime();
-          if (dateA < dateB) return sortConfig.direction === 'asc' ? -1 : 1;
-          if (dateA > dateB) return sortConfig.direction === 'asc' ? 1 : -1;
+          if (dateA < dateB) return sortConfig.direction === "asc" ? -1 : 1;
+          if (dateA > dateB) return sortConfig.direction === "asc" ? 1 : -1;
           return 0;
         }
 
-        if (['id', 'total_amount', 'paid_amount'].includes(sortConfig.key)) {
+        if (["id", "total_amount", "paid_amount"].includes(sortConfig.key)) {
           aVal = Number(aVal);
           bVal = Number(bVal);
         }
 
-        if (String(aVal).toLowerCase() < String(bVal).toLowerCase()) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (String(aVal).toLowerCase() > String(bVal).toLowerCase()) return sortConfig.direction === 'asc' ? 1 : -1;
+        if (String(aVal).toLowerCase() < String(bVal).toLowerCase())
+          return sortConfig.direction === "asc" ? -1 : 1;
+        if (String(aVal).toLowerCase() > String(bVal).toLowerCase())
+          return sortConfig.direction === "asc" ? 1 : -1;
         return 0;
       });
     }
@@ -128,20 +138,54 @@ export default function LockPayments() {
   const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
   const currentItems = sortedItems.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
-  const Pagination = ({ currentPage, totalPages, totalEntries, onPageChange }) => {
-    const startEntry = totalEntries > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+  const columns = [
+    { key: "id", label: "ID" },
+    {
+      key: "payment_date",
+      label: "Payment Date",
+      render: (payment) => formatDate(payment.payment_date),
+    },
+    {
+      key: "payment_mode",
+      label: "Payment Mode",
+      render: (payment) => payment.payment_mode || "N/A",
+    },
+    { key: "total_amount", label: "Total Amount" },
+    {
+      key: "paid_amount",
+      label: "Paid Amount",
+      render: (payment) => payment.paid_amount ?? "N/A",
+    },
+    { key: "payment_status", label: "Status" },
+    {
+      key: "pg_transaction_id",
+      label: "Transaction ID",
+      render: (payment) => payment.pg_transaction_id || "N/A",
+    },
+    {
+      key: "payment_gateway",
+      label: "Gateway",
+      render: (payment) => payment.payment_gateway || "N/A",
+    },
+  ];
+
+  const Pagination = ({
+    currentPage,
+    totalPages,
+    totalEntries,
+    onPageChange,
+  }) => {
+    const startEntry =
+      totalEntries > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
     const endEntry = Math.min(currentPage * itemsPerPage, totalEntries);
 
     return (
       <div className="d-flex justify-content-between align-items-center px-3 mt-2">
         <ul className="pagination justify-content-center d-flex">
-          <li
-            className={`page-item ${currentPage === 1 ? "disabled" : ""
-              }`}
-          >
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => onPageChange(1)}
@@ -150,10 +194,7 @@ export default function LockPayments() {
               First
             </button>
           </li>
-          <li
-            className={`page-item ${currentPage === 1 ? "disabled" : ""
-              }`}
-          >
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => onPageChange(currentPage - 1)}
@@ -162,26 +203,27 @@ export default function LockPayments() {
               Prev
             </button>
           </li>
-          {Array.from(
-            { length: totalPages },
-            (_, index) => index + 1
-          ).map((pageNumber) => (
-            <li
-              key={pageNumber}
-              className={`page-item ${currentPage === pageNumber ? "active" : ""
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+            (pageNumber) => (
+              <li
+                key={pageNumber}
+                className={`page-item ${
+                  currentPage === pageNumber ? "active" : ""
                 }`}
-            >
-              <button
-                className="page-link"
-                onClick={() => onPageChange(pageNumber)}
               >
-                {pageNumber}
-              </button>
-            </li>
-          ))}
+                <button
+                  className="page-link"
+                  onClick={() => onPageChange(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </li>
+            ),
+          )}
           <li
-            className={`page-item ${currentPage === totalPages ? "disabled" : ""
-              }`}
+            className={`page-item ${
+              currentPage === totalPages ? "disabled" : ""
+            }`}
           >
             <button
               className="page-link"
@@ -192,8 +234,9 @@ export default function LockPayments() {
             </button>
           </li>
           <li
-            className={`page-item ${currentPage === totalPages ? "disabled" : ""
-              }`}
+            className={`page-item ${
+              currentPage === totalPages ? "disabled" : ""
+            }`}
           >
             <button
               className="page-link"
@@ -222,7 +265,6 @@ export default function LockPayments() {
             <h3 className="card-title">Lock Payments</h3>
           </div>
           <div className="card-body">
-
             <div className="d-flex justify-content-end align-items-center">
               <div className="d-flex align-items-center">
                 <div className="input-group me-3">
@@ -235,7 +277,7 @@ export default function LockPayments() {
                       handleSearchInputChange(e);
                       handleSearch();
                     }}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   />
                   <div className="input-group-append">
                     <button type="button" className="btn btn-md btn-default">
@@ -261,45 +303,134 @@ export default function LockPayments() {
               </div>
             </div>
 
-            <div className="tbl-container mt-4" style={{
-              height: "100%",
-              overflowX: "hidden",
-              display: "flex",
-              flexDirection: "column",
-            }}>
-              {loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-danger">{error}</p>
-              ) : (
+            <div
+              className="tbl-container mt-4"
+              style={{
+                height: "100%",
+                overflowX: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <EnhancedTable
+                columns={columns}
+                data={sortedItems}
+                loading={loading}
+                emptyMessage={error || "No payments found"}
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchInputChange}
+                onSearchSubmit={handleSearch}
+                searchPlaceholder="Search by name or description"
+                currentPage={currentPage}
+                pageSize={itemsPerPage}
+                onPageChange={handlePageChange}
+                getRowId={(payment) => payment.id}
+                storageKey="lock-payments-list"
+              />
+              {showLegacyTable && (
                 <>
-                  <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>                <thead>
-                    <tr>
-                      <th onClick={() => requestSort('id')} style={{ cursor: 'pointer' }}>ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                      <th onClick={() => requestSort('payment_date')} style={{ cursor: 'pointer' }}>Payment Date {sortConfig.key === 'payment_date' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                      <th onClick={() => requestSort('payment_mode')} style={{ cursor: 'pointer' }}>Payment Mode {sortConfig.key === 'payment_mode' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                      <th onClick={() => requestSort('total_amount')} style={{ cursor: 'pointer' }}>Total Amount {sortConfig.key === 'total_amount' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                      <th onClick={() => requestSort('paid_amount')} style={{ cursor: 'pointer' }}>Paid Amount {sortConfig.key === 'paid_amount' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                      <th onClick={() => requestSort('payment_status')} style={{ cursor: 'pointer' }}>Status {sortConfig.key === 'payment_status' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                      <th onClick={() => requestSort('pg_transaction_id')} style={{ cursor: 'pointer' }}>Transaction ID {sortConfig.key === 'pg_transaction_id' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                      <th onClick={() => requestSort('payment_gateway')} style={{ cursor: 'pointer' }}>Gateway {sortConfig.key === 'payment_gateway' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                    </tr>
-                  </thead>
-                    <tbody style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                      {currentItems.length > 0 ? currentItems.map((payment) => (
-                        <tr key={payment.id}>
-                          <td>{payment.id}</td>
-                          <td>{formatDate(payment.payment_date)}</td>
-                          <td>{payment.payment_mode || 'N/A'}</td>
-                          <td>{payment.total_amount}</td>
-                          <td>{payment.paid_amount ?? 'N/A'}</td>
-                          <td>{payment.payment_status}</td>
-                          <td>{payment.pg_transaction_id || 'N/A'}</td>
-                          <td>{payment.payment_gateway || 'N/A'}</td>
-                        </tr>
-                      )) : (
+                  <table
+                    className="w-100"
+                    style={{
+                      color: "#000",
+                      fontWeight: "400",
+                      fontSize: "13px",
+                    }}
+                  >
+                    {" "}
+                    <thead>
+                      <tr>
+                        <th
+                          onClick={() => requestSort("id")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          ID{" "}
+                          {sortConfig.key === "id" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
+                        </th>
+                        <th
+                          onClick={() => requestSort("payment_date")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          Payment Date{" "}
+                          {sortConfig.key === "payment_date" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
+                        </th>
+                        <th
+                          onClick={() => requestSort("payment_mode")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          Payment Mode{" "}
+                          {sortConfig.key === "payment_mode" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
+                        </th>
+                        <th
+                          onClick={() => requestSort("total_amount")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          Total Amount{" "}
+                          {sortConfig.key === "total_amount" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
+                        </th>
+                        <th
+                          onClick={() => requestSort("paid_amount")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          Paid Amount{" "}
+                          {sortConfig.key === "paid_amount" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
+                        </th>
+                        <th
+                          onClick={() => requestSort("payment_status")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          Status{" "}
+                          {sortConfig.key === "payment_status" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
+                        </th>
+                        <th
+                          onClick={() => requestSort("pg_transaction_id")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          Transaction ID{" "}
+                          {sortConfig.key === "pg_transaction_id" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
+                        </th>
+                        <th
+                          onClick={() => requestSort("payment_gateway")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          Gateway{" "}
+                          {sortConfig.key === "payment_gateway" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      style={{
+                        color: "#000",
+                        fontWeight: "400",
+                        fontSize: "13px",
+                      }}
+                    >
+                      {currentItems.length > 0 ? (
+                        currentItems.map((payment) => (
+                          <tr key={payment.id}>
+                            <td>{payment.id}</td>
+                            <td>{formatDate(payment.payment_date)}</td>
+                            <td>{payment.payment_mode || "N/A"}</td>
+                            <td>{payment.total_amount}</td>
+                            <td>{payment.paid_amount ?? "N/A"}</td>
+                            <td>{payment.payment_status}</td>
+                            <td>{payment.pg_transaction_id || "N/A"}</td>
+                            <td>{payment.payment_gateway || "N/A"}</td>
+                          </tr>
+                        ))
+                      ) : (
                         <tr>
-                          <td colSpan="8" className="text-center py-3">No payments found.</td>
+                          <td colSpan="8" className="text-center py-3">
+                            No payments found.
+                          </td>
                         </tr>
                       )}
                     </tbody>
@@ -307,8 +438,13 @@ export default function LockPayments() {
                 </>
               )}
             </div>
-            {totalPages > 1 && (
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} totalEntries={sortedItems.length} />
+            {showLegacyTable && totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalEntries={sortedItems.length}
+              />
             )}
           </div>
         </div>

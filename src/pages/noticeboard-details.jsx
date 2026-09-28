@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import { Bell, Image as ImageIcon, Megaphone } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
 import toast from "react-hot-toast";
+import "../mor.css";
+import "./project-details-create.css";
 
 const NoticeboardDetails = () => {
   const { id } = useParams();
@@ -148,11 +151,17 @@ if (loading) {
       <div className="main-content">
         <div className="">
           <div className="module-data-section container-fluid">
-            <div className="module-data-section p-3">
-              <div className="card mt-4 pb-4 mx-4">
-                <div className="card-header3">
-                  <h3 className="card-title">Broadcast Details</h3>
-                  <div className="card-body">
+            <div className="module-data-section project-details-page p-3">
+              <div className="card project-details-create-card mt-4 pb-4 mx-4">
+                <div className="card-header project-details-section-header">
+                  <h3 className="project-details-section-heading">
+                    <span className="project-details-section-icon" aria-hidden="true">
+                      <Megaphone size={16} strokeWidth={1.8} />
+                    </span>
+                    Broadcast Details
+                  </h3>
+                </div>
+                <div className="card-body">
                     <div className="row px-3">
                       <div className="col-lg-6 col-md-6 col-sm-12 row px-3 ">
                         <div className="col-6 ">
@@ -316,13 +325,17 @@ if (loading) {
                     </div>
                   </div>
                 </div>
-              </div>
 
               {/* Reminders Section */}
               {noticeboardData?.set_reminders && noticeboardData.set_reminders.length > 0 && (
-                <div className="card mt-3 pb-4 mx-4">
-                  <div className="card-header3">
-                    <h4 className="card-title">Reminders</h4>
+                <div className="card project-details-create-card mt-3 pb-4 mx-4">
+                  <div className="card-header project-details-section-header">
+                    <h3 className="project-details-section-heading">
+                      <span className="project-details-section-icon" aria-hidden="true">
+                        <Bell size={16} strokeWidth={1.8} />
+                      </span>
+                      Reminders
+                    </h3>
                   </div>
                   <div className="card-body">
                     {renderReminders()}
@@ -331,9 +344,14 @@ if (loading) {
               )}
 
               {/* Broadcast Image */}
-              <div className="card mt-3 pb-4 mx-4">
-                <div className="card-header">
-                  <h3 className="card-title">Broadcast Image</h3>
+              <div className="card project-details-create-card mt-3 pb-4 mx-4">
+                <div className="card-header project-details-section-header">
+                  <h3 className="project-details-section-heading">
+                    <span className="project-details-section-icon" aria-hidden="true">
+                      <ImageIcon size={16} strokeWidth={1.8} />
+                    </span>
+                    Broadcast Image
+                  </h3>
                 </div>
                 <div className="card-body">
                   <div className="row">

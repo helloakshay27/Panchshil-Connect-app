@@ -415,10 +415,10 @@ const HomeLoanEdit = () => {
                   {/* Project */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Project<span className="otp-asterisk"> *</span>
-                      </label>
                       <SelectBox
+                        label="Project"
+                        required
+                        placeholder="Select Project"
                         options={projects.map((project) => ({
                           label: project.project_name,
                           value: project.id,
@@ -427,7 +427,6 @@ const HomeLoanEdit = () => {
                         onChange={(value) =>
                           setFormData({ ...formData, project_id: value })
                         }
-                        placeholder="Select Project"
                       />
                       {errors.project_id && (
                         <span className="text-danger">{errors.project_id}</span>
@@ -438,17 +437,16 @@ const HomeLoanEdit = () => {
                   {/* Banks (Multiple Select) */}
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Banks<span className="otp-asterisk"> *</span>
-                      </label>
                       <MultiSelectBox
+                        label="Banks"
+                        required
+                        placeholder="Select Banks"
                         options={banks.map((bank) => ({
                           value: bank.id,
                           label: bank.bank_name,
                         }))}
                         value={getSelectedBankOptions()}
                         onChange={handleBankChange}
-                        placeholder="Select Banks"
                       />
                       {errors.bank_ids && (
                         <span className="text-danger">{errors.bank_ids}</span>

@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "../mor.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { ClipboardList, FileText, Upload } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
 import MultiSelectBox from "../components/base/MultiSelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
+
+const userLabel = (user, id) =>
+  [user?.firstname, user?.lastname].filter(Boolean).join(" ").trim() ||
+  `User ${id}`;
 
 const ConstructionUpdatesEdit = () => {
   const connectEvents = useConnectEvents();
@@ -38,6 +45,7 @@ const ConstructionUpdatesEdit = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const attachmentInputRef = useRef(null);
 
   useEffect(() => {
     fetchConstructionUpdate();
@@ -81,7 +89,7 @@ const ConstructionUpdatesEdit = () => {
         }
 
         setFormData({
-          user_id: updateData.user_id || "",
+          user_id: updateData.user_id ? String(updateData.user_id) : "",
           project_id: updateData.project_id || "",
           site_id: updateData.site_id || "",
           building_id: updateData.building_id || "",
@@ -281,98 +289,102 @@ const ConstructionUpdatesEdit = () => {
 
 
   return (
-    <>
-      <div className="main-content">
-        <div className="">
-          <div className="module-data-section container-fluid">
+    <div className="main-content">
+        <div className="module-data-section banner-form-page p-3">
             <form onSubmit={handleSubmit}>
-              <div className="card mt-4 pb-4 mx-4">
-                <div className="card-header">
-                  <h3 className="card-title">Edit Construction Update</h3>
+              <div className="card banner-form-card mt-3 pb-4">
+                <div className="card-header banner-form-section-header">
+                  <h3 className="banner-form-section-heading">
+                    <span className="banner-form-section-icon" aria-hidden="true">
+                      <ClipboardList size={16} strokeWidth={1.8} />
+                    </span>
+                    Edit Construction Update
+                  </h3>
                 </div>
                 <div className="card-body">
-                  <div className="row">
-                  
+                  <div className="row banner-form-fields">
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Title <span className="text-danger"> *</span>
-                        </label>
-                        <input
-                          className={`form-control ${
-                            errors.title ? "is-invalid" : ""
-                          }`}
-                          type="text"
+                        <FormTextField
+                          label="Title"
+                          required
                           placeholder="Enter title"
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
                         />
                         {errors.title && (
-                          <span className="text-danger">{errors.title}</span>
+                          <span className="error text-danger">{errors.title}</span>
                         )}
                       </div>
                     </div>
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Description <span className="text-danger"> *</span>
-                        </label>
-                        <textarea
-                          className={`form-control ${
-                            errors.description ? "is-invalid" : ""
-                          }`}
-                          rows="1"
+                        <FormTextField
+                          label="Description"
+                          required
                           placeholder="Enter description"
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                         />
                         {errors.description && (
-                          <span className="text-danger">
+                          <span className="error text-danger">
                             {errors.description}
                           </span>
                         )}
                       </div>
                     </div>
 
-              
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          User 
-                          {/* <span className="text-danger"> *</span> */}
-                        </label>
-                        <SelectBox
+                        <MultiSelectBox
+                          label="User"
+                          placeholder="Select User"
                           options={eventUserID.map((user) => ({
                             value: user.id,
-                            label: `${user.firstname} ${user.lastname}`,
+                            label: userLabel(user, user.id),
                           }))}
-                          defaultValue={formData.user_id}
-                          onChange={(value) =>
+                          value={
+                            formData.user_id
+                              ? String(formData.user_id)
+                                  .split(",")
+                                  .filter(Boolean)
+                                  .map((uid) => {
+                                    const user = eventUserID.find(
+                                      (u) => u.id.toString() === uid.toString()
+                                    );
+                                    return {
+                                      value: user?.id ?? uid,
+                                      label: userLabel(user, uid),
+                                    };
+                                  })
+                              : []
+                          }
+                          onChange={(selectedOptions) =>
                             setFormData((prev) => ({
                               ...prev,
-                              user_id: value,
+                              user_id: selectedOptions
+                                .map((option) => option.value)
+                                .join(","),
                             }))
                           }
                         />
                         {errors.user_id && (
-                          <span className="text-danger">{errors.user_id}</span>
+                          <span className="error text-danger">{errors.user_id}</span>
                         )}
                       </div>
                     </div>
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Project 
-                          {/* <span className="text-danger"> *</span> */}
-                        </label>
                         <SelectBox
+                          label="Project"
+                          placeholder="Select Project"
                           options={projects.map((p) => ({
                             label: p.project_name,
                             value: p.id,
                           }))}
-                          defaultValue={formData.project_id}
+                          value={formData.project_id}
                           onChange={(value) =>
                             setFormData({ ...formData, project_id: value })
                           }
@@ -387,23 +399,18 @@ const ConstructionUpdatesEdit = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Site 
-                          {/* <span className="text-danger"> *</span> */}
-                        </label>
                         <SelectBox
-                          name="site_id"
+                          label="Site"
+                          placeholder={sitesLoading ? "Loading..." : "Select Site"}
                           options={
-                            sitesLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : sites.length > 0
+                            sites.length > 0
                               ? sites.map((site) => ({
                                   value: site.id,
                                   label: site.name,
                                 }))
                               : [{ value: "", label: "No sites found" }]
                           }
-                          defaultValue={formData.site_id}
+                          value={formData.site_id}
                           onChange={(value) =>
                             setFormData({ ...formData, site_id: value })
                           }
@@ -416,28 +423,22 @@ const ConstructionUpdatesEdit = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Building Type 
-                          {/* <span className="text-danger"> *</span> */}
-                        </label>
                         <SelectBox
-                          name="building_id"
-                          options={
+                          label="Building Type"
+                          placeholder={
                             buildingTypesLoading
-                              ? [{ value: "", label: "Loading..." }]
-                              : buildingTypes.length > 0
+                              ? "Loading..."
+                              : "Select Building Type"
+                          }
+                          options={
+                            buildingTypes.length > 0
                               ? buildingTypes.map((building) => ({
                                   value: building.id,
                                   label: building.building_type,
                                 }))
-                              : [
-                                  {
-                                    value: "",
-                                    label: "No building types found",
-                                  },
-                                ]
+                              : [{ value: "", label: "No building types found" }]
                           }
-                          defaultValue={formData.building_id}
+                          value={formData.building_id}
                           onChange={(value) =>
                             setFormData({ ...formData, building_id: value })
                           }
@@ -453,188 +454,187 @@ const ConstructionUpdatesEdit = () => {
 
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Date <span className="text-danger"> *</span>
-                        </label>
-                        <input
-                          className={`form-control ${
-                            errors.onDate ? "is-invalid" : ""
-                          }`}
+                        <FormTextField
+                          label="Date"
                           type="date"
                           value={onDate}
                           onChange={(e) => setOnDate(e.target.value)}
                         />
                         {errors.onDate && (
-                          <span className="text-danger">{errors.onDate}</span>
+                          <span className="error text-danger">{errors.onDate}</span>
                         )}
                       </div>
-                    </div>
-
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Upload Attachment{" "}
-                          <span
-                            className="tooltip-container"
-                            onMouseEnter={() => setShowTooltip(true)}
-                            onMouseLeave={() => setShowTooltip(false)}
-                          >
-                            [i]
-                            {showTooltip && (
-                              <span className="tooltip-text">
-                                Max Upload Size 10 MB - Supports Images, Videos, PDF, DOC
-                              </span>
-                            )}
-                          </span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="file"
-                          accept=".png,.jpg,.jpeg,.svg,.pdf,.doc,.docx,.mp4,.mov,.avi,.mkv,.webm"
-                          onChange={handleFileChange}
-                        />
-                       
-                      </div>
-                      {previewImage && (
-                        <div className="mt-2">
-                          {/* Check if we have an attachment (new file) or existing attachment */}
-                          {attachment ? (
-                            // New file preview
-                            attachment.type.startsWith('image/') ? (
-                              <img
-                                src={previewImage}
-                                alt="Attachment Preview"
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                  border: "1px solid #ccc",
-                                  padding: "5px",
-                                }}
-                              />
-                            ) : attachment.type.startsWith('video/') ? (
-                              <video
-                                src={previewImage}
-                                controls
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "150px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                  border: "1px solid #ccc",
-                                  padding: "5px",
-                                }}
-                              />
-                            ) : (
-                              <div 
-                                className="file-preview d-flex align-items-center justify-content-center rounded"
-                                style={{
-                                  width: "100px",
-                                  height: "100px",
-                                  border: "1px solid #ccc",
-                                  backgroundColor: "#f8f9fa",
-                                }}
-                              >
-                                <div className="text-center">
-                                  <i className="fas fa-file fa-2x text-secondary mb-1"></i>
-                                  <div className="small text-muted">
-                                    {attachment.name.split('.').pop().toUpperCase()}
-                                  </div>
-                                </div>
-                              </div>
-                            )
-                          ) : (
-                            // Existing attachment preview (from server)
-                            existingAttachmentName && existingAttachmentName.match(/\.(mp4|mov|avi|mkv|webm)$/i) ? (
-                              <video
-                                src={previewImage}
-                                controls
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "150px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                  border: "1px solid #ccc",
-                                  padding: "5px",
-                                }}
-                              />
-                            ) : existingAttachmentName && existingAttachmentName.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i) ? (
-                              <img
-                                src={previewImage}
-                                alt="Attachment Preview"
-                                className="img-fluid rounded"
-                                style={{
-                                  maxWidth: "100px",
-                                  maxHeight: "100px",
-                                  objectFit: "cover",
-                                  border: "1px solid #ccc",
-                                  padding: "5px",
-                                }}
-                              />
-                            ) : (
-                              <div 
-                                className="file-preview d-flex align-items-center justify-content-center rounded"
-                                style={{
-                                  width: "100px",
-                                  height: "100px",
-                                  border: "1px solid #ccc",
-                                  backgroundColor: "#f8f9fa",
-                                }}
-                              >
-                                <div className="text-center">
-                                  <i className="fas fa-file fa-2x text-secondary mb-1"></i>
-                                  <div className="small text-muted">
-                                    {existingAttachmentName ? existingAttachmentName.split('.').pop().toUpperCase() : 'FILE'}
-                                  </div>
-                                </div>
-                              </div>
-                            )
-                          )}
-                          {/* File info */}
-                          <div className="small text-muted mt-1">
-                            {attachment ? (
-                              `${attachment.name} (${(attachment.size / (1024 * 1024)).toFixed(2)} MB)`
-                            ) : existingAttachmentName ? (
-                              existingAttachmentName
-                            ) : (
-                              'Existing attachment'
-                            )}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="row mt-2 justify-content-center">
-                <div className="col-md-2">
-                  <button
-                    type="submit"
-                    className="purple-btn2 w-100"
-                    disabled={loading}
-                  >
-                    {loading ? "Submitting..." : "Submit"}
-                  </button>
+              <div className="card banner-form-card banner-attachment-card mt-3 pb-4">
+                <div className="card-header banner-form-section-header">
+                  <h3 className="banner-form-section-heading">
+                    <span className="banner-form-section-icon" aria-hidden="true">
+                      <FileText size={16} strokeWidth={1.8} />
+                    </span>
+                    Add Attachments
+                  </h3>
                 </div>
-                <div className="col-md-2">
-                  <button
-                    type="button"
-                    className="purple-btn2 w-100"
-                    onClick={() =>
-                      navigate("/setup-member/construction-updates-list")
-                    }
-                  >
-                    Cancel
-                  </button>
+                <div className="card-body">
+                  <input
+                    ref={attachmentInputRef}
+                    type="file"
+                    accept=".png,.jpg,.jpeg,.svg,.pdf,.doc,.docx,.mp4,.mov,.avi,.mkv,.webm"
+                    onChange={handleFileChange}
+                    className="banner-upload-native-input"
+                  />
+                  <div className="banner-upload-dropzone">
+                    <button
+                      type="button"
+                      className="banner-upload-files-btn"
+                      onClick={() => attachmentInputRef.current?.click()}
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </button>
+                    <span
+                      className="banner-upload-hint tooltip-container"
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                    >
+                      [i]
+                      {showTooltip && (
+                        <span className="tooltip-text">
+                          Max Upload Size 10 MB - Supports Images, Videos, PDF, DOC
+                        </span>
+                      )}
+                    </span>
+                  </div>
+
+                  {previewImage && (
+                    <div className="mt-3">
+                      {attachment ? (
+                        attachment.type.startsWith("image/") ? (
+                          <img
+                            src={previewImage}
+                            alt="Attachment Preview"
+                            className="img-fluid rounded"
+                            style={{
+                              maxWidth: "100px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                              border: "1px solid #ccc",
+                              padding: "5px",
+                            }}
+                          />
+                        ) : attachment.type.startsWith("video/") ? (
+                          <video
+                            src={previewImage}
+                            controls
+                            className="img-fluid rounded"
+                            style={{
+                              maxWidth: "150px",
+                              maxHeight: "100px",
+                              objectFit: "cover",
+                              border: "1px solid #ccc",
+                              padding: "5px",
+                            }}
+                          />
+                        ) : (
+                          <div
+                            className="file-preview d-flex align-items-center justify-content-center rounded"
+                            style={{
+                              width: "100px",
+                              height: "100px",
+                              border: "1px solid #ccc",
+                              backgroundColor: "#f8f9fa",
+                            }}
+                          >
+                            <div className="text-center">
+                              <i className="fas fa-file fa-2x text-secondary mb-1"></i>
+                              <div className="small text-muted">
+                                {attachment.name.split(".").pop().toUpperCase()}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      ) : existingAttachmentName &&
+                        existingAttachmentName.match(/\.(mp4|mov|avi|mkv|webm)$/i) ? (
+                        <video
+                          src={previewImage}
+                          controls
+                          className="img-fluid rounded"
+                          style={{
+                            maxWidth: "150px",
+                            maxHeight: "100px",
+                            objectFit: "cover",
+                            border: "1px solid #ccc",
+                            padding: "5px",
+                          }}
+                        />
+                      ) : existingAttachmentName &&
+                        existingAttachmentName.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i) ? (
+                        <img
+                          src={previewImage}
+                          alt="Attachment Preview"
+                          className="img-fluid rounded"
+                          style={{
+                            maxWidth: "100px",
+                            maxHeight: "100px",
+                            objectFit: "cover",
+                            border: "1px solid #ccc",
+                            padding: "5px",
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className="file-preview d-flex align-items-center justify-content-center rounded"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            border: "1px solid #ccc",
+                            backgroundColor: "#f8f9fa",
+                          }}
+                        >
+                          <div className="text-center">
+                            <i className="fas fa-file fa-2x text-secondary mb-1"></i>
+                            <div className="small text-muted">
+                              {existingAttachmentName
+                                ? existingAttachmentName.split(".").pop().toUpperCase()
+                                : "FILE"}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="small text-muted mt-1">
+                        {attachment
+                          ? `${attachment.name} (${(attachment.size / (1024 * 1024)).toFixed(2)} MB)`
+                          : existingAttachmentName || "Existing attachment"}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              <div className="banner-form-actions">
+                <button
+                  type="submit"
+                  className="banner-form-action-btn"
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Submit"}
+                </button>
+                <button
+                  type="button"
+                  className="banner-form-action-btn"
+                  onClick={() =>
+                    navigate("/setup-member/construction-updates-list")
+                  }
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
-          </div>
-        </div>
       </div>
-    </>
+    </div>
   );
 };
 

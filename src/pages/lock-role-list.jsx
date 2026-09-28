@@ -1,78 +1,56 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+/* eslint-disable react/prop-types */
+import { useEffect, useMemo, useState } from "react";
+import { Check, Pencil, Plus, Search, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Toaster, toast } from "react-hot-toast";
-import { baseURL } from "./baseurl/apiDomain";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 import { useConnectEvents } from "../hooks/useConnectEvents";
 import { useSearchTracking } from "../hooks/useSearchTracking";
+import { baseURL } from "./baseurl/apiDomain";
+import "./lock-role-list.css";
+
+const ACTION_ROWS = [
+  { key: "create", label: "Add" },
+  { key: "show", label: "View" },
+  { key: "update", label: "Edit" },
+  { key: "destroy", label: "Disable" },
+];
+
+const EMPTY_PERMISSIONS = {
+  all: "false",
+  create: "false",
+  show: "false",
+  update: "false",
+  destroy: "false",
+};
+
+const getFunctionKey = (func) =>
+  func.action_name || func.name?.toLowerCase().replace(/\s+/g, "_");
+
+const getModuleName = (func) =>
+  (func.parent_function || "").trim() || "Other";
+
+const formatLabel = (name) =>
+  String(name || "")
+    .split(/[_\s]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 
 const LockRoleList = () => {
   const connectEvents = useConnectEvents();
+  const navigate = useNavigate();
   const [lockRoles, setLockRoles] = useState([]);
   const [lockFunctions, setLockFunctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [functionsLoading, setFunctionsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [roleSearch, setRoleSearch] = useState("");
+  const [functionSearch, setFunctionSearch] = useState("");
+  const [selectedModule, setSelectedModule] = useState("");
   const [editedPermissions, setEditedPermissions] = useState({});
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchLockRoles();
-    fetchLockFunctions();
-  }, []);
-
-  useEffect(() => {
-    if (selectedRole && lockFunctions.length > 0) {
-      try {
-        let permissions = {};
-
-        if (
-          selectedRole.permissions_hash &&
-          selectedRole.permissions_hash !== ""
-        ) {
-          permissions = JSON.parse(selectedRole.permissions_hash);
-        }
-
-        lockFunctions.forEach((func) => {
-          const functionName =
-            func.action_name || func.name.toLowerCase().replace(/\s+/g, "_");
-          if (!permissions[functionName]) {
-            permissions[functionName] = {
-              all: "false",
-              create: "false",
-              show: "false",
-              update: "false",
-              destroy: "false",
-            };
-          }
-        });
-
-        setEditedPermissions(permissions);
-      } catch (error) {
-        console.error("Error parsing permissions:", error);
-
-        const defaultPermissions = {};
-        lockFunctions.forEach((func) => {
-          const functionName =
-            func.action_name || func.name.toLowerCase().replace(/\s+/g, "_");
-          defaultPermissions[functionName] = {
-            all: "false",
-            create: "false",
-            show: "false",
-            update: "false",
-            destroy: "false",
-          };
-        });
-
-        setEditedPermissions(defaultPermissions);
-      }
-    } else {
-      setEditedPermissions({});
-    }
-  }, [selectedRole, lockFunctions]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const fetchLockFunctions = async () => {
     toast.dismiss();
@@ -84,7 +62,6 @@ const LockRoleList = () => {
           "Content-Type": "application/json",
         },
       });
-
       setLockFunctions(response.data || []);
     } catch (error) {
       console.error("Error fetching lock functions:", error);
@@ -93,31 +70,6 @@ const LockRoleList = () => {
       setFunctionsLoading(false);
     }
   };
-
-  // const fetchLockRoles = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(
-  //       `${baseURL}/lock_roles.json`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     setLockRoles(response.data || []);
-  //     // We don't auto-select any role now to show blank table first
-  //     setSelectedRole(null);
-  //   } catch (error) {
-  //     console.error("Error fetching lock roles:", error);
-  //     toast.error("Failed to load lock roles");
-  //     setError("Failed to load lock roles");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const fetchLockRoles = async () => {
     toast.dismiss();
@@ -129,42 +81,69 @@ const LockRoleList = () => {
           "Content-Type": "application/json",
         },
       });
-
       const roles = response.data || [];
       setLockRoles(roles);
-
-      if (roles.length > 0) {
-        setSelectedRole(roles[0]);
-      } else {
-        setSelectedRole(null);
-      }
+      setSelectedRole(roles.length > 0 ? roles[0] : null);
     } catch (error) {
       console.error("Error fetching lock roles:", error);
       toast.error("Failed to load lock roles");
-      // setError("Failed to load lock roles");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRoleSelect = (role) => {
-    setSelectedRole(role);
-  };
+  useEffect(() => {
+    fetchLockRoles();
+    fetchLockFunctions();
+  }, []);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  useEffect(() => {
+    setIsEditing(false);
+    setFunctionSearch("");
 
-  const handlePermissionChange = (functionName, permType) => {
+    if (selectedRole && lockFunctions.length > 0) {
+      try {
+        let permissions = {};
+        if (
+          selectedRole.permissions_hash &&
+          selectedRole.permissions_hash !== ""
+        ) {
+          permissions = JSON.parse(selectedRole.permissions_hash);
+        }
+
+        lockFunctions.forEach((func) => {
+          const functionName = getFunctionKey(func);
+          if (!permissions[functionName]) {
+            permissions[functionName] = { ...EMPTY_PERMISSIONS };
+          }
+        });
+
+        setEditedPermissions(permissions);
+      } catch (error) {
+        console.error("Error parsing permissions:", error);
+        const defaultPermissions = {};
+        lockFunctions.forEach((func) => {
+          const functionName = getFunctionKey(func);
+          defaultPermissions[functionName] = { ...EMPTY_PERMISSIONS };
+        });
+        setEditedPermissions(defaultPermissions);
+      }
+    } else {
+      setEditedPermissions({});
+    }
+  }, [selectedRole, lockFunctions]);
+
+  const handlePermissionChange = (functionName, permissionType) => {
+    if (!isEditing) return;
+
     const updatedPermissions = { ...editedPermissions };
-
-    const currentValue = updatedPermissions[functionName][permType];
-    updatedPermissions[functionName][permType] =
+    const currentValue = updatedPermissions[functionName][permissionType];
+    updatedPermissions[functionName][permissionType] =
       currentValue === "true" ? "false" : "true";
 
     if (
-      permType === "all" &&
-      updatedPermissions[functionName][permType] === "true"
+      permissionType === "all" &&
+      updatedPermissions[functionName][permissionType] === "true"
     ) {
       updatedPermissions[functionName].create = "true";
       updatedPermissions[functionName].show = "true";
@@ -173,8 +152,8 @@ const LockRoleList = () => {
     }
 
     if (
-      permType === "all" &&
-      updatedPermissions[functionName][permType] === "false"
+      permissionType === "all" &&
+      updatedPermissions[functionName][permissionType] === "false"
     ) {
       updatedPermissions[functionName].create = "false";
       updatedPermissions[functionName].show = "false";
@@ -182,13 +161,12 @@ const LockRoleList = () => {
       updatedPermissions[functionName].destroy = "false";
     }
 
-    if (permType !== "all") {
+    if (permissionType !== "all") {
       const allChecked =
         updatedPermissions[functionName].create === "true" &&
         updatedPermissions[functionName].show === "true" &&
         updatedPermissions[functionName].update === "true" &&
         updatedPermissions[functionName].destroy === "true";
-
       updatedPermissions[functionName].all = allChecked ? "true" : "false";
     }
 
@@ -200,6 +178,7 @@ const LockRoleList = () => {
     if (!selectedRole) return;
 
     try {
+      setSaving(true);
       const permissionsHash = JSON.stringify(editedPermissions);
 
       await axios.put(
@@ -214,381 +193,352 @@ const LockRoleList = () => {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const updatedRoles = lockRoles.map((role) =>
         role.id === selectedRole.id
           ? { ...role, permissions_hash: permissionsHash }
-          : role
+          : role,
       );
 
       setLockRoles(updatedRoles);
+      setSelectedRole((prev) =>
+        prev ? { ...prev, permissions_hash: permissionsHash } : prev,
+      );
+      setIsEditing(false);
       connectEvents.onRecordSaved({
         mode: "updated",
         record_id: selectedRole.id,
       });
-      toast.success("Role Updated successfully!");
+      toast.success("Role updated successfully!");
     } catch (error) {
       console.error("Error saving permissions:", error);
       toast.error("Failed to update role.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const filteredRoles = lockRoles.filter(
-    (role) =>
-      role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (role.display_name &&
-        role.display_name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredRoles = useMemo(
+    () =>
+      lockRoles.filter((role) => {
+        const query = roleSearch.toLowerCase();
+        return (
+          role.name?.toLowerCase().includes(query) ||
+          role.display_name?.toLowerCase().includes(query)
+        );
+      }),
+    [lockRoles, roleSearch],
   );
 
-  useSearchTracking(searchTerm, filteredRoles.length);
-
-  const formatFunctionName = (name) => {
-    return name
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
+  useSearchTracking(roleSearch, filteredRoles.length);
 
   const getFunctionDisplayName = (functionName) => {
     const func = lockFunctions.find(
-      (f) =>
-        (f.action_name && f.action_name === functionName) ||
-        (f.name && f.name.toLowerCase().replace(/\s+/g, "_") === functionName)
+      (item) => getFunctionKey(item) === functionName,
     );
-
-    if (func) {
-      return func.name;
-    }
-
-    return formatFunctionName(functionName);
+    return func ? func.name : formatLabel(functionName);
   };
 
+  const modules = useMemo(() => {
+    const names = [];
+    const seen = new Set();
+    lockFunctions.forEach((func) => {
+      const moduleName = getModuleName(func);
+      if (!seen.has(moduleName)) {
+        seen.add(moduleName);
+        names.push(moduleName);
+      }
+    });
+    return names;
+  }, [lockFunctions]);
+
+  useEffect(() => {
+    if (!modules.length) {
+      setSelectedModule("");
+      return;
+    }
+    if (!modules.includes(selectedModule)) {
+      setSelectedModule(modules[0]);
+    }
+  }, [modules, selectedModule]);
+
+  const permissionEntries = useMemo(
+    () => Object.entries(editedPermissions),
+    [editedPermissions],
+  );
+
+  const visiblePermissionEntries = useMemo(() => {
+    const query = functionSearch.toLowerCase().trim();
+    const moduleKeys = new Set(
+      lockFunctions
+        .filter((func) => getModuleName(func) === selectedModule)
+        .map(getFunctionKey),
+    );
+
+    return permissionEntries.filter(([functionName]) => {
+      if (selectedModule && !moduleKeys.has(functionName)) return false;
+      if (!query) return true;
+      return getFunctionDisplayName(functionName)
+        .toLowerCase()
+        .includes(query);
+    });
+  }, [
+    permissionEntries,
+    functionSearch,
+    lockFunctions,
+    selectedModule,
+  ]);
+
+  const allVisibleEnabled =
+    visiblePermissionEntries.length > 0 &&
+    visiblePermissionEntries.every(
+      ([, permissions]) => permissions?.all === "true",
+    );
+
+  const handleEnableAll = () => {
+    if (!isEditing) return;
+    const nextValue = allVisibleEnabled ? "false" : "true";
+    const updatedPermissions = { ...editedPermissions };
+
+    visiblePermissionEntries.forEach(([functionName]) => {
+      updatedPermissions[functionName] = {
+        all: nextValue,
+        create: nextValue,
+        show: nextValue,
+        update: nextValue,
+        destroy: nextValue,
+      };
+    });
+
+    setEditedPermissions(updatedPermissions);
+  };
+
+  const selectedRoleName =
+    selectedRole?.display_name || selectedRole?.name || "this role";
+
   return (
-    <div className="main-content">
-      <div className="module-data-section container-fluid">
-        {error && <div className="alert alert-danger">{error}</div>}
+    <div className="module-data-section container-fluid lock-role-page">
+        <div className="lock-role-header">
+          <div className="lock-role-header-copy">
+            <h1 className="lock-role-title">
+              <span className="lock-role-title-icon" aria-hidden="true">
+                <Shield size={16} strokeWidth={1.8} />
+              </span>
+              Role Management
+            </h1>
+            <p className="lock-role-subtitle">
+              Manage user roles and their access permissions across modules
+            </p>
+          </div>
+          <button
+            type="button"
+            className="lock-role-add-btn"
+            onClick={() => navigate("/setup-member/lock-role-create")}
+          >
+            <Plus size={16} />
+            Add New Role
+          </button>
+        </div>
 
-        <div className="d-flex justify-content-end px-4">
-          <div className="col-md-4 pe-2 mt-1">
-            <div className="input-group">
+        <div className="lock-role-layout">
+          <aside className="lock-role-panel lock-role-sidebar">
+            <h2 className="lock-role-panel-title">Roles</h2>
+            <div className="lock-role-search">
+              <Search size={15} />
               <input
-                type="text"
-                className="form-control tbl-search table_search"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={handleSearch}
+                type="search"
+                value={roleSearch}
+                onChange={(event) => setRoleSearch(event.target.value)}
+                placeholder="Search roles..."
+                aria-label="Search roles"
               />
-              <div className="input-group-append">
-                <button type="submit" className="btn btn-md btn-default">
-                  <svg
-                    width={16}
-                    height={16}
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M7.66927 13.939C3.9026 13.939 0.835938 11.064 0.835938 7.53271C0.835938 4.00146 3.9026 1.12646 7.66927 1.12646C11.4359 1.12646 14.5026 4.00146 14.5026 7.53271C14.5026 11.064 11.4359 13.939 7.66927 13.939ZM7.66927 2.06396C4.44927 2.06396 1.83594 4.52021 1.83594 7.53271C1.83594 10.5452 4.44927 13.0015 7.66927 13.0015C10.8893 13.0015 13.5026 10.5452 13.5026 7.53271C13.5026 4.52021 10.8893 2.06396 7.66927 2.06396Z"
-                      fill="#8B0203"
-                    />
-                    <path
-                      d="M14.6676 14.5644C14.5409 14.5644 14.4143 14.5206 14.3143 14.4269L12.9809 13.1769C12.7876 12.9956 12.7876 12.6956 12.9809 12.5144C13.1743 12.3331 13.4943 12.3331 13.6876 12.5144L15.0209 13.7644C15.2143 13.9456 15.2143 14.2456 15.0209 14.4269C14.9209 14.5206 14.7943 14.5644 14.6676 14.5644Z"
-                      fill="#8B0203"
-                    />
-                  </svg>
-                </button>
-              </div>
             </div>
-          </div>
-          <div className="card-tools">
-            <button
-              className="purple-btn2 rounded-3"
-              fdprocessedid="xn3e6n"
-              onClick={() => navigate("/setup-member/lock-role-create")}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={26}
-                height={20}
-                fill="currentColor"
-                className="bi bi-plus"
-                viewBox="0 0 16 16"
-              >
-                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-              </svg>
-              <span>Add</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="row mx-2 mt-3">
-          <div className="col-md-3">
-            <div className="card sidebar-card">
-              <div className="role-list">
-                {loading ? (
-                  <div className="text-center py-4">
-                    <div
-                      className="spinner-border"
-                      role="status"
-                      style={{ color: "var(--red)" }}
-                    >
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                  </div>
-                ) : filteredRoles.length > 0 ? (
-                  filteredRoles.map((role) => (
-                    <div
+            <div className="lock-role-list">
+              {loading ? (
+                <p className="lock-role-loading">Loading roles...</p>
+              ) : filteredRoles.length > 0 ? (
+                filteredRoles.map((role) => {
+                  const active = selectedRole?.id === role.id;
+                  return (
+                    <button
                       key={role.id}
-                      className={`role-item ${
-                        selectedRole && selectedRole.id === role.id
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() => handleRoleSelect(role)}
+                      type="button"
+                      className={`lock-role-item${active ? " is-active" : ""}`}
+                      onClick={() => setSelectedRole(role)}
                     >
-                      {role.name || "Unnamed Role"}
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-4">No roles found</div>
-                )}
-              </div>
+                      <span className="lock-role-item-name">
+                        {role.name || "Unnamed Role"}
+                      </span>
+                      {active && <Check size={16} />}
+                    </button>
+                  );
+                })
+              ) : (
+                <p className="lock-role-empty">No roles found</p>
+              )}
             </div>
-          </div>
+          </aside>
 
-          <div className="col-md-9">
-            <div className="card">
-              <div className="card-header d-flex justify-content-between align-items-center">
-                <h3 className="card-title m-0">Role Permissions</h3>
-              </div>
-              <div className="card-body">
-                {loading || functionsLoading ? (
-                  <div className="text-center">
-                    <div
-                      className="spinner-border"
-                      role="status"
-                      style={{ color: "var(--red)" }}
-                    >
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
+          <section className="lock-role-panel lock-role-permissions">
+            {selectedRole ? (
+              <>
+                <div className="lock-role-permissions-header">
+                  <div>
+                    <h2>Permissions Configuration</h2>
+                    <p>
+                      Configure access rights for <strong>{selectedRoleName}</strong>
+                    </p>
                   </div>
-                ) : selectedRole ? (
-                  <div className="permissions-table-container mb-4">
-                    {!editedPermissions ||
-                    typeof editedPermissions !== "object" ? (
-                      <div className="alert alert-warning">
-                        Unable to load permissions. Using default empty
-                        permissions.
-                      </div>
-                    ) : (
-                      <>
-                        <div className="tbl-container">
-                          <table className="w-100">
-                            <thead>
-                              <tr className="bg-light">
-                                <th>Functions</th>
-                                <th>All</th>
-                                <th>Add</th>
-                                <th>View</th>
-                                <th>Edit</th>
-                                <th>Disable</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {Object.keys(editedPermissions).map(
-                                (functionName) => (
-                                  <tr key={functionName}>
-                                    <td>
-                                      {getFunctionDisplayName(functionName)}
-                                    </td>
-                                    <td className="text-center">
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          editedPermissions[functionName]
-                                            ?.all === "true"
-                                        }
-                                        onChange={() =>
-                                          handlePermissionChange(
-                                            functionName,
-                                            "all"
-                                          )
-                                        }
-                                      />
-                                    </td>
-                                    <td className="text-center">
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          editedPermissions[functionName]
-                                            ?.create === "true"
-                                        }
-                                        onChange={() =>
-                                          handlePermissionChange(
-                                            functionName,
-                                            "create"
-                                          )
-                                        }
-                                      />
-                                    </td>
-                                    <td className="text-center">
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          editedPermissions[functionName]
-                                            ?.show === "true"
-                                        }
-                                        onChange={() =>
-                                          handlePermissionChange(
-                                            functionName,
-                                            "show"
-                                          )
-                                        }
-                                      />
-                                    </td>
-                                    <td className="text-center">
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          editedPermissions[functionName]
-                                            ?.update === "true"
-                                        }
-                                        onChange={() =>
-                                          handlePermissionChange(
-                                            functionName,
-                                            "update"
-                                          )
-                                        }
-                                      />
-                                    </td>
-                                    <td className="text-center">
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          editedPermissions[functionName]
-                                            ?.destroy === "true"
-                                        }
-                                        onChange={() =>
-                                          handlePermissionChange(
-                                            functionName,
-                                            "destroy"
-                                          )
-                                        }
-                                      />
-                                    </td>
-                                  </tr>
-                                )
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
+                  {isEditing ? (
+                    <button
+                      type="button"
+                      className="lock-role-edit-btn"
+                      onClick={savePermissions}
+                      disabled={saving}
+                    >
+                      {saving ? "Saving..." : "Save Permissions"}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="lock-role-edit-btn"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <Pencil size={15} />
+                      Edit Permissions
+                    </button>
+                  )}
+                </div>
 
-                        <div className="text-end mt-3">
-                          <button
-                            className="update-btn"
-                            onClick={savePermissions}
+                {modules.length > 0 && (
+                  <div className="lock-role-modules" role="tablist">
+                    {modules.map((moduleName) => {
+                      const active = selectedModule === moduleName;
+                      return (
+                        <button
+                          key={moduleName}
+                          type="button"
+                          role="tab"
+                          aria-selected={active}
+                          className={`lock-role-module-tab${active ? " is-active" : ""}`}
+                          onClick={() => {
+                            setSelectedModule(moduleName);
+                            setFunctionSearch("");
+                          }}
+                        >
+                          {formatLabel(moduleName)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="lock-role-toolbar">
+                  <div className="lock-role-access-meta">
+                    {selectedModule
+                      ? `${formatLabel(selectedModule)} Module Access`
+                      : "Module Access"}
+                    <span>
+                      {visiblePermissionEntries.length} Function
+                      {visiblePermissionEntries.length === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                  <div className="lock-role-toolbar-actions">
+                    <div className="lock-role-search">
+                      <Search size={15} />
+                      <input
+                        type="search"
+                        value={functionSearch}
+                        onChange={(event) =>
+                          setFunctionSearch(event.target.value)
+                        }
+                        placeholder="Search functions..."
+                        aria-label="Search functions"
+                      />
+                    </div>
+                    <label className="lock-role-enable-all">
+                      Enable All
+                      <input
+                        type="checkbox"
+                        checked={allVisibleEnabled}
+                        onChange={handleEnableAll}
+                        disabled={!isEditing || visiblePermissionEntries.length === 0}
+                        aria-label="Enable all functions"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="lock-role-table">
+                  {functionsLoading ? (
+                    <div className="lock-role-placeholder">
+                      Loading functions...
+                    </div>
+                  ) : visiblePermissionEntries.length > 0 ? (
+                    visiblePermissionEntries.map(([functionName, permissions]) => (
+                      <div key={functionName}>
+                        <div className="lock-role-row is-parent">
+                          <div className="lock-role-function">
+                            <span className="lock-role-function-dot" aria-hidden="true">
+                              <Shield size={12} strokeWidth={2} />
+                            </span>
+                            {getFunctionDisplayName(functionName)}
+                          </div>
+                          <div className="lock-role-enabled">
+                            <input
+                              type="checkbox"
+                              checked={permissions?.all === "true"}
+                              disabled={!isEditing}
+                              onChange={() =>
+                                handlePermissionChange(functionName, "all")
+                              }
+                              aria-label={`Enable ${getFunctionDisplayName(functionName)}`}
+                            />
+                          </div>
+                        </div>
+                        {ACTION_ROWS.map((action) => (
+                          <div
+                            key={`${functionName}-${action.key}`}
+                            className="lock-role-row is-child"
                           >
-                            Update
-                          </button>
-                        </div>
-
-                        {/* Toaster component */}
-                        {/* <Toaster
-    position="top-right"
-    toastOptions={{
-      style: {
-        border: '1px solid #e0e0e0',
-        padding: '10px 16px',
-        color: '#333',
-        fontWeight: '500',
-      },
-      iconTheme: {
-        primary: '#22c55e', // green
-        secondary: '#f0fdf4',
-      },
-    }}
-  /> */}
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-center py-4">
-                    Select a role to view permissions
-                  </div>
-                )}
+                            <div className="lock-role-function">
+                              <span className="lock-role-child-dot" />
+                              {action.label}
+                            </div>
+                            <div className="lock-role-enabled">
+                              <input
+                                type="checkbox"
+                                checked={permissions?.[action.key] === "true"}
+                                disabled={!isEditing}
+                                onChange={() =>
+                                  handlePermissionChange(
+                                    functionName,
+                                    action.key,
+                                  )
+                                }
+                                aria-label={`${action.label} ${getFunctionDisplayName(functionName)}`}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="lock-role-placeholder">
+                      No functions found
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="lock-role-placeholder">
+                Select a role to view permissions
               </div>
-            </div>
-          </div>
+            )}
+          </section>
         </div>
-      </div>
-
-      {/* <style jsx>{`
-        .role-list {
-          max-height: 500px;
-          overflow-y: auto;
-        }
-        
-        .role-item {
-          padding: 12px 15px;
-          border-bottom: 1px solid #eee;
-          cursor: pointer;
-          transition: background-color 0.2s;
-        }
-        
-        .role-item:hover {
-          background-color: #f8f9fa;
-        }
-        
-        .role-item.active {
-          background-color: #f0f0f0;
-          border-left: 3px solid #8B0203;
-          font-weight: 600;
-        }
-        
-        .permissions-table {
-          border: 1px solid #dee2e6;
-        }
-        
-        .permissions-table th, 
-        .permissions-table td {
-          border: 1px solid #dee2e6;
-          padding: 0.5rem;
-        }
-        
-        .permissions-table-container {
-          max-width: 100%;
-          overflow-x: auto;
-        }
-        
-        .permissions-table input[type="checkbox"] {
-          width: 16px;
-          height: 16px;
-        }
-        
-        .sidebar-card {
-          height: 100%;
-          box-shadow: 0 0 10px rgba(0,0,0,0.05);
-        }
-        
-        .card-title-badge {
-          background-color: #f38120;
-          color: white;
-          padding: 5px 15px;
-          border-radius: 4px;
-          font-size: 14px;
-        }
-        
-        .update-btn {
-          background-color: #f38120;
-          color: white;
-          border: none;
-          padding: 8px 20px;
-          border-radius: 4px;
-          font-weight: 500;
-        }
-      `}</style> */}
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../mor.css";
 import { toast } from "react-hot-toast";
+import { Image } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const CreateImageConfiguration = () => {
   const connectEvents = useConnectEvents();
@@ -174,83 +175,73 @@ const CreateImageConfiguration = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <form onSubmit={handleSubmit}>
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Add Image Configuration</h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-md-3 mb-4">
-                    <div className="form-group">
-                      <label>
-                        Name <span className="otp-asterisk">*</span>
-                      </label>
-                      <SelectBox
-                        options={nameOptions}
-                        defaultValue={selectedName}
-                        onChange={handleNameChange}
-                      />
-                    </div>
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Image size={16} strokeWidth={1.8} />
+                </span>
+                Add Image Configuration
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Name"
+                      required
+                      options={nameOptions}
+                      value={selectedName}
+                      onChange={handleNameChange}
+                      disabled={loading}
+                    />
                   </div>
+                </div>
 
-                  <div className="col-md-3 mb-4">
-                    <div className="form-group">
-                      <label>
-                        Value <span className="otp-asterisk">*</span>
-                      </label>
-                      <SelectBox
-                        options={selectedName ? valueOptionsMap[selectedName] : []}
-                        defaultValue={selectedValue}
-                        onChange={handleValueChange}
-                      />
-                      {!selectedName && (
-                        <small className="text-muted">
-                          Please select a name first
-                        </small>
-                      )}
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Value"
+                      required
+                      options={
+                        selectedName ? valueOptionsMap[selectedName] : []
+                      }
+                      value={selectedValue}
+                      onChange={handleValueChange}
+                      disabled={loading || !selectedName}
+                    />
+                    {!selectedName && (
+                      <small className="text-muted mt-1">
+                        Please select a name first
+                      </small>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Submit and Cancel Buttons */}
-            <div className="row mt-2 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 w-100"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-2"
-                        role="status"
-                        aria-hidden="true"
-                      ></span>
-                      Submitting...
-                    </>
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
-              </div>
-              <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 w-100"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

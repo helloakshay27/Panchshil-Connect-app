@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import { HelpCircle } from "lucide-react";
 import { baseURL } from "./baseurl/apiDomain";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const FaqEdit = () => {
   const connectEvents = useConnectEvents();
@@ -49,8 +52,8 @@ const FaqEdit = () => {
 
         const categoriesData = res.data?.faq_categories || res.data || [];
         const formattedCategories = categoriesData.map((category) => ({
-          id: category?.id || "",
-          name: category?.name || "Unnamed Category",
+          id: category?.id ?? "",
+          name: category?.name || category?.faq_category_name || "Unnamed Category",
         }));
 
         setCategories(formattedCategories);
@@ -77,13 +80,18 @@ const FaqEdit = () => {
             res.data?.faq_sub_categories || res.data || [];
 
           const filteredSubCategories = subCategoriesData.filter(
-            (subCat) => subCat.faq_category_id == formData.faq_category_id
+            (subCat) =>
+              String(subCat.faq_category_id || subCat.faq_category?.id) ===
+              String(formData.faq_category_id)
           );
 
           const formattedSubCategories = filteredSubCategories.map(
             (subCategory) => ({
-              id: subCategory?.id || "",
-              name: subCategory?.name || "Unnamed Sub Category",
+              id: subCategory?.id ?? "",
+              name:
+                subCategory?.name ||
+                subCategory?.faq_sub_category_name ||
+                "Unnamed Sub Category",
             })
           );
 
@@ -183,14 +191,23 @@ const FaqEdit = () => {
         const faqData = res.data?.faq || res.data;
 
         if (faqData) {
+          const categoryId =
+            faqData.faq_category_id ||
+            faqData.faq_category?.id ||
+            "";
+          const subCategoryId =
+            faqData.faq_sub_category_id ||
+            faqData.faq_sub_category?.id ||
+            "";
+
           setFormData({
-            faq_category_id: faqData.faq_category_id || "",
-            faq_sub_category_id: faqData.faq_sub_category_id || "",
+            faq_category_id: categoryId === "" ? "" : String(categoryId),
+            faq_sub_category_id: subCategoryId === "" ? "" : String(subCategoryId),
             faqs: [
               {
                 id: faqData.id,
-                faq_category_id: faqData.faq_category_id || "",
-                faq_sub_category_id: faqData.faq_sub_category_id || "",
+                faq_category_id: categoryId,
+                faq_sub_category_id: subCategoryId,
                 question: faqData.question || "",
                 answer: faqData.answer || "",
                 site_id: faqData.site_id || "",
@@ -423,38 +440,38 @@ const FaqEdit = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
+      <div className="module-data-section banner-form-page p-3">
           <form id="faqEditForm" onSubmit={handleSubmit}>
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Edit FAQ</h3>
+            <div className="card banner-form-card mt-3 pb-4">
+              <div className="card-header banner-form-section-header">
+                <h3 className="banner-form-section-heading">
+                  <span className="banner-form-section-icon" aria-hidden="true">
+                    <HelpCircle size={16} strokeWidth={1.8} />
+                  </span>
+                  Edit FAQ
+                </h3>
               </div>
               <div className="card-body">
-                {/* Category and Subcategory Selection */}
-                <div className="row">
+                <div className="row banner-form-fields">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        FAQ Category 
-                         {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
-                                                    <span className="otp-asterisk"> *</span>
-                                                )}
-                      </label>
                       <SelectBox
-                        options={[
-                          {
-                            value: "",
-                            label: categoriesLoading
-                              ? "Loading categories..."
-                              : "Select Category",
-                          },
-                          ...categories.map((category) => ({
-                            value: category.id,
-                            label: category.name,
-                          })),
-                        ]}
-                        defaultValue={formData.faq_category_id}
+                        label="FAQ Category"
+                        required={
+                          baseURL === "https://dev-panchshil-super-app.lockated.com/" ||
+                          baseURL === "https://kalpataru.lockated.com/" ||
+                          baseURL === "https://rustomjee-live.lockated.com/"
+                        }
+                        placeholder={
+                          categoriesLoading
+                            ? "Loading categories..."
+                            : "Select Category"
+                        }
+                        options={categories.map((category) => ({
+                          value: String(category.id),
+                          label: category.name,
+                        }))}
+                        value={formData.faq_category_id}
                         onChange={handleCategoryChange}
                         disabled={loading || categoriesLoading}
                       />
@@ -463,26 +480,23 @@ const FaqEdit = () => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        FAQ Sub Category 
-                        {(baseURL === "https://dev-panchshil-super-app.lockated.com/" || baseURL === "https://kalpataru.lockated.com/" || baseURL === "https://rustomjee-live.lockated.com/") && (
-                                                 <span className="otp-asterisk"> *</span>
-                                               )}
-                      </label>
                       <SelectBox
-                        options={[
-                          {
-                            value: "",
-                            label: subCategoriesLoading
-                              ? "Loading subcategories..."
-                              : "Select Sub Category",
-                          },
-                          ...subCategories.map((subCategory) => ({
-                            value: subCategory.id,
-                            label: subCategory.name,
-                          })),
-                        ]}
-                        defaultValue={formData.faq_sub_category_id}
+                        label="FAQ Sub Category"
+                        required={
+                          baseURL === "https://dev-panchshil-super-app.lockated.com/" ||
+                          baseURL === "https://kalpataru.lockated.com/" ||
+                          baseURL === "https://rustomjee-live.lockated.com/"
+                        }
+                        placeholder={
+                          subCategoriesLoading
+                            ? "Loading subcategories..."
+                            : "Select Sub Category"
+                        }
+                        options={subCategories.map((subCategory) => ({
+                          value: String(subCategory.id),
+                          label: subCategory.name,
+                        }))}
+                        value={formData.faq_sub_category_id}
                         onChange={handleSubCategoryChange}
                         disabled={
                           loading ||
@@ -492,18 +506,12 @@ const FaqEdit = () => {
                       />
                     </div>
                   </div>
-              
-             
-                {/* <div className="row align-items-center"> */}
-                 
+
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Question <span className="otp-asterisk">*</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Question"
+                        required
                         name="question"
                         placeholder="Enter FAQ Question"
                         value={question}
@@ -513,24 +521,20 @@ const FaqEdit = () => {
                     </div>
                   </div>
 
-                 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Answer <span className="otp-asterisk">*</span>
-                      </label>
-                      <textarea
-                        className="form-control"
+                      <FormTextField
+                        label="Answer"
+                        required
                         name="answer"
                         placeholder="Enter FAQ Answer"
                         value={answer}
                         onChange={(e) => setAnswer(e.target.value)}
                         disabled={loading}
-                        rows="1"
                       />
                     </div>
                   </div>
-                    </div>
+                </div>
 
 
                  
@@ -629,36 +633,29 @@ const FaqEdit = () => {
                   </div>
                 )} */}
               </div>
+
+              <div className="banner-form-actions">
+                <button
+                  type="submit"
+                  form="faqEditForm"
+                  className="banner-form-action-btn"
+                  disabled={loading || formData.faqs.length === 0}
+                >
+                  {loading ? "Submiting..." : "Submit"}
+                </button>
+                <button
+                  type="button"
+                  className="banner-form-action-btn"
+                  onClick={() => navigate("/faq-list")}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
 
-            {/* Hidden submit button for form submission */}
             <button type="submit" style={{ display: "none" }} />
           </form>
-
-          {/* Visible buttons positioned below the card */}
-          <div className="row mt-3 justify-content-center mx-4">
-            <div className="col-md-2">
-              <button
-                type="submit"
-                form="faqEditForm"
-                className="purple-btn2 w-100"
-                disabled={loading || formData.faqs.length === 0}
-              >
-                {loading ? "Submiting..." : "Submit"}
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={() => navigate("/faq-list")}
-                disabled={loading}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

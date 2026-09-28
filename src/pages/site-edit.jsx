@@ -2,9 +2,12 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import { MapPin } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const SiteEdit = () => {
   const connectEvents = useConnectEvents();
@@ -259,12 +262,10 @@ const SiteEdit = () => {
   if (loading) {
     return (
       <div className="main-content">
-        <div className="website-content">
-          <div className="container-fluid">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-body text-center">
-                <h3>Loading site data...</h3>
-              </div>
+        <div className="module-data-section banner-form-page p-3">
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-body text-center">
+              <p className="text-muted mb-0">Loading site data...</p>
             </div>
           </div>
         </div>
@@ -274,216 +275,187 @@ const SiteEdit = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <form onSubmit={handleSubmit}>
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Edit Site</h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  {/* Site Name */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Site Name <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter Site Name"
-                      />
-                    </div>
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <MapPin size={16} strokeWidth={1.8} />
+                </span>
+                Edit Site
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Site Name"
+                      required
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Enter Site Name"
+                    />
                   </div>
+                </div>
 
-                  {/* Company */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Company 
-                      </label>
-                      <SelectBox
-                        name="companyId"
-                        options={
-                          companies.length > 0
-                            ? companies.map((comp) => ({
-                                value: comp.id,
-                                label: comp.name,
-                              }))
-                            : [{ value: "", label: "No companies found" }]
-                        }
-                        defaultValue={formData.companyId}
-                        onChange={(value) =>
-                          setFormData({ ...formData, companyId: value })
-                        }
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Company"
+                      placeholder="Select Company"
+                      options={
+                        companies.length > 0
+                          ? companies.map((comp) => ({
+                              value: comp.id,
+                              label: comp.name,
+                            }))
+                          : [{ value: "", label: "No companies found" }]
+                      }
+                      value={formData.companyId}
+                      onChange={(value) =>
+                        setFormData({ ...formData, companyId: value })
+                      }
+                    />
                   </div>
+                </div>
 
-                  {/* Department */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Department</label>
-                      <SelectBox
-                        name="departmentId"
-                        options={
-                          departments.length > 0
-                            ? departments.map((dept) => ({
-                                value: dept.id,
-                                label: dept.name,
-                              }))
-                            : [{ value: "", label: "No departments found" }]
-                        }
-                        defaultValue={formData.departmentId}
-                        onChange={(value) =>
-                          setFormData({ ...formData, departmentId: value })
-                        }
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Department"
+                      placeholder="Select Department"
+                      options={
+                        departments.length > 0
+                          ? departments.map((dept) => ({
+                              value: dept.id,
+                              label: dept.name,
+                            }))
+                          : [{ value: "", label: "No departments found" }]
+                      }
+                      value={formData.departmentId}
+                      onChange={(value) =>
+                        setFormData({ ...formData, departmentId: value })
+                      }
+                    />
                   </div>
+                </div>
 
-                  {/* Project */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Project</label>
-                      <SelectBox
-                        name="projectId"
-                        options={
-                          projects.length > 0
-                            ? projects.map((project) => ({
-                                value: project.id,
-                                label: project.name || project.project_name,
-                              }))
-                            : [{ value: "", label: "No projects found" }]
-                        }
-                        defaultValue={formData.projectId}
-                        onChange={(value) =>
-                          setFormData({ ...formData, projectId: value })
-                        }
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Project"
+                      placeholder="Select Project"
+                      options={
+                        projects.length > 0
+                          ? projects.map((project) => ({
+                              value: project.id,
+                              label: project.name || project.project_name,
+                            }))
+                          : [{ value: "", label: "No projects found" }]
+                      }
+                      value={formData.projectId}
+                      onChange={(value) =>
+                        setFormData({ ...formData, projectId: value })
+                      }
+                    />
                   </div>
+                </div>
 
-                  {/* Latitude */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Latitude</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="latitude"
-                        value={formData.latitude}
-                        onChange={handleChange}
-                        placeholder="Enter Latitude"
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Latitude"
+                      name="latitude"
+                      value={formData.latitude}
+                      onChange={handleChange}
+                      placeholder="Enter Latitude"
+                    />
                   </div>
+                </div>
 
-                  {/* Longitude */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Longitude</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="longitude"
-                        value={formData.longitude}
-                        onChange={handleChange}
-                        placeholder="Enter Longitude"
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Longitude"
+                      name="longitude"
+                      value={formData.longitude}
+                      onChange={handleChange}
+                      placeholder="Enter Longitude"
+                    />
                   </div>
+                </div>
 
-                  {/* Address */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Address</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        placeholder="Enter Address"
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      placeholder="Enter Address"
+                    />
                   </div>
+                </div>
 
-                  {/* City */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>City</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                        placeholder="Enter City"
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="City"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      placeholder="Enter City"
+                    />
                   </div>
+                </div>
 
-                  {/* District */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>District</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="district"
-                        value={formData.district}
-                        onChange={handleChange}
-                        placeholder="Enter District"
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="District"
+                      name="district"
+                      value={formData.district}
+                      onChange={handleChange}
+                      placeholder="Enter District"
+                    />
                   </div>
+                </div>
 
-                  {/* State */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>State</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="state"
-                        value={formData.state}
-                        onChange={handleChange}
-                        placeholder="Enter State"
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="State"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleChange}
+                      placeholder="Enter State"
+                    />
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Submit & Cancel Buttons */}
-            <div className="row mt-2 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 purple-btn2-shadow w-100"
-                  disabled={submitting}
-                >
-                  {submitting ? "Updating..." : "Submit"}
-                </button>
-              </div>
-              <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 purple-btn2-shadow w-100"
-                  onClick={() => navigate(-1)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={submitting}
+            >
+              {submitting ? "Updating..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={() => navigate(-1)}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
