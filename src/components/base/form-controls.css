@@ -205,26 +205,56 @@
 }
 
 .form-select-field__menu-search {
-  padding: 8px 10px 6px;
+  padding: 6px 6px 8px;
   position: sticky;
   top: 0;
   background: #fff;
   z-index: 1;
 }
 
-.form-select-field__menu-search input {
+.form-select-field__menu-search-box {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
   width: 100%;
-  height: 30px;
-  padding: 4px 8px;
-  border: 1px solid #d8d8d8;
-  border-radius: 3px;
-  outline: none;
-  font-size: 13px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--red, #de7008);
+  border-radius: 6px;
+  background: #fff;
   color: #333;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: text;
 }
 
-.form-select-field__menu-search input:focus {
-  border-color: var(--red, #de7008);
+.form-select-field__menu-search-text {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.form-select-field__menu-search-caret {
+  flex-shrink: 0;
+  width: 1px;
+  height: 18px;
+  margin: 0 1px;
+  background: #333;
+  animation: form-select-caret-blink 1s step-end infinite;
+}
+
+.form-select-field__menu-search-placeholder {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #9a9a9a;
+}
+
+@keyframes form-select-caret-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .form-control-field--disabled,

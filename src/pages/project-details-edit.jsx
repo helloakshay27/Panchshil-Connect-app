@@ -6629,16 +6629,18 @@ const ProjectDetailsEdit = () => {
                       </table>
                     </div>
                   </div>
-                  <div className="form-group">
-                    <label>Video Preview Image Url</label>
-                    <input
-                      className="form-control"
-                      rows={1}
-                      name="video_preview_image_url"
-                      placeholder="Enter Video Url"
-                      value={formData.video_preview_image_url}
-                      onChange={handleChange}
-                    />
+                  <div className="row project-details-primary-fields mt-3">
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <FormTextField
+                          label="Video Preview Image Url"
+                          name="video_preview_image_url"
+                          placeholder="Enter Video Url"
+                          value={formData.video_preview_image_url}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
@@ -6770,7 +6772,7 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="card-body mt-0 pb-0">
                 {/* Input Fields */}
-                <div className="row project-details-primary-fields">
+                <div className="row project-details-primary-fields project-details-inline-row">
                   <div className="col-md-3">
                     <div className="form-group">
                       <FormTextField
@@ -6800,7 +6802,7 @@ const ProjectDetailsEdit = () => {
                     <div className="form-group">
                       <button
                         type="button"
-                        className="purple-btn2 project-details-add-btn"
+                        className="purple-btn2 rounded-3"
                         onClick={handleAddVirtualTour}
                       >
                         <svg
@@ -6821,7 +6823,7 @@ const ProjectDetailsEdit = () => {
 
                  {formData.virtual_tour_url_multiple.length > 0 && (
                   <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container w-100">
+                    <div className="mt-4 tbl-container project-details-editable-table w-100">
                       <table className="w-100">
                         <thead>
                           <tr>

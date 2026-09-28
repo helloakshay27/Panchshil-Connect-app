@@ -4596,17 +4596,17 @@ const ProjectDetailsCreate = () => {
                         </table>
                       </div>
                       <div className="d-flex justify-content-between align-items-end mx-1">
-                        <div className="col-md-12 mt-2">
-                          <div className="form-group">
-                            <label>Video Preview Image Url</label>
-                            <input
-                              className="form-control"
-                              rows={1}
-                              name="video_preview_image_url"
-                              placeholder="Enter Video Url"
-                              value={formData.video_preview_image_url}
-                              onChange={handleChange}
-                            />
+                        <div className="row project-details-primary-fields mt-3">
+                          <div className="col-md-12">
+                            <div className="form-group">
+                              <FormTextField
+                                label="Video Preview Image Url"
+                                name="video_preview_image_url"
+                                placeholder="Enter Video Url"
+                                value={formData.video_preview_image_url}
+                                onChange={handleChange}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -4722,7 +4722,7 @@ const ProjectDetailsCreate = () => {
                   </h3>
                 </div>
                 <div className="card-body mt-0 pb-0">
-                  <div className="row project-details-primary-fields">
+                  <div className="row project-details-primary-fields project-details-inline-row">
                     <div className="col-md-3">
                       <div className="form-group">
                         <FormTextField
@@ -4750,7 +4750,7 @@ const ProjectDetailsCreate = () => {
                       <div className="form-group">
                         <button
                           type="button"
-                          className="purple-btn2 project-details-add-btn"
+                          className="purple-btn2 rounded-3"
                           onClick={handleAddVirtualTour}
                         >
                           <svg

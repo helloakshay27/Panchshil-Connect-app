@@ -6671,8 +6671,8 @@ ul.pagination.justify-content-center {
   background: #fcfbf8;
 }
 
-.module-data-section .tbl-container a,
-.module-data-section .tbl-container button {
+.module-data-section .tbl-container a:not(.purple-btn2),
+.module-data-section .tbl-container button:not(.purple-btn2) {
   color: var(--red, #de7008);
 }
 

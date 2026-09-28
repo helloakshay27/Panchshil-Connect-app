@@ -366,6 +366,34 @@ const EventCreate = () => {
     setReminderUnit("");
   };
 
+  const handleUpdateReminder = (index, field, value) => {
+    setFormData((prevFormData) => {
+      const reminders = [...prevFormData.set_reminders_attributes];
+      const current = reminders[index];
+      if (!current) return prevFormData;
+
+      const updated = { ...current, [field]: value };
+      const { min, max } = timeConstraints[updated.unit] || {
+        min: 0,
+        max: Infinity,
+      };
+
+      if (field === "value" && value !== "") {
+        const num = Number(value);
+        if (num < min || num > max) return prevFormData;
+      }
+      if (field === "unit" && Number(updated.value) > max) {
+        updated.value = String(max);
+      }
+
+      reminders[index] = updated;
+      return {
+        ...prevFormData,
+        set_reminders_attributes: reminders,
+      };
+    });
+  };
+
   const handleRemoveReminder = (index) => {
     setFormData((prevFormData) => {
       const reminders = [...prevFormData.set_reminders_attributes];
@@ -1266,10 +1294,13 @@ const EventCreate = () => {
                       </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-12">
                       <div className="form-group">
                         <FormTextField
                           label="Event Description"
+                          multiline
+                          rows={3}
+                          className="event-description-field"
                           name="description"
                           placeholder="Enter Description"
                           value={formData.description}
@@ -1589,78 +1620,69 @@ const EventCreate = () => {
                       </>
                     )}
 
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <SelectBox
-                          label="Set Reminders"
-                          placeholder="Select"
-                          options={timeOptions}
-                          value={reminderUnit || ""}
-                          onChange={(value) => {
-                            setReminderUnit(value);
-                            setReminderValue("");
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <FormTextField
-                          label="Value"
-                          type="number"
-                          placeholder="Value"
-                          value={reminderValue}
-                          onChange={(e) => {
-                            const val = Number(e.target.value);
-                            const unit = reminderUnit;
-                            const constraints = timeConstraints[unit] || {
-                              min: 0,
-                              max: Infinity,
-                            };
-                            if (
-                              val >= constraints.min &&
-                              val <= constraints.max
-                            ) {
-                              setReminderValue(e.target.value);
-                            }
-                          }}
-                          min={timeConstraints[reminderUnit]?.min || 0}
-                          max={timeConstraints[reminderUnit]?.max || ""}
-                          disabled={!reminderUnit}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <button
-                          type="button"
-                          className="banner-form-action-btn"
-                          onClick={handleAddReminder}
-                          disabled={!reminderValue || !reminderUnit}
-                        >
-                          + Add
-                        </button>
-                      </div>
-                    </div>
-
                     <div className="col-md-12">
+                      <div className="reminder-section">
+                        <label className="reminder-section__label">
+                          Set Reminders
+                        </label>
+                        <div className="reminder-item">
+                          <SelectBox
+                            placeholder="Select..."
+                            options={timeOptions}
+                            value={reminderUnit || ""}
+                            onChange={(value) => {
+                              setReminderUnit(value);
+                              setReminderValue("");
+                            }}
+                          />
+                          <FormTextField
+                            type="number"
+                            placeholder="Value"
+                            value={reminderValue}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              const unit = reminderUnit;
+                              const constraints = timeConstraints[unit] || {
+                                min: 0,
+                                max: Infinity,
+                              };
+                              if (
+                                val >= constraints.min &&
+                                val <= constraints.max
+                              ) {
+                                setReminderValue(e.target.value);
+                              }
+                            }}
+                            min={timeConstraints[reminderUnit]?.min || 0}
+                            max={timeConstraints[reminderUnit]?.max || ""}
+                            disabled={!reminderUnit}
+                          />
+                          <button
+                            type="button"
+                            className="banner-form-action-btn reminder-item__add"
+                            onClick={handleAddReminder}
+                            disabled={!reminderValue || !reminderUnit}
+                          >
+                            + Add
+                          </button>
+                        </div>
 
-                      {/* Display added reminders. Map to {reminder, originalIndex}
-                          before filtering, so handleRemoveReminder(originalIndex)
-                          still targets the right entry in the unfiltered
-                          set_reminders_attributes array if a reminder is ever
-                          soft-deleted (_destroy: true, but left in place). */}
-                      {formData.set_reminders_attributes
-                        .map((reminder, originalIndex) => ({ reminder, originalIndex }))
-                        .filter(({ reminder }) => !reminder._destroy)
-                        .map(({ reminder, originalIndex }) => (
-                          <div className="row mb-2" key={originalIndex}>
-                            <div className="col-md-4">
+                        {/* Display added reminders. Map to {reminder, originalIndex}
+                            before filtering, so handleRemoveReminder(originalIndex)
+                            still targets the right entry in the unfiltered
+                            set_reminders_attributes array if a reminder is ever
+                            soft-deleted (_destroy: true, but left in place). */}
+                        {formData.set_reminders_attributes
+                          .map((reminder, originalIndex) => ({ reminder, originalIndex }))
+                          .filter(({ reminder }) => !reminder._destroy)
+                          .map(({ reminder, originalIndex }) => (
+                            <div className="reminder-item" key={originalIndex}>
                               <select
-                                className="form-control"
+                                className="form-control reminder-item__field"
                                 value={reminder.unit}
-                                disabled
-                                style={{ backgroundColor: "#f8f9fa" }}
+                                onChange={(e) =>
+                                  handleUpdateReminder(originalIndex, "unit", e.target.value)
+                                }
                               >
                                 {timeOptions.map((option) => (
                                   <option
@@ -1671,34 +1693,27 @@ const EventCreate = () => {
                                   </option>
                                 ))}
                               </select>
-                            </div>
-                            <div className="col-md-4">
                               <input
                                 type="number"
-                                className="form-control"
+                                className="form-control reminder-item__field"
                                 value={reminder.value}
-                                readOnly
-                                style={{ backgroundColor: "#f8f9fa" }}
+                                min={timeConstraints[reminder.unit]?.min || 0}
+                                max={timeConstraints[reminder.unit]?.max || ""}
+                                onChange={(e) =>
+                                  handleUpdateReminder(originalIndex, "value", e.target.value)
+                                }
                               />
-                            </div>
-
-                            <div className="col-md-4">
                               <button
                                 type="button"
-                                className="btn btn-danger w-100"
+                                className="reminder-item__remove"
                                 onClick={() => handleRemoveReminder(originalIndex)}
-                                style={{
-                                  height: "35px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
+                                aria-label="Remove reminder"
                               >
                                 ×
                               </button>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                      </div>
                     </div>
 
                   </div>
@@ -2265,9 +2280,8 @@ const EventCreate = () => {
 
                   <div className="col-md-6 mt-3">
                     <div className="form-group">
-                      <label>Event Creation Email Attachment URL</label>
-                      <input
-                        className="form-control"
+                      <FormTextField
+                        label="Event Creation Email Attachment URL"
                         type="url"
                         name="creation_email_attachment_url"
                         placeholder="Enter Creation Email Attachment URL"
@@ -2356,9 +2370,8 @@ const EventCreate = () => {
 
                   <div className="col-md-6 mt-3">
                     <div className="form-group">
-                      <label>Event Reminder Email Attachment URL</label>
-                      <input
-                        className="form-control"
+                      <FormTextField
+                        label="Event Reminder Email Attachment URL"
                         type="url"
                         name="reminder_email_attachment_url"
                         placeholder="Enter Reminder Email Attachment URL"

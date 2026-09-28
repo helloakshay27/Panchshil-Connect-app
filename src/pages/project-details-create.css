@@ -286,6 +286,44 @@
   flex-shrink: 0;
 }
 
+.project-details-editable-table tbody td {
+  vertical-align: middle;
+}
+
+.project-details-editable-table th:first-child,
+.project-details-editable-table td:first-child {
+  width: 80px;
+}
+
+.project-details-editable-table th:last-child,
+.project-details-editable-table td:last-child {
+  width: 120px;
+}
+
+.project-details-editable-table td .form-control {
+  width: 100%;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  line-height: 20px;
+  box-shadow: none;
+}
+
+.project-details-editable-table td .form-control:focus {
+  border-color: var(--red, #de7008);
+  box-shadow: none;
+  outline: none;
+}
+
+.project-details-editable-table td .purple-btn2 {
+  margin: 0;
+}
+
 @media (min-width: 768px) {
   .project-details-main-fields > .col-md-3,
   .project-details-main-fields > .col-md-6 {
@@ -293,6 +331,26 @@
     max-width: 33.333333%;
   }
 
+  .row.project-details-primary-fields.project-details-inline-row > [class*="col-"] {
+    flex: 1 1 0;
+    width: auto;
+    max-width: none;
+  }
+
+  .row.project-details-primary-fields.project-details-inline-row > [class*="col-"]:last-child {
+    flex: 0 0 auto;
+  }
+
+  .project-details-inline-row .form-group:has(> .purple-btn2) {
+    justify-content: center;
+    align-items: flex-start;
+    width: auto;
+    min-height: 56px;
+  }
+
+  .project-details-inline-row .purple-btn2 {
+    margin: 0;
+  }
 }
 
 @media (max-width: 767px) {

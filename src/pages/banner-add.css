@@ -221,6 +221,17 @@
   resize: vertical;
 }
 
+.banner-form-fields .event-description-field .form-control-field__textarea {
+  display: block;
+  height: 90px;
+  min-height: 48px !important;
+  max-height: 400px;
+}
+
+.banner-form-fields .form-control-field__textarea:focus {
+  border-color: var(--red, #de7008) !important;
+}
+
 .banner-form-fields input[type="date"],
 .banner-form-fields input[type="time"],
 .banner-form-fields input[type="datetime-local"] {
@@ -236,17 +247,25 @@
   padding: 0;
 }
 
+.banner-form-fields .form-control-field:has(> .form-radio-control) > .form-control-field__label {
+  top: -8px;
+  left: 0;
+  padding: 0;
+  background: transparent;
+  color: #555;
+  font-size: 13px;
+  line-height: 16px;
+}
+
 .banner-form-fields .form-radio-control {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   width: 100%;
   height: 48px;
-  min-height: 48px;
-  padding: 0 14px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  background: #fff;
+  padding: 10px 0 0;
+  border: none;
+  background: transparent;
   box-sizing: border-box;
 }
 
@@ -265,8 +284,7 @@
 }
 
 .banner-form-fields .form-select-field .select__control--is-focused,
-.banner-form-fields .form-control-field__input:focus,
-.banner-form-fields .form-control-field:focus-within .form-radio-control {
+.banner-form-fields .form-control-field__input:focus {
   border-color: var(--red, #de7008) !important;
 }
 
@@ -444,6 +462,103 @@
   min-width: 0;
   width: 100%;
   height: 40px;
+}
+
+.banner-form-fields .reminder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.banner-form-fields .reminder-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.banner-form-fields .reminder-section__label {
+  margin: 0;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.banner-form-fields .reminder-item {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.banner-form-fields .reminder-item > * {
+  min-width: 0;
+}
+
+.banner-form-fields .reminder-item .banner-form-action-btn.reminder-item__add {
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+}
+
+.banner-form-fields .reminder-item .banner-form-action-btn.reminder-item__add:disabled {
+  opacity: 0.55;
+}
+
+.banner-form-fields .reminder-item__field {
+  width: 100%;
+  height: 48px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  line-height: 20px;
+  box-shadow: none;
+}
+
+.banner-form-fields .reminder-item__field:focus {
+  border-color: var(--red, #de7008);
+  box-shadow: none;
+  outline: none;
+}
+
+.banner-form-fields select.reminder-item__field {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23777' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px;
+  cursor: pointer;
+}
+
+.banner-form-fields .reminder-item__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--red, #de7008);
+  border-radius: 6px;
+  background: var(--red, #de7008);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.banner-form-fields .reminder-item__remove:hover {
+  background: #c46307;
+  border-color: #c46307;
 }
 
 .banner-form-fields .form-check {

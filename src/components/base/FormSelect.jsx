@@ -1,6 +1,7 @@
 import React from "react";
 import Select, { components } from "react-select";
 import { ChevronDown } from "lucide-react";
+import MenuSearchBox from "./MenuSearchBox";
 import "./form-controls.css";
 
 const DropdownIndicator = (props) => (
@@ -25,17 +26,7 @@ const MenuList = (props) => {
             event.stopPropagation();
           }}
         >
-          <input
-            type="text"
-            value={selectProps.inputValue || ""}
-            onChange={(event) =>
-              selectProps.onInputChange?.(event.target.value, {
-                action: "input-change",
-              })
-            }
-            onKeyDown={(event) => event.stopPropagation()}
-            placeholder="Type to search..."
-          />
+          <MenuSearchBox inputValue={selectProps.inputValue} />
         </div>
       )}
       {children}
@@ -116,9 +107,10 @@ const selectStyles = {
     ...base,
     zIndex: 9999,
   }),
-  menuList: (base) => ({
+  menuList: (base, state) => ({
     ...base,
-    padding: "4px 0 6px",
+    padding:
+      state.selectProps.formSelectSearchable !== false ? "0 0 6px" : "4px 0 6px",
     maxHeight: 240,
   }),
   option: (base, state) => ({
