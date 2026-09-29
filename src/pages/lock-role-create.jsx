@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Shield } from "lucide-react";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const LockRoleCreate = () => {
   const connectEvents = useConnectEvents();
@@ -193,126 +196,126 @@ const LockRoleCreate = () => {
   };
 
   return (
-    <>
-      {/* <div className="main-content"> */}
-        <div className="module-data-section">
-          {/* <div className="module-data-section"> */}
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Create Lock Role</h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  {/* Role Title Input (Name) */}
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label>
-                        Role Title
-                        <span className="otp-asterisk"> *</span>
-                      </label>
+    <div className="main-content">
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Shield size={16} strokeWidth={1.8} />
+                </span>
+                Create Lock Role
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Role Title"
+                      required
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Enter role title"
+                    />
+                    {errors.name && (
+                      <span className="error text-danger">{errors.name}</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <div className="form-check">
                       <input
-                        className="form-control"
-                        type="text"
-                        name="name"
-                        value={formData.name}
+                        className="form-check-input"
+                        type="checkbox"
+                        name="active"
+                        id="isActive"
+                        checked={formData.active === 1}
                         onChange={handleChange}
-                        placeholder="Enter role title"
                       />
-                      {errors.name && (
-                        <span className="error text-danger">{errors.name}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Active Status */}
-                  <div className="col-md-6">
-                    <div className="form-group mt-4">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          name="active"
-                          id="isActive"
-                          checked={formData.active === 1}
-                          onChange={handleChange}
-                        />
-                        <label className="form-check-label" htmlFor="isActive">
-                          Active
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Permissions Table Structure (without table header, as requested) */}
-                <div className="row mt-4">
-                  <div className="col-12">
-                  <div className="tbl-container mt-3 ">
-                  <table className="w-100">
-                        <thead>
-                          <tr className="bg-light">
-                            <th style={{width: "30%"}}>Function</th>
-                            {standardActions.map(action => (
-                              <th key={action} className="text-center">{actionLabels[action]}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {!loading &&
-                            lockFunctions.map((func) => (
-                              <tr key={func.id}>
-                                <td>{func.name}</td>
-                                {standardActions.map(action => (
-                                  <td key={`${func.action_name}-${action}`} className="text-center">
-                                    <input
-                                      type="checkbox"
-                                      className="form-check-input"
-                                      checked={permissionsHash[func.action_name]?.[action] === "true"}
-                                      onChange={(e) =>
-                                        handlePermissionChange(
-                                          func.action_name,
-                                          action,
-                                          e.target.checked
-                                        )
-                                      }
-                                    />
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
+                      <label className="form-check-label" htmlFor="isActive">
+                        Active
+                      </label>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          {/* </div> */}
 
-          {/* Submit and Cancel Buttons */}
-          <div className="row mt-4 justify-content-center">
-            <div className="col-md-2">
-              <button
-                onClick={handleSubmit}
-                className="purple-btn2 w-100"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
+              <div className="row mt-4">
+                <div className="col-12">
+                  <div className="tbl-container mt-3">
+                    <table className="w-100">
+                      <thead>
+                        <tr className="bg-light">
+                          <th style={{ width: "30%" }}>Function</th>
+                          {standardActions.map((action) => (
+                            <th key={action} className="text-center">
+                              {actionLabels[action]}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {!loading &&
+                          lockFunctions.map((func) => (
+                            <tr key={func.id}>
+                              <td>{func.name}</td>
+                              {standardActions.map((action) => (
+                                <td
+                                  key={`${func.action_name}-${action}`}
+                                  className="text-center"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    checked={
+                                      permissionsHash[func.action_name]?.[
+                                        action
+                                      ] === "true"
+                                    }
+                                    onChange={(e) =>
+                                      handlePermissionChange(
+                                        func.action_name,
+                                        action,
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      {/* </div> */}
-    </>
+
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

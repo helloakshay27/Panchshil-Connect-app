@@ -2,23 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { HardHat } from "lucide-react";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const ConstructionStatusEdit = () => {
   const connectEvents = useConnectEvents();
-  const { id } = useParams(); // ✅ Get ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const [formData, setFormData] = useState({
     construction_status: "",
     active: true,
   });
 
-  // ✅ Fetch Construction Status Details
   useEffect(() => {
     const fetchStatus = async () => {
-      setLoading(true);
+      setDataLoading(true);
       try {
         const response = await axios.get(
           `${baseURL}construction_statuses/${id}.json`,
@@ -32,21 +35,24 @@ const ConstructionStatusEdit = () => {
         console.error("Error fetching status:", error);
         toast.error("Failed to load construction status.");
       } finally {
-        setLoading(false);
+        setDataLoading(false);
       }
     };
 
     fetchStatus();
   }, [id]);
 
-  // ✅ Handle Form Input Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Handle Form Submission (Update Construction Status)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.construction_status?.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+
     setLoading(true);
     try {
       await axios.put(
@@ -67,61 +73,59 @@ const ConstructionStatusEdit = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Edit Construction Status</h3>
-            </div>
-            <div className="card-body">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                <form onSubmit={handleSubmit}>
-                  <div className="row">
-                    {/* Name Field */}
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>
-                          Name
-                          <span className="otp-asterisk">{" "}*</span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="construction_status"
-                          value={formData.construction_status}
-                          onChange={handleChange}
-                          placeholder="Enter name"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Submit & Cancel Buttons */}
-                  <div className="row mt-2 justify-content-center">
-                    <div className="col-md-2">
-                      <button type="submit" className="purple-btn2 w-100" disabled={loading}>
-                        {loading ? "Updating..." : "Update"}
-                      </button>
-                    </div>
-
-                    <div className="col-md-2">
-                      <button
-                        type="button"
-                        className="purple-btn2 w-100"
-                        onClick={() => navigate("/setup-member/construction-status-list")}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              )}
-            </div>
+      <div className="module-data-section banner-form-page p-3">
+        {dataLoading ? (
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-body text-center py-4">Loading...</div>
           </div>
-        </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="card banner-form-card mt-3 pb-4">
+              <div className="card-header banner-form-section-header">
+                <h3 className="banner-form-section-heading">
+                  <span className="banner-form-section-icon" aria-hidden="true">
+                    <HardHat size={16} strokeWidth={1.8} />
+                  </span>
+                  Edit Construction Status
+                </h3>
+              </div>
+              <div className="card-body">
+                <div className="row banner-form-fields">
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <FormTextField
+                        label="Name"
+                        required
+                        name="construction_status"
+                        placeholder="Enter name"
+                        value={formData.construction_status}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="banner-form-actions">
+              <button
+                type="submit"
+                className="banner-form-action-btn"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Update"}
+              </button>
+              <button
+                type="button"
+                className="banner-form-action-btn"
+                onClick={() => navigate("/setup-member/construction-status-list")}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

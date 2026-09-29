@@ -222,10 +222,10 @@ const handleSubmit = async (e) => {
                     {/* Project Selection */}
                     <div className="col-md-3">
                       <div className="form-group">
-                        <label>
-                          Project<span style={{ color: "#de7008" }}> *</span>
-                        </label>
                         <SelectBox
+                          label="Project"
+                          required
+                          placeholder="Select Project"
                           options={projects.map((proj) => ({
                             label: proj.project_name,
                             value: proj.id,
@@ -261,8 +261,9 @@ const handleSubmit = async (e) => {
                     <div className="row mt-3">
                       <div className="col-md-6">
                         <div className="form-group">
-                          <label>Select Available Slot</label>
                           <SelectBox
+                            label="Select Available Slot"
+                            placeholder="Select Slot"
                             options={slots.map((slot) => ({
                               label: `${slot.start_time} to ${slot.end_time}`,
                               value: slot.id,

@@ -4,7 +4,10 @@ import axios from "axios";
 
 // import LoginModal from "../components/LoginModal";
 import SignInRustomjee from "./sign_pages/signInRustomjee";
-import { baseURL } from "../pages/baseurl/apiDomain"
+import { baseURL } from "../pages/baseurl/apiDomain";
+import EnhancedTable from "../components/EnhancedTable";
+
+const showLegacyTable = false;
 
 const HomeLoanRequest = () => {
   const [showModal, setShowModal] = useState(false);
@@ -18,13 +21,13 @@ const HomeLoanRequest = () => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" });
   const location = useLocation();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
     const year = String(date.getFullYear()); // Get last two digits of the year
     return `${day}-${month}-${year}`;
   };
@@ -33,24 +36,18 @@ const HomeLoanRequest = () => {
   const getMembers = async () => {
     const storedValue = sessionStorage.getItem("selectedId");
     try {
-      const response = await axios.get(
-        `${baseURL}loyalty/members.json`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-
-      ; // Initialize filteredItems
-
+      const response = await axios.get(`${baseURL}loyalty/members.json`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }); // Initialize filteredItems
 
       // Format the created_at date for each member
       const formattedMembers = response.data.map((member) => ({
         ...member,
         tier_validity: formatDate(member.tier_validity), // Use the correct date property
-        last_sign_in: formatDate(member.last_sign_in)
+        last_sign_in: formatDate(member.last_sign_in),
       }));
 
       setMembers(formattedMembers); // Set formatted members
@@ -62,7 +59,6 @@ const HomeLoanRequest = () => {
     } finally {
       setLoading(false);
     }
-
   };
 
   useEffect(() => {
@@ -70,7 +66,7 @@ const HomeLoanRequest = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "https://piramal-loyalty-dev.lockated.com/home_loans_request"
+          "https://piramal-loyalty-dev.lockated.com/home_loans_request",
         );
         setHomeLoans(response.data.home_loans || []);
         setFilteredItems(response.data.home_loans || []);
@@ -120,7 +116,9 @@ const HomeLoanRequest = () => {
         loan.booking_number,
         loan.status,
       ]
-        .map((v) => (v !== null && v !== undefined ? String(v).toLowerCase() : ""))
+        .map((v) =>
+          v !== null && v !== undefined ? String(v).toLowerCase() : "",
+        )
         .some((v) => v.includes(q));
     });
 
@@ -128,7 +126,6 @@ const HomeLoanRequest = () => {
     setCurrentPage(1);
     setSuggestions([]);
   };
-
 
   // Handle search input change
   const handleSearchInputChange = (e) => {
@@ -154,7 +151,9 @@ const HomeLoanRequest = () => {
           loan.booking_number,
           loan.status,
         ]
-          .map((v) => (v !== null && v !== undefined ? String(v).toLowerCase() : ""))
+          .map((v) =>
+            v !== null && v !== undefined ? String(v).toLowerCase() : "",
+          )
           .some((v) => v.includes(q));
       });
 
@@ -174,11 +173,13 @@ const HomeLoanRequest = () => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIndex((prev) =>
-        prev < suggestions.length - 1 ? prev + 1 : 0
+        prev < suggestions.length - 1 ? prev + 1 : 0,
       );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+      setSelectedIndex((prev) =>
+        prev > 0 ? prev - 1 : suggestions.length - 1,
+      );
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
@@ -198,7 +199,9 @@ const HomeLoanRequest = () => {
 
   // Fix suggestion click
   const handleSuggestionClick = (loan) => {
-    setSearchTerm(`${loan.customer_code || loan.booking_number || loan.bank_name}`);
+    setSearchTerm(
+      `${loan.customer_code || loan.booking_number || loan.bank_name}`,
+    );
     setSuggestions([]);
     setFilteredItems([loan]);
     setCurrentPage(1);
@@ -213,9 +216,9 @@ const HomeLoanRequest = () => {
 
   // Fix sorting functionality
   const requestSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
     setCurrentPage(1); // Reset to first page when sorting
@@ -228,8 +231,8 @@ const HomeLoanRequest = () => {
         const aVal = a[sortConfig.key];
         const bVal = b[sortConfig.key];
 
-        if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+        if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
         return 0;
       });
     }
@@ -239,9 +242,68 @@ const HomeLoanRequest = () => {
   const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
   const currentItems = sortedItems.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
   const startIndex = (currentPage - 1) * itemsPerPage;
+
+  const columns = [
+    {
+      key: "serial_number",
+      label: "Sr No",
+      sortable: false,
+      render: (_loan, { absoluteIndex }) => absoluteIndex + 1,
+    },
+    {
+      key: "loan_type",
+      label: "Loan Type",
+      render: (loan) => loan.loan_type ?? "",
+    },
+    {
+      key: "employment_type",
+      label: "Employment Type",
+      render: (loan) => loan.employment_type ?? "",
+    },
+    {
+      key: "monthly_income",
+      label: "Monthly Income",
+      render: (loan) => loan.monthly_income ?? "",
+    },
+    {
+      key: "birth_date",
+      label: "Birth Date",
+      getSortValue: (loan) => loan.birth_date ?? loan.dob ?? "",
+      render: (loan) => loan.birth_date ?? loan.dob ?? "",
+    },
+    {
+      key: "preferred_time",
+      label: "Preferred Time",
+      getSortValue: (loan) => loan.preferred_time ?? loan.preffered_time ?? "",
+      render: (loan) => loan.preferred_time ?? loan.preffered_time ?? "",
+    },
+    {
+      key: "bank_name",
+      label: "Bank Name",
+      render: (loan) => loan.bank_name ?? "",
+    },
+    {
+      key: "amount",
+      label: "Amount",
+      getSortValue: (loan) => loan.amount ?? loan.required_loan_amt ?? "",
+      render: (loan) => loan.amount ?? loan.required_loan_amt ?? "",
+    },
+    { key: "tenure", label: "Tenure", render: (loan) => loan.tenure ?? "" },
+    {
+      key: "customer_code",
+      label: "Customer Code",
+      render: (loan) => loan.customer_code ?? "",
+    },
+    {
+      key: "booking_number",
+      label: "Booking Number",
+      render: (loan) => loan.booking_number ?? "",
+    },
+    { key: "status", label: "Status", render: (loan) => loan.status ?? "" },
+  ];
 
   const Pagination = ({
     currentPage,
@@ -249,7 +311,8 @@ const HomeLoanRequest = () => {
     totalEntries,
     onPageChange,
   }) => {
-    const startEntry = totalEntries === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const startEntry =
+      totalEntries === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
     const endEntry = Math.min(currentPage * itemsPerPage, totalEntries);
 
     return (
@@ -273,20 +336,28 @@ const HomeLoanRequest = () => {
               Prev
             </button>
           </li>
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-            <li
-              key={pageNumber}
-              className={`page-item ${currentPage === pageNumber ? "active" : ""}`}
-            >
-              <button
-                className="page-link"
-                onClick={() => onPageChange(pageNumber)}
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+            (pageNumber) => (
+              <li
+                key={pageNumber}
+                className={`page-item ${
+                  currentPage === pageNumber ? "active" : ""
+                }`}
               >
-                {pageNumber}
-              </button>
-            </li>
-          ))}
-          <li className={`page-item ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""}`}>
+                <button
+                  className="page-link"
+                  onClick={() => onPageChange(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </li>
+            ),
+          )}
+          <li
+            className={`page-item ${
+              currentPage === totalPages || totalPages === 0 ? "disabled" : ""
+            }`}
+          >
             <button
               className="page-link"
               onClick={() => onPageChange(currentPage + 1)}
@@ -295,7 +366,11 @@ const HomeLoanRequest = () => {
               Next
             </button>
           </li>
-          <li className={`page-item ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""}`}>
+          <li
+            className={`page-item ${
+              currentPage === totalPages || totalPages === 0 ? "disabled" : ""
+            }`}
+          >
             <button
               className="page-link"
               onClick={() => onPageChange(totalPages)}
@@ -306,10 +381,9 @@ const HomeLoanRequest = () => {
           </li>
         </ul>
         <p className="text-center" style={{ marginTop: "10px", color: "#555" }}>
-          {totalEntries === 0 
+          {totalEntries === 0
             ? "Showing 0 to 0 of 0 entries"
-            : `Showing ${startEntry} to ${endEntry} of ${totalEntries} entries`
-          }
+            : `Showing ${startEntry} to ${endEntry} of ${totalEntries} entries`}
         </p>
       </div>
     );
@@ -330,9 +404,7 @@ const HomeLoanRequest = () => {
               </p> */}
 
               <div className="d-flex justify-content-between align-items-center">
-                <Link to="">
-                  {/* Add button if needed */}
-                </Link>
+                <Link to="">{/* Add button if needed */}</Link>
                 <div className="d-flex align-items-center">
                   <div className="input-group me-3">
                     <input
@@ -344,7 +416,11 @@ const HomeLoanRequest = () => {
                       onKeyDown={handleKeyDown}
                     />
                     <div className="input-group-append">
-                      <button type="button" className="btn btn-md btn-default" onClick={handleSearch}>
+                      <button
+                        type="button"
+                        className="btn btn-md btn-default"
+                        onClick={handleSearch}
+                      >
                         <svg
                           width={16}
                           height={16}
@@ -378,7 +454,7 @@ const HomeLoanRequest = () => {
                           backgroundColor: "#fff",
                           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                           top: "100%",
-                          left: "0"
+                          left: "0",
                         }}
                       >
                         {suggestions.map((loan, index) => (
@@ -387,13 +463,20 @@ const HomeLoanRequest = () => {
                             style={{
                               padding: "8px",
                               cursor: "pointer",
-                              backgroundColor: selectedIndex === index ? "#f8f9fa" : "transparent"
+                              backgroundColor:
+                                selectedIndex === index
+                                  ? "#f8f9fa"
+                                  : "transparent",
                             }}
-                            className={selectedIndex === index ? "highlight" : ""}
+                            className={
+                              selectedIndex === index ? "highlight" : ""
+                            }
                             onMouseEnter={() => setSelectedIndex(index)}
                             onClick={() => handleSuggestionClick(loan)}
                           >
-                            {loan.customer_code || loan.booking_number || loan.bank_name}
+                            {loan.customer_code ||
+                              loan.booking_number ||
+                              loan.bank_name}
                           </li>
                         ))}
                       </ul>
@@ -402,7 +485,8 @@ const HomeLoanRequest = () => {
                 </div>
               </div>
 
-              <div className="tbl-container mt-4"
+              <div
+                className="tbl-container mt-4"
                 style={{
                   height: "100%",
                   overflowX: "auto",
@@ -410,49 +494,89 @@ const HomeLoanRequest = () => {
                   flexDirection: "column",
                 }}
               >
-                {loading ? (
-                  <p>Loading...</p>
-                ) : error ? (
-                  <p className="text-danger">{error}</p>
-                ) : (
+                <EnhancedTable
+                  columns={columns}
+                  data={sortedItems}
+                  loading={loading}
+                  emptyMessage={
+                    error ||
+                    "No home loan requests found matching your search criteria."
+                  }
+                  searchTerm={searchTerm}
+                  onSearchChange={handleSearchInputChange}
+                  onSearchSubmit={handleSearch}
+                  searchPlaceholder="Search by Customer Code, Bank Name, etc."
+                  currentPage={currentPage}
+                  pageSize={itemsPerPage}
+                  onPageChange={handlePageChange}
+                  getRowId={(loan) => loan.id}
+                  storageKey="home-loan-request-list"
+                />
+                {showLegacyTable && (
                   <>
-                    <table className="w-100" style={{ color: '#000', fontWeight: '400', fontSize: '13px', minWidth: '1200px' }}>
+                    <table
+                      className="w-100"
+                      style={{
+                        color: "#000",
+                        fontWeight: "400",
+                        fontSize: "13px",
+                        minWidth: "1200px",
+                      }}
+                    >
                       <thead>
                         <tr>
-                          <th style={{ width: '8%' }}>Sr No</th>
-                          <th style={{ width: '8%' }}>Loan Type</th>
-                          <th style={{ width: '8%' }}>Employment Type</th>
-                          <th style={{ width: '8%' }}>Monthly Income</th>
-                          <th style={{ width: '8%' }}>Birth Date</th>
-                          <th style={{ width: '8%' }}>Preferred Time</th>
-                          <th style={{ width: '8%' }}>Bank Name</th>
-                          <th style={{ width: '8%' }}>Amount</th>
-                          <th style={{ width: '8%' }}>Tenure</th>
-                          <th style={{ width: '8%' }}>Customer Code</th>
-                          <th style={{ width: '8%' }}>Booking Number</th>
-                          <th style={{ width: '8%' }}>Status</th>
+                          <th style={{ width: "8%" }}>Sr No</th>
+                          <th style={{ width: "8%" }}>Loan Type</th>
+                          <th style={{ width: "8%" }}>Employment Type</th>
+                          <th style={{ width: "8%" }}>Monthly Income</th>
+                          <th style={{ width: "8%" }}>Birth Date</th>
+                          <th style={{ width: "8%" }}>Preferred Time</th>
+                          <th style={{ width: "8%" }}>Bank Name</th>
+                          <th style={{ width: "8%" }}>Amount</th>
+                          <th style={{ width: "8%" }}>Tenure</th>
+                          <th style={{ width: "8%" }}>Customer Code</th>
+                          <th style={{ width: "8%" }}>Booking Number</th>
+                          <th style={{ width: "8%" }}>Status</th>
                         </tr>
                       </thead>
-                      <tbody style={{ color: '#000', fontWeight: '400', fontSize: '13px' }}>
-                        {currentItems.length > 0 ? currentItems.map((loan, idx) => (
-                          <tr key={loan.id || idx}>
-                            <td>{startIndex + idx + 1}</td>
-                            <td>{loan.loan_type ?? ""}</td>
-                            <td>{loan.employment_type ?? ""}</td>
-                            <td>{loan.monthly_income ?? ""}</td>
-                            <td>{loan.birth_date ?? loan.dob ?? ""}</td>
-                            <td>{loan.preferred_time ?? loan.preffered_time ?? ""}</td>
-                            <td>{loan.bank_name ?? ""}</td>
-                            <td>{loan.amount ?? loan.required_loan_amt ?? ""}</td>
-                            <td>{loan.tenure ?? ""}</td>
-                            <td>{loan.customer_code ?? ""}</td>
-                            <td>{loan.booking_number ?? ""}</td>
-                            <td>{loan.status ?? ""}</td>
-                          </tr>
-                        )) : (
+                      <tbody
+                        style={{
+                          color: "#000",
+                          fontWeight: "400",
+                          fontSize: "13px",
+                        }}
+                      >
+                        {currentItems.length > 0 ? (
+                          currentItems.map((loan, idx) => (
+                            <tr key={loan.id || idx}>
+                              <td>{startIndex + idx + 1}</td>
+                              <td>{loan.loan_type ?? ""}</td>
+                              <td>{loan.employment_type ?? ""}</td>
+                              <td>{loan.monthly_income ?? ""}</td>
+                              <td>{loan.birth_date ?? loan.dob ?? ""}</td>
+                              <td>
+                                {loan.preferred_time ??
+                                  loan.preffered_time ??
+                                  ""}
+                              </td>
+                              <td>{loan.bank_name ?? ""}</td>
+                              <td>
+                                {loan.amount ?? loan.required_loan_amt ?? ""}
+                              </td>
+                              <td>{loan.tenure ?? ""}</td>
+                              <td>{loan.customer_code ?? ""}</td>
+                              <td>{loan.booking_number ?? ""}</td>
+                              <td>{loan.status ?? ""}</td>
+                            </tr>
+                          ))
+                        ) : (
                           <tr>
-                            <td colSpan="12" style={{ textAlign: 'center', padding: '20px' }}>
-                              No home loan requests found matching your search criteria.
+                            <td
+                              colSpan="12"
+                              style={{ textAlign: "center", padding: "20px" }}
+                            >
+                              No home loan requests found matching your search
+                              criteria.
                             </td>
                           </tr>
                         )}
@@ -461,12 +585,14 @@ const HomeLoanRequest = () => {
                   </>
                 )}
               </div>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                totalEntries={sortedItems.length}
-              />
+              {showLegacyTable && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalEntries={sortedItems.length}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -476,5 +602,3 @@ const HomeLoanRequest = () => {
 };
 
 export default HomeLoanRequest;
-
-

@@ -5,10 +5,15 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
+import "./project-details-create.css";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Building2, FileText, Globe2, MapPin, Upload } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
 import PropertySelect from "../components/base/PropertySelect";
+import FormTextField from "../components/base/FormTextField";
+import FormSelect from "../components/base/FormSelect";
+import FormMultiSelect from "../components/base/FormMultiSelect";
 
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import { baseURL } from "./baseurl/apiDomain";
@@ -2108,34 +2113,39 @@ const ProjectDetailsCreate = () => {
   ];
   return (
     <>
-      <div className="module-data-section p-3">
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header">
-            <h3 className="card-title">Create Project</h3>
+      <div className="module-data-section project-details-page p-3">
+        <div className="card project-details-create-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Building2 size={16} strokeWidth={1.8} />
+              </span>
+              Create Project
+            </h3>
           </div>
           <div className="card-body">
             <div className="row">
+              <div className="project-details-primary-fields project-details-main-fields row">
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>
-                    Property Types
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <PropertySelect
+                  <FormSelect
+                    label="Property Types"
+                    placeholder="Select..."
+                    required
                     options={propertyTypeOptions}
                     value={formData.Property_Type}
-                    onChange={(value) => handlePropertyTypeChange(value)}
+                    onChange={(_, option) => handlePropertyTypeChange(option)}
                   />
                 </div>
               </div>
               <div className="col-md-3 mt-1">
                 <div className="form-group">
-                  <label>Project Building Type</label>
-                  <SelectBox
+                  <FormSelect
+                    label="Project Building Type"
+                    placeholder="Select..."
                     options={buildingTypeOptions}
-                    defaultValue={formData.building_type}
+                    value={formData.building_type}
                     onChange={(selected) => {
-                      console.log(selected);
                       setFormData((prev) => ({
                         ...prev,
                         building_type: selected,
@@ -2146,13 +2156,12 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-0">
                 <div className="form-group">
-                  <label>
-                    Project Construction Status
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <SelectBox
+                  <FormSelect
+                    label="Project Construction Status"
+                    placeholder="Select..."
+                    required
                     options={statusOptions}
-                    defaultValue={formData.Project_Construction_Status}
+                    value={formData.Project_Construction_Status}
                     onChange={(selectedOption) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -2164,8 +2173,9 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Configuration Type</label>
-                  <MultiSelectBox
+                  <FormMultiSelect
+                    label="Configuration Type"
+                    placeholder="Select..."
                     options={configurations.map((config) => ({
                       value: config.name,
                       label: config.name,
@@ -2182,19 +2192,14 @@ const ProjectDetailsCreate = () => {
                         ),
                       }))
                     }
-                    placeholder="Select Type"
                   />
                 </div>
               </div>
               <div className="col-md-3 mt-1">
                 <div className="form-group">
-                  <label>
-                    Project Name
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
+                  <FormTextField
+                    label="Project Name"
+                    required
                     name="Project_Name"
                     placeholder="Enter Project Name"
                     value={formData.Project_Name}
@@ -2204,13 +2209,9 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-1">
                 <div className="form-group">
-                  <label>
-                    SFDC Project ID
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
+                  <FormTextField
+                    label="SFDC Project ID"
+                    required
                     name="SFDC_Project_Id"
                     placeholder="Enter SFDC Project ID"
                     maxLength={18}
@@ -2221,13 +2222,9 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-1">
                 <div className="form-group">
-                  <label>
-                    Location
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
+                  <FormTextField
+                    label="Location"
+                    required
                     name="project_address"
                     placeholder="Enter Location"
                     value={formData.project_address}
@@ -2237,13 +2234,14 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Tag</label>
-                  <SelectBox
+                  <FormSelect
+                    label="Project Tag"
+                    placeholder="Select..."
                     options={[
                       { value: "Featured", label: "Featured" },
                       { value: "Upcoming", label: "Upcoming" },
                     ]}
-                    defaultValue={formData.project_tag}
+                    value={formData.project_tag}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -2253,25 +2251,11 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
-              <div className="col-md-6 mt-2">
-                <div className="form-group">
-                  <label>Project Description</label>
-                  <textarea
-                    className="form-control"
-                    rows={1}
-                    name="Project_Description"
-                    placeholder="Enter Project Description"
-                    value={formData.Project_Description}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Price Onward</label>
-                  <input
-                    className="form-control"
-                    type="text-number"
+                  <FormTextField
+                    label="Price Onward"
+                    type="text"
                     name="Price_Onward"
                     placeholder="Enter Price Onward"
                     value={formData.Price_Onward}
@@ -2281,9 +2265,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Size (Sq. Mtr.) (For Residential)</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Project Size (Sq. Mtr.) (For Residential)"
                     type="number"
                     name="Project_Size_Sq_Mtr"
                     placeholder="Enter Size in Sq. Mtr."
@@ -2294,9 +2277,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Size (Sq. Ft.) (For Residential)</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Project Size (Sq. Ft.) (For Residential)"
                     type="number"
                     name="Project_Size_Sq_Ft"
                     placeholder="Enter Size in Sq. Ft."
@@ -2307,9 +2289,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Development Area (Sq. Mtr.) (For Office Park)</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Development Area (Sq. Mtr.) (For Office Park)"
                     type="number"
                     name="development_area_sqmt"
                     placeholder="Enter Area Sq. Mt."
@@ -2320,9 +2301,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Development Area (Sq. Ft.) (For Office Park)</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Development Area (Sq. Ft.) (For Office Park)"
                     type="number"
                     name="development_area_sqft"
                     placeholder="Enter Area in Sq. Ft."
@@ -2333,9 +2313,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>RERA Carpet Area (Sq. M)</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="RERA Carpet Area (Sq. M)"
                     type="number"
                     name="Rera_Carpet_Area_Sq_M"
                     placeholder="Enter RERA Carpet Area (Sq. M)"
@@ -2346,9 +2325,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>RERA Carpet Area (Sq. Ft.)</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="RERA Carpet Area (Sq. Ft.)"
                     type="number"
                     name="Rera_Carpet_Area_sqft"
                     placeholder="Enter RERA Carpet Area (Sq. Ft.)"
@@ -2359,9 +2337,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Number of Towers</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Number of Towers"
                     type="number"
                     name="Number_Of_Towers"
                     placeholder="Enter Number of Towers"
@@ -2372,9 +2349,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Number of Floors</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Number of Floors"
                     type="number"
                     name="no_of_floors"
                     placeholder="Enter Number of Floors"
@@ -2385,9 +2361,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Number of Units</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Number of Units"
                     type="number"
                     name="Number_Of_Units"
                     placeholder="Enter Number of Units"
@@ -2398,9 +2373,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Land Area</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Land Area"
                     type="number"
                     name="Land_Area"
                     placeholder="Enter Land Area"
@@ -2411,8 +2385,9 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Land UOM</label>
-                  <SelectBox
+                  <FormSelect
+                    label="Land UOM"
+                    placeholder="Select..."
                     options={[
                       { value: "Square Meter", label: "Square Meter" },
                       { value: "Square Feet", label: "Square Feet" },
@@ -2426,7 +2401,7 @@ const ProjectDetailsCreate = () => {
                       { value: "Cent", label: "Cent" },
                       { value: "Ropani", label: "Ropani" },
                     ]}
-                    value={formData?.land_uom || ""}
+                    value={formData.land_uom}
                     onChange={(value) =>
                       setFormData((prev) => ({ ...prev, land_uom: value }))
                     }
@@ -2435,13 +2410,14 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Sales Type</label>
-                  <SelectBox
+                  <FormSelect
+                    label="Project Sales Type"
+                    placeholder="Select..."
                     options={[
                       { value: "Sales", label: "Sales" },
                       { value: "Lease", label: "Lease" },
                     ]}
-                    value={formData?.project_sales_type || ""}
+                    value={formData.project_sales_type}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -2453,9 +2429,8 @@ const ProjectDetailsCreate = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Order Number</label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Order Number"
                     type="number"
                     name="order_no"
                     placeholder="Enter Order Number"
@@ -2464,18 +2439,32 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
               </div>
-              <div className="col-md-3 mt-2">
+              <div className="col-md-12 mt-2">
                 <div className="form-group">
-                  <label>Disclaimer</label>
-                  <textarea
-                    className="form-control"
-                    rows={1}
+                  <FormTextField
+                    label="Disclaimer"
+                    multiline
+                    rows={2}
                     name="disclaimer"
                     placeholder="Enter disclaimer"
                     value={formData.disclaimer}
                     onChange={handleChange}
                   />
                 </div>
+              </div>
+              <div className="col-md-12 mt-2">
+                <div className="form-group">
+                  <FormTextField
+                    label="Project Description"
+                    multiline
+                    rows={2}
+                    name="Project_Description"
+                    placeholder="Enter Project Description"
+                    value={formData.Project_Description}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
               </div>
               <div className="col-md-6">
                 <div className="form-group">
@@ -2495,14 +2484,24 @@ const ProjectDetailsCreate = () => {
                     </span>
                     <span className="otp-asterisk"> *</span>
                   </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    name="project_qrcode_image"
-                    accept="image/*"
-                    multiple
-                    onChange={handleQRCodeImageChange}
-                  />
+                  <div className="project-details-upload-dropzone">
+                    <label
+                      htmlFor="project-qrcode-image-upload"
+                      className="project-details-upload-btn"
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </label>
+                    <input
+                      id="project-qrcode-image-upload"
+                      className="project-details-hidden-file-input"
+                      type="file"
+                      name="project_qrcode_image"
+                      accept="image/*"
+                      multiple
+                      onChange={handleQRCodeImageChange}
+                    />
+                  </div>
                 </div>
                 <div className="mt-2">
                   {formData.project_qrcode_image.length > 0 ? (
@@ -2538,7 +2537,7 @@ const ProjectDetailsCreate = () => {
                         />
                         <button
                           type="button"
-                          className="purple-btn2"
+                          className="purple-btn2" style={{ color: "#fff" }}
                           onClick={() => handleRemoveQRCodeImage(index)}
                         >
                           Remove
@@ -2646,18 +2645,21 @@ const ProjectDetailsCreate = () => {
         {baseURL !== "https://dev-panchshil-super-app.lockated.com/" &&
           baseURL !== "https://rustomjee-live.lockated.com/" && (
             <>
-              <div className="card mt-3 pb-4 mx-4">
-                <div className="card-header3 d-flex justify-content-between align-items-center">
-                  <h3 className="card-title">RERA Number</h3>
+              <div className="card project-details-section-card mt-3 pb-4 mx-4">
+                <div className="card-header3 project-details-section-header">
+                  <h3 className="project-details-section-heading">
+                    <span className="project-details-section-icon" aria-hidden="true">
+                      <FileText size={16} strokeWidth={1.8} />
+                    </span>
+                    RERA Number
+                  </h3>
                 </div>
                 <div className="card-body mt-0 pb-0">
-                  <div className="row align-items-center">
-                    <div className="col-md-3 mt-2">
+                  <div className="row project-details-primary-fields">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Tower </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Tower"
                           name="tower_name"
                           placeholder="Enter Tower Name"
                           value={towerName}
@@ -2665,12 +2667,10 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>RERA Number </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="RERA Number"
                           name="rera_number"
                           placeholder="Enter RERA Number"
                           value={reraNumber}
@@ -2683,12 +2683,10 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>RERA URL </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="RERA URL"
                           name="rera_url"
                           placeholder="Enter RERA URL"
                           value={reraUrl}
@@ -2696,24 +2694,26 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
-                      <button
-                        className="purple-btn2 rounded-3"
-                        style={{ marginTop: "23px" }}
-                        onClick={handleAddRera}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={26}
-                          height={20}
-                          fill="currentColor"
-                          className="bi bi-plus"
-                          viewBox="0 0 16 16"
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <button
+                          type="button"
+                          className="purple-btn2 project-details-add-btn"
+                          onClick={handleAddRera}
                         >
-                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                        </svg>
-                        <span> Add</span>
-                      </button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={16}
+                            height={16}
+                            fill="currentColor"
+                            className="bi bi-plus"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                          </svg>
+                          <span>Add</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   {formData.Rera_Number_multiple.length > 0 && (
@@ -2779,7 +2779,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() => handleDeleteRera(index)}
                                     >
                                       x
@@ -2797,22 +2797,28 @@ const ProjectDetailsCreate = () => {
               </div>
             </>
           )}
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Amenities</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header3 project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Building2 size={16} strokeWidth={1.8} />
+              </span>
+              Amenities
+            </h3>
           </div>
           <div className="card-body mt-0 pb-0">
-            <div className="row">
+            <div className="row project-details-primary-fields">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Amenities</label>
-                  <MultiSelectBox
+                  <FormMultiSelect
+                    label="Amenities"
+                    placeholder="Select..."
                     options={amenities.map((ammit) => ({
                       value: ammit.id,
                       label: ammit.name,
                     }))}
                     value={formData.Amenities.map((id) => {
-                      const ammit = amenities.find((ammit) => ammit.id === id);
+                      const ammit = amenities.find((item) => item.id === id);
                       return ammit
                         ? { value: ammit.id, label: ammit.name }
                         : null;
@@ -2825,19 +2831,24 @@ const ProjectDetailsCreate = () => {
                         ),
                       }))
                     }
-                    placeholder="Select amenities"
+                    projectDetails
                   />
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header">
-            <h3 className="card-title">Address</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <MapPin size={16} strokeWidth={1.8} />
+              </span>
+              Address
+            </h3>
           </div>
           <div className="card-body">
-            <div className="row">
+            <div className="row project-details-primary-fields">
               <div className="col-md-3 mt-2">
                 <div className="form-group">
                   <label>Address Line 1</label>
@@ -2986,17 +2997,27 @@ const ProjectDetailsCreate = () => {
                   />
                 </div>
                 <div className="col-md-3 mt-2">
-                  <input
-                    className="form-control"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
-                  />
+                  <div className="project-details-upload-dropzone project-details-plan-upload">
+                    <label
+                      htmlFor="project-plan-images-upload"
+                      className="project-details-upload-btn"
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </label>
+                    <input
+                      id="project-plan-images-upload"
+                      className="project-details-hidden-file-input"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => setPlanImages(Array.from(e.target.files))}
+                    />
+                  </div>
                 </div>
                 <div className="col-md-3 ">
                   <button
-                    className="purple-btn2"
+                    className="purple-btn2" style={{ color: "#fff" }}
                     type="button"
                     onClick={() => {
                       if (!planName || planImages.length === 0) {
@@ -3065,7 +3086,7 @@ const ProjectDetailsCreate = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() => handlePlanDelete(plan.id, pIdx)}
                               >
                                 x
@@ -3081,9 +3102,14 @@ const ProjectDetailsCreate = () => {
             </div>
           </div>
         )}
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header">
-            <h3 className="card-title">File Upload</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Upload size={16} strokeWidth={1.8} />
+              </span>
+              File Upload
+            </h3>
           </div>
           <div className="card-body">
             <div className="row">
@@ -3167,7 +3193,7 @@ const ProjectDetailsCreate = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() => discardImage(key, file)}
                               >
                                 x
@@ -3279,7 +3305,7 @@ const ProjectDetailsCreate = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() => discardImage(key, file)}
                                 >
                                   x
@@ -3464,7 +3490,7 @@ const ProjectDetailsCreate = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() => discardImage(key, file)}
                                 >
                                   x
@@ -3558,7 +3584,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() => discardImage(key, file)}
                                     >
                                       x
@@ -3632,7 +3658,7 @@ const ProjectDetailsCreate = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleDiscardFile("brochure", index)
                                 }
@@ -3717,7 +3743,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardPpt("project_ppt", index)
                                     }
@@ -3807,7 +3833,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile("project_layout", index)
                                     }
@@ -3898,7 +3924,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_creatives",
@@ -3998,7 +4024,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleDiscardFile(
                                           "project_creative_generics",
@@ -4099,7 +4125,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleDiscardFile(
                                           "project_creative_offers",
@@ -4194,7 +4220,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_interiors",
@@ -4288,7 +4314,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_exteriors",
@@ -4376,7 +4402,7 @@ const ProjectDetailsCreate = () => {
                                     <td>
                                       <button
                                         type="button"
-                                        className="purple-btn2"
+                                        className="purple-btn2" style={{ color: "#fff" }}
                                         onClick={() =>
                                           handleDiscardFile(
                                             "project_emailer_templetes",
@@ -4462,7 +4488,7 @@ const ProjectDetailsCreate = () => {
                                     <td>
                                       <button
                                         type="button"
-                                        className="purple-btn2"
+                                        className="purple-btn2" style={{ color: "#fff" }}
                                         onClick={() =>
                                           handleDiscardFile(
                                             "KnwYrApt_Technical",
@@ -4556,7 +4582,7 @@ const ProjectDetailsCreate = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile("videos", index)
                                     }
@@ -4570,17 +4596,17 @@ const ProjectDetailsCreate = () => {
                         </table>
                       </div>
                       <div className="d-flex justify-content-between align-items-end mx-1">
-                        <div className="col-md-12 mt-2">
-                          <div className="form-group">
-                            <label>Video Preview Image Url</label>
-                            <input
-                              className="form-control"
-                              rows={1}
-                              name="video_preview_image_url"
-                              placeholder="Enter Video Url"
-                              value={formData.video_preview_image_url}
-                              onChange={handleChange}
-                            />
+                        <div className="row project-details-primary-fields mt-3">
+                          <div className="col-md-12">
+                            <div className="form-group">
+                              <FormTextField
+                                label="Video Preview Image Url"
+                                name="video_preview_image_url"
+                                placeholder="Enter Video Url"
+                                value={formData.video_preview_image_url}
+                                onChange={handleChange}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -4658,7 +4684,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() => handleDeleteVideo(index)}
                                     >
                                       x
@@ -4686,18 +4712,21 @@ const ProjectDetailsCreate = () => {
         {baseURL !== "https://dev-panchshil-super-app.lockated.com/" &&
           baseURL !== "https://rustomjee-live.lockated.com/" && (
             <>
-              <div className="card mt-3 pb-4 mx-4">
-                <div className="card-header3 d-flex justify-content-between align-items-center">
-                  <h3 className="card-title">Virtual Tour</h3>
+              <div className="card project-details-section-card mt-3 pb-4 mx-4">
+                <div className="card-header3 project-details-section-header">
+                  <h3 className="project-details-section-heading">
+                    <span className="project-details-section-icon" aria-hidden="true">
+                      <Globe2 size={16} strokeWidth={1.8} />
+                    </span>
+                    Virtual Tour
+                  </h3>
                 </div>
                 <div className="card-body mt-0 pb-0">
-                  <div className="row align-items-center">
-                    <div className="col-md-3 mt-2">
+                  <div className="row project-details-primary-fields project-details-inline-row">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Virtual Tour Name </label>
-                        <input
-                          className="form-control"
-                          type="text"
+                        <FormTextField
+                          label="Virtual Tour Name"
                           name="virtual_tour_name"
                           placeholder="Enter Virtual Tour Name"
                           value={virtualTourName}
@@ -4705,11 +4734,10 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3">
                       <div className="form-group">
-                        <label>Virtual Tour URL </label>
-                        <input
-                          className="form-control"
+                        <FormTextField
+                          label="Virtual Tour URL"
                           type="url"
                           name="virtual_tour_url"
                           placeholder="Enter Virtual Tour URL"
@@ -4718,24 +4746,26 @@ const ProjectDetailsCreate = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-md-3 mt-2">
-                      <button
-                        className="purple-btn2 rounded-3"
-                        style={{ marginTop: "23px" }}
-                        onClick={handleAddVirtualTour}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={26}
-                          height={20}
-                          fill="currentColor"
-                          className="bi bi-plus"
-                          viewBox="0 0 16 16"
+                    <div className="col-md-3">
+                      <div className="form-group">
+                        <button
+                          type="button"
+                          className="purple-btn2 rounded-3"
+                          onClick={handleAddVirtualTour}
                         >
-                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                        </svg>
-                        <span> Add</span>
-                      </button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={16}
+                            height={16}
+                            fill="currentColor"
+                            className="bi bi-plus"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                          </svg>
+                          <span>Add</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   {formData.virtual_tour_url_multiple.length > 0 && (
@@ -4760,7 +4790,7 @@ const ProjectDetailsCreate = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleDeleteVirtualTour(index)
                                       }
@@ -4781,25 +4811,22 @@ const ProjectDetailsCreate = () => {
             </>
           )}
         <div className="card-body mt-0 pb-0"></div>
-        <div className="row mt-2 justify-content-center">
-          <div className="col-md-2">
-            <button
-              onClick={handleSubmit}
-              className="purple-btn2 w-100"
-              disabled={loading}
-            >
-              Submit
-            </button>
-          </div>
-          <div className="col-md-2">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="purple-btn2 w-100"
-            >
-              Cancel
-            </button>
-          </div>
+        <div className="banner-form-actions">
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </>

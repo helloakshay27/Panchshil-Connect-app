@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Briefcase } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const DepartmentCreate = () => {
   const connectEvents = useConnectEvents();
@@ -152,117 +155,101 @@ const DepartmentCreate = () => {
 
   return (
     <div className="main-content">
-      <div className="website-content overflow-auto">
-        <div className="module-data-section container-fluid">
-          <form onSubmit={handleSubmit}>
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Department Create</h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  {/* Company Name */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Department Name <span className="otp-asterisk"> *</span>
-                      </label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter Department Name"
-                      />
-                    </div>
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Briefcase size={16} strokeWidth={1.8} />
+                </span>
+                Department Create
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <FormTextField
+                      label="Department Name"
+                      required
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Enter Department Name"
+                    />
                   </div>
+                </div>
 
-                  {/* Company Logo */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Compnay ID <span className="otp-asterisk"> *</span>
-                      </label>
-                      <SelectBox
-                        name="companyId"
-                        options={
-                          loading
-                            ? [{ value: "", label: "Loading..." }]
-                            : company.length > 0
-                            ? company.map((comp) => ({
-                                value: comp.id,
-                                label: comp.name,
-                              }))
-                            : [{ value: "", label: "No organizations found" }]
-                        }
-                        value={formData.companyId}
-                        onChange={(value) =>
-                          setFormData({ ...formData, companyId: value })
-                        }
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Company ID"
+                      required
+                      placeholder={loading ? "Loading..." : "Select"}
+                      options={
+                        loading
+                          ? [{ value: "", label: "Loading..." }]
+                          : company.length > 0
+                          ? company.map((comp) => ({
+                              value: comp.id,
+                              label: comp.name,
+                            }))
+                          : [{ value: "", label: "No companies found" }]
+                      }
+                      value={formData.companyId}
+                      onChange={(value) =>
+                        setFormData({ ...formData, companyId: value })
+                      }
+                    />
                   </div>
+                </div>
 
-                  {/* Organization ID */}
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>
-                        Organization ID <span className="otp-asterisk"> *</span>
-                      </label>
-                      <SelectBox
-                        name="organizationId"
-                        options={
-                          loading
-                            ? [{ value: "", label: "Loading..." }]
-                            : organizations.length > 0
-                            ? organizations.map((org) => ({
-                                value: org.id,
-                                label: org.name,
-                              }))
-                            : [{ value: "", label: "No organizations found" }]
-                        }
-                        value={formData.organizationId}
-                        onChange={(value) =>
-                          setFormData({ ...formData, organizationId: value })
-                        }
-                      />
-                    </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Organization ID"
+                      required
+                      placeholder={loading ? "Loading..." : "Select"}
+                      options={
+                        loading
+                          ? [{ value: "", label: "Loading..." }]
+                          : organizations.length > 0
+                          ? organizations.map((org) => ({
+                              value: org.id,
+                              label: org.name,
+                            }))
+                          : [{ value: "", label: "No organizations found" }]
+                      }
+                      value={formData.organizationId}
+                      onChange={(value) =>
+                        setFormData({ ...formData, organizationId: value })
+                      }
+                    />
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Submit & Cancel Buttons */}
-            <div className="row mt-2 justify-content-center">
-              <div className="col-md-2">
-                <button
-                  type="submit"
-                  className="purple-btn2 purple-btn2-shadow w-100"
-                  disabled={submitting}
-                >
-                  {submitting ? "Submitting..." : "Submit"}
-                </button>
-              </div>
-              <div className="col-md-2">
-                <button
-                  type="button"
-                  className="purple-btn2 purple-btn2-shadow w-100"
-                  onClick={() => {
-                    setFormData({
-                      companyName: "",
-                      companyLogo: null,
-                      organizationId: "",
-                    });
-                    navigate(-1);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={submitting}
+            >
+              {submitting ? "Submitting..." : "Submit"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={() => navigate(-1)}
+              disabled={submitting}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Lock } from "lucide-react";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
 import { baseURL } from "./baseurl/apiDomain";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const LockFunctionEdit = () => {
   const connectEvents = useConnectEvents();
@@ -14,7 +17,7 @@ const LockFunctionEdit = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [parentFunctions, setParentFunctions] = useState([]);
-  const [showActionName, setShowActionName] = useState(true);
+  const [showActionName, setShowActionName] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -364,103 +367,112 @@ const LockFunctionEdit = () => {
                           // Add more if needed
   ];
 
+  const parentFunctionOptions = [
+    { label: "All Functions", value: "All Functions" },
+    ...parentFunctions.map((func) => ({
+      label: func.name,
+      value: func.id,
+    })),
+  ];
+
+  if (
+    formData.parent_function &&
+    !parentFunctionOptions.some(
+      (option) => String(option.value) === String(formData.parent_function)
+    )
+  ) {
+    parentFunctionOptions.push({
+      label: formData.parent_function,
+      value: formData.parent_function,
+    });
+  }
+
   return (
-    <>
-      <div className="main-content">
-        <div className="website-content overflow-hidden">
-          <div className="module-data-section">
-            <div className="card mt-4 pb-4 mx-4">
-              <div className="card-header">
-                <h3 className="card-title">Edit Lock Function</h3>
-              </div>
-              <div className="card-body">
-                <div className="row">
-                  {/* Name Input - Changed to SelectBox */}
-                  <div className="col-md-4">
-                    <div className="form-group">
-                      <label>
-                        Name
-                        <span className="otp-asterisk"> *</span>
-                      </label>
-                      <SelectBox
-                        options={nameOptions}
-                        defaultValue={formData.name}
-                        onChange={(value) => handleNameChange(value)}
-                      />
-                      {errors.name && (
-                        <span className="error text-danger">{errors.name}</span>
-                      )}
-                    </div>
+    <div className="main-content">
+      <div className="module-data-section banner-form-page p-3">
+        <form onSubmit={handleSubmit}>
+          <div className="card banner-form-card mt-3 pb-4">
+            <div className="card-header banner-form-section-header">
+              <h3 className="banner-form-section-heading">
+                <span className="banner-form-section-icon" aria-hidden="true">
+                  <Lock size={16} strokeWidth={1.8} />
+                </span>
+                Edit Lock Function
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row banner-form-fields">
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Name"
+                      required
+                      placeholder="Select Name"
+                      options={nameOptions}
+                      value={formData.name}
+                      onChange={(value) => handleNameChange(value)}
+                    />
+                    {errors.name && (
+                      <span className="error text-danger">{errors.name}</span>
+                    )}
                   </div>
+                </div>
 
-                  {/* Action Name Input - Now conditionally shown */}
-                  {showActionName && (
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label>
-                          Action Name
-                          <span className="otp-asterisk"> *</span>
-                        </label>
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="action_name"
-                          value={formData.action_name}
-                          onChange={handleChange}
-                          placeholder="Enter action name"
-                          readOnly // Make it readonly since it fills automatically
-                        />
-                        {errors.action_name && (
-                          <span className="error text-danger">
-                            {errors.action_name}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Parent Function Selection */}
-                  <div className="col-md-4">
+                {showActionName && (
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>
-                        Parent Function
-                        <span className="otp-asterisk"> *</span>
-                      </label>
-                      <SelectBox
-                        options={[
-                          { label: "All Functions", value: "All Functions" },
-                        ]}
-                        defaultValue={formData.parent_function}
-                        onChange={(value) =>
-                          setFormData({ ...formData, parent_function: value })
-                        }
+                      <FormTextField
+                        label="Action Name"
+                        required
+                        name="action_name"
+                        value={formData.action_name}
+                        onChange={handleChange}
+                        placeholder="Enter action name"
+                        readOnly
                       />
-                      {errors.parent_function && (
+                      {errors.action_name && (
                         <span className="error text-danger">
-                          {errors.parent_function}
+                          {errors.action_name}
                         </span>
                       )}
                     </div>
                   </div>
+                )}
+
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <SelectBox
+                      label="Parent Function"
+                      required
+                      placeholder="Select Parent Function"
+                      options={parentFunctionOptions}
+                      value={formData.parent_function}
+                      onChange={(value) =>
+                        setFormData({ ...formData, parent_function: value })
+                      }
+                    />
+                    {errors.parent_function && (
+                      <span className="error text-danger">
+                        {errors.parent_function}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="row mt-3">
-                  {/* Active Status */}
-                  <div className="col-md-4">
-                    <div className="form-group">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          name="active"
-                          id="isActive"
-                          checked={formData.active === 1}
-                          onChange={handleChange}
-                        />
-                        <label className="form-check-label" htmlFor="isActive">
-                          Active
-                        </label>
-                      </div>
+                <div className="col-md-3">
+                  <div className="form-group">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="active"
+                        id="isActive"
+                        checked={formData.active === 1}
+                        onChange={handleChange}
+                      />
+                      <label className="form-check-label" htmlFor="isActive">
+                        Active
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -468,30 +480,25 @@ const LockFunctionEdit = () => {
             </div>
           </div>
 
-          {/* Submit and Cancel Buttons */}
-          <div className="row mt-4 justify-content-center">
-            <div className="col-md-2">
-              <button
-                onClick={handleSubmit}
-                className="purple-btn2 w-100"
-                disabled={submitLoading}
-              >
-                {submitLoading ? "Updating..." : "Update"}
-              </button>
-            </div>
-            <div className="col-md-2">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-            </div>
+          <div className="banner-form-actions">
+            <button
+              type="submit"
+              className="banner-form-action-btn"
+              disabled={submitLoading}
+            >
+              {submitLoading ? "Updating..." : "Update"}
+            </button>
+            <button
+              type="button"
+              className="banner-form-action-btn"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
           </div>
-        </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 };
 

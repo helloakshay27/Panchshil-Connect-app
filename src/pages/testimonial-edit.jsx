@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { FileText, MessageSquare, Upload } from "lucide-react";
+import FormTextField from "../components/base/FormTextField";
 import SelectBox from "../components/base/SelectBox";
 import { baseURL } from "./baseurl/apiDomain";
-import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
-import { ImageCropper } from "../components/reusable/ImageCropper";
 import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import { useConnectEvents } from "../hooks/useConnectEvents";
+import "./banner-add.css";
 
 const TestimonialEdit = () => {
   const connectEvents = useConnectEvents();
@@ -47,6 +48,7 @@ const TestimonialEdit = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const videoInputRef = useRef(null);
 
   useEffect(() => {
     const fetchTestimonialData = async () => {
@@ -162,6 +164,14 @@ const TestimonialEdit = () => {
       }));
       setExistingVideoUrl(null);
     }
+  };
+
+  const discardVideo = () => {
+    if (previewVideo) URL.revokeObjectURL(previewVideo);
+    setPreviewVideo(null);
+    setExistingVideoUrl(null);
+    setFormData((prev) => ({ ...prev, testimonial_video: null }));
+    if (videoInputRef.current) videoInputRef.current.value = "";
   };
 
   const handleImageUpload = (newImageList) => {
@@ -574,275 +584,296 @@ const TestimonialEdit = () => {
 };
   
   return (
-    <div className="">
-      <div className="">
-        <div className="module-data-section p-3">
-          {/* <form onSubmit={handleSubmit}> */}
-          <div className="card mt-4 pb-4 mx-4">
-            <div className="card-header">
-              <h3 className="card-title">Testimonial Edit</h3>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>User Name</label>
-                    <input
-                      className="form-control"
-                      name="user_name"
-                      value={formData.user_name}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>Customer Code</label>
-                    <input
-                      className="form-control"
-                      name="customer_code"
-                      placeholder="Enter customer code"
-                      value={formData.customer_code}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>Building Type</label>
-                    <SelectBox
-                      options={buildingTypeOptions.map((option) => ({
-                        label: option.building_type,
-                        value: option.id,
-                      }))}
-                      defaultValue={formData.building_id}
-                      onChange={(value) =>
-                        setFormData((prev) => ({ ...prev, building_id: value }))
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>Description</label>
-                    <input
-                      className="form-control"
-                      name="content"
-                      value={formData.content}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>Video URL</label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="video_url"
-                      placeholder="Enter video URL"
-                      value={formData.video_url}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <div className="form-group">
-                    <label>
-                      Testimonial Video{" "}
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowVideoTooltip(true)}
-                        onMouseLeave={() => setShowVideoTooltip(false)}
-                      >
-                        [i]
-                        {showVideoTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 10 MB
-                          </span>
-                        )}
-                      </span>
-                      <span className="otp-asterisk"> *</span>
-                    </label>
-
-                    <input
-                      className="form-control"
-                      type="file"
-                      name="testimonial_video"
-                      accept="video/*"
-                      onChange={handleBannerVideoChange}
-                    />
-
-                    {errors.testimonial_video && (
-                      <span className="error text-danger">
-                        {errors.testimonial_video}
-                      </span>
-                    )}
-
-                    {previewVideo && (
-                      <div className="mt-2">
-                        <video
-                          src={previewVideo}
-                          controls
-                          className="img-fluid rounded"
-                          style={{
-                            maxWidth: "200px",
-                            maxHeight: "150px",
-                            objectFit: "cover",
-                          }}
-                        />
-                      </div>
-                    )}
-
-                    {!previewVideo && existingVideoUrl && (
-                      <div className="mt-2">
-                        <video
-                          src={existingVideoUrl}
-                          controls
-                          className="img-fluid rounded"
-                          style={{
-                            maxWidth: "200px",
-                            maxHeight: "150px",
-                            objectFit: "cover",
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="col-md-3 col-sm-6 col-12">
-                  <div className="form-group">
-                    <label className="d-flex align-items-center gap-1 mb-2">
-                      <span>Preview Image</span>
-
-                      <span
-                        className="tooltip-container"
-                        onMouseEnter={() => setShowVideoTooltip(true)}
-                        onMouseLeave={() => setShowVideoTooltip(false)}
-                      >
-                        [i]
-                        {showVideoTooltip && (
-                          <span className="tooltip-text">
-                            Max Upload Size 3 MB and Required ratio is 16:9
-                          </span>
-                        )}
-                      </span>
-
-                      <span className="otp-asterisk text-danger">*</span>
-                    </label>
-
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setShowUploader(true)}
-                      className="custom-upload-button input-upload-button"
-                    >
-                      <span className="upload-button-label">Choose file</span>
-                      <span className="upload-button-value">No file chosen</span>
-                    </span>
-
-                    {showUploader && (
-                      <ProjectBannerUpload
-                        onClose={() => setShowUploader(false)}
-                        includeInvalidRatios={false}
-                        selectedRatioProp={selectedRatios}
-                        showAsModal={true}
-                        label={dynamicLabel}
-                        description={dynamicDescription}
-                        onContinue={handleCropComplete}
-                      />
-                    )}
-                  </div>
+    <div className="main-content">
+      <div className="module-data-section banner-form-page p-3">
+        <div className="card banner-form-card mt-3 pb-4">
+          <div className="card-header banner-form-section-header">
+            <h3 className="banner-form-section-heading">
+              <span className="banner-form-section-icon" aria-hidden="true">
+                <MessageSquare size={16} strokeWidth={1.8} />
+              </span>
+              Testimonial Edit
+            </h3>
+          </div>
+          <div className="card-body">
+            <div className="row banner-form-fields">
+              <div className="col-md-3">
+                <div className="form-group">
+                  <FormTextField
+                    label="User Name"
+                    name="user_name"
+                    placeholder="Enter user name"
+                    value={formData.user_name}
+                    onChange={handleChange}
+                  />
                 </div>
               </div>
 
-              <div className="col-md-12 mt-4">
-                <div className="tbl-container">
-                  <table className="w-100">
-                    <thead>
+              <div className="col-md-3">
+                <div className="form-group">
+                  <FormTextField
+                    label="Customer Code"
+                    name="customer_code"
+                    placeholder="Enter customer code"
+                    value={formData.customer_code}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <SelectBox
+                    label="Building Type"
+                    placeholder="Select Building Type"
+                    options={buildingTypeOptions.map((option) => ({
+                      label: option.building_type,
+                      value: option.id,
+                    }))}
+                    value={formData.building_id}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, building_id: value }))
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <FormTextField
+                    label="Description"
+                    name="content"
+                    placeholder="Enter Description"
+                    value={formData.content}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <FormTextField
+                    label="Video URL"
+                    name="video_url"
+                    placeholder="Enter video URL"
+                    value={formData.video_url}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card banner-form-card banner-attachment-card mt-3 pb-4">
+          <div className="card-header banner-form-section-header">
+            <h3 className="banner-form-section-heading">
+              <span className="banner-form-section-icon" aria-hidden="true">
+                <FileText size={16} strokeWidth={1.8} />
+              </span>
+              Add Attachments
+            </h3>
+          </div>
+          <div className="card-body">
+            <input
+              ref={videoInputRef}
+              type="file"
+              name="testimonial_video"
+              accept="video/*"
+              onChange={handleBannerVideoChange}
+              className="banner-upload-native-input"
+            />
+            <div className="banner-upload-dropzone">
+              <div className="banner-upload-item">
+                <button
+                  type="button"
+                  className="banner-upload-files-btn"
+                  onClick={() => videoInputRef.current?.click()}
+                >
+                  <Upload size={16} strokeWidth={1.8} />
+                  Upload Files
+                </button>
+                <span className="banner-upload-item-label">
+                  Testimonial Video
+                  <span
+                    className="banner-upload-hint tooltip-container"
+                    onMouseEnter={() => setShowVideoTooltip(true)}
+                    onMouseLeave={() => setShowVideoTooltip(false)}
+                  >
+                    [i]
+                    {showVideoTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 10 MB
+                      </span>
+                    )}
+                  </span>
+                  <span className="form-control-field__required">*</span>
+                </span>
+              </div>
+              <div className="banner-upload-item">
+                <button
+                  type="button"
+                  className="banner-upload-files-btn"
+                  onClick={() => setShowUploader(true)}
+                >
+                  <Upload size={16} strokeWidth={1.8} />
+                  Upload Files
+                </button>
+                <span className="banner-upload-item-label">
+                  Preview Image
+                  <span
+                    className="banner-upload-hint tooltip-container"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    [i]
+                    {showTooltip && (
+                      <span className="tooltip-text">
+                        Max Upload Size 3 MB and Required ratio is 16:9
+                      </span>
+                    )}
+                  </span>
+                  <span className="form-control-field__required">*</span>
+                </span>
+              </div>
+            </div>
+            {errors.testimonial_video && (
+              <span className="error text-danger">
+                {errors.testimonial_video}
+              </span>
+            )}
+
+            {showUploader && (
+              <ProjectBannerUpload
+                onClose={() => setShowUploader(false)}
+                includeInvalidRatios={false}
+                selectedRatioProp={selectedRatios}
+                showAsModal={true}
+                label={dynamicLabel}
+                description={dynamicDescription}
+                onContinue={handleCropComplete}
+              />
+            )}
+
+            <div className="col-md-12 mt-4">
+              <div className="tbl-container">
+                <table className="w-100">
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                      <th>Preview</th>
+                      <th>Ratio</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(formData.testimonial_video || existingVideoUrl) && (
                       <tr>
-                        <th>File Name</th>
-                        <th>Preview</th>
-                        <th>Ratio</th>
-                        <th>Action</th>
+                        <td>
+                          {formData.testimonial_video?.name || "Existing video"}
+                        </td>
+                        <td>
+                          {previewVideo || existingVideoUrl ? (
+                            <video
+                              src={previewVideo || existingVideoUrl}
+                              controls
+                              className="img-fluid rounded"
+                              style={{
+                                maxWidth: 100,
+                                maxHeight: 100,
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td>Video</td>
+                        <td>
+                          <button
+                            type="button"
+                            className="purple-btn2"
+                            onClick={discardVideo}
+                          >
+                            x
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {TestimonialImageRatios.flatMap(({ key, label }) => {
-                        const files = Array.isArray(formData[key])
-                          ? formData[key]
-                          : formData[key]
-                            ? [formData[key]]
-                            : [];
+                    )}
+                    {TestimonialImageRatios.flatMap(({ key, label }) => {
+                      const files = Array.isArray(formData[key])
+                        ? formData[key]
+                        : formData[key]
+                          ? [formData[key]]
+                          : [];
 
-                        return files.map((file, index) => {
-                          const preview = file.preview || file.document_url || '';
-                          const name = file.name || file.document_file_name || `Image ${index + 1}`;
-                          const ratio = file.ratio || label;
+                      return files.map((file, index) => {
+                        const preview =
+                          file.preview || file.document_url || "";
+                        const name =
+                          file.name ||
+                          file.document_file_name ||
+                          `Image ${index + 1}`;
+                        const ratio = file.ratio || label;
 
-                          return (
-                            <tr key={`${key}-${index}`}>
-                              <td>{name}</td>
-                              <td>
-                                <img
-                                  style={{ maxWidth: 100, maxHeight: 100, objectFit: "cover" }}
-                                  className="img-fluid rounded"
-                                  src={preview}
-                                  alt={name}
-                                />
-                              </td>
-                              <td>{ratio}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="purple-btn2"
-                                  onClick={() => handleFetchedDiscardGallery(key, index, file.id)}
-                                >
-                                  x
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        });
-                      })}
-                    </tbody>
-
-                  </table>
-                </div>
+                        return (
+                          <tr key={`${key}-${index}`}>
+                            <td>{name}</td>
+                            <td>
+                              <img
+                                style={{
+                                  maxWidth: 100,
+                                  maxHeight: 100,
+                                  objectFit: "cover",
+                                }}
+                                className="img-fluid rounded"
+                                src={preview}
+                                alt={name}
+                              />
+                            </td>
+                            <td>{ratio}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="purple-btn2"
+                                onClick={() =>
+                                  handleFetchedDiscardGallery(
+                                    key,
+                                    index,
+                                    file.id
+                                  )
+                                }
+                              >
+                                x
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      });
+                    })}
+                  </tbody>
+                </table>
               </div>
-
-
             </div>
           </div>
+        </div>
 
-          <div className="row mt-2 justify-content-center">
-            <div className="col-md-2 mt-3">
-              <button
-                type="submit"
-                className="purple-btn2 w-100"
-                disabled={loading}
-                onClick={handleSubmit}
-              >
-                Submit
-              </button>
-            </div>
-            <div className="col-md-2 mt-3">
-              <button
-                type="button"
-                className="purple-btn2 w-100"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-          {/* </form> */}
+        <div className="banner-form-actions">
+          <button
+            type="submit"
+            className="banner-form-action-btn"
+            disabled={loading}
+            onClick={handleSubmit}
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>

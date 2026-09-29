@@ -5,10 +5,15 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../mor.css";
+import "./project-details-create.css";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Building2, FileText, Globe2, MapPin, Upload } from "lucide-react";
 import MultiSelectBox from "../components/base/MultiSelectBox";
 import SelectBox from "../components/base/SelectBox";
+import FormTextField from "../components/base/FormTextField";
+import FormSelect from "../components/base/FormSelect";
+import FormMultiSelect from "../components/base/FormMultiSelect";
 import { baseURL } from "./baseurl/apiDomain";
 import PropertySelect from "../components/base/PropertySelect";
 import { ImageUploadingButton } from "../components/reusable/ImageUploadingButton";
@@ -3539,193 +3544,36 @@ const ProjectDetailsEdit = () => {
     <>
       {/* <Header /> */}
 
-      <div className="module-data-section p-3">
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header">
-            <h3 className="card-title">Edit Project</h3>
+        <div className="module-data-section project-details-page p-3">
+        <div className="card project-details-create-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Building2 size={16} strokeWidth={1.8} />
+              </span>
+              Edit Project
+            </h3>
           </div>
           <div className="card-body">
-            <div className="row">
-              {/* <div className="col-md-3">
-                <div className="form-group">
-                  <label>
-                    Project Banner Image
-                    <span
-                      className="tooltip-container"
-                      onMouseEnter={() => setShowTooltip(true)}
-                      onMouseLeave={() => setShowTooltip(false)}
-                    >
-                      [i]
-                      {showTooltip && (
-                        <span className="tooltip-text">
-                          Max Upload Size 3 MB
-                        </span>
-                      )}
-                    </span>
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-
-                  <ImageUploadingButton
-                    value={mainImageUpload}
-                    onChange={(list) => handleImageUploaded(list, "image")}
-                    variant="custom"
-                  />
-                  <small className="form-text text-muted">
-                    Required ratio must be 9:16
-                  </small>
-                  <ImageCropper
-                    open={dialogOpen.image}
-                    image={pendingImageUpload?.[0]?.dataURL}
-                    originalFile={pendingImageUpload?.[0]?.file}
-                    onComplete={(cropped) => {
-                      if (cropped) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          image: [cropped.file],
-                          bannerPreviewImage: URL.createObjectURL(cropped.file),
-                        }));
-
-                        setMainImageUpload([
-                          {
-                            file: cropped.file,
-                            dataURL: URL.createObjectURL(cropped.file),
-                          },
-                        ]);
-                      }
-                      setDialogOpen((prev) => ({ ...prev, image: false }));
-                      setPendingImageUpload([]);
-                    }}
-                    requiredRatios={[9 / 16, 1, 16 / 9]}
-                    requiredRatioLabel="9:16"
-                    allowedRatios={[
-                      { label: "16:9", ratio: 16 / 9 },
-                      { label: "9:16", ratio: 9 / 16 },
-                      { label: "1:1", ratio: 1 },
-                    ]}
-                  />
-                </div>
-
-                {formData.bannerPreviewImage ? (
-                  <img
-                    src={formData.bannerPreviewImage}
-                    alt="Banner Preview"
-                    className="img-fluid rounded mt-2"
-                    style={{
-                      maxWidth: "100px",
-                      maxHeight: "100px",
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : Array.isArray(formData.image) &&
-                  formData.image.length > 0 ? (
-                  formData.image.map((img, index) => {
-                    let src = "";
-                    if (img.document_url) {
-                      src = img.document_url;
-                    }
-                    return (
-                      <img
-                        key={index}
-                        src={src}
-                        alt={`Uploaded ${index}`}
-                        className="img-fluid rounded mt-2"
-                        style={{
-                          maxWidth: "100px",
-                          maxHeight: "100px",
-                          objectFit: "cover",
-                          marginBottom: "15px",
-                          marginRight: "10px",
-                        }}
-                      />
-                    );
-                  })
-                ) : (
-                  <span>No image selected</span>
-                )}
-
-
-              </div> */}
-              {/* <div className="col-md-3">
-  <div className="form-group">
-    <label>
-      Property Type
-      <span className="otp-asterisk"> *</span>
-    </label>
-    <PropertySelect
-
-      options={propertyTypeOptions.map((type) => ({
-
-        value: type.property_type,
-
-        label: type.property_type,
-      }))} 
-      defaultValue={
-        propertyTypeOptions.find(
-          (type) => type.property_type === formData.Property_Type
-        ) || null // ✅ Ensure defaultValue is set correctly
-      }
-      
-      // value={
-      //   propertyTypeOptions.find(
-      //     (type) => type.property_type === formData.Property_Type
-      //   ) || null
-      // }
-      onChange={(selectedOption) => {
-        setFormData((prev) => ({
-          ...prev,
-          Property_Type: selectedOption?.value || "", // ✅ Ensure value is set correctly
-          building_type: null, // Reset building type when property type changes
-        }));
-      }}
-      isDisabled={false} // ✅ Enable the select box
-      isClearable={true} // ✅ Allow clearing the selection
-      isSearchable={true} // ✅ Enable search functionality
-      placeholder="Select Property Type"
-      
-      // onChange={(selectedOption) =>
-      //   setFormData((prev) => ({
-      //     ...prev,
-      //     Property_Type: selectedOption?.value || "",
-      //   }))
-      // }
-    />
-  </div>
-</div> */}
+            <div className="row project-details-primary-fields project-details-main-fields">
               <div className="col-md-3">
                 <div className="form-group">
-                  <label>
-                    Property Type
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  {propertyTypeOptions.length > 0 ? (
-                    <PropertySelect
-                      options={propertyTypeOptions}
-                      defaultValue={formData.Property_Type}
-                      value={
-                        propertyTypeOptions.find(
-                          (type) => type.value === formData.Property_Type,
-                        ) || null // Ensure defaultValue is set correctly
-                      }
-                      // defaultValue={propertyTypeOptions.find(
-                      //   (type) => type.value === formData.Property_Type
-                      // )}
-                      onChange={(value) => handlePropertyTypeChange(value)}
-                      isClearable
-                      isSearchable
-                      placeholder="Select Property Type"
-                    />
-                  ) : (
-                    <p>No property types available</p>
-                  )}
+                  <FormSelect
+                    label="Property Types"
+                    required
+                    options={propertyTypeOptions}
+                    value={formData.Property_Type}
+                    onChange={(value) => handlePropertyTypeChange(value)}
+                  />
                 </div>
               </div>
 
               <div className="col-md-3 mt-1">
                 <div className="form-group">
-                  <label>Project Building Type</label>
-                  <SelectBox
-                    options={buildingTypes || []}
-                    defaultValue={formData.building_type}
+                  <FormSelect
+                    label="Project Building Type"
+                    options={buildingTypes}
+                    value={formData.building_type}
                     onChange={(selectedValue) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -3736,20 +3584,14 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
+
               <div className="col-md-3 mt-0">
                 <div className="form-group">
-                  <label>
-                    Project Construction Status
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <SelectBox
-                    options={statusOptions || []}
-                    defaultValue={formData.Project_Construction_Status}
-                    // options={ statusOptions.map((status) => ({
-                    //   value: status.value,
-                    //   label: status.label,
-                    // }))}
-                    // defaultValue={parseInt(formData.Project_Construction_Status)}
+                  <FormSelect
+                    label="Project Construction Status"
+                    required
+                    options={statusOptions}
+                    value={formData.Project_Construction_Status}
                     onChange={(selectedValue) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -3790,14 +3632,8 @@ const ProjectDetailsEdit = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Configuration Type
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <MultiSelectBox
+                  <FormMultiSelect
+                    label="Configuration Type"
                     options={filteredConfigurations.map((config) => ({
                       value: config.id,
                       label: config.name,
@@ -3809,37 +3645,27 @@ const ProjectDetailsEdit = () => {
                     onChange={handleConfigurationChange}
                     placeholder="Select Configuration"
                   />
-                  {/* {console.log("amenities", amenities)} */}
-                  {/* {console.log("project_amenities", formData.project_amenities)} */}
                 </div>
               </div>
 
               <div className="col-md-3 mt-1">
                 <div className="form-group">
-                  <label>
-                    Project Name
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
+                  <FormTextField
+                    label="Project Name"
+                    required
                     name="Project_Name"
+                    placeholder="Enter Project Name"
                     value={formData.Project_Name}
                     onChange={handleChange}
                   />
                 </div>
               </div>
 
-              {/* {baseURL === "https://dev-panchshil-super-app.lockated.com/" && ( */}
               <div className="col-md-3 mt-1">
                 <div className="form-group">
-                  <label>
-                    SFDC Project ID
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
+                  <FormTextField
+                    label="SFDC Project ID"
+                    required
                     name="SFDC_Project_Id"
                     placeholder="Enter SFDC Project ID"
                     maxLength={18}
@@ -3848,19 +3674,14 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
               </div>
-              {/* )} */}
 
               <div className="col-md-3 mt-1">
                 <div className="form-group">
-                  <label>
-                    Location
-                    <span className="otp-asterisk"> *</span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Default input"
+                  <FormTextField
+                    label="Location"
+                    required
                     name="project_address"
+                    placeholder="Enter Location"
                     value={formData.project_address}
                     onChange={handleChange}
                   />
@@ -3868,52 +3689,28 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Tag</label>
-                  <SelectBox
+                  <FormSelect
+                    label="Project Tag"
                     options={[
-                      //{ value: "", label: "Select status", isDisabled: true },
                       { value: "Featured", label: "Featured" },
                       { value: "Upcoming", label: "Upcoming" },
                     ]}
-                    defaultValue={formData.project_tag}
+                    value={formData.project_tag}
                     onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
                         project_tag: value,
                       }))
                     }
-                    // isDisableFirstOption={true}
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 mt-2">
-                <div className="form-group">
-                  <label>Project Description</label>
-                  <textarea
-                    className="form-control"
-                    rows={1}
-                    placeholder="Enter ..."
-                    name="Project_Description"
-                    value={formData.Project_Description}
-                    onChange={handleChange}
                   />
                 </div>
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Price Onward
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-
-                  <input
-                    className="form-control"
-                    type="text-number"
-                    placeholder="Default input"
+                  <FormTextField
+                    label="Price Onward"
                     name="Price_Onward"
+                    placeholder="Enter Price Onward"
                     value={formData.Price_Onward}
                     onChange={handleChange}
                   />
@@ -3921,18 +3718,11 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Project Size (Sq. Mtr.) (For Residential)
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Project Size (Sq. Mtr.) (For Residential)"
                     type="number"
-                    placeholder="Default input"
                     name="Project_Size_Sq_Mtr"
+                    placeholder="Enter Size in Sq. Mtr."
                     value={formData.Project_Size_Sq_Mtr}
                     onChange={handleChange}
                   />
@@ -3940,18 +3730,11 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Project Size (Sq. Ft.) (For Residential)
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Project Size (Sq. Ft.) (For Residential)"
                     type="number"
-                    placeholder="Default input"
                     name="Project_Size_Sq_Ft"
+                    placeholder="Enter Size in Sq. Ft."
                     value={formData.Project_Size_Sq_Ft}
                     onChange={handleChange}
                   />
@@ -3959,15 +3742,8 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Development Area (Sq. Mtr.) (For Office Park)
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Development Area (Sq. Mtr.) (For Office Park)"
                     type="number"
                     name="development_area_sqmt"
                     placeholder="Enter Area Sq. Mt."
@@ -3979,15 +3755,8 @@ const ProjectDetailsEdit = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Development Area (Sq. Ft.) (For Office Park)
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Development Area (Sq. Ft.) (For Office Park)"
                     type="number"
                     name="development_area_sqft"
                     placeholder="Enter Area in Sq. Ft."
@@ -3998,18 +3767,11 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Rera Carpet Area (Sq. M)
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="RERA Carpet Area (Sq. M)"
                     type="number"
-                    placeholder="Default input"
                     name="Rera_Carpet_Area_Sq_M"
+                    placeholder="Enter RERA Carpet Area (Sq. M)"
                     value={formData.Rera_Carpet_Area_Sq_M}
                     onChange={handleChange}
                   />
@@ -4017,56 +3779,23 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Rare Carpet Area (Sq. Ft.)
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="RERA Carpet Area (Sq. Ft.)"
                     type="number"
-                    placeholder="Default input"
                     name="Rera_Carpet_Area_sqft"
+                    placeholder="Enter RERA Carpet Area (Sq. Ft.)"
                     value={formData.Rera_Carpet_Area_sqft}
                     onChange={handleChange}
                   />
                 </div>
               </div>
-              {/* <div className="col-md-3 mt-2">
-                <div className="form-group">
-                  <label>
-                    Rare Sellable Area
-                    <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text-number"
-                    placeholder="Default input"
-                    name="Rera_Sellable_Area"
-                    value={formData.Rera_Sellable_Area}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div> */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Number of Towers
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Number of Towers"
                     type="number"
-                    placeholder="Default input"
                     name="Number_Of_Towers"
+                    placeholder="Enter Number of Towers"
                     value={formData.Number_Of_Towers}
                     onChange={handleChange}
                   />
@@ -4074,15 +3803,8 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Number of Floors
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Number of Floors"
                     type="number"
                     name="no_of_floors"
                     placeholder="Enter Number of Floors"
@@ -4093,18 +3815,11 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Number of Units
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Number of Units"
                     type="number"
-                    placeholder="Default input"
                     name="Number_Of_Units"
+                    placeholder="Enter Number of Units"
                     value={formData.Number_Of_Units}
                     onChange={handleChange}
                   />
@@ -4214,18 +3929,11 @@ const ProjectDetailsEdit = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Land Area (Acres)
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
+                  <FormTextField
+                    label="Land Area"
                     type="number"
-                    placeholder="Default input"
                     name="Land_Area"
+                    placeholder="Enter Land Area"
                     value={formData.Land_Area}
                     onChange={handleChange}
                   />
@@ -4234,62 +3942,41 @@ const ProjectDetailsEdit = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Land UOM
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <SelectBox
+                  <FormSelect
+                    label="Land UOM"
                     options={[
                       { value: "Square Meter", label: "Square Meter" },
-                      {
-                        value: "Square Feet",
-                        label: "Square Feet",
-                      },
-                      {
-                        value: "Acre",
-                        label: "Acre",
-                      },
+                      { value: "Square Feet", label: "Square Feet" },
+                      { value: "Acre", label: "Acre" },
                       { value: "Hectare", label: "Hectare" },
                       { value: "Yard", label: "Yard" },
-                      {
-                        value: "Guntha",
-                        label: "Guntha",
-                      },
+                      { value: "Guntha", label: "Guntha" },
                       { value: "Bigha", label: "Bigha" },
                       { value: "Kanal", label: "Kanal" },
                       { value: "Marla", label: "Marla" },
                       { value: "Cent", label: "Cent" },
                       { value: "Ropani", label: "Ropani" },
                     ]}
-                    defaultValue={formData.land_uom}
-                    onChange={(selectedOption) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        land_uom: selectedOption,
-                      }))
+                    value={formData.land_uom}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, land_uom: value }))
                     }
                   />
                 </div>
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>Project Sales Type</label>
-                  <SelectBox
+                  <FormSelect
+                    label="Project Sales Type"
                     options={[
                       { value: "Sales", label: "Sales" },
-                      {
-                        value: "Lease",
-                        label: "Lease",
-                      },
+                      { value: "Lease", label: "Lease" },
                     ]}
-                    defaultValue={formData.project_sales_type}
-                    onChange={(selectedOption) =>
+                    value={formData.project_sales_type}
+                    onChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
-                        project_sales_type: selectedOption,
+                        project_sales_type: value,
                       }))
                     }
                   />
@@ -4298,34 +3985,40 @@ const ProjectDetailsEdit = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Order Number
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-
-                  <input
-                    className="form-control"
-                    type="text-number"
-                    placeholder="Default input"
+                  <FormTextField
+                    label="Order Number"
+                    type="number"
                     name="order_no"
+                    placeholder="Enter Order Number"
                     value={formData.order_no}
                     onChange={handleChange}
                   />
                 </div>
               </div>
 
-              <div className="col-md-3 mt-2">
+              <div className="col-md-12 mt-2">
                 <div className="form-group">
-                  <label>Disclaimer</label>
-                  <textarea
-                    className="form-control"
-                    rows={1}
-                    placeholder="Enter disclaimer..."
+                  <FormTextField
+                    label="Disclaimer"
+                    multiline
+                    rows={2}
                     name="disclaimer"
+                    placeholder="Enter disclaimer"
                     value={formData.disclaimer}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-12 mt-2">
+                <div className="form-group">
+                  <FormTextField
+                    label="Project Description"
+                    multiline
+                    rows={2}
+                    name="Project_Description"
+                    placeholder="Enter Project Description"
+                    value={formData.Project_Description}
                     onChange={handleChange}
                   />
                 </div>
@@ -4349,14 +4042,24 @@ const ProjectDetailsEdit = () => {
                     </span>
                     <span className="otp-asterisk"> *</span>
                   </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    name="project_qrcode_image"
-                    accept="image/*"
-                    multiple
-                    onChange={handleQRCodeImageChange}
-                  />
+                  <div className="project-details-upload-dropzone">
+                    <label
+                      htmlFor="project-qrcode-image-upload-edit"
+                      className="project-details-upload-btn"
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </label>
+                    <input
+                      id="project-qrcode-image-upload-edit"
+                      className="project-details-hidden-file-input"
+                      type="file"
+                      name="project_qrcode_image"
+                      accept="image/*"
+                      multiple
+                      onChange={handleQRCodeImageChange}
+                    />
+                  </div>
                 </div>
 
                 {/* Display uploaded or existing QR code images */}
@@ -4394,7 +4097,7 @@ const ProjectDetailsEdit = () => {
                         />
                         <button
                           type="button"
-                          className="purple-btn2"
+                          className="purple-btn2" style={{ color: "#fff" }}
                           onClick={() =>
                             handleRemoveQRCodeImage(
                               "project_qrcode_image",
@@ -4541,19 +4244,22 @@ const ProjectDetailsEdit = () => {
         </div>
         {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
           <>
-            <div className="card mt-3 pb-4 mx-4">
-              <div className="card-header3 d-flex justify-content-between align-items-center">
-                <h3 className="card-title">RERA Number</h3>
+            <div className="card project-details-section-card mt-3 pb-4 mx-4">
+              <div className="card-header3 project-details-section-header">
+                <h3 className="project-details-section-heading">
+                  <span className="project-details-section-icon" aria-hidden="true">
+                    <FileText size={16} strokeWidth={1.8} />
+                  </span>
+                  RERA Number
+                </h3>
               </div>
               <div className="card-body mt-0 pb-0">
                 {/* Input Fields for New Entry */}
-                <div className="row align-items-center">
-                  <div className="col-md-3 mt-2">
+                <div className="row project-details-primary-fields">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>Tower </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Tower"
                         name="tower_name"
                         placeholder="Enter Tower Name"
                         value={towerName}
@@ -4562,27 +4268,22 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-2">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>RERA Number </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="RERA Number"
                         name="rera_number"
                         placeholder="Enter RERA Number"
                         value={reraNumber}
                         onChange={handleReraNumberChange}
-                        // {...(baseURL !== "https://kalpataru.lockated.com/" && { maxLength: 12 })}
                       />
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-2">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>RERA URL </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="RERA URL"
                         name="rera_url"
                         placeholder="Enter RERA URL"
                         value={reraUrl}
@@ -4591,25 +4292,26 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  {/* Add Button */}
-                  <div className="col-md-3 mt-2">
-                    <button
-                      className="purple-btn2 rounded-3"
-                      style={{ marginTop: "23px" }}
-                      onClick={handleAddRera}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={26}
-                        height={20}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <button
+                        type="button"
+                        className="purple-btn2 project-details-add-btn"
+                        onClick={handleAddRera}
                       >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span> Add</span>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -4676,7 +4378,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() => handleDeleteRera(index)}
                                 >
                                   x
@@ -4694,9 +4396,14 @@ const ProjectDetailsEdit = () => {
           </>
         )}
 
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Amenities</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header3 project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Building2 size={16} strokeWidth={1.8} />
+              </span>
+              Amenities
+            </h3>
           </div>
           <div className="card-body mt-0 pb-0">
             <div className="row">
@@ -4715,14 +4422,8 @@ const ProjectDetailsEdit = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Amenities
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <MultiSelectBox
+                  <FormMultiSelect
+                    label="Amenities"
                     options={filteredAmenities.map((ammit) => ({
                       value: ammit.id,
                       label: ammit.name,
@@ -4733,35 +4434,31 @@ const ProjectDetailsEdit = () => {
                     }))}
                     onChange={handleAmenitiesChange}
                     placeholder="Select Amenities"
+                    projectDetails
                   />
-                  {/* {console.log("amenities", amenities)} */}
-                  {/* {console.log("project_amenities", formData.project_amenities)} */}
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">Address</h3>
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <MapPin size={16} strokeWidth={1.8} />
+              </span>
+              Address
+            </h3>
           </div>
           <div className="card-body">
-            <div className="row">
+            <div className="row project-details-primary-fields">
               {/* Address Section */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Address Line 1{" "}
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span>{" "} */}
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Address Line 1"
+                  <FormTextField
+                    label="Address Line 1"
                     name="address_line_1"
+                    placeholder="Address Line 1"
                     value={formData.Address.address_line_1}
                     onChange={handleChange}
                   />
@@ -4769,15 +4466,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Address Line 2
-                    {/* <span style={{ color: "red", fontSize: "16px" }}>*</span>{" "} */}
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Address Line 2"
+                  <FormTextField
+                    label="Address Line 2"
                     name="address_line_2"
+                    placeholder="Address Line 2"
                     value={formData.Address.address_line_2}
                     onChange={handleChange}
                   />
@@ -4787,18 +4479,10 @@ const ProjectDetailsEdit = () => {
               {/* City, State, Pin, Country Section */}
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    City
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="City"
+                  <FormTextField
+                    label="City"
                     name="city"
+                    placeholder="City"
                     value={formData.Address.city}
                     onChange={handleChange}
                   />
@@ -4806,18 +4490,10 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    State
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="State"
+                  <FormTextField
+                    label="State"
                     name="state"
+                    placeholder="State"
                     value={formData.Address.state}
                     onChange={handleChange}
                   />
@@ -4825,24 +4501,17 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Pin Code
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
+                  <label>Pin Code</label>
                   <input
                     className="form-control"
                     type="text"
                     placeholder="Pin Code"
                     name="pin_code"
                     value={formData.Address.pin_code}
-                    maxLength={6} // Restricts input to 6 characters
+                    maxLength={6}
                     onChange={(e) => {
                       const { name, value } = e.target;
-                      // Allow only numbers and ensure max 6 digits
-                      if (/^\d*$/.test(value) && value.length <= 6) {
+                      if (/^\d{0,6}$/.test(value)) {
                         setFormData((prevData) => ({
                           ...prevData,
                           Address: { ...prevData.Address, [name]: value },
@@ -4855,7 +4524,7 @@ const ProjectDetailsEdit = () => {
                         toast.error("Pin Code must be exactly 6 digits");
                         setFormData((prevData) => ({
                           ...prevData,
-                          Address: { ...prevData.Address, [name]: "" }, // Reset field on incorrect input
+                          Address: { ...prevData.Address, [name]: "" },
                         }));
                       }
                     }}
@@ -4865,18 +4534,10 @@ const ProjectDetailsEdit = () => {
 
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Country
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Country"
+                  <FormTextField
+                    label="Country"
                     name="country"
+                    placeholder="Country"
                     value={formData.Address.country}
                     onChange={handleChange}
                   />
@@ -4884,16 +4545,8 @@ const ProjectDetailsEdit = () => {
               </div>
               <div className="col-md-3 mt-2">
                 <div className="form-group">
-                  <label>
-                    Map URL
-                    {/* <span style={{ color: "#de7008", fontSize: "16px" }}>
-                      {" "}
-                      *
-                    </span> */}
-                  </label>
-                  <input
-                    className="form-control"
-                    type="text"
+                  <FormTextField
+                    label="Map URL"
                     name="map_url"
                     placeholder="Enter Location"
                     value={formData.map_url}
@@ -4940,17 +4593,27 @@ const ProjectDetailsEdit = () => {
                   />
                 </div>
                 <div className="col-md-3 mt-2">
-                  <input
-                    className="form-control"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setPlanImages(Array.from(e.target.files))}
-                  />
+                  <div className="project-details-upload-dropzone project-details-plan-upload">
+                    <label
+                      htmlFor="project-plan-images-upload-edit"
+                      className="project-details-upload-btn"
+                    >
+                      <Upload size={16} strokeWidth={1.8} />
+                      Upload Files
+                    </label>
+                    <input
+                      id="project-plan-images-upload-edit"
+                      className="project-details-hidden-file-input"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => setPlanImages(Array.from(e.target.files))}
+                    />
+                  </div>
                 </div>
                 <div className="col-md-3">
                   <button
-                    className="purple-btn2"
+                    className="purple-btn2" style={{ color: "#fff" }}
                     type="button"
                     onClick={() => {
                       if (!planName || planImages.length === 0) {
@@ -5008,7 +4671,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() => handlePlanDelete(plan.id, pIdx)}
                               >
                                 x
@@ -5024,11 +4687,13 @@ const ProjectDetailsEdit = () => {
             </div>
           </div>
         )}
-        <div className="card mt-3 pb-4 mx-4">
-          <div className="card-header3">
-            <h3 className="card-title">
+        <div className="card project-details-section-card mt-3 pb-4 mx-4">
+          <div className="card-header project-details-section-header">
+            <h3 className="project-details-section-heading">
+              <span className="project-details-section-icon" aria-hidden="true">
+                <Upload size={16} strokeWidth={1.8} />
+              </span>
               File Upload
-              {/* <span style={{ color: "#de7008", fontSize: "16px" }}> *</span> */}
             </h3>
           </div>
           <div className="card-body">
@@ -5127,7 +4792,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleFileDiscardCoverImage("image", index)
                                 }
@@ -5163,7 +4828,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleFileDiscardCoverImage(key, index)
                                 }
@@ -5272,7 +4937,7 @@ const ProjectDetailsEdit = () => {
                           <td>
                             <button
                               type="button"
-                              className="purple-btn2"
+                              className="purple-btn2" style={{ color: "#fff" }}
                               onClick={() =>
                                 handleFileDiscardCoverImage(
                                   "cover_images",
@@ -5356,7 +5021,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardCoverImage(key, index)
                                   }
@@ -5502,7 +5167,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleFetchedDiscardGallery(
                                     "fetched_gallery_image",
@@ -5623,7 +5288,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() => {
                                     handleFetchedDiscardGallery(
                                       key,
@@ -5737,7 +5402,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleDiscardTwoDImage(
                                       "two_d_images",
@@ -5776,7 +5441,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleFileDiscardCoverImage(key, index)
                                     }
@@ -5859,7 +5524,7 @@ const ProjectDetailsEdit = () => {
                             <td>
                               <button
                                 type="button"
-                                className="purple-btn2"
+                                className="purple-btn2" style={{ color: "#fff" }}
                                 onClick={() =>
                                   handleDiscardBroucher("brochure")
                                 }
@@ -5951,7 +5616,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFilePpt("project_ppt", index)
                                     }
@@ -6062,7 +5727,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardLayout(
                                       "project_layout",
@@ -6169,7 +5834,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardCreative(
                                       "project_creatives",
@@ -6282,7 +5947,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleFileDiscardCreativeGenerics(
                                         "project_creative_generics",
@@ -6396,7 +6061,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleFileDiscardCreativeOffers(
                                         "project_creative_offers",
@@ -6504,7 +6169,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardInteriors(
                                       "project_interiors",
@@ -6611,7 +6276,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscardExteriors(
                                       "project_exteriors",
@@ -6711,7 +6376,7 @@ const ProjectDetailsEdit = () => {
                                     <td>
                                       <button
                                         type="button"
-                                        className="purple-btn2"
+                                        className="purple-btn2" style={{ color: "#fff" }}
                                         onClick={() =>
                                           handleFileDiscardEmailerTemplate(
                                             "project_emailer_templetes",
@@ -6736,7 +6401,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile(
                                         "project_emailer_templetes",
@@ -6827,7 +6492,7 @@ const ProjectDetailsEdit = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() =>
                                         handleFileDiscardTechnical(
                                           "KnwYrApt_Technical",
@@ -6851,7 +6516,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDiscardFile("KnwYrApt_Technical", 0)
                                     }
@@ -6950,7 +6615,7 @@ const ProjectDetailsEdit = () => {
                               <td>
                                 <button
                                   type="button"
-                                  className="purple-btn2"
+                                  className="purple-btn2" style={{ color: "#fff" }}
                                   onClick={() =>
                                     handleFileDiscard("videos", index)
                                   }
@@ -6964,16 +6629,18 @@ const ProjectDetailsEdit = () => {
                       </table>
                     </div>
                   </div>
-                  <div className="form-group">
-                    <label>Video Preview Image Url</label>
-                    <input
-                      className="form-control"
-                      rows={1}
-                      name="video_preview_image_url"
-                      placeholder="Enter Video Url"
-                      value={formData.video_preview_image_url}
-                      onChange={handleChange}
-                    />
+                  <div className="row project-details-primary-fields mt-3">
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <FormTextField
+                          label="Video Preview Image Url"
+                          name="video_preview_image_url"
+                          placeholder="Enter Video Url"
+                          value={formData.video_preview_image_url}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
@@ -7067,7 +6734,7 @@ const ProjectDetailsEdit = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="purple-btn2"
+                                      className="purple-btn2" style={{ color: "#fff" }}
                                       onClick={() => handleDeleteVideo(index)}
                                     >
                                       x
@@ -7094,19 +6761,22 @@ const ProjectDetailsEdit = () => {
 
         {baseURL !== "https://dev-panchshil-super-app.lockated.com/" && (
           <>
-            <div className="card mt-3 pb-4 mx-4">
-              <div className="card-header3 d-flex justify-content-between align-items-center">
-                <h3 className="card-title">Virtual Tour</h3>
+            <div className="card project-details-section-card mt-3 pb-4 mx-4">
+              <div className="card-header3 project-details-section-header">
+                <h3 className="project-details-section-heading">
+                  <span className="project-details-section-icon" aria-hidden="true">
+                    <Globe2 size={16} strokeWidth={1.8} />
+                  </span>
+                  Virtual Tour
+                </h3>
               </div>
               <div className="card-body mt-0 pb-0">
                 {/* Input Fields */}
-                <div className="row align-items-center">
-                  <div className="col-md-3 mt-2">
+                <div className="row project-details-primary-fields project-details-inline-row">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>Virtual Tour Name </label>
-                      <input
-                        className="form-control"
-                        type="text"
+                      <FormTextField
+                        label="Virtual Tour Name"
                         name="virtual_tour_name"
                         placeholder="Enter Virtual Tour Name"
                         value={virtualTourName}
@@ -7115,11 +6785,10 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-2">
+                  <div className="col-md-3">
                     <div className="form-group">
-                      <label>Virtual Tour URL </label>
-                      <input
-                        className="form-control"
+                      <FormTextField
+                        label="Virtual Tour URL"
                         type="url"
                         name="virtual_tour_url"
                         placeholder="Enter Virtual Tour URL"
@@ -7129,30 +6798,32 @@ const ProjectDetailsEdit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-3 mt-2">
-                    <button
-                      className="purple-btn2 rounded-3"
-                      style={{ marginTop: "23px" }}
-                      onClick={handleAddVirtualTour}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={26}
-                        height={20}
-                        fill="currentColor"
-                        className="bi bi-plus"
-                        viewBox="0 0 16 16"
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <button
+                        type="button"
+                        className="purple-btn2 rounded-3"
+                        onClick={handleAddVirtualTour}
                       >
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                      </svg>
-                      <span> Add</span>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                          className="bi bi-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                        </svg>
+                        <span>Add</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                {formData.virtual_tour_url_multiple.length > 0 && (
+                 {formData.virtual_tour_url_multiple.length > 0 && (
                   <div className="col-md-12 mt-2">
-                    <div className="mt-4 tbl-container w-100">
+                    <div className="mt-4 tbl-container project-details-editable-table w-100">
                       <table className="w-100">
                         <thead>
                           <tr>
@@ -7201,7 +6872,7 @@ const ProjectDetailsEdit = () => {
                                 <td>
                                   <button
                                     type="button"
-                                    className="purple-btn2"
+                                    className="purple-btn2" style={{ color: "#fff" }}
                                     onClick={() =>
                                       handleDeleteVirtualTour(index)
                                     }
@@ -7221,26 +6892,22 @@ const ProjectDetailsEdit = () => {
             </div>
           </>
         )}
-        <div className="row mt-2 justify-content-center">
-          <div className="col-md-2">
-            <button
-              onClick={handleSubmit}
-              className="purple-btn2 w-100"
-              disabled={loading}
-            >
-              Submit
-            </button>
-          </div>
-
-          <div className="col-md-2">
-            <button
-              type="button"
-              className="purple-btn2 w-100"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-          </div>
+        <div className="banner-form-actions">
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            className="banner-form-action-btn"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </>
