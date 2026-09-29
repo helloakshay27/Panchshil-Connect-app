@@ -614,8 +614,8 @@ const PanchshilConnectUsageDashboard = () => {
     [adoptionQuery.data],
   );
   const adoptionTrend = useMemo(
-    () => buildAdoptionTrend(adoptionTrendQuery.data || {}),
-    [adoptionTrendQuery.data],
+    () => buildAdoptionTrend(adoptionTrendQuery.data || {}, trendFilters),
+    [adoptionTrendQuery.data, trendFilters],
   );
   const growth = useMemo(
     () => buildGrowth(growthQuery.data || {}),

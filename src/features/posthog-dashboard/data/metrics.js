@@ -6,6 +6,7 @@
  * token vocabulary (VIZ from ../components/dashboard/DashboardCharts).
  * ------------------------------------------------------------------------- */
 import { VIZ } from "../../../components/dashboard/DashboardCharts";
+import { isoDate } from "./constants";
 
 const nf = new Intl.NumberFormat("en-IN");
 
@@ -189,12 +190,42 @@ export const buildAdopt = (r = {}) => {
 };
 
 /* ---- Layer 2: adoption trend ---- */
-export const buildAdoptionTrend = ({ weekly = {}, trend_pct = null, wau_now = 0, wau_4wk_ago = 0, info } = {}) => {
+/* `requested` carries the same { to, weeks } sent on the request - the
+   backend only returns weeks that actually have data, silently omitting
+   empty ones, so a low-traffic tenant over a wide window (e.g. 13 weeks)
+   can come back with just 1-2 points sitting near the end. Without
+   reconstructing the full week grid, AreaChart (a categorical x-axis)
+   spaces whatever points exist evenly across the full chart width, which
+   draws a single long line across an otherwise-empty chart instead of a
+   proper 13-week series with real zeros in between. */
+export const buildAdoptionTrend = (
+  { weekly = {}, trend_pct = null, wau_now = 0, wau_4wk_ago = 0, info } = {},
+  requested = {},
+) => {
   const toPoints = (series = []) =>
     series.map((w) => ({ label: w.week, count: w.wau }));
+
+  const fillWeeks = (points) => {
+    const { to, weeks } = requested;
+    if (!to || !weeks) return points;
+    const byLabel = new Map(points.map((p) => [p.label, p.count]));
+    const end = new Date(`${to}T00:00:00`);
+    const out = [];
+    for (let i = weeks - 1; i >= 0; i -= 1) {
+      const d = new Date(end);
+      d.setDate(d.getDate() - i * 7);
+      // Local calendar-date components, not toISOString() - that converts
+      // through UTC first, which silently shifts the label back a day in
+      // any timezone ahead of UTC (e.g. IST).
+      const label = isoDate(d);
+      out.push({ label, count: byLabel.get(label) ?? 0 });
+    }
+    return out;
+  };
+
   return {
-    current: toPoints(weekly.current),
-    previous: toPoints(weekly.previous),
+    current: fillWeeks(toPoints(weekly.current)),
+    previous: fillWeeks(toPoints(weekly.previous)),
     trendPct: trend_pct,
     wauNow: wau_now,
     wau4wkAgo: wau_4wk_ago,
