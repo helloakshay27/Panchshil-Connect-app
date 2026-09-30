@@ -1796,7 +1796,7 @@ const PanchshilConnectUsageDashboard = () => {
         </main>
       </div>
       </div>
-      <InfoPopover state={infoPopover} onClose={closeInfoPopover} />
+      <InfoPopover state={infoPopover} onClose={closeInfoPopover} theme={theme} />
     </>
   );
 };

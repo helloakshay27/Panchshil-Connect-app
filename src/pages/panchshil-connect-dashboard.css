@@ -4,10 +4,14 @@
    ported from the Pulse Analytics Dashboard - Poppins throughout, with its
    uppercase-and-letter-spaced convention for titles/labels. */
 
-.pcd-page {
-  min-height: 100vh;
-  background: var(--pcd-bg);
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+/* Design tokens. Declared on the page root, and ALSO on .pcd-info-pop - the
+   (i) explainer is portaled to document.body, so it sits outside .pcd-page and
+   inherits none of these custom properties. Without them here every var() in
+   the popover falls back (or resolves to nothing), which is why the card came
+   out white-on-dark in dark theme. Light values below; the dark overrides are
+   keyed off data-theme on whichever of the two elements carries it. */
+.pcd-page,
+.pcd-info-pop {
   --pcd-brand: #de7008;
   --pcd-brand-2: #a81e20;
   --pcd-brand-3: #0e7fa8;
@@ -30,14 +34,22 @@
   --pcd-blue-tint: #e8f1f6;
   --pcd-blue-ink: #0b6484;
   --pcd-on-ink: #ffffff;
+}
+
+.pcd-page {
+  min-height: 100vh;
+  background: var(--pcd-bg);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--pcd-ink);
   transition: background .15s ease, color .15s ease;
 }
 
 /* Dark theme - flips the neutral/surface tokens above; --pcd-brand/-2/-3 stay
    put since they're the accent colour and read fine on either ground. Toggled
-   via the data-theme attribute on this same root element (see useTheme). */
-.pcd-page[data-theme="dark"] {
+   via the data-theme attribute on this same root element (see useTheme), which
+   InfoPopover mirrors onto its portaled card so the (i) explainer matches. */
+.pcd-page[data-theme="dark"],
+.pcd-info-pop[data-theme="dark"] {
   --pcd-bg: #1a1917;
   --pcd-surface: #211f1d;
   --pcd-surface-2: #2a2825;
@@ -607,12 +619,15 @@
 
 /* ---------------- (i) explainer popover ---------------- */
 /* Portaled to body so it escapes any stacking context. Fixed positioning
-   is set inline from the measured button rect. */
+   is set inline from the measured button rect. It re-declares the --pcd-*
+   tokens (see the block at the top of this file) because being portaled puts
+   it outside .pcd-page, and carries data-theme so it follows light/dark. */
 .pcd-info-pop {
   position: fixed;
   z-index: 300;
   max-width: 340px;
-  background: var(--pcd-surface, #fff);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--pcd-surface);
   color: var(--pcd-muted);
   border: 1px solid var(--pcd-line);
   border-radius: 10px;
@@ -620,6 +635,11 @@
   font-size: 12.5px;
   line-height: 1.55;
   box-shadow: 0 10px 28px rgba(31, 41, 51, 0.16);
+}
+/* A shadow tuned for a light ground reads as a faint grey haze over the dark
+   surfaces, so dark theme drops it for a deeper one instead. */
+.pcd-info-pop[data-theme="dark"] {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
 }
 .pcd-info-pop-title {
   font-size: 13.5px;

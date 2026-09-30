@@ -44,8 +44,12 @@ export function InfoButton({ infoKey, onInfo }) {
 /* =====================================================================
    InfoPopover — single floating explainer, portaled to document.body.
    `state` is { key, rect } or null; `onClose` dismisses it.
+   `theme` ("light"/"dark") is mirrored onto the card as data-theme: since the
+   popover renders outside .pcd-page, it can't inherit that page's --pcd-*
+   custom properties, and this is what makes it follow light/dark (see the
+   .pcd-info-pop token block in panchshil-connect-dashboard.css).
    ===================================================================== */
-export function InfoPopover({ state, onClose }) {
+export function InfoPopover({ state, onClose, theme }) {
   const popRef = useRef(null);
   const [pos, setPos] = useState(null);
 
@@ -101,6 +105,7 @@ export function InfoPopover({ state, onClose }) {
     <div
       ref={popRef}
       className="pcd-info-pop"
+      data-theme={theme}
       style={{ left: pos?.left ?? -9999, top: pos?.top ?? -9999 }}
     >
       <div className="pcd-info-pop-title">{info.t}</div>

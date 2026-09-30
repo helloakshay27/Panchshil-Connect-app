@@ -103,11 +103,11 @@ const InfoIcon = ({ text }) =>
 /* ================================================================== */
 /* Stat tile - a hero number. The number IS the chart.                */
 /* ================================================================== */
-export const StatTile = ({ label, value, sub, loading }) => (
+export const StatTile = ({ label, value, sub, loading, infoKey, onInfo }) => (
   <div className="pcd-tile">
     <div className="pcd-tile-tophead">
       <div className="pcd-tile-label">{label}</div>
-      <InfoIcon text={sub} />
+      {infoKey ? <InfoButton infoKey={infoKey} onInfo={onInfo} /> : <InfoIcon text={sub} />}
     </div>
     <div className="pcd-tile-value">
       {loading ? <span className="pcd-skel pcd-skel-num" /> : nf.format(value ?? 0)}

@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ChartCard,
-  StatTile,
   MetricCard,
   AreaChart,
 } from "../components/dashboard/DashboardCharts";
@@ -33,6 +32,8 @@ import {
   buildTraffic,
   buildUsage,
 } from "../features/posthog-dashboard/data/metrics";
+import { InfoButton, InfoPopover } from "./usage-info-popover";
+import { hasInfo } from "./usage-info-data";
 import { useConnectEvents } from "../hooks/useConnectEvents";
 import { useTheme } from "../hooks/useTheme";
 import { useSidebarCollapsed } from "../hooks/useSidebarCollapsed";
@@ -64,14 +65,15 @@ const KP = {
   ramp: ["#f8f3e6", "#efe3c4", "#e2c98f", "#cca962", "#A78847", "#7c6435", "#544425"],
 };
 
-const Tile = ({ label, value, sub }) => (
+/* Same as the Panchshil Usage Dashboard's Tile - same markup/classes (value
+   already a formatted string, so no Intl.NumberFormat pass), with the (i)
+   button wired to the shared INFO_DB explainer instead of a native tooltip. */
+const Tile = ({ label, value, sub, infoKey, onInfo }) => (
   <div className="pcd-tile">
     <div className="pcd-tile-tophead">
       <div className="pcd-tile-label">{label}</div>
-      {sub ? (
-        <span className="pcd-info-btn" title={sub} aria-label={sub}>
-          i
-        </span>
+      {hasInfo(infoKey) ? (
+        <InfoButton infoKey={infoKey} onInfo={onInfo} />
       ) : null}
     </div>
     <div className="pcd-tile-value">{value}</div>
@@ -236,12 +238,12 @@ const LAYERS = [
 
 /* ---------------- Traffic & Session ---------------- */
 const TRAFFIC_TILES = [
-  { label: "Active Users", sub: "Last 28 days" },
-  { label: "Screen Views", sub: "Last 28 days" },
-  { label: "Total Sessions", sub: "Last 28 days" },
-  { label: "New Users", sub: "Last 28 days" },
-  { label: "Bounce Rate", sub: "% of sessions" },
-  { label: "Recently Online", sub: "Active in last 30 min" },
+  { label: "Active Users", sub: "Last 28 days", infoKey: "traffic.active_users" },
+  { label: "Screen Views", sub: "Last 28 days", infoKey: "traffic.screen_views" },
+  { label: "Total Sessions", sub: "Last 28 days", infoKey: "traffic.sessions" },
+  { label: "New Users", sub: "Last 28 days", infoKey: "traffic.new_users" },
+  { label: "Bounce Rate", sub: "% of sessions", infoKey: "traffic.bounce_rate" },
+  { label: "Recently Online", sub: "Active in last 30 min", infoKey: "traffic.recently_online" },
 ];
 
 /* Date-range presets for the filter bar's popover — display-only. Nothing
@@ -254,10 +256,10 @@ const DATE_RANGE_PRESETS = [
 
 /* ---------------- Adoption & Engagement ---------------- */
 const ADOPTION_TILES = [
-  { label: "Stickiness", sub: "avg DAU / MAU" },
-  { label: "Adoption Trend", sub: "vs prior 8 weeks · weekly actives" },
-  { label: "14-Day Activation", sub: "of new registrations" },
-  { label: "Module Breadth", sub: "modules used this period" },
+  { label: "Stickiness", sub: "avg DAU / MAU", infoKey: "adoption.stickiness" },
+  { label: "Adoption Trend", sub: "vs prior 8 weeks · weekly actives", infoKey: "adoption.trend" },
+  { label: "14-Day Activation", sub: "of new registrations", infoKey: "adoption.activation" },
+  { label: "Module Breadth", sub: "modules used this period", infoKey: "adoption.module_breadth" },
 ];
 
 const cohortColor = (v) => {
@@ -293,6 +295,14 @@ const KalpataruConnectUsageDashboard = () => {
   const [customApplied, setCustomApplied] = useState(false);
   const [deviceFilter, setDeviceFilter] = useState("all");
   const [prevPeriodOn, setPrevPeriodOn] = useState(true);
+  // (i) explainer popover — { key, rect } or null.
+  const [infoPopover, setInfoPopover] = useState(null);
+  const openInfoPopover = useCallback(
+    (key, rect) => setInfoPopover((cur) => (cur?.key === key ? null : { key, rect })),
+    [],
+  );
+  const closeInfoPopover = useCallback(() => setInfoPopover(null), []);
+
   const dateRangeLabel = customApplied
     ? `${customFrom} – ${customTo}`
     : DATE_RANGE_PRESETS.find((p) => p.key === dateRangePreset)?.label;
@@ -432,13 +442,27 @@ const KalpataruConnectUsageDashboard = () => {
 
   const trafficTiles = useMemo(() => {
     if (!trafficQuery.data) return TRAFFIC_TILES.map((t) => ({ ...t, value: 0 }));
+    const keyFor = (k) =>
+      ({
+        active_users: "traffic.active_users",
+        screen_views: "traffic.screen_views",
+        sessions: "traffic.sessions",
+        avg_session_seconds: "traffic.avg_session",
+        bounce_rate: "traffic.bounce_rate",
+      })[k] || null;
     return [
       ...traffic.tiles.map((tile) => ({
         label: tile.label,
         value: tile.value,
         sub: tile.caption || "Selected period",
+        infoKey: keyFor(tile.key),
       })),
-      { label: "Recently Online", value: traffic.recentlyOnline, sub: "Active in last 30 min" },
+      {
+        label: "Recently Online",
+        value: traffic.recentlyOnline,
+        sub: "Active in last 30 min",
+        infoKey: "traffic.recently_online",
+      },
     ];
   }, [traffic, trafficQuery.data]);
 
@@ -518,10 +542,30 @@ const KalpataruConnectUsageDashboard = () => {
       }));
     }
     return [
-      { label: adoption.stickiness.label, value: adoption.stickiness.display, sub: adoption.stickiness.sub },
-      { label: adoption.adoptionTrend.label, value: adoption.adoptionTrend.display, sub: adoption.adoptionTrend.sub },
-      { label: adoption.activation.label, value: adoption.activation.display, sub: adoption.activation.sub },
-      { label: adoption.moduleBreadth.label, value: adoption.moduleBreadth.display, sub: "modules used this period" },
+      {
+        label: adoption.stickiness.label,
+        value: adoption.stickiness.display,
+        sub: adoption.stickiness.sub,
+        infoKey: "adoption.stickiness",
+      },
+      {
+        label: adoption.adoptionTrend.label,
+        value: adoption.adoptionTrend.display,
+        sub: adoption.adoptionTrend.sub,
+        infoKey: "adoption.trend",
+      },
+      {
+        label: adoption.activation.label,
+        value: adoption.activation.display,
+        sub: adoption.activation.sub,
+        infoKey: "adoption.activation",
+      },
+      {
+        label: adoption.moduleBreadth.label,
+        value: adoption.moduleBreadth.display,
+        sub: "modules used this period",
+        infoKey: "adoption.module_breadth",
+      },
     ];
   }, [adoption, adoptionQuery.data]);
 
@@ -804,13 +848,25 @@ const KalpataruConnectUsageDashboard = () => {
                 style={{ marginTop: 16, gridTemplateColumns: `repeat(${trafficTiles.length}, 1fr)` }}
               >
                 {trafficTiles.map((t) => (
-                  <StatTile key={t.label} label={t.label} value={t.value} sub={t.sub} />
+                  <Tile
+                    key={t.label}
+                    label={t.label}
+                    value={t.value}
+                    sub={t.sub}
+                    infoKey={t.infoKey}
+                    onInfo={openInfoPopover}
+                  />
                 ))}
               </div>
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-2">
-                  <ChartCard title="Usage over time" subtitle="Last 24 days">
+                  <ChartCard
+                    title="Usage over time"
+                    subtitle="Last 24 days"
+                    infoKey="chart.usage"
+                    onInfo={openInfoPopover}
+                  >
                     <div className="pud-devtoggle" style={{ marginBottom: 10 }}>
                       <button
                         type="button"
@@ -850,7 +906,12 @@ const KalpataruConnectUsageDashboard = () => {
                   </ChartCard>
                 </div>
                 <div className="pcd-span-2">
-                  <ChartCard title="Android vs iOS usage" subtitle="Share of active users, Android vs iOS">
+                  <ChartCard
+                    title="Android vs iOS usage"
+                    subtitle="Share of active users, Android vs iOS"
+                    infoKey="chart.device"
+                    onInfo={openInfoPopover}
+                  >
                     <PercentHBar rows={deviceSplit} />
                     <div
                       className="pcd-splits"
@@ -889,13 +950,24 @@ const KalpataruConnectUsageDashboard = () => {
                 style={{ marginTop: 16, gridTemplateColumns: `repeat(${adoptionTiles.length}, 1fr)` }}
               >
                 {adoptionTiles.map((t) => (
-                  <Tile key={t.label} label={t.label} value={t.value} sub={t.sub} />
+                  <Tile
+                    key={t.label}
+                    label={t.label}
+                    value={t.value}
+                    sub={t.sub}
+                    infoKey={t.infoKey}
+                    onInfo={openInfoPopover}
+                  />
                 ))}
               </div>
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title={`Adoption trend (weekly active users, last ${filterWeeksLabel})`}>
+                  <ChartCard
+                    title={`Adoption trend (weekly active users, last ${filterWeeksLabel})`}
+                    infoKey="chart.adoptTrend"
+                    onInfo={openInfoPopover}
+                  >
                     <AreaChart
                       points={adoptionTrendQuery.data ? adoptionTrend.current : []}
                       color={KP.brand}
@@ -904,7 +976,12 @@ const KalpataruConnectUsageDashboard = () => {
                 </div>
 
                 <div className="pcd-span-2">
-                  <ChartCard title="New · Returning · Resurrecting · Dormant" subtitle={`Growth accounting · Last ${filterWeeksLabel}`}>
+                  <ChartCard
+                    title="New · Returning · Resurrecting · Dormant"
+                    subtitle={`Growth accounting · Last ${filterWeeksLabel}`}
+                    infoKey="chart.growth"
+                    onInfo={openInfoPopover}
+                  >
                     <DivergingStackedBarChart
                       labels={growthWeekly.labels}
                       series={growthWeekly.series}
@@ -913,7 +990,12 @@ const KalpataruConnectUsageDashboard = () => {
                   </ChartCard>
                 </div>
                 <div className="pcd-span-2">
-                  <ChartCard title="Do new users keep coming back?" subtitle="% of each cohort still active N weeks later">
+                  <ChartCard
+                    title="Do new users keep coming back?"
+                    subtitle="% of each cohort still active N weeks later"
+                    infoKey="chart.retention"
+                    onInfo={openInfoPopover}
+                  >
                     <div className="pcd-table-scroll">
                       <table className="pud-cohort">
                         <thead>
@@ -952,7 +1034,12 @@ const KalpataruConnectUsageDashboard = () => {
                 </div>
 
                 <div className="pcd-span-2">
-                  <ChartCard title="Who is (and isn't) using the app" subtitle="Active users ÷ invited users">
+                  <ChartCard
+                    title="Who is (and isn't) using the app"
+                    subtitle="Active users ÷ invited users"
+                    infoKey="chart.role"
+                    onInfo={openInfoPopover}
+                  >
                     <PercentHBar
                       rows={
                         rolesQuery.data
@@ -971,6 +1058,8 @@ const KalpataruConnectUsageDashboard = () => {
                         ? `No activity ${adoption.dormant.band}`
                         : "No activity 14+ days"
                     }
+                    infoKey="adoption.dormant"
+                    onInfo={openInfoPopover}
                   />
                 </div>
 
@@ -1043,11 +1132,15 @@ const KalpataruConnectUsageDashboard = () => {
                   label="Workflow Adoption"
                   value={`${workflowQuery.data ? liveWorkflow.kpis.fAdopt.value : 0}%`}
                   sub="of active users attempt this workflow"
+                  infoKey="workflow.adoption"
+                  onInfo={openInfoPopover}
                 />
                 <Tile
                   label="Completion Rate"
                   value={`${workflowQuery.data ? liveWorkflow.kpis.fComp.value : 0}%`}
                   sub="of those who start it, finish it"
+                  infoKey="workflow.completion"
+                  onInfo={openInfoPopover}
                 />
                 <Tile
                   label="Biggest Step Drop"
@@ -1061,17 +1154,26 @@ const KalpataruConnectUsageDashboard = () => {
                         }`
                       : "-"
                   }
+                  infoKey="workflow.biggest_step_drop"
+                  onInfo={openInfoPopover}
                 />
                 <Tile
                   label="Usage Volume"
                   value={String(workflowQuery.data ? liveWorkflow.kpis.fVol.value : 0)}
                   sub="completions this period"
+                  infoKey="workflow.usage_volume"
+                  onInfo={openInfoPopover}
                 />
               </div>
 
               <div className="pcd-grid" style={{ marginTop: 14 }}>
                 <div className="pcd-span-4">
-                  <ChartCard title={`${wfModule || "—"} — completion funnel`} subtitle="Live event sequence and retained %">
+                  <ChartCard
+                    title={`${wfModule || "—"} — completion funnel`}
+                    subtitle="Live event sequence and retained %"
+                    infoKey="chart.funnel"
+                    onInfo={openInfoPopover}
+                  >
                     <div className="pud-funnel">
                       {funnelSteps.map((row, i) => (
                         <div key={row.step}>
@@ -1098,7 +1200,12 @@ const KalpataruConnectUsageDashboard = () => {
                 </div>
 
                 <div className="pcd-span-4">
-                  <ChartCard title="All screens in this module" subtitle="Users, events, sessions and completion per screen">
+                  <ChartCard
+                    title="All screens in this module"
+                    subtitle="Users, events, sessions and completion per screen"
+                    infoKey="chart.flowList"
+                    onInfo={openInfoPopover}
+                  >
                     <div className="pcd-table-scroll">
                       <table className="pcd-table">
                         <thead>
@@ -1127,7 +1234,12 @@ const KalpataruConnectUsageDashboard = () => {
                 </div>
 
                 <div className="pcd-span-4">
-                  <ChartCard title="Top entry screens" subtitle="First screen seen in a session, org-wide (not module-filtered)">
+                  <ChartCard
+                    title="Top entry screens"
+                    subtitle="First screen seen in a session, org-wide (not module-filtered)"
+                    infoKey="chart.path"
+                    onInfo={openInfoPopover}
+                  >
                     <div className="pcd-table-scroll">
                       <table className="pcd-table">
                         <thead>
@@ -1158,6 +1270,8 @@ const KalpataruConnectUsageDashboard = () => {
 
         </main>
       </div>
+
+      <InfoPopover state={infoPopover} onClose={closeInfoPopover} theme={theme} />
     </div>
   );
 };
