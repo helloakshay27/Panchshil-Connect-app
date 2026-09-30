@@ -723,6 +723,9 @@ const PanchshilConnectDashboard = () => {
             >
               Reset
             </button>
+            <Link to="/panchshil_connect_dashboard/usage" className="pcd-btn pcd-btn-ghost">
+              Usage Dashboard
+            </Link>
           </div>
 
           <Link to="/" className="pcd-back">
