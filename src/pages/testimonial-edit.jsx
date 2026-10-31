@@ -20,11 +20,12 @@ const TestimonialEdit = () => {
 
   const [formData, setFormData] = useState({
     user_name: testimonial?.user_name || "",
-    customer_code: testimonial?.customer_code || "",
     user_profile: testimonial?.profile_of_user || "",
     building_id: testimonial?.building_id ?? null,
     content: testimonial?.content || "",
     video_url: testimonial?.video_url || "",
+    booking_number: testimonial?.booking_number || "",
+    customer_code: testimonial?.customer_code || "",
     preview_image: testimonial?.preview_image || "",
     preview_image_16_by_9: testimonial?.preview_image_16_by_9 || [],
     preview_image_3_by_2: testimonial?.preview_image_3_by_2 || [],
@@ -64,11 +65,12 @@ const TestimonialEdit = () => {
 
         setFormData({
           user_name: response.data.user_name || "",
-          customer_code: response.data.customer_code || "",
           user_profile: response.data.profile_of_user || "",
           building_id: response.data.building_id ?? null,
           content: response.data.content || "",
           video_url: response.data.video_url || "",
+          booking_number: response.data.booking_number || "",
+          customer_code: response.data.customer_code || "",
           preview_image: response.data.preview_image || "",
           preview_image_16_by_9: response.data.preview_image_16_by_9 || [],
           preview_image_3_by_2: response.data.preview_image_3_by_2 || [],
@@ -353,7 +355,6 @@ const TestimonialEdit = () => {
     try {
       const sendData = new FormData();
       sendData.append("testimonial[user_name]", formData.user_name);
-      sendData.append("testimonial[customer_code]", formData.customer_code);
       sendData.append("testimonial[profile_of_user]", formData.user_profile);
       sendData.append("testimonial[building_id]", formData.building_id);
       sendData.append("testimonial[content]", formData.content);
@@ -362,6 +363,9 @@ const TestimonialEdit = () => {
       if (formData.video_url && formData.video_url.trim()) {
         sendData.append("testimonial[video_url]", formData.video_url.trim());
       }
+
+      sendData.append("testimonial[booking_number]", formData.booking_number);
+      sendData.append("testimonial[customer_code]", formData.customer_code);
 
       // Always use the cropped image file if present
       // if (image[0] && image[0].file instanceof File) {
@@ -611,18 +615,6 @@ const TestimonialEdit = () => {
 
               <div className="col-md-3">
                 <div className="form-group">
-                  <FormTextField
-                    label="Customer Code"
-                    name="customer_code"
-                    placeholder="Enter customer code"
-                    value={formData.customer_code}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="col-md-3">
-                <div className="form-group">
                   <SelectBox
                     label="Building Type"
                     placeholder="Select Building Type"
@@ -657,6 +649,30 @@ const TestimonialEdit = () => {
                     name="video_url"
                     placeholder="Enter video URL"
                     value={formData.video_url}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <FormTextField
+                    label="Booking Number"
+                    name="booking_number"
+                    placeholder="Enter booking number"
+                    value={formData.booking_number}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                <div className="form-group">
+                  <FormTextField
+                    label="Customer Code"
+                    name="customer_code"
+                    placeholder="Enter customer code"
+                    value={formData.customer_code}
                     onChange={handleChange}
                   />
                 </div>

@@ -20,6 +20,7 @@ const Testimonials = () => {
   const [companySetupId, setCompanySetupId] = useState("");
   const [userName, setUserName] = useState("");
   const [customerCode, setCustomerCode] = useState("");
+  const [bookingNumber, setBookingNumber] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [userProfile, setUserProfile] = useState(""); // State for user profile
@@ -324,7 +325,6 @@ const handleCropComplete = (validImages) => {
 
     const form = new FormData();
     form.append("testimonial[user_name]", userName.trim());
-    form.append("testimonial[customer_code]", customerCode.trim());
     form.append("testimonial[content]", content.trim());
     form.append("testimonial[building_id]", buildingTypeId?.toString() || "");
     form.append(
@@ -370,6 +370,9 @@ const handleCropComplete = (validImages) => {
       form.append("testimonial[video_url]", videoUrl.trim());
     }
 
+    form.append("testimonial[booking_number]", bookingNumber.trim());
+    form.append("testimonial[customer_code]", customerCode.trim());
+
     console.log("data to be sent:", Array.from(form.entries()));
     try {
       console.log("data to be sent:", Array.from(form.entries()));
@@ -386,6 +389,7 @@ const handleCropComplete = (validImages) => {
       // reset all
       setUserName("");
       setCustomerCode("");
+      setBookingNumber("");
       setVideoUrl("");
       setImagePreview("");
       setUserProfile("");
@@ -441,18 +445,6 @@ const handleCropComplete = (validImages) => {
 
                   <div className="col-md-3">
                     <div className="form-group">
-                      <FormTextField
-                        label="Customer Code"
-                        name="customerCode"
-                        placeholder="Enter customer code"
-                        value={customerCode}
-                        onChange={(e) => setCustomerCode(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="form-group">
                       <SelectBox
                         label="Building Type"
                         placeholder="Select Building Type"
@@ -486,6 +478,30 @@ const handleCropComplete = (validImages) => {
                         placeholder="Enter video URL"
                         value={videoUrl}
                         onChange={(e) => setVideoUrl(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <FormTextField
+                        label="Booking Number"
+                        name="bookingNumber"
+                        placeholder="Enter booking number"
+                        value={bookingNumber}
+                        onChange={(e) => setBookingNumber(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <FormTextField
+                        label="Customer Code"
+                        name="customerCode"
+                        placeholder="Enter customer code"
+                        value={customerCode}
+                        onChange={(e) => setCustomerCode(e.target.value)}
                       />
                     </div>
                   </div>

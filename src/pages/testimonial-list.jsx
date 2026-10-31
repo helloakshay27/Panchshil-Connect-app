@@ -327,6 +327,18 @@ const TestimonialList = () => {
         render: (testimonial) =>
           new Date(testimonial.updated_at).toLocaleString(),
       },
+       {
+        key: "booking_number",
+        label: "Booking Number",
+        filterable: true,
+        render: (testimonial) => testimonial.booking_number || "-",
+      },
+      {
+        key: "customer_code",
+        label: "Customer Code",
+        filterable: true,
+        render: (testimonial) => testimonial.customer_code || "-",
+      },
       {
         key: "show_on_home",
         label: "Show on Home",
@@ -345,6 +357,7 @@ const TestimonialList = () => {
           />
         ),
       },
+     
     ],
     [handleToggle, handleToggleShow, navigate, testimonialPermissions.show],
   );
