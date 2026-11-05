@@ -10,6 +10,30 @@ import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import { useConnectEvents } from "../hooks/useConnectEvents";
 import "./banner-add.css";
 
+// Select User dropdown — source of truth for a user's name, booking_number
+// and customer_code, which the testimonial form sends through but never
+// shows as editable inputs (see handleCrmUserSelect below). Response shape
+// confirmed live: { user_societies: [{ id, display_name, booking_number,
+// customer_code, ... }] }.
+const CRM_USERS_URL =
+  "https://hi-society.lockated.com/crm/admin/organization_user_societies.json?token=P4R2AOLz49zoU0eIGFDgf7sRo9vtwpbVVTa7nk4kPLs";
+
+const pickField = (record, keys) => {
+  for (const key of keys) {
+    const value = record?.[key];
+    if (value != null && value !== "") return value;
+  }
+  return "";
+};
+
+const getCrmUserId = (record) => pickField(record, ["id", "user_id"]);
+const getCrmUserName = (record) =>
+  pickField(record, ["display_name", "name", "user_name", "full_name"]);
+const getCrmUserBookingNumber = (record) =>
+  pickField(record, ["booking_number", "booking_no"]);
+const getCrmUserCustomerCode = (record) =>
+  pickField(record, ["customer_code", "customer_code_no", "cust_code"]);
+
 const TestimonialEdit = () => {
   const connectEvents = useConnectEvents();
   const { state } = useLocation();
@@ -49,6 +73,8 @@ const TestimonialEdit = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [crmUsers, setCrmUsers] = useState([]);
+  const [selectedCrmUserId, setSelectedCrmUserId] = useState("");
   const videoInputRef = useRef(null);
 
   useEffect(() => {
@@ -124,6 +150,41 @@ const TestimonialEdit = () => {
 
     fetchBuildingTypes();
   }, []);
+
+  useEffect(() => {
+    const fetchCrmUsers = async () => {
+      try {
+        const response = await axios.get(CRM_USERS_URL, {
+          headers: { Accept: "application/json" },
+        });
+
+        const list = Array.isArray(response.data)
+          ? response.data
+          : response.data?.user_societies || [];
+        setCrmUsers(list);
+      } catch (error) {
+        console.error("Error fetching CRM users:", error);
+        setCrmUsers([]);
+      }
+    };
+
+    fetchCrmUsers();
+  }, []);
+
+  // Selecting a user carries their name, booking_number and customer_code
+  // straight through to submission (testimonial[user_name/booking_number/
+  // customer_code]) - none of the three are shown as their own inputs.
+  const handleCrmUserSelect = (value) => {
+    setSelectedCrmUserId(value);
+    const record = crmUsers.find((u) => String(getCrmUserId(u)) === String(value));
+    if (!record) return;
+    setFormData((prev) => ({
+      ...prev,
+      user_name: getCrmUserName(record),
+      booking_number: String(getCrmUserBookingNumber(record)),
+      customer_code: String(getCrmUserCustomerCode(record)),
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -603,12 +664,15 @@ const TestimonialEdit = () => {
             <div className="row banner-form-fields">
               <div className="col-md-3">
                 <div className="form-group">
-                  <FormTextField
-                    label="User Name"
-                    name="user_name"
-                    placeholder="Enter user name"
-                    value={formData.user_name}
-                    onChange={handleChange}
+                  <SelectBox
+                    label="Select User"
+                    placeholder="Select User"
+                    options={crmUsers.map((u) => ({
+                      label: getCrmUserName(u),
+                      value: getCrmUserId(u),
+                    }))}
+                    value={selectedCrmUserId}
+                    onChange={handleCrmUserSelect}
                   />
                 </div>
               </div>
@@ -654,29 +718,6 @@ const TestimonialEdit = () => {
                 </div>
               </div>
 
-              <div className="col-md-3">
-                <div className="form-group">
-                  <FormTextField
-                    label="Booking Number"
-                    name="booking_number"
-                    placeholder="Enter booking number"
-                    value={formData.booking_number}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="col-md-3">
-                <div className="form-group">
-                  <FormTextField
-                    label="Customer Code"
-                    name="customer_code"
-                    placeholder="Enter customer code"
-                    value={formData.customer_code}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>

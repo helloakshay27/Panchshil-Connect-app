@@ -14,6 +14,30 @@ import ProjectBannerUpload from "../components/reusable/ProjectBannerUpload";
 import { useConnectEvents } from "../hooks/useConnectEvents";
 import "./banner-add.css";
 
+// Select User dropdown — source of truth for a user's name, booking_number
+// and customer_code, which the testimonial form sends through but never
+// shows as editable inputs (see handleCrmUserSelect below). Response shape
+// confirmed live: { user_societies: [{ id, display_name, booking_number,
+// customer_code, ... }] }.
+const CRM_USERS_URL =
+  "https://hi-society.lockated.com/crm/admin/organization_user_societies.json?token=P4R2AOLz49zoU0eIGFDgf7sRo9vtwpbVVTa7nk4kPLs&per_page=100";
+
+const pickField = (record, keys) => {
+  for (const key of keys) {
+    const value = record?.[key];
+    if (value != null && value !== "") return value;
+  }
+  return "";
+};
+
+const getCrmUserId = (record) => pickField(record, ["id", "user_id"]);
+const getCrmUserName = (record) =>
+  pickField(record, ["display_name", "name", "user_name", "full_name"]);
+const getCrmUserBookingNumber = (record) =>
+  pickField(record, ["booking_number", "booking_no"]);
+const getCrmUserCustomerCode = (record) =>
+  pickField(record, ["customer_code", "customer_code_no", "cust_code"]);
+
 const Testimonials = () => {
   const connectEvents = useConnectEvents();
   const [companySetupOptions, setCompanySetupOptions] = useState([]);
@@ -21,6 +45,8 @@ const Testimonials = () => {
   const [userName, setUserName] = useState("");
   const [customerCode, setCustomerCode] = useState("");
   const [bookingNumber, setBookingNumber] = useState("");
+  const [crmUsers, setCrmUsers] = useState([]);
+  const [selectedCrmUserId, setSelectedCrmUserId] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [userProfile, setUserProfile] = useState(""); // State for user profile
@@ -140,6 +166,38 @@ const Testimonials = () => {
 
     fetchBuildingTypes();
   }, []);
+
+  useEffect(() => {
+    const fetchCrmUsers = async () => {
+      try {
+        const response = await axios.get(CRM_USERS_URL, {
+          headers: { Accept: "application/json" },
+        });
+
+        const list = Array.isArray(response.data)
+          ? response.data
+          : response.data?.user_societies || [];
+        setCrmUsers(list);
+      } catch (error) {
+        console.error("Error fetching CRM users:", error);
+        setCrmUsers([]);
+      }
+    };
+
+    fetchCrmUsers();
+  }, []);
+
+  // Selecting a user carries their name, booking_number and customer_code
+  // straight through to submission (testimonial[user_name/booking_number/
+  // customer_code]) - none of the three are shown as their own inputs.
+  const handleCrmUserSelect = (value) => {
+    setSelectedCrmUserId(value);
+    const record = crmUsers.find((u) => String(getCrmUserId(u)) === String(value));
+    if (!record) return;
+    setUserName(getCrmUserName(record));
+    setBookingNumber(String(getCrmUserBookingNumber(record)));
+    setCustomerCode(String(getCrmUserCustomerCode(record)));
+  };
 
   const handleImageUpload = (newImageList) => {
     if (!newImageList || newImageList.length === 0) return;
@@ -390,6 +448,7 @@ const handleCropComplete = (validImages) => {
       setUserName("");
       setCustomerCode("");
       setBookingNumber("");
+      setSelectedCrmUserId("");
       setVideoUrl("");
       setImagePreview("");
       setUserProfile("");
@@ -433,15 +492,19 @@ const handleCropComplete = (validImages) => {
                 <div className="row banner-form-fields">
                   <div className="col-md-3">
                     <div className="form-group">
-                      <FormTextField
-                        label="User Name"
-                        name="userName"
-                        placeholder="Enter user name"
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
+                      <SelectBox
+                        label="Select User"
+                        placeholder="Select User"
+                        options={crmUsers.map((u) => ({
+                          label: getCrmUserName(u),
+                          value: getCrmUserId(u),
+                        }))}
+                        value={selectedCrmUserId}
+                        onChange={handleCrmUserSelect}
                       />
                     </div>
                   </div>
+
 
                   <div className="col-md-3">
                     <div className="form-group">
@@ -482,29 +545,6 @@ const handleCropComplete = (validImages) => {
                     </div>
                   </div>
 
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <FormTextField
-                        label="Booking Number"
-                        name="bookingNumber"
-                        placeholder="Enter booking number"
-                        value={bookingNumber}
-                        onChange={(e) => setBookingNumber(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <FormTextField
-                        label="Customer Code"
-                        name="customerCode"
-                        placeholder="Enter customer code"
-                        value={customerCode}
-                        onChange={(e) => setCustomerCode(e.target.value)}
-                      />
-                    </div>
-                  </div>
 
                   {/* <div className="col-md-3">
                 <div className="form-group">
