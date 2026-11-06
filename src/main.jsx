@@ -5,6 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import posthog from "posthog-js";
 import "./index.css";
 import App from "./App.jsx";
+import { installNetworkMonitor } from "./utils/networkMonitor.js";
+
+// App-wide toasts for slow requests, unreachable server and offline/online —
+// see utils/networkMonitor.js for why this patches fetch/XHR globally.
+installNetworkMonitor();
 
 // Initialize posthog BEFORE React renders so posthog.capture() calls inside
 // useEffect hooks are never made on an uninitialized instance. When using
